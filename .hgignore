@@ -1,22 +1,22 @@
-relre:output/*
-relre:^Mercurial/
-syntax: regexp
-Perf test  results/*.*
-src/FLEx-ChorusPlugin/bin/*.*
-src/FLEx-ChorusPlugin/obj/*.*
-src/FLEx-ChorusPluginTests/bin/*.*
-src/FLEx-ChorusPluginTests/obj/*.*
-src/FwdataNester/bin/*.*
-src/FwdataNester/obj/Debug/*.*
-src/FwdataNester/obj/*.*
-_ReSharper.FLExBridge VS2010/*.*
-src/FLExBridge/obj/*.*
-src/Installer/output/*.*
-syntax: glob
-Perf test  results/*.app6results
-*.user
-*.suo
-DistFiles/.guidsForInstaller.xml
-Mercurial/mercurial.ini
-**.app7results
-Patches/**
+glob:src/FwLift.5.1.ReSharper.user
+glob:src/LiftBridge.5.1.ReSharper.user
+glob:src/LiftBridge.suo
+relre:src/_ReSharper.FwLift/*
+relre:src/_ReSharper.LiftBridge/*
+glob:lib/FieldWorks 6.0/BasicUtils.pdb
+glob:lib/FieldWorks 6.0/COMInterfaces.pdb
+glob:lib/FieldWorks 6.0/FDO.pdb
+glob:lib/FieldWorks 6.0/FwCoreDlgs.pdb
+glob:lib/FieldWorks 6.0/FwResources.pdb
+glob:lib/FieldWorks 6.0/FwUtils.pdb
+glob:lib/FieldWorks 6.0/FxtDLL.pdb
+glob:lib/FieldWorks 6.0/SilUtils.pdb
+glob:lib/FieldWorks 6.0/Utils.pdb
+glob:lib/FieldWorks 6.0/XMLUtils.pdb
+glob:lib/FieldWorks 6.0/xCoreInterfaces.pdb
+glob:lib/FieldWorks 7.0/FwUtils.pdb
+glob:lib/FieldWorks 7.0/SilUtils.pdb
+relre:src/LiftBridge/bin/*
+relre:src/LiftBridge/obj/*
+relre:src/LiftBridgeTests/bin/*
+relre:src/LiftBridgeTests/obj/*
