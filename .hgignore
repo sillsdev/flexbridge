@@ -20,3 +20,4 @@ relre:src/LiftBridge/bin/*
 relre:src/LiftBridge/obj/*
 relre:src/LiftBridgeTests/bin/*
 relre:src/LiftBridgeTests/obj/*
+glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user

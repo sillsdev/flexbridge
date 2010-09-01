@@ -61,6 +61,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Fixing relation links between imported entries.
+		/// </summary>
+		public static string kFixingRelationLinks {
+			get {
+				return ResourceManager.GetString("kFixingRelationLinks", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to WeSay Collaboration.
 		/// </summary>
 		public static string kLabel {
@@ -70,11 +79,83 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to LiftBridge Processing.
+		/// </summary>
+		public static string kLiftBridgeProcessing {
+			get {
+				return ResourceManager.GetString("kLiftBridgeProcessing", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Migrating from LIFT version {0} to version {1}.
+		/// </summary>
+		public static string kLiftVersionMigration {
+			get {
+				return ResourceManager.GetString("kLiftVersionMigration", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Loading various lists for lookup during import.
+		/// </summary>
+		public static string kLoadingListInfo {
+			get {
+				return ResourceManager.GetString("kLoadingListInfo", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}..
+		/// </summary>
+		public static string kProblem {
+			get {
+				return ResourceManager.GetString("kProblem", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Something went wrong trying to import {0} while merging...
+		/// </summary>
+		public static string kProblemImportWhileMerging {
+			get {
+				return ResourceManager.GetString("kProblemImportWhileMerging", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Problem Merging.
+		/// </summary>
+		public static string kProblemMerging {
+			get {
+				return ResourceManager.GetString("kProblemMerging", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to This operation cannot be undone..
 		/// </summary>
 		public static string kRedoDescription {
 			get {
 				return ResourceManager.GetString("kRedoDescription", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Chorus Send/Receive.
+		/// </summary>
+		public static string kSendReceive {
+			get {
+				return ResourceManager.GetString("kSendReceive", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Exporting {0} entries from the lexicon.
+		/// </summary>
+		public static string ksExportingEntries {
+			get {
+				return ResourceManager.GetString("ksExportingEntries", resourceCulture);
 			}
 		}
 

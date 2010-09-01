@@ -1,5 +1,6 @@
 ﻿using System;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FDO;
 using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge
@@ -18,7 +19,7 @@ namespace SIL.LiftBridge
 	public class LiftBridge : IUtility
 	{
 		private UtilityDlg _utilityDlg;
-		//private FdoCache _cache;
+		private FdoCache _cache;
 
 		#region Implementation of IUtility
 
@@ -46,7 +47,7 @@ namespace SIL.LiftBridge
 		public void Process()
 		{
 			// 1. Export Flex Lexical data as LIFT, where the exported file goes into the folder where the Hg Repository is located.
-			// 2. Do commit, push, and pull usinng Chorus' SyncDialog.
+			// 2. Do commit, push, and pull using Chorus' SyncDialog.
 			// 3. Re-import current LIFT data, but only if it actually brought in changes from other users.
 			//		If nothing was pulled, then skip the bother of re-importing the LIFT file.
 			throw new NotImplementedException();
@@ -65,7 +66,11 @@ namespace SIL.LiftBridge
 		/// </summary>
 		public UtilityDlg Dialog
 		{
-			set { _utilityDlg = value; }
+			set
+			{
+				_utilityDlg = value;
+				_cache = (FdoCache)_utilityDlg.Mediator.PropertyTable.GetValue("cache");
+			}
 		}
 
 		#endregion

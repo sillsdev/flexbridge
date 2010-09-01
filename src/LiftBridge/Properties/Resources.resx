@@ -120,13 +120,40 @@
   <data name="kLabel" xml:space="preserve">
 	<value>WeSay Collaboration</value>
   </data>
+  <data name="kLiftBridgeProcessing" xml:space="preserve">
+	<value>LiftBridge Processing</value>
+  </data>
   <data name="kRedoDescription" xml:space="preserve">
 	<value>This operation cannot be undone.</value>
+  </data>
+  <data name="ksExportingEntries" xml:space="preserve">
+	<value>Exporting {0} entries from the lexicon</value>
   </data>
   <data name="kWhatDescription" xml:space="preserve">
 	<value>This utility allows for exporting Flex lexical data in the LIFT format that WeSay uses, send it to WeSay users, and receive entries from WeSay users.</value>
   </data>
   <data name="kWhenDescription" xml:space="preserve">
 	<value>When you want to share lexical entries with WeSay.</value>
+  </data>
+  <data name="kSendReceive" xml:space="preserve">
+	<value>Chorus Send/Receive</value>
+  </data>
+  <data name="kLiftVersionMigration" xml:space="preserve">
+	<value>Migrating from LIFT version {0} to version {1}</value>
+  </data>
+  <data name="kLoadingListInfo" xml:space="preserve">
+	<value>Loading various lists for lookup during import</value>
+  </data>
+  <data name="kProblemMerging" xml:space="preserve">
+	<value>Problem Merging</value>
+  </data>
+  <data name="kFixingRelationLinks" xml:space="preserve">
+	<value>Fixing relation links between imported entries</value>
+  </data>
+  <data name="kProblem" xml:space="preserve">
+	<value>Something went wrong while FieldWorks was attempting to import {0}.</value>
+  </data>
+  <data name="kProblemImportWhileMerging" xml:space="preserve">
+	<value>Something went wrong trying to import {0} while merging..</value>
   </data>
 </root>

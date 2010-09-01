@@ -1,4 +1,4 @@
-﻿namespace FwLift
+﻿namespace SIL.LiftBridge
 {
 	partial class LiftBridgeDlg
 	{
@@ -31,12 +31,12 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this._tbFLexProject = new System.Windows.Forms.TextBox();
 			this._gbHistory = new System.Windows.Forms.GroupBox();
-			this.label2 = new System.Windows.Forms.Label();
 			this._btnReview = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this._btnSendReceive = new System.Windows.Forms.Button();
-			this._clbTargets = new System.Windows.Forms.CheckedListBox();
 			this._llSetup = new System.Windows.Forms.LinkLabel();
+			this._clbTargets = new System.Windows.Forms.CheckedListBox();
+			this._btnSendReceive = new System.Windows.Forms.Button();
 			this._gbHistory.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -69,15 +69,6 @@
 			this._gbHistory.TabStop = false;
 			this._gbHistory.Text = "History";
 			//
-			// label2
-			//
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(25, 32);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(144, 13);
-			this.label2.TabIndex = 0;
-			this.label2.Text = "Last Language Forge Synch:";
-			//
 			// _btnReview
 			//
 			this._btnReview.Location = new System.Drawing.Point(270, 58);
@@ -87,6 +78,15 @@
 			this._btnReview.Text = "Review";
 			this._btnReview.UseVisualStyleBackColor = true;
 			this._btnReview.Click += new System.EventHandler(this.ReviewClick);
+			//
+			// label2
+			//
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(25, 32);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(144, 13);
+			this.label2.TabIndex = 0;
+			this.label2.Text = "Last Language Forge Synch:";
 			//
 			// groupBox1
 			//
@@ -100,23 +100,6 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Send/Receive";
 			//
-			// _btnSendReceive
-			//
-			this._btnSendReceive.Location = new System.Drawing.Point(260, 118);
-			this._btnSendReceive.Name = "_btnSendReceive";
-			this._btnSendReceive.Size = new System.Drawing.Size(96, 23);
-			this._btnSendReceive.TabIndex = 0;
-			this._btnSendReceive.Text = "Send/Receive";
-			this._btnSendReceive.UseVisualStyleBackColor = true;
-			//
-			// _clbTargets
-			//
-			this._clbTargets.FormattingEnabled = true;
-			this._clbTargets.Location = new System.Drawing.Point(7, 20);
-			this._clbTargets.Name = "_clbTargets";
-			this._clbTargets.Size = new System.Drawing.Size(176, 79);
-			this._clbTargets.TabIndex = 1;
-			//
 			// _llSetup
 			//
 			this._llSetup.AutoSize = true;
@@ -128,10 +111,29 @@
 			this._llSetup.Text = "Set up...";
 			this._llSetup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.SetUpClicked);
 			//
-			// FwLiftDlg
+			// _clbTargets
+			//
+			this._clbTargets.FormattingEnabled = true;
+			this._clbTargets.Location = new System.Drawing.Point(7, 20);
+			this._clbTargets.Name = "_clbTargets";
+			this._clbTargets.Size = new System.Drawing.Size(176, 79);
+			this._clbTargets.TabIndex = 1;
+			//
+			// _btnSendReceive
+			//
+			this._btnSendReceive.Location = new System.Drawing.Point(260, 118);
+			this._btnSendReceive.Name = "_btnSendReceive";
+			this._btnSendReceive.Size = new System.Drawing.Size(96, 23);
+			this._btnSendReceive.TabIndex = 0;
+			this._btnSendReceive.Text = "Send/Receive";
+			this._btnSendReceive.UseVisualStyleBackColor = true;
+			this._btnSendReceive.Click += new System.EventHandler(this.SendReceiveClicked);
+			//
+			// LiftBridgeDlg
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.ClientSize = new System.Drawing.Size(401, 323);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._gbHistory);
@@ -140,7 +142,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "FwLiftDlg";
+			this.Name = "LiftBridgeDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Chorus-Flex Partner";
