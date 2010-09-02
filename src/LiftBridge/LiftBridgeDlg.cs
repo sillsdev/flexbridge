@@ -22,6 +22,8 @@ namespace SIL.LiftBridge
 	{
 		private readonly FdoCache _cache;
 		private IAdvInd4 _progressDlg;
+		private readonly string _currentRootDataPath;
+		private  string _liftPathname;
 
 		public LiftBridgeDlg()
 		{
@@ -32,7 +34,20 @@ namespace SIL.LiftBridge
 			: this()
 		{
 			_cache = cache;
-			// TODO: Try to figure out from the cache where the matching Hg repository might be.
+			/*
+me: Hidden is fine, as well. Where do we want to hide it/them?
+ hattonjohn@gmail.com: Appdata
+ me: I'm pretty much indifferent as to where they go.
+8:26 AM hattonjohn@gmail.com: Ok, appdata then.
+
+AppData\LiftBridge\Foo
+AppData\LiftBridge\Bar
+			*/
+			_currentRootDataPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+				Path.Combine("LiftBridge", cache.DatabaseName));
+			if (!Directory.Exists(_currentRootDataPath))
+				Directory.CreateDirectory(_currentRootDataPath);
 		}
 
 		private void ReviewClick(object sender, EventArgs e)
@@ -58,7 +73,7 @@ namespace SIL.LiftBridge
 						progressDlg.Title = Resources.kLiftBridgeProcessing;
 						// 1. Export FLex lexicon
 						var outPath = Path.GetTempFileName();
-						outPath = (string)progressDlg.RunTask(true, ExportLexicon, new object[] { outPath, this });
+						outPath = (string)progressDlg.RunTask(true, ExportLexicon, outPath);
 						if (outPath == null)
 						{
 							// TODO: some sort of error report?
@@ -66,18 +81,20 @@ namespace SIL.LiftBridge
 						}
 
 						// 2. Commit/Push/Pull/Merge via Chorus.
-						// TODO: Since the Flex data was successfully exported,
-						// TODO: now copy it to the Hg folder.
-						// TODO: Use/create a LIFT file at known place on the computer.
-						// TODO: JH says (31 Aug 2010): "I’m not saying we use some FW directory.
-						// TODO:	I’m just saying that, given a unique name (like the language project),
-						// TODO:	we can map to somewhere on your disk, one we define.
-						// TODO: Yes, LinkBridge would be the one making that .hg folder, invisibly."
-						if ((bool)progressDlg.RunTask(true, ChorusMerge, outPath))
+						// Use/Create a LIFT file at known place on the computer.
+						// JH says (31 Aug 2010): "I’m not saying we use some FW directory.
+						// 	I’m just saying that, given a unique name (like the language project),
+						// 	we can map to somewhere on your disk, one we define.
+						// Yes, LinkBridge would be the one making that .hg folder, invisibly."
+						// Since the Flex data was successfully exported,
+						// now copy it to the Hg folder.
+						_liftPathname = Path.Combine(_currentRootDataPath, Path.ChangeExtension(outPath, "lift"));
+						File.Copy(outPath, _liftPathname, true);
+						if ((bool)progressDlg.RunTask(true, ChorusMerge, null))
 						{
 							// 3. Re-import lexicon, overwriting current contents.
 							// But, only if Chorus reports we got some changes from afar.
-							var logFile = (string)progressDlg.RunTask(true, ImportLexicon, outPath);
+							var logFile = (string)progressDlg.RunTask(true, ImportLexicon, null);
 							if (logFile == null)
 							{
 								// TODO: some sort of error report?
@@ -147,9 +164,7 @@ namespace SIL.LiftBridge
 		/// </returns>
 		protected object ChorusMerge(IAdvInd4 progressDialog, params object[] parameters)
 		{
-			var outPath = (string)parameters[0];
-
-			var configuration = new ProjectFolderConfiguration(Path.GetDirectoryName(outPath));
+			var configuration = new ProjectFolderConfiguration(_currentRootDataPath);
 			// 'Borrowed' from WeSay, to not have a dependency on it.
 			//exclude has precedence, but these are redundant as long as we're using the policy
 			//that we explicitly include all the files we understand.  At least someday, when these
@@ -186,13 +201,13 @@ namespace SIL.LiftBridge
 				dlg.SyncOptions.DoSendToOthers = true;
 				// leave it with the default, for now... dlg.SyncOptions.RepositorySourcesToTry.Clear();
 				//dlg.SyncOptions.CheckinDescription = CheckinDescriptionBuilder.GetDescription();
-				dlg.ShowDialog((Form)parameters[1]);
+				dlg.ShowDialog(this);
 				return (dlg.SyncResult != null && dlg.SyncResult.DidGetChangesFromOthers);
 			}
 		}
 
 		/// <summary>
-		/// Import the modified LIFT file given by the first (and only) parameter.
+		/// Re-import the modified LIFT file given by the first (and only) parameter.
 		/// </summary>
 		/// <returns>the name of the log file for the import, or null if a major error occurs.</returns>
 		protected object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
@@ -201,24 +216,23 @@ namespace SIL.LiftBridge
 				_progressDlg = progressDialog;
 			progressDialog.SetRange(0, 100);
 			progressDialog.Position = 0;
-			var inPath = (string)parameters[0];
 			string sLogFile = null;
 			var oldPropChg = _cache.PropChangedHandling;
 			try
 			{
 				_cache.PropChangedHandling = PropChangedHandling.SuppressAll;
 				string sFilename;
-				var migrationNeeded = Migrator.IsMigrationNeeded(inPath);
+				var migrationNeeded = Migrator.IsMigrationNeeded(_liftPathname);
 				if (migrationNeeded)
 				{
-					var sOldVersion = Validator.GetLiftVersion(inPath);
+					var sOldVersion = Validator.GetLiftVersion(_liftPathname);
 					progressDialog.Message = String.Format(Resources.kLiftVersionMigration,
 						sOldVersion, Validator.LiftVersion);
-					sFilename = Migrator.MigrateToLatestVersion(inPath);
+					sFilename = Migrator.MigrateToLatestVersion(_liftPathname);
 				}
 				else
 				{
-					sFilename = inPath;
+					sFilename = _liftPathname;
 				}
 				// TODO: validate input file?
 				progressDialog.Message = Resources.kLoadingListInfo;
@@ -229,7 +243,7 @@ namespace SIL.LiftBridge
 				parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
 				parser.SetStepsCompleted += ParserSetStepsCompleted;
 				parser.SetProgressMessage += ParserSetProgressMessage;
-				flexImporter.LiftFile = inPath;
+				flexImporter.LiftFile = _liftPathname;
 				var cEntries = parser.ReadLiftFile(sFilename);
 
 				if (migrationNeeded)
@@ -244,16 +258,16 @@ namespace SIL.LiftBridge
 				}
 				progressDialog.Message = Resources.kFixingRelationLinks;
 				flexImporter.ProcessPendingRelations();
-				sLogFile = flexImporter.DisplayNewListItems(inPath, cEntries);
+				sLogFile = flexImporter.DisplayNewListItems(_liftPathname, cEntries);
 			}
 			catch (Exception error)
 			{
 				var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-					inPath);
+					_liftPathname);
 				try
 				{
 					var bldr = new StringBuilder();
-					bldr.AppendFormat(Resources.kProblem, inPath);
+					bldr.AppendFormat(Resources.kProblem, _liftPathname);
 					bldr.AppendLine();
 					bldr.AppendLine(error.Message);
 					bldr.AppendLine();
