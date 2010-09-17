@@ -77,5 +77,23 @@ namespace FieldWorksBridge.Properties {
 				return ResourceManager.GetString("kFieldWorksBridge", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Lock file present.
+		/// </summary>
+		internal static string kLockFilePresent {
+			get {
+				return ResourceManager.GetString("kLockFilePresent", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to It appears that FLEx is running, since the file: {0}.fwdata.lock is present. You need to close FLEx or delete that file, if FLEx is not running, and try again..
+		/// </summary>
+		internal static string kLockFilePresentMsg {
+			get {
+				return ResourceManager.GetString("kLockFilePresentMsg", resourceCulture);
+			}
+		}
 	}
 }

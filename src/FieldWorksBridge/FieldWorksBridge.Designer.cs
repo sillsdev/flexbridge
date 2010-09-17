@@ -76,13 +76,13 @@
 			//
 			// _tpSendReceive
 			//
+			this._tpSendReceive.BackColor = System.Drawing.Color.Transparent;
 			this._tpSendReceive.Location = new System.Drawing.Point(4, 22);
 			this._tpSendReceive.Name = "_tpSendReceive";
 			this._tpSendReceive.Padding = new System.Windows.Forms.Padding(3);
 			this._tpSendReceive.Size = new System.Drawing.Size(849, 438);
 			this._tpSendReceive.TabIndex = 0;
 			this._tpSendReceive.Text = "Send/Receive";
-			this._tpSendReceive.UseVisualStyleBackColor = true;
 			//
 			// _tpNotes
 			//
@@ -129,6 +129,7 @@
 			this._tbComment.Name = "_tbComment";
 			this._tbComment.Size = new System.Drawing.Size(390, 20);
 			this._tbComment.TabIndex = 4;
+			this._tbComment.Leave += new System.EventHandler(this.LeaveTextBox);
 			//
 			// FieldWorksBridge
 			//

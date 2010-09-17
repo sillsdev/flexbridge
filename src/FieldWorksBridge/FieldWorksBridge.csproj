@@ -69,6 +69,7 @@
 	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
 	</Compile>
 	<Compile Include="FieldWorksBridgeBootstrapper.cs" />
+	<Compile Include="FieldWorksProjectFolderConfiguration.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="FieldWorksBridge.resx">
