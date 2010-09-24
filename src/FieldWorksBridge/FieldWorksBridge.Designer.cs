@@ -38,6 +38,7 @@
 			this._tpAbout = new System.Windows.Forms.TabPage();
 			this.label2 = new System.Windows.Forms.Label();
 			this._tbComment = new System.Windows.Forms.TextBox();
+			this._tpSettings = new System.Windows.Forms.TabPage();
 			this._tcPages.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -65,6 +66,7 @@
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._tcPages.Controls.Add(this._tpSendReceive);
+			this._tcPages.Controls.Add(this._tpSettings);
 			this._tcPages.Controls.Add(this._tpNotes);
 			this._tcPages.Controls.Add(this._tpHistory);
 			this._tcPages.Controls.Add(this._tpAbout);
@@ -83,6 +85,7 @@
 			this._tpSendReceive.Size = new System.Drawing.Size(849, 438);
 			this._tpSendReceive.TabIndex = 0;
 			this._tpSendReceive.Text = "Send/Receive";
+			this._tpSendReceive.UseVisualStyleBackColor = true;
 			//
 			// _tpNotes
 			//
@@ -131,6 +134,16 @@
 			this._tbComment.TabIndex = 4;
 			this._tbComment.Leave += new System.EventHandler(this.LeaveTextBox);
 			//
+			// _tpSettings
+			//
+			this._tpSettings.Location = new System.Drawing.Point(4, 22);
+			this._tpSettings.Name = "_tpSettings";
+			this._tpSettings.Padding = new System.Windows.Forms.Padding(3);
+			this._tpSettings.Size = new System.Drawing.Size(849, 438);
+			this._tpSettings.TabIndex = 4;
+			this._tpSettings.Text = "Settings";
+			this._tpSettings.UseVisualStyleBackColor = true;
+			//
 			// FieldWorksBridge
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -163,5 +176,6 @@
 		private System.Windows.Forms.TabPage _tpAbout;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox _tbComment;
+		private System.Windows.Forms.TabPage _tpSettings;
 	}
 }

@@ -1,10 +1,12 @@
-﻿using System;
+﻿//#define FORMIKE
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using Chorus;
+using Chorus.UI.Settings;
 using Chorus.UI.Sync;
 using FieldWorksBridge.Properties;
 
@@ -32,6 +34,7 @@ namespace FieldWorksBridge
 			_tcPages.TabPages[1].Controls.Clear();
 			_tcPages.TabPages[2].Controls.Clear();
 			_tcPages.TabPages[3].Controls.Clear();
+			_tcPages.TabPages[4].Controls.Clear();
 			var selItem = _cbProjects.SelectedItem as string;
 			if (selItem == null)
 			{
@@ -63,12 +66,16 @@ namespace FieldWorksBridge
 				//panel.Controls.Add(syncCntrl);
 				//syncCntrl.Dock = DockStyle.Fill;
 
+				var settingsPage = container.Resolve<SettingsView>(); // chorusSys.WinForms.CreateSettingDialog(); throws not impl exception.
+				_tcPages.TabPages[1].Controls.Add(settingsPage);
+				settingsPage.Dock = DockStyle.Fill;
+
 				var notesBrowserPage = chorusSys.WinForms.CreateNotesBrowser();
-				_tcPages.TabPages[1].Controls.Add(notesBrowserPage);
+				_tcPages.TabPages[2].Controls.Add(notesBrowserPage);
 				notesBrowserPage.Dock = DockStyle.Fill;
 
 				var historyPage = chorusSys.WinForms.CreateHistoryPage();
-				_tcPages.TabPages[2].Controls.Add(historyPage);
+				_tcPages.TabPages[3].Controls.Add(historyPage);
 				historyPage.Dock = DockStyle.Fill;
 				//_tcPages.TabPages["About"].Controls.Add(chorusSystem.WinForms.CreateSettingDialog());
 
@@ -92,7 +99,11 @@ namespace FieldWorksBridge
 		{
 			// Populate combo box with all projects in "C:\ProgramData\SIL\FieldWorks\Projects" (Vista/Windows 7)
 			// (?? for XP. ?? for Linux)
+#if FORMIKE
+			foreach (var projectName in _containers.Keys.Where(projectName => projectName != "MainContainer"))
+#else
 			foreach (var projectName in _containers.Keys.Where(projectName => projectName == "ZPI"))
+#endif
 			{
 				_cbProjects.Items.Add(projectName);
 			}
