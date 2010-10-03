@@ -92,6 +92,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="ExistingSystem.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ExistingSystem.Designer.cs">
+	  <DependentUpon>ExistingSystem.cs</DependentUpon>
+	</Compile>
 	<Compile Include="LiftBridgeDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -105,14 +111,28 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="StartupNewEventArgs.cs" />
+	<Compile Include="StartupNew.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="StartupNew.Designer.cs">
+	  <DependentUpon>StartupNew.cs</DependentUpon>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
+	<EmbeddedResource Include="ExistingSystem.resx">
+	  <DependentUpon>ExistingSystem.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="LiftBridgeDlg.resx">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="StartupNew.resx">
+	  <DependentUpon>StartupNew.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>

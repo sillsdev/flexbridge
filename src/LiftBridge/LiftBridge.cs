@@ -6,7 +6,7 @@ using SIL.LiftBridge.Properties;
 namespace SIL.LiftBridge
 {
 	/// <summary>
-	/// Class that allows FiedWorks and WeSay users to collaborate using LIFT data.
+	/// Class that allows FieldWorks and WeSay users to collaborate using LIFT data.
 	///
 	/// The assumption is that a FieldWorks user has a Mercurial repository with the WeSay material in it,
 	/// which is shared by FieldWorks and WeSay users. This utility sees that FieldWorks LIFT data is exported,
@@ -15,8 +15,13 @@ namespace SIL.LiftBridge
 	/// When the system senses that new data has come in from other users,
 	/// the LIFT data is merged back into the FieldWorks data set. If any entries have been deleted
 	/// by other users, those entries are then deleted from the FieldWorks system.
+	///
+	/// See: http://projects.palaso.org/projects/show/liftbridge
 	/// </summary>
-	public class LiftBridge : IUtility
+	/// <remarks>
+	/// NB: All of the FieldWorks dlls comes from the FW 6.0.4 install.
+	/// </remarks>
+	public sealed class LiftBridge : IUtility
 	{
 		private UtilityDlg _utilityDlg;
 		private FdoCache _cache;

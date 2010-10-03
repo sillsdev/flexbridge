@@ -18,22 +18,24 @@ using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge
 {
-	public partial class LiftBridgeDlg : Form
+	public sealed partial class LiftBridgeDlg : Form
 	{
 		private readonly FdoCache _cache;
 		private IAdvInd4 _progressDlg;
 		private readonly string _currentRootDataPath;
 		private  string _liftPathname;
 
-		public LiftBridgeDlg()
+		internal LiftBridgeDlg()
 		{
 			InitializeComponent();
 		}
 
-		internal LiftBridgeDlg(FdoCache cache)
+		public LiftBridgeDlg(FdoCache cache)
 			: this()
 		{
 			_cache = cache;
+
+			Text = Text + cache.DatabaseName;
 			/*
 me: Hidden is fine, as well. Where do we want to hide it/them?
  hattonjohn@gmail.com: Appdata
@@ -48,67 +50,50 @@ AppData\LiftBridge\Bar
 				Path.Combine("LiftBridge", cache.DatabaseName));
 			if (!Directory.Exists(_currentRootDataPath))
 				Directory.CreateDirectory(_currentRootDataPath);
-		}
 
-		private void ReviewClick(object sender, EventArgs e)
-		{
-
-		}
-
-		private void SetUpClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-
-		}
-
-		private void SendReceiveClicked(object sender, EventArgs e)
-		{
-			using (new WaitCursor(this))
+			var hgPath = Path.Combine(_currentRootDataPath, ".hg");
+			if (Directory.Exists(hgPath))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this))
-				{
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-					_progressDlg = progressDlg;
-					try
-					{
-						progressDlg.Title = Resources.kLiftBridgeProcessing;
-						// 1. Export FLex lexicon
-						var outPath = Path.GetTempFileName();
-						outPath = (string)progressDlg.RunTask(true, ExportLexicon, outPath);
-						if (outPath == null)
-						{
-							// TODO: some sort of error report?
-							return;
-						}
-
-						// 2. Commit/Push/Pull/Merge via Chorus.
-						// Use/Create a LIFT file at known place on the computer.
-						// JH says (31 Aug 2010): "I’m not saying we use some FW directory.
-						// 	I’m just saying that, given a unique name (like the language project),
-						// 	we can map to somewhere on your disk, one we define.
-						// Yes, LinkBridge would be the one making that .hg folder, invisibly."
-						// Since the Flex data was successfully exported,
-						// now copy it to the Hg folder.
-						_liftPathname = Path.Combine(_currentRootDataPath, Path.ChangeExtension(outPath, "lift"));
-						File.Copy(outPath, _liftPathname, true);
-						if ((bool)progressDlg.RunTask(true, ChorusMerge, null))
-						{
-							// 3. Re-import lexicon, overwriting current contents.
-							// But, only if Chorus reports we got some changes from afar.
-							var logFile = (string)progressDlg.RunTask(true, ImportLexicon, null);
-							if (logFile == null)
-							{
-								// TODO: some sort of error report?
-								return;
-							}
-						}
-					}
-					catch
-					{
-					}
-				}
+				InstallExistingSystemControl();
 			}
-			DialogResult = DialogResult.OK;
-			Close();
+			else
+			{
+				// Use StartupNew control.
+				SuspendLayout();
+				var ctrl = new StartupNew();
+				Controls.Add(ctrl);
+				ctrl.Dock = DockStyle.Fill;
+				ctrl.Startup += Startup;
+				ResumeLayout();
+			}
+		}
+
+		private void InstallExistingSystemControl()
+		{
+			var ctrl = new ExistingSystem();
+			Controls.Add(ctrl);
+			ctrl.Dock = DockStyle.Fill;
+		}
+
+		void Startup(object sender, StartupNewEventArgs e)
+		{
+			if (e.MakeNewSystem)
+			{
+				// Create a new Hg repo for the given LP in the hard-wired location.
+			}
+			else
+			{
+				MessageBox.Show("Decide what to do next for the Extant option. That is, how do we know where we clone from?");
+			}
+
+			// Dispose the StartupNew control (disconnect this event handler) and add the main control.
+			SuspendLayout();
+			var oldControl = (StartupNew)Controls[0];
+			Controls.Clear();
+			oldControl.Startup -= Startup;
+			oldControl.Dispose();
+			InstallExistingSystemControl();
+			ResumeLayout(true);
 		}
 
 		/// <summary>
@@ -117,7 +102,7 @@ AppData\LiftBridge\Bar
 		/// <returns>
 		/// The name of the exported LIFT file if successful, or null if an error occurs.
 		/// </returns>
-		protected object ExportLexicon(IAdvInd4 progressDialog, params object[] parameters)
+		private object ExportLexicon(IAdvInd4 progressDialog, params object[] parameters)
 		{
 			string outPath;
 			try
@@ -162,7 +147,7 @@ AppData\LiftBridge\Bar
 		/// True, Chorus reports that changes were found in other data in the pull/merge.
 		/// Otherwise, False.
 		/// </returns>
-		protected object ChorusMerge(IAdvInd4 progressDialog, params object[] parameters)
+		private object ChorusMerge(IAdvInd4 progressDialog, params object[] parameters)
 		{
 			var configuration = new ProjectFolderConfiguration(_currentRootDataPath);
 			// 'Borrowed' from WeSay, to not have a dependency on it.
@@ -210,7 +195,7 @@ AppData\LiftBridge\Bar
 		/// Re-import the modified LIFT file given by the first (and only) parameter.
 		/// </summary>
 		/// <returns>the name of the log file for the import, or null if a major error occurs.</returns>
-		protected object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
+		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
 		{
 			if (_progressDlg == null)
 				_progressDlg = progressDialog;
@@ -292,7 +277,6 @@ AppData\LiftBridge\Bar
 		{
 			if (_progressDlg == null)
 				return;
-			//Debug.WriteLine(String.Format("OnDumperSetProgressMessage(\"{0}\")", e.MessageId));
 			var message = Resources.ResourceManager.GetString(e.MessageId, Resources.Culture);
 			if (!string.IsNullOrEmpty(message))
 				_progressDlg.Message = message;

@@ -5,11 +5,11 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{779F1446-6E6C-44C4-8A80-10C42A9F358D}</ProjectGuid>
+	<ProjectGuid>{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>SIL.LiftBridge</RootNamespace>
-	<AssemblyName>LiftBridgeTests</AssemblyName>
+	<RootNamespace>LiftBridgeUtility6</RootNamespace>
+	<AssemblyName>LiftBridgeUtility6</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,46 +31,21 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=6.0.4.16100, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces, Version=6.0.4.16251, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="FwCoreDlgs, Version=6.0.4.17723, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FwCoreDlgs.dll</HintPath>
-	</Reference>
-	<Reference Include="FwResources, Version=6.0.4.16099, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FwResources.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\SilUtils.dll</HintPath>
-	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
-	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml.Linq">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
-	<Reference Include="System.Xml" />
-	<Reference Include="xCoreInterfaces, Version=6.0.4.16283, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\xCoreInterfaces.dll</HintPath>
+	<Reference Include="System.Data.DataSetExtensions">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="LiftBridgeTests.cs" />
+	<Compile Include="LiftBridgeUtility.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

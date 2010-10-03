@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FwLiftUtilitiesTests")]
+[assembly: AssemblyTitle("LiftBridgeUtility6")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("FwLiftUtilitiesTests")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("LiftBridgeUtility6")]
 [assembly: AssemblyCopyright("Copyright ©  2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f17e94f5-1795-406e-acb9-f51f77f11a80")]
+[assembly: Guid("808a3742-65d8-4fc8-ae44-fae4cb47ec6f")]
 
 // Version information for an assembly consists of the following four values:
 //

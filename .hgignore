@@ -21,3 +21,7 @@ relre:src/LiftBridge/obj/*
 relre:src/LiftBridgeTests/bin/*
 relre:src/LiftBridgeTests/obj/*
 glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user
+relre:src/LiftBridgeUtility6/bin/*.*
+relre:src/LiftBridgeUtility6/obj/*.*
+relre:src/LiftBridgeUtility7/bin/*.*
+relre:src/LiftBridgeUtility7/obj/*.*
