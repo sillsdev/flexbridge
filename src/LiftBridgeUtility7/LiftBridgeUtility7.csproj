@@ -31,10 +31,31 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="BasicUtils, Version=6.9.0.22363, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgs, Version=6.9.0.22690, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources, Version=6.9.0.22587, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=6.9.0.22591, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\SilUtils.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
+	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml.Linq">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
@@ -43,9 +64,13 @@
 	</Reference>
 	<Reference Include="System.Data" />
 	<Reference Include="System.Xml" />
+	<Reference Include="xCoreInterfaces, Version=6.9.0.22588, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\xCoreInterfaces.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="LiftBridgeUtility.cs" />
+	<Compile Include="LiftBridgeUtility70.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

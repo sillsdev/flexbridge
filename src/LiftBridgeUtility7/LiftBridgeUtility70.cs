@@ -1,9 +1,12 @@
 ﻿using System;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LiftBridge;
 using SIL.LiftBridge.Properties;
 
-namespace SIL.LiftBridge
+namespace LiftBridgeUtility7
 {
 	/// <summary>
 	/// Class that allows FieldWorks and WeSay users to collaborate using LIFT data.
@@ -19,12 +22,12 @@ namespace SIL.LiftBridge
 	/// See: http://projects.palaso.org/projects/show/liftbridge
 	/// </summary>
 	/// <remarks>
-	/// NB: All of the FieldWorks dlls comes from the FW 6.0.4 install.
+	/// NB: All of the FieldWorks dlls comes from the FW 7 build.
 	/// </remarks>
-	public sealed class LiftBridge : IUtility
+	public class LiftBridgeUtility70 : IUtility, ILiftBridgeImportExport
 	{
 		private UtilityDlg _utilityDlg;
-		private FdoCache _cache;
+		//private FdoCache _cache;
 
 		#region Implementation of IUtility
 
@@ -63,7 +66,7 @@ namespace SIL.LiftBridge
 		/// </summary>
 		public string Label
 		{
-			get {return Resources.kLabel; }
+			get { return Resources.kLabel; }
 		}
 
 		/// <summary>
@@ -74,7 +77,7 @@ namespace SIL.LiftBridge
 			set
 			{
 				_utilityDlg = value;
-				_cache = (FdoCache)_utilityDlg.Mediator.PropertyTable.GetValue("cache");
+				//_cache = (FdoCache)_utilityDlg.Mediator.PropertyTable.GetValue("cache");
 			}
 		}
 
@@ -88,5 +91,31 @@ namespace SIL.LiftBridge
 		{
 			return Label;
 		}
+
+		#region Implementation of ILiftBridgeImportExport
+
+		/// <summary>
+		/// Export the FieldWorks lexicon into the LIFT file.
+		/// The file may, or may not, exist.
+		/// </summary>
+		public void ExportLexicon()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Import the LIFT file into FieldWorks.
+		/// </summary>
+		public void ImportLexicon()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets or sets the LIFT file's pathname.
+		/// </summary>
+		public string LiftPathname { get; set; }
+
+		#endregion
 	}
 }

@@ -31,45 +31,13 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=6.0.4.16100, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\BasicUtils.dll</HintPath>
-	</Reference>
 	<Reference Include="Chorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=6.0.4.16251, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO, Version=6.0.4.16280, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FDO.dll</HintPath>
-	</Reference>
-	<Reference Include="FwControls, Version=6.0.4.16275, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FwControls.dll</HintPath>
-	</Reference>
-	<Reference Include="FwCoreDlgs, Version=6.0.4.17723, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FwCoreDlgs.dll</HintPath>
-	</Reference>
-	<Reference Include="FxtDLL, Version=6.0.4.16586, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\FxtDLL.dll</HintPath>
-	</Reference>
-	<Reference Include="LexTextControls, Version=6.0.4.17781, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\LexTextControls.dll</HintPath>
-	</Reference>
 	<Reference Include="LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="LiftIO, Version=1.1.32.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\LiftIO.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
@@ -82,14 +50,6 @@
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.Xml" />
-	<Reference Include="Utils, Version=6.0.4.16101, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\Utils.dll</HintPath>
-	</Reference>
-	<Reference Include="xCoreInterfaces, Version=6.0.4.16283, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\xCoreInterfaces.dll</HintPath>
-	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="ExistingSystem.cs">
@@ -98,13 +58,13 @@
 	<Compile Include="ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	</Compile>
+	<Compile Include="ILiftBridgeImportExport.cs" />
 	<Compile Include="LiftBridgeDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="LiftBridgeDlg.Designer.cs">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
 	</Compile>
-	<Compile Include="LiftBridge.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
