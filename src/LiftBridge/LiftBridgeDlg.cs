@@ -93,6 +93,9 @@ AppData\LiftBridge\Bar
 		/// </returns>
 		private object ChorusMerge()
 		{
+			// Now that the dlg uses regular Chorus controls, rather than the SyncDialog,
+			// how are we to know when to do the export and import?
+
 			var configuration = new ProjectFolderConfiguration(_currentRootDataPath);
 			// 'Borrowed' from WeSay, to not have a dependency on it.
 			//exclude has precedence, but these are redundant as long as we're using the policy

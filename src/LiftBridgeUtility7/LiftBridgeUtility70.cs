@@ -70,7 +70,10 @@ namespace LiftBridgeUtility7
 			// 2. Do commit, push, and pull using Chorus' SyncDialog.
 			// 3. Re-import current LIFT data, but only if it actually brought in changes from other users.
 			//		If nothing was pulled, then skip the bother of re-importing the LIFT file.
-			throw new NotImplementedException();
+			using (var dlg = new LiftBridgeDlg(this, _cache.DatabaseName))
+			{
+				dlg.ShowDialog(_utilityDlg);
+			}
 		}
 
 		/// <summary>
@@ -196,7 +199,6 @@ namespace LiftBridgeUtility7
 					{
 						sFilename = liftPathname;
 					}
-					// TODO: validate input file?
 					progressDialog.Message = Resources.kLoadingListInfo;
 					var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.msKeepOnlyNew, true);
 					var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -70,7 +68,10 @@ namespace LiftBridgeUtility6
 			// 2. Do commit, push, and pull using Chorus' SyncDialog.
 			// 3. Re-import current LIFT data, but only if it actually brought in changes from other users.
 			//		If nothing was pulled, then skip the bother of re-importing the LIFT file.
-			throw new NotImplementedException();
+			using (var dlg = new LiftBridgeDlg(this, _cache.DatabaseName))
+			{
+				dlg.ShowDialog(_utilityDlg);
+			}
 		}
 
 		/// <summary>
