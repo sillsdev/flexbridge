@@ -25,3 +25,4 @@ relre:src/LiftBridgeUtility6/bin/*.*
 relre:src/LiftBridgeUtility6/obj/*.*
 relre:src/LiftBridgeUtility7/bin/*.*
 relre:src/LiftBridgeUtility7/obj/*.*
+glob:lib/FieldWorks 7.0/*.pdb

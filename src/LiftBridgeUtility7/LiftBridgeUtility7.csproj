@@ -35,6 +35,18 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\BasicUtils.dll</HintPath>
 	</Reference>
+	<Reference Include="COMInterfaces, Version=6.0.4.16251, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 6.0\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO, Version=6.9.2.14995, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls, Version=6.9.2.14990, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FwControls.dll</HintPath>
+	</Reference>
 	<Reference Include="FwCoreDlgs, Version=6.9.0.22690, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FwCoreDlgs.dll</HintPath>
@@ -46,6 +58,18 @@
 	<Reference Include="FwUtils, Version=6.9.0.22591, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FxtDll, Version=6.9.2.15022, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\FxtDll.dll</HintPath>
+	</Reference>
+	<Reference Include="LexTextControls, Version=6.0.4.17781, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 6.0\LexTextControls.dll</HintPath>
+	</Reference>
+	<Reference Include="LiftIO, Version=1.1.32.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\FieldWorks 7.0\LiftIO.dll</HintPath>
 	</Reference>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

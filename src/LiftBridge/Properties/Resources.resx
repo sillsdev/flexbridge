@@ -156,4 +156,10 @@
   <data name="kProblemImportWhileMerging" xml:space="preserve">
 	<value>Something went wrong trying to import {0} while merging..</value>
   </data>
+  <data name="kExportLiftLexicon" xml:space="preserve">
+	<value>Export LIFT Lexicon</value>
+  </data>
+  <data name="kImportLiftlexicon" xml:space="preserve">
+	<value>Import LIFT Lexicon</value>
+  </data>
 </root>

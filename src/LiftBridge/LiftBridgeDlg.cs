@@ -99,6 +99,7 @@ AppData\LiftBridge\Bar
 			//that we explicitly include all the files we understand.  At least someday, when these
 			//effect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			//us a bit from other apps that might try to do a *.* include
+
 			// Excludes
 			configuration.ExcludePatterns.Add("**/cache");
 			configuration.ExcludePatterns.Add("**/Cache");

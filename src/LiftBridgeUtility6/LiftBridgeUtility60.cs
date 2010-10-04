@@ -35,7 +35,7 @@ namespace LiftBridgeUtility6
 	/// <remarks>
 	/// NB: All of the FieldWorks dlls comes from the FW 6.0.4 install.
 	/// </remarks>
-	public class LiftBridgeUtility60 : IUtility, ILiftBridgeImportExport
+	public sealed class LiftBridgeUtility60 : IUtility, ILiftBridgeImportExport
 	{
 		private UtilityDlg _utilityDlg;
 		private FdoCache _cache;
@@ -147,119 +147,186 @@ namespace LiftBridgeUtility6
 			_progressDlg.Position = e.Progress > nMax ? e.Progress % nMax : e.Progress;
 		}
 
+		/// <summary>
+		/// Export the contents of the lexicon to the given file (first and only parameter).
+		/// </summary>
+		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
+		private object ExportLexicon(IAdvInd4 progressDialog, params object[] parameters)
+		{
+			try
+			{
+				var outPath = (string) parameters[0];
+				progressDialog.Message = string.Format(
+					Resources.ksExportingEntries,
+					_cache.LangProject.LexDbOA.EntriesOC.Count);
+				using (var dumper = new XDumper(_cache))
+				{
+					dumper.UpdateProgress += OnDumperUpdateProgress;
+					dumper.SetProgressMessage += OnDumperSetProgressMessage;
+					// Don't bother writing out the range information in the export.
+					dumper.SetTestVariable("SkipRanges", true);
+					dumper.SkipAuxFileOutput = true;
+					progressDialog.SetRange(0, dumper.GetProgressMaximum());
+					progressDialog.Position = 0;
+					using (TextWriter textWriter = new StreamWriter(LiftPathname))
+					{
+						var fxtPath = Path.Combine(
+							Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer\Export Templates"),
+							"LIFT.fxt.xml");
+						dumper.ExportPicturesAndMedia = true; // useless without Pictures directory...
+						dumper.Go(_cache.LangProject as CmObject, fxtPath, textWriter);
+					}
+					return outPath;
+				}
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Import the LIFT file into FieldWorks.
+		/// </summary>
+		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
+		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
+		{
+			if (_progressDlg == null)
+				_progressDlg = progressDialog;
+			progressDialog.SetRange(0, 100);
+			progressDialog.Position = 0;
+			string sLogFile = null;
+			var oldPropChg = _cache.PropChangedHandling;
+			try
+			{
+				_cache.PropChangedHandling = PropChangedHandling.SuppressAll;
+				string sFilename;
+				var migrationNeeded = Migrator.IsMigrationNeeded(LiftPathname);
+				if (migrationNeeded)
+				{
+					var sOldVersion = Validator.GetLiftVersion(LiftPathname);
+					progressDialog.Message = String.Format(Resources.kLiftVersionMigration,
+						sOldVersion, Validator.LiftVersion);
+					sFilename = Migrator.MigrateToLatestVersion(LiftPathname);
+				}
+				else
+				{
+					sFilename = LiftPathname;
+				}
+
+				progressDialog.Message = Resources.kLoadingListInfo;
+				// FlexLiftMerger.MergeStyle.msKeepOnlyNew means:
+				// "Throw away any existing entries/senses/... that are not in the LIFT file."
+				var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.msKeepOnlyNew, true);
+				var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
+				parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
+				parser.SetStepsCompleted += ParserSetStepsCompleted;
+				parser.SetProgressMessage += ParserSetProgressMessage;
+				flexImporter.LiftFile = LiftPathname;
+				var cEntries = parser.ReadLiftFile(sFilename);
+
+				if (migrationNeeded)
+				{
+					// Try to move the migrated file to the temp directory, even if a copy of it
+					// already exists there.
+					var sTempMigrated = Path.Combine(Path.GetTempPath(),
+						Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + ".lift"));
+					if (File.Exists(sTempMigrated))
+						File.Delete(sTempMigrated);
+					File.Move(sFilename, sTempMigrated);
+				}
+				progressDialog.Message = Resources.kFixingRelationLinks;
+				flexImporter.ProcessPendingRelations();
+				sLogFile = flexImporter.DisplayNewListItems(LiftPathname, cEntries);
+			}
+			catch (Exception error)
+			{
+				var sMsg = String.Format(Resources.kProblemImportWhileMerging,
+					LiftPathname);
+				try
+				{
+					var bldr = new StringBuilder();
+					bldr.AppendFormat(Resources.kProblem, LiftPathname);
+					bldr.AppendLine();
+					bldr.AppendLine(error.Message);
+					bldr.AppendLine();
+					bldr.AppendLine(error.StackTrace);
+					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+						Clipboard.SetDataObject(bldr.ToString(), true);
+				}
+				catch
+				{
+				}
+				MessageBox.Show(sMsg, Resources.kProblemMerging,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			finally
+			{
+				_cache.PropChangedHandling = oldPropChg;
+			}
+			return sLogFile;
+		}
+
 		#region Implementation of ILiftBridgeImportExport
 
 		/// <summary>
 		/// Export the FieldWorks lexicon into the LIFT file.
 		/// The file may, or may not, exist.
 		/// </summary>
-		public void ExportLexicon()
+		/// <returns>True, if successful, otherwise false.</returns>
+		public bool ExportLexicon(Form parentForm)
 		{
-			// TODO: Get an instance of IAdvInd4 from somewhere.
-			//if (_progressDlg == null)
-			//    _progressDlg = progressDialog;
-			//progressDialog.Message = string.Format(
-			//    Resources.ksExportingEntries,
-			//    _cache.LangProject.LexDbOA.EntriesOC.Count);
-			//using (var dumper = new XDumper(_cache))
-			//{
-			//    dumper.UpdateProgress += OnDumperUpdateProgress;
-			//    dumper.SetProgressMessage += OnDumperSetProgressMessage;
-			//    // Don't bother writing out the range information in the export.
-			//    dumper.SetTestVariable("SkipRanges", true);
-			//    dumper.SkipAuxFileOutput = true;
-			//    progressDialog.SetRange(0, dumper.GetProgressMaximum());
-			//    progressDialog.Position = 0;
-			//    using (TextWriter textWriter = new StreamWriter(_liftPathname))
-			//    {
-			//        var fxtPath = Path.Combine(
-			//            Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer\Export Templates"),
-			//            "LIFT.fxt.xml");
-			//        dumper.ExportPicturesAndMedia = true; // useless without Pictures directory...
-			//        dumper.Go(_cache.LangProject as CmObject, fxtPath, textWriter);
-			//    }
-			//}
+			using (new WaitCursor(parentForm))
+			{
+				using (var progressDlg = new ProgressDialogWithTask(parentForm))
+				{
+					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					_progressDlg = progressDlg;
+					try
+					{
+						progressDlg.Title = Resources.kExportLiftLexicon;
+						var outPath = Path.GetTempFileName();
+						outPath = (string)progressDlg.RunTask(true, ExportLexicon, outPath);
+						if (outPath == null)
+							return false;
+
+						// Copy temp file to real LIFT file.
+						File.Copy(outPath, LiftPathname, true);
+						File.Delete(outPath); // Delete temp file.
+						return true;
+					}
+					catch
+					{
+						return false;
+					}
+				}
+			}
 		}
 
 		/// <summary>
 		/// Import the LIFT file into FieldWorks.
 		/// </summary>
-		public void ImportLexicon()
+		/// <returns>True, if successful, otherwise false.</returns>
+		public bool ImportLexicon(Form parentForm)
 		{
-			// TODO: Get an instance of IAdvInd4 from somewhere.
-			//if (_progressDlg == null)
-			//    _progressDlg = progressDialog;
-			//progressDialog.SetRange(0, 100);
-			//progressDialog.Position = 0;
-			//string sLogFile = null;
-			//var oldPropChg = _cache.PropChangedHandling;
-			//try
-			//{
-			//    _cache.PropChangedHandling = PropChangedHandling.SuppressAll;
-			//    string sFilename;
-			//    var migrationNeeded = Migrator.IsMigrationNeeded(_liftPathname);
-			//    if (migrationNeeded)
-			//    {
-			//        var sOldVersion = Validator.GetLiftVersion(_liftPathname);
-			//        progressDialog.Message = String.Format(Resources.kLiftVersionMigration,
-			//            sOldVersion, Validator.LiftVersion);
-			//        sFilename = Migrator.MigrateToLatestVersion(_liftPathname);
-			//    }
-			//    else
-			//    {
-			//        sFilename = _liftPathname;
-			//    }
-			//    // TODO: validate input file?
-			//    progressDialog.Message = Resources.kLoadingListInfo;
-			//    // FlexLiftMerger.MergeStyle.msKeepOnlyNew means:
-			//    // "Throw away any existing entries/senses/... that are not in the LIFT file."
-			//    var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.msKeepOnlyNew, true);
-			//    var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
-			//    parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
-			//    parser.SetStepsCompleted += ParserSetStepsCompleted;
-			//    parser.SetProgressMessage += ParserSetProgressMessage;
-			//    flexImporter.LiftFile = _liftPathname;
-			//    var cEntries = parser.ReadLiftFile(sFilename);
-
-			//    if (migrationNeeded)
-			//    {
-			//        // Try to move the migrated file to the temp directory, even if a copy of it
-			//        // already exists there.
-			//        var sTempMigrated = Path.Combine(Path.GetTempPath(),
-			//            Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + ".lift"));
-			//        if (File.Exists(sTempMigrated))
-			//            File.Delete(sTempMigrated);
-			//        File.Move(sFilename, sTempMigrated);
-			//    }
-			//    progressDialog.Message = Resources.kFixingRelationLinks;
-			//    flexImporter.ProcessPendingRelations();
-			//    sLogFile = flexImporter.DisplayNewListItems(_liftPathname, cEntries);
-			//}
-			//catch (Exception error)
-			//{
-			//    var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-			//        _liftPathname);
-			//    try
-			//    {
-			//        var bldr = new StringBuilder();
-			//        bldr.AppendFormat(Resources.kProblem, _liftPathname);
-			//        bldr.AppendLine();
-			//        bldr.AppendLine(error.Message);
-			//        bldr.AppendLine();
-			//        bldr.AppendLine(error.StackTrace);
-			//        if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-			//            Clipboard.SetDataObject(bldr.ToString(), true);
-			//    }
-			//    catch
-			//    {
-			//    }
-			//    MessageBox.Show(sMsg, Resources.kProblemMerging,
-			//        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			//}
-			//finally
-			//{
-			//    _cache.PropChangedHandling = oldPropChg;
-			//}
+			using (new WaitCursor(parentForm))
+			{
+				using (var progressDlg = new ProgressDialogWithTask(parentForm))
+				{
+					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					_progressDlg = progressDlg;
+					try
+					{
+						progressDlg.Title = Resources.kImportLiftlexicon;
+						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, LiftPathname);
+						return logFile != null;
+					}
+					catch
+					{
+						return false;
+					}
+				}
+			}
 		}
 
 		/// <summary>
