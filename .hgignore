@@ -3,19 +3,7 @@ glob:src/LiftBridge.5.1.ReSharper.user
 glob:src/LiftBridge.suo
 relre:src/_ReSharper.FwLift/*
 relre:src/_ReSharper.LiftBridge/*
-glob:lib/FieldWorks 6.0/BasicUtils.pdb
-glob:lib/FieldWorks 6.0/COMInterfaces.pdb
-glob:lib/FieldWorks 6.0/FDO.pdb
-glob:lib/FieldWorks 6.0/FwCoreDlgs.pdb
-glob:lib/FieldWorks 6.0/FwResources.pdb
-glob:lib/FieldWorks 6.0/FwUtils.pdb
-glob:lib/FieldWorks 6.0/FxtDLL.pdb
-glob:lib/FieldWorks 6.0/SilUtils.pdb
-glob:lib/FieldWorks 6.0/Utils.pdb
-glob:lib/FieldWorks 6.0/XMLUtils.pdb
-glob:lib/FieldWorks 6.0/xCoreInterfaces.pdb
-glob:lib/FieldWorks 7.0/FwUtils.pdb
-glob:lib/FieldWorks 7.0/SilUtils.pdb
+glob:lib/FieldWorks 6.0/*.pdb
 relre:src/LiftBridge/bin/*
 relre:src/LiftBridge/obj/*
 relre:src/LiftBridgeTests/bin/*
