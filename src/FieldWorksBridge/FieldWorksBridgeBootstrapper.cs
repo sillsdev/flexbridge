@@ -33,7 +33,7 @@ namespace FieldWorksBridge
 		{
 			var outerBuilder = new ContainerBuilder();
 			outerBuilder.Register<IProgress>(new NullProgress());
-			// This is a sad hack... I don't know how to simly override the default using the container,
+			// This is a sad hack... I (JohnH) don't know how to simply override the default using the container,
 			// which I'd rather do, and just leave this to pushing in the "normal"
 			outerBuilder.Register(SyncUIFeatures.Advanced).SingletonScoped();
 			outerBuilder.Register(new EmbeddedMessageContentHandlerFactory());
@@ -120,6 +120,7 @@ namespace FieldWorksBridge
 			innerBuilder.Register<SyncPanel>();
 			innerBuilder.Register<SyncControlModel>();
 			//innerBuilder.Register<SyncStartControl>();
+			innerBuilder.Register<BridgeSyncControl>();
 		}
 
 		internal static void RegisterReviewStuff(ContainerBuilder builder)

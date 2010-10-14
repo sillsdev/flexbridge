@@ -33,12 +33,10 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this._tcPages = new System.Windows.Forms.TabControl();
 			this._tpSendReceive = new System.Windows.Forms.TabPage();
+			this._tpSettings = new System.Windows.Forms.TabPage();
 			this._tpNotes = new System.Windows.Forms.TabPage();
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
-			this.label2 = new System.Windows.Forms.Label();
-			this._tbComment = new System.Windows.Forms.TextBox();
-			this._tpSettings = new System.Windows.Forms.TabPage();
 			this._tcPages.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -87,6 +85,16 @@
 			this._tpSendReceive.Text = "Send/Receive";
 			this._tpSendReceive.UseVisualStyleBackColor = true;
 			//
+			// _tpSettings
+			//
+			this._tpSettings.Location = new System.Drawing.Point(4, 22);
+			this._tpSettings.Name = "_tpSettings";
+			this._tpSettings.Padding = new System.Windows.Forms.Padding(3);
+			this._tpSettings.Size = new System.Drawing.Size(849, 438);
+			this._tpSettings.TabIndex = 4;
+			this._tpSettings.Text = "Settings";
+			this._tpSettings.UseVisualStyleBackColor = true;
+			//
 			// _tpNotes
 			//
 			this._tpNotes.Location = new System.Drawing.Point(4, 22);
@@ -117,45 +125,17 @@
 			this._tpAbout.Text = "About";
 			this._tpAbout.UseVisualStyleBackColor = true;
 			//
-			// label2
-			//
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(304, 20);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(92, 13);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "Optional comment";
-			//
-			// _tbComment
-			//
-			this._tbComment.Location = new System.Drawing.Point(403, 16);
-			this._tbComment.Name = "_tbComment";
-			this._tbComment.Size = new System.Drawing.Size(390, 20);
-			this._tbComment.TabIndex = 4;
-			this._tbComment.Leave += new System.EventHandler(this.LeaveTextBox);
-			//
-			// _tpSettings
-			//
-			this._tpSettings.Location = new System.Drawing.Point(4, 22);
-			this._tpSettings.Name = "_tpSettings";
-			this._tpSettings.Padding = new System.Windows.Forms.Padding(3);
-			this._tpSettings.Size = new System.Drawing.Size(849, 438);
-			this._tpSettings.TabIndex = 4;
-			this._tpSettings.Text = "Settings";
-			this._tpSettings.UseVisualStyleBackColor = true;
-			//
 			// FieldWorksBridge
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.ClientSize = new System.Drawing.Size(856, 520);
-			this.Controls.Add(this._tbComment);
-			this.Controls.Add(this.label2);
 			this.Controls.Add(this._tcPages);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._cbProjects);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimumSize = new System.Drawing.Size(525, 490);
 			this.Name = "FieldWorksBridge";
 			this.Text = "FieldWorks Bridge";
 			this.Load += new System.EventHandler(this.LoadForm);
@@ -174,8 +154,6 @@
 		private System.Windows.Forms.TabPage _tpNotes;
 		private System.Windows.Forms.TabPage _tpHistory;
 		private System.Windows.Forms.TabPage _tpAbout;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox _tbComment;
 		private System.Windows.Forms.TabPage _tpSettings;
 	}
 }

@@ -53,18 +53,21 @@ namespace FieldWorksBridge
 				var container = _containers[selItem];
 				var chorusSys = container.Resolve<ChorusSystem>();
 
-				var syncPanel = container.Resolve<SyncPanel>();
-				//var syncPanel = container.Resolve<SyncDialog>(); // Throws, since it is a Form.
-				_tcPages.TabPages[0].Controls.Add(syncPanel);
-				syncPanel.Dock = DockStyle.Fill;
-				// Doesn't work, since it generates some kind of exception in BetterLabel.
-				// Still doesn't work, since it is so far out of its "native" environment.
-				//var panel = new Panel();
-				//_tcPages.TabPages[0].Controls.Add(panel);
-				//panel.Dock = DockStyle.Fill;
-				//var syncCntrl = container.Resolve<SyncStartControl>();
-				//panel.Controls.Add(syncCntrl);
-				//syncCntrl.Dock = DockStyle.Fill;
+				var bridgeControl = container.Resolve<BridgeSyncControl>();
+				_tcPages.TabPages[0].Controls.Add(bridgeControl);
+				bridgeControl.Dock = DockStyle.Fill;
+				//var syncPanel = container.Resolve<SyncPanel>();
+				////var syncPanel = container.Resolve<SyncDialog>(); // Throws, since it is a Form.
+				//_tcPages.TabPages[0].Controls.Add(syncPanel);
+				//syncPanel.Dock = DockStyle.Fill;
+				//// Doesn't work, since it generates some kind of exception in BetterLabel.
+				//// Still doesn't work, since it is so far out of its "native" environment.
+				////var panel = new Panel();
+				////_tcPages.TabPages[0].Controls.Add(panel);
+				////panel.Dock = DockStyle.Fill;
+				////var syncCntrl = container.Resolve<SyncStartControl>();
+				////panel.Controls.Add(syncCntrl);
+				////syncCntrl.Dock = DockStyle.Fill;
 
 				var settingsPage = container.Resolve<SettingsView>(); // chorusSys.WinForms.CreateSettingDialog(); throws not impl exception.
 				_tcPages.TabPages[1].Controls.Add(settingsPage);
@@ -78,21 +81,8 @@ namespace FieldWorksBridge
 				_tcPages.TabPages[3].Controls.Add(historyPage);
 				historyPage.Dock = DockStyle.Fill;
 				//_tcPages.TabPages["About"].Controls.Add(chorusSystem.WinForms.CreateSettingDialog());
-
-				AddComment(container);
 			}
 			_tcPages.ResumeLayout();
-		}
-
-		private void AddComment(IContext container)
-		{
-			var comment = _tbComment.Text;
-			if (string.IsNullOrEmpty(comment))
-				return;
-
-			var model = container.Resolve<SyncControlModel>();
-			var syncOptions = model.SyncOptions;
-			syncOptions.CheckinDescription = (syncOptions.CheckinDescription + ": " + comment).Trim();
 		}
 
 		private void LoadForm(object sender, EventArgs e)
@@ -109,19 +99,6 @@ namespace FieldWorksBridge
 			}
 			if (_cbProjects.Items.Count > 0)
 				_cbProjects.SelectedIndex = 0;
-		}
-
-		private void LeaveTextBox(object sender, EventArgs e)
-		{
-			AddComment(_cbProjects.SelectedItem as string);
-		}
-
-		private void AddComment(string selItem)
-		{
-			if (selItem == null || string.IsNullOrEmpty(_tbComment.Text))
-				return;
-
-			AddComment(_containers[selItem]);
 		}
 	}
 }
