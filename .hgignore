@@ -11,6 +11,6 @@ relre:src/LiftBridgeUtility6/obj/*.*
 relre:src/LiftBridgeUtility7/bin/*.*
 relre:src/LiftBridgeUtility7/obj/*.*
 glob:lib/FieldWorks 7.0/*.pdb
-glob:LiftBridge.5.1.ReSharper.user
-glob:LiftBridge.suo
 relre:_ReSharper.LiftBridge/*
+glob:LiftBridge VS2008.5.1.ReSharper.user
+glob:LiftBridge VS2008.suo
