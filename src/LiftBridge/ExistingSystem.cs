@@ -20,9 +20,18 @@ namespace SIL.LiftBridge
 		{
 			_chorusSystem = chorusSystem;
 			_bridgeControl = bridgeControl;
-			_tpSendReceive.Controls.Add(bridgeControl);
-			_tpNotes.Controls.Add(_chorusSystem.WinForms.CreateNotesBrowser());
-			_tpHistory.Controls.Add(_chorusSystem.WinForms.CreateHistoryPage());
+
+			_tpSendReceive.Controls.Add(_bridgeControl);
+			_bridgeControl.Dock = DockStyle.Fill;
+
+			var notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
+			_tpNotes.Controls.Add(notesBrowser);
+			notesBrowser.Dock = DockStyle.Fill;
+
+			var historyPage = _chorusSystem.WinForms.CreateHistoryPage();
+			_tpHistory.Controls.Add(historyPage);
+			historyPage.Dock = DockStyle.Fill;
+
 			//_tpAbout
 		}
 
@@ -34,19 +43,19 @@ namespace SIL.LiftBridge
 				if (value == null)
 					return;
 
-				_bridgeControl.SyncStarting += BridgeControl_SyncStarting;
-				_bridgeControl.SyncFinished += BridgeControl_SyncFinished;
+				_bridgeControl.SyncStarting += BridgeControlSyncStarting;
+				_bridgeControl.SyncFinished += BridgeControlSyncFinished;
 			}
 		}
 
-		void BridgeControl_SyncStarting(object sender, SyncStartingEventArgs e)
+		void BridgeControlSyncStarting(object sender, SyncStartingEventArgs e)
 		{
 			_importerExporter.LiftPathname = e.LiftPathname;
 			// ExportLexicon returns 'true' for success, so go with opposite.
 			e.Cancel = !_importerExporter.ExportLexicon(FindForm());
 		}
 
-		void BridgeControl_SyncFinished(object sender, SyncFinishedEventArgs e)
+		void BridgeControlSyncFinished(object sender, SyncFinishedEventArgs e)
 		{
 			if (e.Results.DidGetChangesFromOthers)
 				_importerExporter.ImportLexicon(FindForm()); // NB: It will use the LiftPathname provided in the exporter handler.

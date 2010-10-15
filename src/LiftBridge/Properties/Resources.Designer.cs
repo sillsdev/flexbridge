@@ -88,7 +88,7 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to WeSay Collaboration.
+		///   Looks up a localized string similar to LIFT Collaboration.
 		/// </summary>
 		public static string kLabel {
 			get {
@@ -124,7 +124,7 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}..
+		///   Looks up a localized string similar to Something went wrong while FLEx was attempting to import {0}..
 		/// </summary>
 		public static string kProblem {
 			get {
@@ -178,7 +178,7 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This utility allows for exporting Flex lexical data in the LIFT format that WeSay uses, send it to WeSay users, and receive entries from WeSay users..
+		///   Looks up a localized string similar to This utility allows for: 1) exporting FLEx lexical data in the LIFT format, 2) sending it to other LIFT users, and 3) receiving entries from them..
 		/// </summary>
 		public static string kWhatDescription {
 			get {
@@ -187,7 +187,7 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to When you want to share lexical entries with WeSay..
+		///   Looks up a localized string similar to When you want to share lexical entries with another application that uses LIFT data..
 		/// </summary>
 		public static string kWhenDescription {
 			get {

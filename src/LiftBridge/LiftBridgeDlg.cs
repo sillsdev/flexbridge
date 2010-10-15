@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using Chorus.sync;
-using Chorus.UI.Sync;
-using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge
 {
@@ -12,6 +9,7 @@ namespace SIL.LiftBridge
 		private readonly ILiftBridgeImportExport _importerExporter;
 		private readonly string _langProjName;
 		private readonly string _currentRootDataPath;
+		private LiftBridgeBootstrapper _bootstrapper = new LiftBridgeBootstrapper();
 
 		internal LiftBridgeDlg()
 		{
@@ -36,7 +34,7 @@ AppData\LiftBridge\Bar
 			*/
 			_currentRootDataPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-				Path.Combine("LiftBridge", langProjName));
+				Path.Combine("LiftBridge", _langProjName));
 			if (!Directory.Exists(_currentRootDataPath))
 				Directory.CreateDirectory(_currentRootDataPath);
 
@@ -51,31 +49,49 @@ AppData\LiftBridge\Bar
 
 		private void InstallNewSystem()
 		{
-			var ctrl = new StartupNew();
-			Controls.Add(ctrl);
-			ctrl.Dock = DockStyle.Fill;
-			ctrl.Startup += Startup;
+			var startupNew = new StartupNew();
+			Controls.Add(startupNew);
+			startupNew.Dock = DockStyle.Fill;
+			startupNew.Startup += Startup;
 		}
 
 		private void InstallExistingSystemControl()
 		{
-			var ctrl = new ExistingSystem();
-			Controls.Add(ctrl);
-			ctrl.Dock = DockStyle.Fill;
+			var existingSystem = _bootstrapper.Bootstrap(_currentRootDataPath);
+			existingSystem.ImporterExporter = _importerExporter;
+			Controls.Add(existingSystem);
+			existingSystem.Dock = DockStyle.Fill;
 		}
 
 		void Startup(object sender, StartupNewEventArgs e)
 		{
-			if (e.MakeNewSystem)
+			if (!e.MakeNewSystem)
 			{
-				// Create a new Hg repo for the given LP in the hard-wired location.
-			}
-			else
-			{
+				switch (e.ExtantRepoSource)
+				{
+					case ExtantRepoSource.Internet:
+						// TODO: Cf. "Get Project From Internet" dlg at: http://www.wesay.org/blogs/2010/06/21/internet-collaboration/
+						break;
+					case ExtantRepoSource.LocalNetwork:
+						// TODO: Use the dlg Chorus uses to get a chorus enabled folder,
+						// TODO: *but* it has to be a lift folder, not just any folder,
+						// TODO: *and* it must allow for local network navigation.
+						break;
+					case ExtantRepoSource.Usb:
+						// TODO: Ensure there is one, and only one, USB drive installed,
+						// TODO: *and* that it have a LIFT repo.
+						break;
+				}
 				MessageBox.Show("Decide what to do next for the Extant option. That is, how do we know where we clone from?");
 			}
+			//else
+			//{
+			//    // Nothing more need be done, as a new repo will be created automatically.
+			//}
 
-			// Dispose the StartupNew control (disconnect this event handler) and add the main control.
+			// Dispose the StartupNew control
+			// Disconnect this event handler,
+			// and add the main control.
 			SuspendLayout();
 			var oldControl = (StartupNew)Controls[0];
 			Controls.Clear();
@@ -83,36 +99,6 @@ AppData\LiftBridge\Bar
 			oldControl.Dispose();
 			InstallExistingSystemControl();
 			ResumeLayout(true);
-		}
-
-		/// <summary>
-		/// Do the Commit/Push/Pull/Merge to the LIFT file given by the first (and only)
-		/// parameter.
-		/// </summary>
-		/// <returns>
-		/// True, Chorus reports that changes were found in other data in the pull/merge.
-		/// Otherwise, False.
-		/// </returns>
-		private object ChorusMerge()
-		{
-			// Now that the dlg uses regular Chorus controls, rather than the SyncDialog,
-			// how are we to know when to do the export and import?
-
-			var configuration = new LiftBridgeProjectFolderConfiguration(_currentRootDataPath);
-
-			using (var dlg = new SyncDialog(configuration,
-										   SyncUIDialogBehaviors.Lazy,
-										   SyncUIFeatures.NormalRecommended))
-			{
-				dlg.Text = Resources.kSendReceive;
-				dlg.SyncOptions.DoMergeWithOthers = true;
-				dlg.SyncOptions.DoPullFromOthers = true;
-				dlg.SyncOptions.DoSendToOthers = true;
-				// leave it with the default, for now... dlg.SyncOptions.RepositorySourcesToTry.Clear();
-				//dlg.SyncOptions.CheckinDescription = CheckinDescriptionBuilder.GetDescription();
-				dlg.ShowDialog(this);
-				return (dlg.SyncResult != null && dlg.SyncResult.DidGetChangesFromOthers);
-			}
 		}
 	}
 }

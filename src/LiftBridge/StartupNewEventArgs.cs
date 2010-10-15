@@ -14,10 +14,19 @@ namespace SIL.LiftBridge
 	internal sealed class StartupNewEventArgs : EventArgs
 	{
 		internal bool MakeNewSystem { get; private set; }
+		internal ExtantRepoSource ExtantRepoSource { get; private set; }
 
-		internal StartupNewEventArgs(bool makeNewSystem)
+		internal StartupNewEventArgs(bool makeNewSystem, ExtantRepoSource extantRepoSource)
 		{
 			MakeNewSystem = makeNewSystem;
+			ExtantRepoSource = extantRepoSource;
 		}
+	}
+
+	internal enum ExtantRepoSource
+	{
+		Internet,
+		Usb,
+		LocalNetwork
 	}
 }

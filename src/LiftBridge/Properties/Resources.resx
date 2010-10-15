@@ -118,7 +118,7 @@
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="kLabel" xml:space="preserve">
-	<value>WeSay Collaboration</value>
+	<value>LIFT Collaboration</value>
   </data>
   <data name="kLiftBridgeProcessing" xml:space="preserve">
 	<value>LiftBridge Processing</value>
@@ -130,10 +130,10 @@
 	<value>Exporting {0} entries from the lexicon</value>
   </data>
   <data name="kWhatDescription" xml:space="preserve">
-	<value>This utility allows for exporting Flex lexical data in the LIFT format that WeSay uses, send it to WeSay users, and receive entries from WeSay users.</value>
+	<value>This utility allows for: 1) exporting FLEx lexical data in the LIFT format, 2) sending it to other LIFT users, and 3) receiving entries from them.</value>
   </data>
   <data name="kWhenDescription" xml:space="preserve">
-	<value>When you want to share lexical entries with WeSay.</value>
+	<value>When you want to share lexical entries with another application that uses LIFT data.</value>
   </data>
   <data name="kSendReceive" xml:space="preserve">
 	<value>Chorus Send/Receive</value>
@@ -151,7 +151,7 @@
 	<value>Fixing relation links between imported entries</value>
   </data>
   <data name="kProblem" xml:space="preserve">
-	<value>Something went wrong while FieldWorks was attempting to import {0}.</value>
+	<value>Something went wrong while FLEx was attempting to import {0}.</value>
   </data>
   <data name="kProblemImportWhileMerging" xml:space="preserve">
 	<value>Something went wrong trying to import {0} while merging..</value>

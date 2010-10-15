@@ -19,8 +19,8 @@
 					components.Dispose();
 				if (_importerExporter != null)
 				{
-					_bridgeControl.SyncStarting -= BridgeControl_SyncStarting;
-					_bridgeControl.SyncFinished -= BridgeControl_SyncFinished;
+					_bridgeControl.SyncStarting -= BridgeControlSyncStarting;
+					_bridgeControl.SyncFinished -= BridgeControlSyncFinished;
 				}
 			}
 			base.Dispose(disposing);

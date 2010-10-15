@@ -19,12 +19,21 @@ namespace SIL.LiftBridge
 
 		private void RadioButtonClicked(object sender, EventArgs e)
 		{
-			_btnContinue.Enabled = _rbFirstToUseFlexBridge.Checked || _rbUseExistingSystem.Checked;
+			_btnContinue.Enabled = _rbFirstToUseFlexBridge.Checked
+				|| (_rbUseExistingSystem.Checked
+					&& (_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked) );
+			groupBox1.Enabled = _rbUseExistingSystem.Checked;
 		}
 
 		private void ContinueBtnClicked(object sender, EventArgs e)
 		{
-			OnStartup(new StartupNewEventArgs(_rbFirstToUseFlexBridge.Checked));
+			var repoSource = _rbUsb.Checked
+				? ExtantRepoSource.Usb
+				: (_rbLocalNetwork.Checked
+					? ExtantRepoSource.LocalNetwork
+					: ExtantRepoSource.Internet);
+
+			OnStartup(new StartupNewEventArgs(_rbFirstToUseFlexBridge.Checked, repoSource));
 		}
 
 		private void OnStartup(StartupNewEventArgs e)
