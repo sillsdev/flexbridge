@@ -1,6 +1,6 @@
 ﻿namespace SIL.LiftBridge
 {
-	internal partial class ExistingSystem
+	public partial class ExistingSystem
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -13,9 +13,15 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				if (_importerExporter != null)
+				{
+					_bridgeControl.SyncStarting -= BridgeControl_SyncStarting;
+					_bridgeControl.SyncFinished -= BridgeControl_SyncFinished;
+				}
 			}
 			base.Dispose(disposing);
 		}
