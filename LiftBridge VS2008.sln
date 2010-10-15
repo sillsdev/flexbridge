@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridge", "LiftBridge\LiftBridge.csproj", "{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridge", "src\LiftBridge\LiftBridge.csproj", "{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility6", "LiftBridgeUtility6\LiftBridgeUtility6.csproj", "{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility6", "src\LiftBridgeUtility6\LiftBridgeUtility6.csproj", "{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility7", "LiftBridgeUtility7\LiftBridgeUtility7.csproj", "{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility7", "src\LiftBridgeUtility7\LiftBridgeUtility7.csproj", "{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
