@@ -10,6 +10,7 @@ namespace SIL.LiftBridge
 	public sealed partial class LiftBridgeDlg : Form
 	{
 		private readonly ILiftBridgeImportExport _importerExporter;
+		private readonly string _langProjName;
 		private readonly string _currentRootDataPath;
 
 		internal LiftBridgeDlg()
@@ -21,6 +22,7 @@ namespace SIL.LiftBridge
 			: this()
 		{
 			_importerExporter = importerExporter;
+			_langProjName = langProjName;
 
 			Text = Text + langProjName;
 			/*
@@ -38,21 +40,21 @@ AppData\LiftBridge\Bar
 			if (!Directory.Exists(_currentRootDataPath))
 				Directory.CreateDirectory(_currentRootDataPath);
 
+			SuspendLayout();
 			var hgPath = Path.Combine(_currentRootDataPath, ".hg");
 			if (Directory.Exists(hgPath))
-			{
 				InstallExistingSystemControl();
-			}
 			else
-			{
-				// Use StartupNew control.
-				SuspendLayout();
-				var ctrl = new StartupNew();
-				Controls.Add(ctrl);
-				ctrl.Dock = DockStyle.Fill;
-				ctrl.Startup += Startup;
-				ResumeLayout();
-			}
+				InstallNewSystem();
+			ResumeLayout();
+		}
+
+		private void InstallNewSystem()
+		{
+			var ctrl = new StartupNew();
+			Controls.Add(ctrl);
+			ctrl.Dock = DockStyle.Fill;
+			ctrl.Startup += Startup;
 		}
 
 		private void InstallExistingSystemControl()
@@ -96,33 +98,7 @@ AppData\LiftBridge\Bar
 			// Now that the dlg uses regular Chorus controls, rather than the SyncDialog,
 			// how are we to know when to do the export and import?
 
-			var configuration = new ProjectFolderConfiguration(_currentRootDataPath);
-			// 'Borrowed' from WeSay, to not have a dependency on it.
-			//exclude has precedence, but these are redundant as long as we're using the policy
-			//that we explicitly include all the files we understand.  At least someday, when these
-			//effect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
-			//us a bit from other apps that might try to do a *.* include
-
-			// Excludes
-			configuration.ExcludePatterns.Add("**/cache");
-			configuration.ExcludePatterns.Add("**/Cache");
-			configuration.ExcludePatterns.Add("autoFonts.css");
-			configuration.ExcludePatterns.Add("autoLayout.css");
-			configuration.ExcludePatterns.Add("defaultDictionary.css");
-			configuration.ExcludePatterns.Add("*.old");
-			configuration.ExcludePatterns.Add("*.WeSayUserMemory");
-			configuration.ExcludePatterns.Add("*.tmp");
-			configuration.ExcludePatterns.Add("*.bak");
-			// Includes.
-			configuration.IncludePatterns.Add("audio/*.*");
-			configuration.IncludePatterns.Add("pictures/*.*");
-			configuration.IncludePatterns.Add("**.css"); //stylesheets
-			configuration.IncludePatterns.Add("export/*.lpconfig");//lexique pro
-			configuration.IncludePatterns.Add("**.lift");
-			configuration.IncludePatterns.Add("**.WeSayConfig");
-			configuration.IncludePatterns.Add("**.WeSayUserConfig");
-			configuration.IncludePatterns.Add("**.xml");
-			configuration.IncludePatterns.Add(".hgIgnore");
+			var configuration = new LiftBridgeProjectFolderConfiguration(_currentRootDataPath);
 
 			using (var dlg = new SyncDialog(configuration,
 										   SyncUIDialogBehaviors.Lazy,
