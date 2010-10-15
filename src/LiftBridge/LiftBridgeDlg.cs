@@ -65,7 +65,12 @@ AppData\LiftBridge\Bar
 
 		void Startup(object sender, StartupNewEventArgs e)
 		{
-			if (!e.MakeNewSystem)
+			if (e.MakeNewSystem)
+			{
+				// Create empty Lift file.
+				File.Create(Path.Combine(_currentRootDataPath, _langProjName + ".lift"));
+			}
+			else
 			{
 				switch (e.ExtantRepoSource)
 				{
@@ -82,12 +87,8 @@ AppData\LiftBridge\Bar
 						// TODO: *and* that it have a LIFT repo.
 						break;
 				}
-				MessageBox.Show("Decide what to do next for the Extant option. That is, how do we know where we clone from?");
+				MessageBox.Show("Clone the repo, and do a plain import, but without wiping out FLEx data.");
 			}
-			//else
-			//{
-			//    // Nothing more need be done, as a new repo will be created automatically.
-			//}
 
 			// Dispose the StartupNew control
 			// Disconnect this event handler,
