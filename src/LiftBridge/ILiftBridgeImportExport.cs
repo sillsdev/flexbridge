@@ -18,6 +18,13 @@ namespace SIL.LiftBridge
 		bool ImportLexicon(Form parentForm);
 
 		/// <summary>
+		/// Do a basic 'safe' import, where entries in FLEx that are not
+		/// in the Lift file are not removed.
+		/// </summary>
+		/// <returns>True, if successful, otherwise false.</returns>
+		bool DoBasicImport(Form parentForm);
+
+		/// <summary>
 		/// Gets or sets the LIFT file's pathname.
 		/// </summary>
 		string LiftPathname { get; set; }

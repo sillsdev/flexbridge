@@ -61,6 +61,24 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Cannot clone onto an existing directory ({0}).
+		/// </summary>
+		public static string kCloneTrouble {
+			get {
+				return ResourceManager.GetString("kCloneTrouble", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Did not get an existing Lift system..
+		/// </summary>
+		public static string kDidNotCloneSystem {
+			get {
+				return ResourceManager.GetString("kDidNotCloneSystem", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Export LIFT Lexicon.
 		/// </summary>
 		public static string kExportLiftLexicon {
@@ -106,6 +124,24 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to LIFT Lexicon File (*.lift)|*.lift.
+		/// </summary>
+		public static string kLiftFileFilter {
+			get {
+				return ResourceManager.GetString("kLiftFileFilter", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Lift Setup.
+		/// </summary>
+		public static string kLiftSetUp {
+			get {
+				return ResourceManager.GetString("kLiftSetUp", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Migrating from LIFT version {0} to version {1}.
 		/// </summary>
 		public static string kLiftVersionMigration {
@@ -120,6 +156,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kLoadingListInfo {
 			get {
 				return ResourceManager.GetString("kLoadingListInfo", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Locate Lift File.
+		/// </summary>
+		public static string kLocateLiftFile {
+			get {
+				return ResourceManager.GetString("kLocateLiftFile", resourceCulture);
 			}
 		}
 

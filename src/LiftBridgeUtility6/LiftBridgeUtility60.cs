@@ -220,7 +220,7 @@ namespace LiftBridgeUtility6
 				progressDialog.Message = Resources.kLoadingListInfo;
 				// FlexLiftMerger.MergeStyle.msKeepOnlyNew means:
 				// "Throw away any existing entries/senses/... that are not in the LIFT file."
-				var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.msKeepOnlyNew, true);
+				var flexImporter = new FlexLiftMerger(_cache, (FlexLiftMerger.MergeStyle)parameters[0], true);
 				var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
 				parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
 				parser.SetStepsCompleted += ParserSetStepsCompleted;
@@ -270,6 +270,28 @@ namespace LiftBridgeUtility6
 			return sLogFile;
 		}
 
+		private bool ImportCommon(Form parentForm, FlexLiftMerger.MergeStyle mergeStyle)
+		{
+			using (new WaitCursor(parentForm))
+			{
+				using (var progressDlg = new ProgressDialogWithTask(parentForm))
+				{
+					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					_progressDlg = progressDlg;
+					try
+					{
+						progressDlg.Title = Resources.kImportLiftlexicon;
+						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, mergeStyle);
+						return logFile != null;
+					}
+					catch
+					{
+						return false;
+					}
+				}
+			}
+		}
+
 		#region Implementation of ILiftBridgeImportExport
 
 		/// <summary>
@@ -312,24 +334,17 @@ namespace LiftBridgeUtility6
 		/// <returns>True, if successful, otherwise false.</returns>
 		public bool ImportLexicon(Form parentForm)
 		{
-			using (new WaitCursor(parentForm))
-			{
-				using (var progressDlg = new ProgressDialogWithTask(parentForm))
-				{
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-					_progressDlg = progressDlg;
-					try
-					{
-						progressDlg.Title = Resources.kImportLiftlexicon;
-						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, LiftPathname);
-						return logFile != null;
-					}
-					catch
-					{
-						return false;
-					}
-				}
-			}
+			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.msKeepOnlyNew);
+		}
+
+		/// <summary>
+		/// Do a basic 'safe' import, where entries in FLEx that are not
+		/// in the Lift file are not removed.
+		/// </summary>
+		/// <param name="parentForm"></param>
+		public bool DoBasicImport(Form parentForm)
+		{
+			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.msKeepBoth);
 		}
 
 		/// <summary>

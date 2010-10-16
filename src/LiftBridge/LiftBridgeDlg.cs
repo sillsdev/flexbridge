@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Chorus.UI.Clone;
+using Chorus.UI.Misc;
+using Chorus.VcsDrivers.Mercurial;
+using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge
 {
@@ -8,6 +12,7 @@ namespace SIL.LiftBridge
 	{
 		private readonly ILiftBridgeImportExport _importerExporter;
 		private readonly string _langProjName;
+		private readonly string _currentBaseLiftBridgePath;
 		private readonly string _currentRootDataPath;
 		private LiftBridgeBootstrapper _bootstrapper = new LiftBridgeBootstrapper();
 
@@ -32,11 +37,13 @@ me: Hidden is fine, as well. Where do we want to hide it/them?
 AppData\LiftBridge\Foo
 AppData\LiftBridge\Bar
 			*/
-			_currentRootDataPath = Path.Combine(
+			_currentBaseLiftBridgePath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-				Path.Combine("LiftBridge", _langProjName));
-			if (!Directory.Exists(_currentRootDataPath))
-				Directory.CreateDirectory(_currentRootDataPath);
+				"LiftBridge");
+			if (!Directory.Exists(_currentBaseLiftBridgePath))
+				Directory.CreateDirectory(_currentBaseLiftBridgePath);
+			_currentRootDataPath = Path.Combine(
+				_currentBaseLiftBridgePath,_langProjName);
 
 			SuspendLayout();
 			var hgPath = Path.Combine(_currentRootDataPath, ".hg");
@@ -68,6 +75,8 @@ AppData\LiftBridge\Bar
 			if (e.MakeNewSystem)
 			{
 				// Create empty Lift file.
+				if (!Directory.Exists(_currentRootDataPath))
+					Directory.CreateDirectory(_currentRootDataPath);
 				File.Create(Path.Combine(_currentRootDataPath, _langProjName + ".lift"));
 			}
 			else
@@ -75,19 +84,90 @@ AppData\LiftBridge\Bar
 				switch (e.ExtantRepoSource)
 				{
 					case ExtantRepoSource.Internet:
-						// TODO: Cf. "Get Project From Internet" dlg at: http://www.wesay.org/blogs/2010/06/21/internet-collaboration/
+						var cloneModel = new GetCloneFromInternetModel(_currentBaseLiftBridgePath) {LocalFolderName = _langProjName};
+						using (var internetCloneDlg = new GetCloneFromInternetDialog(cloneModel))
+						{
+							var dlgResult = internetCloneDlg.ShowDialog(this);
+							switch (dlgResult)
+							{
+								default:
+									BailOut();
+									return;
+								case DialogResult.OK:
+									// It made a clone, but maybe in the wrong name.
+									// _currentRootDataPath is the one we want to use.
+									var newProjPath = internetCloneDlg.PathToNewProject;
+									if (newProjPath != _currentRootDataPath)
+										Directory.Move(newProjPath, _currentRootDataPath);
+									break;
+							}
+						}
 						break;
 					case ExtantRepoSource.LocalNetwork:
-						// TODO: Use the dlg Chorus uses to get a chorus enabled folder,
-						// TODO: *but* it has to be a lift folder, not just any folder,
-						// TODO: *and* it must allow for local network navigation.
+						using (var openFileDlg = new OpenFileDialog())
+						{
+							openFileDlg.AutoUpgradeEnabled = true;
+							openFileDlg.Title = Resources.kLocateLiftFile;
+							openFileDlg.AutoUpgradeEnabled = true;
+							openFileDlg.RestoreDirectory = true;
+							openFileDlg.DefaultExt = ".lift";
+							openFileDlg.Filter = Resources.kLiftFileFilter;
+							openFileDlg.Multiselect = false;
+
+							var dlgResult = openFileDlg.ShowDialog(this);
+							switch (dlgResult)
+							{
+								default:
+									BailOut();
+									return;
+								case DialogResult.OK:
+									var fileFromDlg = openFileDlg.FileName;
+									var sourcePath = Path.GetDirectoryName(fileFromDlg);
+									var x = Path.GetFileNameWithoutExtension(fileFromDlg);
+									// Make a clone the hard way.
+// ReSharper disable AssignNullToNotNullAttribute
+									var target = Path.Combine(_currentBaseLiftBridgePath, x);
+									if (Directory.Exists(target))
+										throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
+									using (var log = new LogBox()) // LogBox has no handle, so this crashes.
+									{
+										log.Show();
+										var repo = new HgRepository(sourcePath, log);
+										repo.CloneLocal(target);
+									}
+									if (target != _currentRootDataPath)
+										Directory.Move(target, _currentRootDataPath);
+// ReSharper restore AssignNullToNotNullAttribute
+									break;
+							}
+						}
 						break;
 					case ExtantRepoSource.Usb:
-						// TODO: Ensure there is one, and only one, USB drive installed,
-						// TODO: *and* that it have a LIFT repo.
+						using (var usbCloneDlg = new GetCloneFromUsbDialog(_currentBaseLiftBridgePath))
+						{
+							var dlgResult = usbCloneDlg.ShowDialog(this);
+							switch (dlgResult)
+							{
+								default:
+									BailOut();
+									return;
+								case DialogResult.OK:
+									// It made a clone, but maybe in the wrong name.
+									// _currentRootDataPath is the one we want to use.
+									var newProjPath = usbCloneDlg.PathToNewProject;
+									if (newProjPath != _currentRootDataPath)
+										Directory.Move(newProjPath, _currentRootDataPath);
+									break;
+							}
+						}
 						break;
 				}
-				MessageBox.Show("Clone the repo, and do a plain import, but without wiping out FLEx data.");
+				_importerExporter.LiftPathname = _currentRootDataPath;
+				if (!_importerExporter.DoBasicImport(this))
+				{
+					BailOut();
+					return;
+				}
 			}
 
 			// Dispose the StartupNew control
@@ -100,6 +180,13 @@ AppData\LiftBridge\Bar
 			oldControl.Dispose();
 			InstallExistingSystemControl();
 			ResumeLayout(true);
+		}
+
+		private void BailOut()
+		{
+			MessageBox.Show(this, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+			Close();
 		}
 	}
 }

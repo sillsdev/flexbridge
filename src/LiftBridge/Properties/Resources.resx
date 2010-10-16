@@ -162,4 +162,19 @@
   <data name="kImportLiftlexicon" xml:space="preserve">
 	<value>Import LIFT Lexicon</value>
   </data>
+  <data name="kLocateLiftFile" xml:space="preserve">
+	<value>Locate Lift File</value>
+  </data>
+  <data name="kLiftFileFilter" xml:space="preserve">
+	<value>LIFT Lexicon File (*.lift)|*.lift</value>
+  </data>
+  <data name="kCloneTrouble" xml:space="preserve">
+	<value>Cannot clone onto an existing directory ({0})</value>
+  </data>
+	<data name="kDidNotCloneSystem">
+		<value xml:space="preserve">Did not get an existing Lift system.</value>
+	</data>
+	<data name="kLiftSetUp">
+		<value xml:space="preserve">Lift Setup</value>
+	</data>
 </root>
