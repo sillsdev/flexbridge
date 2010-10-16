@@ -171,7 +171,7 @@ namespace LiftBridgeUtility6
 					dumper.SkipAuxFileOutput = true;
 					progressDialog.SetRange(0, dumper.GetProgressMaximum());
 					progressDialog.Position = 0;
-					using (TextWriter textWriter = new StreamWriter(LiftPathname))
+					using (TextWriter textWriter = new StreamWriter(outPath))
 					{
 						var fxtPath = Path.Combine(
 							Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer\Export Templates"),
@@ -192,8 +192,10 @@ namespace LiftBridgeUtility6
 		/// Import the LIFT file into FieldWorks.
 		/// </summary>
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
-		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
+		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parametersNew)
 		{
+			var liftPathname = parametersNew[0].ToString();
+			var mergeStyle = (FlexLiftMerger.MergeStyle)parametersNew[1];
 			if (_progressDlg == null)
 				_progressDlg = progressDialog;
 			progressDialog.SetRange(0, 100);
@@ -204,28 +206,28 @@ namespace LiftBridgeUtility6
 			{
 				_cache.PropChangedHandling = PropChangedHandling.SuppressAll;
 				string sFilename;
-				var migrationNeeded = Migrator.IsMigrationNeeded(LiftPathname);
+				var migrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 				if (migrationNeeded)
 				{
-					var sOldVersion = Validator.GetLiftVersion(LiftPathname);
+					var sOldVersion = Validator.GetLiftVersion(liftPathname);
 					progressDialog.Message = String.Format(Resources.kLiftVersionMigration,
 						sOldVersion, Validator.LiftVersion);
-					sFilename = Migrator.MigrateToLatestVersion(LiftPathname);
+					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 				}
 				else
 				{
-					sFilename = LiftPathname;
+					sFilename = liftPathname;
 				}
 
 				progressDialog.Message = Resources.kLoadingListInfo;
 				// FlexLiftMerger.MergeStyle.msKeepOnlyNew means:
 				// "Throw away any existing entries/senses/... that are not in the LIFT file."
-				var flexImporter = new FlexLiftMerger(_cache, (FlexLiftMerger.MergeStyle)parameters[0], true);
+				var flexImporter = new FlexLiftMerger(_cache, mergeStyle, true);
 				var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
 				parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
 				parser.SetStepsCompleted += ParserSetStepsCompleted;
 				parser.SetProgressMessage += ParserSetProgressMessage;
-				flexImporter.LiftFile = LiftPathname;
+				flexImporter.LiftFile = liftPathname;
 				var cEntries = parser.ReadLiftFile(sFilename);
 
 				if (migrationNeeded)
@@ -240,16 +242,16 @@ namespace LiftBridgeUtility6
 				}
 				progressDialog.Message = Resources.kFixingRelationLinks;
 				flexImporter.ProcessPendingRelations();
-				sLogFile = flexImporter.DisplayNewListItems(LiftPathname, cEntries);
+				sLogFile = flexImporter.DisplayNewListItems(liftPathname, cEntries);
 			}
 			catch (Exception error)
 			{
 				var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-					LiftPathname);
+					liftPathname);
 				try
 				{
 					var bldr = new StringBuilder();
-					bldr.AppendFormat(Resources.kProblem, LiftPathname);
+					bldr.AppendFormat(Resources.kProblem, liftPathname);
 					bldr.AppendLine();
 					bldr.AppendLine(error.Message);
 					bldr.AppendLine();
@@ -281,7 +283,7 @@ namespace LiftBridgeUtility6
 					try
 					{
 						progressDlg.Title = Resources.kImportLiftlexicon;
-						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, mergeStyle);
+						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, new object[] { LiftPathname, mergeStyle });
 						return logFile != null;
 					}
 					catch
