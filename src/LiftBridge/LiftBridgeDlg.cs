@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Chorus.UI.Misc;
+using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
 using SIL.LiftBridge.Properties;
 
@@ -131,12 +132,8 @@ AppData\LiftBridge\Bar
 									var target = Path.Combine(_currentBaseLiftBridgePath, x);
 									if (Directory.Exists(target))
 										throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
-									using (var log = new LogBox()) // LogBox has no handle, so this crashes.
-									{
-										log.Show();
-										var repo = new HgRepository(sourcePath, log);
-										repo.CloneLocal(target);
-									}
+									var repo = new HgRepository(sourcePath, new StatusProgress());
+									repo.CloneLocal(target);
 									if (target != _currentRootDataPath)
 										Directory.Move(target, _currentRootDataPath);
 // ReSharper restore AssignNullToNotNullAttribute
