@@ -137,7 +137,8 @@ namespace SIL.LiftBridge
 		/// </summary>
 		public void Dispose()
 		{
-			_container.Dispose();
+			if (_container != null)
+				_container.Dispose();
 		}
 
 		#endregion

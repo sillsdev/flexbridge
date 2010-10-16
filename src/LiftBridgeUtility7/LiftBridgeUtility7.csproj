@@ -35,9 +35,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=6.0.4.16251, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="COMInterfaces, Version=8.0.0.24843, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\lib\FieldWorks 7.0\COMInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FDO, Version=6.9.2.14995, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -59,9 +59,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FxtDll.dll</HintPath>
 	</Reference>
-	<Reference Include="LexTextControls, Version=6.0.4.17781, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="LexTextControls, Version=8.0.0.25044, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\FieldWorks 6.0\LexTextControls.dll</HintPath>
+	  <HintPath>..\..\lib\FieldWorks 7.0\LexTextControls.dll</HintPath>
 	</Reference>
 	<Reference Include="LiftIO, Version=1.1.32.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

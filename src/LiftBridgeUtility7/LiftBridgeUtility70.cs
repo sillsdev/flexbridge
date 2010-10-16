@@ -176,6 +176,8 @@ namespace LiftBridgeUtility7
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
 		private object ImportLexicon(IProgress progressDialog, params object[] parameters)
 		{
+			var liftPathname = parameters[0].ToString();
+			var mergeStyle = (FlexLiftMerger.MergeStyle) parameters[1];
 			if (_progressDlg == null)
 				_progressDlg = progressDialog;
 			progressDialog.Minimum = 0;
@@ -188,25 +190,25 @@ namespace LiftBridgeUtility7
 				try
 				{
 					string sFilename;
-					var fMigrationNeeded = Migrator.IsMigrationNeeded(LiftPathname);
+					var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 					if (fMigrationNeeded)
 					{
-						var sOldVersion = Validator.GetLiftVersion(LiftPathname);
+						var sOldVersion = Validator.GetLiftVersion(liftPathname);
 						progressDialog.Message = String.Format(Resources.kLiftVersionMigration,
-							sOldVersion, Validator.LiftVersion);
-						sFilename = Migrator.MigrateToLatestVersion(LiftPathname);
+															   sOldVersion, Validator.LiftVersion);
+						sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 					}
 					else
 					{
-						sFilename = LiftPathname;
+						sFilename = liftPathname;
 					}
 					progressDialog.Message = Resources.kLoadingListInfo;
-					var flexImporter = new FlexLiftMerger(_cache, (FlexLiftMerger.MergeStyle)parameters[0], true);
+					var flexImporter = new FlexLiftMerger(_cache, mergeStyle, true);
 					var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
 					parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
 					parser.SetStepsCompleted += ParserSetStepsCompleted;
 					parser.SetProgressMessage += ParserSetProgressMessage;
-					flexImporter.LiftFile = LiftPathname;
+					flexImporter.LiftFile = liftPathname;
 
 					var cEntries = parser.ReadLiftFile(sFilename);
 
@@ -215,23 +217,23 @@ namespace LiftBridgeUtility7
 						// Try to move the migrated file to the temp directory, even if a copy of it
 						// already exists there.
 						var sTempMigrated = Path.Combine(Path.GetTempPath(),
-							Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + ".lift"));
+														 Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + ".lift"));
 						if (File.Exists(sTempMigrated))
 							File.Delete(sTempMigrated);
 						File.Move(sFilename, sTempMigrated);
 					}
 					progressDialog.Message = Resources.kFixingRelationLinks;
-					flexImporter.ProcessPendingRelations();
-					sLogFile = flexImporter.DisplayNewListItems(LiftPathname, cEntries);
+					flexImporter.ProcessPendingRelations(progressDialog);
+					sLogFile = flexImporter.DisplayNewListItems(liftPathname, cEntries);
 				}
 				catch (Exception error)
 				{
 					var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-						LiftPathname);
+											 liftPathname);
 					try
 					{
 						var bldr = new StringBuilder();
-						bldr.AppendFormat(Resources.kProblem, LiftPathname);
+						bldr.AppendFormat(Resources.kProblem, liftPathname);
 						bldr.AppendLine();
 						bldr.AppendLine(error.Message);
 						bldr.AppendLine();
@@ -243,7 +245,7 @@ namespace LiftBridgeUtility7
 					{
 					}
 					MessageBox.Show(sMsg, Resources.kProblemMerging,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			});
 			return sLogFile;
@@ -279,7 +281,7 @@ namespace LiftBridgeUtility7
 					{
 						progressDlg.Title = Resources.kImportLiftlexicon;
 
-						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, mergeStyle);
+						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, new object[]{LiftPathname, mergeStyle});
 						return logFile != null;
 					}
 					catch
@@ -341,7 +343,7 @@ namespace LiftBridgeUtility7
 		/// <returns>True, if successful, otherwise false.</returns>
 		public bool ImportLexicon(Form parentForm)
 		{
-			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.msKeepOnlyNew);
+			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
 		}
 
 		/// <summary>
@@ -351,7 +353,7 @@ namespace LiftBridgeUtility7
 		/// <param name="parentForm"></param>
 		public bool DoBasicImport(Form parentForm)
 		{
-			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.msKeepBoth);
+			return ImportCommon(parentForm, FlexLiftMerger.MergeStyle.MsKeepBoth);
 		}
 
 		/// <summary>

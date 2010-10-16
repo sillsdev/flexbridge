@@ -14,6 +14,7 @@ namespace SIL.LiftBridge
 		private readonly string _langProjName;
 		private readonly string _currentBaseLiftBridgePath;
 		private readonly string _currentRootDataPath;
+		private string _liftPathname;
 		private LiftBridgeBootstrapper _bootstrapper = new LiftBridgeBootstrapper();
 
 		internal LiftBridgeDlg()
@@ -44,6 +45,7 @@ AppData\LiftBridge\Bar
 				Directory.CreateDirectory(_currentBaseLiftBridgePath);
 			_currentRootDataPath = Path.Combine(
 				_currentBaseLiftBridgePath,_langProjName);
+			_liftPathname = Path.Combine(_currentRootDataPath, _langProjName + ".lift");
 
 			SuspendLayout();
 			var hgPath = Path.Combine(_currentRootDataPath, ".hg");
@@ -77,7 +79,7 @@ AppData\LiftBridge\Bar
 				// Create empty Lift file.
 				if (!Directory.Exists(_currentRootDataPath))
 					Directory.CreateDirectory(_currentRootDataPath);
-				File.Create(Path.Combine(_currentRootDataPath, _langProjName + ".lift"));
+				File.Create(_liftPathname);
 			}
 			else
 			{
@@ -162,7 +164,10 @@ AppData\LiftBridge\Bar
 						}
 						break;
 				}
-				_importerExporter.LiftPathname = _currentRootDataPath;
+// ReSharper disable AssignNullToNotNullAttribute
+				_liftPathname = Directory.GetFiles(_currentRootDataPath, "*.lift")[0];
+// ReSharper restore AssignNullToNotNullAttribute
+				_importerExporter.LiftPathname = _liftPathname;
 				if (!_importerExporter.DoBasicImport(this))
 				{
 					BailOut();
