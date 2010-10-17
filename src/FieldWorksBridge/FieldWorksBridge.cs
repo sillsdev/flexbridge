@@ -54,6 +54,7 @@ namespace FieldWorksBridge
 				var chorusSys = container.Resolve<ChorusSystem>();
 
 				var bridgeControl = container.Resolve<BridgeSyncControl>();
+				bridgeControl.ShowAllControls = true;
 				_tcPages.TabPages[0].Controls.Add(bridgeControl);
 				bridgeControl.Dock = DockStyle.Fill;
 				//var syncPanel = container.Resolve<SyncPanel>();
