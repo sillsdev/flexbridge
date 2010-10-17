@@ -37,6 +37,8 @@ namespace SIL.LiftBridge
 			IncludePatterns.Add("**.WeSayUserConfig");
 			IncludePatterns.Add("**.xml");
 			IncludePatterns.Add(".hgIgnore");
+			IncludePatterns.Add(".ldml");
+			IncludePatterns.Add(".lift-ranges");
 		}
 	}
 }
