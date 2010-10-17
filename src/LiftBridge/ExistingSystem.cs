@@ -20,6 +20,7 @@ namespace SIL.LiftBridge
 		{
 			_chorusSystem = chorusSystem;
 			_bridgeControl = bridgeControl;
+			_bridgeControl.ShowAllControls = false;
 
 			_tpSendReceive.Controls.Add(_bridgeControl);
 			_bridgeControl.Dock = DockStyle.Fill;
