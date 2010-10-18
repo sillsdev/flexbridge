@@ -17,7 +17,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>..\..\output\Debug\LiftBridgeUtility7\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\output\Release\LiftBridgeUtility7\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -34,6 +34,10 @@
 	<Reference Include="BasicUtils, Version=6.9.0.22363, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\common\ChorusMerge.exe</HintPath>
 	</Reference>
 	<Reference Include="COMInterfaces, Version=8.0.0.24843, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -81,7 +85,9 @@
 	<Compile Include="..\..\Version.cs">
 	  <Link>Version.cs</Link>
 	</Compile>
-	<Compile Include="LiftBridgeUtility70.cs" />
+	<Compile Include="LiftBridgeUtility70.cs">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Compile>
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +97,7 @@
 	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<Content Include="UtilityCatalogInclude-LiftBridge7.xml">
+	<Content Include="Language Explorer\Configuration\UtilityCatalogInclude-LiftBridge7.xml">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
   </ItemGroup>

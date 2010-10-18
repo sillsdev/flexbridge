@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LiftBridgeUtility6")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("FieldWorks 6 utility for Lift collaboration")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("SIL Inc.")]
 [assembly: AssemblyProduct("LiftBridgeUtility6")]
 [assembly: AssemblyCopyright("Copyright ©  2010")]
 [assembly: AssemblyTrademark("")]

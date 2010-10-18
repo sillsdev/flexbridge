@@ -40,6 +40,10 @@
 	  <ExecutableExtension>.exe</ExecutableExtension>
 	  <HintPath>..\..\lib\common\Chorus.exe</HintPath>
 	</Reference>
+	<Reference Include="ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\common\ChorusMerge.exe</HintPath>
+	</Reference>
 	<Reference Include="LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\LibChorus.dll</HintPath>
