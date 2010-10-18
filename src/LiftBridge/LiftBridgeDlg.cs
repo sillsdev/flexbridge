@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
-using Chorus.UI.Misc;
 using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
 using SIL.LiftBridge.Properties;
@@ -46,15 +45,27 @@ AppData\LiftBridge\Bar
 				Directory.CreateDirectory(_currentBaseLiftBridgePath);
 			_currentRootDataPath = Path.Combine(
 				_currentBaseLiftBridgePath,_langProjName);
-			_liftPathname = Path.Combine(_currentRootDataPath, _langProjName + ".lift");
 
 			SuspendLayout();
 			var hgPath = Path.Combine(_currentRootDataPath, ".hg");
 			if (Directory.Exists(hgPath))
+			{
+				SetLiftPathname();
 				InstallExistingSystemControl();
+			}
 			else
+			{
+				// SetLiftPathname(); will be called after the clone has been made.
 				InstallNewSystem();
+			}
 			ResumeLayout();
+		}
+
+		private void SetLiftPathname()
+		{
+			// Just use the first lift file we find.
+			_liftPathname = Directory.GetFiles(_currentRootDataPath, "*.lift")[0];
+			_importerExporter.LiftPathname = _liftPathname;
 		}
 
 		private void InstallNewSystem()
@@ -67,6 +78,7 @@ AppData\LiftBridge\Bar
 
 		private void InstallExistingSystemControl()
 		{
+			// TODO: Just create a ChorusSystem here, and we get get rid of our use of autofac.
 			var existingSystem = _bootstrapper.Bootstrap(_currentRootDataPath);
 			existingSystem.ImporterExporter = _importerExporter;
 			Controls.Add(existingSystem);
@@ -80,7 +92,10 @@ AppData\LiftBridge\Bar
 				// Create empty Lift file.
 				if (!Directory.Exists(_currentRootDataPath))
 					Directory.CreateDirectory(_currentRootDataPath);
+				// We get to pick its name, since we create the repo.
+				_liftPathname = Path.Combine(_currentRootDataPath, _langProjName + ".lift");
 				File.Create(_liftPathname);
+				_importerExporter.LiftPathname = _liftPathname;
 			}
 			else
 			{
@@ -161,10 +176,7 @@ AppData\LiftBridge\Bar
 						}
 						break;
 				}
-// ReSharper disable AssignNullToNotNullAttribute
-				_liftPathname = Directory.GetFiles(_currentRootDataPath, "*.lift")[0];
-// ReSharper restore AssignNullToNotNullAttribute
-				_importerExporter.LiftPathname = _liftPathname;
+				SetLiftPathname();
 				if (!_importerExporter.DoBasicImport(this))
 				{
 					BailOut();

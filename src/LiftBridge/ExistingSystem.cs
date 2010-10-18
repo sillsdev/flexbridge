@@ -7,23 +7,18 @@ namespace SIL.LiftBridge
 	public partial class ExistingSystem : UserControl
 	{
 		private readonly ChorusSystem _chorusSystem;
-		private readonly BridgeSyncControl _bridgeControl;
 		private ILiftBridgeImportExport _importerExporter;
+		private bool _haveExportedFromFlex;
 
 		internal ExistingSystem()
 		{
 			InitializeComponent();
 		}
 
-		public ExistingSystem(ChorusSystem chorusSystem, BridgeSyncControl bridgeControl)
+		public ExistingSystem(ChorusSystem chorusSystem)
 			: this()
 		{
 			_chorusSystem = chorusSystem;
-			_bridgeControl = bridgeControl;
-			_bridgeControl.ShowAllControls = false;
-
-			_tpSendReceive.Controls.Add(_bridgeControl);
-			_bridgeControl.Dock = DockStyle.Fill;
 
 			var notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
 			_tpNotes.Controls.Add(notesBrowser);
@@ -43,23 +38,35 @@ namespace SIL.LiftBridge
 				_importerExporter = value;
 				if (value == null)
 					return;
-
-				_bridgeControl.SyncStarting += BridgeControlSyncStarting;
-				_bridgeControl.SyncFinished += BridgeControlSyncFinished;
 			}
 		}
 
-		void BridgeControlSyncStarting(object sender, SyncStartingEventArgs e)
+		private void _sendReceiveButton_Click(object sender, System.EventArgs e)
 		{
-			_importerExporter.LiftPathname = e.LiftPathname;
-			// ExportLexicon returns 'true' for success, so go with opposite.
-			e.Cancel = !_importerExporter.ExportLexicon(FindForm());
-		}
+			if (!_haveExportedFromFlex)
+			{
+				// Export Flex, but only once per utility launch
+				//// ExportLexicon returns 'true' for success.
+				_haveExportedFromFlex = _importerExporter.ExportLexicon(FindForm());
+			}
+			if (!_haveExportedFromFlex)
+				return; // Nothing to do.
 
-		void BridgeControlSyncFinished(object sender, SyncFinishedEventArgs e)
-		{
-			if (e.Results.DidGetChangesFromOthers)
-				_importerExporter.ImportLexicon(FindForm()); // NB: It will use the LiftPathname provided in the exporter handler.
+			// Use SyncDialog to do the S/R stuff.
+			// SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended
+			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog())
+			{
+				syncDlg.SyncOptions.DoSendToOthers = true;
+				syncDlg.SyncOptions.DoPullFromOthers = true;
+				syncDlg.SyncOptions.DoMergeWithOthers = true;
+				var myForm = FindForm();
+				syncDlg.ShowDialog(myForm);
+				if (syncDlg.DialogResult == DialogResult.OK && syncDlg.SyncResult.DidGetChangesFromOthers)
+				{
+					// Import merged stuff, but only if any new stuff came from afar.
+					_importerExporter.ImportLexicon(myForm);
+				}
+			}
 		}
 	}
 }
