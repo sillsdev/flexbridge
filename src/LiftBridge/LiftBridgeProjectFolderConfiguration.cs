@@ -3,7 +3,7 @@
 namespace SIL.LiftBridge
 {
 	/// <summary>
-	/// Copy of the WeSay project configuration class, so LiftBridge doens; thave to take a dependency on WeSay.
+	/// Copy of the WeSay project configuration class, so LiftBridge doesn't have to take a dependency on WeSay.
 	/// </summary>
 	public sealed class LiftBridgeProjectFolderConfiguration : ProjectFolderConfiguration
 	{
