@@ -15,3 +15,4 @@ relre:_ReSharper.LiftBridge/*
 glob:LiftBridge VS2008.5.1.ReSharper.user
 glob:LiftBridge VS2008.suo
 relre:output/*
+glob:lib/common/ChorusPlus.pdb
