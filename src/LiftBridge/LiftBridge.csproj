@@ -31,10 +31,6 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
-	</Reference>
 	<Reference Include="Chorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <ExecutableExtension>.exe</ExecutableExtension>
@@ -71,7 +67,6 @@
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ILiftBridgeImportExport.cs" />
-	<Compile Include="LiftBridgeBootstrapper.cs" />
 	<Compile Include="LiftBridgeDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>

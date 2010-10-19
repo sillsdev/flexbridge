@@ -86,7 +86,6 @@
 	  <Link>Version.cs</Link>
 	</Compile>
 	<Compile Include="LiftBridgeUtility70.cs">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Compile>
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

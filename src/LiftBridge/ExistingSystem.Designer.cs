@@ -17,6 +17,8 @@
 			{
 				if (components != null)
 					components.Dispose();
+				if (_chorusSystem != null)
+					_chorusSystem.Dispose();
 			}
 			base.Dispose(disposing);
 		}

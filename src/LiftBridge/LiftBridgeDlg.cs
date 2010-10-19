@@ -1,8 +1,8 @@
-﻿#define USEAUTOFAC
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Clone;
 using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
@@ -17,7 +17,6 @@ namespace SIL.LiftBridge
 		private readonly string _currentBaseLiftBridgePath;
 		private readonly string _currentRootDataPath;
 		private string _liftPathname;
-		private LiftBridgeBootstrapper _bootstrapper = new LiftBridgeBootstrapper();
 
 		internal LiftBridgeDlg()
 		{
@@ -80,16 +79,9 @@ AppData\LiftBridge\Bar
 
 		private void InstallExistingSystemControl()
 		{
-#if USEAUTOFAC
-			var existingSystem = _bootstrapper.Bootstrap(_currentRootDataPath);
-#else
-			// TODO: Just create a ChorusSystem here, and we get get rid of our use of autofac.
-			// Wee need to be able to feed our custom project config class into ChorusSystem,
-			// or get access to the base class and add our Includes and Excludes.
 			var chorusSystem = new ChorusSystem(_currentRootDataPath, Environment.UserName);
-			var existingSystem = new ExistingSystem(chorusSystem);
-#endif
-			existingSystem.ImporterExporter = _importerExporter;
+			LiftFolder.AddLiftFileInfoToFolderConfiguration(chorusSystem.ProjectFolderConfiguration);
+			var existingSystem = new ExistingSystem(chorusSystem) { ImporterExporter = _importerExporter };
 			Controls.Add(existingSystem);
 			existingSystem.Dock = DockStyle.Fill;
 		}
