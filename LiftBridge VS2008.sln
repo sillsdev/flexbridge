@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Version.cs = Version.cs
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "LiftBridge for FieldWorks 7", "src\LiftBridge for FieldWorks 7\LiftBridge for FieldWorks 7.vdproj", "{86007C33-08E9-45F4-820A-E7130AB47A31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,8 @@ Global
 		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86007C33-08E9-45F4-820A-E7130AB47A31}.Debug|Any CPU.ActiveCfg = Debug
+		{86007C33-08E9-45F4-820A-E7130AB47A31}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
