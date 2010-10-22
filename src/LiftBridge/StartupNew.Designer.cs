@@ -46,9 +46,9 @@
 			this.label1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label1.Location = new System.Drawing.Point(16, 14);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(156, 19);
+			this.label1.Size = new System.Drawing.Size(154, 19);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "Welcome to FLEx Bridge";
+			this.label1.Text = "Welcome to LIFT Bridge";
 			//
 			// _rbFirstToUseFlexBridge
 			//
@@ -56,9 +56,9 @@
 			this._rbFirstToUseFlexBridge.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._rbFirstToUseFlexBridge.Location = new System.Drawing.Point(19, 41);
 			this._rbFirstToUseFlexBridge.Name = "_rbFirstToUseFlexBridge";
-			this._rbFirstToUseFlexBridge.Size = new System.Drawing.Size(329, 17);
+			this._rbFirstToUseFlexBridge.Size = new System.Drawing.Size(326, 17);
 			this._rbFirstToUseFlexBridge.TabIndex = 1;
-			this._rbFirstToUseFlexBridge.Text = "I am the first member of the team to start using FLEx Bridge";
+			this._rbFirstToUseFlexBridge.Text = "I am the first member of the team to start using LIFT Bridge";
 			this._rbFirstToUseFlexBridge.UseVisualStyleBackColor = true;
 			this._rbFirstToUseFlexBridge.Click += new System.EventHandler(this.RadioButtonClicked);
 			//
@@ -68,9 +68,9 @@
 			this._rbUseExistingSystem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._rbUseExistingSystem.Location = new System.Drawing.Point(19, 65);
 			this._rbUseExistingSystem.Name = "_rbUseExistingSystem";
-			this._rbUseExistingSystem.Size = new System.Drawing.Size(274, 17);
+			this._rbUseExistingSystem.Size = new System.Drawing.Size(271, 17);
 			this._rbUseExistingSystem.TabIndex = 2;
-			this._rbUseExistingSystem.Text = "Another teammate has already used FLEx Bridge,";
+			this._rbUseExistingSystem.Text = "Another teammate has already used LIFT Bridge,";
 			this._rbUseExistingSystem.UseVisualStyleBackColor = true;
 			this._rbUseExistingSystem.Click += new System.EventHandler(this.RadioButtonClicked);
 			//
