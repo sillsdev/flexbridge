@@ -43,7 +43,7 @@
 			this.Name = "LiftBridgeDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			this.Text = "FLEx Bridge: ";
+			this.Text = "LIFT Bridge: ";
 			this.ResumeLayout(false);
 
 		}
