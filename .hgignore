@@ -1,8 +1,10 @@
-glob:src/FieldWorksBridge.5.1.ReSharper.user
-glob:src/FieldWorksBridge.suo
-glob:src/FieldWorksBridge/FieldWorksBridge.csproj.ReSharper.user
-relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*.*
 relre:src/FieldWorksBridge/bin/*.*
 relre:src/FieldWorksBridge/obj/*.*
-relre:src/_ReSharper.FieldWorksBridge/*.*
 relre:mercurial/*.*
+glob:FieldWorksBridge VS2008.suo
+glob:FieldWorksBridge VS2008.5.1.ReSharper.user
+relre:_ReSharper.FieldWorksBridge VS2008/*
+glob:src/FieldWorksBridge/FieldWorksBridge.csproj.ReSharper.user
+relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*
+relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/bin/*
+relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/obj/*
