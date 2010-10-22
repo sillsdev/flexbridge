@@ -26,10 +26,7 @@ namespace FieldWorksBridge
 				return;
 			}
 
-			using (var bootStrapper = new FieldWorksBridgeBootstrapper())
-			{
-				Application.Run(bootStrapper.Bootstrap());
-			}
+			Application.Run(new FieldWorksBridge());
 
 			Settings.Default.Save();
 		}

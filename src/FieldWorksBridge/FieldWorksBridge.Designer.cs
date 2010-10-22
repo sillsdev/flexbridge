@@ -32,11 +32,10 @@
 			this._cbProjects = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this._tcPages = new System.Windows.Forms.TabControl();
-			this._tpSendReceive = new System.Windows.Forms.TabPage();
-			this._tpSettings = new System.Windows.Forms.TabPage();
 			this._tpNotes = new System.Windows.Forms.TabPage();
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
+			this._sendReceiveButton = new System.Windows.Forms.Button();
 			this._tcPages.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -45,7 +44,7 @@
 			this._cbProjects.FormattingEnabled = true;
 			this._cbProjects.Location = new System.Drawing.Point(70, 16);
 			this._cbProjects.Name = "_cbProjects";
-			this._cbProjects.Size = new System.Drawing.Size(214, 21);
+			this._cbProjects.Size = new System.Drawing.Size(265, 21);
 			this._cbProjects.TabIndex = 0;
 			this._cbProjects.SelectedIndexChanged += new System.EventHandler(this.SelectedProjectIndexChanged);
 			//
@@ -63,8 +62,6 @@
 			this._tcPages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._tcPages.Controls.Add(this._tpSendReceive);
-			this._tcPages.Controls.Add(this._tpSettings);
 			this._tcPages.Controls.Add(this._tpNotes);
 			this._tcPages.Controls.Add(this._tpHistory);
 			this._tcPages.Controls.Add(this._tpAbout);
@@ -73,27 +70,6 @@
 			this._tcPages.SelectedIndex = 0;
 			this._tcPages.Size = new System.Drawing.Size(857, 464);
 			this._tcPages.TabIndex = 2;
-			//
-			// _tpSendReceive
-			//
-			this._tpSendReceive.BackColor = System.Drawing.Color.Transparent;
-			this._tpSendReceive.Location = new System.Drawing.Point(4, 22);
-			this._tpSendReceive.Name = "_tpSendReceive";
-			this._tpSendReceive.Padding = new System.Windows.Forms.Padding(3);
-			this._tpSendReceive.Size = new System.Drawing.Size(849, 438);
-			this._tpSendReceive.TabIndex = 0;
-			this._tpSendReceive.Text = "Send/Receive";
-			this._tpSendReceive.UseVisualStyleBackColor = true;
-			//
-			// _tpSettings
-			//
-			this._tpSettings.Location = new System.Drawing.Point(4, 22);
-			this._tpSettings.Name = "_tpSettings";
-			this._tpSettings.Padding = new System.Windows.Forms.Padding(3);
-			this._tpSettings.Size = new System.Drawing.Size(849, 438);
-			this._tpSettings.TabIndex = 4;
-			this._tpSettings.Text = "Settings";
-			this._tpSettings.UseVisualStyleBackColor = true;
 			//
 			// _tpNotes
 			//
@@ -125,12 +101,26 @@
 			this._tpAbout.Text = "About";
 			this._tpAbout.UseVisualStyleBackColor = true;
 			//
+			// _sendReceiveButton
+			//
+			this._sendReceiveButton.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this._sendReceiveButton.Image = ((System.Drawing.Image)(resources.GetObject("_sendReceiveButton.Image")));
+			this._sendReceiveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this._sendReceiveButton.Location = new System.Drawing.Point(362, 16);
+			this._sendReceiveButton.Name = "_sendReceiveButton";
+			this._sendReceiveButton.Size = new System.Drawing.Size(132, 38);
+			this._sendReceiveButton.TabIndex = 15;
+			this._sendReceiveButton.Text = "Send/Receive";
+			this._sendReceiveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._sendReceiveButton.UseVisualStyleBackColor = false;
+			//
 			// FieldWorksBridge
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.ClientSize = new System.Drawing.Size(856, 520);
+			this.Controls.Add(this._sendReceiveButton);
 			this.Controls.Add(this._tcPages);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._cbProjects);
@@ -150,10 +140,9 @@
 		private System.Windows.Forms.ComboBox _cbProjects;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TabControl _tcPages;
-		private System.Windows.Forms.TabPage _tpSendReceive;
 		private System.Windows.Forms.TabPage _tpNotes;
 		private System.Windows.Forms.TabPage _tpHistory;
 		private System.Windows.Forms.TabPage _tpAbout;
-		private System.Windows.Forms.TabPage _tpSettings;
+		private System.Windows.Forms.Button _sendReceiveButton;
 	}
 }
