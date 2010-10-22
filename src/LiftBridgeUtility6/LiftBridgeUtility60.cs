@@ -192,10 +192,10 @@ namespace LiftBridgeUtility6
 		/// Import the LIFT file into FieldWorks.
 		/// </summary>
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
-		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parametersNew)
+		private object ImportLexicon(IAdvInd4 progressDialog, params object[] parameters)
 		{
-			var liftPathname = parametersNew[0].ToString();
-			var mergeStyle = (FlexLiftMerger.MergeStyle)parametersNew[1];
+			var liftPathname = parameters[0].ToString();
+			var mergeStyle = (FlexLiftMerger.MergeStyle)parameters[1];
 			if (_progressDlg == null)
 				_progressDlg = progressDialog;
 			progressDialog.SetRange(0, 100);
@@ -218,10 +218,7 @@ namespace LiftBridgeUtility6
 				{
 					sFilename = liftPathname;
 				}
-
 				progressDialog.Message = Resources.kLoadingListInfo;
-				// FlexLiftMerger.MergeStyle.msKeepOnlyNew means:
-				// "Throw away any existing entries/senses/... that are not in the LIFT file."
 				var flexImporter = new FlexLiftMerger(_cache, mergeStyle, true);
 				var parser = new LiftParser<LiftObject, LiftEntry, LiftSense, LiftExample>(flexImporter);
 				parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
@@ -290,6 +287,10 @@ namespace LiftBridgeUtility6
 					{
 						return false;
 					}
+					finally
+					{
+						_progressDlg = null;
+					}
 				}
 			}
 		}
@@ -325,6 +326,10 @@ namespace LiftBridgeUtility6
 					catch
 					{
 						return false;
+					}
+					finally
+					{
+						_progressDlg = null;
 					}
 				}
 			}

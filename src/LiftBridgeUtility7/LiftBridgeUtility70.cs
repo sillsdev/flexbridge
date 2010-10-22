@@ -209,7 +209,6 @@ namespace LiftBridgeUtility7
 					parser.SetStepsCompleted += ParserSetStepsCompleted;
 					parser.SetProgressMessage += ParserSetProgressMessage;
 					flexImporter.LiftFile = liftPathname;
-
 					var cEntries = parser.ReadLiftFile(sFilename);
 
 					if (fMigrationNeeded)
@@ -280,7 +279,6 @@ namespace LiftBridgeUtility7
 					try
 					{
 						progressDlg.Title = Resources.kImportLiftlexicon;
-
 						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, new object[]{LiftPathname, mergeStyle});
 						return logFile != null;
 					}
@@ -314,7 +312,6 @@ namespace LiftBridgeUtility7
 					try
 					{
 						progressDlg.Title = Resources.kExportLiftLexicon;
-
 						var outPath = Path.GetTempFileName();
 						outPath = (string)progressDlg.RunTask(true, ExportLexicon, outPath);
 						if (outPath == null)
