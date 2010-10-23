@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FieldWorksBridge.Model;
+using FieldWorksBridge.Properties;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -17,9 +19,14 @@ namespace FieldWorksBridge.Infrastructure
 
 		internal LanguageProjectRepository(HashSet<string> baseFolderPaths)
 		{
+			if (baseFolderPaths == null)
+				throw new ArgumentNullException("baseFolderPaths");
+			if (baseFolderPaths.Count == 0)
+				throw new ArgumentOutOfRangeException("baseFolderPaths", Resources.kNoPathsGiven);
+
 			_baseFolderPaths = baseFolderPaths;
 			foreach (var fwdataFiles in
-				baseFolderPaths.SelectMany(baseFolderPath => Directory.
+				_baseFolderPaths.SelectMany(baseFolderPath => Directory.
 					GetDirectories(baseFolderPath).
 					Select(dir => Directory.
 						GetFiles(dir, "*.fwdata")).
@@ -35,6 +42,16 @@ namespace FieldWorksBridge.Infrastructure
 		internal IEnumerable<LanguageProject> AllLanguageProjects
 		{
 			get { return _projects; }
+		}
+
+		internal LanguageProject GetProject(string projectName)
+		{
+			if (string.IsNullOrEmpty(projectName))
+				throw new ArgumentNullException("projectName");
+
+			return (from project in _projects
+					where project.Name == projectName
+					select project).First();
 		}
 	}
 }

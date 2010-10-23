@@ -95,5 +95,14 @@ namespace FieldWorksBridge.Properties {
 				return ResourceManager.GetString("kLockFilePresentMsg", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to No paths given.
+		/// </summary>
+		internal static string kNoPathsGiven {
+			get {
+				return ResourceManager.GetString("kNoPathsGiven", resourceCulture);
+			}
+		}
 	}
 }

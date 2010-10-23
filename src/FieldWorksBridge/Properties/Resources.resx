@@ -129,4 +129,7 @@
   <data name="kLockFilePresentMsg" xml:space="preserve">
 	<value>It appears that FLEx is running, since the file: {0}.fwdata.lock is present. You need to close FLEx or delete that file, if FLEx is not running, and try again.</value>
   </data>
+	<data name="kNoPathsGiven">
+		<value xml:space="preserve">No paths given</value>
+	</data>
 </root>

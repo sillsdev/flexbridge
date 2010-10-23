@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace FieldWorksBridge.Model
 {
@@ -28,6 +25,19 @@ namespace FieldWorksBridge.Model
 				throw new FileNotFoundException("Cannot find the file.", fwdataFile);
 
 			_fwdataFile = fwdataFile;
+		}
+
+		internal string Name
+		{
+			get { return Path.GetFileNameWithoutExtension(_fwdataFile); }
+		}
+
+		public bool IsRemoteCollaborationEnabled
+		{
+			get
+			{
+				return Directory.Exists(Path.Combine(Path.GetDirectoryName(_fwdataFile), ".hg"));
+			}
 		}
 	}
 }
