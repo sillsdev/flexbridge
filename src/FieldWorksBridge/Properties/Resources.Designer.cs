@@ -104,5 +104,14 @@ namespace FieldWorksBridge.Properties {
 				return ResourceManager.GetString("kNoPathsGiven", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Not a FieldWorks XML file..
+		/// </summary>
+		internal static string kNotAnFwXmlFile {
+			get {
+				return ResourceManager.GetString("kNotAnFwXmlFile", resourceCulture);
+			}
+		}
 	}
 }

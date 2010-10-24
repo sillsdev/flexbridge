@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using FieldWorksBridge.Properties;
 
 namespace FieldWorksBridge.Model
 {
@@ -23,6 +24,8 @@ namespace FieldWorksBridge.Model
 				throw new ArgumentNullException("fwdataFile");
 			if (!File.Exists(fwdataFile))
 				throw new FileNotFoundException("Cannot find the file.", fwdataFile);
+			if (!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata")
+				throw new ArgumentException(Resources.kNotAnFwXmlFile, "fwdataFile");
 
 			_fwdataFile = fwdataFile;
 		}
@@ -32,11 +35,16 @@ namespace FieldWorksBridge.Model
 			get { return Path.GetFileNameWithoutExtension(_fwdataFile); }
 		}
 
+		internal string DirectoryName
+		{
+			get { return Path.GetDirectoryName(_fwdataFile); }
+		}
+
 		public bool IsRemoteCollaborationEnabled
 		{
 			get
 			{
-				return Directory.Exists(Path.Combine(Path.GetDirectoryName(_fwdataFile), ".hg"));
+				return Directory.Exists(Path.Combine(DirectoryName, ".hg"));
 			}
 		}
 	}

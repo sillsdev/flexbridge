@@ -8,7 +8,7 @@ using FieldWorksBridge.Properties;
 namespace FieldWorksBridge.Infrastructure
 {
 	/// <summary>
-	/// A repository the gets the available FieldWorks projects on a computer
+	/// A repository that gets the available FieldWorks projects on a computer
 	/// as represented by the class LanguageProject
 	/// (not the FielwdWorks internal language project class).
 	/// </summary>
@@ -17,14 +17,14 @@ namespace FieldWorksBridge.Infrastructure
 		private readonly HashSet<string> _baseFolderPaths;
 		private readonly HashSet<LanguageProject> _projects = new HashSet<LanguageProject>();
 
-		internal LanguageProjectRepository(HashSet<string> baseFolderPaths)
+		internal LanguageProjectRepository(IProjectPathLocator pathLocator)
 		{
-			if (baseFolderPaths == null)
-				throw new ArgumentNullException("baseFolderPaths");
-			if (baseFolderPaths.Count == 0)
-				throw new ArgumentOutOfRangeException("baseFolderPaths", Resources.kNoPathsGiven);
+			if (pathLocator == null)
+				throw new ArgumentNullException("pathLocator");
+			if (pathLocator.BaseFolderPaths.Count == 0)
+				throw new ArgumentOutOfRangeException("pathLocator", Resources.kNoPathsGiven);
 
-			_baseFolderPaths = baseFolderPaths;
+			_baseFolderPaths = pathLocator.BaseFolderPaths;
 			foreach (var fwdataFiles in
 				_baseFolderPaths.SelectMany(baseFolderPath => Directory.
 					GetDirectories(baseFolderPath).

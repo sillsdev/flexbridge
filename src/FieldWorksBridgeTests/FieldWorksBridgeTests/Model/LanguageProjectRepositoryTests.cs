@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FieldWorksBridge.Infrastructure;
+using FieldWorksBridgeTests.Controller;
 using NUnit.Framework;
 
-namespace FieldWorksBridgeTests
+namespace FieldWorksBridgeTests.Model
 {
 	/// <summary>
 	/// Test the LanguageProjectRepository class.
@@ -38,7 +39,7 @@ namespace FieldWorksBridgeTests
 			_dummyFolderPaths.Add(projectPath);
 			File.WriteAllText(Path.Combine(projectPath, "NotEnabled.fwdata"), "");
 
-			_languageProjectRepository = new LanguageProjectRepository(_baseFolderPaths);
+			_languageProjectRepository = new LanguageProjectRepository(new MockedLocator(new HashSet<string>(_baseFolderPaths)));
 		}
 
 		[TestFixtureTearDown]
@@ -75,7 +76,7 @@ namespace FieldWorksBridgeTests
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void NoPathsThrows()
 		{
-			new LanguageProjectRepository(new HashSet<string>());
+			new LanguageProjectRepository(new MockedLocator(new HashSet<string>()));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]

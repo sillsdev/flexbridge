@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using FieldWorksBridge.Controller;
 using FieldWorksBridge.Properties;
 
 namespace FieldWorksBridge
@@ -26,7 +27,10 @@ namespace FieldWorksBridge
 				return;
 			}
 
-			Application.Run(new FieldWorksBridge());
+			using (var controller = new FwBridgeController())
+			{
+				Application.Run(controller.MainForm);
+			}
 
 			Settings.Default.Save();
 		}
