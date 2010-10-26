@@ -123,12 +123,6 @@
 		}
 		"Entry"
 		{
-		"MsmKey" = "8:_2874B4EA78302D586399CFCD52E06326"
-		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
 		"MsmKey" = "8:_28C55CCF5F85452DA0214E69DEC660A5"
 		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
@@ -155,24 +149,6 @@
 		{
 		"MsmKey" = "8:_301758906B9C44D98E1F52ED5E54208E"
 		"OwnerKey" = "8:_UNDEFINED"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_3019511B60B8EA121446D4FF2FC4747C"
-		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_3019511B60B8EA121446D4FF2FC4747C"
-		"OwnerKey" = "8:_C6F5CC4C65FEF7EAC249196D6155234E"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_3019511B60B8EA121446D4FF2FC4747C"
-		"OwnerKey" = "8:_3E47E5B6487739A0B834A9C797321325"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -262,13 +238,13 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_3E47E5B6487739A0B834A9C797321325"
-		"OwnerKey" = "8:_2874B4EA78302D586399CFCD52E06326"
+		"OwnerKey" = "8:_833A04C0C2A0A09630CCE0ED420D949D"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_3E47E5B6487739A0B834A9C797321325"
-		"OwnerKey" = "8:_C6F5CC4C65FEF7EAC249196D6155234E"
+		"OwnerKey" = "8:_FA59554F911B0E9603120BA249F54CCC"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -365,6 +341,24 @@
 		{
 		"MsmKey" = "8:_61B7A67B52724831839152D704B7CD34"
 		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6751E703711DE17BE7EB87A51B687BBD"
+		"OwnerKey" = "8:_3E47E5B6487739A0B834A9C797321325"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6751E703711DE17BE7EB87A51B687BBD"
+		"OwnerKey" = "8:_FA59554F911B0E9603120BA249F54CCC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6751E703711DE17BE7EB87A51B687BBD"
+		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -479,6 +473,12 @@
 		{
 		"MsmKey" = "8:_7E55ACB7267D4652BBAD5F13B685D0C2"
 		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_833A04C0C2A0A09630CCE0ED420D949D"
+		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -843,18 +843,6 @@
 		}
 		"Entry"
 		{
-		"MsmKey" = "8:_C6F5CC4C65FEF7EAC249196D6155234E"
-		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_C6F5CC4C65FEF7EAC249196D6155234E"
-		"OwnerKey" = "8:_2874B4EA78302D586399CFCD52E06326"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
 		"MsmKey" = "8:_C8E3ECBAFE2C41EA8BC57751AF5C221B"
 		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
@@ -1101,6 +1089,18 @@
 		}
 		"Entry"
 		{
+		"MsmKey" = "8:_FA59554F911B0E9603120BA249F54CCC"
+		"OwnerKey" = "8:_E52CBCF322024D0286ED406541B638C8"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_FA59554F911B0E9603120BA249F54CCC"
+		"OwnerKey" = "8:_833A04C0C2A0A09630CCE0ED420D949D"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
 		"MsmKey" = "8:_FB4C5AE0098A4374BE9DF942A41ABD68"
 		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
@@ -1126,19 +1126,13 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_3019511B60B8EA121446D4FF2FC4747C"
+		"OwnerKey" = "8:_833A04C0C2A0A09630CCE0ED420D949D"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_2874B4EA78302D586399CFCD52E06326"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_C6F5CC4C65FEF7EAC249196D6155234E"
+		"OwnerKey" = "8:_FA59554F911B0E9603120BA249F54CCC"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -1213,6 +1207,12 @@
 		"OwnerKey" = "8:_3E47E5B6487739A0B834A9C797321325"
 		"MsmSig" = "8:_UNDEFINED"
 		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_6751E703711DE17BE7EB87A51B687BBD"
+		"MsmSig" = "8:_UNDEFINED"
+		}
 	}
 	"Configurations"
 	{
@@ -1238,6 +1238,19 @@
 			"PrerequisitesLocation" = "2:1"
 			"Url" = "8:"
 			"ComponentsUrl" = "8:"
+				"Items"
+				{
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5"
+					{
+					"Name" = "8:.NET Framework 3.5"
+					"ProductCode" = "8:Microsoft.Net.Framework.3.5"
+					}
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+					{
+					"Name" = "8:Windows Installer 3.1"
+					"ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+					}
+				}
 			}
 		}
 		"Release"
@@ -1665,37 +1678,6 @@
 			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2874B4EA78302D586399CFCD52E06326"
-			{
-			"AssemblyRegister" = "3:1"
-			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:LiftBridge, Version=1.0.0.38143, Culture=neutral, processorArchitecture=MSIL"
-				"ScatterAssemblies"
-				{
-					"_2874B4EA78302D586399CFCD52E06326"
-					{
-					"Name" = "8:LiftBridge.dll"
-					"Attributes" = "3:512"
-					}
-				}
-			"SourcePath" = "8:LiftBridge.dll"
-			"TargetName" = "8:"
-			"Tag" = "8:"
-			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
-			"Condition" = "8:"
-			"Transitive" = "11:FALSE"
-			"Vital" = "11:TRUE"
-			"ReadOnly" = "11:FALSE"
-			"Hidden" = "11:FALSE"
-			"System" = "11:FALSE"
-			"Permanent" = "11:FALSE"
-			"SharedLegacy" = "11:FALSE"
-			"PackageAs" = "3:1"
-			"Register" = "3:1"
-			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
-			"IsolateTo" = "8:"
-			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_28C55CCF5F85452DA0214E69DEC660A5"
 			{
 			"SourcePath" = "8:..\\..\\..\\mercurial\\hgrc.d\\Mercurial.rc"
@@ -1794,37 +1776,6 @@
 			"Register" = "3:1"
 			"Exclude" = "11:FALSE"
 			"IsDependency" = "11:FALSE"
-			"IsolateTo" = "8:"
-			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3019511B60B8EA121446D4FF2FC4747C"
-			{
-			"AssemblyRegister" = "3:1"
-			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL"
-				"ScatterAssemblies"
-				{
-					"_3019511B60B8EA121446D4FF2FC4747C"
-					{
-					"Name" = "8:Autofac.dll"
-					"Attributes" = "3:512"
-					}
-				}
-			"SourcePath" = "8:Autofac.dll"
-			"TargetName" = "8:"
-			"Tag" = "8:"
-			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
-			"Condition" = "8:"
-			"Transitive" = "11:FALSE"
-			"Vital" = "11:TRUE"
-			"ReadOnly" = "11:FALSE"
-			"Hidden" = "11:FALSE"
-			"System" = "11:FALSE"
-			"Permanent" = "11:FALSE"
-			"SharedLegacy" = "11:FALSE"
-			"PackageAs" = "3:1"
-			"Register" = "3:1"
-			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
 			"IsolateTo" = "8:"
 			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31202CAD1C37455BA6A50BBE9EAA7031"
@@ -2429,6 +2380,37 @@
 			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6751E703711DE17BE7EB87A51B687BBD"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_6751E703711DE17BE7EB87A51B687BBD"
+					{
+					"Name" = "8:Autofac.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Autofac.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_686A4DCCD7CC49C7A0B50590C4F9F371"
 			{
 			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\monoblue\\filelog.tmpl"
@@ -2789,6 +2771,37 @@
 			"Register" = "3:1"
 			"Exclude" = "11:FALSE"
 			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_833A04C0C2A0A09630CCE0ED420D949D"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:LiftBridge, Version=1.0.0.34960, Culture=neutral, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_833A04C0C2A0A09630CCE0ED420D949D"
+					{
+					"Name" = "8:LiftBridge.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:LiftBridge.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:TRUE"
 			"IsolateTo" = "8:"
 			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_86BE2A4A69A148219A67CB81A7CAF2BD"
@@ -3744,37 +3757,6 @@
 			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C6F5CC4C65FEF7EAC249196D6155234E"
-			{
-			"AssemblyRegister" = "3:1"
-			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-				"ScatterAssemblies"
-				{
-					"_C6F5CC4C65FEF7EAC249196D6155234E"
-					{
-					"Name" = "8:ChorusPlus.dll"
-					"Attributes" = "3:512"
-					}
-				}
-			"SourcePath" = "8:ChorusPlus.dll"
-			"TargetName" = "8:"
-			"Tag" = "8:"
-			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
-			"Condition" = "8:"
-			"Transitive" = "11:FALSE"
-			"Vital" = "11:TRUE"
-			"ReadOnly" = "11:FALSE"
-			"Hidden" = "11:FALSE"
-			"System" = "11:FALSE"
-			"Permanent" = "11:FALSE"
-			"SharedLegacy" = "11:FALSE"
-			"PackageAs" = "3:1"
-			"Register" = "3:1"
-			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
-			"IsolateTo" = "8:"
-			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C8E3ECBAFE2C41EA8BC57751AF5C221B"
 			{
 			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\rss\\error.tmpl"
@@ -4330,6 +4312,37 @@
 			"IsDependency" = "11:TRUE"
 			"IsolateTo" = "8:"
 			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FA59554F911B0E9603120BA249F54CCC"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_FA59554F911B0E9603120BA249F54CCC"
+					{
+					"Name" = "8:ChorusPlus.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ChorusPlus.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB4C5AE0098A4374BE9DF942A41ABD68"
 			{
 			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\monoblue\\summary.tmpl"
@@ -4593,14 +4606,14 @@
 		{
 		"Name" = "8:Microsoft Visual Studio"
 		"ProductName" = "8:LiftBridge for FieldWorks 7"
-		"ProductCode" = "8:{E68EA6F7-6BC5-4328-9DBF-062FA54B0CB8}"
-		"PackageCode" = "8:{EAD7ABE2-91EA-4926-9B09-3DE2D954D1A4}"
+		"ProductCode" = "8:{32E89B10-155A-4E55-A54D-68A20FB72CF4}"
+		"PackageCode" = "8:{1B229B7C-B9C3-4A80-9892-9C257D4A4E40}"
 		"UpgradeCode" = "8:{C45E6E6A-4763-4AA0-A3DF-1AF5EE09B72E}"
 		"RestartWWWService" = "11:FALSE"
 		"RemovePreviousVersions" = "11:TRUE"
 		"DetectNewerInstalledVersion" = "11:TRUE"
 		"InstallAllUsers" = "11:TRUE"
-		"ProductVersion" = "8:0.1"
+		"ProductVersion" = "8:0.5"
 		"Manufacturer" = "8:SIL"
 		"ARPHELPTELEPHONE" = "8:"
 		"ARPHELPLINK" = "8:"
@@ -5061,7 +5074,7 @@
 			}
 			"{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E52CBCF322024D0286ED406541B638C8"
 			{
-			"SourcePath" = "8:..\\LiftBridgeUtility7\\obj\\Release\\LiftBridgeUtility7.dll"
+			"SourcePath" = "8:..\\LiftBridgeUtility7\\obj\\Debug\\LiftBridgeUtility7.dll"
 			"TargetName" = "8:"
 			"Tag" = "8:"
 			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"

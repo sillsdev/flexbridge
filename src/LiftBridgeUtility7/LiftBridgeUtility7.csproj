@@ -31,7 +31,7 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=6.9.0.22363, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="BasicUtils, Version=6.0.4.5563, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\BasicUtils.dll</HintPath>
 	</Reference>
@@ -39,31 +39,31 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\ChorusMerge.exe</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=8.0.0.24843, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="COMInterfaces, Version=6.0.4.5698, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\COMInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=6.9.2.14995, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FDO, Version=6.0.4.5715, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FDO.dll</HintPath>
 	</Reference>
-	<Reference Include="FwControls, Version=6.9.2.14990, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FwControls, Version=6.0.4.5709, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FwControls.dll</HintPath>
 	</Reference>
-	<Reference Include="FwCoreDlgs, Version=6.9.0.22690, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FwCoreDlgs, Version=6.0.4.7093, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FwCoreDlgs.dll</HintPath>
 	</Reference>
-	<Reference Include="FwUtils, Version=6.9.0.22591, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FwUtils, Version=6.0.4.5700, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FwUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="FxtDll, Version=6.9.2.15022, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FxtDll, Version=6.0.4.6013, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\FxtDll.dll</HintPath>
 	</Reference>
-	<Reference Include="LexTextControls, Version=8.0.0.25044, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="LexTextControls, Version=6.0.4.7149, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\LexTextControls.dll</HintPath>
 	</Reference>
@@ -76,7 +76,7 @@
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.Windows.Forms" />
-	<Reference Include="xCoreInterfaces, Version=6.9.0.22588, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="xCoreInterfaces, Version=6.0.4.5718, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 7.0\xCoreInterfaces.dll</HintPath>
 	</Reference>
