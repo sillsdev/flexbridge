@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace FieldWorksBridge
+namespace FieldWorksBridge.View
 {
 	public partial class FieldWorksBridge : Form
 	{

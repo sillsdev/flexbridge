@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FieldWorksBridge.Infrastructure;
-using FieldWorksBridgeTests.Controller;
+using FieldWorksBridgeTests.Mocks;
 using NUnit.Framework;
 
 namespace FieldWorksBridgeTests.Model
@@ -14,38 +13,22 @@ namespace FieldWorksBridgeTests.Model
 	[TestFixture]
 	public class LanguageProjectRepositoryTests
 	{
-		private string _baseFolderPath;
-		private readonly List<string> _dummyFolderPaths = new List<string>();
-		private readonly HashSet<string> _baseFolderPaths = new HashSet<string>();
+		private DummyFolderSystem _dummyFolderSystem;
 		private LanguageProjectRepository _languageProjectRepository;
 
-		/// <summary>
-		/// Set up some dummy folders.
-		/// </summary>
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_baseFolderPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Projects")).FullName;
-			_baseFolderPaths.Add(_baseFolderPath);
-
-			// Remote collaboration enabled project
-			var projectPath = Directory.CreateDirectory(Path.Combine(_baseFolderPath, "ZPI")).FullName;
-			Directory.CreateDirectory(Path.Combine(projectPath, ".hg"));
-			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "ZPI.fwdata"), "");
-
-			// Remote collaboration not enabled project
-			projectPath = Directory.CreateDirectory(Path.Combine(_baseFolderPath, "NotEnabled")).FullName;
-			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "NotEnabled.fwdata"), "");
-
-			_languageProjectRepository = new LanguageProjectRepository(new MockedLocator(new HashSet<string>(_baseFolderPaths)));
+			_dummyFolderSystem = new DummyFolderSystem();
+			_languageProjectRepository = new LanguageProjectRepository(
+				new MockedProjectPathLocator(
+					new HashSet<string>(_dummyFolderSystem.BaseFolderPaths)));
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			Directory.Delete(_baseFolderPath, true);
+			_dummyFolderSystem.Dispose();
 		}
 
 		[Test]
@@ -76,7 +59,7 @@ namespace FieldWorksBridgeTests.Model
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void NoPathsThrows()
 		{
-			new LanguageProjectRepository(new MockedLocator(new HashSet<string>()));
+			new LanguageProjectRepository(new MockedProjectPathLocator(new HashSet<string>()));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]

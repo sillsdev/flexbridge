@@ -1,4 +1,4 @@
-﻿namespace FieldWorksBridge
+﻿namespace FieldWorksBridge.View
 {
 	partial class FieldWorksBridge
 	{

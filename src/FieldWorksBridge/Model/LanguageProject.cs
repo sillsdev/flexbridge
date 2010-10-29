@@ -47,5 +47,10 @@ namespace FieldWorksBridge.Model
 				return Directory.Exists(Path.Combine(DirectoryName, ".hg"));
 			}
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

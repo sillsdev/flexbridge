@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Chorus;
 using FieldWorksBridge.Model;
 
 namespace FieldWorksBridge.View
@@ -10,6 +9,7 @@ namespace FieldWorksBridge.View
 		event SynchronizeProjectEventHandler SynchronizeProject;
 
 		IEnumerable<LanguageProject> Projects { set; }
-		ChorusSystem SyncSystem { set; }
+		IProjectView ProjectView { get; }
+		bool EnableSendReceive { set; }
 	}
 }

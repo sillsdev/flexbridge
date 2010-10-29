@@ -17,8 +17,6 @@ namespace FieldWorksBridge
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			SetUpErrorHandling();
-
 			// Is mercurial set up?
 			var s = HgRepository.GetEnvironmentReadinessMessage("en");
 			if (!string.IsNullOrEmpty(s))
@@ -33,26 +31,6 @@ namespace FieldWorksBridge
 			}
 
 			Settings.Default.Save();
-		}
-
-		private static void SetUpErrorHandling()
-		{
-			try
-			{
-				//				Palaso.Reporting.ErrorReport.AddProperty("EmailAddress", "issues@wesay.org");
-				//				Palaso.Reporting.ErrorReport.AddStandardProperties();
-				//				Palaso.Reporting.ExceptionHandler.Init();
-				//var asm = Assembly.LoadFrom("Palaso.dll");
-				//var errorReportType = asm.GetType("Palaso.Reporting.ErrorReport");
-				//var emailAddress = errorReportType.GetProperty("EmailAddress");
-				//emailAddress.SetValue(null, "issues@wesay.org", null);
-				//errorReportType.GetMethod("AddStandardProperties").Invoke(null, null);
-				//asm.GetType("Palaso.Reporting.ExceptionHandler").GetMethod("Init").Invoke(null, null);
-			}
-			catch
-			{
-				// ah well
-			}
 		}
 	}
 }

@@ -59,5 +59,45 @@ namespace FieldWorksBridgeTests.Model
 				File.Delete(tempFile);
 			}
 		}
+
+		[Test]
+		public void ProjectHasCorrectName()
+		{
+			var temp = Path.GetTempFileName();
+			var tempFile = Path.ChangeExtension(temp, ".fwdata");
+			File.Move(temp, tempFile);
+			try
+			{
+				var lp = new LanguageProject(tempFile);
+				Assert.AreEqual(Path.GetDirectoryName(tempFile), lp.DirectoryName);
+
+				var fileName = Path.GetFileNameWithoutExtension(tempFile);
+				Assert.AreEqual(fileName, lp.Name);
+			}
+			finally
+			{
+				File.Delete(tempFile);
+			}
+		}
+
+		[Test]
+		public void NameIsSameAsToString()
+		{
+			var temp = Path.GetTempFileName();
+			var tempFile = Path.ChangeExtension(temp, ".fwdata");
+			File.Move(temp, tempFile);
+			try
+			{
+				var lp = new LanguageProject(tempFile);
+				Assert.AreEqual(Path.GetFileNameWithoutExtension(tempFile), lp.ToString());
+
+				var fileName = Path.GetFileNameWithoutExtension(tempFile);
+				Assert.AreEqual(fileName, lp.ToString());
+			}
+			finally
+			{
+				File.Delete(tempFile);
+			}
+		}
 	}
 }

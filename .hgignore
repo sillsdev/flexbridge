@@ -8,3 +8,4 @@ glob:src/FieldWorksBridge/FieldWorksBridge.csproj.ReSharper.user
 relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*
 relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/bin/*
 relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/obj/*
+relre:output/*

@@ -60,6 +60,13 @@ namespace FieldWorksBridge.Properties {
 			}
 		}
 
+		internal static System.Drawing.Icon chorus {
+			get {
+				object obj = ResourceManager.GetObject("chorus", resourceCulture);
+				return ((System.Drawing.Icon)(obj));
+			}
+		}
+
 		/// <summary>
 		///   Looks up a localized string similar to Select a Chorus-enabled FieldWorks project to open:.
 		/// </summary>

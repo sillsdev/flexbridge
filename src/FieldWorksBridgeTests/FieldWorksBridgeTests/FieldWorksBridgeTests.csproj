@@ -51,14 +51,19 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Controller\MockedClasses.cs">
+	<Compile Include="Mocks\MockedExistingSystemView.cs" />
+	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\DeveloperSystemProjectPathLocatorTests.cs" />
+	<Compile Include="DummyFolderSystem.cs" />
 	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
 	<Compile Include="Model\LanguageProjectTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
+	<Compile Include="Mocks\MockedProjectView.cs" />
+	<Compile Include="Mocks\MockedStartupNewView.cs" />
 	<Compile Include="View\ViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,4 +80,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+	<PostBuildEvent>copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
