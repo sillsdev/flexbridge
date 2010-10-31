@@ -5,8 +5,6 @@ namespace FieldWorksBridge.View
 {
 	public partial class ExistingSystemView : UserControl, IExistingSystemView
 	{
-		private ChorusSystem _chorusSystem;
-
 		public ExistingSystemView()
 		{
 			InitializeComponent();
@@ -16,12 +14,9 @@ namespace FieldWorksBridge.View
 		{
 			set
 			{
-				// Controller will dispose of ChorusSystem objects, as needed.
-				_chorusSystem = value;
-
 				_tcMain.SuspendLayout();
 
-				if (_chorusSystem == null)
+				if (value == null)
 				{
 					ClearPage(_tcMain.TabPages[0]);
 					ClearPage(_tcMain.TabPages[1]);
@@ -30,14 +25,36 @@ namespace FieldWorksBridge.View
 				else
 				{
 					_tcMain.Enabled = true;
-					ResetPage(0, _chorusSystem.WinForms.CreateNotesBrowser());
-					ResetPage(1, _chorusSystem.WinForms.CreateHistoryPage());
+					ResetPage(0, value.WinForms.CreateNotesBrowser());
+					ResetPage(1, value.WinForms.CreateHistoryPage());
 					//ResetTabPage(2, TODO: Figure out what to do on About page.);
 				}
 
 				_tcMain.ResumeLayout(true);
-				_tcMain.Enabled = (_chorusSystem != null);
+				_tcMain.Enabled = (value != null);
 			}
+		}
+
+		public void SetSystem(ChorusSystem chorusSystem)
+		{
+			_tcMain.SuspendLayout();
+
+			if (chorusSystem == null)
+			{
+				ClearPage(_tcMain.TabPages[0]);
+				ClearPage(_tcMain.TabPages[1]);
+				// About page: ClearPage(_tcMain.TabPages[2]);
+			}
+			else
+			{
+				_tcMain.Enabled = true;
+				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
+				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
+				//ResetTabPage(2, TODO: Figure out what to do on About page.);
+			}
+
+			_tcMain.ResumeLayout(true);
+			_tcMain.Enabled = (chorusSystem != null);
 		}
 
 		private void ResetPage(int idx, Control newContent)

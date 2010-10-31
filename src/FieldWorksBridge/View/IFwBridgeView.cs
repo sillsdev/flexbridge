@@ -10,6 +10,6 @@ namespace FieldWorksBridge.View
 
 		IEnumerable<LanguageProject> Projects { set; }
 		IProjectView ProjectView { get; }
-		bool EnableSendReceive { set; }
+		void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible);
 	}
 }

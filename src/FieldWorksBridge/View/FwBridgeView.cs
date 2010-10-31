@@ -63,9 +63,12 @@ namespace FieldWorksBridge.View
 			get { return _projectView; }
 		}
 
-		public bool EnableSendReceive
+		public void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
 		{
-			set { _sendReceiveButton.Enabled = value; }
+			_sendReceiveButton.Enabled = enableSendReceiveBtn;
+			_warninglabel1.Visible = makeWarningsVisible;
+			_warninglabel2.Visible = makeWarningsVisible;
+			pictureBox1.Visible = makeWarningsVisible;
 		}
 
 		#endregion

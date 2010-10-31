@@ -13,24 +13,29 @@ namespace FieldWorksBridgeTests.Controller
 	[TestFixture]
 	public class ControllerTests
 	{
-		private MockedProjectPathLocator _projectPathLocator;
-		private FwBridgeController _controller;
-		private MockedFwBridgeView _fwBridgeView;
+		private FwBridgeController _realController;
+		private MockedProjectPathLocator _mockedProjectPathLocator;
+		private MockedFwBridgeView _mockedFwBridgeView;
 		private MockedProjectView _mockedProjectView;
 		private MockedExistingSystemView _mockedExistingSystemView;
 		private MockedStartupNewView _mockedStartupNewView;
+		private MockedSynchronizeProject _mockedSynchronizeProject;
 		private DummyFolderSystem _dummyFolderSystem;
+		private MockedGetSharedProject _mockedGetSharedProject;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
-			_projectPathLocator = new MockedProjectPathLocator(new HashSet<string> {_dummyFolderSystem.BaseFolderPath});
+			_mockedProjectPathLocator = new MockedProjectPathLocator(new HashSet<string> {_dummyFolderSystem.BaseFolderPath});
 
-			_fwBridgeView = new MockedFwBridgeView();
-			_controller = new FwBridgeController(_fwBridgeView, _projectPathLocator);
+			_mockedSynchronizeProject = new MockedSynchronizeProject();
+			_mockedGetSharedProject = new MockedGetSharedProject();
 
-			_mockedProjectView = (MockedProjectView)_fwBridgeView.ProjectView;
+			_mockedFwBridgeView = new MockedFwBridgeView();
+			_realController = new FwBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject, _mockedGetSharedProject);
+
+			_mockedProjectView = (MockedProjectView)_mockedFwBridgeView.ProjectView;
 			_mockedExistingSystemView = (MockedExistingSystemView)_mockedProjectView.ExistingSystemView;
 			_mockedStartupNewView = (MockedStartupNewView)_mockedProjectView.StartupNewView;
 		}
@@ -40,14 +45,14 @@ namespace FieldWorksBridgeTests.Controller
 		{
 			_dummyFolderSystem.Dispose();
 			_dummyFolderSystem = null;
-			_controller.Dispose();
-			_controller = null;
+			_realController.Dispose();
+			_realController = null;
 		}
 
 		[Test]
 		public void EnsureMainhFormExists()
 		{
-			Assert.IsNotNull(_controller.MainForm);
+			Assert.IsNotNull(_realController.MainForm);
 		}
 
 		#region Ensure IFwBridgeView is handled by controller
@@ -55,23 +60,23 @@ namespace FieldWorksBridgeTests.Controller
 		[Test]
 		public void EnsureProjectViewIsAvailable()
 		{
-			Assert.IsNotNull(_fwBridgeView.ProjectView);
+			Assert.IsNotNull(_mockedFwBridgeView.ProjectView);
 		}
 
 		[Test]
 		public void EnsureProjectsHasTwoSampleProjects()
 		{
-			Assert.AreEqual(2, _fwBridgeView.Projects.Count());
+			Assert.AreEqual(2, _mockedFwBridgeView.Projects.Count());
 		}
 
-		[Test]
+		[Test, Ignore("Work up test.")]
 		public void EnsureSendReceiveBtnIsDisabledForUnsharableProject()
 		{
-			var unsharableProject = (from project in _fwBridgeView.Projects
+			var unsharableProject = (from project in _mockedFwBridgeView.Projects
 									 where !project.IsRemoteCollaborationEnabled
 									 select project).First();
-			_fwBridgeView.RaiseProjectSelected(unsharableProject);
-			Assert.IsFalse(_fwBridgeView.EnableSendReceive);
+			_mockedFwBridgeView.RaiseProjectSelected(unsharableProject);
+			Assert.IsFalse(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedStartupNewView, _mockedProjectView.ActiveView);
@@ -81,13 +86,31 @@ namespace FieldWorksBridgeTests.Controller
 		}
 
 		[Test]
+		public void EnsureSendReceiveBtnIsEnabledForUnsharedButSharableProject()
+		{
+			var unsharedButSharableProject = (from project in _mockedFwBridgeView.Projects
+									 where !project.IsRemoteCollaborationEnabled
+									 select project).First();
+			_mockedFwBridgeView.RaiseProjectSelected(unsharedButSharableProject);
+			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
+
+			// Tests IProjectView_ActivateView
+			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
+
+			// Tests IExistingSystemView_ChorusSys
+			Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+
+			Assert.IsFalse(_mockedFwBridgeView.WarningsAreVisible);
+		}
+
+		[Test]
 		public void EnsureSendReceiveBtnIsEnabledForSharableProject()
 		{
-			var sharableProject = (from project in _fwBridgeView.Projects
+			var sharableProject = (from project in _mockedFwBridgeView.Projects
 									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
-			_fwBridgeView.RaiseProjectSelected(sharableProject);
-			Assert.IsTrue(_fwBridgeView.EnableSendReceive);
+			_mockedFwBridgeView.RaiseProjectSelected(sharableProject);
+			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
@@ -96,11 +119,14 @@ namespace FieldWorksBridgeTests.Controller
 			Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
 		}
 
-		// TODO: Change test, when it gets implemented.
-		[Test, ExpectedException(typeof(NotImplementedException))]
-		public void SynchronizeProjectThrows()
+		[Test]
+		public void SynchronizeProjectHasFormAndChorusSystem()
 		{
-			_fwBridgeView.RaiseSynchronizeProject();
+			Assert.IsFalse(_mockedSynchronizeProject.HasForm);
+			Assert.IsFalse(_mockedSynchronizeProject.HasChorusSystem);
+			_mockedFwBridgeView.RaiseSynchronizeProject();
+			Assert.IsTrue(_mockedSynchronizeProject.HasForm);
+			Assert.IsTrue(_mockedSynchronizeProject.HasChorusSystem);
 		}
 
 		#endregion Ensure IFwBridgeView is handled by controller
@@ -122,16 +148,5 @@ namespace FieldWorksBridgeTests.Controller
 		}
 
 		#endregion Ensure IProjectView is handled by controller
-
-		#region Ensure IStartupNewView is handled by controller
-
-		// TODO: Change test, when it gets implemented.
-		[Test, ExpectedException(typeof(NotImplementedException))]
-		public void StartupThrows()
-		{
-			_mockedStartupNewView.RaiseStartup();
-		}
-
-		#endregion Ensure IStartupNewView is handled by controller
 	}
 }

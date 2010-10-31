@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace FieldWorksBridge.View
 {
 	/// <summary>
-	/// This control is used by the LiftBridgeDlg when there is no extant Hg repo for some FW language project.
+	/// This control is used by the FieldWorks Bridge when there is no extant Hg repo for some FW language project.
 	///
 	/// The Startup event lets the controller know what the user wants to do (use extant repo or make new one).
 	/// </summary>
@@ -19,10 +19,19 @@ namespace FieldWorksBridge.View
 
 		private void RadioButtonClicked(object sender, EventArgs e)
 		{
-			_btnGetStarted.Enabled = _rbFirstToUseFlexBridge.Checked
-				|| (_rbUseExistingSystem.Checked
-					&& (_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked) );
-			groupBox1.Enabled = _rbUseExistingSystem.Checked;
+			UpdateEnabledControls();
+		}
+
+		private void UpdateEnabledControls()
+		{
+			groupBox1.Enabled = _cbAcceptLimitation.Checked;
+			_btnGetStarted.Enabled = _cbAcceptLimitation.Checked
+									 && groupBox1.Enabled &&(_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked);
+		}
+
+		private void AcceptLimitationsCheckChanged(object sender, EventArgs e)
+		{
+			UpdateEnabledControls();
 		}
 
 		private void ContinueBtnClicked(object sender, EventArgs e)
@@ -33,15 +42,13 @@ namespace FieldWorksBridge.View
 					? ExtantRepoSource.LocalNetwork
 					: ExtantRepoSource.Internet);
 
-			OnStartup(new StartupNewEventArgs(_rbFirstToUseFlexBridge.Checked, repoSource));
+			OnStartup(new StartupNewEventArgs(repoSource));
 		}
 
 		private void OnStartup(StartupNewEventArgs e)
 		{
-			var handler = Startup;
-			if (handler != null)
-				handler(this, e);
+			if (Startup != null)
+				Startup(this, e);
 		}
-
 	}
 }

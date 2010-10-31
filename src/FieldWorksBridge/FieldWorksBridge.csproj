@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="Controller\FwBridgeController.cs" />
+	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="View\ExistingSystemView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -124,11 +125,14 @@
 	<Compile Include="View\FwBridgeView.Designer.cs">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IProjectView.cs" />
+	<Compile Include="View\IGetSharedProject.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
+	<Compile Include="View\ISynchronizeProject.cs" />
 	<Compile Include="View\ProjectView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -143,6 +147,7 @@
 	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\StartupNewEventArgs.cs" />
+	<Compile Include="View\SynchronizeProject.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="chorus.ico" />

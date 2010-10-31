@@ -139,4 +139,16 @@
   <data name="chorus" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>..\chorus.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="kSelectClonedDataFolder" xml:space="preserve">
+	<value>Select the new folder where the shared data goes.</value>
+  </data>
+  <data name="kCloneTrouble" xml:space="preserve">
+	<value>Cannot clone onto an existing directory ({0})</value>
+  </data>
+  <data name="kFwDataFileFilter" xml:space="preserve">
+	<value>FieldWorks Project File (*.fwdata)|*.fwdata</value>
+  </data>
+  <data name="kLocateFwDataFile" xml:space="preserve">
+	<value>Locate FieldWorks XML Data File</value>
+  </data>
 </root>

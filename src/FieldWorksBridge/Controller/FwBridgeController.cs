@@ -15,15 +15,29 @@ namespace FieldWorksBridge.Controller
 		private readonly IStartupNewView _startupNewView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly LanguageProjectRepository _repository;
+		private readonly ISynchronizeProject _projectSynchronizer;
+		private readonly IGetSharedProject _getSharedProject;
 		private ChorusSystem _chorusSystem;
 
+		/// <summary>
+		/// Constructor that makes a standard controller.
+		/// </summary>
+		/// <remarks>
+		/// Developers (or others using a DEBUG build)
+		/// </remarks>
 		internal FwBridgeController()
-			: this(new View.FieldWorksBridge(), new FwBridgeView(), new DeveloperSystemProjectPathLocator())
-		{}
+#if DEBUG
+			: this(new View.FieldWorksBridge(), new FwBridgeView(), new DeveloperSystemProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
+#else
+			: this(new View.FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
+#endif
+		{ }
 
-		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator)
+		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
 		{
 			_repository = new LanguageProjectRepository(locator);
+			_projectSynchronizer = projectSynchronizer;
+			_getSharedProject = getSharedProject;
 
 			MainForm = fieldWorksBridge;
 			var ctrl = (Control)fwBridgeView;
@@ -49,9 +63,33 @@ namespace FieldWorksBridge.Controller
 		/// <summary>
 		/// For testing only.
 		/// </summary>
-		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator)
-			: this(new View.FieldWorksBridge(), mockedTestView, mockedLocator)
-		{}
+		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
+			: this(new View.FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
+		{ }
+
+		private static void ConfigureChorusProjectFolder(ChorusSystem chorusSystem)
+		{
+			// Exclude has precedence, but these are redundant as long as we're using the policy
+			// that we explicitly include all the files we understand.  At least someday, when these
+			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
+			// us a bit from other apps that might try to do a *.* include
+			var projFolder = chorusSystem.ProjectFolderConfiguration;
+			projFolder.ExcludePatterns.Add("*.bak");
+			projFolder.ExcludePatterns.Add("*.lock");
+			projFolder.ExcludePatterns.Add("*.tmp");
+			projFolder.ExcludePatterns.Add("**/Temp");
+			projFolder.ExcludePatterns.Add("**/BackupSettings");
+			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
+
+			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
+			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
+			projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");
+			projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
+			projFolder.IncludePatterns.Add("Keyboards/*.*");
+			projFolder.IncludePatterns.Add("Fonts/*.*");
+			projFolder.IncludePatterns.Add("*.fwdata");
+			projFolder.IncludePatterns.Add(".hgignore");
+		}
 
 		internal Form MainForm { get; private set; }
 
@@ -63,82 +101,62 @@ namespace FieldWorksBridge.Controller
 				_chorusSystem = null;
 			}
 			_chorusSystem = system;
-			_existingSystemView.ChorusSys = _chorusSystem; // May be null, which is fine.
+			_existingSystemView.SetSystem(_chorusSystem); // May be null, which is fine.
 		}
 
 		void FwBridgeViewSynchronizeProjectHandler(object sender, EventArgs e)
 		{
-			// S/R btn clicked. Handle it here with SyncDialog.
-
-			throw new NotImplementedException();
+			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, _chorusSystem);
 		}
 
 		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)
 		{
-			ChorusSystem chorusSystem = null;
-			bool enableSendReceive;
 			var langProj = e.Project;
 
-			// TODO: This really ought to disable the S/R btn and show a label control with the message.
-			if (File.Exists(langProj.DirectoryName + langProj.Name + ".fwdata.lock"))
+			// 1. If langProj is null, then show the revised 'fetch from afar' view, and return.
+			if (langProj == null)
 			{
-				MessageBox.Show(MainForm,
-								string.Format(Resources.kLockFilePresentMsg, langProj.Name),
-								Resources.kLockFilePresent, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				SetSystem(chorusSystem);
+				_fwBridgeView.EnableSendReceiveControls(false, false);
+				_projectView.ActivateView(_startupNewView);
+				SetSystem(null);
 				return;
 			}
 
+			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
+			// This possible repo creation allows for the case where the local computer
+			// intends to start sharing an existing system.
+			var chorusSystem = new ChorusSystem(langProj.DirectoryName, Environment.UserName);
+			ConfigureChorusProjectFolder(chorusSystem);
+			var enableSendReceiveBtn = true;
+			var makeWarningsVisible = false;
 
-			if (langProj.IsRemoteCollaborationEnabled)
+			// 2: If FW project is in use, then disable the S/R btn and show a warning message.
+			if (langProj.FieldWorkProjectInUse)
 			{
-				enableSendReceive = true;
-				_projectView.ActivateView(_existingSystemView);
-
-				chorusSystem = new ChorusSystem(langProj.DirectoryName, Environment.UserName);
-				// Exclude has precedence, but these are redundant as long as we're using the policy
-				// that we explicitly include all the files we understand.  At least someday, when these
-				// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
-				// us a bit from other apps that might try to do a *.* include
-				var projFolder = chorusSystem.ProjectFolderConfiguration;
-				projFolder.ExcludePatterns.Add("*.bak");
-				projFolder.ExcludePatterns.Add("*.lock");
-				projFolder.ExcludePatterns.Add("*.tmp");
-				projFolder.ExcludePatterns.Add("**/Temp");
-				projFolder.ExcludePatterns.Add("**/BackupSettings");
-				projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
-
-				projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
-				projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
-				projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");
-				projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
-				projFolder.IncludePatterns.Add("Keyboards/*.*");
-				projFolder.IncludePatterns.Add("Fonts/*.*");
-				projFolder.IncludePatterns.Add("*.fwdata");
-				projFolder.IncludePatterns.Add(".hgignore");
-			}
-			else
-			{
-				enableSendReceive = false;
-				// TODO: If the fwdata file exists, then we can really only create a sharable system.
-				// TODO: We don't want to try and get one from elsewhere,
-				// TODO: and then have to merge it with another one that exists, or do we?
-				// TODO: (Consider G & J Andersen's case, where each has an FW 6 system.
-				// TODO: They likley want to be able to merge the two systems they have.)
-				_projectView.ActivateView(_startupNewView);
+				// This still allows the user to see the history,notes, etc, tab control.
+				enableSendReceiveBtn = false;
+				makeWarningsVisible = true;
 			}
 
-			_fwBridgeView.EnableSendReceive = enableSendReceive;
+			// 3. Show correct view and enable/disable S/R btn and show (or not) the warnings.
+			_projectView.ActivateView(_existingSystemView);
+			_fwBridgeView.EnableSendReceiveControls(enableSendReceiveBtn, makeWarningsVisible);
 			SetSystem(chorusSystem);
 
 		}
 
 		private void StartupNewViewStartupHandler(object sender, StartupNewEventArgs e)
 		{
-			// TODO: Fire up one of the various dlgs that fetch some extant system.
-			// TODO: Or, enable the current lang proj to be shared.
-			// TODO: We don't really want to support all of the options since how would we merge an extant local data set with some other one?
-			throw new NotImplementedException();
+			// This handler can't really work (yet) in an environment where the local system has an extant project,
+			// and the local user wants to collaborate with a remote user,
+			// where the FW language project is the 'same' on both computers.
+			// That is, we don't (yet) support merging the two, since they hav eno common ancestor.
+			// Odds are they each have crucial obejcts, such as LangProject or LexDb, that need to be singletons,
+			// but which have different guids.
+			// (Consider G & J Andersen's case, where each has an FW 6 system.
+			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
+
+			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource);
 		}
 
 		#region Implementation of IDisposable

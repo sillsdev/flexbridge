@@ -77,11 +77,38 @@ namespace FieldWorksBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Cannot clone onto an existing directory ({0}).
+		/// </summary>
+		internal static string kCloneTrouble {
+			get {
+				return ResourceManager.GetString("kCloneTrouble", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Bridge.
 		/// </summary>
 		internal static string kFieldWorksBridge {
 			get {
 				return ResourceManager.GetString("kFieldWorksBridge", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FieldWorks Project File (*.fwdata)|*.fwdata.
+		/// </summary>
+		internal static string kFwDataFileFilter {
+			get {
+				return ResourceManager.GetString("kFwDataFileFilter", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Locate FieldWorks XML Data File.
+		/// </summary>
+		internal static string kLocateFwDataFile {
+			get {
+				return ResourceManager.GetString("kLocateFwDataFile", resourceCulture);
 			}
 		}
 
@@ -118,6 +145,15 @@ namespace FieldWorksBridge.Properties {
 		internal static string kNotAnFwXmlFile {
 			get {
 				return ResourceManager.GetString("kNotAnFwXmlFile", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Select the new folder where the shared data goes..
+		/// </summary>
+		internal static string kSelectClonedDataFolder {
+			get {
+				return ResourceManager.GetString("kSelectClonedDataFolder", resourceCulture);
 			}
 		}
 	}

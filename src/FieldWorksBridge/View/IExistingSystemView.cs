@@ -4,6 +4,6 @@ namespace FieldWorksBridge.View
 {
 	public interface IExistingSystemView : IActiveProjectView
 	{
-		ChorusSystem ChorusSys { set; }
+		void SetSystem(ChorusSystem chorusSystem);
 	}
 }

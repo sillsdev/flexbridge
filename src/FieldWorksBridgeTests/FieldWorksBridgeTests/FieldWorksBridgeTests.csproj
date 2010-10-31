@@ -55,9 +55,11 @@
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="Mocks\MockedGetSharedProject.cs" />
 	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\DeveloperSystemProjectPathLocatorTests.cs" />
 	<Compile Include="DummyFolderSystem.cs" />
+	<Compile Include="Mocks\MockedSynchronizeProject.cs" />
 	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
 	<Compile Include="Model\LanguageProjectTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />

@@ -13,10 +13,8 @@ namespace FieldWorksBridgeTests.Mocks
 		internal void RaiseStartup()
 		{
 			if (Startup != null)
-				Startup(this, new StartupNewEventArgs(MakeNewSystem, RepoSource));
+				Startup(this, new StartupNewEventArgs(RepoSource));
 		}
-
-		internal bool MakeNewSystem { get; set; }
 
 		internal ExtantRepoSource RepoSource { get; set; }
 	}

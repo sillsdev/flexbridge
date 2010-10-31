@@ -81,6 +81,28 @@ namespace FieldWorksBridgeTests.Model
 		}
 
 		[Test]
+		public void LockedProjectIsInUse()
+		{
+			var tempFolder = Path.GetTempPath();
+			var tempDir = Directory.CreateDirectory(Path.Combine(tempFolder, "FWBTest"));
+			try
+			{
+				var fwdataFile = Path.Combine(tempDir.FullName, "test.fwdata");
+				File.WriteAllText(fwdataFile, "");
+
+				var lp = new LanguageProject(fwdataFile);
+				Assert.IsFalse(lp.FieldWorkProjectInUse);
+				var lockedFwdataFile = fwdataFile + ".lock";
+				File.WriteAllText(lockedFwdataFile, "");
+				Assert.IsTrue(lp.FieldWorkProjectInUse);
+			}
+			finally
+			{
+				Directory.Delete(tempDir.FullName, true);
+			}
+		}
+
+		[Test]
 		public void NameIsSameAsToString()
 		{
 			var temp = Path.GetTempFileName();

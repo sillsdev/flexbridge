@@ -48,6 +48,15 @@ namespace FieldWorksBridge.Model
 			}
 		}
 
+		public bool FieldWorkProjectInUse
+		{
+			get
+			{
+				var lockPathname = Path.Combine(DirectoryName, Name + ".fwdata.lock");
+				return File.Exists(lockPathname);
+			}
+		}
+
 		public override string ToString()
 		{
 			return Name;

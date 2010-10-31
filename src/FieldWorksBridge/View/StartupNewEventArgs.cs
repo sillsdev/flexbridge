@@ -13,12 +13,10 @@ namespace FieldWorksBridge.View
 	/// </summary>
 	public sealed class StartupNewEventArgs : EventArgs
 	{
-		internal bool MakeNewSystem { get; private set; }
 		internal ExtantRepoSource ExtantRepoSource { get; private set; }
 
-		internal StartupNewEventArgs(bool makeNewSystem, ExtantRepoSource extantRepoSource)
+		internal StartupNewEventArgs(ExtantRepoSource extantRepoSource)
 		{
-			MakeNewSystem = makeNewSystem;
 			ExtantRepoSource = extantRepoSource;
 		}
 	}

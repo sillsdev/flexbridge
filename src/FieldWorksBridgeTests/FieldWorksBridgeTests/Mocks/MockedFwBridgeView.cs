@@ -32,7 +32,15 @@ namespace FieldWorksBridgeTests.Mocks
 			get { return _mockedProjectView; }
 		}
 
-		public bool EnableSendReceive { set; internal get; }
+		public void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
+		{
+			EnableSendReceive = enableSendReceiveBtn;
+			WarningsAreVisible = makeWarningsVisible;
+		}
+
+		internal bool EnableSendReceive { set; get; }
+
+		internal bool WarningsAreVisible { set; get; }
 
 		#endregion
 	}

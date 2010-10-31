@@ -5,9 +5,14 @@ namespace FieldWorksBridgeTests.Mocks
 {
 	internal class MockedExistingSystemView : IExistingSystemView
 	{
+		internal ChorusSystem ChorusSys { get; private set; }
+
 		#region Implementation of IExistingSystemView
 
-		public ChorusSystem ChorusSys { internal get; set; } // The internal getter is for testing.
+		public void SetSystem(ChorusSystem chorusSystem)
+		{
+			ChorusSys = chorusSystem;
+		}
 
 		#endregion
 	}
