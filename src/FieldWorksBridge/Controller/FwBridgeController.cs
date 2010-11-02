@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using FieldWorksBridge.Infrastructure;
-using FieldWorksBridge.Properties;
+using FieldWorksBridge.Model;
 using FieldWorksBridge.View;
 
 namespace FieldWorksBridge.Controller
@@ -18,6 +17,7 @@ namespace FieldWorksBridge.Controller
 		private readonly ISynchronizeProject _projectSynchronizer;
 		private readonly IGetSharedProject _getSharedProject;
 		private ChorusSystem _chorusSystem;
+		private LanguageProject _currentLanguageProject;
 
 		/// <summary>
 		/// Constructor that makes a standard controller.
@@ -106,15 +106,15 @@ namespace FieldWorksBridge.Controller
 
 		void FwBridgeViewSynchronizeProjectHandler(object sender, EventArgs e)
 		{
-			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, _chorusSystem);
+			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, _chorusSystem, _currentLanguageProject);
 		}
 
 		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)
 		{
-			var langProj = e.Project;
+			_currentLanguageProject = e.Project;
 
 			// 1. If langProj is null, then show the revised 'fetch from afar' view, and return.
-			if (langProj == null)
+			if (_currentLanguageProject == null)
 			{
 				_fwBridgeView.EnableSendReceiveControls(false, false);
 				_projectView.ActivateView(_startupNewView);
@@ -125,13 +125,13 @@ namespace FieldWorksBridge.Controller
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
-			var chorusSystem = new ChorusSystem(langProj.DirectoryName, Environment.UserName);
+			var chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
 			ConfigureChorusProjectFolder(chorusSystem);
 			var enableSendReceiveBtn = true;
 			var makeWarningsVisible = false;
 
 			// 2: If FW project is in use, then disable the S/R btn and show a warning message.
-			if (langProj.FieldWorkProjectInUse)
+			if (_currentLanguageProject.FieldWorkProjectInUse)
 			{
 				// This still allows the user to see the history,notes, etc, tab control.
 				enableSendReceiveBtn = false;

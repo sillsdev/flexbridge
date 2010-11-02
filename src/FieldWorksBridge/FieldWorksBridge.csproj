@@ -161,6 +161,7 @@
   </Target>
   -->
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)</PostBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>

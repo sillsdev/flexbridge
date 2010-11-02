@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FieldWorksBridge.Controller;
 using FieldWorksBridgeTests.Mocks;
@@ -122,11 +121,18 @@ namespace FieldWorksBridgeTests.Controller
 		[Test]
 		public void SynchronizeProjectHasFormAndChorusSystem()
 		{
+			var sharableProject = (from project in _mockedFwBridgeView.Projects
+								   where project.IsRemoteCollaborationEnabled
+								   select project).First();
+			_mockedFwBridgeView.RaiseProjectSelected(sharableProject);
+
 			Assert.IsFalse(_mockedSynchronizeProject.HasForm);
 			Assert.IsFalse(_mockedSynchronizeProject.HasChorusSystem);
+			Assert.IsFalse(_mockedSynchronizeProject.HasLanguageProject);
 			_mockedFwBridgeView.RaiseSynchronizeProject();
 			Assert.IsTrue(_mockedSynchronizeProject.HasForm);
 			Assert.IsTrue(_mockedSynchronizeProject.HasChorusSystem);
+			Assert.IsTrue(_mockedSynchronizeProject.HasLanguageProject);
 		}
 
 		#endregion Ensure IFwBridgeView is handled by controller

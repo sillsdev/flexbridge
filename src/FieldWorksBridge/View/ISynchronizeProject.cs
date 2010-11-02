@@ -1,10 +1,11 @@
 ﻿using System.Windows.Forms;
 using Chorus;
+using FieldWorksBridge.Model;
 
 namespace FieldWorksBridge.View
 {
-	public interface ISynchronizeProject
+	internal interface ISynchronizeProject
 	{
-		void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem);
+		void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject);
 	}
 }
