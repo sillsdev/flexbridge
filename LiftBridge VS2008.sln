@@ -3,16 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridge", "src\LiftBridge\LiftBridge.csproj", "{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility6", "src\LiftBridgeUtility6\LiftBridgeUtility6.csproj", "{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeUtility7", "src\LiftBridgeUtility7\LiftBridgeUtility7.csproj", "{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAA3E6B4-A674-487B-8D6A-CB93E4ED9708}"
 	ProjectSection(SolutionItems) = preProject
 		Version.cs = Version.cs
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "LiftBridge for FieldWorks 7", "src\LiftBridge for FieldWorks 7\LiftBridge for FieldWorks 7.vdproj", "{86007C33-08E9-45F4-820A-E7130AB47A31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeCore", "src\LiftBridgeCore\LiftBridgeCore.csproj", "{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeTests", "src\LiftBridgeTests\LiftBridgeTests.csproj", "{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,16 +22,14 @@ Global
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD2E6B89-30ED-413F-AB6F-7DCF45E5CC03}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BEC9F5B-EDC6-42BE-A833-14FFE45330D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86007C33-08E9-45F4-820A-E7130AB47A31}.Debug|Any CPU.ActiveCfg = Debug
-		{86007C33-08E9-45F4-820A-E7130AB47A31}.Release|Any CPU.ActiveCfg = Release
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

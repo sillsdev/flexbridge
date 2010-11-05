@@ -1,18 +1,13 @@
-relre:src/_ReSharper.FwLift/*
 relre:src/_ReSharper.LiftBridge/*
-glob:lib/FieldWorks 6.0/*.pdb
 relre:src/LiftBridge/bin/*
 relre:src/LiftBridge/obj/*
 relre:src/LiftBridgeTests/bin/*
 relre:src/LiftBridgeTests/obj/*
 glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user
-relre:src/LiftBridgeUtility6/bin/*.*
-relre:src/LiftBridgeUtility6/obj/*.*
-relre:src/LiftBridgeUtility7/bin/*.*
-relre:src/LiftBridgeUtility7/obj/*.*
-glob:lib/FieldWorks 7.0/*.pdb
 relre:_ReSharper.LiftBridge/*
 glob:LiftBridge VS2008.5.1.ReSharper.user
 glob:LiftBridge VS2008.suo
 relre:output/*
 glob:lib/common/ChorusPlus.pdb
+relre:src/LiftBridgeCore/bin/*
+relre:src/LiftBridgeCore/obj/*

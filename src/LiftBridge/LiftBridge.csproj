@@ -17,7 +17,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -76,6 +76,9 @@
 	<Compile Include="LiftBridgeDlg.Designer.cs">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
 	</Compile>
+	<Compile Include="Controller\LiftBridgeController.cs" />
+	<Compile Include="Model\LiftProject.cs" />
+	<Compile Include="Model\LiftProjectServices.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
@@ -108,6 +111,12 @@
 	  <DependentUpon>StartupNew.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\LiftBridgeCore\LiftBridgeCore.csproj">
+	  <Project>{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}</Project>
+	  <Name>LiftBridgeCore</Name>
+	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
