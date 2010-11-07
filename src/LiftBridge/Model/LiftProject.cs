@@ -12,6 +12,11 @@ namespace SIL.LiftBridge.Model
 	{
 		internal string LiftProjectName { get; private set; }
 
+		public string LiftPathname
+		{
+			get { return LiftProjectServices.PathToFirstLiftFile(this); }
+		}
+
 		internal LiftProject(string liftProjectName)
 		{
 			LiftProjectName = liftProjectName;

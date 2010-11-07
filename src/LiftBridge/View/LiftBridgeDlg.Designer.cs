@@ -1,6 +1,8 @@
-﻿namespace SIL.LiftBridge
+﻿using System.Windows.Forms;
+
+namespace SIL.LiftBridge.View
 {
-	public partial class LiftBridgeDlg
+	public partial class LiftBridgeDlg : Form
 	{
 		/// <summary>
 		/// Required designer variable.

@@ -1,6 +1,8 @@
-﻿namespace SIL.LiftBridge
+﻿using System.Windows.Forms;
+
+namespace SIL.LiftBridge.View
 {
-	public partial class ExistingSystem
+	public partial class ExistingSystem : UserControl
 	{
 		/// <summary>
 		/// Required designer variable.

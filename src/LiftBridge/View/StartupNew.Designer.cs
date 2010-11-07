@@ -1,4 +1,4 @@
-﻿namespace SIL.LiftBridge
+﻿namespace SIL.LiftBridge.View
 {
 	partial class StartupNew
 	{

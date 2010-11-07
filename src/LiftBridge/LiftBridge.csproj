@@ -63,17 +63,20 @@
 	<Compile Include="..\..\Version.cs">
 	  <Link>Version.cs</Link>
 	</Compile>
-	<Compile Include="ExistingSystem.cs">
+	<Compile Include="View\ExistingSystem.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="ExistingSystem.Designer.cs">
+	<Compile Include="View\ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	</Compile>
-	<Compile Include="ILiftBridgeImportExport.cs" />
-	<Compile Include="LiftBridgeDlg.cs">
+	<Compile Include="View\IActiveView.cs" />
+	<Compile Include="View\IExistingSystemView.cs" />
+	<Compile Include="View\ILiftBridgeView.cs" />
+	<Compile Include="View\IStartupNewView.cs" />
+	<Compile Include="View\LiftBridgeDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="LiftBridgeDlg.Designer.cs">
+	<Compile Include="View\LiftBridgeDlg.Designer.cs">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Controller\LiftBridgeController.cs" />
@@ -85,20 +88,20 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
-	<Compile Include="StartupNewEventArgs.cs" />
-	<Compile Include="StartupNew.cs">
+	<Compile Include="View\StartupNewEventArgs.cs" />
+	<Compile Include="View\StartupNew.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="StartupNew.Designer.cs">
+	<Compile Include="View\StartupNew.Designer.cs">
 	  <DependentUpon>StartupNew.cs</DependentUpon>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="ExistingSystem.resx">
+	<EmbeddedResource Include="View\ExistingSystem.resx">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="LiftBridgeDlg.resx">
+	<EmbeddedResource Include="View\LiftBridgeDlg.resx">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
@@ -107,7 +110,7 @@
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="StartupNew.resx">
+	<EmbeddedResource Include="View\StartupNew.resx">
 	  <DependentUpon>StartupNew.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>

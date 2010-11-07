@@ -12,9 +12,14 @@ namespace SIL.LiftBridge.Model
 		{
 			get
 			{
-				return Path.Combine(
+				var basePath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 					"LiftBridge");
+
+				if (!Directory.Exists(basePath))
+					Directory.CreateDirectory(basePath);
+
+				return basePath;
 			}
 		}
 
@@ -25,7 +30,18 @@ namespace SIL.LiftBridge.Model
 
 		internal static bool ProjectIsShared(LiftProject project)
 		{
-			return Directory.Exists(Path.Combine(PathToProject(project), ".hg"));
+			return Directory.Exists(PathToMercurialFolder(project));
+		}
+
+		internal static string PathToFirstLiftFile(LiftProject project)
+		{
+			var liftFiles = Directory.GetFiles(PathToProject(project), "*.lift");
+			return liftFiles.Length == 0 ? null : liftFiles[0];
+		}
+
+		internal static string PathToMercurialFolder(LiftProject project)
+		{
+			return Path.Combine(PathToProject(project), ".hg");
 		}
 	}
 }

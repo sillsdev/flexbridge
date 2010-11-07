@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SIL.LiftBridge
+namespace SIL.LiftBridge.View
 {
 	/// <summary>
 	/// Delegate declaration.
@@ -13,12 +13,12 @@ namespace SIL.LiftBridge
 	/// </summary>
 	internal sealed class StartupNewEventArgs : EventArgs
 	{
-		internal bool MakeNewSystem { get; private set; }
+		internal SharedSystemType SystemType { get; private set; }
 		internal ExtantRepoSource ExtantRepoSource { get; private set; }
 
-		internal StartupNewEventArgs(bool makeNewSystem, ExtantRepoSource extantRepoSource)
+		internal StartupNewEventArgs(SharedSystemType systemType, ExtantRepoSource extantRepoSource)
 		{
-			MakeNewSystem = makeNewSystem;
+			SystemType = systemType;
 			ExtantRepoSource = extantRepoSource;
 		}
 	}
@@ -28,5 +28,11 @@ namespace SIL.LiftBridge
 		Internet,
 		Usb,
 		LocalNetwork
+	}
+
+	internal enum SharedSystemType
+	{
+		New,
+		Extant
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace LiftBridgeCore
 {
@@ -37,6 +38,6 @@ namespace LiftBridgeCore
 		/// <exception cref="ArgumentNullException">
 		/// Thrown if <param name="projectName"/> is null or an empty string.
 		/// </exception>
-		void DoSendReceiveForLanguageProject(string projectName);
+		void DoSendReceiveForLanguageProject(Form parent, string projectName);
 	}
 }

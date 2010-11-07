@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SIL.LiftBridge
+namespace SIL.LiftBridge.View
 {
 	/// <summary>
 	/// This control is used by the LiftBridgeDlg when there is no extant Hg repo for some FW language project.
 	///
 	/// The Startup event lets the parent dlg know what the user wants to do (use extant repo or make new one).
 	/// </summary>
-	internal sealed partial class StartupNew : UserControl
+	internal sealed partial class StartupNew : UserControl, IStartupNewView
 	{
-		internal event StartupNewEventHandler Startup;
+		public event StartupNewEventHandler Startup;
 
 		internal StartupNew()
 		{
@@ -33,15 +33,15 @@ namespace SIL.LiftBridge
 					? ExtantRepoSource.LocalNetwork
 					: ExtantRepoSource.Internet);
 
-			OnStartup(new StartupNewEventArgs(_rbFirstToUseFlexBridge.Checked, repoSource));
+			OnStartup(new StartupNewEventArgs(
+				(_rbFirstToUseFlexBridge.Checked) ? SharedSystemType.New : SharedSystemType.Extant,
+				repoSource));
 		}
 
 		private void OnStartup(StartupNewEventArgs e)
 		{
-			var handler = Startup;
-			if (handler != null)
-				handler(this, e);
+			if (Startup != null)
+				Startup(this, e);
 		}
-
 	}
 }

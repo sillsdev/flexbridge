@@ -1,36 +1,23 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Chorus;
-using Chorus.UI.Sync;
 
-namespace SIL.LiftBridge
+namespace SIL.LiftBridge.View
 {
-	public partial class ExistingSystem : UserControl
+	public partial class ExistingSystem : IExistingSystemView
 	{
-		private readonly ChorusSystem _chorusSystem;
+		private ChorusSystem _chorusSystem;
+#if WANTPORT
 		private ILiftBridgeImportExport _importerExporter;
 		private bool _haveExportedFromFlex;
+#endif
 
 		internal ExistingSystem()
 		{
 			InitializeComponent();
 		}
 
-		public ExistingSystem(ChorusSystem chorusSystem)
-			: this()
-		{
-			_chorusSystem = chorusSystem;
-
-			var notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
-			_tpNotes.Controls.Add(notesBrowser);
-			notesBrowser.Dock = DockStyle.Fill;
-
-			var historyPage = _chorusSystem.WinForms.CreateHistoryPage();
-			_tpHistory.Controls.Add(historyPage);
-			historyPage.Dock = DockStyle.Fill;
-
-			//_tpAbout
-		}
-
+#if WANTPORT
 		internal ILiftBridgeImportExport ImporterExporter
 		{
 			set
@@ -40,9 +27,11 @@ namespace SIL.LiftBridge
 					return;
 			}
 		}
+#endif
 
 		private void _sendReceiveButton_Click(object sender, System.EventArgs e)
 		{
+#if WANTPORT
 			if (!_haveExportedFromFlex)
 			{
 				// Export Flex, but only once per utility launch
@@ -67,6 +56,26 @@ namespace SIL.LiftBridge
 					_importerExporter.ImportLexicon(myForm);
 				}
 			}
+#endif
 		}
+
+		#region Implementation of IExistingSystemView
+
+		public void SetSystem(ChorusSystem chorusSystem)
+		{
+			_chorusSystem = chorusSystem;
+
+			var notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
+			_tpNotes.Controls.Add(notesBrowser);
+			notesBrowser.Dock = DockStyle.Fill;
+
+			var historyPage = _chorusSystem.WinForms.CreateHistoryPage();
+			_tpHistory.Controls.Add(historyPage);
+			historyPage.Dock = DockStyle.Fill;
+
+			//_tpAbout
+		}
+
+		#endregion
 	}
 }

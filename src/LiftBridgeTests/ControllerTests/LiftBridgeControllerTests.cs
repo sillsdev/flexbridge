@@ -12,7 +12,8 @@
 // Responsibility: Randy
 // ---------------------------------------------------------------------------------------------
 using System;
-using LiftBridgeCore;
+using System.Windows.Forms;
+using LiftBridgeTests.MockedViews;
 using NUnit.Framework;
 using SIL.LiftBridge.Controller;
 
@@ -21,23 +22,57 @@ namespace LiftBridgeTests.ControllerTests
 	[TestFixture]
 	public class LiftBridgeControllerTests
 	{
-		private readonly ILiftBridge _liftBridgeController;
+		private LiftBridgeController _liftBridgeController;
+		private Form _parentForm;
+		private MockedLiftBridgeView _mockedLiftBridgeView;
 
-		public LiftBridgeControllerTests()
+		[SetUp]
+		public void TestSetup()
 		{
-			_liftBridgeController = new LiftBridgeController();
+			_parentForm = new Form();
+			_mockedLiftBridgeView = new MockedLiftBridgeView();
+			_liftBridgeController = new LiftBridgeController(_mockedLiftBridgeView, null, null);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			_mockedLiftBridgeView.Dispose();
+			_parentForm.Dispose();
+
+			_mockedLiftBridgeView = null;
+			_parentForm = null;
+			_liftBridgeController = null;
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void NullProjectNameThrows()
 		{
-			_liftBridgeController.DoSendReceiveForLanguageProject(null);
+			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, null);
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void EmptyProjectNameThrows()
 		{
-			_liftBridgeController.DoSendReceiveForLanguageProject(string.Empty);
+			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, string.Empty);
+		}
+
+		[Test]
+		public void EnsureControllerhasProject()
+		{
+			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, "SomeProject");
+			var lp = _liftBridgeController.Liftproject;
+			Assert.IsNotNull(lp);
+			Assert.AreEqual("SomeProject", lp.LiftProjectName);
+		}
+
+		[Test]
+		public void EnsureControllerManagesMainLiftBrdigeView()
+		{
+			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, "AProject");
+			Assert.IsNotNull(_mockedLiftBridgeView.MainForm);
+			Assert.AreSame(_parentForm, _mockedLiftBridgeView.MainForm);
+			Assert.AreEqual("LIFT Bridge: AProject", _mockedLiftBridgeView.Title);
 		}
 
 		// TODO: Deal with the three handlers and a mocked impl of the callee of the remaining code in DoSendReceiveForLanguageProject

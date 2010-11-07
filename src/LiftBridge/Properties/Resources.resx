@@ -171,10 +171,13 @@
   <data name="kCloneTrouble" xml:space="preserve">
 	<value>Cannot clone onto an existing directory ({0})</value>
   </data>
-	<data name="kDidNotCloneSystem">
-		<value xml:space="preserve">Did not get an existing Lift system.</value>
-	</data>
-	<data name="kLiftSetUp">
-		<value xml:space="preserve">Lift Setup</value>
-	</data>
+  <data name="kDidNotCloneSystem" xml:space="preserve">
+	<value>Did not get an existing Lift system.</value>
+  </data>
+  <data name="kLiftSetUp" xml:space="preserve">
+	<value>Lift Setup</value>
+  </data>
+  <data name="kTitle" xml:space="preserve">
+	<value>LIFT Bridge: {0}</value>
+  </data>
 </root>

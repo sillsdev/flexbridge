@@ -223,6 +223,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to LIFT Bridge: {0}.
+		/// </summary>
+		public static string kTitle {
+			get {
+				return ResourceManager.GetString("kTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to This utility allows for: 1) exporting FLEx lexical data in the LIFT format, 2) sending it to other LIFT users, and 3) receiving entries from them..
 		/// </summary>
 		public static string kWhatDescription {

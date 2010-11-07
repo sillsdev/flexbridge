@@ -7,6 +7,24 @@ namespace LiftBridgeTests.ModelTests
 	[TestFixture]
 	public class LiftBridgeModelTests
 	{
+		private string _pathToProject;
+
+		private LiftProject CreateNewbieProject()
+		{
+			var liftProject = new LiftProject("Newbie");
+			_pathToProject = LiftProjectServices.PathToProject(liftProject);
+			Directory.CreateDirectory(_pathToProject);
+			return liftProject;
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			if (_pathToProject != null && Directory.Exists(_pathToProject))
+				Directory.Delete(_pathToProject, true);
+			_pathToProject = null;
+		}
+
 		[Test]
 		public void ProjectHasCorrectName()
 		{
@@ -23,31 +41,39 @@ namespace LiftBridgeTests.ModelTests
 		[Test]
 		public void HasCorrectPathForProject()
 		{
-			var liftProject = new LiftProject("Newbie");
-			Assert.IsTrue(LiftProjectServices.PathToProject(liftProject).EndsWith("Newbie"));
+			CreateNewbieProject();
+			Assert.IsTrue(_pathToProject.EndsWith("Newbie"));
 		}
 
 		[Test]
 		public void EnsureProjectIsNotShared()
 		{
-			var liftProject = new LiftProject("Newbie");
+			var liftProject = CreateNewbieProject();
 			Assert.IsFalse(LiftProjectServices.ProjectIsShared(liftProject));
 		}
 
 		[Test]
 		public void EnsureProjectIsShared()
 		{
-			var liftProject = new LiftProject("Newbie");
-			var pathToProj = LiftProjectServices.PathToProject(liftProject);
-			var dirInfo = Directory.CreateDirectory(Path.Combine(pathToProj, ".hg"));
-			try
-			{
-				Assert.IsTrue(LiftProjectServices.ProjectIsShared(liftProject));
-			}
-			finally
-			{
-				Directory.Delete(dirInfo.FullName);
-			}
+			var liftProject = CreateNewbieProject();
+			Directory.CreateDirectory(Path.Combine(_pathToProject, ".hg"));
+			Assert.IsTrue(LiftProjectServices.ProjectIsShared(liftProject));
+		}
+
+		[Test]
+		public void ProjectHasLiftFile()
+		{
+			var liftProject = CreateNewbieProject();
+			var liftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			File.WriteAllText(liftPathname, "");
+			Assert.AreEqual(liftPathname, liftProject.LiftPathname);
+		}
+
+		[Test]
+		public void ProjectHasNoLiftFile()
+		{
+			var liftProject = CreateNewbieProject();
+			Assert.IsNull(liftProject.LiftPathname);
 		}
 	}
 }
