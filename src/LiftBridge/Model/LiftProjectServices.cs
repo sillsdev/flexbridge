@@ -25,7 +25,12 @@ namespace SIL.LiftBridge.Model
 
 		internal static string PathToProject(LiftProject project)
 		{
-			return Path.Combine(BasePath, project.LiftProjectName);
+			var pathToProj = Path.Combine(BasePath, project.LiftProjectName);
+
+			if (!Directory.Exists(pathToProj))
+				Directory.CreateDirectory(pathToProj);
+
+			return pathToProj;
 		}
 
 		internal static bool ProjectIsShared(LiftProject project)

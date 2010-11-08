@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SIL.LiftBridge.Model
+﻿namespace SIL.LiftBridge.Model
 {
 	/// <summary>
 	/// Class that represents a Lift project.

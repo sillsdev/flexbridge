@@ -2,7 +2,7 @@
 
 namespace SIL.LiftBridge.View
 {
-	public partial class ExistingSystem : UserControl
+	internal partial class ExistingSystem : UserControl
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -96,7 +96,7 @@ namespace SIL.LiftBridge.View
 			this._sendReceiveButton.Text = "Send/Receive";
 			this._sendReceiveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._sendReceiveButton.UseVisualStyleBackColor = false;
-			this._sendReceiveButton.Click += new System.EventHandler(this._sendReceiveButton_Click);
+			this._sendReceiveButton.Click += new System.EventHandler(this.SendReceiveButtonClick);
 			//
 			// ExistingSystem
 			//

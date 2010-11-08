@@ -10,7 +10,11 @@ namespace SIL.LiftBridge.View
 	/// </summary>
 	internal sealed partial class StartupNew : UserControl, IStartupNewView
 	{
+		#region IStartupNewView
+
 		public event StartupNewEventHandler Startup;
+
+		#endregion IStartupNewView
 
 		internal StartupNew()
 		{
@@ -27,15 +31,15 @@ namespace SIL.LiftBridge.View
 
 		private void ContinueBtnClicked(object sender, EventArgs e)
 		{
+			var sharedSystemType = (_rbFirstToUseFlexBridge.Checked) ? SharedSystemType.New : SharedSystemType.Extant;
+
 			var repoSource = _rbUsb.Checked
 				? ExtantRepoSource.Usb
 				: (_rbLocalNetwork.Checked
 					? ExtantRepoSource.LocalNetwork
 					: ExtantRepoSource.Internet);
 
-			OnStartup(new StartupNewEventArgs(
-				(_rbFirstToUseFlexBridge.Checked) ? SharedSystemType.New : SharedSystemType.Extant,
-				repoSource));
+			OnStartup(new StartupNewEventArgs(sharedSystemType, repoSource));
 		}
 
 		private void OnStartup(StartupNewEventArgs e)

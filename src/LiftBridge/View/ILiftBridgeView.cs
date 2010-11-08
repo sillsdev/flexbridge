@@ -19,5 +19,10 @@ namespace SIL.LiftBridge.View
 		/// with <paramref name="activeView"/>.
 		/// </remarks>
 		void ActivateView(IActiveView activeView);
+
+		/// <summary>
+		/// Close the view.
+		/// </summary>
+		void Close();
 	}
 }

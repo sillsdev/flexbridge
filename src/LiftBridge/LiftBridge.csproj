@@ -69,8 +69,10 @@
 	<Compile Include="View\ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
+	<Compile Include="View\IGetSharedProject.cs" />
 	<Compile Include="View\ILiftBridgeView.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="View\LiftBridgeDlg.cs">

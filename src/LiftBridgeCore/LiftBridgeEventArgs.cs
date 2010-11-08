@@ -15,6 +15,12 @@ namespace LiftBridgeCore
 			LiftPathname = liftPathname;
 		}
 
+		/// <summary>
+		/// The pathname to a Lift file.
+		///
+		/// This may be a temporary lift file or a real one,
+		/// but it ought not be a concern to the client code that uses the pathname.
+		/// </summary>
 		public string LiftPathname { get; private set; }
 	}
 }

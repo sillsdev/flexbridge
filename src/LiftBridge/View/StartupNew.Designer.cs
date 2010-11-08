@@ -86,10 +86,9 @@
 			//
 			// _btnContinue
 			//
-			this._btnContinue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._btnContinue.Enabled = false;
 			this._btnContinue.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._btnContinue.Location = new System.Drawing.Point(287, 216);
+			this._btnContinue.Location = new System.Drawing.Point(20, 217);
 			this._btnContinue.Name = "_btnContinue";
 			this._btnContinue.Size = new System.Drawing.Size(75, 23);
 			this._btnContinue.TabIndex = 5;
@@ -99,8 +98,6 @@
 			//
 			// groupBox1
 			//
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this._rbLocalNetwork);
 			this.groupBox1.Controls.Add(this._rbInternet);
 			this.groupBox1.Controls.Add(this._rbUsb);

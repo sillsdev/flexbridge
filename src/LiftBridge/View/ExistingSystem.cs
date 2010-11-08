@@ -1,48 +1,59 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.UI.Sync;
+using LiftBridgeCore;
+using SIL.LiftBridge.Model;
 
 namespace SIL.LiftBridge.View
 {
-	public partial class ExistingSystem : IExistingSystemView
+	internal partial class ExistingSystem : IExistingSystemView
 	{
 		private ChorusSystem _chorusSystem;
-#if WANTPORT
-		private ILiftBridgeImportExport _importerExporter;
+		private LiftProject _liftProject;
 		private bool _haveExportedFromFlex;
-#endif
 
 		internal ExistingSystem()
 		{
 			InitializeComponent();
 		}
 
-#if WANTPORT
-		internal ILiftBridgeImportExport ImporterExporter
+		private void SendReceiveButtonClick(object sender, EventArgs e)
 		{
-			set
+			if (!_haveExportedFromFlex)
 			{
-				_importerExporter = value;
-				if (value == null)
-					return;
-			}
-		}
-#endif
+				// Export Lift data, but only once per launch.
+				if (ExportLexicon != null)
+				{
+					// Use a temp file, in case something bad happens on export.
+					var tempPathname = Path.GetTempFileName();
+					var eventArgs = new LiftBridgeEventArgs(tempPathname);
+					ExportLexicon(this, eventArgs);
+					if (eventArgs.Cancel)
+					{
+						try
+						{
+							if (File.Exists(tempPathname))
+								File.Delete(tempPathname);
+						}
+// ReSharper disable EmptyGeneralCatchClause
+						catch
+						{
+							// Eat exception.
+						}
+// ReSharper restore EmptyGeneralCatchClause
+						return;
+					}
 
-		private void _sendReceiveButton_Click(object sender, System.EventArgs e)
-		{
-#if WANTPORT
-			if (!_haveExportedFromFlex)
-			{
-				// Export Flex, but only once per utility launch
-				//// ExportLexicon returns 'true' for success.
-				_haveExportedFromFlex = _importerExporter.ExportLexicon(FindForm());
+					File.Copy(_liftProject.LiftPathname, _liftProject.LiftPathname + ".bak", true);
+					File.Copy(tempPathname, _liftProject.LiftPathname, true);
+					File.Delete(tempPathname);
+					_haveExportedFromFlex = true;
+				}
 			}
-			if (!_haveExportedFromFlex)
-				return; // Nothing to do.
 
 			// Use SyncDialog to do the S/R stuff.
-			// SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended
 			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog())
 			{
 				syncDlg.SyncOptions.DoSendToOthers = true;
@@ -50,20 +61,28 @@ namespace SIL.LiftBridge.View
 				syncDlg.SyncOptions.DoMergeWithOthers = true;
 				var myForm = FindForm();
 				syncDlg.ShowDialog(myForm);
-				if (syncDlg.DialogResult == DialogResult.OK && syncDlg.SyncResult.DidGetChangesFromOthers)
-				{
-					// Import merged stuff, but only if any new stuff came from afar.
-					_importerExporter.ImportLexicon(myForm);
-				}
+				if (syncDlg.DialogResult != DialogResult.OK || !syncDlg.SyncResult.DidGetChangesFromOthers)
+					return; // User canceled of nothing came from 'afar'.
+
+				if (ImportLexicon == null)
+					return;// No event handler.
+
+				var eventArgs = new LiftBridgeEventArgs(_liftProject.LiftPathname);
+				ImportLexicon(this, eventArgs);
+				// Should we do anything special for an import cancelation?
 			}
-#endif
 		}
 
 		#region Implementation of IExistingSystemView
 
-		public void SetSystem(ChorusSystem chorusSystem)
+		public event ExportLexiconEventHandler ExportLexicon;
+
+		public event ImportLexiconEventHandler ImportLexicon;
+
+		public void SetSystem(ChorusSystem chorusSystem, LiftProject liftProject)
 		{
 			_chorusSystem = chorusSystem;
+			_liftProject = liftProject;
 
 			var notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
 			_tpNotes.Controls.Add(notesBrowser);

@@ -3,9 +3,6 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
-using Chorus.UI.Clone;
-using Chorus.Utilities;
-using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -15,25 +12,32 @@ namespace SIL.LiftBridge.Controller
 {
 	internal class LiftBridgeController : ILiftBridge
 	{
-		private ILiftBridgeView _liftBridgeView;
-		private IStartupNewView _startupNewView;
-		private IExistingSystemView _existingSystemView;
+		private readonly ILiftBridgeView _liftBridgeView;
+		private readonly IStartupNewView _startupNewView;
+		private readonly IExistingSystemView _existingSystemView;
+		private readonly IGetSharedProject _getSharedProject;
 
 		/// <summary>
 		/// Constructor used by ILiftBridge client (via Reflection).
 		/// </summary>
 		internal LiftBridgeController()
 		{
+			_liftBridgeView = new LiftBridgeDlg();
+			_startupNewView = new StartupNew();
+			_existingSystemView = new ExistingSystem();
+			_getSharedProject = new GetSharedProject();
 		}
 
 		/// <summary>
-		/// Constructor used *only* for testing
+		/// Constructor used *only* for testing.
 		/// </summary>
-		internal LiftBridgeController(ILiftBridgeView mockedLiftBridgeView, IStartupNewView mockedStartupNewView, IExistingSystemView mockedExistingSystemView)
+		internal LiftBridgeController(ILiftBridgeView mockedLiftBridgeView, IStartupNewView mockedStartupNewView,
+			IExistingSystemView mockedExistingSystemView, IGetSharedProject mockedGetSharedProject)
 		{
 			_liftBridgeView = mockedLiftBridgeView;
 			_startupNewView = mockedStartupNewView;
 			_existingSystemView = mockedExistingSystemView;
+			_getSharedProject = mockedGetSharedProject;
 		}
 
 		private Form MainForm
@@ -48,19 +52,34 @@ namespace SIL.LiftBridge.Controller
 			if (_startupNewView != null)
 				_startupNewView.Startup -= Startup;
 
-			if (_existingSystemView == null)
-				_existingSystemView = new ExistingSystem();
 			var chorusSystem = new ChorusSystem(LiftProjectServices.PathToProject(Liftproject), Environment.UserName);
 			LiftFolder.AddLiftFileInfoToFolderConfiguration(chorusSystem.ProjectFolderConfiguration);
-			_existingSystemView.SetSystem(chorusSystem);
+			_existingSystemView.SetSystem(chorusSystem, Liftproject);
 			_liftBridgeView.ActivateView(_existingSystemView);
-			// TODO: Wire up events on 'existingSystem' with the big client in the sky.
+			_existingSystemView.ImportLexicon += OnImportLexicon;
+			_existingSystemView.ExportLexicon += OnExportLexicon;
+		}
+
+		void OnExportLexicon(object sender, LiftBridgeEventArgs e)
+		{
+			// Just pass it on, or cancel.
+			if (ExportLexicon != null)
+				ExportLexicon(this, e);
+			else
+				e.Cancel = true;
+		}
+
+		void OnImportLexicon(object sender, LiftBridgeEventArgs e)
+		{
+			// Just pass it on, or cancel.
+			if (ImportLexicon != null)
+				ImportLexicon(this, e);
+			else
+				e.Cancel = true;
 		}
 
 		private void InstallNewSystem()
 		{
-			if (_startupNewView == null)
-				_startupNewView = new StartupNew();
 			_liftBridgeView.ActivateView(_startupNewView);
 			_startupNewView.Startup += Startup;
 		}
@@ -69,101 +88,38 @@ namespace SIL.LiftBridge.Controller
 		{
 			switch (e.SystemType)
 			{
-				case SharedSystemType.New:
-					File.Create(Path.Combine(LiftProjectServices.PathToProject(Liftproject), Liftproject.LiftProjectName + ".lift"));
-					break;
 				default:
-					switch (e.ExtantRepoSource)
+					throw new InvalidOperationException("Unrecognized type of shared system.");
+				case SharedSystemType.New:
+					File.WriteAllText(
+						Path.Combine(
+							LiftProjectServices.PathToProject(Liftproject),
+							Liftproject.LiftProjectName + ".lift"),
+						"");
+					break;
+				case SharedSystemType.Extant:
+					if (!_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject))
 					{
-						case ExtantRepoSource.Internet:
-							var cloneModel = new GetCloneFromInternetModel(LiftProjectServices.BasePath)
-												{
-													LocalFolderName = Liftproject.LiftProjectName
-												};
-							using (var internetCloneDlg = new GetCloneFromInternetDialog(cloneModel))
-							{
-								var dlgResult = internetCloneDlg.ShowDialog(MainForm);
-								switch (dlgResult)
-								{
-									default:
-										BailOut();
-										return;
-									case DialogResult.OK:
-										// It made a clone, but maybe in the wrong name.
-										// _currentRootDataPath is the one we want to use.
-										var newProjPath = internetCloneDlg.PathToNewProject;
-										if (newProjPath != LiftProjectServices.PathToProject(Liftproject))
-											Directory.Move(newProjPath, LiftProjectServices.PathToProject(Liftproject));
-										break;
-								}
-							}
-							break;
-						case ExtantRepoSource.LocalNetwork:
-							using (var openFileDlg = new OpenFileDialog())
-							{
-								openFileDlg.AutoUpgradeEnabled = true;
-								openFileDlg.Title = Resources.kLocateLiftFile;
-								openFileDlg.AutoUpgradeEnabled = true;
-								openFileDlg.RestoreDirectory = true;
-								openFileDlg.DefaultExt = ".lift";
-								openFileDlg.Filter = Resources.kLiftFileFilter;
-								openFileDlg.Multiselect = false;
-
-								var dlgResult = openFileDlg.ShowDialog(MainForm);
-								switch (dlgResult)
-								{
-									default:
-										BailOut();
-										return;
-									case DialogResult.OK:
-										var fileFromDlg = openFileDlg.FileName;
-										var sourcePath = Path.GetDirectoryName(fileFromDlg);
-										var x = Path.GetFileNameWithoutExtension(fileFromDlg);
-										// Make a clone the hard way.
-// ReSharper disable AssignNullToNotNullAttribute
-										var target = Path.Combine(LiftProjectServices.BasePath, x);
-										if (Directory.Exists(target))
-											throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
-										var repo = new HgRepository(sourcePath, new StatusProgress());
-										repo.CloneLocal(target);
-										if (target != LiftProjectServices.PathToProject(Liftproject))
-											Directory.Move(target, LiftProjectServices.PathToProject(Liftproject));
-// ReSharper restore AssignNullToNotNullAttribute
-										break;
-								}
-							}
-							break;
-						case ExtantRepoSource.Usb:
-							using (var usbCloneDlg = new GetCloneFromUsbDialog(LiftProjectServices.BasePath))
-							{
-								var dlgResult = usbCloneDlg.ShowDialog(MainForm);
-								switch (dlgResult)
-								{
-									default:
-										BailOut();
-										return;
-									case DialogResult.OK:
-										// It made a clone, but maybe in the wrong name.
-										// _currentRootDataPath is the one we want to use.
-										var newProjPath = usbCloneDlg.PathToNewProject;
-										if (newProjPath != LiftProjectServices.PathToProject(Liftproject))
-											Directory.Move(newProjPath, LiftProjectServices.PathToProject(Liftproject));
-										break;
-								}
-							}
-							break;
+						// Clone not made for some reason.
+						MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
+										MessageBoxIcon.Warning);
+						_liftBridgeView.Close();
+						return;
+					}
+					if (BasicLexiconImport != null)
+					{
+						var eventArgs = new LiftBridgeEventArgs(Liftproject.LiftPathname);
+						BasicLexiconImport((ILiftBridge)this, eventArgs);
+						if (eventArgs.Cancel)
+						{
+							_liftBridgeView.Close();
+							return; // Event handler could not complete the basic import.
+						}
 					}
 					break;
 			}
 
 			InstallExistingSystemControl();
-		}
-
-		private void BailOut()
-		{
-			MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
-							MessageBoxIcon.Warning);
-			MainForm.Close();
 		}
 
 		#region Implementation of ILiftBridge
@@ -199,8 +155,6 @@ namespace SIL.LiftBridge.Controller
 
 			Liftproject = new LiftProject(projectName);
 
-			if (_liftBridgeView == null)
-				_liftBridgeView = new LiftBridgeDlg();
 			try
 			{
 				if (LiftProjectServices.ProjectIsShared(Liftproject))
@@ -212,7 +166,6 @@ namespace SIL.LiftBridge.Controller
 			finally
 			{
 				_liftBridgeView.Dispose();
-				_liftBridgeView = null;
 			}
 		}
 

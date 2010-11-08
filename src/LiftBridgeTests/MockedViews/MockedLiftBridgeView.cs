@@ -3,26 +3,12 @@ using SIL.LiftBridge.View;
 
 namespace LiftBridgeTests.MockedViews
 {
-	internal class MockedLiftBridgeView : ILiftBridgeView
+	internal class MockedLiftBridgeView : Form, ILiftBridgeView
 	{
-		private IActiveView _activeView;
+		internal IActiveView ActiveView { get; private set; }
 
 		internal string Title { get; private set; }
 		internal Form MainForm { get; private set; }
-
-		#region Implementation of IDisposable
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		/// <filterpriority>2</filterpriority>
-		public void Dispose()
-		{
-			//MainForm = null;
-			//Title = null;
-		}
-
-		#endregion
 
 		#region Implementation of ILiftBridgeView
 
@@ -45,7 +31,7 @@ namespace LiftBridgeTests.MockedViews
 		/// </remarks>
 		public void ActivateView(IActiveView activeView)
 		{
-			_activeView = activeView;
+			ActiveView = activeView;
 		}
 
 		#endregion
