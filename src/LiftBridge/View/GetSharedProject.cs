@@ -29,6 +29,10 @@ namespace SIL.LiftBridge.View
 			if (Directory.GetFiles(currentRootDataPath).Length > 0 || Directory.GetDirectories(currentRootDataPath).Length > 0)
 				return false;
 
+			// Actually, we don't want the folder to exist at all.
+			// Just delete it, or Chorus will not be happy.
+			Directory.Delete(currentRootDataPath);
+
 			// 2. Make clone from some source.
 			switch (extantRepoSource)
 			{
