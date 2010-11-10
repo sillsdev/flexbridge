@@ -60,9 +60,6 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\Version.cs">
-	  <Link>Version.cs</Link>
-	</Compile>
 	<Compile Include="View\ExistingSystem.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
