@@ -12,7 +12,7 @@ namespace LiftBridgeCore
 	/// This allows for clients that do not deal directly with LIFT files as a primary data source
 	/// to collaborate with other software that uses LIFT data.
 	/// </summary>
-	public interface ILiftBridge
+	public interface ILiftBridge : IDisposable
 	{
 		/// <summary>
 		/// Export the internally held lexicon into the LIFT file given in LiftBridgeEventArgs.
