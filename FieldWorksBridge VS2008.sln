@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridge", "src\Fie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridgeTests", "src\FieldWorksBridgeTests\FieldWorksBridgeTests.csproj", "{FCC2A824-2FC1-45A9-89F9-180561E3A647}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "src\Installer\Installer.vdproj", "{93343F94-5B65-4F0F-89C7-F9DF0AC60BCF}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FWBridgeInstaller", "src\Installer\Installer.vdproj", "{93343F94-5B65-4F0F-89C7-F9DF0AC60BCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
