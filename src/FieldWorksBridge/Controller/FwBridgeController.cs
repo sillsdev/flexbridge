@@ -151,7 +151,7 @@ namespace FieldWorksBridge.Controller
 			// and the local user wants to collaborate with a remote user,
 			// where the FW language project is the 'same' on both computers.
 			// That is, we don't (yet) support merging the two, since they hav eno common ancestor.
-			// Odds are they each have crucial obejcts, such as LangProject or LexDb, that need to be singletons,
+			// Odds are they each have crucial objects, such as LangProject or LexDb, that need to be singletons,
 			// but which have different guids.
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
