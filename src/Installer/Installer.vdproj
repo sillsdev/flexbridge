@@ -16,37 +16,37 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_11FC7A3F3F540F519B4CF093900DA4B0"
-		"OwnerKey" = "8:_C0491DDEA15C4433966C62F5E477E62B"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_11FC7A3F3F540F519B4CF093900DA4B0"
 		"OwnerKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
-		"MsmKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
-		"OwnerKey" = "8:_61BD4693CF84EE51ACF4EDEDC2F06C03"
+		"MsmKey" = "8:_11FC7A3F3F540F519B4CF093900DA4B0"
+		"OwnerKey" = "8:_C0491DDEA15C4433966C62F5E477E62B"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_19618CBF8FAF4AB3ADEB5AFCAF2A0761"
+		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
 		"OwnerKey" = "8:_C0491DDEA15C4433966C62F5E477E62B"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
+		"OwnerKey" = "8:_19618CBF8FAF4AB3ADEB5AFCAF2A0761"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
 		"OwnerKey" = "8:_946CA6A53A5C14B1AA8A880EA83A0802"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_61BD4693CF84EE51ACF4EDEDC2F06C03"
-		"OwnerKey" = "8:_C0491DDEA15C4433966C62F5E477E62B"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -82,7 +82,7 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_11FC7A3F3F540F519B4CF093900DA4B0"
+		"OwnerKey" = "8:_19618CBF8FAF4AB3ADEB5AFCAF2A0761"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -94,13 +94,13 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_61BD4693CF84EE51ACF4EDEDC2F06C03"
+		"OwnerKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_1D65CABD971C4957E054ACABC996DB1A"
+		"OwnerKey" = "8:_11FC7A3F3F540F519B4CF093900DA4B0"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 	}
@@ -128,6 +128,19 @@
 			"PrerequisitesLocation" = "2:1"
 			"Url" = "8:"
 			"ComponentsUrl" = "8:"
+				"Items"
+				{
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5"
+					{
+					"Name" = "8:.NET Framework 3.5"
+					"ProductCode" = "8:Microsoft.Net.Framework.3.5"
+					}
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+					{
+					"Name" = "8:Windows Installer 3.1"
+					"ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+					}
+				}
 			}
 		}
 		"Release"
@@ -226,20 +239,20 @@
 			"IsDependency" = "11:TRUE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1D65CABD971C4957E054ACABC996DB1A"
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_19618CBF8FAF4AB3ADEB5AFCAF2A0761"
 			{
 			"AssemblyRegister" = "3:1"
 			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
+			"AssemblyAsmDisplayName" = "8:ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
 				"ScatterAssemblies"
 				{
-					"_1D65CABD971C4957E054ACABC996DB1A"
+					"_19618CBF8FAF4AB3ADEB5AFCAF2A0761"
 					{
-					"Name" = "8:LibChorus.dll"
+					"Name" = "8:ChorusMerge.exe"
 					"Attributes" = "3:512"
 					}
 				}
-			"SourcePath" = "8:LibChorus.dll"
+			"SourcePath" = "8:..\\..\\lib\\common\\ChorusMerge.exe"
 			"TargetName" = "8:"
 			"Tag" = "8:"
 			"Folder" = "8:_73FE6C2FD98D4DC6A675499E98AB1D64"
@@ -254,23 +267,23 @@
 			"PackageAs" = "3:1"
 			"Register" = "3:1"
 			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
+			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_61BD4693CF84EE51ACF4EDEDC2F06C03"
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1D65CABD971C4957E054ACABC996DB1A"
 			{
 			"AssemblyRegister" = "3:1"
 			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+			"AssemblyAsmDisplayName" = "8:LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
 				"ScatterAssemblies"
 				{
-					"_61BD4693CF84EE51ACF4EDEDC2F06C03"
+					"_1D65CABD971C4957E054ACABC996DB1A"
 					{
-					"Name" = "8:ChorusMerge.exe"
+					"Name" = "8:LibChorus.dll"
 					"Attributes" = "3:512"
 					}
 				}
-			"SourcePath" = "8:ChorusMerge.exe"
+			"SourcePath" = "8:LibChorus.dll"
 			"TargetName" = "8:"
 			"Tag" = "8:"
 			"Folder" = "8:_73FE6C2FD98D4DC6A675499E98AB1D64"
@@ -416,7 +429,7 @@
 		"Name" = "8:Microsoft Visual Studio"
 		"ProductName" = "8:FieldWorks Bridge"
 		"ProductCode" = "8:{E11E8467-911A-484C-8F03-7717239AAA33}"
-		"PackageCode" = "8:{9CEFA5EE-2257-468A-B4A3-37E01E0449C5}"
+		"PackageCode" = "8:{CDD12D11-E0DA-4B20-A84D-E585BAECBC8F}"
 		"UpgradeCode" = "8:{1185F2E2-936E-45CF-A5A4-03DED982D5D5}"
 		"RestartWWWService" = "11:FALSE"
 		"RemovePreviousVersions" = "11:TRUE"

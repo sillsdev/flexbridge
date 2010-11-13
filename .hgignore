@@ -6,6 +6,5 @@ glob:FieldWorksBridge VS2008.5.1.ReSharper.user
 relre:_ReSharper.FieldWorksBridge VS2008/*
 glob:src/FieldWorksBridge/FieldWorksBridge.csproj.ReSharper.user
 relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*
-relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/bin/*
-relre:src/FieldWorksBridgeTests/FieldWorksBridgeTests/obj/*
 relre:output/*
+relre:src/FieldWorksBridgeTests/obj/*

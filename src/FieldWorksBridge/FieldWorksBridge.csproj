@@ -33,11 +33,6 @@
 	<UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\common\ChorusMerge.exe</HintPath>
-	</Reference>
 	<Reference Include="ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\ChorusPlus.dll</HintPath>
@@ -162,6 +157,7 @@
   </Target>
   -->
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)</PostBuildEvent>
+	<PostBuildEvent>copy $(SolutionDir)lib\common\ChorusMerge.exe $(TargetDir)
+copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
