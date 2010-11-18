@@ -35,10 +35,6 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 6.0\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\common\ChorusMerge.exe</HintPath>
-	</Reference>
 	<Reference Include="COMInterfaces, Version=6.0.4.16251, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\FieldWorks 6.0\COMInterfaces.dll</HintPath>

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LIFTBridge")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("LIFTBridge for FielwdWorks 6")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("LIFTBridge")]
