@@ -22,6 +22,7 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -33,9 +34,9 @@
 	<UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="Chorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\common\ChorusPlus.dll</HintPath>
+	  <HintPath>..\..\lib\common\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
@@ -158,6 +159,8 @@
   -->
   <PropertyGroup>
 	<PostBuildEvent>copy $(SolutionDir)lib\common\ChorusMerge.exe $(TargetDir)
-copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)</PostBuildEvent>
+copy $(SolutionDir)lib\common\icu.net.dll $(TargetDir)
+copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)
+copy $(SolutionDir)lib\net2.0\Palaso.dll $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
