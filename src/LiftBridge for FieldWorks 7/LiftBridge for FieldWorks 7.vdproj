@@ -225,25 +225,13 @@
 		}
 		"Entry"
 		{
-		"MsmKey" = "8:_3E47E5B6487739A0B834A9C797321325"
-		"OwnerKey" = "8:_F6404075C917540B5588415A3C3A5879"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_3E47E5B6487739A0B834A9C797321325"
-		"OwnerKey" = "8:_2D59146D4C0D48DEA48D82CE309A29BF"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_3E47E5B6487739A0B834A9C797321325"
-		"OwnerKey" = "8:_6A338D73FF7BD9CF7276F56473D6AD17"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
 		"MsmKey" = "8:_43DF0702F02140EC87D859CB95959B34"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_45BFFD63967647A4B87BB114336ED620"
 		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
 		}
@@ -257,12 +245,6 @@
 		{
 		"MsmKey" = "8:_49E8DC5958F240B98C7AD4D1FEC4A224"
 		"OwnerKey" = "8:_UNDEFINED"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_4A5D1CB1A37FEABF7BAB48C0E1ABE6E0"
-		"OwnerKey" = "8:_3E47E5B6487739A0B834A9C797321325"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -831,12 +813,6 @@
 		}
 		"Entry"
 		{
-		"MsmKey" = "8:_F6404075C917540B5588415A3C3A5879"
-		"OwnerKey" = "8:_2D59146D4C0D48DEA48D82CE309A29BF"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
 		"MsmKey" = "8:_FA5610BCF1214DAFAF738CE67F0CE87A"
 		"OwnerKey" = "8:_UNDEFINED"
 		"MsmSig" = "8:_UNDEFINED"
@@ -862,13 +838,13 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_4A5D1CB1A37FEABF7BAB48C0E1ABE6E0"
+		"OwnerKey" = "8:_2D59146D4C0D48DEA48D82CE309A29BF"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_2D59146D4C0D48DEA48D82CE309A29BF"
+		"OwnerKey" = "8:_45BFFD63967647A4B87BB114336ED620"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 		"Entry"
@@ -886,13 +862,7 @@
 		"Entry"
 		{
 		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_F6404075C917540B5588415A3C3A5879"
-		"MsmSig" = "8:_UNDEFINED"
-		}
-		"Entry"
-		{
-		"MsmKey" = "8:_UNDEFINED"
-		"OwnerKey" = "8:_3E47E5B6487739A0B834A9C797321325"
+		"OwnerKey" = "8:_4A5D1CB1A37FEABF7BAB48C0E1ABE6E0"
 		"MsmSig" = "8:_UNDEFINED"
 		}
 	}
@@ -1680,23 +1650,12 @@
 			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3E47E5B6487739A0B834A9C797321325"
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43DF0702F02140EC87D859CB95959B34"
 			{
-			"AssemblyRegister" = "3:1"
-			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:LibChorus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
-				"ScatterAssemblies"
-				{
-					"_3E47E5B6487739A0B834A9C797321325"
-					{
-					"Name" = "8:LibChorus.dll"
-					"Attributes" = "3:512"
-					}
-				}
-			"SourcePath" = "8:LibChorus.dll"
-			"TargetName" = "8:"
+			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\rss\\tags.tmpl"
+			"TargetName" = "8:tags.tmpl"
 			"Tag" = "8:"
-			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
+			"Folder" = "8:_C182E10CD2BA441392EC7F4DFAE4DC69"
 			"Condition" = "8:"
 			"Transitive" = "11:FALSE"
 			"Vital" = "11:TRUE"
@@ -1708,15 +1667,26 @@
 			"PackageAs" = "3:1"
 			"Register" = "3:1"
 			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
+			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43DF0702F02140EC87D859CB95959B34"
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_45BFFD63967647A4B87BB114336ED620"
 			{
-			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\rss\\tags.tmpl"
-			"TargetName" = "8:tags.tmpl"
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ChorusMergePlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_45BFFD63967647A4B87BB114336ED620"
+					{
+					"Name" = "8:ChorusMerge.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\lib\\common\\ChorusMerge.exe"
+			"TargetName" = "8:"
 			"Tag" = "8:"
-			"Folder" = "8:_C182E10CD2BA441392EC7F4DFAE4DC69"
+			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
 			"Condition" = "8:"
 			"Transitive" = "11:FALSE"
 			"Vital" = "11:TRUE"
@@ -1846,7 +1816,7 @@
 			{
 			"AssemblyRegister" = "3:1"
 			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:LiftBridgeCore, Version=1.0.0.20561, Culture=neutral, processorArchitecture=x86"
+			"AssemblyAsmDisplayName" = "8:LiftBridgeCore, Version=1.0.0.25845, Culture=neutral, processorArchitecture=x86"
 				"ScatterAssemblies"
 				{
 					"_4CB8A05141F965353D64ECC3E26C1F9B"
@@ -2117,7 +2087,7 @@
 			{
 			"AssemblyRegister" = "3:1"
 			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+			"AssemblyAsmDisplayName" = "8:ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
 				"ScatterAssemblies"
 				{
 					"_6A338D73FF7BD9CF7276F56473D6AD17"
@@ -3664,37 +3634,6 @@
 			"IsDependency" = "11:FALSE"
 			"IsolateTo" = "8:"
 			}
-			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F6404075C917540B5588415A3C3A5879"
-			{
-			"AssemblyRegister" = "3:1"
-			"AssemblyIsInGAC" = "11:FALSE"
-			"AssemblyAsmDisplayName" = "8:ChorusMerge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-				"ScatterAssemblies"
-				{
-					"_F6404075C917540B5588415A3C3A5879"
-					{
-					"Name" = "8:ChorusMerge.exe"
-					"Attributes" = "3:512"
-					}
-				}
-			"SourcePath" = "8:ChorusMerge.exe"
-			"TargetName" = "8:"
-			"Tag" = "8:"
-			"Folder" = "8:_AC7C4BF3CEB94606BD284C1B97B2F6D3"
-			"Condition" = "8:"
-			"Transitive" = "11:FALSE"
-			"Vital" = "11:TRUE"
-			"ReadOnly" = "11:FALSE"
-			"Hidden" = "11:FALSE"
-			"System" = "11:FALSE"
-			"Permanent" = "11:FALSE"
-			"SharedLegacy" = "11:FALSE"
-			"PackageAs" = "3:1"
-			"Register" = "3:1"
-			"Exclude" = "11:FALSE"
-			"IsDependency" = "11:TRUE"
-			"IsolateTo" = "8:"
-			}
 			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FA5610BCF1214DAFAF738CE67F0CE87A"
 			{
 			"SourcePath" = "8:..\\..\\..\\mercurial\\templates\\monoblue\\changelog.tmpl"
@@ -3979,7 +3918,7 @@
 		"Name" = "8:Microsoft Visual Studio"
 		"ProductName" = "8:LiftBridge for FieldWorks 7"
 		"ProductCode" = "8:{32E89B10-155A-4E55-A54D-68A20FB72CF4}"
-		"PackageCode" = "8:{1B229B7C-B9C3-4A80-9892-9C257D4A4E40}"
+		"PackageCode" = "8:{40FF48F3-B2A7-4A30-811E-05F126DD2C93}"
 		"UpgradeCode" = "8:{C45E6E6A-4763-4AA0-A3DF-1AF5EE09B72E}"
 		"RestartWWWService" = "11:FALSE"
 		"RemovePreviousVersions" = "11:TRUE"
