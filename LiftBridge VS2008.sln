@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeCore", "src\LiftB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeTests", "src\LiftBridgeTests\LiftBridgeTests.csproj", "{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "LiftBridge for FieldWorks 7", "src\LiftBridge for FieldWorks 7\LiftBridge for FieldWorks 7.vdproj", "{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|x86.ActiveCfg = Release|x86
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|x86.Build.0 = Release|x86
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Debug|Any CPU.ActiveCfg = Debug
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Debug|Any CPU.Build.0 = Debug
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Debug|x86.ActiveCfg = Debug
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Debug|x86.Build.0 = Debug
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Release|Any CPU.ActiveCfg = Release
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Release|Any CPU.Build.0 = Release
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Release|x86.ActiveCfg = Release
+		{14283CE8-92E3-4FEB-8CC5-1443E8E315B9}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

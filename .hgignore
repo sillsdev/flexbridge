@@ -11,3 +11,5 @@ relre:output/*
 glob:lib/common/ChorusPlus.pdb
 relre:src/LiftBridgeCore/bin/*
 relre:src/LiftBridgeCore/obj/*
+relre:src/LiftBridge for FieldWorks 7/Debug/*
+relre:src/LiftBridge for FieldWorks 7/Release/*
