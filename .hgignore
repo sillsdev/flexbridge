@@ -16,3 +16,5 @@ glob:LiftBridge VS2008.5.1.ReSharper.user
 glob:LiftBridge VS2008.suo
 relre:output/*
 glob:lib/common/ChorusPlus.pdb
+relre:src/LiftBridge for FieldWorks 7/*
+relre:src/LiftBridgeCore/*
