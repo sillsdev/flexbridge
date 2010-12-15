@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LIFTBridge")]
-[assembly: AssemblyDescription("LIFTBridge for FielwdWorks 6")]
+[assembly: AssemblyTitle("Lift Bridge")]
+[assembly: AssemblyDescription("Lift Bridge for FielwdWorks 6")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("LIFTBridge")]
+[assembly: AssemblyProduct("Lift Bridge")]
 [assembly: AssemblyCopyright("Copyright © 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //// You can specify all the values or you can default the Build and Revision Numbers
 //// by using the '*' as shown below:
 //// [assembly: AssemblyVersion("1.0.*")]
-//[assembly: AssemblyVersion("1.0.0.*")]
-//[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.6.0.*")]
+[assembly: AssemblyFileVersion("0.6.0.0")]
