@@ -48,9 +48,9 @@
   <Target Name="MergeAssemblies" DependsOnTargets="CreateDirectories">
 	<Message Text="Attempting ILMerge for two assemblies" Importance="high"/>
 	<!-- Make the merged Chorus library. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /target:library /out:$(teamcity_build_checkoutDir)\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll" />
+	<Exec Command="ILMerge /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /target:library /out:$(teamcity_build_checkoutDir)\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll" />
 	<!-- Make a new merged ChorusMerge exe. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll" />
+	<Exec Command="ILMerge /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial; MergeAssemblies">
