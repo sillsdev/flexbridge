@@ -61,13 +61,13 @@ namespace LiftBridgeTests.ControllerTests
 			_liftBridgeController = null;
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void NullProjectNameThrows()
 		{
 			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, null);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void EmptyProjectNameThrows()
 		{
 			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, string.Empty);
