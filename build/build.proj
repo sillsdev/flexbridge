@@ -37,7 +37,7 @@
 
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
 	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
-		   TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
   </Target>
 
   <Target Name="CreateDirectories">
@@ -114,8 +114,6 @@
 	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
 	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.msi"
 	  TreatErrorsAsWarnings="false"/>
-	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftToolsInstaller.msi"
-	  TreatErrorsAsWarnings="false"/>
 
   </Target>
 
@@ -130,12 +128,16 @@
   </Target>
 
   <Target Name="MakeWixForMercurialFiles" DependsOnTargets="UnzipMercurial; CreateDirectories">
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\"/>
 	<MakeWixForDirTree DirectoryReferenceId="MercurialDir" ComponentGroupId="MercurialFiles"
-	  RootDirectory="$(teamcity_build_checkoutDir)\output\common\Mercurial"
+	  RootDirectory="$(teamcity_build_checkoutDir)\Mercurial"
 	  OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedMercurialFiles.wxs"
 	  MatchRegExPattern=".*">
 	  <!--what does this do? -->
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
+	<Delete Files="$(teamcity_build_checkoutDir)\Mercurial"
+	  TreatErrorsAsWarnings="false"/>
   </Target>
 </Project>
