@@ -80,7 +80,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="LiftBridgeUtility6.dll" Name="LiftBridgeUtility6.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridgeUtility6.dll" />
 		  </Component>
 
-		  <!-- Add these three by hand for now, since the generator task appears to not support being run twice. -->
+		  <!-- Add these three by hand for now, since the generator task appears to not support being run twice.
 		  <Component Id="about.htm" Guid="{c1ecd184-e382-11de-8a39-0800200c9a66}">
 			<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\DistFiles\about.htm" />
 		  </Component>
@@ -91,7 +91,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="LogoForAbout.png" Guid="{c1ecd186-e382-11de-8a39-0800200c9a66}">
 			<File Id="LogoForAbout.png" Name="LogoForAbout.png" KeyPath="yes" Source="..\..\DistFiles\LogoForAbout.png" />
-		  </Component>
+			</Component> -->
 
 		  <Directory Id="FLEx" Name="Language Explorer">
 			<Directory Id="Configuration" Name="Configuration">
@@ -117,14 +117,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LiftBridgeUtility6.dll"/>
 	  <ComponentRef Id="UtilityCatalogIncludeLiftBridge6.xml"/>
 
-	  <!-- Add these three by hand for now, since the generator task appears to not support being run twice. -->
+	  <!-- Add these three by hand for now, since the generator task appears to not support being run twice.
 	  <ComponentRef Id="about.htm"/>
 	  <ComponentRef Id="license.rtf"/>
-	  <ComponentRef Id="LogoForAbout.png"/>
+	  <ComponentRef Id="LogoForAbout.png"/> -->
 
-	  <!-- Generated components
-		<ComponentGroupRef Id ="DistFiles"/> -->
-	 <ComponentGroupRef Id ="MercurialFiles"/>
+	  <!-- Generated components -->
+	  <ComponentGroupRef Id ="DistFiles"/>
+	  <ComponentGroupRef Id ="MercurialFiles"/>
 
 	</Feature>
 

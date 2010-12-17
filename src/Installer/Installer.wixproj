@@ -65,6 +65,7 @@
   </PropertyGroup>
   <ItemGroup>
 	<Compile Include="Installer.wxs" />
+	<Compile Include="..\..\output\Installer\GeneratedDistFiles.wxs" />
 	<Compile Include="..\..\output\Installer\GeneratedMercurialFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
