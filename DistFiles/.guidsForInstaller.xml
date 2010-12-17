@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+	<File Id="about.htm" Guid="c1ecd187-e382-11de-8a39-0800200c9a66" />
+	<File Id="license.rtf" Guid="c1ecd188-e382-11de-8a39-0800200c9a66" />
+	<File Id="LogoForAbout.png" Guid="c1ecd189-e382-11de-8a39-0800200c9a66" />
+</InstallerMetadata>

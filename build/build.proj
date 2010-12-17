@@ -1,130 +1,146 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/build/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
-
-
+  <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
   <Target Name="VersionNumbers">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
 	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
+	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter"/>
 	</Split>
 
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="0.6.$(BuildCounter)">
+	<CreateProperty Value="0.7.$(BuildCounter)">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
 	<Message Text="Version: $(Version)" Importance="high"/>
   </Target>
 
-
-
-  <Target Name="Build">
-	<CallTarget Targets="Compile"/>
-	<Message Text="Build Complete"/>
+  <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+	<ItemGroup>
+	  <AssemblyInfoFiles Include="$(teamcity_build_checkoutDir)/src/**/assemblyinfo.cs"/>
+	</ItemGroup>
+	<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
   </Target>
 
+  <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
+  </Target>
 
-  <Target Name="SetAssemblyVersion">
-	  <ItemGroup>
-		<AssemblyInfoFiles Include="$(teamcity_build_checkoutDir)/src/**/assemblyinfo.cs"/>
-	  </ItemGroup>
-	  <StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
-	</Target>
+  <Target Name="CreateDirectories">
+	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\"/>
+	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\common\"/>
+	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Release\"/>
+	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Installer\"/>
+  </Target>
 
-  <Target Name="Compile" DependsOnTargets="SetAssemblyVersion">
-	<MSBuild Projects="$(teamcity_build_checkoutDir)/LiftBridge VS2008.sln"
-			 Targets="Rebuild"
-			 Properties="Configuration=Release" />
+  <Target Name="MergeAssemblies" DependsOnTargets="CreateDirectories">
+	<Message Text="Attempting ILMerge for two assemblies" Importance="high"/>
+	<!-- Make the merged Chorus library. -->
+	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /target:library /out:$(teamcity_build_checkoutDir)\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll" />
+	<!-- Make a new merged ChorusMerge exe. -->
+	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial; MergeAssemblies">
+	<MSBuild Projects="$(teamcity_build_checkoutDir)/LiftBridge VS2010.sln" Targets="Rebuild"
+	  Properties="Configuration=Release"/>
+	<Message Text="Build Complete"/>
   </Target>
 
 
   <Target Name="Test" DependsOnTargets ="Build">
 	<ItemGroup>
-	  <TestAssemblies Include="$(teamcity_build_checkoutDir)/output/release/*Tests.dll;"  Exclude="**\obj\**;**\SpongeTests.dll" />
+	  <TestAssemblies Include="$(teamcity_build_checkoutDir)/output/Release/*Tests.dll;"  Exclude="**\obj\**" />
 	</ItemGroup>
 	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" />
   </Target>
 
-  <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
+  <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers">
 
 	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
-	<Copy SourceFiles ="$(teamcity_build_checkoutDir)\src\Installer\DownloadPointers.htm"
-		   DestinationFolder ="$(teamcity_build_checkoutDir)\output\Installer"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\src\Installer\DownloadPointers.htm"
+	  DestinationFolder="$(teamcity_build_checkoutDir)\output\Installer"/>
 
 	<!-- replace some parts of the file with the version number & date -->
-
 	<FileUpdate File="$(teamcity_build_checkoutDir)\output\Installer\DownloadPointers.htm"
-				 DatePlaceholder='DEV_RELEASE_DATE'
-				Regex='DEV_VERSION_NUMBER'
-				 ReplacementText ="$(Version)" />
-
-
+	  DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
-
 	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/DownloadPointers.htm" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/DownloadPointers.htm' />
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LBforFW7.html"/>
+  </Target>
+
+  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
+	<Message Text="Attempting rsync of LiftBridgeForFW7Installer.$(Version).msi" Importance="high"/>
+
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridgeForFW7Installer.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridgeForFW7Installer.$(Version).msi"/>
+
+	<CallTarget Targets="MakeDownloadPointers"/>
   </Target>
 
 
-
-  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer" >
-	<Message Text="Attempting rsync of LiftBridgeInstaller.$(Version).msi" Importance="high"/>
-
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/LiftBridgeInstaller.$(Version).msi" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridgeInstaller.$(Version).msi' />
-
-	<CallTarget Targets ='MakeDownloadPointers'/>
-  </Target>
-
-
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
-
+  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; MakeWixForMercurialFiles; CreateDirectories; Build">
 	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
 		changing of the script, but I haven't figured that out. -->
+	<FileUpdate File="$(teamcity_build_checkoutDir)\src\Installer\Installer.wxs"
+	  Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion =
+	  &quot;$(Version)&quot;"/>
 
-	<FileUpdate File="$(teamcity_build_checkoutDir)\src\Installer\Installer.wxs" Regex='Property_ProductVersion = ".*"'
-				ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
-
-
-	<Message Text="Making Installer Version: $(Version)" Importance="high"  />
+	<Message Text="Making Installer Version: $(Version)" Importance="high"/>
 
 	<MSBuild Projects="$(teamcity_build_checkoutDir)\src\Installer\Installer.wixproj"/>
 
-
 	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(teamcity_build_checkoutDir)\output\installer\LiftBridgeInstaller.$(Version).msi" TreatErrorsAsWarnings="false" />
+	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW7Installer.$(Version).msi"
+	  TreatErrorsAsWarnings="false"/>
 
-	<Copy SourceFiles="$(teamcity_build_checkoutDir)\output\installer\LiftBridgeInstaller.msi"
-		  DestinationFiles="$(teamcity_build_checkoutDir)\output\installer\LiftBridgeInstaller.$(Version).msi"
-		  />
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW7Installer.msi"
+	  DestinationFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW7Installer.$(Version).msi"/>
 
 	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(teamcity_build_checkoutDir)\output\installer\LiftBridgeInstaller.msi" TreatErrorsAsWarnings="false" />
+	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW7Installer.msi"
+	  TreatErrorsAsWarnings="false"/>
 
   </Target>
 
-
-
-  <Target Name="MakeWixForDistFiles">
-	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Installer\"/>
-
-	<MakeWixForDirTree
-				DirectoryReferenceId="ProgramDir"
-					ComponentGroupId="DistFiles"
-						RootDirectory="$(teamcity_build_checkoutDir)\DistFiles"
-				OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedDistFiles.wxs"
-				MatchRegExPattern=".*"
-				>
+  <Target Name="MakeWixForDistFiles" DependsOnTargets="CreateDirectories">
+	<MakeWixForDirTree DirectoryReferenceId="FW6INSTALLDIR" ComponentGroupId="DistFiles"
+	  RootDirectory="$(teamcity_build_checkoutDir)\DistFiles"
+	  OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedDistFiles.wxs"
+	  MatchRegExPattern=".*">
 	  <!--what does this do?-->
-	  <Output TaskParameter="OutputFilePath" ItemName="Compile" />
+	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
+  </Target>
+
+  <Target Name="MakeWixForMercurialFiles" DependsOnTargets="UnzipMercurial; CreateDirectories">
+	<!--
+	  An apparent bug in the PathUtils in our custom tasks can't work
+	  with the right root path, so we have to unzip it again
+	  in a place it works.
+	  The preferred root is:
+	  RootDirectory="$(teamcity_build_checkoutDir)\output\common\Mercurial"
+	-->
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\"/>
+	<MakeWixForDirTree DirectoryReferenceId="MercurialDir" ComponentGroupId="MercurialFiles"
+	  RootDirectory="$(teamcity_build_checkoutDir)\Mercurial"
+	  OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedMercurialFiles.wxs"
+	  MatchRegExPattern=".*">
+	  <!--what does this do? -->
+	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
+	</MakeWixForDirTree>
+	<Delete Files="$(teamcity_build_checkoutDir)\Mercurial"
+	  TreatErrorsAsWarnings="false"/>
   </Target>
 </Project>

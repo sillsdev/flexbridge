@@ -1,6 +1,0 @@
-Use this command in a cmd window in the Chorus output folder to make the merged ChorusPlus.dll and the merged ChorusmergePlus.exe (must be renamed to ChorusMerge.exe).
-
-ilmerge /log:mergeChorusPlus.log /internalize /target:library /out:ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll
-
-
-ilmerge /log:mergeMergeChorusPlus.log /internalize /target:exe /out:ChorusMergePlus.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll

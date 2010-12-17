@@ -13,3 +13,8 @@ relre:src/LiftBridgeCore/bin/*
 relre:src/LiftBridgeCore/obj/*
 relre:src/LiftBridge for FieldWorks 7/Debug/*
 relre:src/LiftBridge for FieldWorks 7/Release/*
+glob:LiftBridge VS2010.5.1.ReSharper.user
+glob:src/LiftBridge/LiftBridge.csproj.user
+glob:src/LiftBridgeCore/LiftBridgeCore.csproj.user
+glob:LiftBridge VS2010.suo
+glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
