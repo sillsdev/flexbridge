@@ -93,7 +93,7 @@
   </Target>
 
 
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; MakeWixForMercurialFiles; CreateDirectories; Build">
+  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; CreateDirectories; Build">
 	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
 		changing of the script, but I haven't figured that out. -->
 	<FileUpdate File="$(teamcity_build_checkoutDir)\src\Installer\Installer.wxs"
