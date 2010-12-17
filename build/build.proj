@@ -77,7 +77,7 @@
 	  -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot;
 	  -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key
 	  -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot;
-	  bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	  bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/DownloadPointers.html"/>
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
@@ -93,7 +93,7 @@
   </Target>
 
 
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; CreateDirectories; Build">
+  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForMercurialFiles; CreateDirectories; Build">
 	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
 		changing of the script, but I haven't figured that out. -->
 	<FileUpdate File="$(teamcity_build_checkoutDir)\src\Installer\Installer.wxs"
@@ -113,6 +113,8 @@
 
 	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
 	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.msi"
+	  TreatErrorsAsWarnings="false"/>
+	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftToolsInstaller.msi"
 	  TreatErrorsAsWarnings="false"/>
 
   </Target>

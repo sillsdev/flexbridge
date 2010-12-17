@@ -80,6 +80,19 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="LiftBridgeUtility6.dll" Name="LiftBridgeUtility6.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridgeUtility6.dll" />
 		  </Component>
 
+		  <!-- Add these three by hand for now, since the generator task appears to not support being run twice. -->
+		  <Component Id="about.htm" Guid="{c1ecd184-e382-11de-8a39-0800200c9a66}">
+			<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\DistFiles\about.htm" />
+		  </Component>
+
+		  <Component Id="license.rtf" Guid="{c1ecd185-e382-11de-8a39-0800200c9a66}">
+			<File Id="license.rtf" Name="license.rtf" KeyPath="yes" Source="..\..\DistFiles\license.rtf" />
+		  </Component>
+
+		  <Component Id="LogoForAbout.png" Guid="{c1ecd186-e382-11de-8a39-0800200c9a66}">
+			<File Id="LogoForAbout.png" Name="LogoForAbout.png" KeyPath="yes" Source="..\..\DistFiles\LogoForAbout.png" />
+		  </Component>
+
 		  <Directory Id="FLEx" Name="Language Explorer">
 			<Directory Id="Configuration" Name="Configuration">
 			  <Component Id="UtilityCatalogIncludeLiftBridge6.xml" Guid="c1ecd17e-e382-11de-8a39-0800200c9a66">
@@ -88,8 +101,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			</Directory>
 		  </Directory>
 
-		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here.
-		  <Directory Id="MercurialDir" Name="Mercurial" /> -->
+		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
+		  <Directory Id="MercurialDir" Name="Mercurial" />
 
 		</Directory>
 	  </Directory>
@@ -104,9 +117,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LiftBridgeUtility6.dll"/>
 	  <ComponentRef Id="UtilityCatalogIncludeLiftBridge6.xml"/>
 
-	  <!-- Generated components -->
-	  <ComponentGroupRef Id ="DistFiles"/>
-	 <!--  <ComponentGroupRef Id ="MercurialFiles"/> -->
+	  <!-- Generated components
+		<ComponentGroupRef Id ="DistFiles"/> -->
+	 <ComponentGroupRef Id ="MercurialFiles"/>
 
 	</Feature>
 

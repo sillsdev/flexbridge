@@ -3,4 +3,5 @@
 <InstallerMetadata>
   <File Id="about.htm" Guid="c1ecd184-e382-11de-8a39-0800200c9a66" />
   <File Id="license.rtf" Guid="c1ecd185-e382-11de-8a39-0800200c9a66" />
+  <File Id="LogoForAbout.png" Guid="c1ecd186-e382-11de-8a39-0800200c9a66" />
 </InstallerMetadata>
