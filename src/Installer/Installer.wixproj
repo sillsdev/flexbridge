@@ -12,6 +12,7 @@
 	<OutputPath>..\..\output\installer\</OutputPath>
 	<IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
 	<DefineConstants>Debug</DefineConstants>
+	<DefineSolutionProperties>False</DefineSolutionProperties>
 	<AllowIdenticalRows>False</AllowIdenticalRows>
 	<CabinetCachePath>
 	</CabinetCachePath>
@@ -56,9 +57,11 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 	<OutputPath>..\..\output\installer\</OutputPath>
 	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
+	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<OutputPath>..\..\output\installer\</OutputPath>
+	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
 	<Compile Include="Installer.wxs" />

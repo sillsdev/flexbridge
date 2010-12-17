@@ -82,8 +82,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Directory Id="FLEx" Name="Language Explorer">
 			<Directory Id="Configuration" Name="Configuration">
-			  <Component Id="UtilityCatalogInclude-LiftBridge6.xml" Guid="c1ecd17e-e382-11de-8a39-0800200c9a66">
-				<File Id="UtilityCatalogInclude-LiftBridge6.xml" Name="UtilityCatalogInclude-LiftBridge6.xml" Source="..\..\output\Release\Language Explorer\Configuration\UtilityCatalogInclude-LiftBridge6.xml" />
+			  <Component Id="UtilityCatalogIncludeLiftBridge6.xml" Guid="c1ecd17e-e382-11de-8a39-0800200c9a66">
+				<File Id="UtilityCatalogIncludeLiftBridge6.xml" Name="UtilityCatalogInclude-LiftBridge6.xml" Source="..\..\output\Release\Language Explorer\Configuration\UtilityCatalogInclude-LiftBridge6.xml" />
 			  </Component>
 			</Directory>
 		  </Directory>
@@ -102,7 +102,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="ChorusMerge.exe"/>
 	  <ComponentRef Id="LiftBridge.dll"/>
 	  <ComponentRef Id="LiftBridgeUtility6.dll"/>
-	  <ComponentRef Id="UtilityCatalogInclude-LiftBridge6.xml"/>
+	  <ComponentRef Id="UtilityCatalogIncludeLiftBridge6.xml"/>
 
 	  <!-- Generated components -->
 	  <ComponentGroupRef Id ="DistFiles"/>
