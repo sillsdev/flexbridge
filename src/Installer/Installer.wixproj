@@ -4,7 +4,7 @@
 	<ProductVersion>3.0</ProductVersion>
 	<ProjectGuid>{c1ecd17c-e382-11de-8a39-0800200c9a66}</ProjectGuid>
 	<SchemaVersion>2.0</SchemaVersion>
-	<OutputName>LiftToolsInstaller</OutputName>
+	<OutputName>LiftBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
 	<WixToolPath>C:\Program Files\Windows Installer XML v3\bin\</WixToolPath>
   </PropertyGroup>
