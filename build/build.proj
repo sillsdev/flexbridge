@@ -73,13 +73,13 @@
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
 	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LBforFW6.html"/>
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
-	<Message Text="Attempting rsync of LiftBridgeInstaller.$(Version).msi" Importance="high"/>
+	<Message Text="Attempting rsync of LiftBridgeForFW6Installer.$(Version).msi" Importance="high"/>
 
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridgeInstaller.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridgeInstaller.$(Version).msi"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridgeForFW6Installer.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridgeForFW6Installer.$(Version).msi"/>
 
 	<CallTarget Targets="MakeDownloadPointers"/>
   </Target>
@@ -97,14 +97,14 @@
 	<MSBuild Projects="$(teamcity_build_checkoutDir)\src\Installer\Installer.wixproj"/>
 
 	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.$(Version).msi"
+	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW6Installer.$(Version).msi"
 	  TreatErrorsAsWarnings="false"/>
 
-	<Copy SourceFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.msi"
-	  DestinationFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.$(Version).msi"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW6Installer.msi"
+	  DestinationFiles="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW6Installer.$(Version).msi"/>
 
 	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeInstaller.msi"
+	<Delete Files="$(teamcity_build_checkoutDir)\output\Installer\LiftBridgeForFW6Installer.msi"
 	  TreatErrorsAsWarnings="false"/>
 
   </Target>
