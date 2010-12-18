@@ -117,7 +117,7 @@
   </Target>
 
   <Target Name="MakeWixForDistFiles" DependsOnTargets="CreateDirectories">
-	<MakeWixForDirTree DirectoryReferenceId="FW6INSTALLDIR" ComponentGroupId="DistFiles"
+	<MakeWixForDirTree DirectoryReferenceId="FW7INSTALLDIR" ComponentGroupId="DistFiles"
 	  RootDirectory="$(teamcity_build_checkoutDir)\DistFiles"
 	  OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedDistFiles.wxs"
 	  MatchRegExPattern=".*">
