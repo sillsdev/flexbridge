@@ -12,7 +12,7 @@
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
 
-  <Product Id="$(var.Property_ProductCode)" Name="LiftBridge for FieldWorks 7" Language="1033"
+  <Product Id="$(var.Property_ProductCode)" Name="Lift Bridge for FieldWorks 7" Language="1033"
 			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
 			 UpgradeCode="$(var.Property_UpgradeCode)">
 
@@ -45,11 +45,11 @@ users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 
-	<Condition Message="Before LiftBridge can install, you need to install SIL's FieldWorks 7.">
+	<Condition Message="Before Lift Bridge can install, you need to install SIL's FieldWorks 7.">
 	  Installed OR FW7INSTALLDIR
 	</Condition>
 	<PropertyRef Id="NETFRAMEWORK35" />
-	<Condition Message="Before LiftBridge can install, you need to install Microsoft's free .NET Framework 3.5." >
+	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5." >
 	  Installed OR NETFRAMEWORK35
 	</Condition>
 
@@ -97,11 +97,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	</Feature>
 
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
-	<!--
-	<Icon Id="LiftTools.exe" SourceFile ="..\..\output\release\LiftTools.exe" />
-	-->
-	<Property Id="ARPPRODUCTICON" Value="Lift Bridge for FieldWorks 7" />
 	<!-- what you see in add/remove programs control panel -->
+	<Property Id="ARPPRODUCTICON" Value="Lift Bridge for FieldWorks 7" />
 
 	<InstallExecuteSequence>
 	  <RemoveExistingProducts After="InstallInitialize" />

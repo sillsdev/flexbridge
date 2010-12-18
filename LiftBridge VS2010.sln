@@ -7,6 +7,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeCore", "src\LiftB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridgeTests", "src\LiftBridgeTests\LiftBridgeTests.csproj", "{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{24FF10ED-58AD-48EB-961A-5259CBABC710}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.proj = build\build.proj
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{9373AC08-99B7-41DA-B0DF-60128E9D9DF0}"
+	ProjectSection(SolutionItems) = preProject
+		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
+		src\Installer\Index.htm = src\Installer\Index.htm
+		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
+		src\Installer\Installer.wxs = src\Installer\Installer.wxs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
