@@ -65,11 +65,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="ChorusPlus.dll" Guid="{c1ecf881-e382-11de-8a39-0800200c9a66}">
-			<File Id="ChorusPlus.dll" Name="ChorusPlus.dll" KeyPath="yes" Source="..\..\output\Release\ChorusPlus.dll" />
+			<File Id="ChorusPlus.dll" Name="ChorusPlus.dll" KeyPath="yes" Source="..\..\output\Common\ChorusPlus.dll" />
 		  </Component>
 
 		  <Component Id="ChorusMerge.exe" Guid="{c1ecf882-e382-11de-8a39-0800200c9a66}">
-			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe" />
+			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe" />
 		  </Component>
 
 		  <Component Id="LiftBridge.dll" Guid="{c1ecf883-e382-11de-8a39-0800200c9a66}">
