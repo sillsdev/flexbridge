@@ -175,7 +175,7 @@
   </Target>
   -->
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)lib\common\ChorusMerge.exe $(TargetDir)
+	<PostBuildEvent>copy $(SolutionDir)lib\net2.0\ChorusMerge.exe $(TargetDir)
 copy $(SolutionDir)lib\common\icu.net.dll $(TargetDir)
 copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)
 copy $(SolutionDir)lib\net2.0\Palaso.dll $(TargetDir)</PostBuildEvent>
