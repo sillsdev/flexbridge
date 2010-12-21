@@ -126,6 +126,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	</Feature>
 
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
+	<Icon Id="FieldWorksBridge.exe" SourceFile ="..\..\output\Release\FieldWorksBridge.exe" />
 	<!-- what you see in add/remove programs control panel -->
 	<Property Id="ARPPRODUCTICON" Value="FieldWorks Bridge" />
 
