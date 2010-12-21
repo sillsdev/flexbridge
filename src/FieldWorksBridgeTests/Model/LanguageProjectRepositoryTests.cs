@@ -50,31 +50,31 @@ namespace FieldWorksBridgeTests.Model
 			Assert.IsFalse(_languageProjectRepository.GetProject("NotEnabled").IsRemoteCollaborationEnabled);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void NullPathSetThrows()
 		{
 			new LanguageProjectRepository(null);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException)), Category("SkipOnTeamCity")]
 		public void NoPathsThrows()
 		{
 			new LanguageProjectRepository(new MockedProjectPathLocator(new HashSet<string>()));
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void NullProjectNameThrows()
 		{
 			_languageProjectRepository.GetProject(null);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void EmptyProjectNameThrows()
 		{
 			_languageProjectRepository.GetProject(string.Empty);
 		}
 
-		[Test, ExpectedException(typeof(InvalidOperationException))]
+		[Test, ExpectedException(typeof(InvalidOperationException)), Category("SkipOnTeamCity")]
 		public void NonExistantProjectNameThrows()
 		{
 			_languageProjectRepository.GetProject("NobodyHomeProject");

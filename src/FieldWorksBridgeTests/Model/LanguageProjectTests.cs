@@ -11,25 +11,25 @@ namespace FieldWorksBridgeTests.Model
 	[TestFixture]
 	public class LanguageProjectTests
 	{
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void NullPathnameThrows()
 		{
 			new LanguageProject(null);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
 		public void EmptyPathnameThrows()
 		{
 			new LanguageProject(string.Empty);
 		}
 
-		[Test, ExpectedException(typeof(FileNotFoundException))]
+		[Test, ExpectedException(typeof(FileNotFoundException)), Category("SkipOnTeamCity")]
 		public void NonExistantFileThrows()
 		{
 			new LanguageProject("NobodyHome");
 		}
 
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test, ExpectedException(typeof(ArgumentException)), Category("SkipOnTeamCity")]
 		public void NonFwFileThrows()
 		{
 			var tempFile = Path.GetTempFileName();

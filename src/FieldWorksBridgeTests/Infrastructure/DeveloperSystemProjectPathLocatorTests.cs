@@ -8,6 +8,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 	/// to make sure it includes the DistFiles Project file and the default installation (Vista & Windows 7) path.
 	/// </summary>
 	[TestFixture]
+	[Category("SkipOnTeamCity")]
 	public class DeveloperSystemProjectPathLocatorTests
 	{
 		[Test]
