@@ -50,34 +50,34 @@ namespace FieldWorksBridgeTests.Model
 			Assert.IsFalse(_languageProjectRepository.GetProject("NotEnabled").IsRemoteCollaborationEnabled);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
+		[Test]
 		public void NullPathSetThrows()
 		{
-			new LanguageProjectRepository(null);
+			Assert.Throws<ArgumentNullException>(() => new LanguageProjectRepository(null));
 		}
 
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException)), Category("SkipOnTeamCity")]
+		[Test]
 		public void NoPathsThrows()
 		{
-			new LanguageProjectRepository(new MockedProjectPathLocator(new HashSet<string>()));
+			Assert.Throws<ArgumentOutOfRangeException>(() => new LanguageProjectRepository(new MockedProjectPathLocator(new HashSet<string>())));
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
+		[Test]
 		public void NullProjectNameThrows()
 		{
-			_languageProjectRepository.GetProject(null);
+			Assert.Throws<ArgumentNullException>(() => _languageProjectRepository.GetProject(null));
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException)), Category("SkipOnTeamCity")]
+		[Test]
 		public void EmptyProjectNameThrows()
 		{
-			_languageProjectRepository.GetProject(string.Empty);
+			Assert.Throws<ArgumentNullException>(() => _languageProjectRepository.GetProject(string.Empty));
 		}
 
-		[Test, ExpectedException(typeof(InvalidOperationException)), Category("SkipOnTeamCity")]
+		[Test]
 		public void NonExistantProjectNameThrows()
 		{
-			_languageProjectRepository.GetProject("NobodyHomeProject");
+			Assert.Throws<InvalidOperationException>(() => _languageProjectRepository.GetProject("NobodyHomeProject"));
 		}
 	}
 }
