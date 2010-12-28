@@ -5,6 +5,7 @@ using Chorus.UI.Clone;
 using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
 using FieldWorksBridge.Properties;
+using Palaso.Progress.LogBox;
 
 namespace FieldWorksBridge.View
 {
