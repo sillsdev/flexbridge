@@ -6,6 +6,7 @@ using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Clone;
 using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge
