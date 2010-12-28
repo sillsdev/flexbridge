@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 
