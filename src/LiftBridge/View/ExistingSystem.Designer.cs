@@ -51,7 +51,9 @@ namespace SIL.LiftBridge.View
 			this._tcMain.Controls.Add(this._tpHistory);
 			this._tcMain.Controls.Add(this._tpAbout);
 			this._tcMain.Location = new System.Drawing.Point(0, 52);
+			this._tcMain.Margin = new System.Windows.Forms.Padding(0);
 			this._tcMain.Name = "_tcMain";
+			this._tcMain.Padding = new System.Drawing.Point(0, 0);
 			this._tcMain.SelectedIndex = 0;
 			this._tcMain.Size = new System.Drawing.Size(581, 361);
 			this._tcMain.TabIndex = 0;
@@ -59,8 +61,8 @@ namespace SIL.LiftBridge.View
 			// _tpNotes
 			//
 			this._tpNotes.Location = new System.Drawing.Point(4, 22);
+			this._tpNotes.Margin = new System.Windows.Forms.Padding(0);
 			this._tpNotes.Name = "_tpNotes";
-			this._tpNotes.Padding = new System.Windows.Forms.Padding(3);
 			this._tpNotes.Size = new System.Drawing.Size(573, 335);
 			this._tpNotes.TabIndex = 1;
 			this._tpNotes.Text = "Notes";
@@ -69,6 +71,7 @@ namespace SIL.LiftBridge.View
 			// _tpHistory
 			//
 			this._tpHistory.Location = new System.Drawing.Point(4, 22);
+			this._tpHistory.Margin = new System.Windows.Forms.Padding(0);
 			this._tpHistory.Name = "_tpHistory";
 			this._tpHistory.Size = new System.Drawing.Size(573, 335);
 			this._tpHistory.TabIndex = 2;
@@ -78,6 +81,7 @@ namespace SIL.LiftBridge.View
 			// _tpAbout
 			//
 			this._tpAbout.Location = new System.Drawing.Point(4, 22);
+			this._tpAbout.Margin = new System.Windows.Forms.Padding(0);
 			this._tpAbout.Name = "_tpAbout";
 			this._tpAbout.Size = new System.Drawing.Size(573, 335);
 			this._tpAbout.TabIndex = 3;

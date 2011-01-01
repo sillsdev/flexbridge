@@ -160,6 +160,7 @@
 			this.Controls.Add(this._rbUseExistingSystem);
 			this.Controls.Add(this._rbFirstToUseFlexBridge);
 			this.Controls.Add(this.label1);
+			this.Margin = new System.Windows.Forms.Padding(0);
 			this.MinimumSize = new System.Drawing.Size(332, 158);
 			this.Name = "StartupNew";
 			this.Size = new System.Drawing.Size(374, 253);
