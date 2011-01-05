@@ -61,6 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<OutputPath>..\..\output\installer\</OutputPath>
+	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
