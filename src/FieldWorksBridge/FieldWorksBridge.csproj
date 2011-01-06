@@ -181,6 +181,8 @@
 	<PostBuildEvent>copy $(SolutionDir)lib\net2.0\ChorusMerge.exe $(TargetDir)
 copy $(SolutionDir)lib\common\icu.net.dll $(TargetDir)
 copy $(SolutionDir)lib\net2.0\Autofac.dll $(TargetDir)
-copy $(SolutionDir)lib\net2.0\Palaso.dll $(TargetDir)</PostBuildEvent>
+copy $(SolutionDir)lib\net2.0\Palaso.dll $(TargetDir)
+copy $(SolutionDir)DistFiles\about.htm $(TargetDir)
+copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>

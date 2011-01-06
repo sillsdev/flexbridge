@@ -33,7 +33,9 @@
 			this._tpNotes = new System.Windows.Forms.TabPage();
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
+			this._webBrowser = new System.Windows.Forms.WebBrowser();
 			this._tcMain.SuspendLayout();
+			this._tpAbout.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// _tcMain
@@ -72,6 +74,7 @@
 			//
 			// _tpAbout
 			//
+			this._tpAbout.Controls.Add(this._webBrowser);
 			this._tpAbout.Location = new System.Drawing.Point(4, 22);
 			this._tpAbout.Margin = new System.Windows.Forms.Padding(0);
 			this._tpAbout.Name = "_tpAbout";
@@ -79,6 +82,18 @@
 			this._tpAbout.TabIndex = 3;
 			this._tpAbout.Text = "About";
 			this._tpAbout.UseVisualStyleBackColor = true;
+			//
+			// _webBrowser
+			//
+			this._webBrowser.AllowWebBrowserDrop = false;
+			this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._webBrowser.IsWebBrowserContextMenuEnabled = false;
+			this._webBrowser.Location = new System.Drawing.Point(0, 0);
+			this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+			this._webBrowser.Name = "_webBrowser";
+			this._webBrowser.Size = new System.Drawing.Size(442, 283);
+			this._webBrowser.TabIndex = 0;
+			this._webBrowser.Url = new System.Uri("", System.UriKind.Relative);
 			//
 			// ExistingSystemView
 			//
@@ -89,7 +104,9 @@
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "ExistingSystemView";
 			this.Size = new System.Drawing.Size(450, 309);
+			this.Load += new System.EventHandler(this.ExistingSystemViewLoad);
 			this._tcMain.ResumeLayout(false);
+			this._tpAbout.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -100,5 +117,6 @@
 		internal System.Windows.Forms.TabPage _tpHistory;
 		internal System.Windows.Forms.TabPage _tpAbout;
 		internal System.Windows.Forms.TabControl _tcMain;
+		private System.Windows.Forms.WebBrowser _webBrowser;
 	}
 }

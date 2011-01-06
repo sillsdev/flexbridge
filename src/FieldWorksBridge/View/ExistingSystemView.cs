@@ -1,4 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
 using Chorus;
 
 namespace FieldWorksBridge.View
@@ -79,6 +82,13 @@ namespace FieldWorksBridge.View
 
 			page.Controls[0].Dispose();
 			page.Controls.Clear();
+		}
+
+		private void ExistingSystemViewLoad(object sender, EventArgs e)
+		{
+			_webBrowser.Navigate(Path.Combine(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase),
+				"about.htm"));
 		}
 	}
 }

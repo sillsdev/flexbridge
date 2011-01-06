@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using FieldWorksBridge.Controller;
 using FieldWorksBridge.Properties;
+using Palaso.Reporting;
 
 namespace FieldWorksBridge
 {
@@ -14,6 +15,7 @@ namespace FieldWorksBridge
 		[STAThread]
 		static void Main()
 		{
+			ExceptionHandler.Init();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
