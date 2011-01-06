@@ -19,10 +19,5 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore PossibleNullReferenceException
 			}
 		}
-
-		internal static string StandardInstallDir
-		{
-			get { return @"C:\ProgramData\SIL\FieldWorks 7\Projects"; }
-		}
 	}
 }

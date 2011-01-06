@@ -75,7 +75,6 @@
 	</Compile>
 	<Compile Include="Mocks\MockedGetSharedProject.cs" />
 	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
-	<Compile Include="Infrastructure\DeveloperSystemProjectPathLocatorTests.cs" />
 	<Compile Include="DummyFolderSystem.cs" />
 	<Compile Include="Mocks\MockedSynchronizeProject.cs" />
 	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
@@ -91,6 +90,9 @@
 	  <Project>{A40E1224-6159-4FE6-B78E-4094BD05DAF6}</Project>
 	  <Name>FieldWorksBridge</Name>
 	</ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="Infrastructure\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -8,3 +8,4 @@ glob:src/FieldWorksBridge/FieldWorksBridge.csproj.ReSharper.user
 relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*
 relre:output/*
 relre:src/FieldWorksBridgeTests/obj/*
+glob:FieldWorksBridge VS2008.sln.cache

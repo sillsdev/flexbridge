@@ -22,15 +22,8 @@ namespace FieldWorksBridge.Controller
 		/// <summary>
 		/// Constructor that makes a standard controller.
 		/// </summary>
-		/// <remarks>
-		/// Developers (or others using a DEBUG build)
-		/// </remarks>
 		internal FwBridgeController()
-#if DEBUG
-			: this(new View.FieldWorksBridge(), new FwBridgeView(), new DeveloperSystemProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
-#else
 			: this(new View.FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
-#endif
 		{ }
 
 		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
