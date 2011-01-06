@@ -5,6 +5,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridge", "src\Fie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridgeTests", "src\FieldWorksBridgeTests\FieldWorksBridgeTests.csproj", "{FCC2A824-2FC1-45A9-89F9-180561E3A647}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
+	ProjectSection(SolutionItems) = preProject
+		DistFiles\about.htm = DistFiles\about.htm
+		build\build.proj = build\build.proj
+		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
+		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
+		src\Installer\Installer.wxs = src\Installer\Installer.wxs
+		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
