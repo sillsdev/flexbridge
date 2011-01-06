@@ -39,7 +39,9 @@ namespace SIL.LiftBridge.View
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
 			this._sendReceiveButton = new System.Windows.Forms.Button();
+			this._webBrowser = new System.Windows.Forms.WebBrowser();
 			this._tcMain.SuspendLayout();
+			this._tpAbout.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// _tcMain
@@ -80,6 +82,7 @@ namespace SIL.LiftBridge.View
 			//
 			// _tpAbout
 			//
+			this._tpAbout.Controls.Add(this._webBrowser);
 			this._tpAbout.Location = new System.Drawing.Point(4, 22);
 			this._tpAbout.Margin = new System.Windows.Forms.Padding(0);
 			this._tpAbout.Name = "_tpAbout";
@@ -102,6 +105,15 @@ namespace SIL.LiftBridge.View
 			this._sendReceiveButton.UseVisualStyleBackColor = false;
 			this._sendReceiveButton.Click += new System.EventHandler(this.SendReceiveButtonClick);
 			//
+			// _webBrowser
+			//
+			this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._webBrowser.Location = new System.Drawing.Point(0, 0);
+			this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+			this._webBrowser.Name = "_webBrowser";
+			this._webBrowser.Size = new System.Drawing.Size(573, 335);
+			this._webBrowser.TabIndex = 0;
+			//
 			// ExistingSystem
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -111,7 +123,9 @@ namespace SIL.LiftBridge.View
 			this.Controls.Add(this._tcMain);
 			this.Name = "ExistingSystem";
 			this.Size = new System.Drawing.Size(584, 413);
+			this.Load += new System.EventHandler(this.LoadExistingSystem);
 			this._tcMain.ResumeLayout(false);
+			this._tpAbout.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -123,5 +137,6 @@ namespace SIL.LiftBridge.View
 		private System.Windows.Forms.TabPage _tpHistory;
 		private System.Windows.Forms.TabPage _tpAbout;
 		private System.Windows.Forms.Button _sendReceiveButton;
+		private WebBrowser _webBrowser;
 	}
 }

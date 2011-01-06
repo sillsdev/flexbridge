@@ -20,6 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DistFiles", "DistFiles", "{C9834F5B-35BF-4ED2-8120-558EF69D200B}"
+	ProjectSection(SolutionItems) = preProject
+		DistFiles\about.htm = DistFiles\about.htm
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

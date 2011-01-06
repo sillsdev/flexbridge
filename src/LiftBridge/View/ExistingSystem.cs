@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -96,5 +97,12 @@ namespace SIL.LiftBridge.View
 		}
 
 		#endregion
+
+		private void LoadExistingSystem(object sender, EventArgs e)
+		{
+			_webBrowser.Navigate(Path.Combine(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase),
+				"about.htm"));
+		}
 	}
 }
