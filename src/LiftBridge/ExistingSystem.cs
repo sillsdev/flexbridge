@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
 
@@ -67,6 +69,13 @@ namespace SIL.LiftBridge
 					_importerExporter.ImportLexicon(myForm);
 				}
 			}
+		}
+
+		private void LoadExistingSystem(object sender, System.EventArgs e)
+		{
+			_webBrowser.Navigate(Path.Combine(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase),
+				"about.htm"));
 		}
 	}
 }
