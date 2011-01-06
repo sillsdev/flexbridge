@@ -27,9 +27,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="RootCodeDir" Type="raw" />
 	</Property>
 
+ <!--<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" /> WixUi_InstallDir -->
 	<UIRef Id="WixUI_Minimal"/>
 
-<!-- # WixUIBannerBmp / Top banner / 493 × 58
+<!-- # WixUIBannerBmp / Top banner / 493 x 58
 # WixUIDialogBmp / Background bitmap used on the welcome and completion dialogs / 493 × 312
 
 	<WixVariable Id='WixUIBannerBmp' Value='..\..\artwork\installerBanner.bmp' />
@@ -62,7 +63,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id='FieldWorksBridgeShortcutDir' Name='FieldWorksBridge'>
 		  <Component Id ='removeShortcutDir' Guid ="{3d9bf2de-4a25-11df-9879-0800200c9a66}">
 			<RemoveFolder Id ="shortcutDirRemover" On ="uninstall"/>
-			<RegistryKey Id="keyPathForRemoveShortcutDir" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\FieldWorksBridge\Components\FieldWorksBridgeShortcutDir">
+			<RegistryKey Id="keyPathForRemoveShortcutDir" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\SIL\FieldWorksBridge\Components\FieldWorksBridgeShortcutDir">
 			  <RegistryValue Type ="string" Value =""  Action ="write" KeyPath ="yes"/>
 			</RegistryKey>
 		  </Component>
@@ -70,15 +71,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  </Directory>
 
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
-		<Directory Id="ProgramDir" Name="FieldWorksBridge">
+		<Directory Id="SILDIR" Name="SIL">
+		  <Directory Id="INSTALLDIR" Name="FieldWorksBridge">
 
 		  <Component Id="FieldWorksBridge.exe" Guid="{3d9bf2df-4a25-11df-9879-0800200c9a66}">
-			<RegistryKey Id="keyFieldWorksBridge.exe" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\FieldWorksBridge\Components\FieldWorksBridge.exe">
+			<RegistryKey Id="keyFieldWorksBridge.exe" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\SIL\FieldWorksBridge\Components\FieldWorksBridge.exe">
 			  <RegistryValue Type ="string" Value =""  Action ="write" KeyPath ="yes"/>
 			</RegistryKey>
 			<File Id="FieldWorksBridge.exe" Name="FieldWorksBridge.exe"  Source="..\..\output\Release\FieldWorksBridge.exe" />
 			<Shortcut Id="startmenuShortcut"  Directory="FieldWorksBridgeShortcutDir" Name="FieldWorksBridge"
-			  WorkingDirectory="ProgramDir" Target="[!FieldWorksBridge.exe]"  Icon ="FieldWorksBridge.exe" />
+			  WorkingDirectory="INSTALLDIR" Target="[!FieldWorksBridge.exe]"  Icon ="FieldWorksBridge.exe" />
 		  </Component>
 
 		  <Component Id="Autofac.dll" Guid="{3d9bf2e0-4a25-11df-9879-0800200c9a66}">
@@ -109,7 +111,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Directory Id="MercurialDir" Name="Mercurial" />
 
 		</Directory>
-	  </Directory>
+		</Directory>
+		</Directory>
 	</Directory>
 
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
