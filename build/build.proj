@@ -44,7 +44,7 @@
   </Target>
 
   <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial">
-	<MSBuild Projects="$(teamcity_build_checkoutDir)/FieldWorksBridge VS2008.sln" Targets="Rebuild"
+	<MSBuild Projects="$(teamcity_build_checkoutDir)/FieldWorksBridge VS2010.sln" Targets="Rebuild"
 	  Properties="Configuration=Release"/>
 	<Message Text="Build Complete"/>
   </Target>
