@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
+	ProjectSection(SolutionItems) = preProject
+		DistFiles\about.htm = DistFiles\about.htm
+		build\build.proj = build\build.proj
+		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
+		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
+		src\Installer\Installer.wxs = src\Installer\Installer.wxs
+		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridge", "src\FieldWorksBridge\FieldWorksBridge.csproj", "{A40E1224-6159-4FE6-B78E-4094BD05DAF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridgeTests", "src\FieldWorksBridgeTests\FieldWorksBridgeTests.csproj", "{FCC2A824-2FC1-45A9-89F9-180561E3A647}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Debug|x86.ActiveCfg = Debug|x86
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Debug|x86.Build.0 = Debug|x86
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|x86.ActiveCfg = Release|x86
+		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|x86.Build.0 = Release|x86
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|x86.ActiveCfg = Debug|x86
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|x86.Build.0 = Debug|x86
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|x86.ActiveCfg = Release|x86
+		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
