@@ -68,9 +68,9 @@
 			this._rbUseExistingSystem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._rbUseExistingSystem.Location = new System.Drawing.Point(19, 65);
 			this._rbUseExistingSystem.Name = "_rbUseExistingSystem";
-			this._rbUseExistingSystem.Size = new System.Drawing.Size(271, 17);
+			this._rbUseExistingSystem.Size = new System.Drawing.Size(328, 17);
 			this._rbUseExistingSystem.TabIndex = 2;
-			this._rbUseExistingSystem.Text = "Another teammate has already used LIFT Bridge,";
+			this._rbUseExistingSystem.Text = "Another teammate has already used LIFT Bridge (or WeSay),";
 			this._rbUseExistingSystem.UseVisualStyleBackColor = true;
 			this._rbUseExistingSystem.Click += new System.EventHandler(this.RadioButtonClicked);
 			//

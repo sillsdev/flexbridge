@@ -18,3 +18,4 @@ glob:src/LiftBridge/LiftBridge.csproj.user
 glob:src/LiftBridgeCore/LiftBridgeCore.csproj.user
 glob:LiftBridge VS2010.suo
 glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
+relre:src/LiftBridgeUtility6/obj/*
