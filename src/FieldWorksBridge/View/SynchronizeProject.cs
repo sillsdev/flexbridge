@@ -14,6 +14,9 @@ namespace FieldWorksBridge.View
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".lock");
+
+			// Try to make the xml better formed.
+
 			try
 			{
 				File.WriteAllText(lockPathname, "");
