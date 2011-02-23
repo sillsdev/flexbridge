@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
@@ -65,8 +67,9 @@ AppData\LiftBridge\Bar
 
 		private void SetLiftPathname()
 		{
-			// Just use the first lift file we find.
-			_liftPathname = Directory.GetFiles(_currentRootDataPath, "*.lift")[0];
+			// Just use the first 'correct; lift file we find.
+			// 'Correct' being the first one with only one '.' in the file name.
+			_liftPathname = PathToFirstLiftFile();
 			_importerExporter.LiftPathname = _liftPathname;
 		}
 
@@ -203,6 +206,24 @@ AppData\LiftBridge\Bar
 			MessageBox.Show(this, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning);
 			Close();
+		}
+
+		private string PathToFirstLiftFile()
+		{
+			var liftFiles = Directory.GetFiles(_currentRootDataPath, "*.lift").ToList();
+			return liftFiles.Count == 0 ? null : GetMainLiftFile(liftFiles);
+		}
+
+		private static string GetMainLiftFile(IEnumerable<string> liftFiles)
+		{
+			return (from file in liftFiles
+					where HasOnlyOneDot(file)
+					select file).FirstOrDefault();
+		}
+
+		private static bool HasOnlyOneDot(string file)
+		{
+			return file.IndexOf(".") == file.LastIndexOf(".");
 		}
 	}
 }
