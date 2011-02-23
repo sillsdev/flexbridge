@@ -17,16 +17,12 @@ namespace FieldWorksBridge.View
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".lock");
 
-			// Try to make the xml better formed.
-			var readerSettings = new XmlReaderSettings
-									{
-										IgnoreWhitespace = true
-									};
+			// Make the xml better formed.
 			var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
-			var tmpBPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".tmpB");
-			var writeSettings = CanonicalXmlSettings.CreateXmlWriterSettings();
-			using (var reader = XmlReader.Create(origPathname, readerSettings))
-			using (var writer = XmlWriter.Create(tmpBPathname, writeSettings))
+			var tempPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".temp");
+			using (var reader = XmlReader.Create(origPathname,
+				new XmlReaderSettings { IgnoreWhitespace = true }))
+			using (var writer = XmlWriter.Create(tempPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
 				// 1. Write (copy) the root element, including its attributes.
 				reader.MoveToContent();
@@ -38,15 +34,15 @@ namespace FieldWorksBridge.View
 
 				// 2. Write (copy) all root element child elements.
 				while (!reader.EOF)
-				{
 					writer.WriteNode(reader, true);
-				}
 			}
 
 			// 3. Rename/copy/move the new file to fwdata.
-			File.Delete(origPathname);
-			File.Move(tmpBPathname, origPathname);
+			File.Copy(origPathname, Path.Combine(langProject.DirectoryName, langProject.Name + ".bak"), true);
+			File.Copy(tempPathname, origPathname, true);
+			File.Delete(tempPathname);
 
+			// Do the Chorus business.
 			try
 			{
 				File.WriteAllText(lockPathname, "");
