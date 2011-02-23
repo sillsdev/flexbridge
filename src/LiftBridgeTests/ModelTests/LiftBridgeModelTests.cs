@@ -70,6 +70,17 @@ namespace LiftBridgeTests.ModelTests
 		}
 
 		[Test]
+		public void ProjectReturnsCorrectLiftFile()
+		{
+			var liftProject = CreateNewbieProject();
+			var badLiftPathname = Path.Combine(_pathToProject, "Newbie.0.12.lift");
+			File.WriteAllText(badLiftPathname, "");
+			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			File.WriteAllText(goodLiftPathname, "");
+			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
+		}
+
+		[Test]
 		public void ProjectHasNoLiftFile()
 		{
 			var liftProject = CreateNewbieProject();

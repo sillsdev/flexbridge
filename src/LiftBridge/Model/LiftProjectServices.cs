@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SIL.LiftBridge.Model
 {
@@ -40,13 +42,25 @@ namespace SIL.LiftBridge.Model
 
 		internal static string PathToFirstLiftFile(LiftProject project)
 		{
-			var liftFiles = Directory.GetFiles(PathToProject(project), "*.lift");
-			return liftFiles.Length == 0 ? null : liftFiles[0];
+			var liftFiles = Directory.GetFiles(PathToProject(project), "*.lift").ToList();
+			return liftFiles.Count == 0 ? null : GetMainLiftFile(liftFiles);
 		}
 
 		internal static string PathToMercurialFolder(LiftProject project)
 		{
 			return Path.Combine(PathToProject(project), ".hg");
+		}
+
+		private static string GetMainLiftFile(IEnumerable<string> liftFiles)
+		{
+			return (from file in liftFiles
+						where HasOnlyOneDot(file)
+						select file).FirstOrDefault();
+		}
+
+		private static bool HasOnlyOneDot(string file)
+		{
+			return file.IndexOf(".") == file.LastIndexOf(".");
 		}
 	}
 }
