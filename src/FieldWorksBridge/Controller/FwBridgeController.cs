@@ -73,6 +73,8 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("**/Temp");
 			projFolder.ExcludePatterns.Add("**/BackupSettings");
 			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
+			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
+			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 
 			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
