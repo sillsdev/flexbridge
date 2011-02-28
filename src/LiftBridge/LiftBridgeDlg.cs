@@ -120,7 +120,7 @@ AppData\LiftBridge\Bar
 									// It made a clone, but maybe in the wrong name.
 									// _currentRootDataPath is the one we want to use.
 									var newProjPath = internetCloneDlg.PathToNewProject;
-									if (newProjPath != _currentRootDataPath)
+									if (newProjPath.ToLowerInvariant() != _currentRootDataPath.ToLowerInvariant() && !Directory.Exists(_currentRootDataPath))
 										Directory.Move(newProjPath, _currentRootDataPath);
 									break;
 							}
@@ -154,7 +154,7 @@ AppData\LiftBridge\Bar
 										throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
 									var repo = new HgRepository(sourcePath, new StatusProgress());
 									repo.CloneLocal(target);
-									if (target != _currentRootDataPath)
+									if (target.ToLowerInvariant() != _currentRootDataPath.ToLowerInvariant() && !Directory.Exists(_currentRootDataPath))
 										Directory.Move(target, _currentRootDataPath);
 // ReSharper restore AssignNullToNotNullAttribute
 									break;
@@ -174,7 +174,7 @@ AppData\LiftBridge\Bar
 									// It made a clone, but maybe in the wrong name.
 									// _currentRootDataPath is the one we want to use.
 									var newProjPath = usbCloneDlg.PathToNewProject;
-									if (newProjPath != _currentRootDataPath)
+									if (newProjPath.ToLowerInvariant() != _currentRootDataPath.ToLowerInvariant() && !Directory.Exists(_currentRootDataPath))
 										Directory.Move(newProjPath, _currentRootDataPath);
 									break;
 							}
