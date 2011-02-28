@@ -111,7 +111,7 @@ namespace SIL.LiftBridge.View
 
 		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
 		{
-			if (newProjPath != currentRootDataPath)
+			if (newProjPath.ToLowerInvariant() != currentRootDataPath.ToLowerInvariant() && !Directory.Exists(currentRootDataPath))
 				Directory.Move(newProjPath, currentRootDataPath);
 		}
 
