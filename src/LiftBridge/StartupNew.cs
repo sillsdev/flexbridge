@@ -43,5 +43,10 @@ namespace SIL.LiftBridge
 				handler(this, e);
 		}
 
+		private void btnClose_Click(object sender, EventArgs e)
+		{
+			FindForm().Close();
+		}
+
 	}
 }

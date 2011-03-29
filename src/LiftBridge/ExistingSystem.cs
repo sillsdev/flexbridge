@@ -77,5 +77,10 @@ namespace SIL.LiftBridge
 				Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase),
 				"about.htm"));
 		}
+
+		private void btnClose_Click(object sender, System.EventArgs e)
+		{
+			FindForm().Close();
+		}
 	}
 }

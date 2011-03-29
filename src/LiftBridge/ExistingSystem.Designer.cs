@@ -36,8 +36,9 @@
 			this._tpNotes = new System.Windows.Forms.TabPage();
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
-			this._sendReceiveButton = new System.Windows.Forms.Button();
 			this._webBrowser = new System.Windows.Forms.WebBrowser();
+			this._sendReceiveButton = new System.Windows.Forms.Button();
+			this.btnClose = new System.Windows.Forms.Button();
 			this._tcMain.SuspendLayout();
 			this._tpAbout.SuspendLayout();
 			this.SuspendLayout();
@@ -55,7 +56,7 @@
 			this._tcMain.Name = "_tcMain";
 			this._tcMain.Padding = new System.Drawing.Point(0, 0);
 			this._tcMain.SelectedIndex = 0;
-			this._tcMain.Size = new System.Drawing.Size(581, 361);
+			this._tcMain.Size = new System.Drawing.Size(581, 326);
 			this._tcMain.TabIndex = 0;
 			//
 			// _tpNotes
@@ -63,7 +64,7 @@
 			this._tpNotes.Location = new System.Drawing.Point(4, 22);
 			this._tpNotes.Margin = new System.Windows.Forms.Padding(0);
 			this._tpNotes.Name = "_tpNotes";
-			this._tpNotes.Size = new System.Drawing.Size(573, 335);
+			this._tpNotes.Size = new System.Drawing.Size(573, 300);
 			this._tpNotes.TabIndex = 1;
 			this._tpNotes.Text = "Notes";
 			this._tpNotes.UseVisualStyleBackColor = true;
@@ -73,7 +74,7 @@
 			this._tpHistory.Location = new System.Drawing.Point(4, 22);
 			this._tpHistory.Margin = new System.Windows.Forms.Padding(0);
 			this._tpHistory.Name = "_tpHistory";
-			this._tpHistory.Size = new System.Drawing.Size(573, 335);
+			this._tpHistory.Size = new System.Drawing.Size(573, 290);
 			this._tpHistory.TabIndex = 2;
 			this._tpHistory.Text = "History";
 			this._tpHistory.UseVisualStyleBackColor = true;
@@ -84,10 +85,19 @@
 			this._tpAbout.Location = new System.Drawing.Point(4, 22);
 			this._tpAbout.Margin = new System.Windows.Forms.Padding(0);
 			this._tpAbout.Name = "_tpAbout";
-			this._tpAbout.Size = new System.Drawing.Size(573, 335);
+			this._tpAbout.Size = new System.Drawing.Size(573, 290);
 			this._tpAbout.TabIndex = 3;
 			this._tpAbout.Text = "About";
 			this._tpAbout.UseVisualStyleBackColor = true;
+			//
+			// _webBrowser
+			//
+			this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._webBrowser.Location = new System.Drawing.Point(0, 0);
+			this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+			this._webBrowser.Name = "_webBrowser";
+			this._webBrowser.Size = new System.Drawing.Size(573, 335);
+			this._webBrowser.TabIndex = 0;
 			//
 			// _sendReceiveButton
 			//
@@ -103,20 +113,22 @@
 			this._sendReceiveButton.UseVisualStyleBackColor = false;
 			this._sendReceiveButton.Click += new System.EventHandler(this._sendReceiveButton_Click);
 			//
-			// _webBrowser
+			// btnClose
 			//
-			this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._webBrowser.Location = new System.Drawing.Point(0, 0);
-			this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-			this._webBrowser.Name = "_webBrowser";
-			this._webBrowser.Size = new System.Drawing.Size(573, 335);
-			this._webBrowser.TabIndex = 0;
+			this.btnClose.Location = new System.Drawing.Point(497, 381);
+			this.btnClose.Name = "btnClose";
+			this.btnClose.Size = new System.Drawing.Size(75, 23);
+			this.btnClose.TabIndex = 16;
+			this.btnClose.Text = "Close";
+			this.btnClose.UseVisualStyleBackColor = true;
+			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
 			//
 			// ExistingSystem
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+			this.Controls.Add(this.btnClose);
 			this.Controls.Add(this._sendReceiveButton);
 			this.Controls.Add(this._tcMain);
 			this.Name = "ExistingSystem";
@@ -136,5 +148,6 @@
 		private System.Windows.Forms.TabPage _tpAbout;
 		private System.Windows.Forms.Button _sendReceiveButton;
 		private System.Windows.Forms.WebBrowser _webBrowser;
+		private System.Windows.Forms.Button btnClose;
 	}
 }
