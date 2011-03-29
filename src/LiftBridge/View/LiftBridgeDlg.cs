@@ -34,13 +34,20 @@ namespace SIL.LiftBridge.View
 			if (Controls.Count > 0)
 			{
 				var oldControl = Controls[0];
+				((IActiveView)oldControl).CloseApp -= LiftBridgeDlgCloseApp;
 				Controls.Clear();
 				oldControl.Dispose();
 			}
 			var newControl = (Control)activeView;
 			Controls.Add(newControl);
 			newControl.Dock = DockStyle.Fill;
+			activeView.CloseApp += LiftBridgeDlgCloseApp;
 			ResumeLayout(true);
+		}
+
+		void LiftBridgeDlgCloseApp(object sender, System.EventArgs e)
+		{
+			Close();
 		}
 
 		#endregion Implementation of ILiftBridgeView

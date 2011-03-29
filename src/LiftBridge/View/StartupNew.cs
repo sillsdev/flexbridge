@@ -47,5 +47,16 @@ namespace SIL.LiftBridge.View
 			if (Startup != null)
 				Startup(this, e);
 		}
+
+		private void CloseButtonClick(object sender, EventArgs e)
+		{
+			CloseApp(this, e);
+		}
+
+		#region Implementation of IActiveView
+
+		public event EventHandler CloseApp;
+
+		#endregion
 	}
 }

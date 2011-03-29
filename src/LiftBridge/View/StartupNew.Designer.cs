@@ -37,6 +37,7 @@
 			this._rbLocalNetwork = new System.Windows.Forms.RadioButton();
 			this._rbInternet = new System.Windows.Forms.RadioButton();
 			this._rbUsb = new System.Windows.Forms.RadioButton();
+			this.btnClose = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -149,11 +150,23 @@
 			this._rbUsb.UseVisualStyleBackColor = true;
 			this._rbUsb.Click += new System.EventHandler(this.RadioButtonClicked);
 			//
+			// btnClose
+			//
+			this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnClose.Location = new System.Drawing.Point(286, 217);
+			this.btnClose.Name = "btnClose";
+			this.btnClose.Size = new System.Drawing.Size(75, 23);
+			this.btnClose.TabIndex = 7;
+			this.btnClose.Text = "Close";
+			this.btnClose.UseVisualStyleBackColor = true;
+			this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
+			//
 			// StartupNew
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+			this.Controls.Add(this.btnClose);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._btnContinue);
 			this.Controls.Add(this.label2);
@@ -182,5 +195,6 @@
 		private System.Windows.Forms.RadioButton _rbLocalNetwork;
 		private System.Windows.Forms.RadioButton _rbInternet;
 		private System.Windows.Forms.RadioButton _rbUsb;
+		private System.Windows.Forms.Button btnClose;
 	}
 }

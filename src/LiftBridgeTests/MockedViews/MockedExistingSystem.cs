@@ -1,4 +1,5 @@
-﻿using Chorus;
+﻿using System;
+using Chorus;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.View;
@@ -39,6 +40,12 @@ namespace LiftBridgeTests.MockedViews
 			ChorusSys = chorusSystem;
 			Project = liftProject;
 		}
+
+		#endregion
+
+		#region Implementation of IActiveView
+
+		public event EventHandler CloseApp;
 
 		#endregion
 	}
