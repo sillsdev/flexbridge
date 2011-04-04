@@ -28,9 +28,6 @@ namespace LiftBridgeUtility6
 			File.Copy(originalPathname, bakPathname, true); // Be safe in this.
 
 			// Diff the original file (now bak) and the newly exported file (temp).
-			//var differ = Xml2WayDiffer.CreateFromFiles(bakPathname, tempPathname, new NullMergeEventListener(), "header", "entry", "id");
-			//Dictionary<string, byte[]> childIndex;
-			//var parentIndex = differ.ReportDifferencesToListener(out childIndex);
 			var parentIndex = new Dictionary<string, byte[]>();
 			using (var parentPrepper = new DifferDictionaryPrepper(parentIndex, bakPathname, "header", "entry", "id"))
 			{
@@ -91,6 +88,8 @@ namespace LiftBridgeUtility6
 						{
 							byte[] headerToWrite;
 							childIndex.TryGetValue(currentId, out headerToWrite);
+							if (reader.LocalName == currentId)
+								reader.ReadToNextSibling("entry");
 
 							// If 'header' is in childIndex, then add it now.
 							if (headerToWrite != null)
