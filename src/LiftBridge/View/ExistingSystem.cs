@@ -6,6 +6,7 @@ using Chorus;
 using Chorus.UI.Sync;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.Services;
 
 namespace SIL.LiftBridge.View
 {
@@ -47,9 +48,8 @@ namespace SIL.LiftBridge.View
 						return;
 					}
 
-					File.Copy(_liftProject.LiftPathname, _liftProject.LiftPathname + ".bak", true);
-					File.Copy(tempPathname, _liftProject.LiftPathname, true);
-					File.Delete(tempPathname);
+					LiftFileServices.PrettyPrintFile(_liftProject.LiftPathname, tempPathname);
+
 					_haveExportedFromFlex = true;
 				}
 			}
