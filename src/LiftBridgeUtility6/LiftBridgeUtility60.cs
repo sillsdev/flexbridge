@@ -318,9 +318,8 @@ namespace LiftBridgeUtility6
 						if (outPath == null)
 							return false;
 
-						// Copy temp file to real LIFT file.
-						File.Copy(outPath, LiftPathname, true);
-						File.Delete(outPath); // Delete temp file.
+						LiftFileServices.PrettyPrintFile(LiftPathname, outPath);
+
 						return true;
 					}
 					catch
