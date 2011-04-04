@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Chorus.FileTypeHanders;
-using Chorus.merge.xml.generic;
 using Chorus.Utilities;
 using Palaso.Xml;
 
@@ -45,16 +43,17 @@ namespace SIL.LiftBridge.Services
 			}
 
 			// Collect up the new entries.
+			var parentKeys = parentIndex.Keys.ToList();
 			var newbies = new HashSet<string>(from childKey in childIndex.Keys
-												where !parentIndex.ContainsKey(childKey)
+											  where !parentKeys.Contains(childKey)
 												select childKey,
 											  StringComparer.OrdinalIgnoreCase);
 			// Collect the ones that were deleted.
+			var childKeys = childIndex.Keys.ToList();
 			var goners = new HashSet<string>(from parentKey in parentIndex.Keys
-												where !childIndex.ContainsKey(parentKey)
+											 where !childKeys.Contains(parentKey)
 												select parentKey,
 											 StringComparer.OrdinalIgnoreCase);
-			parentIndex = null;
 
 			// Write the entries in the order of records in the new '.bak' file. New entries can get appended to the end.
 			using (var writer = XmlWriter.Create(originalPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -93,14 +92,13 @@ namespace SIL.LiftBridge.Services
 							byte[] headerToWrite;
 							childIndex.TryGetValue(currentId, out headerToWrite);
 							if (reader.LocalName == currentId)
-								keepReading = reader.ReadToNextSibling("entry");
+								reader.ReadToNextSibling("entry");
 
 							// If 'header' is in childIndex, then add it now.
 							if (headerToWrite != null)
 								WriteNode(writer, headerToWrite);
 							RemoveItem(currentId, childIndex, newbies, goners);
 							handledHeader = true;
-							//continue;
 						}
 						else
 						{
@@ -112,7 +110,7 @@ namespace SIL.LiftBridge.Services
 							if (goners.Contains(currentId))
 							{
 								// Skip this record, since it has been deleted.
-								keepReading = reader.ReadToNextSibling("entry");
+								reader.ReadToNextSibling("entry");
 								RemoveItem(currentId, childIndex, newbies, goners);
 								// continue;
 							}
