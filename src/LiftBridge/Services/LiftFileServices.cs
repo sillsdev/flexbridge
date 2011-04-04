@@ -28,9 +28,6 @@ namespace SIL.LiftBridge.Services
 			File.Copy(originalPathname, bakPathname, true); // Be safe in this.
 
 			// Diff the original file (now bak) and the newly exported file (temp).
-			//var differ = Xml2WayDiffer.CreateFromFiles(bakPathname, tempPathname, new NullMergeEventListener(), "header", "entry", "id");
-			//Dictionary<string, byte[]> childIndex;
-			//var parentIndex = differ.ReportDifferencesToListener(out childIndex);
 			var parentIndex = new Dictionary<string, byte[]>();
 			using (var parentPrepper = new DifferDictionaryPrepper(parentIndex, bakPathname, "header", "entry", "id"))
 			{
