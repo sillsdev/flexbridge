@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using NUnit.Framework;
 using Palaso.IO;
 using SIL.LiftBridge.Services;
@@ -123,6 +119,92 @@ namespace LiftBridgeTests.ServicesTests
 				LiftFileServices.PrettyPrintFile(tempParent.Path, tempChild.Path);
 				var newOutputContents = File.ReadAllText(tempParent.Path);
 				Assert.IsTrue(newOutputContents.Contains(replacedHeader)); // Header changed with good format.
+			}
+		}
+
+		[Test]
+		public void CaseShouldNotMatterInChildIds()
+		{
+			const string parent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<lift
+	version='0.13'
+	producer='SIL.FLEx 7.0.0.40590'>
+	<header>
+		<stuff></stuff>
+	</header>
+	<entry
+		id='pos1' />
+	<entry
+		id='pos2' />
+	<entry
+		id='pos3' />
+</lift>";
+			const string child =
+@"<?xml version='1.0' encoding='utf-8'?>
+<lift
+	version='0.13'
+	producer='SIL.FLEx 7.0.0.40590'>
+	<header>
+		<stuff></stuff>
+	</header>
+	<entry
+		id='pos1' />
+	<entry
+		id='POS2' />
+	<entry
+		id='pos3' />
+</lift>";
+
+			using (var tempParent = new TempFile(parent))
+			using (var tempChild = new TempFile(child))
+			{
+				LiftFileServices.PrettyPrintFile(tempParent.Path, tempChild.Path);
+				var newOutputContents = File.ReadAllText(tempParent.Path);
+				Assert.IsTrue(newOutputContents.Contains("POS2"));
+			}
+		}
+
+		[Test]
+		public void CaseShouldNotMatterInParentIds()
+		{
+			const string parent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<lift
+	version='0.13'
+	producer='SIL.FLEx 7.0.0.40590'>
+	<header>
+		<stuff></stuff>
+	</header>
+	<entry
+		id='pos1' />
+	<entry
+		id='POS2' />
+	<entry
+		id='pos3' />
+</lift>";
+			const string child =
+@"<?xml version='1.0' encoding='utf-8'?>
+<lift
+	version='0.13'
+	producer='SIL.FLEx 7.0.0.40590'>
+	<header>
+		<stuff></stuff>
+	</header>
+	<entry
+		id='pos1' />
+	<entry
+		id='pos2' />
+	<entry
+		id='pos3' />
+</lift>";
+
+			using (var tempParent = new TempFile(parent))
+			using (var tempChild = new TempFile(child))
+			{
+				LiftFileServices.PrettyPrintFile(tempParent.Path, tempChild.Path);
+				var newOutputContents = File.ReadAllText(tempParent.Path);
+				Assert.IsTrue(newOutputContents.Contains("pos2"));
 			}
 		}
 

@@ -28,27 +28,29 @@ namespace SIL.LiftBridge.Services
 			File.Copy(originalPathname, bakPathname, true); // Be safe in this.
 
 			// Diff the original file (now bak) and the newly exported file (temp).
-			var parentIndex = new Dictionary<string, byte[]>();
+			var parentIndex = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			using (var parentPrepper = new DifferDictionaryPrepper(parentIndex, bakPathname, "header", "entry", "id"))
 			{
 				parentPrepper.Run();
 			}
-			var childIndex = new Dictionary<string, byte[]>();
+			var childIndex = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			using (var childPrepper = new DifferDictionaryPrepper(childIndex, tempPathname, "header", "entry", "id"))
 			{
 				childPrepper.Run();
 			}
 
 			// Collect up the new entries.
-			var parentKeys = parentIndex.Keys.ToList();
+			var parentKeys = new List<string>(parentIndex.Count);
+			parentKeys.AddRange(parentIndex.Keys.Select(parentKey => parentKey.ToLowerInvariant()));
 			var newbies = new HashSet<string>(from childKey in childIndex.Keys
-											  where !parentKeys.Contains(childKey)
+											  where !parentKeys.Contains(childKey.ToLowerInvariant())
 												select childKey,
 											  StringComparer.OrdinalIgnoreCase);
 			// Collect the ones that were deleted.
-			var childKeys = childIndex.Keys.ToList();
+			var childKeys = new List<string>(childIndex.Count);
+			childKeys.AddRange(childIndex.Keys.Select(childKey => childKey.ToLowerInvariant()));
 			var goners = new HashSet<string>(from parentKey in parentIndex.Keys
-											 where !childKeys.Contains(parentKey)
+											 where !childKeys.Contains(parentKey.ToLowerInvariant())
 												select parentKey,
 											 StringComparer.OrdinalIgnoreCase);
 
@@ -74,7 +76,6 @@ namespace SIL.LiftBridge.Services
 				{
 					reader.MoveToContent();
 					// Write all root element child elements.
-					// TODO?: While we have the files opened, then take care of the Flex export issue, where senses end up with guid_guid (or gloss_guid) ids.
 					// Delete goners.
 					// Copy extant objects to new file using verison (same or modified, no matter) from childIndex.
 					// Add newbies at end.
@@ -82,7 +83,7 @@ namespace SIL.LiftBridge.Services
 					var keepReading = reader.Read();
 					while (keepReading)
 					{
-						var currentId = handledHeader ? reader.GetAttribute("id") : "header";
+						var currentId = handledHeader ? reader.GetAttribute("id").ToLowerInvariant() : "header";
 						// Optional header element.
 						if (!handledHeader)
 						{
