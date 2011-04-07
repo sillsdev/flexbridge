@@ -3,10 +3,10 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
-using SIL.LiftBridge.Services;
 
 namespace SIL.LiftBridge.View
 {
