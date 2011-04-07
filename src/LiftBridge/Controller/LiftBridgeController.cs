@@ -95,7 +95,9 @@ namespace SIL.LiftBridge.Controller
 						Path.Combine(
 							LiftProjectServices.PathToProject(Liftproject),
 							Liftproject.LiftProjectName + ".lift"),
-						"");
+@"<?xml version='1.0' encoding='UTF-8'?>
+<lift version='0.13'>
+</lift>");
 					break;
 				case SharedSystemType.Extant:
 					if (!_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject))
