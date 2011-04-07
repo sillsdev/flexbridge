@@ -100,6 +100,11 @@ AppData\LiftBridge\Bar
 				// We get to pick its name, since we create the repo.
 				_liftPathname = Path.Combine(_currentRootDataPath, _langProjName + ".lift");
 				File.Create(_liftPathname);
+				File.WriteAllText(
+					_liftPathname,
+@"<?xml version='1.0' encoding='UTF-8'?>
+<lift version='0.13'>
+</lift>");
 				_importerExporter.LiftPathname = _liftPathname;
 			}
 			else
