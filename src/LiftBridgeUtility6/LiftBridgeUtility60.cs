@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Chorus.FileTypeHanders.lift;
 using LiftIO.Migration;
 using LiftIO.Parsing;
 using LiftIO.Validation;

@@ -107,7 +107,6 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="LiftBridgeUtility60.cs" />
-	<Compile Include="LiftFileServices.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
