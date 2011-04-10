@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Chorus.FileTypeHanders.FieldWorks;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -25,7 +26,7 @@ namespace FieldWorksBridge.Infrastructure
 			CheckPathname(mainFilePathname);
 		}
 
-		internal static void PutHumptyTogetherAgain(string mainFilePathname)
+		internal static void RestoreMainFile(string mainFilePathname)
 		{
 			// NB: Do the write on a new file, and then rename (move/copy) to 'mainFilePathname',
 			// just in case it does not finish properly.
@@ -39,10 +40,9 @@ namespace FieldWorksBridge.Infrastructure
 
 		private static void CheckPathname(string mainFilePathname)
 		{
-			if (string.IsNullOrEmpty(mainFilePathname))
-				throw new ArgumentNullException(mainFilePathname);
-			if (!File.Exists(mainFilePathname))
-				throw new FileNotFoundException("File does not exist.", mainFilePathname);
+			var fwFileHandler = new FieldWorksFileHandler();
+			if (!fwFileHandler.CanValidateFile(mainFilePathname))
+				throw new ApplicationException("Cannot process the given file.");
 		}
 	}
 }

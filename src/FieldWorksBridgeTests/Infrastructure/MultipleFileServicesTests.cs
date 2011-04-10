@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using FieldWorksBridge.Infrastructure;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FieldWorksBridgeTests.Infrastructure
 {
@@ -14,37 +15,55 @@ namespace FieldWorksBridgeTests.Infrastructure
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ArgumentNullException>(() => MultipleFileServices.BreakupMainFile(null));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ArgumentNullException>(() => MultipleFileServices.BreakupMainFile(""));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(""));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<FileNotFoundException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata"));
+		}
+
+		[Test]
+		public void NotFwDataFileForBreakupShouldThrow()
+		{
+			using (var tempFile = new TempFile(""))
+			{
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(tempFile.Path));
+			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ArgumentNullException>(() => MultipleFileServices.PutHumptyTogetherAgain(null));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ArgumentNullException>(() => MultipleFileServices.PutHumptyTogetherAgain(""));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<FileNotFoundException>(() => MultipleFileServices.PutHumptyTogetherAgain("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("Bogus.fwdata"));
+		}
+
+		[Test]
+		public void NotFwDataFileForRestoreShouldThrow()
+		{
+			using (var tempFile = new TempFile(""))
+			{
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path));
+			}
 		}
 	}
 }
