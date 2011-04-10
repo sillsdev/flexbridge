@@ -92,6 +92,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
@@ -114,9 +115,7 @@
 	  <Name>FieldWorksBridge</Name>
 	</ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Infrastructure\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
