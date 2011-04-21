@@ -1,10 +1,15 @@
-﻿using System.IO;
+﻿#define USEMULTIPLEFILES
+using System.IO;
 using System.Windows.Forms;
-using System.Xml;
 using Chorus;
 using Chorus.UI.Sync;
 using FieldWorksBridge.Model;
+#if USEMULTIPLEFILES
+using FieldWorksBridge.Infrastructure;
+#else
+using System.Xml;
 using Palaso.Xml;
+#endif
 
 namespace FieldWorksBridge.View
 {
@@ -16,9 +21,11 @@ namespace FieldWorksBridge.View
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".lock");
+			File.WriteAllText(lockPathname, "");
 
-			// Make the xml better formed.
 			var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
+#if !USEMULTIPLEFILES
+			// Make the xml better formed.
 			var tempPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".temp");
 			using (var reader = XmlReader.Create(origPathname,
 				new XmlReaderSettings { IgnoreWhitespace = true }))
@@ -41,18 +48,28 @@ namespace FieldWorksBridge.View
 			File.Copy(origPathname, Path.Combine(langProject.DirectoryName, langProject.Name + ".bak"), true);
 			File.Copy(tempPathname, origPathname, true);
 			File.Delete(tempPathname);
+#else
+			// Break up into smaller files.
+			MultipleFileServices.BreakupMainFile(origPathname);
+#endif
 
 			// Do the Chorus business.
 			try
 			{
-				File.WriteAllText(lockPathname, "");
-
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
 					syncDlg.SyncOptions.DoSendToOthers = true;
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
 					syncDlg.ShowDialog(parent);
+
+#if USEMULTIPLEFILES
+					if (syncDlg.SyncResult.DidGetChangesFromOthers)
+					{
+						// Put Humpty together again.
+						MultipleFileServices.RestoreMainFile(origPathname);
+					}
+#endif
 				}
 			}
 			finally

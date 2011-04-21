@@ -31,8 +31,16 @@ namespace FieldWorksBridge.View
 
 		private void SendReceiveButtonClick(object sender, EventArgs e)
 		{
-			if (SynchronizeProject != null)
-				SynchronizeProject(this, new EventArgs());
+			Cursor = Cursors.WaitCursor;
+			try
+			{
+				if (SynchronizeProject != null)
+					SynchronizeProject(this, new EventArgs());
+			}
+			finally
+			{
+				Cursor = Cursors.Default;
+			}
 		}
 
 		#region Implementation of IFwBridgeView

@@ -67,23 +67,24 @@ namespace FieldWorksBridge.Controller
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include
 			var projFolder = chorusSystem.ProjectFolderConfiguration;
+			projFolder.ExcludePatterns.Add("*.fwdata");
 			projFolder.ExcludePatterns.Add("*.bak");
 			projFolder.ExcludePatterns.Add("*.lock");
 			projFolder.ExcludePatterns.Add("*.tmp");
+			projFolder.ExcludePatterns.Add(".hgignore");
 			projFolder.ExcludePatterns.Add("**/Temp");
 			projFolder.ExcludePatterns.Add("**/BackupSettings");
 			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 
+			projFolder.IncludePatterns.Add("DataFiles/*.fwdata");
 			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
 			projFolder.IncludePatterns.Add("Keyboards/*.*");
 			projFolder.IncludePatterns.Add("Fonts/*.*");
-			projFolder.IncludePatterns.Add("*.fwdata");
-			projFolder.IncludePatterns.Add(".hgignore");
 		}
 
 		internal Form MainForm { get; private set; }

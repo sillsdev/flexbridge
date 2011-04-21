@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿#define USEMULTIPLEFILES
+#if USEMULTIPLEFILES
+using System;
 using FieldWorksBridge.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
@@ -67,3 +65,4 @@ namespace FieldWorksBridgeTests.Infrastructure
 		}
 	}
 }
+#endif
