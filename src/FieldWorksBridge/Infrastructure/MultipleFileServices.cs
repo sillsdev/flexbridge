@@ -2,7 +2,6 @@
 #if USEMULTIPLEFILES
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -147,14 +146,14 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore AssignNullToNotNullAttribute
 
 			var tempPathname = Path.GetTempFileName();
-			// NB: Do the write on a new file, and then rename (move/copy) to 'mainFilePathname',
-			// just in case it does not finish properly.
-			// NB: This should follow current FW write settings practice.
-			// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
-			// but the custom props element must be first.
+
 			try
 			{
+				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
+				// but the custom props element must be first.
+
 				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+				// NB: This should follow current FW write settings practice.
 				var fwWriterSettings = new XmlWriterSettings
 				{
 					OmitXmlDeclaration = false,
@@ -195,34 +194,16 @@ namespace FieldWorksBridge.Infrastructure
 					// Work on all other files, except the custom prop file.
 					foreach (var pathname in multipleFiles)
 					{
-						if (pathname == "CmAgentEvaluation.fwdata")
-							Debug.WriteLine("found it.");
 						using (var reader = XmlReader.Create(pathname, readerSettings))
 						{
 							reader.MoveToContent();
 							reader.Read();
 							while (reader.IsStartElement())
 							{
-								//if (reader.HasAttributes && reader.IsEmptyElement)
-								//{
-								//	writer.WriteStartElement(reader.LocalName);
-								//	for (var i = 0; i < reader.AttributeCount; ++i)
-								//	{
-								//		reader.MoveToAttribute(i);
-								//		writer.WriteAttributeString(reader.LocalName, reader.Value);
-								//	}
-								//	writer.WriteEndElement();
-								//	reader.Read();
-								//}
-								//else
-								//{
-									writer.WriteNode(reader, true);
-								//}
+								writer.WriteNode(reader, false);
 							}
 						}
 					}
-
-
 					writer.WriteEndElement();
 				}
 
