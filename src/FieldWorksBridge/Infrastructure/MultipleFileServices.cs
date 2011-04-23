@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders.FieldWorks;
 using Chorus.Utilities;
 using Palaso.Xml;
@@ -29,17 +30,6 @@ namespace FieldWorksBridge.Infrastructure
 		private static readonly Encoding Utf8 = Encoding.UTF8;
 		private const string FirstElementTag = "AdditionalFields";
 		private const string StartTag = "rt";
-
-		private const string IdentfierAttribute = "guid";
-		private static readonly byte[] IdentifierAttributeWithDoubleOpen = Utf8.GetBytes(IdentfierAttribute + "=\"");
-		private static readonly byte[] IdentifierAttributeWithSingleOpen = Utf8.GetBytes(IdentfierAttribute + "='");
-
-		private const string ClassAttribute = "class";
-		private static readonly byte[] ClassAttributeWithDoubleOpen = Utf8.GetBytes(ClassAttribute + "=\"");
-		private static readonly byte[] ClassAttributeWithSingleOpen = Utf8.GetBytes(ClassAttribute + "='");
-
-		private static readonly byte DoubleQuote = Utf8.GetBytes("\"")[0];
-		private static readonly byte SingleQuote = Utf8.GetBytes("'")[0];
 		/*
 		<languageproject version="7000037">
 		</languageproject>
@@ -70,7 +60,7 @@ namespace FieldWorksBridge.Infrastructure
 					if (foundOptionalFirstElement)
 					{
 						// Cache custom prop file for later write.
-						optionalFirstElement = record;
+						optionalFirstElement = SortCustomPropertiesRecord(record);
 						foundOptionalFirstElement = false;
 					}
 					else
@@ -90,14 +80,141 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-			// TODO: Deal with all other sortings at some point.
 			// Write optional first element.
 			if (optionalFirstElement != null)
 				WriteSecondaryFile(Path.Combine(multiFileDirRoot, "CustomProperties.fwdata"), readerSettings, version, optionalFirstElement);
 
 			// Write data records in guid sorted order.
+			var highVolumeClasses = new HashSet<string> {"Segment", "WfiAnalysis", "WfiMorphBundle"};
 			foreach (var kvp in classData)
-				WriteSecondaryFile(Path.Combine(multiFileDirRoot, kvp.Key + ".fwdata"), readerSettings, version, kvp.Value);
+			{
+				var className = kvp.Key;
+				if (highVolumeClasses.Contains(className))
+				{
+					// Get rid of original file.
+					if (File.Exists(Path.Combine(multiFileDirRoot, className + ".fwdata")))
+						File.Delete(Path.Combine(multiFileDirRoot, className + ".fwdata"));
+
+					// Write 10 files for each high volume class.
+					WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, version, kvp.Value);
+				}
+				else
+				{
+					// Only write one file.
+					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".fwdata"), readerSettings, version, kvp.Value);
+				}
+			}
+		}
+
+		private static byte[] SortCustomPropertiesRecord(byte[] optionalFirstElement)
+		{
+			var customPropertiesElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
+
+			// <CustomField name="Certified" class="WfiWordform" type="Boolean" />
+
+			// 1. Sort child elements by using a compound key of 'class'+'name'.
+			var sortedProperties = new SortedDictionary<string, XElement>();
+			foreach (var customProperty in customPropertiesElement.Elements())
+				sortedProperties.Add(customProperty.Attribute("class").Value + customProperty.Attribute("name").Value, customProperty);
+			customPropertiesElement.Elements().Remove();
+			foreach (var propertyKvp in sortedProperties)
+				customPropertiesElement.Add(propertyKvp.Value);
+
+			// Sort all attributes.
+			SortAttributes(customPropertiesElement);
+
+			return Utf8.GetBytes(customPropertiesElement.ToString());
+		}
+
+		private static void SortAttributes(XElement element)
+		{
+			if (element.HasElements)
+			{
+				foreach (var childElement in element.Elements())
+					SortAttributes(childElement);
+			}
+
+			if (!element.HasAttributes || element.Attributes().Count() <= 1)
+				return;
+
+			var sortedAttributes = new SortedDictionary<string, XAttribute>();
+			foreach (var attr in element.Attributes())
+				sortedAttributes.Add(attr.Name.LocalName, attr);
+
+			element.Attributes().Remove();
+			foreach (var sortedAttrKvp in sortedAttributes)
+				element.Add(sortedAttrKvp.Value);
+		}
+
+		private static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, string version, SortedDictionary<string, byte[]> data)
+		{
+			// Divide 'data' into the 10 zero-based buckets.
+			var bucket0 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket1 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket2 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket3 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket4 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket5 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket6 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket7 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket8 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var bucket9 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var kvp in data)
+			{
+				var key = kvp.Key;
+				var bucket = (int)((uint)new Guid(key).GetHashCode() % 10);
+				SortedDictionary<string, byte[]> currentBucket;
+				switch(bucket)
+				{
+					default:
+						throw new InvalidOperationException("Bucket not recognized.");
+					case 0:
+						currentBucket = bucket0;
+						break;
+					case 1:
+						currentBucket = bucket1;
+						break;
+					case 2:
+						currentBucket = bucket2;
+						break;
+					case 3:
+						currentBucket = bucket3;
+						break;
+					case 4:
+						currentBucket = bucket4;
+						break;
+					case 5:
+						currentBucket = bucket5;
+						break;
+					case 6:
+						currentBucket = bucket6;
+						break;
+					case 7:
+						currentBucket = bucket7;
+						break;
+					case 8:
+						currentBucket = bucket8;
+						break;
+					case 9:
+						currentBucket = bucket9;
+						break;
+				}
+				currentBucket.Add(key, kvp.Value);
+			}
+
+			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
+			var basePath = Path.Combine(multiFileDirRoot, className);
+			WriteSecondaryFile(basePath + "_01.fwdata", readerSettings, version, bucket0); // 1-based files vs 0-based buckets.
+			WriteSecondaryFile(basePath + "_02.fwdata", readerSettings, version, bucket1);
+			WriteSecondaryFile(basePath + "_03.fwdata", readerSettings, version, bucket2);
+			WriteSecondaryFile(basePath + "_04.fwdata", readerSettings, version, bucket3);
+			WriteSecondaryFile(basePath + "_05.fwdata", readerSettings, version, bucket4);
+			WriteSecondaryFile(basePath + "_06.fwdata", readerSettings, version, bucket5);
+			WriteSecondaryFile(basePath + "_07.fwdata", readerSettings, version, bucket6);
+			WriteSecondaryFile(basePath + "_08.fwdata", readerSettings, version, bucket7);
+			WriteSecondaryFile(basePath + "_09.fwdata", readerSettings, version, bucket8);
+			WriteSecondaryFile(basePath + "_10.fwdata", readerSettings, version, bucket9);
 		}
 
 		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, string version, SortedDictionary<string, byte[]> data)
@@ -227,53 +344,38 @@ namespace FieldWorksBridge.Infrastructure
 
 		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
 		{
-			var className = GetAttribute(false, ClassAttributeWithDoubleOpen, DoubleQuote, record)
-					   ?? GetAttribute(false, ClassAttributeWithSingleOpen, SingleQuote, record);
+			var rtElement = XElement.Parse(Utf8.GetString(record));
+// ReSharper disable PossibleNullReferenceException
+			var className = rtElement.Attribute("class").Value;
+			var guid = rtElement.Attribute("guid").Value;
+// ReSharper restore PossibleNullReferenceException
+
+			// 1. Remove 'Checksum' from wordforms.
+			if (className == "WfiWordform")
+			{
+				var csElement = rtElement.Element("Checksum");
+				if (csElement != null)
+					csElement.Remove();
+			}
+
+			// 2. Sort property elements of <rt>
+			var sortedPropertyElements = new SortedDictionary<string, XElement>();
+			foreach (var propertyElement in rtElement.Elements())
+				sortedPropertyElements.Add(propertyElement.Name.LocalName, propertyElement);
+			rtElement.Elements().Remove();
+			foreach (var kvp in sortedPropertyElements)
+				rtElement.Add(kvp.Value);
+
+			// 3. Sort attributes at all levels.
+			SortAttributes(rtElement);
+
 			SortedDictionary<string, byte[]> recordData;
 			if (!classData.TryGetValue(className, out recordData))
 			{
 				recordData = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 				classData.Add(className, recordData);
 			}
-			var guid = GetAttribute(true, IdentifierAttributeWithDoubleOpen, DoubleQuote, record)
-				   ?? GetAttribute(true, IdentifierAttributeWithSingleOpen, SingleQuote, record);
-			recordData.Add(guid, record);
-		}
-
-		private static string GetAttribute(bool shiftCase, byte[] name, byte closeQuote, byte[] input)
-		{
-			var start = input.IndexOfSubArray(name);
-			if (start == -1)
-				return null;
-
-			var isWhiteSpace = IsWhitespace(input[start - 1]);
-			start += name.Length;
-			var end = Array.IndexOf(input, closeQuote, start);
-
-			// Check to make sure start -1 is not another letter in a similarly named attr (e.g., id vs guid).
-			if (isWhiteSpace)
-			{
-				return (end == -1)
-						? null
-						: ReplaceBasicSetOfEntitites(shiftCase ? Utf8.GetString(input.SubArray(start, end - start)).ToLowerInvariant() : Utf8.GetString(input.SubArray(start, end - start)));
-			}
-
-			return GetAttribute(shiftCase, name, closeQuote, input.SubArray(end + 1, input.Length - end));
-		}
-
-		private static string ReplaceBasicSetOfEntitites(string input)
-		{
-			return input
-				.Replace("&amp;", "&")
-				.Replace("&lt;", "<")
-				.Replace("&gt;", ">")
-				.Replace("&quot;", "\"")
-				.Replace("&apos;", "'");
-		}
-
-		private static bool IsWhitespace(byte input)
-		{
-			return (input == ' ' || input == '\t' || input == '\r' || input == '\n');
+			recordData.Add(guid, Utf8.GetBytes(rtElement.ToString()));
 		}
 	}
 }
