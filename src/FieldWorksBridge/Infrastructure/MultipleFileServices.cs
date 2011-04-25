@@ -48,6 +48,8 @@ namespace FieldWorksBridge.Infrastructure
 			if (!Directory.Exists(multiFileDirRoot))
 				Directory.CreateDirectory(multiFileDirRoot);
 
+			var mdc = new MetadataCache();
+
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
@@ -61,11 +63,23 @@ namespace FieldWorksBridge.Infrastructure
 					{
 						// Cache custom prop file for later write.
 						optionalFirstElement = SortCustomPropertiesRecord(record);
+						// Add custom property info to MDC.
+						var cpElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
+						foreach (var propElement in cpElement.Elements("CustomField"))
+						{
+							// ReSharper disable PossibleNullReferenceException
+							mdc.AddCustomPropInfo(
+								propElement.Attribute("class").Value,
+								new FdoPropertyInfo(
+									propElement.Attribute("name").Value,
+									propElement.Attribute("type").Value));
+							// ReSharper restore PossibleNullReferenceException
+						}
 						foundOptionalFirstElement = false;
 					}
 					else
 					{
-						CacheDataRecord(classData, record);
+						CacheDataRecord(mdc, classData, record);
 					}
 				}
 			}
@@ -342,7 +356,7 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
+		private static void CacheDataRecord(MetadataCache mdc, IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
@@ -358,10 +372,19 @@ namespace FieldWorksBridge.Infrastructure
 					csElement.Remove();
 			}
 
+			// Get collection propeties for the class.
+			var colPropNames = (from pi in mdc.GetClassInfo(className).AllCollectionProperties
+							   select pi.PropertyName).ToList();
+
 			// 2. Sort property elements of <rt>
 			var sortedPropertyElements = new SortedDictionary<string, XElement>();
 			foreach (var propertyElement in rtElement.Elements())
-				sortedPropertyElements.Add(propertyElement.Name.LocalName, propertyElement);
+			{
+				var propName = propertyElement.Name.LocalName;
+				if (colPropNames.Contains(propName))
+					SortCollectionProperties(propertyElement);
+				sortedPropertyElements.Add(propName, propertyElement);
+			}
 			rtElement.Elements().Remove();
 			foreach (var kvp in sortedPropertyElements)
 				rtElement.Add(kvp.Value);
@@ -376,6 +399,26 @@ namespace FieldWorksBridge.Infrastructure
 				classData.Add(className, recordData);
 			}
 			recordData.Add(guid, Utf8.GetBytes(rtElement.ToString()));
+		}
+
+		private static void SortCollectionProperties(XElement propertyElement)
+		{
+			// Write collection properties in guid sorted order,
+			// since order is not significant in collections,
+			// but it will  be easier on Hg.
+			var sortCollectionData = new SortedDictionary<string, XElement>();
+			foreach (var objsurElement in propertyElement.Elements("objsur"))
+			{
+// ReSharper disable PossibleNullReferenceException
+				sortCollectionData.Add(objsurElement.Attribute("guid").Value, objsurElement);
+// ReSharper restore PossibleNullReferenceException
+			}
+			if (sortCollectionData.Count > 1)
+			{
+				propertyElement.Elements().Remove();
+				foreach (var kvp in sortCollectionData)
+					propertyElement.Add(kvp.Value);
+			}
 		}
 	}
 }
