@@ -33,11 +33,12 @@ namespace FieldWorksBridge.Infrastructure
 		/*
 		<languageproject version="7000037">
 		</languageproject>
-		root\DataFiles\CustomProperties.fwdata
-		root\DataFiles\ClassName.fwdata
+		root\DataFiles\ZPI.CustomProperties
+		root\DataFiles\ZPI.ModelVersion
+		root\DataFiles\ClassName.ClassData
 		*/
 
-		internal static void BreakupMainFile(string mainFilePathname)
+		internal static void BreakupMainFile(string mainFilePathname, string projectName)
 		{
 			CheckPathname(mainFilePathname);
 
@@ -47,6 +48,11 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore AssignNullToNotNullAttribute
 			if (!Directory.Exists(multiFileDirRoot))
 				Directory.CreateDirectory(multiFileDirRoot);
+			else
+			{
+				foreach (var oldFwDataPathname in Directory.GetFiles(multiFileDirRoot, "*.fwdata"))
+					File.Delete(oldFwDataPathname);
+			}
 
 			var mdc = new MetadataCache();
 
@@ -57,6 +63,7 @@ namespace FieldWorksBridge.Infrastructure
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
 				bool foundOptionalFirstElement;
+				// NB: The main input file *does* have to deal with the optional first element.
 				foreach (var record in fastSplitter.GetSecondLevelElementBytes(FirstElementTag, StartTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
@@ -67,13 +74,13 @@ namespace FieldWorksBridge.Infrastructure
 						var cpElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
-							// ReSharper disable PossibleNullReferenceException
+// ReSharper disable PossibleNullReferenceException
 							mdc.AddCustomPropInfo(
 								propElement.Attribute("class").Value,
 								new FdoPropertyInfo(
 									propElement.Attribute("name").Value,
 									propElement.Attribute("type").Value));
-							// ReSharper restore PossibleNullReferenceException
+// ReSharper restore PossibleNullReferenceException
 						}
 						foundOptionalFirstElement = false;
 					}
@@ -93,10 +100,13 @@ namespace FieldWorksBridge.Infrastructure
 				version = reader.Value;
 			}
 
+			// Write version number file.
+			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), "{\"modelversion\": " + version + "}");
+
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 			// Write optional first element.
 			if (optionalFirstElement != null)
-				WriteSecondaryFile(Path.Combine(multiFileDirRoot, "CustomProperties.fwdata"), readerSettings, version, optionalFirstElement);
+				WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
 			// Write data records in guid sorted order.
 			var highVolumeClasses = new HashSet<string> {"Segment", "WfiAnalysis", "WfiMorphBundle"};
@@ -105,17 +115,13 @@ namespace FieldWorksBridge.Infrastructure
 				var className = kvp.Key;
 				if (highVolumeClasses.Contains(className))
 				{
-					// Get rid of original file.
-					if (File.Exists(Path.Combine(multiFileDirRoot, className + ".fwdata")))
-						File.Delete(Path.Combine(multiFileDirRoot, className + ".fwdata"));
-
 					// Write 10 files for each high volume class.
-					WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, version, kvp.Value);
+					WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, kvp.Value);
 				}
 				else
 				{
 					// Only write one file.
-					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".fwdata"), readerSettings, version, kvp.Value);
+					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, kvp.Value);
 				}
 			}
 		}
@@ -129,7 +135,13 @@ namespace FieldWorksBridge.Infrastructure
 			// 1. Sort child elements by using a compound key of 'class'+'name'.
 			var sortedProperties = new SortedDictionary<string, XElement>();
 			foreach (var customProperty in customPropertiesElement.Elements())
-				sortedProperties.Add(customProperty.Attribute("class").Value + customProperty.Attribute("name").Value, customProperty);
+			{
+// ReSharper disable PossibleNullReferenceException
+				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
+				customProperty.Add(new XAttribute("key", customProperty.Attribute("class").Value + customProperty.Attribute("name").Value));
+				sortedProperties.Add(customProperty.Attribute("key").Value, customProperty);
+// ReSharper restore PossibleNullReferenceException
+			}
 			customPropertiesElement.Elements().Remove();
 			foreach (var propertyKvp in sortedProperties)
 				customPropertiesElement.Add(propertyKvp.Value);
@@ -160,7 +172,7 @@ namespace FieldWorksBridge.Infrastructure
 				element.Add(sortedAttrKvp.Value);
 		}
 
-		private static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, string version, SortedDictionary<string, byte[]> data)
+		private static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
 		{
 			// Divide 'data' into the 10 zero-based buckets.
 			var bucket0 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
@@ -219,43 +231,37 @@ namespace FieldWorksBridge.Infrastructure
 
 			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
 			var basePath = Path.Combine(multiFileDirRoot, className);
-			WriteSecondaryFile(basePath + "_01.fwdata", readerSettings, version, bucket0); // 1-based files vs 0-based buckets.
-			WriteSecondaryFile(basePath + "_02.fwdata", readerSettings, version, bucket1);
-			WriteSecondaryFile(basePath + "_03.fwdata", readerSettings, version, bucket2);
-			WriteSecondaryFile(basePath + "_04.fwdata", readerSettings, version, bucket3);
-			WriteSecondaryFile(basePath + "_05.fwdata", readerSettings, version, bucket4);
-			WriteSecondaryFile(basePath + "_06.fwdata", readerSettings, version, bucket5);
-			WriteSecondaryFile(basePath + "_07.fwdata", readerSettings, version, bucket6);
-			WriteSecondaryFile(basePath + "_08.fwdata", readerSettings, version, bucket7);
-			WriteSecondaryFile(basePath + "_09.fwdata", readerSettings, version, bucket8);
-			WriteSecondaryFile(basePath + "_10.fwdata", readerSettings, version, bucket9);
+			WriteSecondaryFile(basePath + "_01.ClassData", readerSettings, bucket0); // 1-based files vs 0-based buckets.
+			WriteSecondaryFile(basePath + "_02.ClassData", readerSettings, bucket1);
+			WriteSecondaryFile(basePath + "_03.ClassData", readerSettings, bucket2);
+			WriteSecondaryFile(basePath + "_04.ClassData", readerSettings, bucket3);
+			WriteSecondaryFile(basePath + "_05.ClassData", readerSettings, bucket4);
+			WriteSecondaryFile(basePath + "_06.ClassData", readerSettings, bucket5);
+			WriteSecondaryFile(basePath + "_07.ClassData", readerSettings, bucket6);
+			WriteSecondaryFile(basePath + "_08.ClassData", readerSettings, bucket7);
+			WriteSecondaryFile(basePath + "_09.ClassData", readerSettings, bucket8);
+			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
 		}
 
-		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, string version, SortedDictionary<string, byte[]> data)
+		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
 		{
 			if (File.Exists(newPathname))
 				File.Delete(newPathname);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
-				writer.WriteStartElement("languageproject");
-				writer.WriteAttributeString("version", version);
+				writer.WriteStartElement("classdata");
 				foreach (var kvp in data)
 					WriteElement(writer, readerSettings, kvp.Value);
 				writer.WriteEndElement();
 			}
 		}
 
-		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, string version, byte[] element)
+		private static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
 		{
 			if (File.Exists(newPathname))
 				File.Delete(newPathname);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				writer.WriteStartElement("languageproject");
-				writer.WriteAttributeString("version", version);
 				WriteElement(writer, readerSettings, element);
-				writer.WriteEndElement();
-			}
 		}
 
 		private static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
@@ -264,11 +270,8 @@ namespace FieldWorksBridge.Infrastructure
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void RestoreMainFile(string mainFilePathname)
+		internal static void RestoreMainFile(string mainFilePathname, string projectName)
 		{
-			// Q: Where to find the current model version?
-			// A: For now, each file is 'fwdata' and thus must have the version number.
-
 			CheckPathname(mainFilePathname);
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
@@ -281,7 +284,7 @@ namespace FieldWorksBridge.Infrastructure
 			try
 			{
 				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
-				// but the custom props element must be first.
+				// but the optional custom props element must be first.
 
 				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 				// NB: This should follow current FW write settings practice.
@@ -296,43 +299,35 @@ namespace FieldWorksBridge.Infrastructure
 					NewLineOnAttributes = false
 				};
 
-				var multipleFiles = Directory.GetFiles(multiFileDirRoot, "*.fwdata").ToList();
 				using (var writer = XmlWriter.Create(tempPathname, fwWriterSettings))
 				{
 					writer.WriteStartElement("languageproject");
 
-					// Write out version number from the first handy file.
-					// Since the custom property file is optional, it can't really be used.
-					using (var reader = XmlReader.Create(multipleFiles[0], readerSettings))
-					{
-						reader.MoveToContent();
-						reader.MoveToAttribute("version");
-						writer.WriteAttributeString("version", reader.Value);
-					}
+					// Write out version number from the ModelVersion file.
+					var modelVersionData = File.ReadAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"));
+					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
+					writer.WriteAttributeString("version", splitModelVersionData[1]);
 
 					// Write out optional custom property file.
-					if (multipleFiles.Contains(Path.Combine(multiFileDirRoot, "CustomProperties.fwdata")))
+					var optionalCustomPropFile = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
+					if (File.Exists(optionalCustomPropFile))
 					{
-						using (var reader = XmlReader.Create(Path.Combine(multiFileDirRoot, "CustomProperties.fwdata"), readerSettings))
+						using (var reader = XmlReader.Create(optionalCustomPropFile, readerSettings))
 						{
 							reader.MoveToContent();
-							reader.Read();
 							writer.WriteNode(reader, false);
 						}
-						multipleFiles.Remove(Path.Combine(multiFileDirRoot, "CustomProperties.fwdata"));
 					}
 
-					// Work on all other files, except the custom prop file.
-					foreach (var pathname in multipleFiles)
+					// Work on all class data files.
+					foreach (var pathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData"))
 					{
 						using (var reader = XmlReader.Create(pathname, readerSettings))
 						{
 							reader.MoveToContent();
 							reader.Read();
 							while (reader.IsStartElement())
-							{
 								writer.WriteNode(reader, false);
-							}
 						}
 					}
 					writer.WriteEndElement();
@@ -349,8 +344,10 @@ namespace FieldWorksBridge.Infrastructure
 
 		private static void CheckPathname(string mainFilePathname)
 		{
-			var fwFileHandler = new FieldWorksFileHandler();
-			if (fwFileHandler.CanValidateFile(mainFilePathname))
+			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
+			if (!string.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
+				&& File.Exists(mainFilePathname) // There has to be an actual file,
+				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");

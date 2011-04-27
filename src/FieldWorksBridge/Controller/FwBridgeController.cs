@@ -77,8 +77,12 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
+			projFolder.ExcludePatterns.Add("DataFiles/*.fwdata");
 
-			projFolder.IncludePatterns.Add("DataFiles/*.fwdata");
+			projFolder.IncludePatterns.Add("DataFiles/*.ClassData");
+			projFolder.IncludePatterns.Add("DataFiles/*.CustomProperties");
+			projFolder.IncludePatterns.Add("DataFiles/*.ModelVersion");
+			projFolder.IncludePatterns.Add("do_not_share_project.txt");
 			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");

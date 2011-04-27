@@ -13,19 +13,19 @@ namespace FieldWorksBridgeTests.Infrastructure
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(null));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(null, "ZPI"));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(""));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("", "ZPI"));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata", "ZPI"));
 		}
 
 		[Test]
@@ -33,26 +33,26 @@ namespace FieldWorksBridgeTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(tempFile.Path));
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(tempFile.Path, "ZPI"));
 			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(null));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(null, "ZPI"));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(""));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("", "ZPI"));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("Bogus.fwdata", "ZPI"));
 		}
 
 		[Test]
@@ -60,7 +60,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path));
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path, "ZPI"));
 			}
 		}
 	}

@@ -50,7 +50,7 @@ namespace FieldWorksBridge.View
 			File.Delete(tempPathname);
 #else
 			// Break up into smaller files.
-			MultipleFileServices.BreakupMainFile(origPathname);
+			MultipleFileServices.BreakupMainFile(origPathname, langProject.Name);
 #endif
 
 			// Do the Chorus business.
@@ -67,7 +67,7 @@ namespace FieldWorksBridge.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						MultipleFileServices.RestoreMainFile(origPathname);
+						MultipleFileServices.RestoreMainFile(origPathname, langProject.Name);
 					}
 #endif
 				}
