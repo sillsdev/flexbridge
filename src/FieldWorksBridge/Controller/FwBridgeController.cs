@@ -71,7 +71,7 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("*.bak");
 			projFolder.ExcludePatterns.Add("*.lock");
 			projFolder.ExcludePatterns.Add("*.tmp");
-			projFolder.ExcludePatterns.Add(".hgignore");
+			//projFolder.ExcludePatterns.Add(".hgignore");
 			projFolder.ExcludePatterns.Add("**/Temp");
 			projFolder.ExcludePatterns.Add("**/BackupSettings");
 			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
