@@ -50,8 +50,9 @@ namespace FieldWorksBridge.Infrastructure
 				Directory.CreateDirectory(multiFileDirRoot);
 			else
 			{
-				foreach (var oldFwDataPathname in Directory.GetFiles(multiFileDirRoot, "*.fwdata"))
-					File.Delete(oldFwDataPathname);
+				// Brutal, but effective in making sure deleted stuff doesn't come back to life in the Restore code. :-)
+				foreach (var oldPathname in Directory.GetFiles(multiFileDirRoot, "*.*"))
+					File.Delete(oldPathname);
 			}
 
 			var mdc = new MetadataCache();
@@ -306,12 +307,17 @@ namespace FieldWorksBridge.Infrastructure
 					// Write out version number from the ModelVersion file.
 					var modelVersionData = File.ReadAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"));
 					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
-					writer.WriteAttributeString("version", splitModelVersionData[1]);
+					writer.WriteAttributeString("version", splitModelVersionData[1].Trim());
 
 					// Write out optional custom property file.
 					var optionalCustomPropFile = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
 					if (File.Exists(optionalCustomPropFile))
 					{
+						// Remove 'key' attribute from CustomField elements.
+						var doc = XDocument.Load(optionalCustomPropFile);
+						foreach (var cf in doc.Descendants("CustomField"))
+							cf.Attribute("key").Remove();
+						doc.Save(optionalCustomPropFile);
 						using (var reader = XmlReader.Create(optionalCustomPropFile, readerSettings))
 						{
 							reader.MoveToContent();
@@ -378,6 +384,11 @@ namespace FieldWorksBridge.Infrastructure
 			foreach (var propertyElement in rtElement.Elements())
 			{
 				var propName = propertyElement.Name.LocalName;
+				// <Custom name="Certified" val="True" />
+// ReSharper disable PossibleNullReferenceException
+				if (propName == "Custom")
+					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
+// ReSharper restore PossibleNullReferenceException
 				if (colPropNames.Contains(propName))
 					SortCollectionProperties(propertyElement);
 				sortedPropertyElements.Add(propName, propertyElement);
