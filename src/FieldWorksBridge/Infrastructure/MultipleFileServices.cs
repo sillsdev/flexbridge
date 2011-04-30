@@ -26,7 +26,7 @@ namespace FieldWorksBridge.Infrastructure
 	internal static class MultipleFileServices
 	{
 		private static readonly Encoding Utf8 = Encoding.UTF8;
-		private const string FirstElementTag = "AdditionalFields";
+		private const string OptionalFirstElementTag = "AdditionalFields";
 		private const string StartTag = "rt";
 		/*
 		<languageproject version="7000037">
@@ -48,7 +48,7 @@ namespace FieldWorksBridge.Infrastructure
 				Directory.CreateDirectory(multiFileDirRoot);
 			else
 			{
-				// Brutal, but effective in making sure deleted stuff doesn't come back to life in the Restore code. :-)
+				// Brutal, but effective. :-)
 				foreach (var oldPathname in Directory.GetFiles(multiFileDirRoot, "*.*"))
 					File.Delete(oldPathname);
 			}
@@ -63,14 +63,14 @@ namespace FieldWorksBridge.Infrastructure
 			{
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(FirstElementTag, StartTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(OptionalFirstElementTag, StartTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
 						// Cache custom prop file for later write.
 						var cpElement = SortCustomPropertiesRecord(record);
 						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
-						// Add custom property info to MDC.
+						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
 // ReSharper disable PossibleNullReferenceException
@@ -103,26 +103,35 @@ namespace FieldWorksBridge.Infrastructure
 			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), "{\"modelversion\": " + version + "}");
 
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-			// Write optional first element.
-			if (optionalFirstElement != null)
-				WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
+			WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
 			// Write data records in guid sorted order.
-			var highVolumeClasses = new HashSet<string> {"Segment", "WfiAnalysis", "WfiMorphBundle"};
-			foreach (var kvp in classData)
+			var highVolumeClasses = new HashSet<string> { "Segment", "WfiAnalysis", "WfiMorphBundle", "StTxtPara", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry", "StText" };
+			// Write class file for each concrete class, whether it has data or not.
+			foreach (var concClassInfo in mdc.AllConcreteClasses)
 			{
-				var className = kvp.Key;
-				if (highVolumeClasses.Contains(className))
+				var className = concClassInfo.ClassName;
+				SortedDictionary<string, byte[]> sortedInstanceData;
+				if (classData.TryGetValue(className, out sortedInstanceData))
 				{
-					// Write 10 files for each high volume class.
-					WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, kvp.Value);
+					if (highVolumeClasses.Contains(className))
+					{
+						// Write 10 files for each high volume class.
+						WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, sortedInstanceData);
+					}
+					else
+					{
+						// Only write one file.
+						WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
+					}
 				}
 				else
 				{
-					// Only write one file.
-					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, kvp.Value);
+					// Write empty class file.
+					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
 				}
 			}
+			//RestoreMainFile(mainFilePathname, projectName);
 		}
 
 		private static XElement SortCustomPropertiesRecord(byte[] optionalFirstElement)
@@ -244,23 +253,31 @@ namespace FieldWorksBridge.Infrastructure
 
 		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
 		{
-			if (File.Exists(newPathname))
-				File.Delete(newPathname);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
 				writer.WriteStartElement("classdata");
-				foreach (var kvp in data)
-					WriteElement(writer, readerSettings, kvp.Value);
+				if (data != null)
+				{
+					foreach (var kvp in data)
+						WriteElement(writer, readerSettings, kvp.Value);
+				}
 				writer.WriteEndElement();
 			}
 		}
 
 		private static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
 		{
-			if (File.Exists(newPathname))
-				File.Delete(newPathname);
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-				WriteElement(writer, readerSettings, element);
+			if (element == null)
+			{
+				// Still write out file with just the root element.
+				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("AdditionalFields"));
+				doc.Save(newPathname);
+			}
+			else
+			{
+				using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+					WriteElement(writer, readerSettings, element);
+			}
 		}
 
 		private static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
@@ -284,7 +301,6 @@ namespace FieldWorksBridge.Infrastructure
 			{
 				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
 				// but the optional custom props element must be first.
-
 				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 				// NB: This should follow current FW write settings practice.
 				var fwWriterSettings = new XmlWriterSettings
@@ -308,18 +324,20 @@ namespace FieldWorksBridge.Infrastructure
 					writer.WriteAttributeString("version", splitModelVersionData[1].Trim());
 
 					// Write out optional custom property file.
+					// Actually, the file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
 					var optionalCustomPropFile = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
-					if (File.Exists(optionalCustomPropFile))
+					// Remove 'key' attribute from CustomField elements, before writing to main file.
+					var doc = XDocument.Load(optionalCustomPropFile);
+// ReSharper disable PossibleNullReferenceException
+					var customFieldElements = doc.Root.Elements("CustomField");
+// ReSharper restore PossibleNullReferenceException
+					if (customFieldElements.Count() > 0)
 					{
-						// Remove 'key' attribute from CustomField elements.
-						var doc = XDocument.Load(optionalCustomPropFile);
-						foreach (var cf in doc.Descendants("CustomField"))
+// ReSharper disable PossibleNullReferenceException
+						foreach (var cf in customFieldElements)
 							cf.Attribute("key").Remove();
-						using (var reader = XmlReader.Create(optionalCustomPropFile, readerSettings))
-						{
-							reader.MoveToContent();
-							writer.WriteNode(reader, false);
-						}
+						WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
+// ReSharper restore PossibleNullReferenceException
 					}
 
 					// Work on all class data files.
@@ -328,6 +346,8 @@ namespace FieldWorksBridge.Infrastructure
 						using (var reader = XmlReader.Create(pathname, readerSettings))
 						{
 							reader.MoveToContent();
+							if (reader.IsEmptyElement)
+								continue; // No <rt> child elements.
 							reader.Read();
 							while (reader.IsStartElement())
 								writer.WriteNode(reader, false);
