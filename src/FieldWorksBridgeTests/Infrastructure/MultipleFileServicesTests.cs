@@ -1,6 +1,4 @@
-﻿#define USEMULTIPLEFILES
-#if USEMULTIPLEFILES
-using System;
+﻿using System;
 using FieldWorksBridge.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
@@ -65,4 +63,3 @@ namespace FieldWorksBridgeTests.Infrastructure
 		}
 	}
 }
-#endif

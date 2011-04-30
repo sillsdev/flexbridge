@@ -71,14 +71,12 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("*.bak");
 			projFolder.ExcludePatterns.Add("*.lock");
 			projFolder.ExcludePatterns.Add("*.tmp");
-			//projFolder.ExcludePatterns.Add(".hgignore");
 			projFolder.ExcludePatterns.Add("**/Temp");
 			projFolder.ExcludePatterns.Add("**/BackupSettings");
 			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/trash/*.*");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
-			projFolder.ExcludePatterns.Add("DataFiles/*.fwdata");
 
 			projFolder.IncludePatterns.Add("DataFiles/*.ClassData");
 			projFolder.IncludePatterns.Add("DataFiles/*.CustomProperties");
@@ -90,6 +88,7 @@ namespace FieldWorksBridge.Controller
 			projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
 			projFolder.IncludePatterns.Add("Keyboards/*.*");
 			projFolder.IncludePatterns.Add("Fonts/*.*");
+			projFolder.IncludePatterns.Add(".hgignore");
 		}
 
 		internal Form MainForm { get; private set; }

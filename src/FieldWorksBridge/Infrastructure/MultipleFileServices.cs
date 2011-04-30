@@ -1,6 +1,4 @@
-﻿#define USEMULTIPLEFILES
-#if USEMULTIPLEFILES
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,9 +68,9 @@ namespace FieldWorksBridge.Infrastructure
 					if (foundOptionalFirstElement)
 					{
 						// Cache custom prop file for later write.
-						optionalFirstElement = SortCustomPropertiesRecord(record);
+						var cpElement = SortCustomPropertiesRecord(record);
+						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						// Add custom property info to MDC.
-						var cpElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
 // ReSharper disable PossibleNullReferenceException
@@ -127,7 +125,7 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
-		private static byte[] SortCustomPropertiesRecord(byte[] optionalFirstElement)
+		private static XElement SortCustomPropertiesRecord(byte[] optionalFirstElement)
 		{
 			var customPropertiesElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
 
@@ -150,7 +148,7 @@ namespace FieldWorksBridge.Infrastructure
 			// Sort all attributes.
 			SortAttributes(customPropertiesElement);
 
-			return Utf8.GetBytes(customPropertiesElement.ToString());
+			return customPropertiesElement;
 		}
 
 		private static void SortAttributes(XElement element)
@@ -317,7 +315,6 @@ namespace FieldWorksBridge.Infrastructure
 						var doc = XDocument.Load(optionalCustomPropFile);
 						foreach (var cf in doc.Descendants("CustomField"))
 							cf.Attribute("key").Remove();
-						doc.Save(optionalCustomPropFile);
 						using (var reader = XmlReader.Create(optionalCustomPropFile, readerSettings))
 						{
 							reader.MoveToContent();
@@ -430,4 +427,3 @@ namespace FieldWorksBridge.Infrastructure
 		}
 	}
 }
-#endif
