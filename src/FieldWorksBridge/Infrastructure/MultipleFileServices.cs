@@ -69,18 +69,24 @@ namespace FieldWorksBridge.Infrastructure
 					{
 						// Cache custom prop file for later write.
 						var cpElement = SortCustomPropertiesRecord(record);
-						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
 // ReSharper disable PossibleNullReferenceException
+							var typeAttr = propElement.Attribute("type");
+							var adjustedTypeValue = AdjustedPropertyType(typeAttr.Value);
+// ReSharper disable RedundantCheckBeforeAssignment
+							if (adjustedTypeValue != typeAttr.Value)
+								typeAttr.Value = adjustedTypeValue;
+// ReSharper restore RedundantCheckBeforeAssignment
 							mdc.AddCustomPropInfo(
 								propElement.Attribute("class").Value,
 								new FdoPropertyInfo(
 									propElement.Attribute("name").Value,
-									propElement.Attribute("type").Value));
+									typeAttr.Value));
 // ReSharper restore PossibleNullReferenceException
 						}
+						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						foundOptionalFirstElement = false;
 					}
 					else
@@ -335,7 +341,11 @@ namespace FieldWorksBridge.Infrastructure
 					{
 // ReSharper disable PossibleNullReferenceException
 						foreach (var cf in customFieldElements)
+						{
 							cf.Attribute("key").Remove();
+							// Restore type attr for object values.
+							cf.Attribute("type").Value = RestoreAdjustedTypeValue(cf.Attribute("type").Value);
+						}
 						WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
 // ReSharper restore PossibleNullReferenceException
 					}
@@ -444,6 +454,72 @@ namespace FieldWorksBridge.Infrastructure
 				foreach (var kvp in sortCollectionData)
 					propertyElement.Add(kvp.Value);
 			}
+		}
+
+		private static string AdjustedPropertyType(string rawType)
+		{
+			string adjustedType;
+			switch (rawType)
+			{
+				default:
+					adjustedType = rawType;
+					break;
+
+				case "OC":
+					adjustedType = "OwningCollection";
+					break;
+				case "RC":
+					adjustedType = "ReferenceCollection";
+					break;
+
+				case "OS":
+					adjustedType = "OwningSequence";
+					break;
+				case "RS":
+					adjustedType = "ReferenceSequence";
+					break;
+
+				case "OA":
+					adjustedType = "OwningAtomic";
+					break;
+				case "RA":
+					adjustedType = "ReferenceAtomic";
+					break;
+			}
+			return adjustedType;
+		}
+
+		private static string RestoreAdjustedTypeValue(string storedType)
+		{
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
+
+				case "OwningCollection":
+					adjustedType = "OC";
+					break;
+				case "ReferenceCollection":
+					adjustedType = "RC";
+					break;
+
+				case "OwningSequence":
+					adjustedType = "OS";
+					break;
+				case "ReferenceSequence":
+					adjustedType = "RS";
+					break;
+
+				case "OwningAtomic":
+					adjustedType = "OA";
+					break;
+				case "ReferenceAtomic":
+					adjustedType = "RA";
+					break;
+			}
+			return adjustedType;
 		}
 	}
 }
