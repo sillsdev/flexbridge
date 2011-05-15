@@ -49,8 +49,12 @@ namespace FieldWorksBridge.Infrastructure
 			else
 			{
 				// Brutal, but effective. :-)
-				foreach (var oldPathname in Directory.GetFiles(multiFileDirRoot, "*.*"))
-					File.Delete(oldPathname);
+				foreach (var oldPathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData"))
+						File.Delete(oldPathname);
+				var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
+				if (File.Exists(customPropPathname))
+					File.Delete(customPropPathname);
+				// Leave ModelVersion file and all ChorusNotes files.
 			}
 
 			var mdc = new MetadataCache();

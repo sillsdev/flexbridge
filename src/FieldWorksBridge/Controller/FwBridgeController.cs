@@ -67,6 +67,7 @@ namespace FieldWorksBridge.Controller
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include
 			var projFolder = chorusSystem.ProjectFolderConfiguration;
+
 			projFolder.ExcludePatterns.Add("*.fwdata");
 			projFolder.ExcludePatterns.Add("*.bak");
 			projFolder.ExcludePatterns.Add("*.lock");
@@ -81,6 +82,7 @@ namespace FieldWorksBridge.Controller
 			projFolder.IncludePatterns.Add("DataFiles/*.ClassData");
 			projFolder.IncludePatterns.Add("DataFiles/*.CustomProperties");
 			projFolder.IncludePatterns.Add("DataFiles/*.ModelVersion");
+			projFolder.IncludePatterns.Add("DataFiles/*.ChorusNotes");
 			projFolder.IncludePatterns.Add("do_not_share_project.txt");
 			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
