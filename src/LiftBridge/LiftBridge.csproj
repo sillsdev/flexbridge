@@ -92,6 +92,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="View\ExistingSystem.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -169,9 +170,7 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>copy $(SolutionDir)DistFiles\about.htm $(TargetDir)

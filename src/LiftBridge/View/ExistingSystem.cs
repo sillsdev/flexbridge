@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -7,6 +8,7 @@ using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.Services;
 
 namespace SIL.LiftBridge.View
 {
@@ -28,16 +30,27 @@ namespace SIL.LiftBridge.View
 				// Export Lift data, but only once per launch.
 				if (ExportLexicon != null)
 				{
-					// Use a temp file, in case something bad happens on export.
-					var tempPathname = Path.GetTempFileName();
+					// 1. Keep track of all extant files in all folders, except the .hg (or .git) folder.
+					var baseProjectDir = Path.GetDirectoryName(_liftProject.LiftPathname);
+					var extantFileBeforeExport = FileAndDirectoryServices.EnumerateExtantFiles(baseProjectDir);
+// ReSharper disable AssignNullToNotNullAttribute
+					var tempPathname = Path.Combine(baseProjectDir, _liftProject.LiftPathname + ".tmp");
+// ReSharper restore AssignNullToNotNullAttribute
+
 					var eventArgs = new LiftBridgeEventArgs(tempPathname);
 					ExportLexicon(this, eventArgs);
 					if (eventArgs.Cancel)
 					{
 						try
 						{
-							if (File.Exists(tempPathname))
-								File.Delete(tempPathname);
+							// 2. Do search of all files and folders (except .hg) and delete any files not found in #1, above.
+							// This will delete any new files that may have been written by the aborted export process.
+							FileAndDirectoryServices.WipeOutNewStuff(
+								extantFileBeforeExport,
+								FileAndDirectoryServices.EnumerateExtantFiles(baseProjectDir));
+
+							// 3. This will restore all files in repo that may have been changed in the aborted Export process.
+							_chorusSystem.Repository.RollbackWorkingDirectoryToLastCheckin();
 						}
 // ReSharper disable EmptyGeneralCatchClause
 						catch
@@ -48,6 +61,7 @@ namespace SIL.LiftBridge.View
 						return;
 					}
 
+					// 2 (if no Cancel was done). Fix up the newly exported file.
 					LiftFileServices.PrettyPrintFile(_liftProject.LiftPathname, tempPathname);
 
 					_haveExportedFromFlex = true;
