@@ -58,6 +58,7 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			var mdc = new MetadataCache();
+			var collectionPropertiesCache = CacheCollectionProperties(mdc);
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
@@ -77,16 +78,18 @@ namespace FieldWorksBridge.Infrastructure
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
 // ReSharper disable PossibleNullReferenceException
+							var className = propElement.Attribute("class").Value;
+							var propName = propElement.Attribute("name").Value;
 							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = AdjustedPropertyType(typeAttr.Value);
+							var adjustedTypeValue = AdjustedPropertyType(collectionPropertiesCache, className, propName, typeAttr.Value);
 // ReSharper disable RedundantCheckBeforeAssignment
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
 // ReSharper restore RedundantCheckBeforeAssignment
 							mdc.AddCustomPropInfo(
-								propElement.Attribute("class").Value,
+								className,
 								new FdoPropertyInfo(
-									propElement.Attribute("name").Value,
+									propName,
 									typeAttr.Value));
 // ReSharper restore PossibleNullReferenceException
 						}
@@ -95,7 +98,7 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
-						CacheDataRecord(mdc, classData, record);
+						CacheDataRecord(mdc, collectionPropertiesCache, classData, record);
 					}
 				}
 			}
@@ -142,6 +145,22 @@ namespace FieldWorksBridge.Infrastructure
 				}
 			}
 			//RestoreMainFile(mainFilePathname, projectName);
+		}
+
+		private static Dictionary<string, HashSet<string>> CacheCollectionProperties(MetadataCache mdc)
+		{
+			var classesWithCollectionProperties = mdc.ClassesWithCollectionProperties;
+			var results = new Dictionary<string, HashSet<string>>(classesWithCollectionProperties.Count());
+
+			foreach (var classWithColPropKvp in classesWithCollectionProperties)
+			{
+				var hs = new HashSet<string>();
+				results.Add(classWithColPropKvp.Key, hs);
+				foreach (var prop in classWithColPropKvp.Value.AllCollectionProperties)
+					hs.Add(prop.PropertyName);
+			}
+
+			return results;
 		}
 
 		private static XElement SortCustomPropertiesRecord(byte[] optionalFirstElement)
@@ -390,7 +409,7 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		private static void CacheDataRecord(MetadataCache mdc, IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
+		private static void CacheDataRecord(MetadataCache mdc, IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
@@ -406,9 +425,10 @@ namespace FieldWorksBridge.Infrastructure
 					csElement.Remove();
 			}
 
-			// Get collection propeties for the class.
-			var colPropNames = (from pi in mdc.GetClassInfo(className).AllCollectionProperties
-							   select pi.PropertyName).ToList();
+			// Get collection properties for the class.
+			HashSet<string> colPropNames;
+			if (!collectionPropertiesCache.TryGetValue(className, out colPropNames))
+				colPropNames = new HashSet<string>();
 
 			// 2. Sort property elements of <rt>
 			var sortedPropertyElements = new SortedDictionary<string, XElement>();
@@ -460,7 +480,7 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
-		private static string AdjustedPropertyType(string rawType)
+		private static string AdjustedPropertyType(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName, string rawType)
 		{
 			string adjustedType;
 			switch (rawType)
@@ -471,14 +491,17 @@ namespace FieldWorksBridge.Infrastructure
 
 				case "OC":
 					adjustedType = "OwningCollection";
+					AddCollectionPropertyToCache(collectionPropertiesCache, className, propName);
 					break;
 				case "RC":
 					adjustedType = "ReferenceCollection";
+					AddCollectionPropertyToCache(collectionPropertiesCache, className, propName);
 					break;
 
 				case "OS":
 					adjustedType = "OwningSequence";
 					break;
+
 				case "RS":
 					adjustedType = "ReferenceSequence";
 					break;
@@ -486,11 +509,23 @@ namespace FieldWorksBridge.Infrastructure
 				case "OA":
 					adjustedType = "OwningAtomic";
 					break;
+
 				case "RA":
 					adjustedType = "ReferenceAtomic";
 					break;
 			}
 			return adjustedType;
+		}
+
+		private static void AddCollectionPropertyToCache(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName)
+		{
+			HashSet<string> collProps;
+			if (!collectionPropertiesCache.TryGetValue(className, out collProps))
+			{
+				collProps = new HashSet<string>();
+				collectionPropertiesCache.Add(className, collProps);
+			}
+			collProps.Add(propName);
 		}
 
 		private static string RestoreAdjustedTypeValue(string storedType)
