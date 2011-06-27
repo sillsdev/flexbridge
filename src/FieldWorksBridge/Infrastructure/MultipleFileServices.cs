@@ -118,6 +118,15 @@ namespace FieldWorksBridge.Infrastructure
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 			WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
+			// TODO: Extract Bounded context data here, inasmuch as I can define them.
+			// TODO: Start with ReversalIndex instances and everything they own.
+			// TODO: The Reversal Index instances, including all they own, need to then be removed from 'classData',
+			// TODO: as that stuff will be stored elsewhere.
+			// TODO: Each ReversalIndex instance will be in its own folder, along with everything it owns (nested ownership as well).
+			// TODO: The folder pattern is:
+			// TODO: DataFiles\Reversals\foo, where foo is the WritingSystem property of a ReversalIndex.
+			WriteReversalBoundedContexts(classData);
+
 			// Write data records in guid sorted order.
 			var highVolumeClasses = new HashSet<string> { "Segment", "WfiAnalysis", "WfiMorphBundle", "StTxtPara", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry", "StText" };
 			// Write class file for each concrete class, whether it has data or not.
@@ -145,6 +154,13 @@ namespace FieldWorksBridge.Infrastructure
 				}
 			}
 			//RestoreMainFile(mainFilePathname, projectName);
+		}
+
+		private static void WriteReversalBoundedContexts(Dictionary<string, SortedDictionary<string, byte[]>> classData)
+		{
+			SortedDictionary<string, byte[]> sortedInstanceData;
+			if (!classData.TryGetValue("ReversalIndex", out sortedInstanceData))
+				return;
 		}
 
 		private static Dictionary<string, HashSet<string>> CacheCollectionProperties(MetadataCache mdc)
