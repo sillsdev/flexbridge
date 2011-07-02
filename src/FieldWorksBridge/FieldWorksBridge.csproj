@@ -100,8 +100,11 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="Controller\FwBridgeController.cs" />
+	<Compile Include="Infrastructure\DataSortingService.cs" />
+	<Compile Include="Infrastructure\FileWriterService.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
+	<Compile Include="Infrastructure\ReversalBoundedContextService.cs" />
 	<Compile Include="View\ExistingSystemView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>

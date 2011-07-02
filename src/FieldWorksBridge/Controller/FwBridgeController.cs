@@ -79,7 +79,7 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 
-			projFolder.IncludePatterns.Add("DataFiles/*.ClassData");
+			projFolder.IncludePatterns.Add("DataFiles/**.ClassData");
 			projFolder.IncludePatterns.Add("DataFiles/*.CustomProperties");
 			projFolder.IncludePatterns.Add("DataFiles/*.ModelVersion");
 			projFolder.IncludePatterns.Add("DataFiles/*.ChorusNotes");
