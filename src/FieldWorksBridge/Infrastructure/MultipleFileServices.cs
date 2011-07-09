@@ -123,12 +123,12 @@ namespace FieldWorksBridge.Infrastructure
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			// Start with ReversalIndex instances and everything they own.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
-			FileWriterService.WriteBoundedContexts(multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
 			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
 
 			// Write data records in guid sorted order.
-			var highVolumeClasses = new HashSet<string> { "Segment", "WfiAnalysis", "WfiMorphBundle", "StTxtPara", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry", "StText" };
+			var highVolumeClasses = new HashSet<string> { "WfiAnalysis", "WfiMorphBundle", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry" };
 			// Write class file for each concrete class, whether it has data or not.
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{

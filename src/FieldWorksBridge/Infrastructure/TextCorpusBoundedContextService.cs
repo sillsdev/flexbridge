@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders.FieldWorks;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -24,6 +25,7 @@ namespace FieldWorksBridge.Infrastructure
 		private const string TextCorpusRootFolder = "TextCorpus";
 
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			IDictionary<string, string> guidToClassMapping,
 			HashSet<string> skipwriteEmptyClassFiles)
@@ -32,65 +34,40 @@ namespace FieldWorksBridge.Infrastructure
 			if (Directory.Exists(textCorpusBaseDir))
 				Directory.Delete(textCorpusBaseDir, true);
 
-			SortedDictionary<string, byte[]> sortedTextInstanceData;
-			if (!classData.TryGetValue("Text", out sortedTextInstanceData))
-				return;
-
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var output = new SortedDictionary<string, byte[]>();
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-			// 1. Find the "GenreList" list (and its possibilities) owned by lang proj
-			//		Store in TextCorpus folder.
-			//		The list owns instances of CmPossibility.
-			var xElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].GetEnumerator().Current.Value));
-			var propElement = xElement.Element("GenreList");
-			if (propElement != null)
-			{
-				var guid = propElement.Element("objsur").Attribute("guid").Value.ToLowerInvariant();
-				var classname = guidToClassMapping[guid];
-				output.Add(guid, classData[classname][guid]);
-				// Write list.
-				FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, Path.Combine(TextCorpusRootFolder, "GenreList.ClassData")), readerSettings, output);
-				output.Clear();
+			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
 
-				// Get all possibilities in list.
-				ObjectFinderServices.CollectPossibilities(classData, guidToClassMapping, multiClassOutput, xElement);
+			// 1. Find the "GenreList" list (and its possibilities) owned by lang proj
+			//		Store in main TextCorpus folder.
+			var guids = ObjectFinderServices.GetGuids(langProjElement, "GenreList");
+			if (guids.Count > 0)
+			{
+				var listBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
+
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+					classData, guidToClassMapping, multiClassOutput,
+					XElement.Parse(MultipleFileServices.Utf8.GetString(listBytes)));
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(TextCorpusRootFolder, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-				multiClassOutput.Clear();
-				output.Clear();
+					FileWriterService.WriteSecondaryFile(Path.Combine(textCorpusBaseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
 			}
 
-			// Get Text guids from Lang Proj.
-			propElement = xElement.Element("Texts");
-			if (propElement == null)
-				return; // No texts at all.
-
 			// 2. Find and store Text instances (and everything they own) that are owned in "Texts" property of Lang Proj.
-			multiClassOutput.Clear();
-			foreach (var textGuid in propElement.Elements("objsur").Select(osEl => osEl.Attribute("guid").Value.ToLowerInvariant()))
+			foreach (var guid in ObjectFinderServices.GetGuids(langProjElement, "Texts"))
 			{
-				var textByteArray = sortedTextInstanceData[textGuid];
-				sortedTextInstanceData.Remove(textGuid);
-				if (!multiClassOutput.TryGetValue("Text", out output))
-				{
-					output = new SortedDictionary<string, byte[]>();
-					multiClassOutput.Add("Text", output);
-				}
-				output.Add(textGuid, textByteArray);
+				multiClassOutput.Clear();
+				var textBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 
-				ObjectFinderServices.CollectStText(
-					classData, guidToClassMapping,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(textByteArray)),
-					"Contents", multiClassOutput);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+					classData, guidToClassMapping, multiClassOutput,
+					XElement.Parse(MultipleFileServices.Utf8.GetString(textBytes)));
 
 				// Write out each Text's stuff in a separate folder.
-				var textDirInfo = Directory.CreateDirectory(Path.Combine(textCorpusBaseDir, "Text_" + textGuid));
+				var textDirInfo = Directory.CreateDirectory(Path.Combine(textCorpusBaseDir, "Text_" + guid));
 				foreach (var kvp in multiClassOutput)
 					FileWriterService.WriteSecondaryFile(Path.Combine(textDirInfo.FullName, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-				multiClassOutput.Clear();
 			}
 		}
 

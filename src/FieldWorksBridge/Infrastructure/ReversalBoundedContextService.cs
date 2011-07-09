@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders.FieldWorks;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -20,6 +21,7 @@ namespace FieldWorksBridge.Infrastructure
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
@@ -34,13 +36,11 @@ namespace FieldWorksBridge.Infrastructure
 			if (!Directory.Exists(reversalBaseDir))
 				Directory.CreateDirectory(reversalBaseDir);
 
-			var output = new SortedDictionary<string, byte[]>();
-			var posLists = classData["CmPossibilityList"];
-			var entries = classData["ReversalIndexEntry"];
-			foreach (var reversalIndexKvp in sortedInstanceData)
+			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
+			foreach (var reversalIndexKvp in srcDataCopy)
 			{
+				var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 				var revIndex = XElement.Parse(MultipleFileServices.Utf8.GetString(reversalIndexKvp.Value));
-
 // ReSharper disable PossibleNullReferenceException
 				var ws = revIndex.Element("WritingSystem").Element("Uni").Value;
 // ReSharper restore PossibleNullReferenceException
@@ -48,41 +48,17 @@ namespace FieldWorksBridge.Infrastructure
 				if (!Directory.Exists(reversalDir))
 					Directory.CreateDirectory(reversalDir);
 
-				// Write out the rev index object in its own file.
-				output.Add(reversalIndexKvp.Key, reversalIndexKvp.Value);
-				FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "ReversalIndex.ClassData"), readerSettings, output);
-				output.Clear();
-
-				// Get POS list, remove and hold for storage.
-				var posElement = revIndex.Element("PartsOfSpeech");
-				XElement posListElement = null;
-				if (posElement != null)
-				{
-// ReSharper disable PossibleNullReferenceException
-					var posListGuid = posElement.Element("objsur").Attribute("guid").Value.ToLowerInvariant();
-// ReSharper restore PossibleNullReferenceException
-					var byteData = posLists[posListGuid];
-					posListElement = XElement.Parse(MultipleFileServices.Utf8.GetString(byteData));
-					posLists.Remove(posListGuid);
-
-					output.Add(posListGuid, byteData);
-					FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "POSList.ClassData"), readerSettings, output);
-					output.Clear();
-				}
-
-				var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-				ObjectFinderServices.CollectPossibilities(classData, guidToClassMapping, multiClassOutput, posListElement);
+				ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, reversalIndexKvp.Key);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+					classData, guidToClassMapping, multiClassOutput,
+					XElement.Parse(MultipleFileServices.Utf8.GetString(reversalIndexKvp.Value)));
 				foreach (var kvp in multiClassOutput)
 					FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-				multiClassOutput.Clear();
-				output.Clear();
-
-				ObjectFinderServices.CollectReversalEntries(entries, output, revIndex);
-				FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "ReversalEntries.ClassData"), readerSettings, output);
-				output.Clear();
 			}
+
 			//skipWriteEmptyClassFiles.Add("ReversalIndex");
 			//skipWriteEmptyClassFiles.Add("ReversalIndexEntry");
+
 			classData.Remove("ReversalIndex"); // No need to process it in the 'soup' now.
 			classData.Remove("ReversalIndexEntry"); // No need to process it in the 'soup' now.
 		}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders.FieldWorks;
 using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
@@ -136,10 +137,10 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
-		internal static void WriteBoundedContexts(string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
+		internal static void WriteBoundedContexts(MetadataCache mdc, string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
 		{
-			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 		}
 
 		internal static void RestoreBoundedContexts(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
