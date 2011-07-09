@@ -7,7 +7,6 @@ using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.FieldWorks;
 using Chorus.Utilities;
-using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -25,7 +24,7 @@ namespace FieldWorksBridge.Infrastructure
 	/// </remarks>
 	internal static class MultipleFileServices
 	{
-		private static readonly Encoding Utf8 = Encoding.UTF8;
+		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		private const string OptionalFirstElementTag = "AdditionalFields";
 		private const string StartTag = "rt";
 		/*
@@ -45,7 +44,9 @@ namespace FieldWorksBridge.Infrastructure
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 // ReSharper restore AssignNullToNotNullAttribute
 			if (!Directory.Exists(multiFileDirRoot))
+			{
 				Directory.CreateDirectory(multiFileDirRoot);
+			}
 			else
 			{
 				// Brutal, but effective. :-)
@@ -63,6 +64,7 @@ namespace FieldWorksBridge.Infrastructure
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
+			var guidToClassMapping = new Dictionary<string, string>();
 			byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
@@ -73,7 +75,7 @@ namespace FieldWorksBridge.Infrastructure
 					if (foundOptionalFirstElement)
 					{
 						// Cache custom prop file for later write.
-						var cpElement = SortCustomPropertiesRecord(record);
+						var cpElement = DataSortingService.SortCustomPropertiesRecord(record);
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
@@ -98,7 +100,7 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
-						CacheDataRecord(mdc, collectionPropertiesCache, classData, record);
+						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
 					}
 				}
 			}
@@ -113,35 +115,42 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			// Write version number file.
-			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), "{\"modelversion\": " + version + "}");
+			FileWriterService.WriteVersionNumberFile(multiFileDirRoot, projectName, version);
 
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-			WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
+			FileWriterService.WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
+
+			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
+			// Start with ReversalIndex instances and everything they own.
+			var skipwriteEmptyClassFiles = new HashSet<string>();
+			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
+			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
 
 			// Write data records in guid sorted order.
-			var highVolumeClasses = new HashSet<string> { "Segment", "WfiAnalysis", "WfiMorphBundle", "StTxtPara", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry", "StText" };
+			var highVolumeClasses = new HashSet<string> { "WfiAnalysis", "WfiMorphBundle", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry" };
 			// Write class file for each concrete class, whether it has data or not.
-			foreach (var concClassInfo in mdc.AllConcreteClasses)
+			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
-				var className = concClassInfo.ClassName;
 				SortedDictionary<string, byte[]> sortedInstanceData;
 				if (classData.TryGetValue(className, out sortedInstanceData))
 				{
 					if (highVolumeClasses.Contains(className))
 					{
 						// Write 10 files for each high volume class.
-						WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, sortedInstanceData);
+						FileWriterService.WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, sortedInstanceData);
 					}
 					else
 					{
 						// Only write one file.
-						WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
+						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
 					}
 				}
 				else
 				{
-					// Write empty class file.
-					WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
+					// Write empty class file, unless it is empty by reason of it being emptied by a Bounded Context.
+					if (!skipwriteEmptyClassFiles.Contains(className))
+						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
 				}
 			}
 			//RestoreMainFile(mainFilePathname, projectName);
@@ -161,158 +170,6 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			return results;
-		}
-
-		private static XElement SortCustomPropertiesRecord(byte[] optionalFirstElement)
-		{
-			var customPropertiesElement = XElement.Parse(Utf8.GetString(optionalFirstElement));
-
-			// <CustomField name="Certified" class="WfiWordform" type="Boolean" />
-
-			// 1. Sort child elements by using a compound key of 'class'+'name'.
-			var sortedProperties = new SortedDictionary<string, XElement>();
-			foreach (var customProperty in customPropertiesElement.Elements())
-			{
-// ReSharper disable PossibleNullReferenceException
-				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
-				customProperty.Add(new XAttribute("key", customProperty.Attribute("class").Value + customProperty.Attribute("name").Value));
-				sortedProperties.Add(customProperty.Attribute("key").Value, customProperty);
-// ReSharper restore PossibleNullReferenceException
-			}
-			customPropertiesElement.Elements().Remove();
-			foreach (var propertyKvp in sortedProperties)
-				customPropertiesElement.Add(propertyKvp.Value);
-
-			// Sort all attributes.
-			SortAttributes(customPropertiesElement);
-
-			return customPropertiesElement;
-		}
-
-		private static void SortAttributes(XElement element)
-		{
-			if (element.HasElements)
-			{
-				foreach (var childElement in element.Elements())
-					SortAttributes(childElement);
-			}
-
-			if (!element.HasAttributes || element.Attributes().Count() <= 1)
-				return;
-
-			var sortedAttributes = new SortedDictionary<string, XAttribute>();
-			foreach (var attr in element.Attributes())
-				sortedAttributes.Add(attr.Name.LocalName, attr);
-
-			element.Attributes().Remove();
-			foreach (var sortedAttrKvp in sortedAttributes)
-				element.Add(sortedAttrKvp.Value);
-		}
-
-		private static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
-		{
-			// Divide 'data' into the 10 zero-based buckets.
-			var bucket0 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket1 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket2 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket3 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket4 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket5 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket6 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket7 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket8 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-			var bucket9 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-
-			foreach (var kvp in data)
-			{
-				var key = kvp.Key;
-				var bucket = (int)((uint)new Guid(key).GetHashCode() % 10);
-				SortedDictionary<string, byte[]> currentBucket;
-				switch(bucket)
-				{
-					default:
-						throw new InvalidOperationException("Bucket not recognized.");
-					case 0:
-						currentBucket = bucket0;
-						break;
-					case 1:
-						currentBucket = bucket1;
-						break;
-					case 2:
-						currentBucket = bucket2;
-						break;
-					case 3:
-						currentBucket = bucket3;
-						break;
-					case 4:
-						currentBucket = bucket4;
-						break;
-					case 5:
-						currentBucket = bucket5;
-						break;
-					case 6:
-						currentBucket = bucket6;
-						break;
-					case 7:
-						currentBucket = bucket7;
-						break;
-					case 8:
-						currentBucket = bucket8;
-						break;
-					case 9:
-						currentBucket = bucket9;
-						break;
-				}
-				currentBucket.Add(key, kvp.Value);
-			}
-
-			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
-			var basePath = Path.Combine(multiFileDirRoot, className);
-			WriteSecondaryFile(basePath + "_01.ClassData", readerSettings, bucket0); // 1-based files vs 0-based buckets.
-			WriteSecondaryFile(basePath + "_02.ClassData", readerSettings, bucket1);
-			WriteSecondaryFile(basePath + "_03.ClassData", readerSettings, bucket2);
-			WriteSecondaryFile(basePath + "_04.ClassData", readerSettings, bucket3);
-			WriteSecondaryFile(basePath + "_05.ClassData", readerSettings, bucket4);
-			WriteSecondaryFile(basePath + "_06.ClassData", readerSettings, bucket5);
-			WriteSecondaryFile(basePath + "_07.ClassData", readerSettings, bucket6);
-			WriteSecondaryFile(basePath + "_08.ClassData", readerSettings, bucket7);
-			WriteSecondaryFile(basePath + "_09.ClassData", readerSettings, bucket8);
-			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
-		}
-
-		private static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
-		{
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				writer.WriteStartElement("classdata");
-				if (data != null)
-				{
-					foreach (var kvp in data)
-						WriteElement(writer, readerSettings, kvp.Value);
-				}
-				writer.WriteEndElement();
-			}
-		}
-
-		private static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
-		{
-			if (element == null)
-			{
-				// Still write out file with just the root element.
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("AdditionalFields"));
-				doc.Save(newPathname);
-			}
-			else
-			{
-				using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-					WriteElement(writer, readerSettings, element);
-			}
-		}
-
-		private static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), readerSettings))
-				writer.WriteNode(nodeReader, true);
 		}
 
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)
@@ -369,23 +226,15 @@ namespace FieldWorksBridge.Infrastructure
 							// Restore type attr for object values.
 							cf.Attribute("type").Value = RestoreAdjustedTypeValue(cf.Attribute("type").Value);
 						}
-						WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
+						FileWriterService.WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
 // ReSharper restore PossibleNullReferenceException
 					}
 
-					// Work on all class data files.
-					foreach (var pathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData"))
-					{
-						using (var reader = XmlReader.Create(pathname, readerSettings))
-						{
-							reader.MoveToContent();
-							if (reader.IsEmptyElement)
-								continue; // No <rt> child elements.
-							reader.Read();
-							while (reader.IsStartElement())
-								writer.WriteNode(reader, false);
-						}
-					}
+					FileWriterService.RestoreBoundedContexts(writer, readerSettings, multiFileDirRoot);
+
+					// Work on all non-Bounded Context class data files.
+					FileWriterService.WriteClassDataToOriginal(writer, multiFileDirRoot, readerSettings);
+
 					writer.WriteEndElement();
 				}
 
@@ -409,12 +258,13 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		private static void CacheDataRecord(MetadataCache mdc, IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
+		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
 			var className = rtElement.Attribute("class").Value;
 			var guid = rtElement.Attribute("guid").Value;
+			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 // ReSharper restore PossibleNullReferenceException
 
 			// 1. Remove 'Checksum' from wordforms.
@@ -425,32 +275,10 @@ namespace FieldWorksBridge.Infrastructure
 					csElement.Remove();
 			}
 
-			// Get collection properties for the class.
-			HashSet<string> colPropNames;
-			if (!collectionPropertiesCache.TryGetValue(className, out colPropNames))
-				colPropNames = new HashSet<string>();
+			// 2. Sort <rt>
+			DataSortingService.SortMainElement(collectionPropertiesCache, className, rtElement);
 
-			// 2. Sort property elements of <rt>
-			var sortedPropertyElements = new SortedDictionary<string, XElement>();
-			foreach (var propertyElement in rtElement.Elements())
-			{
-				var propName = propertyElement.Name.LocalName;
-				// <Custom name="Certified" val="True" />
-// ReSharper disable PossibleNullReferenceException
-				if (propName == "Custom")
-					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
-// ReSharper restore PossibleNullReferenceException
-				if (colPropNames.Contains(propName))
-					SortCollectionProperties(propertyElement);
-				sortedPropertyElements.Add(propName, propertyElement);
-			}
-			rtElement.Elements().Remove();
-			foreach (var kvp in sortedPropertyElements)
-				rtElement.Add(kvp.Value);
-
-			// 3. Sort attributes at all levels.
-			SortAttributes(rtElement);
-
+			// 3. Cache it.
 			SortedDictionary<string, byte[]> recordData;
 			if (!classData.TryGetValue(className, out recordData))
 			{
@@ -458,26 +286,6 @@ namespace FieldWorksBridge.Infrastructure
 				classData.Add(className, recordData);
 			}
 			recordData.Add(guid, Utf8.GetBytes(rtElement.ToString()));
-		}
-
-		private static void SortCollectionProperties(XElement propertyElement)
-		{
-			// Write collection properties in guid sorted order,
-			// since order is not significant in collections,
-			// but it will  be easier on Hg.
-			var sortCollectionData = new SortedDictionary<string, XElement>();
-			foreach (var objsurElement in propertyElement.Elements("objsur"))
-			{
-// ReSharper disable PossibleNullReferenceException
-				sortCollectionData.Add(objsurElement.Attribute("guid").Value, objsurElement);
-// ReSharper restore PossibleNullReferenceException
-			}
-			if (sortCollectionData.Count > 1)
-			{
-				propertyElement.Elements().Remove();
-				foreach (var kvp in sortCollectionData)
-					propertyElement.Add(kvp.Value);
-			}
 		}
 
 		private static string AdjustedPropertyType(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName, string rawType)
