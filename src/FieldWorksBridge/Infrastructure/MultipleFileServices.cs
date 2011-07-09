@@ -64,6 +64,7 @@ namespace FieldWorksBridge.Infrastructure
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
+			var guidToClassMapping = new Dictionary<string, string>();
 			byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
@@ -99,7 +100,7 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
-						CacheDataRecord(collectionPropertiesCache, classData, record);
+						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
 					}
 				}
 			}
@@ -119,13 +120,12 @@ namespace FieldWorksBridge.Infrastructure
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 			FileWriterService.WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
-			// TODO: Extract Bounded context data here, inasmuch as I can define them.
-			// TODO: Once everything is in these BCs, then there should be nothing left in the 'classData' dictionary,
-			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level.
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			// Start with ReversalIndex instances and everything they own.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
-			ReversalBoundedContextService.ExtractReversalBoundedContexts(readerSettings, multiFileDirRoot, classData, skipwriteEmptyClassFiles);
+			FileWriterService.WriteBoundedContexts(multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
+			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
 
 			// Write data records in guid sorted order.
 			var highVolumeClasses = new HashSet<string> { "Segment", "WfiAnalysis", "WfiMorphBundle", "StTxtPara", "WfiWordform", "CmDomainQ", "LexSense", "CmSemanticDomain", "LexEntry", "StText" };
@@ -230,9 +230,7 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore PossibleNullReferenceException
 					}
 
-					// Restore Bounded Context data here.
-					ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-					// TODO: Add others.
+					FileWriterService.RestoreBoundedContexts(writer, readerSettings, multiFileDirRoot);
 
 					// Work on all non-Bounded Context class data files.
 					FileWriterService.WriteClassDataToOriginal(writer, multiFileDirRoot, readerSettings);
@@ -260,12 +258,13 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, byte[] record)
+		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
 			var className = rtElement.Attribute("class").Value;
 			var guid = rtElement.Attribute("guid").Value;
+			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 // ReSharper restore PossibleNullReferenceException
 
 			// 1. Remove 'Checksum' from wordforms.

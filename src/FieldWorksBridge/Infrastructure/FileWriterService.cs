@@ -135,5 +135,17 @@ namespace FieldWorksBridge.Infrastructure
 				}
 			}
 		}
+
+		internal static void WriteBoundedContexts(string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
+		{
+			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+		}
+
+		internal static void RestoreBoundedContexts(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		{
+			ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+		}
 	}
 }

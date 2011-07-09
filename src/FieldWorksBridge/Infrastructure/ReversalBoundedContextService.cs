@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -21,7 +19,9 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string ReversalRootFolder = "Reversals";
 
-		internal static void ExtractReversalBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot, IDictionary<string, SortedDictionary<string, byte[]>> classData, HashSet<string> skipWriteEmptyClassFiles)
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
+			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			var reversalBaseDir = Path.Combine(multiFileDirRoot, ReversalRootFolder);
 			if (Directory.Exists(reversalBaseDir))
@@ -36,7 +36,6 @@ namespace FieldWorksBridge.Infrastructure
 
 			var output = new SortedDictionary<string, byte[]>();
 			var posLists = classData["CmPossibilityList"];
-			var poses = classData["PartOfSpeech"];
 			var entries = classData["ReversalIndexEntry"];
 			foreach (var reversalIndexKvp in sortedInstanceData)
 			{
@@ -71,60 +70,21 @@ namespace FieldWorksBridge.Infrastructure
 					output.Clear();
 				}
 
-				CollectCategories(poses, output, posListElement, "Possibilities");
-				FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "Categories.ClassData"), readerSettings, output);
+				var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
+				ObjectFinderServices.CollectPossibilities(classData, guidToClassMapping, multiClassOutput, posListElement);
+				foreach (var kvp in multiClassOutput)
+					FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				multiClassOutput.Clear();
 				output.Clear();
 
-				CollectEntries(entries, output, revIndex, "Entries");
-				FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "Entries.ClassData"), readerSettings, output);
+				ObjectFinderServices.CollectReversalEntries(entries, output, revIndex);
+				FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, "ReversalEntries.ClassData"), readerSettings, output);
 				output.Clear();
 			}
-			skipWriteEmptyClassFiles.Add("ReversalIndex");
-			skipWriteEmptyClassFiles.Add("ReversalIndexEntry");
+			//skipWriteEmptyClassFiles.Add("ReversalIndex");
+			//skipWriteEmptyClassFiles.Add("ReversalIndexEntry");
 			classData.Remove("ReversalIndex"); // No need to process it in the 'soup' now.
 			classData.Remove("ReversalIndexEntry"); // No need to process it in the 'soup' now.
-		}
-
-		private static void CollectEntries(IDictionary<string, byte[]> inputEntries, IDictionary<string, byte[]> outputEntries, XContainer ownerElement, string propertyName)
-		{
-			var propElement = ownerElement.Element(propertyName);
-			if (propElement == null)
-				return;
-
-// ReSharper disable PossibleNullReferenceException
-			foreach (var guid in propElement.Elements("objsur").Select(osElement => osElement.Attribute("guid").Value))
-// ReSharper restore PossibleNullReferenceException
-			{
-				var bytes = inputEntries[guid];
-				inputEntries.Remove(guid);
-				outputEntries.Add(guid, bytes);
-
-				CollectEntries(
-					inputEntries, outputEntries,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(bytes)),
-					"Subentries");
-			}
-		}
-
-		private static void CollectCategories(IDictionary<string, byte[]> inputCategories, IDictionary<string, byte[]> outputCategories, XContainer ownerElement, string propertyName)
-		{
-			var propElement = ownerElement.Element(propertyName);
-			if (propElement == null)
-				return;
-
-// ReSharper disable PossibleNullReferenceException
-			foreach (var guid in propElement.Elements("objsur").Select(osElement => osElement.Attribute("guid").Value))
-// ReSharper restore PossibleNullReferenceException
-			{
-				var bytes = inputCategories[guid];
-				inputCategories.Remove(guid);
-				outputCategories.Add(guid, bytes);
-
-				CollectCategories(
-					inputCategories, outputCategories,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(bytes)),
-					"SubPossibilities");
-			}
 		}
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
