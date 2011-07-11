@@ -49,9 +49,9 @@ namespace FieldWorksBridge.Infrastructure
 			ObjectFinderServices.WritePropertyInFolders(mdc,
 				classData, guidToClassMapping, multiClassOutput,
 				readerSettings, textCorpusBaseDir,
-				langProjElement, "Texts", "Text_");
+				langProjElement, "Texts", "Text_", true);
 
-			ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, "Text");
+			ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Text" });
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

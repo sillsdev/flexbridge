@@ -86,7 +86,7 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore PossibleNullReferenceException
 		}
 
-		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, byte[]>> multiClassOutput, XmlReaderSettings readerSettings, string baseDir, XElement dataElement, string propertyName, string dirPrefix)
+		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, byte[]>> multiClassOutput, XmlReaderSettings readerSettings, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
 		{
 			foreach (var guid in GetGuids(dataElement, propertyName))
 			{
@@ -99,16 +99,32 @@ namespace FieldWorksBridge.Infrastructure
 					new HashSet<string>());
 
 				// Write out data in a separate folder.
-				var directoryInfo = Directory.CreateDirectory(Path.Combine(baseDir, dirPrefix + guid));
+				string dirPath;
+				DirectoryInfo directoryInfo;
+				if (appendGuid)
+				{
+					directoryInfo = Directory.CreateDirectory(Path.Combine(baseDir, dirPrefix + guid));
+					dirPath = directoryInfo.FullName;
+				}
+				else
+				{
+					dirPath = Path.Combine(baseDir, dirPrefix);
+					if (!Directory.Exists(dirPath))
+						Directory.CreateDirectory(dirPath);
+				}
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(directoryInfo.FullName, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
 			}
+			multiClassOutput.Clear();
 		}
 
-		internal static void ProcessLists(IDictionary<string, SortedDictionary<string, byte[]>> classData, HashSet<string> skipWriteEmptyClassFiles, string classname)
+		internal static void ProcessLists(IDictionary<string, SortedDictionary<string, byte[]>> classData, HashSet<string> skipWriteEmptyClassFiles, HashSet<string> classnames)
 		{
-			skipWriteEmptyClassFiles.Add(classname);
-			classData.Remove(classname);
+			foreach (var classname in classnames)
+			{
+				skipWriteEmptyClassFiles.Add(classname);
+				classData.Remove(classname);
+			}
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -22,27 +21,6 @@ namespace FieldWorksBridge.Infrastructure
 
 			Directory.CreateDirectory(wfiBaseDir);
 
-			// WfiWordSet (Morphology Bounded Context, not WFI).
-			// PunctuationForm (in its own Bounded Context)
-
-			// WfiWordform, owns:
-			//	WfiAnalysis owns:
-			//		WfiGloss (owns nothing)
-			//		FsFeatStruc owns:
-			//			FsFeatStrucDisj owns:
-			//				FsFeatStruc (recursive, see FsFeatStruc)
-			//			FsFeatureSpecification (owns nothing)
-			//		MoDeriv owns:
-			//			FsFeatStruc (see FsFeatStruc)
-			//			MoStratumApp owns:
-			//				MoCompoundRuleApp (owns nothing)
-			//				MoDerivAffApp owns:
-			//					MoDerivStepMsa owns:
-			//						FsFeatStruc (see FsFeatStruc)
-			//				MoInflTemplateApp owns:
-			//					MoInflAffixSlotApp (owns nothing)
-			//				MoPhonolRuleApp (owns nothing)
-			//		WfiMorphBundle (owns nothing)
 			SortedDictionary<string, byte[]> sortedInstanceData;
 			if (!classData.TryGetValue("WfiWordform", out sortedInstanceData))
 				return;
@@ -76,11 +54,7 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			// No need to process these in the 'soup' now.
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "WfiWordform");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "WfiAnalysis");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "WfiGloss");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "WfiMorphBundle");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "MoDeriv");
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "WfiWordform", "WfiAnalysis", "WfiGloss", "WfiMorphBundle", "MoDeriv" });
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

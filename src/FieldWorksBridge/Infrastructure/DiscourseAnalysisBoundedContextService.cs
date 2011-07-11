@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -50,17 +49,11 @@ namespace FieldWorksBridge.Infrastructure
 					classData, guidToClassMapping, multiClassOutput,
 					readerSettings, discourseBaseDir,
 					XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
-					"Charts", "Chart_");
+					"Charts", "Chart_", true);
 			}
 
 			// No need to process these in the 'soup' now.
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "DsDiscourseData");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "DsConstChart");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ConstChartRow");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ConstChartWordGroup");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ConstChartMovedTextMarker");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ConstChartClauseMarker");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ConstChartTag");
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "DsDiscourseData", "DsConstChart", "ConstChartRow", "ConstChartWordGroup", "ConstChartMovedTextMarker", "ConstChartClauseMarker", "ConstChartTag" });
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

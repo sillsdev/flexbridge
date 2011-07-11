@@ -50,8 +50,7 @@ namespace FieldWorksBridge.Infrastructure
 				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, reversalDir, readerSettings, multiClassOutput, reversalIndexKvp.Key, new HashSet<string>());
 			}
 
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ReversalIndex");
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, "ReversalIndexEntry");
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

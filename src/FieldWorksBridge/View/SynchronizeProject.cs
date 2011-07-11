@@ -14,7 +14,7 @@ namespace FieldWorksBridge.View
 		public void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".lock");
+			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");
 			File.WriteAllText(lockPathname, "");
 
 			var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
