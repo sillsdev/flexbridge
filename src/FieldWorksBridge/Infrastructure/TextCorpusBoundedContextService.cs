@@ -24,7 +24,7 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string TextCorpusRootFolder = "TextCorpus";
 
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			IDictionary<string, string> guidToClassMapping,
@@ -34,8 +34,7 @@ namespace FieldWorksBridge.Infrastructure
 			if (Directory.Exists(textCorpusBaseDir))
 				Directory.Delete(textCorpusBaseDir, true);
 
-			if (!Directory.Exists(textCorpusBaseDir))
-				Directory.CreateDirectory(textCorpusBaseDir);
+			Directory.CreateDirectory(textCorpusBaseDir);
 
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
@@ -44,34 +43,18 @@ namespace FieldWorksBridge.Infrastructure
 			//		Store in main TextCorpus folder.
 			var guids = ObjectFinderServices.GetGuids(langProjElement, "GenreList");
 			if (guids.Count > 0)
-			{
-				var listBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(listBytes)));
-				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(textCorpusBaseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-			}
+				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, textCorpusBaseDir, readerSettings, multiClassOutput, guids[0], new HashSet<string>());
 
 			// 2. Find and store Text instances (and everything they own) that are owned in "Texts" property of Lang Proj.
-			foreach (var guid in ObjectFinderServices.GetGuids(langProjElement, "Texts"))
-			{
-				multiClassOutput.Clear();
-				var textBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+			ObjectFinderServices.WritePropertyInFolders(mdc,
+				classData, guidToClassMapping, multiClassOutput,
+				readerSettings, textCorpusBaseDir,
+				langProjElement, "Texts", "Text_", true);
 
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(textBytes)));
-
-				// Write out each Text's stuff in a separate folder.
-				var textDirInfo = Directory.CreateDirectory(Path.Combine(textCorpusBaseDir, "Text_" + guid));
-				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(textDirInfo.FullName, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-			}
+			ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Text" });
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			var textCorpusBaseDir = Path.Combine(multiFileDirRoot, TextCorpusRootFolder);
 			if (!Directory.Exists(textCorpusBaseDir))

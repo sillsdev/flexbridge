@@ -141,12 +141,42 @@ namespace FieldWorksBridge.Infrastructure
 		{
 			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+
+			// WfiWordSet (Morphology Bounded Context, not WFI).
+			// PunctuationForm (in its own Bounded Context)
+
+			// Remove the data that may be in multiple bounded Contexts.
+			// Eventually, there ought not be an need for writing the leftovers in the base folder,
+			// but I'm not there yet.
+
+			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Note" });
 		}
 
 		internal static void RestoreBoundedContexts(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+		}
+
+		internal static void WriteObject(MetadataCache mdc,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping,
+			string baseDir,
+			XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> multiClassOutput, string guid,
+			HashSet<string> omitProperties)
+		{
+			var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+			ObjectFinderServices.CollectAllOwnedObjects(mdc,
+														classData, guidToClassMapping, multiClassOutput,
+														XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
+														omitProperties);
+			foreach (var kvp in multiClassOutput)
+				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
 		}
 	}
 }

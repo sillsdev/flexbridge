@@ -33,8 +33,7 @@ namespace FieldWorksBridge.Infrastructure
 			if (!classData.TryGetValue("ReversalIndex", out sortedInstanceData))
 				return;
 
-			if (!Directory.Exists(reversalBaseDir))
-				Directory.CreateDirectory(reversalBaseDir);
+			Directory.CreateDirectory(reversalBaseDir);
 
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
@@ -48,22 +47,13 @@ namespace FieldWorksBridge.Infrastructure
 				if (!Directory.Exists(reversalDir))
 					Directory.CreateDirectory(reversalDir);
 
-				ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, reversalIndexKvp.Key);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(reversalIndexKvp.Value)));
-				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(reversalDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, reversalDir, readerSettings, multiClassOutput, reversalIndexKvp.Key, new HashSet<string>());
 			}
 
-			//skipWriteEmptyClassFiles.Add("ReversalIndex");
-			//skipWriteEmptyClassFiles.Add("ReversalIndexEntry");
-
-			classData.Remove("ReversalIndex"); // No need to process it in the 'soup' now.
-			classData.Remove("ReversalIndexEntry"); // No need to process it in the 'soup' now.
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			var reversalBaseDir = Path.Combine(multiFileDirRoot, ReversalRootFolder);
 			if (!Directory.Exists(reversalBaseDir))
