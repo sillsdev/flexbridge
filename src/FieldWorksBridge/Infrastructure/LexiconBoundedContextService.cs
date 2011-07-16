@@ -25,11 +25,11 @@ namespace FieldWorksBridge.Infrastructure
 			if (!classData.TryGetValue("LexDb", out sortedInstanceData))
 				return;
 
-			Directory.CreateDirectory(lexiconBaseDir);
-
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			if (sortedInstanceData.Count > 0)
 			{
+				Directory.CreateDirectory(lexiconBaseDir);
+
 				var guid = sortedInstanceData.Keys.First();
 				var dataBytes = sortedInstanceData.Values.First();
 
@@ -125,9 +125,45 @@ namespace FieldWorksBridge.Infrastructure
 							break;
 					}
 				}
+
+				// 10. Semantic Domain list.
+				multiClassOutput.Clear();
+				var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
+				var guids = ObjectFinderServices.GetGuids(langProjElement, "SemanticDomainList");
+				if (guids.Count > 0)
+				{
+					var entryBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
+					ObjectFinderServices.CollectAllOwnedObjects(mdc,
+																classData, guidToClassMapping, multiClassOutput,
+																XElement.Parse(MultipleFileServices.Utf8.GetString(entryBytes)),
+																new HashSet<string>());
+					var semDomDir = Path.Combine(lexiconBaseDir, "SemanticDomain");
+					Directory.CreateDirectory(semDomDir);
+					foreach (var kvp in multiClassOutput)
+					{
+						var classname = kvp.Key;
+						switch (classname)
+						{
+							default:
+								// Only write one file.
+								FileWriterService.WriteSecondaryFile(Path.Combine(semDomDir, classname + ".ClassData"), readerSettings, kvp.Value);
+								break;
+							case "CmSemanticDomain":
+							case "CmDomainQ":
+								// Write 10 files for each high volume class.
+								FileWriterService.WriteSecondaryFiles(semDomDir, classname, readerSettings, kvp.Value);
+								break;
+						}
+					}
+				}
 			}
 
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "LexDb", "LexEntry", "LexSense", "LexEntryRef", "LexEtymology", "LexExampleSentence", "LexEntryType", "MoMorphType", "LexReference", "LexRefType", "LexAppendix" });
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "LexDb",
+				"LexEntry", "LexSense",
+				"LexEntryRef", "LexEtymology",
+				"LexExampleSentence", "LexEntryType",
+				"MoMorphType", "LexReference", "LexRefType", "LexAppendix",
+				"CmSemanticDomain", "CmDomainQ" });
 		}
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

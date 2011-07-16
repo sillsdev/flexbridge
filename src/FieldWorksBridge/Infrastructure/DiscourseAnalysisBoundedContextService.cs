@@ -29,8 +29,6 @@ namespace FieldWorksBridge.Infrastructure
 			if (!classData.TryGetValue("DsDiscourseData", out sortedInstanceData))
 				return;
 
-			Directory.CreateDirectory(discourseBaseDir);
-
 			// TODO: Are there any other lists, other than thse two?
 			// ConstChartTempl and ChartMarkers are two lists owned by DsDiscourseData.
 			// How about lang proj's:  <owning num="55" id="TextMarkupTags" card="atomic" sig="CmPossibilityList">
@@ -38,6 +36,8 @@ namespace FieldWorksBridge.Infrastructure
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			if (sortedInstanceData.Count > 0)
 			{
+				Directory.CreateDirectory(discourseBaseDir);
+
 				var guid = sortedInstanceData.Keys.First();
 				var dataBytes = sortedInstanceData.Values.First();
 

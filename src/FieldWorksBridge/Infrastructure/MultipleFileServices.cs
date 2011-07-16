@@ -121,7 +121,6 @@ namespace FieldWorksBridge.Infrastructure
 			FileWriterService.WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
-			// Start with ReversalIndex instances and everything they own.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
 			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 

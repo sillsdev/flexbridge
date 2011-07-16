@@ -144,15 +144,15 @@ namespace FieldWorksBridge.Infrastructure
 			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 
 			// WfiWordSet (Morphology Bounded Context, not WFI).
-			// PunctuationForm (in its own Bounded Context)
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
 			// but I'm not there yet.
 
-			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Note" });
+			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
 		}
 
 		internal static void RestoreBoundedContexts(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
@@ -162,6 +162,7 @@ namespace FieldWorksBridge.Infrastructure
 			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 		}
 
 		internal static void WriteObject(MetadataCache mdc,

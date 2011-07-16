@@ -19,11 +19,11 @@ namespace FieldWorksBridge.Infrastructure
 			if (Directory.Exists(wfiBaseDir))
 				Directory.Delete(wfiBaseDir, true);
 
-			Directory.CreateDirectory(wfiBaseDir);
-
 			SortedDictionary<string, byte[]> sortedInstanceData;
 			if (!classData.TryGetValue("WfiWordform", out sortedInstanceData))
 				return;
+
+			Directory.CreateDirectory(wfiBaseDir);
 
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();

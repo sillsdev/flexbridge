@@ -106,6 +106,7 @@
 	<Compile Include="Infrastructure\LexiconBoundedContextService.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
+	<Compile Include="Infrastructure\PunctuationFormBoundedContextService.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\ReversalBoundedContextService.cs" />
 	<Compile Include="Infrastructure\TextCorpusBoundedContextService.cs" />
