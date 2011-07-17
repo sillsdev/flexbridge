@@ -25,11 +25,11 @@ namespace FieldWorksBridge.Infrastructure
 			if (!classData.TryGetValue("LexDb", out sortedInstanceData))
 				return;
 
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			if (sortedInstanceData.Count > 0)
 			{
 				Directory.CreateDirectory(lexiconBaseDir);
 
+				var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 				var guid = sortedInstanceData.Keys.First();
 				var dataBytes = sortedInstanceData.Values.First();
 

@@ -145,6 +145,7 @@ namespace FieldWorksBridge.Infrastructure
 			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 
 			// WfiWordSet (Morphology Bounded Context, not WFI).
 
@@ -163,6 +164,7 @@ namespace FieldWorksBridge.Infrastructure
 			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 		}
 
 		internal static void WriteObject(MetadataCache mdc,
