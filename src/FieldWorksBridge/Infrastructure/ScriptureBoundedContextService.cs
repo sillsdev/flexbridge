@@ -144,18 +144,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var scriptureBaseDir = Path.Combine(multiFileDirRoot, ScriptureRootFolder);
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			FileWriterService.WriteClassDataToOriginal(writer, scriptureBaseDir, readerSettings);
-
-			foreach (var directory in Directory.GetDirectories(scriptureBaseDir))
-			{
-				FileWriterService.WriteClassDataToOriginal(writer, directory, readerSettings);
-				foreach (var subfolder in Directory.GetDirectories(directory))
-					FileWriterService.WriteClassDataToOriginal(writer, subfolder, readerSettings);
-			}
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, ScriptureRootFolder)));
 		}
 	}
 }
