@@ -127,23 +127,14 @@ namespace FieldWorksBridge.Infrastructure
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
 			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
 			// Write data records in guid sorted order.
-			var highVolumeClasses = new HashSet<string> { "CmDomainQ", "CmSemanticDomain" };
 			// Write class file for each concrete class, whether it has data or not.
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
 				SortedDictionary<string, byte[]> sortedInstanceData;
 				if (classData.TryGetValue(className, out sortedInstanceData))
 				{
-					if (highVolumeClasses.Contains(className))
-					{
-						// Write 10 files for each high volume class.
-						FileWriterService.WriteSecondaryFiles(multiFileDirRoot, className, readerSettings, sortedInstanceData);
-					}
-					else
-					{
-						// Only write one file.
-						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
-					}
+					// Only write one file, since there are no more high volume instacnes here.
+					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
 				}
 				else
 				{

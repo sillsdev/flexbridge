@@ -36,7 +36,6 @@ namespace FieldWorksBridge.Infrastructure
 				// 1. Write out the RnResearchNbk instance in anthropologyBaseDir, but not one of its lists.
 				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, notebookDir, readerSettings, multiClassOutput, guid,
 					new HashSet<string> { "RecTypes" });
-				multiClassOutput.Clear();
 
 				// 2. Write RecTypes list.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -44,7 +43,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, anthropologyBaseDir,
 					XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
 					"RecTypes", "RecordTypes", false);
-				multiClassOutput.Clear();
 			}
 
 			// Other LangProj props to write here:
@@ -56,7 +54,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"AnthroList", "AnthroList", false);
-			multiClassOutput.Clear();
 
 			//	4. Write ConfidenceLevels (or lex?)
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -64,7 +61,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"ConfidenceLevels", "ConfidenceLevels", false);
-			multiClassOutput.Clear();
 
 			//	5. Write Restrictions (or lex?)
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -72,7 +68,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Restrictions", "Restrictions", false);
-			multiClassOutput.Clear();
 
 			//	6. Write Roles
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -80,7 +75,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Roles", "Roles", false);
-			multiClassOutput.Clear();
 
 			//	7. Write Status
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -88,7 +82,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Status", "Status", false);
-			multiClassOutput.Clear();
 
 			//	8. Write Locations
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -96,7 +89,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Locations", "Locations", false);
-			multiClassOutput.Clear();
 
 			//	9. Write People
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -104,7 +96,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"People", "People", false);
-			multiClassOutput.Clear();
 
 			//	10. Write Education
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -112,7 +103,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Education", "Education", false);
-			multiClassOutput.Clear();
 
 			//	11. Write TimeOfDay
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -120,7 +110,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"TimeOfDay", "TimeOfDay", false);
-			multiClassOutput.Clear();
 
 			//	12. Write Positions
 			ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -128,8 +117,6 @@ namespace FieldWorksBridge.Infrastructure
 				readerSettings, anthropologyBaseDir,
 				langProjElement,
 				"Positions", "Positions", false);
-			multiClassOutput.Clear();
-
 
 			//// No need to process it in the 'soup' now.
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "RnResearchNbk", "RnGenericRec", "Reminder", "RnRoledPartic", "CmPerson", "CmAnthroItem", "CmLocation" });

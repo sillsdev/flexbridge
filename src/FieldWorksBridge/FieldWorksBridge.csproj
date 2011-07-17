@@ -105,6 +105,7 @@
 	<Compile Include="Infrastructure\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FileWriterService.cs" />
 	<Compile Include="Infrastructure\LexiconBoundedContextService.cs" />
+	<Compile Include="Infrastructure\LinguisticsBoundedContextService.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
 	<Compile Include="Infrastructure\PunctuationFormBoundedContextService.cs" />

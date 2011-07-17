@@ -146,12 +146,14 @@ namespace FieldWorksBridge.Infrastructure
 			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-
-			// WfiWordSet (Morphology Bounded Context, not WFI).
+			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
 			// but I'm not there yet.
+
+
+			// Scripture
 
 			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
 		}
@@ -165,6 +167,7 @@ namespace FieldWorksBridge.Infrastructure
 			LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 		}
 
 		internal static void WriteObject(MetadataCache mdc,
@@ -173,6 +176,7 @@ namespace FieldWorksBridge.Infrastructure
 			XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> multiClassOutput, string guid,
 			HashSet<string> omitProperties)
 		{
+			multiClassOutput.Clear();
 			var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 			ObjectFinderServices.CollectAllOwnedObjects(mdc,
 														classData, guidToClassMapping, multiClassOutput,
@@ -180,6 +184,7 @@ namespace FieldWorksBridge.Infrastructure
 														omitProperties);
 			foreach (var kvp in multiClassOutput)
 				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+			multiClassOutput.Clear();
 		}
 	}
 }

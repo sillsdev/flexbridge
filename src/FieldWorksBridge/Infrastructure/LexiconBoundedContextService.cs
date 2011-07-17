@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -25,18 +24,17 @@ namespace FieldWorksBridge.Infrastructure
 			if (!classData.TryGetValue("LexDb", out sortedInstanceData))
 				return;
 
+			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			if (sortedInstanceData.Count > 0)
 			{
 				Directory.CreateDirectory(lexiconBaseDir);
 
-				var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 				var guid = sortedInstanceData.Keys.First();
 				var dataBytes = sortedInstanceData.Values.First();
 
 				// 1. Write out the LexDb instance in lexiconBaseDir, but not several things it owns.
 				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, lexiconBaseDir, readerSettings, multiClassOutput, guid,
 					new HashSet<string> { "ReversalIndexes", "SenseTypes", "UsageTypes", "DomainTypes", "MorphTypes", "References", "VariantEntryTypes", "ComplexEntryTypes" });
-				multiClassOutput.Clear();
 
 				var lexDbElement = XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes));
 
@@ -46,7 +44,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"SenseTypes", "SenseTypes", false);
-				multiClassOutput.Clear();
 
 				// 3. Write UsageTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -54,7 +51,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"UsageTypes", "UsageTypes", false);
-				multiClassOutput.Clear();
 
 				// 4. Write DomainTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -62,7 +58,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"DomainTypes", "DomainTypes", false);
-				multiClassOutput.Clear();
 
 				// 5. Write MorphTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -70,7 +65,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"MorphTypes", "MorphTypes", false);
-				multiClassOutput.Clear();
 
 				// 6. Write References.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -78,7 +72,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"References", "References", false);
-				multiClassOutput.Clear();
 
 				// 7. Write VariantEntryTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -86,7 +79,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"VariantEntryTypes", "VariantEntryTypes", false);
-				multiClassOutput.Clear();
 
 				// 8. Write ComplexEntryTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -94,7 +86,6 @@ namespace FieldWorksBridge.Infrastructure
 					readerSettings, lexiconBaseDir,
 					lexDbElement,
 					"ComplexEntryTypes", "ComplexEntryTypes", false);
-				multiClassOutput.Clear();
 
 				// 9. Entries
 				if (!classData.TryGetValue("LexEntry", out sortedInstanceData))
@@ -125,36 +116,54 @@ namespace FieldWorksBridge.Infrastructure
 							break;
 					}
 				}
+			}
 
-				// 10. Semantic Domain list.
-				multiClassOutput.Clear();
-				var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
-				var guids = ObjectFinderServices.GetGuids(langProjElement, "SemanticDomainList");
-				if (guids.Count > 0)
+			// 10. Semantic Domain list.
+			multiClassOutput.Clear();
+			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
+			var guids = ObjectFinderServices.GetGuids(langProjElement, "SemanticDomainList");
+			if (guids.Count > 0)
+			{
+				var semDomListBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															XElement.Parse(MultipleFileServices.Utf8.GetString(semDomListBytes)),
+															new HashSet<string>());
+				var semDomDir = Path.Combine(lexiconBaseDir, "SemanticDomain");
+				Directory.CreateDirectory(semDomDir);
+				foreach (var kvp in multiClassOutput)
 				{
-					var entryBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																XElement.Parse(MultipleFileServices.Utf8.GetString(entryBytes)),
-																new HashSet<string>());
-					var semDomDir = Path.Combine(lexiconBaseDir, "SemanticDomain");
-					Directory.CreateDirectory(semDomDir);
-					foreach (var kvp in multiClassOutput)
+					var classname = kvp.Key;
+					switch (classname)
 					{
-						var classname = kvp.Key;
-						switch (classname)
-						{
-							default:
-								// Only write one file.
-								FileWriterService.WriteSecondaryFile(Path.Combine(semDomDir, classname + ".ClassData"), readerSettings, kvp.Value);
-								break;
-							case "CmSemanticDomain":
-							case "CmDomainQ":
-								// Write 10 files for each high volume class.
-								FileWriterService.WriteSecondaryFiles(semDomDir, classname, readerSettings, kvp.Value);
-								break;
-						}
+						default:
+							// Only write one file.
+							FileWriterService.WriteSecondaryFile(Path.Combine(semDomDir, classname + ".ClassData"), readerSettings, kvp.Value);
+							break;
+						case "CmSemanticDomain":
+						case "CmDomainQ":
+							// Write 10 files for each high volume class.
+							FileWriterService.WriteSecondaryFiles(semDomDir, classname, readerSettings, kvp.Value);
+							break;
 					}
+				}
+			}
+
+			// 11. Affix category list. LP->AffixCategories
+			multiClassOutput.Clear();
+			guids = ObjectFinderServices.GetGuids(langProjElement, "AffixCategories");
+			if (guids.Count > 0)
+			{
+				var afxCatListBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															XElement.Parse(MultipleFileServices.Utf8.GetString(afxCatListBytes)),
+															new HashSet<string>());
+				var afCatDir = Path.Combine(lexiconBaseDir, "AffixCategories");
+				Directory.CreateDirectory(afCatDir);
+				foreach (var kvp in multiClassOutput)
+				{
+					FileWriterService.WriteSecondaryFile(Path.Combine(afCatDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
 				}
 			}
 
