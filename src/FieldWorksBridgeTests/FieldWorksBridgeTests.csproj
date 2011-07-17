@@ -80,6 +80,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
 	</Reference>
+	<Reference Include="Palaso, Version=1.7.23.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -92,6 +95,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
@@ -114,9 +118,7 @@
 	  <Name>FieldWorksBridge</Name>
 	</ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Infrastructure\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
