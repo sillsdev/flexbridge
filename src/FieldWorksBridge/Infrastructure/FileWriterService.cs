@@ -147,13 +147,11 @@ namespace FieldWorksBridge.Infrastructure
 			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			ScriptureBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
 			// but I'm not there yet.
-
-
-			// Scripture
 
 			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
 		}
@@ -168,6 +166,7 @@ namespace FieldWorksBridge.Infrastructure
 			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 		}
 
 		internal static void WriteObject(MetadataCache mdc,
