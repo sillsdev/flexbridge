@@ -46,11 +46,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var pfiBaseDir = Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder);
-			if (!Directory.Exists(pfiBaseDir))
-				return;
-
-			FileWriterService.WriteClassDataToOriginal(writer, pfiBaseDir, readerSettings);
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder)));
 		}
 	}
 }

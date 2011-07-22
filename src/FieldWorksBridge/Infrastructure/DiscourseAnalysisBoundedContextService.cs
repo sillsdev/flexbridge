@@ -58,16 +58,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var discourseBaseDir = Path.Combine(multiFileDirRoot, DiscourseRootFolder);
-			if (!Directory.Exists(discourseBaseDir))
-				return;
-
-			// Main folder
-			FileWriterService.WriteClassDataToOriginal(writer, discourseBaseDir, readerSettings);
-
-			// Sub-Folders.
-			foreach (var directory in Directory.GetDirectories(discourseBaseDir))
-				FileWriterService.WriteClassDataToOriginal(writer, directory, readerSettings);
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, DiscourseRootFolder)));
 		}
 	}
 }

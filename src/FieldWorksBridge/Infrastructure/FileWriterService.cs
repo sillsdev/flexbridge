@@ -185,5 +185,16 @@ namespace FieldWorksBridge.Infrastructure
 				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
 			multiClassOutput.Clear();
 		}
+
+		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)
+		{
+			if (!Directory.Exists(baseDir))
+				return;
+
+			WriteClassDataToOriginal(writer, baseDir, readerSettings);
+
+			foreach (var directory in Directory.GetDirectories(baseDir))
+				RestoreFiles(writer, readerSettings, directory);
+		}
 	}
 }

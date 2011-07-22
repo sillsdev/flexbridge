@@ -59,11 +59,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var wfiBaseDir = Path.Combine(multiFileDirRoot, WordformInventoryRootFolder);
-			if (!Directory.Exists(wfiBaseDir))
-				return;
-
-			FileWriterService.WriteClassDataToOriginal(writer, wfiBaseDir, readerSettings);
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, WordformInventoryRootFolder));
 		}
 	}
 }

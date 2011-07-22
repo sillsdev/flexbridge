@@ -124,14 +124,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var anthropologyBaseDir = Path.Combine(multiFileDirRoot, AnthropologyRootFolder);
-			if (!Directory.Exists(anthropologyBaseDir))
-				return;
-
-			FileWriterService.WriteClassDataToOriginal(writer, anthropologyBaseDir, readerSettings);
-
-			foreach (var directory in Directory.GetDirectories(anthropologyBaseDir))
-				FileWriterService.WriteClassDataToOriginal(writer, directory, readerSettings);
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, AnthropologyRootFolder)));
 		}
 	}
 }

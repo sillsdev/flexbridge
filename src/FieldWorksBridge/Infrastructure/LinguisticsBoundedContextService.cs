@@ -24,44 +24,10 @@ namespace FieldWorksBridge.Infrastructure
 			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 
-			// 4. Phonology - LP->PhonologicalData
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"PhonologicalData", "Phonology", false);
-
-			// 2. LP->PhFeatureSystem
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"PhFeatureSystem", "PhonologyFeatureSystem", false);
-
-			// 1. FeatureSystem - LP->MsFeatureSystem
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"MsFeatureSystem", "MorphAndSynFeatureSystem", false);
-
-			// 3. Morphology - LP->MorphologicalData
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"MorphologicalData", "Morphology", false);
-
-			// 5. Categories LP->PartsOfSpeech
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"PartsOfSpeech", "Categories", false);
-
-			// 6. AnalyzingAgents LP->AnalyzingAgents
-			// NB: Don't use ObjectFinderServices.WritePropertyInFolders, as it doesn't work on col/seq props with 'false'.
-			foreach (var guid in ObjectFinderServices.GetGuids(langProjElement, "AnalyzingAgents"))
+			// Bundle under Linguistics\Phonology.
+			var guids = ObjectFinderServices.GetGuids(langProjElement, "PhonologicalData");
+			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "PhFeatureSystem"));
+			foreach (var guid in guids)
 			{
 				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
@@ -69,18 +35,58 @@ namespace FieldWorksBridge.Infrastructure
 															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
 															new HashSet<string>());
 			}
-			var analAgentDir = Path.Combine(linguisticsBaseDir, "AnalyzingAgents");
-			Directory.CreateDirectory(analAgentDir);
-			foreach (var kvp in multiClassOutput)
-				FileWriterService.WriteSecondaryFile(Path.Combine(analAgentDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-			multiClassOutput.Clear();
+			if (multiClassOutput.Count > 0)
+			{
+				var phonologyDir = Path.Combine(linguisticsBaseDir, "Phonology");
+				Directory.CreateDirectory(phonologyDir);
+				foreach (var kvp in multiClassOutput)
+					FileWriterService.WriteSecondaryFile(Path.Combine(phonologyDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				multiClassOutput.Clear();
+			}
 
-			// 7. TextMarkupTags
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, linguisticsBaseDir,
-				langProjElement,
-				"TextMarkupTags", "TextMarkupTags", false);
+			// Bundle under Linguistics\MorphologyAndSyntax
+			var morphAndSynDir = Path.Combine(linguisticsBaseDir, "MorphologyAndSyntax");
+			Directory.CreateDirectory(morphAndSynDir);
+			guids = ObjectFinderServices.GetGuids(langProjElement, "MsFeatureSystem");
+			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "PartsOfSpeech"));
+			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "TextMarkupTags"));
+			foreach (var guid in guids)
+			{
+				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
+															new HashSet<string>());
+			}
+			if (multiClassOutput.Count > 0)
+			{
+				foreach (var kvp in multiClassOutput)
+					FileWriterService.WriteSecondaryFile(Path.Combine(morphAndSynDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				multiClassOutput.Clear();
+			}
+
+			// Bundle under Linguistics\MorphologyAndSyntax\Morphology
+			guids = ObjectFinderServices.GetGuids(langProjElement, "MorphologicalData");
+			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "AnalyzingAgents"));
+			foreach (var guid in guids)
+			{
+				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
+															new HashSet<string>());
+			}
+			if (multiClassOutput.Count > 0)
+			{
+				var morphDir = Path.Combine(morphAndSynDir, "Morphology");
+				Directory.CreateDirectory(morphDir);
+				foreach (var kvp in multiClassOutput)
+					FileWriterService.WriteSecondaryFile(Path.Combine(morphDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				multiClassOutput.Clear();
+			}
+
+			// There could be a Linguistics\MorphologyAndSyntax\Syntax folder, eventually.
+			// 8ff.
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
 				"PhPhonData", "PhPhonemeSet", "PhEnvironment", "PhPhoneme", "PhBdryMarker", "PhCode", "PhNCSegments",
@@ -92,14 +98,7 @@ namespace FieldWorksBridge.Infrastructure
 
 		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			var linguisticsBaseDir = Path.Combine(multiFileDirRoot, LinguisticsRootFolder);
-			if (!Directory.Exists(linguisticsBaseDir))
-				return;
-
-			FileWriterService.WriteClassDataToOriginal(writer, linguisticsBaseDir, readerSettings);
-
-			foreach (var directory in Directory.GetDirectories(linguisticsBaseDir))
-				FileWriterService.WriteClassDataToOriginal(writer, directory, readerSettings);
+			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, LinguisticsRootFolder));
 		}
 	}
 }
