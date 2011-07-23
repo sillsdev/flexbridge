@@ -10,30 +10,52 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string PunctuationFormInventoryRootFolder = "PunctuationFormInventory";
 
+#if USEXELEMENTS
+		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+												  MetadataCache mdc,
+												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
+												  HashSet<string> skipWriteEmptyClassFiles)
+#else
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
+#endif
 		{
-			var pfiBaseDir = Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder);
-			if (Directory.Exists(pfiBaseDir))
-				Directory.Delete(pfiBaseDir, true);
-
+#if USEXELEMENTS
+			SortedDictionary<string, XElement> sortedInstanceData;
+#else
 			SortedDictionary<string, byte[]> sortedInstanceData;
+#endif
 			if (!classData.TryGetValue("PunctuationForm", out sortedInstanceData))
 				return;
 
-			Directory.CreateDirectory(pfiBaseDir);
+			var pfiBaseDir = Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder);
+			if (!Directory.Exists(pfiBaseDir))
+				Directory.CreateDirectory(pfiBaseDir);
 
+#if USEXELEMENTS
+			var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
+			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
+#else
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
+#endif
 			foreach (var kvpPunctuationForm in srcDataCopy)
 			{
+#if USEXELEMENTS
+				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, kvpPunctuationForm.Key);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															dataEl,
+															new HashSet<string>());
+#else
 				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, kvpPunctuationForm.Key);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
 															new HashSet<string>());
+#endif
 			}
 			foreach (var kvp in multiClassOutput)
 			{

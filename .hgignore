@@ -15,5 +15,6 @@ relre:_ReSharper.FieldWorksBridge VS2010/*
 glob:src/FieldWorksBridge/FieldWorksBridge.csproj.user
 glob:src/FieldWorksBridgeTests/FieldWorksBridgeTests.csproj.user
 syntax: regexp
+Perf test  results/*.*
 syntax: glob
 Perf test  results/*.app6results

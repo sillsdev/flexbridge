@@ -10,6 +10,29 @@ namespace FieldWorksBridge.Infrastructure
 {
 	internal static class FileWriterService
 	{
+#if USEXELEMENTS
+		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
+		{
+#if USEXDOC
+			//NB: Doesn't do pretty print like I want.
+			var doc = new XDocument(
+				new XDeclaration("1.0", "utf-8", "yes"),
+				new XElement("classdata", data.Values));
+			doc.Save(newPathname);
+#else
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+				writer.WriteStartElement("classdata");
+				if (data != null)
+				{
+					foreach (var kvp in data)
+						WriteElement(writer, readerSettings, kvp.Value);
+				}
+				writer.WriteEndElement();
+			}
+#endif
+		}
+#else
 		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -23,10 +46,27 @@ namespace FieldWorksBridge.Infrastructure
 				writer.WriteEndElement();
 			}
 		}
+#endif
 
+#if USEXELEMENTS
+		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
+#else
 		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, byte[]> data)
+#endif
 		{
 			// Divide 'data' into the 10 zero-based buckets.
+#if USEXELEMENTS
+			var bucket0 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket1 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket2 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket3 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket4 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket5 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket6 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket7 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket8 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var bucket9 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+#else
 			var bucket0 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			var bucket1 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			var bucket2 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
@@ -37,13 +77,18 @@ namespace FieldWorksBridge.Infrastructure
 			var bucket7 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			var bucket8 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			var bucket9 = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+#endif
 
 			foreach (var kvp in data)
 			{
 				var key = kvp.Key;
 				var bucket = (int)((uint)new Guid(key).GetHashCode() % 10);
+#if USEXELEMENTS
+				SortedDictionary<string, XElement> currentBucket;
+#else
 				SortedDictionary<string, byte[]> currentBucket;
-				switch(bucket)
+#endif
+				switch (bucket)
 				{
 					default:
 						throw new InvalidOperationException("Bucket not recognized.");
@@ -83,6 +128,7 @@ namespace FieldWorksBridge.Infrastructure
 
 			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
 			var basePath = Path.Combine(multiFileDirRoot, className);
+#if USEXELEMENTS
 			WriteSecondaryFile(basePath + "_01.ClassData", readerSettings, bucket0); // 1-based files vs 0-based buckets.
 			WriteSecondaryFile(basePath + "_02.ClassData", readerSettings, bucket1);
 			WriteSecondaryFile(basePath + "_03.ClassData", readerSettings, bucket2);
@@ -93,7 +139,27 @@ namespace FieldWorksBridge.Infrastructure
 			WriteSecondaryFile(basePath + "_08.ClassData", readerSettings, bucket7);
 			WriteSecondaryFile(basePath + "_09.ClassData", readerSettings, bucket8);
 			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
+#else
+			WriteSecondaryFile(basePath + "_01.ClassData", readerSettings, bucket0); // 1-based files vs 0-based buckets.
+			WriteSecondaryFile(basePath + "_02.ClassData", readerSettings, bucket1);
+			WriteSecondaryFile(basePath + "_03.ClassData", readerSettings, bucket2);
+			WriteSecondaryFile(basePath + "_04.ClassData", readerSettings, bucket3);
+			WriteSecondaryFile(basePath + "_05.ClassData", readerSettings, bucket4);
+			WriteSecondaryFile(basePath + "_06.ClassData", readerSettings, bucket5);
+			WriteSecondaryFile(basePath + "_07.ClassData", readerSettings, bucket6);
+			WriteSecondaryFile(basePath + "_08.ClassData", readerSettings, bucket7);
+			WriteSecondaryFile(basePath + "_09.ClassData", readerSettings, bucket8);
+			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
+#endif
 		}
+
+#if USEXELEMENTS
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement optionalFirstElement)
+		{
+			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(optionalFirstElement.ToString()), false), readerSettings))
+				writer.WriteNode(nodeReader, true);
+		}
+#endif
 
 		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
 		{
@@ -137,8 +203,13 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
+#if USEXELEMENTS
+		internal static void WriteBoundedContexts(MetadataCache mdc, string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
+#else
 		internal static void WriteBoundedContexts(MetadataCache mdc, string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
+#endif
 		{
+#if USEXELEMENTS
 			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
@@ -148,6 +219,17 @@ namespace FieldWorksBridge.Infrastructure
 			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			ScriptureBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+#else
+			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			ScriptureBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+#endif
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
@@ -169,13 +251,30 @@ namespace FieldWorksBridge.Infrastructure
 			ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 		}
 
+#if USEXELEMENTS
+		internal static void WriteObject(MetadataCache mdc,
+			IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping,
+			string baseDir,
+			XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
+			HashSet<string> omitProperties)
+#else
 		internal static void WriteObject(MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping,
 			string baseDir,
 			XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, byte[]>> multiClassOutput, string guid,
 			HashSet<string> omitProperties)
+#endif
 		{
 			multiClassOutput.Clear();
+#if USEXELEMENTS
+			var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+			ObjectFinderServices.CollectAllOwnedObjects(mdc,
+														classData, guidToClassMapping, multiClassOutput,
+														dataEl,
+														omitProperties);
+			foreach (var kvp in multiClassOutput)
+				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+#else
 			var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 			ObjectFinderServices.CollectAllOwnedObjects(mdc,
 														classData, guidToClassMapping, multiClassOutput,
@@ -183,7 +282,27 @@ namespace FieldWorksBridge.Infrastructure
 														omitProperties);
 			foreach (var kvp in multiClassOutput)
 				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+#endif
 			multiClassOutput.Clear();
+		}
+
+		internal static void RemoveDataFiles(string baseDataFolder)
+		{
+			// Delete all data files at any folder depth.
+			foreach (var dataFilePathname in Directory.GetFiles(baseDataFolder, "*.ClassData", SearchOption.AllDirectories))
+				File.Delete(dataFilePathname);
+		}
+
+		internal static void RemoveEmptyFolders(string baseDataFolder)
+		{
+			foreach (var folder in Directory.GetDirectories(baseDataFolder))
+			{
+				if (Directory.GetFileSystemEntries(folder).Length > 0)
+					RemoveEmptyFolders(folder); // Work down to leaf folders first.
+
+				if (Directory.GetFileSystemEntries(folder).Length == 0)
+					Directory.Delete(folder); // Empty now, so zap it.
+			}
 		}
 
 		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)

@@ -24,20 +24,31 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string TextCorpusRootFolder = "TextCorpus";
 
+#if USEXELEMENTS
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+			MetadataCache mdc,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, string> guidToClassMapping,
+			HashSet<string> skipwriteEmptyClassFiles)
+#else
 		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			IDictionary<string, string> guidToClassMapping,
 			HashSet<string> skipwriteEmptyClassFiles)
+#endif
 		{
 			var textCorpusBaseDir = Path.Combine(multiFileDirRoot, TextCorpusRootFolder);
-			if (Directory.Exists(textCorpusBaseDir))
-				Directory.Delete(textCorpusBaseDir, true);
+			if (!Directory.Exists(textCorpusBaseDir))
+				Directory.CreateDirectory(textCorpusBaseDir);
 
-			Directory.CreateDirectory(textCorpusBaseDir);
-
+#if USEXELEMENTS
+			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
+			var langProjElement = classData["LangProject"].Values.First();
+#else
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
+#endif
 
 			// 1. Find the "GenreList" list (and its possibilities) owned by lang proj
 			//		Store in main TextCorpus folder.

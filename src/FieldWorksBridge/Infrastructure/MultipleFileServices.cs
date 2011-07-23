@@ -27,13 +27,6 @@ namespace FieldWorksBridge.Infrastructure
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		private const string OptionalFirstElementTag = "AdditionalFields";
 		private const string StartTag = "rt";
-		/*
-		<languageproject version="7000037">
-		</languageproject>
-		root\DataFiles\ZPI.CustomProperties
-		root\DataFiles\ZPI.ModelVersion
-		root\DataFiles\ClassName.ClassData
-		*/
 
 		internal static void BreakupMainFile(string mainFilePathname, string projectName)
 		{
@@ -50,8 +43,9 @@ namespace FieldWorksBridge.Infrastructure
 			else
 			{
 				// Brutal, but effective. :-)
-				foreach (var oldPathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData"))
-						File.Delete(oldPathname);
+				FileWriterService.RemoveDataFiles(multiFileDirRoot);
+				FileWriterService.RemoveEmptyFolders(multiFileDirRoot);
+
 				var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
 				if (File.Exists(customPropPathname))
 					File.Delete(customPropPathname);
@@ -63,7 +57,11 @@ namespace FieldWorksBridge.Infrastructure
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
+#if USEXELEMENTS
+			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
+#else
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
+#endif
 			var guidToClassMapping = new Dictionary<string, string>();
 			byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
@@ -100,7 +98,11 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
+#if USEXELEMENTS
 						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
+#else
+						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
+#endif
 					}
 				}
 			}
@@ -122,7 +124,11 @@ namespace FieldWorksBridge.Infrastructure
 
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
+#if USEXELEMENTS
 			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+#else
+			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+#endif
 
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
 			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
@@ -130,11 +136,20 @@ namespace FieldWorksBridge.Infrastructure
 			// Write class file for each concrete class, whether it has data or not.
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
+#if USEXELEMENTS
+				SortedDictionary<string, XElement> sortedInstanceData;
+#else
 				SortedDictionary<string, byte[]> sortedInstanceData;
+#endif
 				if (classData.TryGetValue(className, out sortedInstanceData))
 				{
+#if USEXELEMENTS
 					// Only write one file, since there are no more high volume instacnes here.
 					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
+#else
+					// Only write one file, since there are no more high volume instacnes here.
+					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
+#endif
 				}
 				else
 				{
@@ -248,7 +263,11 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
+#if USEXELEMENTS
+		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
+#else
 		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
+#endif
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
@@ -269,13 +288,25 @@ namespace FieldWorksBridge.Infrastructure
 			DataSortingService.SortMainElement(collectionPropertiesCache, className, rtElement);
 
 			// 3. Cache it.
+#if USEXELEMENTS
+			SortedDictionary<string, XElement> recordData;
+#else
 			SortedDictionary<string, byte[]> recordData;
+#endif
 			if (!classData.TryGetValue(className, out recordData))
 			{
+#if USEXELEMENTS
+				recordData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+#else
 				recordData = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+#endif
 				classData.Add(className, recordData);
 			}
+#if USEXELEMENTS
+			recordData.Add(guid, rtElement);
+#else
 			recordData.Add(guid, Utf8.GetBytes(rtElement.ToString()));
+#endif
 		}
 
 		private static string AdjustedPropertyType(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName, string rawType)

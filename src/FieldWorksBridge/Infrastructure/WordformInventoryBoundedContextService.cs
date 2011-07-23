@@ -10,30 +10,52 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string WordformInventoryRootFolder = "WordformInventory";
 
+#if USEXELEMENTS
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+												  MetadataCache mdc,
+												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
+												  HashSet<string> skipWriteEmptyClassFiles)
+#else
 		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
+#endif
 		{
-			var wfiBaseDir = Path.Combine(multiFileDirRoot, WordformInventoryRootFolder);
-			if (Directory.Exists(wfiBaseDir))
-				Directory.Delete(wfiBaseDir, true);
-
+#if USEXELEMENTS
+			SortedDictionary<string, XElement> sortedInstanceData;
+#else
 			SortedDictionary<string, byte[]> sortedInstanceData;
+#endif
 			if (!classData.TryGetValue("WfiWordform", out sortedInstanceData))
 				return;
 
-			Directory.CreateDirectory(wfiBaseDir);
+			var wfiBaseDir = Path.Combine(multiFileDirRoot, WordformInventoryRootFolder);
+			if (!Directory.Exists(wfiBaseDir))
+				Directory.CreateDirectory(wfiBaseDir);
 
+#if USEXELEMENTS
+			var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
+			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
+#else
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
+#endif
 			foreach (var kvpWordform in srcDataCopy)
 			{
+#if USEXELEMENTS
+				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, kvpWordform.Key);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															dataEl,
+															new HashSet<string>());
+#else
 				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, kvpWordform.Key);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
 															new HashSet<string>());
+#endif
 			}
 			foreach (var kvp in multiClassOutput)
 			{
