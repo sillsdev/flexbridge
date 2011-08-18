@@ -35,7 +35,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 -->
 
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" />
-
+e
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
 users to install just the shortcut for your app, then demand-install the
@@ -46,6 +46,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  Installed OR FW7INSTALLDIR
 	</Condition>
 	<PropertyRef Id="NETFRAMEWORK35" />
+	<PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
 	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5." >
 	  Installed OR NETFRAMEWORK35
 	</Condition>
