@@ -46,12 +46,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  Installed OR FW7INSTALLDIR
 	</Condition>
 	<PropertyRef Id="NETFRAMEWORK35" />
-	<PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
-	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5 SP1.">
+	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5.">
 	  Installed OR NETFRAMEWORK35
-	</Condition>
-	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5 SP1.">
-	  Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")
 	</Condition>
 
 	<!--because of bug, this needs to be 1 -->
