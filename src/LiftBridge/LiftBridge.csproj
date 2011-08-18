@@ -75,9 +75,17 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
 	</Reference>
-	<Reference Include="ChorusPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
