@@ -35,7 +35,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 -->
 
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" />
-e
+
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
 users to install just the shortcut for your app, then demand-install the
