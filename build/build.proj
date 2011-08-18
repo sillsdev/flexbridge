@@ -43,15 +43,15 @@
 	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Installer\"/>
   </Target>
 
-  <Target Name="MergeAssemblies" DependsOnTargets="CreateDirectories">
-	<Message Text="Attempting ILMerge for two assemblies" Importance="high"/>
-	<!-- Make the merged Chorus library. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /target:library /out:$(teamcity_build_checkoutDir)\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll" />
-	<!-- Make a new merged ChorusMerge exe. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\net2.0\ /lib:$(teamcity_build_checkoutDir)\lib\common\ /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll" />
+  <Target Name="CopyAssemblies" DependsOnTargets="CreateDirectories">
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\lib\net2.0\Chorus.exe" DestinationFiles="$(teamcity_build_checkoutDir)\output\common\Chorus.exe"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\lib\net2.0\LibChorus.dll" DestinationFiles="$(teamcity_build_checkoutDir)\output\common\LibChorus.dll"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\lib\net2.0\ChorusMerge.exe" DestinationFiles="$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\lib\net2.0\Palaso.dll" DestinationFiles="$(teamcity_build_checkoutDir)\output\common\Palaso.dll"/>
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\lib\common\icu.net.dll" DestinationFiles="$(teamcity_build_checkoutDir)\output\common\icu.net.dll"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial; MergeAssemblies">
+  <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial; CopyAssemblies">
 	<MSBuild Projects="$(teamcity_build_checkoutDir)/LiftBridge VS2010.sln" Targets="Rebuild"
 	  Properties="Configuration=Release"/>
 	<Message Text="Build Complete"/>

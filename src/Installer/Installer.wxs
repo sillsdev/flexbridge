@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME  (in quotes)-->
-<?define Property_ProductVersion = ".*" ?>
-<!--this is replaced at build time by the msbuild 'package' target -->
-<?define Property_ProductCode = "*" ?>
-<!-- auto-generate a new guid each time -->
-<?define Property_UpgradeCode = "{c1ecd18b-e382-11de-8a39-0800200c9a66}" ?>
-<!--Don't even think of EVER changing this -->
+<?define Property_ProductVersion = ".*" ?> <!--this is replaced at build time by the msbuild 'package' target -->
+<?define Property_ProductCode = "*" ?> <!-- auto-generate a new guid each time -->
+<?define Property_UpgradeCode = "{c1ecd18b-e382-11de-8a39-0800200c9a66}" ?> <!--Don't even think of EVER changing this -->
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
@@ -52,6 +49,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5." >
 	  Installed OR NETFRAMEWORK35
 	</Condition>
+	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5 SP1.">
+	  Installed OR NETFRAMEWORK35
+	</Condition>
+	<Condition Message="Before Lift Bridge can install, you need to install Microsoft's free .NET Framework 3.5 SP1.">
+	  Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")
+	</Condition>
 
 	<!--because of bug, this needs to be 1 -->
 	<Property Id ="ALLUSERS">1</Property>
@@ -59,26 +62,35 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Directory Id="TARGETDIR" Name="SourceDir">
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<Directory Id="FW7INSTALLDIR" Name="."> <!-- Overrides the parent folder -->
-		  <!-- Add all of the main LB assemblies here. -->
-		  <Component Id="Autofac.dll" Guid="{c1ecf880-e382-11de-8a39-0800200c9a66}">
-			<File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll" />
-		  </Component>
+		  <Directory Id="LiftBridge" Name="LB">
+			<!-- Add all of the main LB assemblies here. -->
+			<Component Id="Autofac.dll" Guid="{c1ecf880-e382-11de-8a39-0800200c9a66}">
+			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll" />
+			</Component>
+			<Component Id="Chorus.exe" Guid="{c1ecf884-e382-11de-8a39-0800200c9a66}">
+			  <File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Common\Chorus.exe" />
+			</Component>
+			<Component Id="ChorusMerge.exe" Guid="{c1ecf882-e382-11de-8a39-0800200c9a66}">
+			  <File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe" />
+			</Component>
+			<Component Id="LibChorus.dll" Guid="{c1ecf885-e382-11de-8a39-0800200c9a66}">
+			  <File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Common\LibChorus.dll" />
+			</Component>
+			<Component Id="Palaso.dll" Guid="{c1ecf886-e382-11de-8a39-0800200c9a66}">
+			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Common\Palaso.dll" />
+			</Component>
+			<Component Id="icu.net.dll" Guid="{c1ecf887-e382-11de-8a39-0800200c9a66}">
+			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Common\icu.net.dll" />
+			</Component>
 
-		  <Component Id="ChorusPlus.dll" Guid="{c1ecf881-e382-11de-8a39-0800200c9a66}">
-			<File Id="ChorusPlus.dll" Name="ChorusPlus.dll" KeyPath="yes" Source="..\..\output\Common\ChorusPlus.dll" />
-		  </Component>
+			<Component Id="LiftBridge.dll" Guid="{c1ecf883-e382-11de-8a39-0800200c9a66}">
+			  <File Id="LiftBridge.dll" Name="LiftBridge.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge.dll" />
+			</Component>
 
-		  <Component Id="ChorusMerge.exe" Guid="{c1ecf882-e382-11de-8a39-0800200c9a66}">
-			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe" />
-		  </Component>
+			<!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
+			<Directory Id="MercurialDir" Name="Mercurial" />
 
-		  <Component Id="LiftBridge.dll" Guid="{c1ecf883-e382-11de-8a39-0800200c9a66}">
-			<File Id="LiftBridge.dll" Name="LiftBridge.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge.dll" />
-		  </Component>
-
-		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
-		  <Directory Id="MercurialDir" Name="Mercurial" />
-
+		  </Directory>
 		</Directory>
 	  </Directory>
 	</Directory>
@@ -86,8 +98,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
 
 	  <ComponentRef Id ="Autofac.dll"/>
-	  <ComponentRef Id="ChorusPlus.dll"/>
+	  <ComponentRef Id="Chorus.exe"/>
 	  <ComponentRef Id="ChorusMerge.exe"/>
+	  <ComponentRef Id="LibChorus.dll"/>
+	  <ComponentRef Id="Palaso.dll"/>
+	  <ComponentRef Id="icu.net.dll"/>
+
 	  <ComponentRef Id="LiftBridge.dll"/>
 
 	  <!-- Generated components -->
