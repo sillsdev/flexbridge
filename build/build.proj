@@ -10,7 +10,7 @@
   <Target Name="VersionNumbers">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
-	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
+	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="3">
 	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter"/>
 	</Split>
 
