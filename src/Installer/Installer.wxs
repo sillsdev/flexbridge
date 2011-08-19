@@ -62,23 +62,26 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll" />
 			</Component>
 			<Component Id="Chorus.exe" Guid="{c1ecf884-e382-11de-8a39-0800200c9a66}">
-			  <File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Common\Chorus.exe" />
+			  <File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Release\Chorus.exe" />
 			</Component>
 			<Component Id="ChorusMerge.exe" Guid="{c1ecf882-e382-11de-8a39-0800200c9a66}">
-			  <File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe" />
+			  <File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe" />
 			</Component>
 			<Component Id="LibChorus.dll" Guid="{c1ecf885-e382-11de-8a39-0800200c9a66}">
-			  <File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Common\LibChorus.dll" />
+			  <File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Release\LibChorus.dll" />
 			</Component>
 			<Component Id="Palaso.dll" Guid="{c1ecf886-e382-11de-8a39-0800200c9a66}">
-			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Common\Palaso.dll" />
+			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.dll" />
 			</Component>
 			<Component Id="icu.net.dll" Guid="{c1ecf887-e382-11de-8a39-0800200c9a66}">
-			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Common\icu.net.dll" />
+			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll" />
 			</Component>
 
 			<Component Id="LiftBridge.dll" Guid="{c1ecf883-e382-11de-8a39-0800200c9a66}">
 			  <File Id="LiftBridge.dll" Name="LiftBridge.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge.dll" />
+			</Component>
+			<Component Id="LiftBridgeCore.dll" Guid="{c1ecf888-e382-11de-8a39-0800200c9a66}">
+			  <File Id="LiftBridgeCore.dll" Name="LiftBridgeCore.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridgeCore.dll" />
 			</Component>
 
 			<!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
@@ -99,6 +102,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icu.net.dll"/>
 
 	  <ComponentRef Id="LiftBridge.dll"/>
+	  <ComponentRef Id="LiftBridgeCore.dll"/>
 
 	  <!-- Generated components -->
 	  <ComponentGroupRef Id ="DistFiles"/>

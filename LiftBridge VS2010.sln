@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{24FF10ED
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{9373AC08-99B7-41DA-B0DF-60128E9D9DF0}"
 	ProjectSection(SolutionItems) = preProject
-		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
 		src\Installer\Index.htm = src\Installer\Index.htm
 		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
