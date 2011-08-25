@@ -4,18 +4,13 @@ relre:src/LiftBridge/obj/*
 relre:src/LiftBridgeTests/bin/*
 relre:src/LiftBridgeTests/obj/*
 glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user
-relre:_ReSharper.LiftBridge/*
-glob:LiftBridge VS2008.5.1.ReSharper.user
-glob:LiftBridge VS2008.suo
 relre:output/*
-glob:lib/common/ChorusPlus.pdb
 relre:src/LiftBridgeCore/bin/*
 relre:src/LiftBridgeCore/obj/*
-relre:src/LiftBridge for FieldWorks 7/Debug/*
-relre:src/LiftBridge for FieldWorks 7/Release/*
 glob:LiftBridge VS2010.5.1.ReSharper.user
 glob:src/LiftBridge/LiftBridge.csproj.user
 glob:src/LiftBridgeCore/LiftBridgeCore.csproj.user
 glob:LiftBridge VS2010.suo
 glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
-relre:src/LiftBridgeUtility6/obj/*
+syntax: regexp
+_ReSharper.LiftBridge VS2010/*

@@ -36,7 +36,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\Debug\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -45,7 +45,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\Release\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -53,7 +53,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\Debug\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
@@ -62,7 +62,7 @@
 	<UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>..\..\output\Release\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -70,23 +70,107 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;MONO</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|x86'">
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;MONO</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release' ">
 	<Reference Include="Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
 	</Reference>
 	<Reference Include="Chorus">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="ChorusMerge">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
 	</Reference>
 	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
 	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	<Reference Include="Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\mono\Autofac.dll</HintPath>
+	</Reference>
+	<Reference Include="Chorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\mono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\mono\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\mono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\mono\Palaso.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
