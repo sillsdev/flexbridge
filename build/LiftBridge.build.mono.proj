@@ -1,0 +1,55 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+  </PropertyGroup>
+
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+  <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+
+  <!-- ***************** Main build ***************** -->
+  <PropertyGroup>
+	<Solution>LiftBridge VS2010.sln</Solution>
+	<ApplicationName>LiftBridge</ApplicationName>
+	<Configuration>Release</Configuration>
+  </PropertyGroup>
+
+  <Import Project="$(RootDir)/build/build.common.proj"/>
+
+  <Target Name="CreateDirectories">
+	<MakeDir Directories="$(RootDir)/output/"/>
+	<MakeDir Directories="$(RootDir)/output/common"/>
+	<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
+  </Target>
+
+  <Target Name="Build">
+	<CallTarget Targets="Clean"/>
+	<CallTarget Targets="CreateDirectories"/>
+	<CallTarget Targets="SetAssemblyVersion"/>
+	<CallTarget Targets="Compile"/>
+	<Message Text="Build Complete"/>
+  </Target>
+
+  <ItemGroup>
+	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+  </ItemGroup>
+  <Target Name="Clean">
+	<Delete Files="@(ExistingObjectFiles)"/>
+  </Target>
+
+  <Target Name="Compile">
+	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <!-- ***************** Testing ***************** -->
+  <Target Name="Test" DependsOnTargets="Build">
+	<CreateItem Include="$(RootDir)/output/$(Configuration)/*.Tests.dll">
+	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
+	</CreateItem>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
+  </Target>
+</Project>
