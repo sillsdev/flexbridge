@@ -1,2 +1,0 @@
-ILMerge /lib:..\lib\net2.0\ /lib:..\lib\common\ /target:library /out:..\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll icu.net.dll
-ILMerge /lib:..\lib\net2.0\ /lib:..\lib\common\ /out:..\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll icu.net.dll
