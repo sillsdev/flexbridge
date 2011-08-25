@@ -18,7 +18,7 @@
 	<Configuration>Release</Configuration>
   </PropertyGroup>
 
-  <Import Project="$(RootDir)/build/build.common.proj" />
+  <Import Project="$(RootDir)/build/build.common.proj"/>
 
   <Target Name="CreateDirectories">
 	<MakeDir Directories="$(RootDir)/output/"/>
@@ -36,40 +36,29 @@
   </Target>
 
   <ItemGroup>
-	<ExistingObjectFiles
-	  Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*"
-	  Exclude="$(RootDir)/.hg/**/*"
-	/>
+	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
   </ItemGroup>
   <Target Name="Clean">
-	<Delete Files="@(ExistingObjectFiles)" />
+	<Delete Files="@(ExistingObjectFiles)"/>
   </Target>
 
   <Target Name="Compile">
-	<MSBuild
-	  Projects="$(RootDir)/$(Solution)"
-	  Targets="Build"
-	  Properties="Configuration=$(Configuration)" />
+	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
   <Target Name="Test" DependsOnTargets="Build">
 	<CreateItem Include="$(RootDir)/output/$(Configuration)/*.Tests.dll">
-	  <Output ItemName="TestAssemblies" TaskParameter="Include" />
+	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
-	<NUnitTeamCity
-	  Assemblies="@(TestAssemblies)"
-	  ExcludeCategory="SkipOnTeamCity"
-	  NUnitVersion="NUnit-2.5.5" />
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
   </Target>
 
-  <!-- ***************** Suspect below this point ***************** -->
+  <!-- ***************** Installer stuff below this line. ***************** -->
 
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
 	<Unzip ZipFileName="$(RootDir)/lib/net2.0/Mercurial.zip" TargetDirectory="$(RootDir)/output/common"/>
   </Target>
-
-  <!-- Installer stuff below this line. -->
 
   <Target Name="MakeIndex" DependsOnTargets="VersionNumbers">
 
