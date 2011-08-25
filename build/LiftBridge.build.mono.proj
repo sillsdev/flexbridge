@@ -15,7 +15,7 @@
   <PropertyGroup>
 	<Solution>LiftBridge VS2010.sln</Solution>
 	<ApplicationName>LiftBridge</ApplicationName>
-	<Configuration>Release</Configuration>
+	<Configuration>ReleaseMono</Configuration>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
