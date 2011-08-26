@@ -30,7 +30,9 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="Compile"/>
+	<CallTarget Targets="CompileCore"/>
+	<CallTarget Targets="CompileMain"/>
+	<CallTarget Targets="CompileTests"/>
 	<Message Text="Build Complete"/>
   </Target>
 
@@ -41,9 +43,15 @@
 	<Delete Files="@(ExistingObjectFiles)"/>
   </Target>
 
-  <Target Name="Compile">
+  <Target Name="CompileCore">
 	<MSBuild Projects="$(RootDir)/src/LiftBridgeCore/LiftBridgeCore.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Name="CompileMain">
 	<MSBuild Projects="$(RootDir)/src/LiftBridge/LiftBridge.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Name="CompileTests">
 	<MSBuild Projects="$(RootDir)/src/LiftBridgeTests/LiftBridgeTests.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
