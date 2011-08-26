@@ -42,7 +42,9 @@
   </Target>
 
   <Target Name="Compile">
-	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)/src/LiftBridgeCore/LiftBridgeCore.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)/src/LiftBridge/LiftBridge.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)/src/LiftBridgeTests/LiftBridgeTests.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
