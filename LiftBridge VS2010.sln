@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{24FF10ED-58AD-48EB-961A-5259CBABC710}"
 	ProjectSection(SolutionItems) = preProject
 		build\build.common.proj = build\build.common.proj
+		build\LiftBridge.build.mono.proj = build\LiftBridge.build.mono.proj
 		build\LiftBridge.build.win.proj = build\LiftBridge.build.win.proj
 	EndProjectSection
 EndProject
