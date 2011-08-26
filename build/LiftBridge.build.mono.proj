@@ -30,9 +30,10 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="CompileCore"/>
+	<CallTarget Targets="Compile"/>
+	<!--<CallTarget Targets="CompileCore"/>
 	<CallTarget Targets="CompileMain"/>
-	<CallTarget Targets="CompileTests"/>
+	<CallTarget Targets="CompileTests"/>-->
 	<Message Text="Build Complete"/>
   </Target>
 
@@ -41,6 +42,10 @@
   </ItemGroup>
   <Target Name="Clean">
 	<Delete Files="@(ExistingObjectFiles)"/>
+  </Target>
+
+  <Target Name="Compile">
+	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="CompileCore">
