@@ -56,7 +56,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Directory Id="TARGETDIR" Name="SourceDir">
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<Directory Id="FW7INSTALLDIR" Name="."> <!-- Overrides the parent folder -->
-		  <Directory Id="LiftBridge" Name="LB">
+		  <Directory Id="LiftBridge" Name="LiftBridge">
 			<!-- Add all of the main LB assemblies here. -->
 			<Component Id="Autofac.dll" Guid="{c1ecf880-e382-11de-8a39-0800200c9a66}">
 			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll" />
