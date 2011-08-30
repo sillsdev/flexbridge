@@ -225,7 +225,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>copy $(SolutionDir)DistFiles\about.htm $(TargetDir)
-copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)</PostBuildEvent>
+copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)
+copy $(SolutionDir)output\common\ChorusMerge.exe $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
