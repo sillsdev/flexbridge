@@ -1,0 +1,2 @@
+..\lib\common\ILRepack /target:library /out:../output/common/ChorusPlus.dll ../lib/mono/Chorus.exe ../lib/mono/LibChorus.dll ../lib/mono/Palaso.dll ../lib/mono/Autofac.dll ../lib/mono/NDesk.DBus.dll ../lib/common/icu.net.dll
+..\lib\common\ILRepack /out:../output/common/ChorusMerge.exe ../lib/mono/ChorusMerge.exe ../lib/mono/LibChorus.dll ../lib/mono/Palaso.dll ../lib/mono/Autofac.dll ../lib/mono/NDesk.DBus.dll ../lib/common/icu.net.dll

@@ -30,10 +30,8 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
+	<CallTarget Targets="MergeAssemblies"/>
 	<CallTarget Targets="Compile"/>
-	<!--<CallTarget Targets="CompileCore"/>
-	<CallTarget Targets="CompileMain"/>
-	<CallTarget Targets="CompileTests"/>-->
 	<Message Text="Build Complete"/>
   </Target>
 
@@ -48,16 +46,9 @@
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
-  <Target Name="CompileCore">
-	<MSBuild Projects="$(RootDir)/src/LiftBridgeCore/LiftBridgeCore.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
-  </Target>
-
-  <Target Name="CompileMain">
-	<MSBuild Projects="$(RootDir)/src/LiftBridge/LiftBridge.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
-  </Target>
-
-  <Target Name="CompileTests">
-	<MSBuild Projects="$(RootDir)/src/LiftBridgeTests/LiftBridgeTests.csproj" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  <Target Name="MergeAssemblies">
+	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/mono/Chorus.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/mono/ChorusMerge.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->

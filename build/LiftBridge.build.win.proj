@@ -31,6 +31,7 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
+	<CallTarget Targets="MergeAssemblies"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -44,6 +45,11 @@
 
   <Target Name="Compile">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Name="MergeAssemblies">
+	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/net2.0/Chorus.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/net2.0/ChorusMerge.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->

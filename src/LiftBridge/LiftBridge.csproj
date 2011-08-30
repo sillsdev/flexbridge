@@ -126,51 +126,10 @@
 	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release' ">
-	<Reference Include="Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
-	</Reference>
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
-	</Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
-	<Reference Include="Autofac, Version=1.4.4.561, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\mono\Autofac.dll</HintPath>
-	</Reference>
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\mono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\mono\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\mono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\mono\Palaso.dll</HintPath>
-	</Reference>
-  </ItemGroup>
   <ItemGroup>
+	<Reference Include="ChorusPlus">
+	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>

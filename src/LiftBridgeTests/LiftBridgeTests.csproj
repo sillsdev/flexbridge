@@ -130,48 +130,18 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release' ">
-	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
-	</Reference>
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
-	</Reference>
 	<Reference Include="Palaso.TestUtilities">
 	  <HintPath>..\..\lib\net2.0\Palaso.TestUtilities.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
-	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\mono\Autofac.dll</HintPath>
-	</Reference>
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\mono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <HintPath>..\..\lib\mono\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <HintPath>..\..\lib\mono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\mono\Palaso.dll</HintPath>
-	</Reference>
 	<Reference Include="Palaso.TestUtilities">
 	  <HintPath>..\..\lib\mono\Palaso.TestUtilities.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="icu.net">
-	  <HintPath>..\..\lib\common\icu.net.dll</HintPath>
+	<Reference Include="ChorusPlus">
+	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
 	</Reference>
 	<Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
