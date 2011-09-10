@@ -47,8 +47,10 @@
   </Target>
 
   <Target Name="MergeAssemblies">
-	<Exec Command="$(RootDir)/lib/mono/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/mono/Chorus.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="$(RootDir)/lib/mono/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/mono/ChorusMerge.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="cd $(RootDir)/lib/mono/"
+	<Exec Command="mono ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="mono ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="cd $(RootDir)/"
   </Target>
 
   <!-- ***************** Testing ***************** -->
