@@ -47,8 +47,8 @@
   </Target>
 
   <Target Name="MergeAssemblies">
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/mono/Chorus.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/mono/ChorusMerge.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="mono $(RootDir)/lib/mono/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/mono/Chorus.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="mono $(RootDir)/lib/mono/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/mono/ChorusMerge.exe $(RootDir)/lib/mono/LibChorus.dll $(RootDir)/lib/mono/Palaso.dll $(RootDir)/lib/mono/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->

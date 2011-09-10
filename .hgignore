@@ -14,3 +14,6 @@ glob:LiftBridge VS2010.suo
 glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
 syntax: regexp
 _ReSharper.LiftBridge VS2010/*
+glob:LiftBridge VS2010.userprefs
+glob:**.resources
+glob:**.pidb
