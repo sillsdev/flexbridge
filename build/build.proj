@@ -34,6 +34,8 @@
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
 	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\Release"/>
   </Target>
 
   <Target Name="CreateDirectories">
