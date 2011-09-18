@@ -35,6 +35,7 @@
 	<Message Text="Build Complete"/>
   </Target>
 
+
   <ItemGroup>
 	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
   </ItemGroup>
