@@ -27,6 +27,15 @@ namespace FieldWorksBridgeTests
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "NotEnabled")).FullName;
 			_dummyFolderPaths.Add(projectPath);
 			File.WriteAllText(Path.Combine(projectPath, "NotEnabled.fwdata"), "");
+
+			// Client-Server DB4o project
+			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "DB4o")).FullName;
+			_dummyFolderPaths.Add(projectPath);
+			File.WriteAllText(Path.Combine(projectPath, "DB4o.fwdb"), "");
+
+			// Random non-FW folder
+			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "RandomFolder")).FullName;
+			_dummyFolderPaths.Add(projectPath);
 		}
 
 		internal string BaseFolderPath { get; private set; }
