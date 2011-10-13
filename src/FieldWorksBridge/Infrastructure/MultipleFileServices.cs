@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.FieldWorks;
-using Chorus.Utilities;
+using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
 {
