@@ -68,6 +68,7 @@
 	<Compile Include="Installer.wxs" />
 	<Compile Include="..\..\output\Installer\GeneratedDistFiles.wxs" />
 	<Compile Include="..\..\output\Installer\GeneratedMercurialFiles.wxs" />
+	<Compile Include="..\..\output\Installer\GeneratedMercurialExtensionsFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
 	<WixExtension Include="WixUtilExtension">
