@@ -73,6 +73,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
 		  <Directory Id="MercurialDir" Name="Mercurial"/>
+		  <Directory Id="MercurialExtensionsDir" Name="MercurialExtensions"/>
 
 		</Directory>
 	  </Directory>
@@ -85,6 +86,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <!-- Generated components -->
 	  <ComponentGroupRef Id="DistFiles"/>
 	  <ComponentGroupRef Id="MercurialFiles"/>
+	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
 
 	</Feature>
 
