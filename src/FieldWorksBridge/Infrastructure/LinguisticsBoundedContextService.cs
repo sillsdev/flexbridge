@@ -11,48 +11,28 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string LinguisticsRootFolder = "Linguistics";
 
-#if USEXELEMENTS
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
-#else
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
-#endif
 		{
 			var linguisticsBaseDir = Path.Combine(multiFileDirRoot, LinguisticsRootFolder);
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
-#if USEXELEMENTS
 			var langProjElement = classData["LangProject"].Values.First();
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-#else
-			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-#endif
 
 			// Bundle under Linguistics\Phonology.
 			var guids = ObjectFinderServices.GetGuids(langProjElement, "PhonologicalData");
 			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "PhFeatureSystem"));
 			foreach (var guid in guids)
 			{
-#if USEXELEMENTS
 				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															dataEl,
 															new HashSet<string>());
-#else
-				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
-															new HashSet<string>());
-#endif
 			}
 			if (multiClassOutput.Count > 0)
 			{
@@ -73,19 +53,11 @@ namespace FieldWorksBridge.Infrastructure
 			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "TextMarkupTags"));
 			foreach (var guid in guids)
 			{
-#if USEXELEMENTS
 				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															dataEl,
 															new HashSet<string>());
-#else
-				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
-															new HashSet<string>());
-#endif
 			}
 			if (multiClassOutput.Count > 0)
 			{
@@ -99,19 +71,11 @@ namespace FieldWorksBridge.Infrastructure
 			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "AnalyzingAgents"));
 			foreach (var guid in guids)
 			{
-#if USEXELEMENTS
 				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															dataEl,
 															new HashSet<string>());
-#else
-				var dataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
-															new HashSet<string>());
-#endif
 			}
 			if (multiClassOutput.Count > 0)
 			{

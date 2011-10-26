@@ -11,35 +11,20 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string LexiconRootFolder = "Lexicon";
 
-#if USEXELEMENTS
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
-#else
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
-#endif
 		{
 			var lexiconBaseDir = Path.Combine(multiFileDirRoot, LexiconRootFolder);
 			if (!Directory.Exists(lexiconBaseDir))
 				Directory.CreateDirectory(lexiconBaseDir);
 
-#if USEXELEMENTS
 			SortedDictionary<string, XElement> sortedInstanceData;
-#else
-			SortedDictionary<string, byte[]> sortedInstanceData;
-#endif
 			if (!classData.TryGetValue("LexDb", out sortedInstanceData))
 				return;
 
-#if USEXELEMENTS
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-#else
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-#endif
 			if (sortedInstanceData.Count > 0)
 			{
 				var guid = sortedInstanceData.Keys.First();
@@ -49,11 +34,7 @@ namespace FieldWorksBridge.Infrastructure
 				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, lexiconBaseDir, readerSettings, multiClassOutput, guid,
 					new HashSet<string> { "ReversalIndexes", "SenseTypes", "UsageTypes", "DomainTypes", "MorphTypes", "References", "VariantEntryTypes", "ComplexEntryTypes" });
 
-#if USEXELEMENTS
 				var lexDbElement = dataBytes;
-#else
-				var lexDbElement = XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes));
-#endif
 
 				// 2. Write SenseTypes.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
@@ -107,26 +88,14 @@ namespace FieldWorksBridge.Infrastructure
 				// 9. Entries
 				if (!classData.TryGetValue("LexEntry", out sortedInstanceData))
 					return;
-#if USEXELEMENTS
 				var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
-#else
-				var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
-#endif
 				foreach (var entryKvp in srcDataCopy)
 				{
-#if USEXELEMENTS
 					var entryEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, entryKvp.Key);
 					ObjectFinderServices.CollectAllOwnedObjects(mdc,
 																classData, guidToClassMapping, multiClassOutput,
 																entryEl,
 																new HashSet<string>());
-#else
-					var entryBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, entryKvp.Key);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																XElement.Parse(MultipleFileServices.Utf8.GetString(entryBytes)),
-																new HashSet<string>());
-#endif
 				}
 				var entryDir = Path.Combine(lexiconBaseDir, "Entries");
 				if (!Directory.Exists(entryDir))
@@ -151,27 +120,15 @@ namespace FieldWorksBridge.Infrastructure
 
 			// 10. Semantic Domain list.
 			multiClassOutput.Clear();
-#if USEXELEMENTS
 			var langProjElement = classData["LangProject"].Values.First();
-#else
-			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
-#endif
 			var guids = ObjectFinderServices.GetGuids(langProjElement, "SemanticDomainList");
 			if (guids.Count > 0)
 			{
-#if USEXELEMENTS
 				var semDomListEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															semDomListEl,
 															new HashSet<string>());
-#else
-				var semDomListBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															XElement.Parse(MultipleFileServices.Utf8.GetString(semDomListBytes)),
-															new HashSet<string>());
-#endif
 				var semDomDir = Path.Combine(lexiconBaseDir, "SemanticDomain");
 				if (!Directory.Exists(semDomDir))
 					Directory.CreateDirectory(semDomDir);
@@ -199,17 +156,10 @@ namespace FieldWorksBridge.Infrastructure
 			if (guids.Count > 0)
 			{
 				var afxCatListBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-#if USEXELEMENTS
 				ObjectFinderServices.CollectAllOwnedObjects(mdc,
 															classData, guidToClassMapping, multiClassOutput,
 															afxCatListBytes,
 															new HashSet<string>());
-#else
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															XElement.Parse(MultipleFileServices.Utf8.GetString(afxCatListBytes)),
-															new HashSet<string>());
-#endif
 				var afCatDir = Path.Combine(lexiconBaseDir, "AffixCategories");
 				if (!Directory.Exists(afCatDir))
 					Directory.CreateDirectory(afCatDir);
