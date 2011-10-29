@@ -181,8 +181,10 @@ namespace FieldWorksBridge.Infrastructure
 			foreach (var objsurElement in propertyElement.Elements("objsur"))
 			{
 // ReSharper disable PossibleNullReferenceException
-				sortCollectionData.Add(objsurElement.Attribute("guid").Value, objsurElement);
+				var key = objsurElement.Attribute("guid").Value;
 // ReSharper restore PossibleNullReferenceException
+				if (!sortCollectionData.ContainsKey(key))
+					sortCollectionData.Add(key, objsurElement);
 			}
 
 			propertyElement.Elements().Remove();

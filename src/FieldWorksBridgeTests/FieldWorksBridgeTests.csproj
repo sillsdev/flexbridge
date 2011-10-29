@@ -95,6 +95,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
 	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
