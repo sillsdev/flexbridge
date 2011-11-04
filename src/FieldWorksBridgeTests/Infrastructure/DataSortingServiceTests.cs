@@ -130,18 +130,18 @@ namespace FieldWorksBridgeTests.Infrastructure
 
 			var customData = sortedCustomDataElement.Elements().ElementAt(0);
 			CheckAttributes(customData,
-				new List<string> { "class", "name", "type", "wsSelector" },
-				new List<string> {"LexEntry", "Paradigm", "String", "-2" });
+				new List<string> { "class", "key", "name", "type", "wsSelector" },
+				new List<string> { "LexEntry", "LexEntryParadigm", "Paradigm", "String", "-2" });
 
 			customData = sortedCustomDataElement.Elements().ElementAt(1);
 			CheckAttributes(customData,
-				new List<string> { "class", "destclass", "listRoot", "name", "type" },
-				new List<string> { "LexEntry", "7", "53241fd4-72ae-4082-af55-6b659657083c", "Tone", "RC" });
+				new List<string> { "class", "destclass", "key", "listRoot", "name", "type" },
+				new List<string> { "LexEntry", "7", "LexEntryTone", "53241fd4-72ae-4082-af55-6b659657083c", "Tone", "RC" });
 
 			customData = sortedCustomDataElement.Elements().ElementAt(2);
 			CheckAttributes(customData,
-				new List<string> { "class", "name", "type" },
-				new List<string> {	"WfiWordform", "Certified", "Boolean" });
+				new List<string> { "class", "key", "name", "type" },
+				new List<string> { "WfiWordform", "WfiWordformCertified", "Certified", "Boolean" });
 		}
 
 		private static void CheckAttributes(XElement customData, IList<string> expectedAttributeNames, IList<string> expectedAttributeValues)

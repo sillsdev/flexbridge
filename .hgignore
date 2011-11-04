@@ -12,5 +12,6 @@ glob:src/FieldWorksBridge/FieldWorksBridge.csproj.user
 glob:src/FieldWorksBridgeTests/FieldWorksBridgeTests.csproj.user
 syntax: regexp
 Perf test  results/*.*
+DistFiles/Mercurial/*.*
 syntax: glob
 Perf test  results/*.app6results

@@ -70,7 +70,9 @@ namespace FieldWorksBridge.Infrastructure
 			{
 // ReSharper disable PossibleNullReferenceException
 				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
-				sortedCustomProperties.Add(customProperty.Attribute("class").Value + customProperty.Attribute("name").Value, customProperty);
+				var keyValue = customProperty.Attribute("class").Value + customProperty.Attribute("name").Value;
+				customProperty.Add(new XAttribute("key", keyValue));
+				sortedCustomProperties.Add(keyValue, customProperty);
 // ReSharper restore PossibleNullReferenceException
 			}
 			customPropertiesElement.Elements().Remove();
