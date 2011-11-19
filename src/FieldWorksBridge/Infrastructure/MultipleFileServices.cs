@@ -86,7 +86,8 @@ namespace FieldWorksBridge.Infrastructure
 								className,
 								new FdoPropertyInfo(
 									propName,
-									typeAttr.Value));
+									typeAttr.Value,
+									true));
 // ReSharper restore PossibleNullReferenceException
 						}
 						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
