@@ -32,6 +32,7 @@
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="MergeAssemblies"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -43,13 +44,23 @@
 	<Delete Files="@(ExistingObjectFiles)"/>
   </Target>
 
-  <Target Name="Compile">
+  <Target Name="Compile" DependsOnTargets="CopyMercurialFolders">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="MergeAssemblies">
 	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/net2.0/Chorus.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
 	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/net2.0/ChorusMerge.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+  </Target>
+
+  <Target Name="CopyMercurialFolders" DependsOnTargets="UnzipMercurial">
+	<Copy SourceFiles="$(RootDir)\output\common\Mercurial" DestinationFolder="$(RootDir)/output/$(Configuration)" />
+	<Copy SourceFiles="$(RootDir)\output\common\MercurialExtensions" DestinationFolder="$(RootDir)/output/$(Configuration)" />
+  </Target>
+
+  <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
+	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
+	<Unzip ZipFileName="$(RootDir)\lib\net2.0\MercurialExtensions.zip" TargetDirectory="$(RootDir)\output\common"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
@@ -61,11 +72,6 @@
   </Target>
 
   <!-- ***************** Installer stuff below this line. ***************** -->
-
-  <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\MercurialExtensions.zip" TargetDirectory="$(RootDir)\output\common"/>
-  </Target>
 
   <Target Name="MakeIndex" DependsOnTargets="VersionNumbers">
 
