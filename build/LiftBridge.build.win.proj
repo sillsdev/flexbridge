@@ -54,8 +54,16 @@
   </Target>
 
   <Target Name="CopyMercurialFolders" DependsOnTargets="UnzipMercurial">
-	<Copy SourceFiles="$(RootDir)\output\common\Mercurial" DestinationFolder="$(RootDir)/output/$(Configuration)" />
-	<Copy SourceFiles="$(RootDir)\output\common\MercurialExtensions" DestinationFolder="$(RootDir)/output/$(Configuration)" />
+	<ItemGroup>
+	  <MyMercurialFiles Include="$(RootDir)\output\common\Mercurial\**\*.*"/>
+	  <MyMercurialExtensionFiles Include="$(RootDir)\output\common\MercurialExtensions\**\*.*"/>
+	</ItemGroup>
+	<Copy
+	  SourceFiles="@(MyMercurialFiles)"
+	  DestinationFolder="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy
+	  SourceFiles="@(MyMercurialExtensionFiles)"
+	  DestinationFolder="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
