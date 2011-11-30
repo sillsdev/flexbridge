@@ -11,29 +11,17 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string AnthropologyRootFolder = "Anthropology";
 
-#if USEXELEMENTS
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
-#else
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
-#endif
 		{
 			var anthropologyBaseDir = Path.Combine(multiFileDirRoot, AnthropologyRootFolder);
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
-#if USEXELEMENTS
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
 			SortedDictionary<string, XElement> sortedInstanceData;
-#else
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-			SortedDictionary<string, byte[]> sortedInstanceData;
-#endif
 			classData.TryGetValue("RnResearchNbk", out sortedInstanceData);
 
 			if (sortedInstanceData.Count > 0)
@@ -49,27 +37,15 @@ namespace FieldWorksBridge.Infrastructure
 					new HashSet<string> { "RecTypes" });
 
 				// 2. Write RecTypes list.
-#if USEXELEMENTS
 				ObjectFinderServices.WritePropertyInFolders(mdc,
 					classData, guidToClassMapping, multiClassOutput,
 					readerSettings, anthropologyBaseDir,
 					dataBytes,
 					"RecTypes", "RecordTypes", false);
-#else
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, anthropologyBaseDir,
-					XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes)),
-					"RecTypes", "RecordTypes", false);
-#endif
 			}
 
 			// Other LangProj props to write here:
-#if USEXELEMENTS
 			var langProjElement = classData["LangProject"].Values.First();
-#else
-			var langProjElement = XElement.Parse(MultipleFileServices.Utf8.GetString(classData["LangProject"].Values.First()));
-#endif
 
 			//	3. Write AnthroList
 			ObjectFinderServices.WritePropertyInFolders(mdc,

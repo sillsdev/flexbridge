@@ -1,35 +1,138 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
 using System.Xml.Linq;
+using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
 {
+	/// <summary>
+	/// Class used to sort all of the data in the XML BEP, so Mercurial doesn't suffer so much.
+	/// </summary>
 	internal static class DataSortingService
 	{
-		internal static XElement SortCustomPropertiesRecord(byte[] optionalFirstElement)
-		{
-			var customPropertiesElement = XElement.Parse(MultipleFileServices.Utf8.GetString(optionalFirstElement));
+		internal static readonly Encoding Utf8 = Encoding.UTF8;
+		private const string OptionalFirstElementTag = "AdditionalFields";
+		private const string StartTag = "rt";
+		internal const string Collections = "Collections";
+		internal const string MultiAlt = "MultiAlt";
 
-			// <CustomField name="Certified" class="WfiWordform" type="Boolean" />
+		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XmlWriter writer, string pathname)
+		{
+			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+
+			// Step 2: Sort and rewrite file.
+			using (var fastSplitter = new FastXmlElementSplitter(pathname))
+			{
+				var sortedObjects = new SortedDictionary<string, string>();
+				bool foundOptionalFirstElement;
+				foreach (var record in fastSplitter.GetSecondLevelElementStrings(OptionalFirstElementTag, StartTag, out foundOptionalFirstElement))
+				{
+					if (foundOptionalFirstElement)
+					{
+						// Step 2A: Write out custom property declaration(s).
+						WriteElement(writer, readerSettings, SortCustomPropertiesRecord(record));
+						foundOptionalFirstElement = false;
+					}
+					else
+					{
+						// Step 2B: Sort main CmObject record.
+						var sortedMainObject = SortMainElement(sortableProperties, record);
+						sortedObjects.Add(sortedMainObject.Attribute("guid").Value, sortedMainObject.ToString());
+					}
+				}
+				foreach (var sortedObjectKvp in sortedObjects)
+				{
+					WriteElement(writer, readerSettings, sortedObjectKvp.Value);
+				}
+			}
+		}
+
+		internal static XElement SortCustomPropertiesRecord(string optionalFirstElement)
+		{
+			var customPropertiesElement = XElement.Parse(optionalFirstElement);
+
+			SortCustomPropertiesRecord(customPropertiesElement);
+
+			return customPropertiesElement;
+		}
+
+		internal static void SortCustomPropertiesRecord(XElement customPropertiesElement)
+		{
+			// <CustomField name="Certified" class="WfiWordform" type="Boolean" ... />
 
 			// 1. Sort child elements by using a compound key of 'class'+'name'.
-			var sortedProperties = new SortedDictionary<string, XElement>();
+			var sortedCustomProperties = new SortedDictionary<string, XElement>();
 			foreach (var customProperty in customPropertiesElement.Elements())
 			{
 // ReSharper disable PossibleNullReferenceException
 				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
-				customProperty.Add(new XAttribute("key", customProperty.Attribute("class").Value + customProperty.Attribute("name").Value));
-				sortedProperties.Add(customProperty.Attribute("key").Value, customProperty);
+				var keyValue = customProperty.Attribute("class").Value + customProperty.Attribute("name").Value;
+				customProperty.Add(new XAttribute("key", keyValue));
+				sortedCustomProperties.Add(keyValue, customProperty);
 // ReSharper restore PossibleNullReferenceException
 			}
 			customPropertiesElement.Elements().Remove();
-			foreach (var propertyKvp in sortedProperties)
+			foreach (var propertyKvp in sortedCustomProperties)
 				customPropertiesElement.Add(propertyKvp.Value);
 
 			// Sort all attributes.
 			SortAttributes(customPropertiesElement);
+		}
 
-			return customPropertiesElement;
+		internal static XElement SortMainElement(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string rootData)
+		{
+			var sortedResult = XElement.Parse(rootData);
+
+			SortMainElement(sortableProperties, sortedResult);
+
+			return sortedResult;
+		}
+
+		internal static void SortMainElement(IDictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XElement rootData)
+		{
+			var className = rootData.Attribute("class").Value;
+
+			// Get collection properties for the class.
+			Dictionary<string, HashSet<string>> sortablePropertiesForClass;
+			if (!sortableProperties.TryGetValue(className, out sortablePropertiesForClass))
+			{
+				// Appears to be a newly obsolete instance of 'className'.
+				sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
+												{
+													{Collections, new HashSet<string>()},
+													{MultiAlt, new HashSet<string>()}
+												};
+				sortableProperties.Add(className, sortablePropertiesForClass);
+			}
+
+			var collData = sortablePropertiesForClass[Collections];
+			var multiAltData = sortablePropertiesForClass[MultiAlt];
+
+			var sortedPropertyElements = new SortedDictionary<string, XElement>();
+			foreach (var propertyElement in rootData.Elements())
+			{
+				var propName = propertyElement.Name.LocalName;
+				// <Custom name="Certified" val="True" />
+// ReSharper disable PossibleNullReferenceException
+				if (propName == "Custom")
+					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
+// ReSharper restore PossibleNullReferenceException
+				if (collData.Contains(propName))
+					SortCollectionProperties(propertyElement);
+				if (multiAltData.Contains(propName))
+					SortMultiSomethingProperty(propertyElement);
+				sortedPropertyElements.Add(propName, propertyElement);
+			}
+			rootData.Elements().Remove();
+			foreach (var kvp in sortedPropertyElements)
+				rootData.Add(kvp.Value);
+
+			// 3. Sort attributes at all levels.
+			SortAttributes(rootData);
 		}
 
 		internal static void SortAttributes(XElement element)
@@ -40,7 +143,7 @@ namespace FieldWorksBridge.Infrastructure
 					SortAttributes(childElement);
 			}
 
-			if (!element.HasAttributes || element.Attributes().Count() <= 1)
+			if (element.Attributes().Count() < 2)
 				return;
 
 			var sortedAttributes = new SortedDictionary<string, XAttribute>();
@@ -52,52 +155,54 @@ namespace FieldWorksBridge.Infrastructure
 				element.Add(sortedAttrKvp.Value);
 		}
 
-		internal static void SortMainElement(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, XElement rtElement)
+		internal static void SortMultiSomethingProperty(XContainer multiSomethingProperty)
 		{
-			// Get collection properties for the class.
-			HashSet<string> colPropNames;
-			if (!collectionPropertiesCache.TryGetValue(className, out colPropNames))
-				colPropNames = new HashSet<string>();
+			if (multiSomethingProperty.Elements().Count() < 2)
+				return;
 
-			var sortedPropertyElements = new SortedDictionary<string, XElement>();
-			foreach (var propertyElement in rtElement.Elements())
+			var sortedAlternativeElements = new SortedDictionary<string, XElement>();
+			foreach (var alternativeElement in multiSomethingProperty.Elements())
 			{
-				var propName = propertyElement.Name.LocalName;
-				// <Custom name="Certified" val="True" />
-// ReSharper disable PossibleNullReferenceException
-				if (propName == "Custom")
-					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
-// ReSharper restore PossibleNullReferenceException
-				if (colPropNames.Contains(propName))
-					SortCollectionProperties(propertyElement);
-				sortedPropertyElements.Add(propName, propertyElement);
+				var ws = alternativeElement.Attribute("ws").Value;
+				sortedAlternativeElements.Add(ws, alternativeElement);
 			}
-			rtElement.Elements().Remove();
-			foreach (var kvp in sortedPropertyElements)
-				rtElement.Add(kvp.Value);
 
-			// 3. Sort attributes at all levels.
-			SortAttributes(rtElement);
+			multiSomethingProperty.Elements().Remove();
+			foreach (var kvp in sortedAlternativeElements)
+				multiSomethingProperty.Add(kvp.Value);
 		}
 
-		private static void SortCollectionProperties(XElement propertyElement)
+		internal static void SortCollectionProperties(XContainer propertyElement)
 		{
+			if (propertyElement.Elements().Count() < 2)
+				return;
+
 			// Write collection properties in guid sorted order,
-			// since order is not significant in collections,
-			// but it will  be easier on Hg.
+			// since order is not significant in collections.
 			var sortCollectionData = new SortedDictionary<string, XElement>();
 			foreach (var objsurElement in propertyElement.Elements("objsur"))
 			{
 // ReSharper disable PossibleNullReferenceException
-				sortCollectionData.Add(objsurElement.Attribute("guid").Value, objsurElement);
+				var key = objsurElement.Attribute("guid").Value;
 // ReSharper restore PossibleNullReferenceException
+				if (!sortCollectionData.ContainsKey(key))
+					sortCollectionData.Add(key, objsurElement);
 			}
-			if (sortCollectionData.Count > 1)
-			{
-				propertyElement.Elements().Remove();
-				foreach (var kvp in sortCollectionData)
-					propertyElement.Add(kvp.Value);
-			}
+
+			propertyElement.Elements().Remove();
+			foreach (var kvp in sortCollectionData)
+				propertyElement.Add(kvp.Value);
+		}
+
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
+		{
+			WriteElement(writer, readerSettings, element.ToString());
+		}
+
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, string element)
+		{
+			using (var nodeReader = XmlReader.Create(new MemoryStream(Utf8.GetBytes(element), false), readerSettings))
+				writer.WriteNode(nodeReader, true);
 		}
 	}
 }

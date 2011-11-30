@@ -34,6 +34,13 @@
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
 	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\Release"/>
+
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\output\Release"/>
   </Target>
 
   <Target Name="CreateDirectories">
@@ -141,6 +148,18 @@
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
 	<Delete Files="$(teamcity_build_checkoutDir)\Mercurial"
+	  TreatErrorsAsWarnings="false"/>
+
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)\"/>
+	<MakeWixForDirTree DirectoryReferenceId="MercurialExtensionsDir" ComponentGroupId="MercurialExtensionsFiles"
+	  RootDirectory="$(teamcity_build_checkoutDir)\MercurialExtensions"
+	  OutputFilePath="$(teamcity_build_checkoutDir)\output\Installer\GeneratedMercurialExtensionsFiles.wxs"
+	  MatchRegExPattern=".*">
+	  <!--what does this do? -->
+	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
+	</MakeWixForDirTree>
+	<Delete Files="$(teamcity_build_checkoutDir)\MercurialExtensions"
 	  TreatErrorsAsWarnings="false"/>
   </Target>
 </Project>

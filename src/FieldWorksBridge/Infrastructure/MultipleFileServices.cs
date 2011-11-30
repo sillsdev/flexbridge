@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.FieldWorks;
-using Chorus.Utilities;
+using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -53,15 +53,11 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			var mdc = new MetadataCache();
-			var collectionPropertiesCache = CacheCollectionProperties(mdc);
+			Dictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache = CacheSortableProperties(mdc);
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
-#if USEXELEMENTS
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
-#else
-			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
-#endif
 			var guidToClassMapping = new Dictionary<string, string>();
 			byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
@@ -73,7 +69,7 @@ namespace FieldWorksBridge.Infrastructure
 					if (foundOptionalFirstElement)
 					{
 						// Cache custom prop file for later write.
-						var cpElement = DataSortingService.SortCustomPropertiesRecord(record);
+						var cpElement = DataSortingService.SortCustomPropertiesRecord(Utf8.GetString(record));
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
@@ -81,7 +77,7 @@ namespace FieldWorksBridge.Infrastructure
 							var className = propElement.Attribute("class").Value;
 							var propName = propElement.Attribute("name").Value;
 							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = AdjustedPropertyType(collectionPropertiesCache, className, propName, typeAttr.Value);
+							var adjustedTypeValue = AdjustedPropertyType(sortablePropertiesCache, className, propName, typeAttr.Value);
 // ReSharper disable RedundantCheckBeforeAssignment
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
@@ -90,7 +86,8 @@ namespace FieldWorksBridge.Infrastructure
 								className,
 								new FdoPropertyInfo(
 									propName,
-									typeAttr.Value));
+									typeAttr.Value,
+									true));
 // ReSharper restore PossibleNullReferenceException
 						}
 						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
@@ -98,11 +95,7 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
-#if USEXELEMENTS
-						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
-#else
-						CacheDataRecord(collectionPropertiesCache, classData, guidToClassMapping, record);
-#endif
+						CacheDataRecord(sortablePropertiesCache, classData, guidToClassMapping, record);
 					}
 				}
 			}
@@ -124,11 +117,7 @@ namespace FieldWorksBridge.Infrastructure
 
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
-#if USEXELEMENTS
 			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-#else
-			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-#endif
 
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
 			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
@@ -136,20 +125,11 @@ namespace FieldWorksBridge.Infrastructure
 			// Write class file for each concrete class, whether it has data or not.
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
-#if USEXELEMENTS
 				SortedDictionary<string, XElement> sortedInstanceData;
-#else
-				SortedDictionary<string, byte[]> sortedInstanceData;
-#endif
 				if (classData.TryGetValue(className, out sortedInstanceData))
 				{
-#if USEXELEMENTS
 					// Only write one file, since there are no more high volume instacnes here.
 					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
-#else
-					// Only write one file, since there are no more high volume instacnes here.
-					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
-#endif
 				}
 				else
 				{
@@ -161,17 +141,41 @@ namespace FieldWorksBridge.Infrastructure
 			//RestoreMainFile(mainFilePathname, projectName);
 		}
 
-		private static Dictionary<string, HashSet<string>> CacheCollectionProperties(MetadataCache mdc)
+		private static Dictionary<string, Dictionary<string, HashSet<string>>> CacheSortableProperties(MetadataCache mdc)
 		{
-			var classesWithCollectionProperties = mdc.ClassesWithCollectionProperties;
-			var results = new Dictionary<string, HashSet<string>>(classesWithCollectionProperties.Count());
+			var concreteClasses = mdc.AllConcreteClasses;
+			var results = new Dictionary<string, Dictionary<string, HashSet<string>>>(concreteClasses.Count());
 
-			foreach (var classWithColPropKvp in classesWithCollectionProperties)
+			foreach (var concreteClass in concreteClasses)
 			{
-				var hs = new HashSet<string>();
-				results.Add(classWithColPropKvp.Key, hs);
-				foreach (var prop in classWithColPropKvp.Value.AllCollectionProperties)
-					hs.Add(prop.PropertyName);
+				Dictionary<string, HashSet<string>> sortablePropertiesForClass;
+				if (!results.TryGetValue(concreteClass.ClassName, out sortablePropertiesForClass))
+				{
+					// Appears to be a newly obsolete instance of 'className'.
+					sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
+												{
+													{DataSortingService.Collections, new HashSet<string>()},
+													{DataSortingService.MultiAlt, new HashSet<string>()}
+												};
+					results.Add(concreteClass.ClassName, sortablePropertiesForClass);
+				}
+				var collData = sortablePropertiesForClass[DataSortingService.Collections];
+				var multiAltData = sortablePropertiesForClass[DataSortingService.MultiAlt];
+
+				foreach (var propertyInfo in concreteClass.AllProperties)
+				{
+					switch (propertyInfo.DataType)
+					{
+						case DataType.OwningCollection:
+						case DataType.ReferenceCollection:
+							collData.Add(propertyInfo.PropertyName);
+							break;
+						case DataType.MultiUnicode:
+						case DataType.MultiString:
+							multiAltData.Add(propertyInfo.PropertyName);
+							break;
+					}
+				}
 			}
 
 			return results;
@@ -263,11 +267,7 @@ namespace FieldWorksBridge.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-#if USEXELEMENTS
-		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
-#else
-		private static void CacheDataRecord(IDictionary<string, HashSet<string>> collectionPropertiesCache, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
-#endif
+		private static void CacheDataRecord(Dictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 // ReSharper disable PossibleNullReferenceException
@@ -285,31 +285,19 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			// 2. Sort <rt>
-			DataSortingService.SortMainElement(collectionPropertiesCache, className, rtElement);
+			DataSortingService.SortMainElement(sortablePropertiesCache, rtElement);
 
 			// 3. Cache it.
-#if USEXELEMENTS
 			SortedDictionary<string, XElement> recordData;
-#else
-			SortedDictionary<string, byte[]> recordData;
-#endif
 			if (!classData.TryGetValue(className, out recordData))
 			{
-#if USEXELEMENTS
 				recordData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-#else
-				recordData = new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-#endif
 				classData.Add(className, recordData);
 			}
-#if USEXELEMENTS
 			recordData.Add(guid, rtElement);
-#else
-			recordData.Add(guid, Utf8.GetBytes(rtElement.ToString()));
-#endif
 		}
 
-		private static string AdjustedPropertyType(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName, string rawType)
+		private static string AdjustedPropertyType(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName, string rawType)
 		{
 			string adjustedType;
 			switch (rawType)
@@ -320,11 +308,11 @@ namespace FieldWorksBridge.Infrastructure
 
 				case "OC":
 					adjustedType = "OwningCollection";
-					AddCollectionPropertyToCache(collectionPropertiesCache, className, propName);
+					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 				case "RC":
 					adjustedType = "ReferenceCollection";
-					AddCollectionPropertyToCache(collectionPropertiesCache, className, propName);
+					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 
 				case "OS":
@@ -346,14 +334,19 @@ namespace FieldWorksBridge.Infrastructure
 			return adjustedType;
 		}
 
-		private static void AddCollectionPropertyToCache(IDictionary<string, HashSet<string>> collectionPropertiesCache, string className, string propName)
+		private static void AddCollectionPropertyToCache(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName)
 		{
-			HashSet<string> collProps;
-			if (!collectionPropertiesCache.TryGetValue(className, out collProps))
+			Dictionary<string, HashSet<string>> classProps;
+			if (!sortablePropertiesCache.TryGetValue(className, out classProps))
 			{
-				collProps = new HashSet<string>();
-				collectionPropertiesCache.Add(className, collProps);
+				classProps = new Dictionary<string, HashSet<string>>(2)
+								{
+									{DataSortingService.Collections, new HashSet<string>()},
+									{DataSortingService.MultiAlt, new HashSet<string>()}
+								};
+				sortablePropertiesCache.Add(className, classProps);
 			}
+			var collProps = classProps[DataSortingService.Collections];
 			collProps.Add(propName);
 		}
 

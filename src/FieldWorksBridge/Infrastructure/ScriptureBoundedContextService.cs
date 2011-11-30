@@ -11,29 +11,17 @@ namespace FieldWorksBridge.Infrastructure
 	{
 		private const string ScriptureRootFolder = "Scripture";
 
-#if USEXELEMENTS
 		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
-#else
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, byte[]>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
-#endif
 		{
 			var scriptureBaseDir = Path.Combine(multiFileDirRoot, ScriptureRootFolder);
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
-#if USEXELEMENTS
 			SortedDictionary<string, XElement> sortedInstanceData;
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-#else
-			SortedDictionary<string, byte[]> sortedInstanceData;
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, byte[]>>();
-#endif
 			classData.TryGetValue("ScrRefSystem", out sortedInstanceData);
 
 			if (sortedInstanceData != null && sortedInstanceData.Count > 0)
@@ -71,11 +59,7 @@ namespace FieldWorksBridge.Infrastructure
 													"NoteCategories"
 												});
 
-#if USEXELEMENTS
 				var scriptureElement = dataBytes;
-#else
-				var scriptureElement = XElement.Parse(MultipleFileServices.Utf8.GetString(dataBytes));
-#endif
 				// 2. <owning num="1" id="ScriptureBooks" card="seq" sig="ScrBook"> One folder per book using Scripture\Translation\Book+guid. [NB: 3 levels down.]
 				var currentDir = Path.Combine(scriptureBaseDir, "Translation");
 				if (!Directory.Exists(currentDir))
@@ -107,19 +91,11 @@ namespace FieldWorksBridge.Infrastructure
 				// NB: Don't use ObjectFinderServices.WritePropertyInFolders, as it doesn't work on col/seq props with 'false'.
 				foreach (var styleGuid in ObjectFinderServices.GetGuids(scriptureElement, "Styles"))
 				{
-#if USEXELEMENTS
 					var styleDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, styleGuid);
 					ObjectFinderServices.CollectAllOwnedObjects(mdc,
 																classData, guidToClassMapping, multiClassOutput,
 																styleDataBytes,
 																new HashSet<string>());
-#else
-					var styleDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, styleGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																XElement.Parse(MultipleFileServices.Utf8.GetString(styleDataBytes)),
-																new HashSet<string>());
-#endif
 				}
 				if (multiClassOutput.Count > 0)
 				{
@@ -135,36 +111,20 @@ namespace FieldWorksBridge.Infrastructure
 				// 6. <owning num="24" id="BookAnnotations" card="seq" sig="ScrBookAnnotations">
 				foreach (var annGuid in ObjectFinderServices.GetGuids(scriptureElement, "BookAnnotations"))
 				{
-#if USEXELEMENTS
 					var annDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, annGuid);
 					ObjectFinderServices.CollectAllOwnedObjects(mdc,
 																classData, guidToClassMapping, multiClassOutput,
 																annDataBytes,
 																new HashSet<string>());
-#else
-					var annDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, annGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																XElement.Parse(MultipleFileServices.Utf8.GetString(annDataBytes)),
-																new HashSet<string>());
-#endif
 				}
 				// 7. <owning num="25" id="NoteCategories" card="atomic" sig="CmPossibilityList">
 				foreach (var noteCatGuid in ObjectFinderServices.GetGuids(scriptureElement, "NoteCategories"))
 				{
-#if USEXELEMENTS
 					var noteCatDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, noteCatGuid);
 					ObjectFinderServices.CollectAllOwnedObjects(mdc,
 																classData, guidToClassMapping, multiClassOutput,
 																noteCatDataBytes,
 																new HashSet<string>());
-#else
-					var noteCatDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, noteCatGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																XElement.Parse(MultipleFileServices.Utf8.GetString(noteCatDataBytes)),
-																new HashSet<string>());
-#endif
 				}
 				if (multiClassOutput.Count > 0)
 				{
