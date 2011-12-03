@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.FieldWorks;
@@ -10,6 +11,20 @@ namespace FieldWorksBridge.Infrastructure
 {
 	internal static class FileWriterService
 	{
+		internal static void WriteNestedFile(string newPathname,
+			XmlReaderSettings readerSettings,
+			XElement nestedData,
+			string rootElementName)
+		{
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+				writer.WriteStartElement(rootElementName);
+				if (nestedData != null)
+					WriteElement(writer, readerSettings, nestedData);
+				writer.WriteEndElement();
+			}
+		}
+
 		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -95,9 +110,9 @@ namespace FieldWorksBridge.Infrastructure
 			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
 		}
 
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement optionalFirstElement)
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(optionalFirstElement.ToString()), false), readerSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(element.ToString()), false), readerSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 
@@ -143,37 +158,67 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
-		internal static void WriteBoundedContexts(MetadataCache mdc, string multiFileDirRoot, XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipwriteEmptyClassFiles)
+		internal static void RemoveDomainData(string pathRoot)
 		{
-			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot.Replace("DataFiles", "Linguistics"), mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			ScriptureBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot);
+			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot);
+			ScriptureDomainServices.RemoveBoundedContextData(pathRoot);
+
+			// TODO: Remove below stuff, after everything is shifted to domains.
+			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
+			RemoveDataFiles(multiFileDirRoot);
+			RemoveEmptyFolders(multiFileDirRoot, false);
+		}
+
+		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
+			XmlReaderSettings readerSettings,
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			HashSet<string> skipwriteEmptyClassFiles)
+		{
+			LinguisticsDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			AnthropologyDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			ScriptureDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
 			// but I'm not there yet.
-
 			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
 		}
 
-		internal static void RestoreBoundedContexts(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string pathRoot)
 		{
-			// TODO: be sure to re-sort the attrs, as they may not have been rebuilt in sorted order on the un-nested' rt elements.
-			ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot.Replace("DataFiles", "Linguistics"));
-			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			foreach (var restoredElement in LinguisticsDomainServices.FlattenDomain(sortableProperties, pathRoot))
+			{
+				DataSortingService.SortAndStoreElement(sortedData, sortableProperties, restoredElement);
+			}
+
+			// TODO: Add other two Domains and move remaining ling stuff into Ling domain.
+			//ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot.Replace("DataFiles", "Linguistics"));
+			//TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			//DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			//WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			//LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			//PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			//LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+
+			//AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+
+			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
+// ReSharper disable PossibleNullReferenceException
+			foreach (var rtElement in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories)
+				.Select(XDocument.Load)
+				.SelectMany(classDataDoc => classDataDoc.Element("classdata").Elements("rt")))
+// ReSharper restore PossibleNullReferenceException
+			{
+				DataSortingService.SortAndStoreElement(sortedData, sortableProperties, rtElement);
+			}
+
+			foreach (var rtElement in sortedData.Values)
+				WriteElement(writer, readerSettings, rtElement);
 		}
 
 		internal static void WriteObject(MetadataCache mdc,
@@ -200,16 +245,18 @@ namespace FieldWorksBridge.Infrastructure
 				File.Delete(dataFilePathname);
 		}
 
-		internal static void RemoveEmptyFolders(string baseDataFolder)
+		internal static void RemoveEmptyFolders(string baseDataFolder, bool removeTopLevelFolder)
 		{
 			foreach (var folder in Directory.GetDirectories(baseDataFolder))
 			{
 				if (Directory.GetFileSystemEntries(folder).Length > 0)
-					RemoveEmptyFolders(folder); // Work down to leaf folders first.
+					RemoveEmptyFolders(folder, false); // Work down to leaf folders first.
 
 				if (Directory.GetFileSystemEntries(folder).Length == 0)
 					Directory.Delete(folder); // Empty now, so zap it.
 			}
+			if (removeTopLevelFolder && Directory.GetFileSystemEntries(baseDataFolder).Length == 0)
+				Directory.Delete(baseDataFolder); // Empty now, so zap it.
 		}
 
 		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)

@@ -101,18 +101,22 @@
   <ItemGroup>
 	<Compile Include="Controller\FwBridgeController.cs" />
 	<Compile Include="Infrastructure\AnthropologyBoundedContextService.cs" />
+	<Compile Include="Infrastructure\AnthropologyDomainServices.cs" />
+	<Compile Include="Infrastructure\CmObjectFlatteningService.cs" />
 	<Compile Include="Infrastructure\CmObjectNestingService.cs" />
 	<Compile Include="Infrastructure\DataSortingService.cs" />
 	<Compile Include="Infrastructure\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FileWriterService.cs" />
 	<Compile Include="Infrastructure\LexiconBoundedContextService.cs" />
 	<Compile Include="Infrastructure\LinguisticsBoundedContextService.cs" />
+	<Compile Include="Infrastructure\LinguisticsDomainServices.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
 	<Compile Include="Infrastructure\PunctuationFormBoundedContextService.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\ReversalBoundedContextService.cs" />
 	<Compile Include="Infrastructure\ScriptureBoundedContextService.cs" />
+	<Compile Include="Infrastructure\ScriptureDomainServices.cs" />
 	<Compile Include="Infrastructure\TextCorpusBoundedContextService.cs" />
 	<Compile Include="Infrastructure\WordformInventoryBoundedContextService.cs" />
 	<Compile Include="View\ExistingSystemView.cs">

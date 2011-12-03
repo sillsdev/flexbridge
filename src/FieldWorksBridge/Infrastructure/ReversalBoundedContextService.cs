@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders.FieldWorks;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -21,9 +21,9 @@ namespace FieldWorksBridge.Infrastructure
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string baseDirectory,
-			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			SortedDictionary<string, XElement> sortedInstanceData;
@@ -47,10 +47,10 @@ namespace FieldWorksBridge.Infrastructure
 				CmObjectNestingService.NestObject(revIndex,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
+					interestingPropertiesCache,
 					guidToClassMapping);
 
-				// TODO: Better save, that includes something for the doc root, and that uses the canonical writer settings.
-				revIndex.Save(Path.Combine(reversalDir, reversalFilename), SaveOptions.None);
+				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), readerSettings, revIndex, "Reversal");
 			}
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
@@ -59,6 +59,27 @@ namespace FieldWorksBridge.Infrastructure
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, ReversalRootFolder)));
+		}
+
+		public static void RemoveBoundedContextData(string pathRoot)
+		{
+			var reversalDir = Path.Combine(pathRoot, Path.Combine("Linguistics", ReversalRootFolder));
+			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
+				File.Delete(reversalPathname);
+			FileWriterService.RemoveEmptyFolders(reversalDir, true);
+		}
+
+		public static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string linguisticsBaseDir)
+		{
+			var result = new List<XElement>(50000);
+// ReSharper disable PossibleNullReferenceException
+			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
+				.Select(reversalPathname => XDocument.Load(reversalPathname)))
+			{
+				result.AddRange(CmObjectFlatteningService.FlattenObject(sortableProperties, reversalDoc.Element("Reversal").Element("ReversalIndex"), null));
+			}
+// ReSharper restore PossibleNullReferenceException
+			return result;
 		}
 	}
 }

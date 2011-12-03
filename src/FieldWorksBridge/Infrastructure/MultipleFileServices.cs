@@ -36,24 +36,25 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper disable AssignNullToNotNullAttribute
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 // ReSharper restore AssignNullToNotNullAttribute
-			if (!Directory.Exists(multiFileDirRoot))
-			{
-				Directory.CreateDirectory(multiFileDirRoot);
-			}
-			else
+			if (Directory.Exists(multiFileDirRoot))
 			{
 				// Brutal, but effective. :-)
-				FileWriterService.RemoveDataFiles(multiFileDirRoot);
-				FileWriterService.RemoveEmptyFolders(multiFileDirRoot);
+				FileWriterService.RemoveDomainData(pathRoot);
 
+				// TODO: Move custom prop data and model version data to rootDir.
 				var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
 				if (File.Exists(customPropPathname))
 					File.Delete(customPropPathname);
+
 				// Leave ModelVersion file and all ChorusNotes files.
+			}
+			else
+			{
+				Directory.CreateDirectory(multiFileDirRoot);
 			}
 
 			var mdc = new MetadataCache();
-			Dictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache = CacheSortableProperties(mdc);
+			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
@@ -77,17 +78,19 @@ namespace FieldWorksBridge.Infrastructure
 							var className = propElement.Attribute("class").Value;
 							var propName = propElement.Attribute("name").Value;
 							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = AdjustedPropertyType(sortablePropertiesCache, className, propName, typeAttr.Value);
+							var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
 // ReSharper disable RedundantCheckBeforeAssignment
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
 // ReSharper restore RedundantCheckBeforeAssignment
+							var customProp = new FdoPropertyInfo(
+								propName,
+								typeAttr.Value,
+								true);
+							DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
 							mdc.AddCustomPropInfo(
 								className,
-								new FdoPropertyInfo(
-									propName,
-									typeAttr.Value,
-									true));
+								customProp);
 // ReSharper restore PossibleNullReferenceException
 						}
 						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
@@ -95,7 +98,7 @@ namespace FieldWorksBridge.Infrastructure
 					}
 					else
 					{
-						CacheDataRecord(sortablePropertiesCache, classData, guidToClassMapping, record);
+						CacheDataRecord(interestingPropertiesCache, classData, guidToClassMapping, record);
 					}
 				}
 			}
@@ -117,7 +120,7 @@ namespace FieldWorksBridge.Infrastructure
 
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
-			FileWriterService.WriteBoundedContexts(mdc, multiFileDirRoot, readerSettings, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			FileWriterService.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
 			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
@@ -138,47 +141,7 @@ namespace FieldWorksBridge.Infrastructure
 						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
 				}
 			}
-			//RestoreMainFile(mainFilePathname, projectName);
-		}
-
-		private static Dictionary<string, Dictionary<string, HashSet<string>>> CacheSortableProperties(MetadataCache mdc)
-		{
-			var concreteClasses = mdc.AllConcreteClasses;
-			var results = new Dictionary<string, Dictionary<string, HashSet<string>>>(concreteClasses.Count());
-
-			foreach (var concreteClass in concreteClasses)
-			{
-				Dictionary<string, HashSet<string>> sortablePropertiesForClass;
-				if (!results.TryGetValue(concreteClass.ClassName, out sortablePropertiesForClass))
-				{
-					// Appears to be a newly obsolete instance of 'className'.
-					sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
-												{
-													{DataSortingService.Collections, new HashSet<string>()},
-													{DataSortingService.MultiAlt, new HashSet<string>()}
-												};
-					results.Add(concreteClass.ClassName, sortablePropertiesForClass);
-				}
-				var collData = sortablePropertiesForClass[DataSortingService.Collections];
-				var multiAltData = sortablePropertiesForClass[DataSortingService.MultiAlt];
-
-				foreach (var propertyInfo in concreteClass.AllProperties)
-				{
-					switch (propertyInfo.DataType)
-					{
-						case DataType.OwningCollection:
-						case DataType.ReferenceCollection:
-							collData.Add(propertyInfo.PropertyName);
-							break;
-						case DataType.MultiUnicode:
-						case DataType.MultiString:
-							multiAltData.Add(propertyInfo.PropertyName);
-							break;
-					}
-				}
-			}
-
-			return results;
+			RestoreMainFile(mainFilePathname, projectName);
 		}
 
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)
@@ -191,6 +154,8 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper restore AssignNullToNotNullAttribute
 
 			var tempPathname = Path.GetTempFileName();
+			var mdc = new MetadataCache();
+			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 			try
 			{
@@ -233,17 +198,15 @@ namespace FieldWorksBridge.Infrastructure
 						{
 							cf.Attribute("key").Remove();
 							// Restore type attr for object values.
-							cf.Attribute("type").Value = RestoreAdjustedTypeValue(cf.Attribute("type").Value);
+							var propType = cf.Attribute("type").Value;
+							cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+
+							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute("class").Value], new FdoPropertyInfo(cf.Attribute("name").Value, propType, true));
 						}
 						FileWriterService.WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
 // ReSharper restore PossibleNullReferenceException
 					}
-
-					FileWriterService.RestoreBoundedContexts(writer, readerSettings, multiFileDirRoot);
-
-					// Work on all non-Bounded Context class data files.
-					FileWriterService.WriteClassDataToOriginal(writer, multiFileDirRoot, readerSettings);
-
+					FileWriterService.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
 					writer.WriteEndElement();
 				}
 
@@ -261,7 +224,9 @@ namespace FieldWorksBridge.Infrastructure
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!string.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,
+// ReSharper disable PossibleNullReferenceException
 				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
+// ReSharper restore PossibleNullReferenceException
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");

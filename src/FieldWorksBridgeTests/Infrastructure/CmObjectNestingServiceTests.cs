@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders.FieldWorks;
 using NUnit.Framework;
 using FieldWorksBridge.Infrastructure;
 
@@ -10,9 +11,60 @@ namespace FieldWorksBridgeTests.Infrastructure
 	[TestFixture]
 	public class CmObjectNestingServiceTests
 	{
+		private MetadataCache _mdc;
 		private XElement _rt;
 		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
+		private Dictionary<string, Dictionary<string, HashSet<string>>> _interestingPropsCache;
 		private Dictionary<string, string> _guidToClassMapping;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			_mdc = new MetadataCache();
+
+			// Add custom props to mdc.
+			var loneAardvarkProp = new FdoPropertyInfo(
+				"LoneAardvark",
+				DataType.OwningAtomic,
+				true);
+			_mdc.AddCustomPropInfo(
+				"ReversalIndexEntry",
+				loneAardvarkProp);
+
+			var gaggleOfAardvarksProp = new FdoPropertyInfo(
+				"GaggleOfAardvarks",
+				DataType.OwningCollection,
+				true);
+			_mdc.AddCustomPropInfo(
+				"ReversalIndexEntry",
+				gaggleOfAardvarksProp);
+
+			var aardvarksInARowProp = new FdoPropertyInfo(
+				"AardvarksInARow",
+				DataType.OwningSequence,
+				true);
+			_mdc.AddCustomPropInfo(
+				"ReversalIndexEntry",
+				aardvarksInARowProp);
+
+			_interestingPropsCache = DataSortingService.CacheInterestingProperties(_mdc);
+			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], loneAardvarkProp);
+			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], gaggleOfAardvarksProp);
+			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], aardvarksInARowProp);
+			// Add aardvark class to _interestingPropsCache, with nothing of interest in it.
+			_interestingPropsCache.Add("Aardvark", new Dictionary<string, HashSet<string>>
+													{
+														{DataSortingService.Collections, new HashSet<string>()},
+														{DataSortingService.MultiAlt, new HashSet<string>()},
+														{DataSortingService.Owning, new HashSet<string>()}
+													});
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown()
+		{
+			_mdc = null;
+		}
 
 		[SetUp]
 		public void SetupTest()
@@ -51,6 +103,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(null,
 				new Dictionary<string, HashSet<string>>(),
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
+				new Dictionary<string, Dictionary<string, HashSet<string>>>(),
 				new Dictionary<string, string>()));
 		}
 
@@ -60,6 +113,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
 				null,
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
+				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
 				new Dictionary<string, string>()));
 		}
 
@@ -68,6 +122,17 @@ namespace FieldWorksBridgeTests.Infrastructure
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
 				new Dictionary<string, HashSet<string>>(),
+				null,
+				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
+				new Dictionary<string, string>()));
+		}
+
+		[Test]
+		public void NullInterestingPropsCacheThrows()
+		{
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
+				new Dictionary<string, HashSet<string>>(),
+				new Dictionary<string,SortedDictionary<string,XElement>>(),
 				null,
 				new Dictionary<string, string>()));
 		}
@@ -78,6 +143,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
 				new Dictionary<string, HashSet<string>>(),
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
+				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
 				null));
 		}
 
@@ -87,6 +153,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 			CmObjectNestingService.NestObject(_rt,
 											  new Dictionary<string, HashSet<string>>(),
 											  _classData,
+											  _interestingPropsCache,
 											  _guidToClassMapping);
 			Assert.IsTrue(_rt.Name.LocalName == "ReversalIndex");
 			Assert.IsNull(_rt.Attribute("class"));
@@ -95,10 +162,11 @@ namespace FieldWorksBridgeTests.Infrastructure
 		[Test]
 		public void OwnedObjectsAreNested()
 		{
-			AddOwnedObjects(_rt, _classData, _guidToClassMapping);
+			AddOwnedObjects();
 			CmObjectNestingService.NestObject(_rt,
 				new Dictionary<string, HashSet<string>>(),
 				_classData,
+				_interestingPropsCache,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
@@ -113,10 +181,11 @@ namespace FieldWorksBridgeTests.Infrastructure
 								{
 									{"ReversalIndex", new HashSet<string> {"PartsOfSpeech"}}
 								};
-			AddOwnedObjects(_rt, _classData, _guidToClassMapping);
+			AddOwnedObjects();
 			CmObjectNestingService.NestObject(_rt,
 				exclusions,
 				_classData,
+				_interestingPropsCache,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
@@ -125,30 +194,80 @@ namespace FieldWorksBridgeTests.Infrastructure
 			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements("objsur").Count());
 		}
 
-		private static void AddOwnedObjects(XElement rt, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping)
+		[Test]
+		public void LoneAardvarkIsNested()
 		{
-			// Add two entries, the first one having a nested entry. ownerguid
-			var rtGuid = rt.Attribute("guid").Value;
+			AddOwnedObjects();
+			CmObjectNestingService.NestObject(_rt,
+				new Dictionary<string,HashSet<string>>(),
+				_classData,
+				_interestingPropsCache,
+				_guidToClassMapping);
+			var loneAardvarkPropElement =
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "LoneAardvark").First();
+			var contentElements = loneAardvarkPropElement.Elements();
+			Assert.AreEqual(1, contentElements.Count());
+			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
+		}
+
+		[Test]
+		public void GaggleOfAardvarksAreNested()
+		{
+			AddOwnedObjects();
+			CmObjectNestingService.NestObject(_rt,
+				new Dictionary<string, HashSet<string>>(),
+				_classData,
+				_interestingPropsCache,
+				_guidToClassMapping);
+			var gaggleOfAardvarksPropElement =
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "GaggleOfAardvarks").First();
+			var contentElements = gaggleOfAardvarksPropElement.Elements();
+			Assert.AreEqual(2, contentElements.Count());
+			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
+			Assert.AreEqual("Aardvark", contentElements.Last().Name.LocalName);
+		}
+
+		[Test]
+		public void RowOfAardvarksAreNested()
+		{
+			AddOwnedObjects();
+			CmObjectNestingService.NestObject(_rt,
+				new Dictionary<string, HashSet<string>>(),
+				_classData,
+				_interestingPropsCache,
+				_guidToClassMapping);
+			var aardvarksInARowPropElement =
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "GaggleOfAardvarks").First();
+			var contentElements = aardvarksInARowPropElement.Elements();
+			Assert.AreEqual(2, contentElements.Count());
+			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
+			Assert.AreEqual("Aardvark", contentElements.Last().Name.LocalName);
+		}
+
+		private void AddOwnedObjects()
+		{
+			// Add two entries, the first one having a nested entry.
+			var rtGuid = _rt.Attribute("guid").Value;
 			var data = new SortedDictionary<string, XElement>();
 			var entry1 = new XElement("rt",
 									  new XAttribute("class", "ReversalIndexEntry"),
 									  new XAttribute("guid", "0039739a-7fcf-4838-8b75-566b8815a29f"),
 									  new XAttribute("ownerguid", rtGuid));
 			data.Add("0039739a-7fcf-4838-8b75-566b8815a29f", entry1);
-			guidToClassMapping.Add("0039739a-7fcf-4838-8b75-566b8815a29f", "ReversalIndexEntry");
+			_guidToClassMapping.Add("0039739a-7fcf-4838-8b75-566b8815a29f", "ReversalIndexEntry");
 			var subentry1 = new XElement("rt",
 									  new XAttribute("class", "ReversalIndexEntry"),
 									  new XAttribute("guid", "14a6b4bc-1bb3-4c67-b70c-5a195e411e27"),
 									  new XAttribute("ownerguid", "0039739a-7fcf-4838-8b75-566b8815a29f"));
 			data.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", subentry1);
-			guidToClassMapping.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", "ReversalIndexEntry");
+			_guidToClassMapping.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", "ReversalIndexEntry");
 			var entry2 = new XElement("rt",
 									  new XAttribute("class", "ReversalIndexEntry"),
 									  new XAttribute("guid", "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
 									  new XAttribute("ownerguid", rtGuid));
 			data.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", entry2);
-			guidToClassMapping.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "ReversalIndexEntry");
-			classData.Add("ReversalIndexEntry", data);
+			_guidToClassMapping.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "ReversalIndexEntry");
+			_classData.Add("ReversalIndexEntry", data);
 			var entriesElement = new XElement("Entries",
 											  new XElement("objsur",
 												  new XAttribute("guid", "0039739a-7fcf-4838-8b75-566b8815a29f"),
@@ -156,7 +275,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 											  new XElement("objsur",
 												  new XAttribute("guid", "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
 												  new XAttribute("t", "o")));
-			rt.Add(entriesElement);
+			_rt.Add(entriesElement);
 			entriesElement = new XElement("Subentries",
 											  new XElement("objsur",
 												  new XAttribute("guid", "14a6b4bc-1bb3-4c67-b70c-5a195e411e27"),
@@ -172,13 +291,76 @@ namespace FieldWorksBridgeTests.Infrastructure
 											  new XElement("objsur",
 												  new XAttribute("guid", "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
 												  new XAttribute("t", "o")));
-			guidToClassMapping.Add("fb5e83e5-6576-455d-aba0-0b7a722b9b5d", "CmPossibilityList");
+			_guidToClassMapping.Add("fb5e83e5-6576-455d-aba0-0b7a722b9b5d", "CmPossibilityList");
 			data = new SortedDictionary<string, XElement>
 					{
 						{"fb5e83e5-6576-455d-aba0-0b7a722b9b5d", posList}
 					};
-			classData.Add("CmPossibilityList", data);
-			rt.Add(entriesElement);
+			_classData.Add("CmPossibilityList", data);
+			_rt.Add(entriesElement);
+
+			// Add lone aardvark.
+			var customPropElement = new XElement("Custom",
+												 new XAttribute("name", "LoneAardvark"),
+												 new XAttribute("type", "OwningAtomic"),
+												 new XElement("objsur",
+													 new XAttribute("guid", "c1ed46b3-e382-11de-8a39-0800200c9a66"),
+													 new XAttribute("t", "o")));
+			_rt.Add(customPropElement);
+			_guidToClassMapping.Add("c1ed46b3-e382-11de-8a39-0800200c9a66", "Aardvark");
+
+			// Add gaggle of aardvarks.
+			customPropElement = new XElement("Custom",
+												 new XAttribute("name", "GaggleOfAardvarks"),
+												 new XAttribute("type", "OwningCollection"),
+												 new XElement("objsur",
+													 new XAttribute("guid", "c1ed46b4-e382-11de-8a39-0800200c9a66"),
+													 new XAttribute("t", "o")),
+												 new XElement("objsur",
+													 new XAttribute("guid", "c1ed46b5-e382-11de-8a39-0800200c9a66"),
+													 new XAttribute("t", "o")));
+			_rt.Add(customPropElement);
+			_guidToClassMapping.Add("c1ed46b4-e382-11de-8a39-0800200c9a66", "Aardvark");
+			_guidToClassMapping.Add("c1ed46b5-e382-11de-8a39-0800200c9a66", "Aardvark");
+
+			// Add row of aardvarks.
+			customPropElement = new XElement("Custom",
+												 new XAttribute("name", "AardvarksInARow"),
+												 new XAttribute("type", "OwningSequence"),
+												 new XElement("objsur",
+													 new XAttribute("guid", "c1ed46b6-e382-11de-8a39-0800200c9a66"),
+													 new XAttribute("t", "o")),
+												 new XElement("objsur",
+													 new XAttribute("guid", "c1ed46b7-e382-11de-8a39-0800200c9a66"),
+													 new XAttribute("t", "o")));
+			_rt.Add(customPropElement);
+			_guidToClassMapping.Add("c1ed46b6-e382-11de-8a39-0800200c9a66", "Aardvark");
+			_guidToClassMapping.Add("c1ed46b7-e382-11de-8a39-0800200c9a66", "Aardvark");
+
+			data = new SortedDictionary<string, XElement>
+					{
+						{"c1ed46b3-e382-11de-8a39-0800200c9a66", new XElement("rt",
+										   new XAttribute("class", "Aardvark"),
+										   new XAttribute("guid", "c1ed46b3-e382-11de-8a39-0800200c9a66"),
+										   new XAttribute("ownerguid", rtGuid))},
+						{"c1ed46b4-e382-11de-8a39-0800200c9a66", new XElement("rt",
+										   new XAttribute("class", "Aardvark"),
+										   new XAttribute("guid", "c1ed46b4-e382-11de-8a39-0800200c9a66"),
+										   new XAttribute("ownerguid", rtGuid))},
+						{"c1ed46b5-e382-11de-8a39-0800200c9a66", new XElement("rt",
+										   new XAttribute("class", "Aardvark"),
+										   new XAttribute("guid", "c1ed46b5-e382-11de-8a39-0800200c9a66"),
+										   new XAttribute("ownerguid", rtGuid))},
+						{"c1ed46b6-e382-11de-8a39-0800200c9a66", new XElement("rt",
+										   new XAttribute("class", "Aardvark"),
+										   new XAttribute("guid", "c1ed46b6-e382-11de-8a39-0800200c9a66"),
+										   new XAttribute("ownerguid", rtGuid))},
+						{"c1ed46b7-e382-11de-8a39-0800200c9a66", new XElement("rt",
+										   new XAttribute("class", "Aardvark"),
+										   new XAttribute("guid", "c1ed46b7-e382-11de-8a39-0800200c9a66"),
+										   new XAttribute("ownerguid", rtGuid))}
+					};
+			_classData.Add("Aardvark", data);
 		}
 	}
 }

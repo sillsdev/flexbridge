@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders.FieldWorks;
 using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure
@@ -19,6 +20,7 @@ namespace FieldWorksBridge.Infrastructure
 		private const string StartTag = "rt";
 		internal const string Collections = "Collections";
 		internal const string MultiAlt = "MultiAlt";
+		internal const string Owning = "Owning";
 
 		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XmlWriter writer, string pathname)
 		{
@@ -203,6 +205,66 @@ namespace FieldWorksBridge.Infrastructure
 		{
 			using (var nodeReader = XmlReader.Create(new MemoryStream(Utf8.GetBytes(element), false), readerSettings))
 				writer.WriteNode(nodeReader, true);
+		}
+
+		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, IDictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XElement restorableElement)
+		{
+			SortMainElement(sortableProperties, restorableElement);
+			sortedData.Add(restorableElement.Attribute("guid").Value.ToLowerInvariant(), restorableElement);
+		}
+
+		internal static void CacheProperty(IDictionary<string, HashSet<string>> interestingPropertiesForClass, FdoPropertyInfo propertyInfo)
+		{
+			var collData = interestingPropertiesForClass[Collections];
+			var multiAltData = interestingPropertiesForClass[MultiAlt];
+			var owningData = interestingPropertiesForClass[Owning];
+			switch (propertyInfo.DataType)
+			{
+				case DataType.OwningSequence: // Fall through.
+				case DataType.OwningAtomic:
+					owningData.Add(propertyInfo.PropertyName);
+					break;
+				case DataType.OwningCollection:
+					owningData.Add(propertyInfo.PropertyName);
+					collData.Add(propertyInfo.PropertyName);
+					break;
+				case DataType.ReferenceCollection:
+					collData.Add(propertyInfo.PropertyName);
+					break;
+				case DataType.MultiUnicode:
+				case DataType.MultiString:
+					multiAltData.Add(propertyInfo.PropertyName);
+					break;
+			}
+		}
+
+		internal static Dictionary<string, Dictionary<string, HashSet<string>>> CacheInterestingProperties(MetadataCache mdc)
+		{
+			var concreteClasses = mdc.AllConcreteClasses;
+			var results = new Dictionary<string, Dictionary<string, HashSet<string>>>(concreteClasses.Count());
+
+			foreach (var concreteClass in concreteClasses)
+			{
+				Dictionary<string, HashSet<string>> sortablePropertiesForClass;
+				if (!results.TryGetValue(concreteClass.ClassName, out sortablePropertiesForClass))
+				{
+					// Appears to be a newly obsolete instance of 'className'.
+					sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
+													{
+														{Collections, new HashSet<string>()},
+														{MultiAlt, new HashSet<string>()},
+														{Owning, new HashSet<string>()}
+													};
+					results.Add(concreteClass.ClassName, sortablePropertiesForClass);
+				}
+
+				foreach (var propertyInfo in concreteClass.AllProperties)
+				{
+					CacheProperty(sortablePropertiesForClass, propertyInfo);
+				}
+			}
+
+			return results;
 		}
 	}
 }
