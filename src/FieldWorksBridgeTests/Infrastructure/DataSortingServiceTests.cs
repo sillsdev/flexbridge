@@ -173,9 +173,9 @@ namespace FieldWorksBridgeTests.Infrastructure
 <AUni ws='en'>Parts Of Speech</AUni>
 </Abbreviation>
 </rt>";
-			var sortableProperties = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+			var interestingPropertiesCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 			var pl = new Dictionary<string, HashSet<string>>();
-			sortableProperties.Add("CmPossibilityList", pl);
+			interestingPropertiesCache.Add("CmPossibilityList", pl);
 			var hs = new HashSet<string> {"Possibilities"};
 			pl.Add("Collections", hs);
 			hs = new HashSet<string> { "Abbreviation" };
@@ -188,7 +188,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 			//{
 			//	using (var writer = XmlWriter.Create(tempOutputPathname))
 			//	{
-			var rtElement = DataSortingService.SortMainElement(sortableProperties, rt);
+			var rtElement = DataSortingService.SortMainElement(interestingPropertiesCache, rt);
 			//		writer.Flush();
 			//		writer.Close();
 			//	}
@@ -231,9 +231,9 @@ namespace FieldWorksBridgeTests.Infrastructure
 <rt guid='c1ecf88c-e382-11de-8a39-0800200c9a66' class='LexEntry' />
 </languageproject>";
 
-			var sortableProperties = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+			var interestingPropertiesCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 			var pl = new Dictionary<string, HashSet<string>>();
-			sortableProperties.Add("CmPossibilityList", pl);
+			interestingPropertiesCache.Add("CmPossibilityList", pl);
 			var hs = new HashSet<string> { "Possibilities" };
 			pl.Add("Collections", hs);
 			hs = new HashSet<string> { "Abbreviation" };
@@ -246,7 +246,7 @@ namespace FieldWorksBridgeTests.Infrastructure
 				using (var writer = XmlWriter.Create(tempOutputPathname))
 				{
 					writer.WriteStartElement("languageproject");
-					DataSortingService.SortEntireFile(sortableProperties, writer, tempInputPathname);
+					DataSortingService.SortEntireFile(interestingPropertiesCache, writer, tempInputPathname);
 					writer.WriteEndElement();
 					writer.Flush();
 					writer.Close();

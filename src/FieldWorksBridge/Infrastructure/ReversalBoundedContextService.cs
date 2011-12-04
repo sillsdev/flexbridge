@@ -69,14 +69,14 @@ namespace FieldWorksBridge.Infrastructure
 			FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 
-		public static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string linguisticsBaseDir)
+		public static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string linguisticsBaseDir)
 		{
 			var result = new List<XElement>(50000);
 // ReSharper disable PossibleNullReferenceException
 			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
 			{
-				result.AddRange(CmObjectFlatteningService.FlattenObject(sortableProperties, reversalDoc.Element("Reversal").Element("ReversalIndex"), null));
+				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, reversalDoc.Element("Reversal").Element("ReversalIndex"), null));
 			}
 // ReSharper restore PossibleNullReferenceException
 			return result;

@@ -187,12 +187,12 @@ namespace FieldWorksBridge.Infrastructure
 			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
 		}
 
-		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string pathRoot)
+		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string pathRoot)
 		{
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var restoredElement in LinguisticsDomainServices.FlattenDomain(sortableProperties, pathRoot))
+			foreach (var restoredElement in LinguisticsDomainServices.FlattenDomain(interestingPropertiesCache, pathRoot))
 			{
-				DataSortingService.SortAndStoreElement(sortedData, sortableProperties, restoredElement);
+				DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, restoredElement);
 			}
 
 			// TODO: Add other two Domains and move remaining ling stuff into Ling domain.
@@ -214,7 +214,7 @@ namespace FieldWorksBridge.Infrastructure
 				.SelectMany(classDataDoc => classDataDoc.Element("classdata").Elements("rt")))
 // ReSharper restore PossibleNullReferenceException
 			{
-				DataSortingService.SortAndStoreElement(sortedData, sortableProperties, rtElement);
+				DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
 			}
 
 			foreach (var rtElement in sortedData.Values)

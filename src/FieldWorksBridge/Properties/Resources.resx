@@ -151,4 +151,7 @@
   <data name="kLocateFwDataFile" xml:space="preserve">
 	<value>Locate FieldWorks XML Data File</value>
   </data>
+	<data name="kOwnerGuidEmpty">
+		<value><![CDATA['ownerguid' may not be an empty string]]></value>
+	</data>
 </root>

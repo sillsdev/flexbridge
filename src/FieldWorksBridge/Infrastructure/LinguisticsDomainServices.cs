@@ -45,11 +45,11 @@ namespace FieldWorksBridge.Infrastructure
 			//LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 		}
 
-		public static IEnumerable<XElement> FlattenDomain(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string rootDir)
+		public static IEnumerable<XElement> FlattenDomain(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootDir)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
 			var results = new List<XElement>(200000);
-			results.AddRange(ReversalBoundedContextService.FlattenContext(sortableProperties, linguisticsBaseDir));
+			results.AddRange(ReversalBoundedContextService.FlattenContext(interestingPropertiesCache, linguisticsBaseDir));
 
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");

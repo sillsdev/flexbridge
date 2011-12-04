@@ -22,7 +22,7 @@ namespace FieldWorksBridge.Infrastructure
 		internal const string MultiAlt = "MultiAlt";
 		internal const string Owning = "Owning";
 
-		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XmlWriter writer, string pathname)
+		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XmlWriter writer, string pathname)
 		{
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 
@@ -42,7 +42,7 @@ namespace FieldWorksBridge.Infrastructure
 					else
 					{
 						// Step 2B: Sort main CmObject record.
-						var sortedMainObject = SortMainElement(sortableProperties, record);
+						var sortedMainObject = SortMainElement(interestingPropertiesCache, record);
 						sortedObjects.Add(sortedMainObject.Attribute("guid").Value, sortedMainObject.ToString());
 					}
 				}
@@ -85,22 +85,22 @@ namespace FieldWorksBridge.Infrastructure
 			SortAttributes(customPropertiesElement);
 		}
 
-		internal static XElement SortMainElement(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, string rootData)
+		internal static XElement SortMainElement(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootData)
 		{
 			var sortedResult = XElement.Parse(rootData);
 
-			SortMainElement(sortableProperties, sortedResult);
+			SortMainElement(interestingPropertiesCache, sortedResult);
 
 			return sortedResult;
 		}
 
-		internal static void SortMainElement(IDictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XElement rootData)
+		internal static void SortMainElement(IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement rootData)
 		{
 			var className = rootData.Attribute("class").Value;
 
 			// Get collection properties for the class.
 			Dictionary<string, HashSet<string>> sortablePropertiesForClass;
-			if (!sortableProperties.TryGetValue(className, out sortablePropertiesForClass))
+			if (!interestingPropertiesCache.TryGetValue(className, out sortablePropertiesForClass))
 			{
 				// Appears to be a newly obsolete instance of 'className'.
 				sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
@@ -108,7 +108,7 @@ namespace FieldWorksBridge.Infrastructure
 													{Collections, new HashSet<string>()},
 													{MultiAlt, new HashSet<string>()}
 												};
-				sortableProperties.Add(className, sortablePropertiesForClass);
+				interestingPropertiesCache.Add(className, sortablePropertiesForClass);
 			}
 
 			var collData = sortablePropertiesForClass[Collections];
@@ -207,9 +207,9 @@ namespace FieldWorksBridge.Infrastructure
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, IDictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XElement restorableElement)
+		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement restorableElement)
 		{
-			SortMainElement(sortableProperties, restorableElement);
+			SortMainElement(interestingPropertiesCache, restorableElement);
 			sortedData.Add(restorableElement.Attribute("guid").Value.ToLowerInvariant(), restorableElement);
 		}
 
