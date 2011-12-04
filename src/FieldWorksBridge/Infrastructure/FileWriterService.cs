@@ -25,6 +25,22 @@ namespace FieldWorksBridge.Infrastructure
 			}
 		}
 
+		internal static void WriteNestedFile(string newPathname,
+			XmlReaderSettings readerSettings,
+			XDocument nestedDoc)
+		{
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+					WriteDocument(writer, readerSettings, nestedDoc);
+			}
+		}
+
+		private static void WriteDocument(XmlWriter writer, XmlReaderSettings readerSettings, XDocument nestedDoc)
+		{
+			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(nestedDoc.ToString()), false), readerSettings))
+				writer.WriteNode(nodeReader, true);
+		}
+
 		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))

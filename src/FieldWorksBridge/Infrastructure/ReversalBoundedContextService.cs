@@ -15,6 +15,17 @@ namespace FieldWorksBridge.Infrastructure
 	/// Each ReversalIndex instance will be in its own file, along with everything it owns (nested ownership as well).
 	/// The pattern is:
 	/// Linguistics\Reversals\foo.reversal, where foo.reversal is the Reversal Index file and 'foo' is the WritingSystem property of the ReversalIndex.
+	///
+	/// The output file for each will be:
+	/// <reversal>
+	///		<ReversalIndex>
+	/// 1. The "Entries" element's contents will be relocated after the "ReversalIndex" element.
+	/// 2. All other owned stuff will be nested here.
+	///		</ReversalIndex>
+	///		<ReversalInxEntry>Nested for what they own.</ReversalInxEntry>
+	///		...
+	///		<ReversalInxEntry>Nested for what they own.</ReversalInxEntry>
+	/// </reversal>
 	/// </summary>
 	internal static class ReversalBoundedContextService
 	{
@@ -50,7 +61,14 @@ namespace FieldWorksBridge.Infrastructure
 					interestingPropertiesCache,
 					guidToClassMapping);
 
-				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), readerSettings, revIndex, "Reversal");
+				var entriesElement = revIndex.Element("Entries");
+				var root = new XElement("Reversal", revIndex);
+				root.Add(entriesElement.Elements());
+				entriesElement.RemoveNodes();
+				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
+					root);
+
+				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), readerSettings, fullRevObject);
 			}
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
@@ -76,7 +94,11 @@ namespace FieldWorksBridge.Infrastructure
 			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
 			{
-				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, reversalDoc.Element("Reversal").Element("ReversalIndex"), null));
+				// Put entries back into index's Entries element.
+				var root = reversalDoc.Element("Reversal");
+				var revIdx = root.Element("ReversalIndex");
+				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
+				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, revIdx, null));
 			}
 // ReSharper restore PossibleNullReferenceException
 			return result;

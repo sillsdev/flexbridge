@@ -15,7 +15,10 @@ namespace FieldWorksBridge.Infrastructure
 		{
 			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (element == null) throw new ArgumentNullException("element");
-			if (ownerguid == string.Empty) throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
+			if (ownerguid != null)
+			{
+				if (ownerguid == string.Empty) throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
+			}
 
 			var result = new List<XElement>(50000)
 							{
