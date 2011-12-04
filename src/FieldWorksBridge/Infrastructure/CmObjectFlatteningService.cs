@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using FieldWorksBridge.Properties;
 
 namespace FieldWorksBridge.Infrastructure
 {
@@ -9,8 +11,12 @@ namespace FieldWorksBridge.Infrastructure
 	/// </summary>
 	internal static class CmObjectFlatteningService
 	{
-		internal static IEnumerable<XElement> FlattenObject(Dictionary<string, Dictionary<string, HashSet<string>>> sortableProperties, XElement element, string ownerguid)
+		internal static IEnumerable<XElement> FlattenObject(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement element, string ownerguid)
 		{
+			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
+			if (element == null) throw new ArgumentNullException("element");
+			if (ownerguid == string.Empty) throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
+
 			var result = new List<XElement>(50000)
 							{
 								element
@@ -23,16 +29,15 @@ namespace FieldWorksBridge.Infrastructure
 			if (ownerguid != null)
 				element.Add(new XAttribute("ownerguid", ownerguid));
 
-			var owningPropsForClass = sortableProperties[className][DataSortingService.Owning];
+			var owningPropsForClass = interestingPropertiesCache[className][DataSortingService.Owning];
 			if (owningPropsForClass.Count == 0)
 				return result;
 
-			foreach (var propertyElement in element.Elements())
+			foreach (var propertyElement in element.Elements().ToArray())
 			{
-				if (!owningPropsForClass.Contains(propertyElement.Name.LocalName))
-					continue;
 				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
-				if (isCustomProperty && !owningPropsForClass.Contains(propertyElement.Attribute("name").Value))
+				var propName = isCustomProperty ? propertyElement.Attribute("name").Value : propertyElement.Name.LocalName;
+				if (!owningPropsForClass.Contains(propName))
 					continue;
 				if (!propertyElement.HasElements)
 					continue;
@@ -44,7 +49,7 @@ namespace FieldWorksBridge.Infrastructure
 															   new XAttribute("t", "o"));
 					propertyElement.Add(replacementOjSurElement);
 					// Move down the nested set of owned objects, and do the same.
-					result.AddRange(FlattenObject(sortableProperties, ownedElement, element.Attribute("guid").Value));
+					result.AddRange(FlattenObject(interestingPropertiesCache, ownedElement, element.Attribute("guid").Value));
 				}
 			}
 
