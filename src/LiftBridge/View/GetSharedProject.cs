@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
-using Chorus.Utilities;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
@@ -75,12 +75,29 @@ namespace SIL.LiftBridge.View
 							case DialogResult.OK:
 								var fileFromDlg = openFileDlg.FileName;
 								var sourcePath = Path.GetDirectoryName(fileFromDlg);
+								if (Directory.GetDirectories(sourcePath, ".hg").Count() == 0)
+								{
+									MessageBox.Show(parent, Resources.kLoneLiftFileWarning, Resources.kUnsipportedLiftFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+									return false;
+								}
 								var x = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
 // ReSharper disable AssignNullToNotNullAttribute
 								var target = Path.Combine(LiftProjectServices.BasePath, x);
 								if (Directory.Exists(target))
-									throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
+								{
+									var dlgResultfolderExists = MessageBox.Show(parent,
+													string.Format("It appears that the folder: {0} already exists. It needs to be deleted, before continuing.", target),
+													Resources.lFolderAlreadyExists, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+									if (dlgResultfolderExists == DialogResult.OK)
+									{
+										Directory.Delete(target, true);
+									}
+									else
+									{
+										return false;
+									}
+								}
 								var repo = new HgRepository(sourcePath, new StatusProgress());
 								repo.CloneLocal(target);
 								// It made a clone, but maybe in the 'wrong' folder name.
