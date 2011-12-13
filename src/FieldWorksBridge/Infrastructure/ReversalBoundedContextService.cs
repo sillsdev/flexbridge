@@ -97,7 +97,8 @@ namespace FieldWorksBridge.Infrastructure
 			{
 				// Put entries back into index's Entries element.
 				var root = reversalDoc.Element("Reversal");
-				var revIdx = root.Element("ReversalIndex");
+				var header = root.Element("header");
+				var revIdx = header.Element("ReversalIndex");
 				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
 				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, revIdx, null));
 			}

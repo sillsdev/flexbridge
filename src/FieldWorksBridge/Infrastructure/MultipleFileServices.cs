@@ -36,14 +36,15 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper disable AssignNullToNotNullAttribute
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 // ReSharper restore AssignNullToNotNullAttribute
-			var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
+			var customPropPathname = Path.Combine(pathRoot, projectName + ".CustomProperties");
 			if (File.Exists(customPropPathname))
 				File.Delete(customPropPathname);
 			// Leave ModelVersion file.
+
 			if (Directory.Exists(multiFileDirRoot))
 			{
 				// Brutal, but effective. :-)
-				FileWriterService.RemoveDomainData(pathRoot);
+				FileWriterService.RemoveDomainData(pathRoot); // Deletes stuff in old and new locations.
 				// Leave all ChorusNotes files.
 			}
 			else
@@ -147,10 +148,6 @@ namespace FieldWorksBridge.Infrastructure
 			CheckPathname(mainFilePathname);
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-// ReSharper disable AssignNullToNotNullAttribute
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-// ReSharper restore AssignNullToNotNullAttribute
-
 			var tempPathname = Path.GetTempFileName();
 			var mdc = new MetadataCache();
 			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
@@ -177,13 +174,13 @@ namespace FieldWorksBridge.Infrastructure
 					writer.WriteStartElement("languageproject");
 
 					// Write out version number from the ModelVersion file.
-					var modelVersionData = File.ReadAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"));
+					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"));
 					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
 					writer.WriteAttributeString("version", splitModelVersionData[1].Trim());
 
 					// Write out optional custom property file.
 					// Actually, the file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
-					var optionalCustomPropFile = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
+					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
 					// Remove 'key' attribute from CustomField elements, before writing to main file.
 					var doc = XDocument.Load(optionalCustomPropFile);
 // ReSharper disable PossibleNullReferenceException

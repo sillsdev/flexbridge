@@ -79,17 +79,20 @@ namespace FieldWorksBridge.Controller
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 
-			projFolder.IncludePatterns.Add("DataFiles/*.ModelVersion"); // Hope this forces the version file to be done first.
-			projFolder.IncludePatterns.Add("DataFiles/*.CustomProperties"); // Hope this forces the custom props to be done next.
+			projFolder.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
+			projFolder.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
 			projFolder.IncludePatterns.Add("DataFiles/**.ClassData");
 			projFolder.IncludePatterns.Add("DataFiles/**.ChorusNotes");
+			projFolder.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			projFolder.IncludePatterns.Add("Linguistics/**.ChorusNotes");
+			projFolder.IncludePatterns.Add("Anthropology/**.ChorusNotes");
+			projFolder.IncludePatterns.Add("Scripture/**.ChorusNotes");
 			projFolder.IncludePatterns.Add("do_not_share_project.txt");
 			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");
 			projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
-			projFolder.IncludePatterns.Add("Keyboards/*.*");
-			projFolder.IncludePatterns.Add("Fonts/*.*");
+			projFolder.IncludePatterns.Add("SupportingFiles/*.*");
 			projFolder.IncludePatterns.Add(".hgignore");
 		}
 
