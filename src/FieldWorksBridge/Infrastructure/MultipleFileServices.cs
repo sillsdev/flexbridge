@@ -36,17 +36,15 @@ namespace FieldWorksBridge.Infrastructure
 // ReSharper disable AssignNullToNotNullAttribute
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 // ReSharper restore AssignNullToNotNullAttribute
+			var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
+			if (File.Exists(customPropPathname))
+				File.Delete(customPropPathname);
+			// Leave ModelVersion file.
 			if (Directory.Exists(multiFileDirRoot))
 			{
 				// Brutal, but effective. :-)
 				FileWriterService.RemoveDomainData(pathRoot);
-
-				// TODO: Move custom prop data and model version data to rootDir.
-				var customPropPathname = Path.Combine(multiFileDirRoot, projectName + ".CustomProperties");
-				if (File.Exists(customPropPathname))
-					File.Delete(customPropPathname);
-
-				// Leave ModelVersion file and all ChorusNotes files.
+				// Leave all ChorusNotes files.
 			}
 			else
 			{
@@ -113,10 +111,10 @@ namespace FieldWorksBridge.Infrastructure
 			}
 
 			// Write version number file.
-			FileWriterService.WriteVersionNumberFile(multiFileDirRoot, projectName, version);
-
+			FileWriterService.WriteVersionNumberFile(pathRoot, projectName, version);
+			// Write custom properties file, even if has no custom innards.
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-			FileWriterService.WriteCustomPropertyFile(Path.Combine(multiFileDirRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
+			FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
 
 			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
 			var skipwriteEmptyClassFiles = new HashSet<string>();

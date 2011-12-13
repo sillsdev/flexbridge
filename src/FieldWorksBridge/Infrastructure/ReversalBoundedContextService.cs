@@ -62,7 +62,8 @@ namespace FieldWorksBridge.Infrastructure
 					guidToClassMapping);
 
 				var entriesElement = revIndex.Element("Entries");
-				var root = new XElement("Reversal", revIndex);
+				var root = new XElement("Reversal",
+					new XElement("header", revIndex));
 				root.Add(entriesElement.Elements());
 				entriesElement.RemoveNodes();
 				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
