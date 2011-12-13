@@ -140,7 +140,7 @@ namespace FieldWorksBridge.Infrastructure
 						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
 				}
 			}
-			RestoreMainFile(mainFilePathname, projectName);
+			//RestoreMainFile(mainFilePathname, projectName);
 		}
 
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)
