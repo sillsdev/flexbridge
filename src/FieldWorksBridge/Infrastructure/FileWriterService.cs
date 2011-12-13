@@ -224,13 +224,13 @@ namespace FieldWorksBridge.Infrastructure
 
 			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-// ReSharper disable PossibleNullReferenceException
-			foreach (XElement rtElement in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories)
-				.Select(XDocument.Load)
-				.SelectMany(classDataDoc => classDataDoc.Element("classdata").Elements("rt")))
-// ReSharper restore PossibleNullReferenceException
+			foreach (var classDataPathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories))
 			{
-				DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
+				var classDataDoc = XDocument.Load(classDataPathname);
+				foreach (var rtElement in classDataDoc.Element("classdata").Elements("rt"))
+				{
+					DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
+				}
 			}
 
 			foreach (var rtElement in sortedData.Values)
