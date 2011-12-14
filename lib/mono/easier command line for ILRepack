@@ -1,0 +1,5 @@
+mono ILRepack.exe /target:library /out:ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll Autofac.dll ../common/icu.net.dll
+
+
+
+mono ILRepack.exe /out:ChorusMerge2.exe ChorusMerge.exe LibChorus.dll Palaso.dll Autofac.dll ../common/icu.net.dll
