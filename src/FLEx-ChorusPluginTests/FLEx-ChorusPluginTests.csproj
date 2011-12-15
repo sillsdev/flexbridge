@@ -92,6 +92,7 @@
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
+	<Compile Include="LoadHandlersTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
