@@ -65,8 +65,8 @@
 	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalMergeStrategy.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalTypeHandler.cs" />
 	<Compile Include="Controller\FwBridgeController.cs" />
-	<Compile Include="Infrastructure\AnthropologyBoundedContextService.cs" />
-	<Compile Include="Infrastructure\AnthropologyDomainServices.cs" />
+	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
+	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
 	<Compile Include="Infrastructure\CmObjectFlatteningService.cs" />
 	<Compile Include="Infrastructure\CmObjectNestingService.cs" />
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
@@ -74,7 +74,7 @@
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyMergingStrategy.cs" />
 	<Compile Include="Infrastructure\DataSortingService.cs" />
 	<Compile Include="Infrastructure\DataType.cs" />
-	<Compile Include="Infrastructure\DiscourseAnalysisBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FdoClassInfo.cs" />
 	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
@@ -82,22 +82,22 @@
 	<Compile Include="Infrastructure\FileWriterService.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
-	<Compile Include="Infrastructure\LexiconBoundedContextService.cs" />
-	<Compile Include="Infrastructure\LinguisticsBoundedContextService.cs" />
-	<Compile Include="Infrastructure\LinguisticsDomainServices.cs" />
+	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\LinguisticsBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\LinguisticsDomainServices.cs" />
 	<Compile Include="Infrastructure\MetadataCache.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandler.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
-	<Compile Include="Infrastructure\PunctuationFormBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\WordformInventory\PunctuationFormBoundedContextService.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
-	<Compile Include="Infrastructure\ReversalBoundedContextService.cs" />
-	<Compile Include="Infrastructure\ScriptureBoundedContextService.cs" />
-	<Compile Include="Infrastructure\ScriptureDomainServices.cs" />
-	<Compile Include="Infrastructure\TextCorpusBoundedContextService.cs" />
-	<Compile Include="Infrastructure\WordformInventoryBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureDomainServices.cs" />
+	<Compile Include="Contexts\Linguistics\TextCorpus\TextCorpusBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
 	<Compile Include="Model\LanguageProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="Properties\Resources.resx">
@@ -152,10 +152,7 @@
 	</Compile>
 	<Compile Include="View\SynchronizeProject.cs" />
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Contexts\Anthropology\" />
-	<Folder Include="Contexts\Scripture\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
 	<EmbeddedResource Include="View\ExistingSystemView.resx">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>

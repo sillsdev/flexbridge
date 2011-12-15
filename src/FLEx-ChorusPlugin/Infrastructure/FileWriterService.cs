@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts.Anthropology;
+using FLEx_ChorusPlugin.Contexts.Linguistics;
+using FLEx_ChorusPlugin.Contexts.Scripture;
+using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure
@@ -153,7 +157,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static void WriteVersionNumberFile(string multiFileDirRoot, string projectName, string version)
 		{
-			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), "{\"modelversion\": " + version + "}");
+			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
 		}
 
 		internal static void WriteClassDataToOriginal(XmlWriter writer, string rootFolder, XmlReaderSettings readerSettings)

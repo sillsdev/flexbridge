@@ -2,8 +2,9 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Infrastructure;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
 	/// <summary>
 	/// This domain services class interacts with the Anthropology bounded contexts.

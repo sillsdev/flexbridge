@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace FLEx_ChorusPlugin.Properties {
+	using System;
+
+
 	/// <summary>
 	///   A strongly-typed resource class, for looking up localized strings, etc.
 	/// </summary>
@@ -83,6 +86,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to }.
+		/// </summary>
+		internal static string kCloseCurlyBrace {
+			get {
+				return ResourceManager.GetString("kCloseCurlyBrace", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Bridge.
 		/// </summary>
 		internal static string kFieldWorksBridge {
@@ -124,6 +136,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string kLockFilePresentMsg {
 			get {
 				return ResourceManager.GetString("kLockFilePresentMsg", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {&quot;modelversion&quot;: .
+		/// </summary>
+		internal static string kModelVersion {
+			get {
+				return ResourceManager.GetString("kModelVersion", resourceCulture);
 			}
 		}
 

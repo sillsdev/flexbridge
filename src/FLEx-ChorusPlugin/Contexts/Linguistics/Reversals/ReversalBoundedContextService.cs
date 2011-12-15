@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Infrastructure;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
 	/// <summary>
 	/// Read/Write the Reversal bounded context.

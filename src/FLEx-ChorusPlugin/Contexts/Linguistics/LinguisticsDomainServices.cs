@@ -2,8 +2,14 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts.Linguistics.Discourse;
+using FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
+using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
+using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
+using FLEx_ChorusPlugin.Infrastructure;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Contexts.Linguistics
 {
 	/// <summary>
 	/// This domain services class interacts with the Linguistics bounded contexts.
