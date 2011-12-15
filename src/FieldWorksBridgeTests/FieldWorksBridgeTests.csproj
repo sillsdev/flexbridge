@@ -99,25 +99,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Infrastructure\CmObjectFlatteningServiceTests.cs" />
-	<Compile Include="Infrastructure\CmObjectNestingServiceTests.cs" />
-	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
-	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
-	<Compile Include="Mocks\MockedExistingSystemView.cs" />
-	<Compile Include="Mocks\MockedFwBridgeView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="Mocks\MockedGetSharedProject.cs" />
-	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
-	<Compile Include="DummyFolderSystem.cs" />
-	<Compile Include="Mocks\MockedSynchronizeProject.cs" />
-	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
-	<Compile Include="Model\LanguageProjectTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Controller\ControllerTests.cs" />
-	<Compile Include="Mocks\MockedProjectView.cs" />
-	<Compile Include="Mocks\MockedStartupNewView.cs" />
-	<Compile Include="View\ViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\FieldWorksBridge\FieldWorksBridge.csproj">
