@@ -124,6 +124,10 @@
 	  <Project>{A40E1224-6159-4FE6-B78E-4094BD05DAF6}</Project>
 	  <Name>FieldWorksBridge</Name>
 	</ProjectReference>
+	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
+	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
+	  <Name>FLEx-ChorusPlugin</Name>
+	</ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

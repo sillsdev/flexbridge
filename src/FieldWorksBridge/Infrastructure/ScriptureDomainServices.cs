@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders.FieldWorks;
+using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FieldWorksBridge.Infrastructure
 {

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>8.0.30703</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>FLEx_ChorusPlugin</RootNamespace>
+	<AssemblyName>FLEx-ChorusPlugin</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Autofac">
+	  <HintPath>..\..\lib\net2.0\Autofac.dll</HintPath>
+	</Reference>
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="icu.net">
+	  <HintPath>..\..\lib\common\icu.net.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="Contexts\General\FieldWorkObjectContextGenerator.cs" />
+	<Compile Include="Contexts\General\FieldWorksChangePresenter.cs" />
+	<Compile Include="Contexts\General\FieldWorksFileHandler.cs" />
+	<Compile Include="Contexts\General\FieldWorksMergingStrategy.cs" />
+	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalMergeStrategy.cs" />
+	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalTypeHandler.cs" />
+	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
+	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyFileHandler.cs" />
+	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyMergingStrategy.cs" />
+	<Compile Include="Infrastructure\DataType.cs" />
+	<Compile Include="Infrastructure\FdoClassInfo.cs" />
+	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
+	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
+	<Compile Include="Infrastructure\MetadataCache.cs" />
+	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
+	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
+	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandler.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="Contexts\Anthropology\" />
+	<Folder Include="Contexts\Scripture\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -17,5 +17,9 @@ glob:src/FieldWorksBridgeTests/FieldWorksBridgeTests.csproj.user
 syntax: regexp
 Perf test  results/*.*
 DistFiles/Mercurial/*.*
+src/FLEx-ChorusPlugin/bin/*.*
+src/FLEx-ChorusPlugin/obj/*.*
+src/FLEx-ChorusPluginTests/bin/*.*
+src/FLEx-ChorusPluginTests/obj/*.*
 syntax: glob
 Perf test  results/*.app6results

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders.FieldWorks;
+using FLEx_ChorusPlugin.Infrastructure;
 using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure

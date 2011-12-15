@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders.FieldWorks;
+using FLEx_ChorusPlugin.Infrastructure;
 using Palaso.Xml;
 
 namespace FieldWorksBridge.Infrastructure

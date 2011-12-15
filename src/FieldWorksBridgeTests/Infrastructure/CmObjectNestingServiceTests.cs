@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders.FieldWorks;
+using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using FieldWorksBridge.Infrastructure;
 

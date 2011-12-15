@@ -227,6 +227,12 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
+	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
+	  <Name>FLEx-ChorusPlugin</Name>
+	</ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
