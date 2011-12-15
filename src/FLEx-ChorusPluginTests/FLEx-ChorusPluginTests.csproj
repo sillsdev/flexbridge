@@ -63,6 +63,9 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
 	</Reference>
+	<Reference Include="LibChorus.Tests">
+	  <HintPath>..\..\lib\net2.0\LibChorus.Tests.dll</HintPath>
+	</Reference>
 	<Reference Include="nunit.framework">
 	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
 	</Reference>
@@ -89,10 +92,7 @@
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
-	<Compile Include="ListenerForUnitTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="RepositorySetup.cs" />
-	<Compile Include="XmlTestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">

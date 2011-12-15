@@ -4,6 +4,8 @@ using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using FLEx_ChorusPlugin.Infrastructure.ModelVersion;
+using LibChorus.Tests;
+using LibChorus.Tests.merge.xml.generic;
 using NUnit.Framework;
 using Palaso.IO;
 

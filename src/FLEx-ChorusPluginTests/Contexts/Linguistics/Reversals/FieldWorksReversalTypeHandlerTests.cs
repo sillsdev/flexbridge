@@ -9,6 +9,7 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
 using FLEx_ChorusPlugin.Infrastructure;
+using LibChorus.Tests.merge.xml.generic;
 using NUnit.Framework;
 using Palaso.IO;
 

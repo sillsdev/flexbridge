@@ -6,6 +6,7 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
+using LibChorus.Tests.merge.xml.generic;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Contexts.General
