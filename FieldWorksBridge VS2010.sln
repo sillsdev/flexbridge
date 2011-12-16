@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridge", "src\FieldWorksBridge\FieldWorksBridge.csproj", "{A40E1224-6159-4FE6-B78E-4094BD05DAF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FieldWorksBridgeTests", "src\FieldWorksBridgeTests\FieldWorksBridgeTests.csproj", "{FCC2A824-2FC1-45A9-89F9-180561E3A647}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLEx-ChorusPlugin", "src\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj", "{133981BF-62BF-453A-8ED0-AEFA386FEBB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLEx-ChorusPluginTests", "src\FLEx-ChorusPluginTests\FLEx-ChorusPluginTests.csproj", "{5512542B-6423-4221-90AC-CF12CC73E96F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,22 @@ Global
 		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|x86.ActiveCfg = Release|x86
 		{A40E1224-6159-4FE6-B78E-4094BD05DAF6}.Release|x86.Build.0 = Release|x86
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|x86.ActiveCfg = Debug|x86
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Debug|x86.Build.0 = Debug|x86
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|x86.ActiveCfg = Release|x86
-		{FCC2A824-2FC1-45A9-89F9-180561E3A647}.Release|x86.Build.0 = Release|x86
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|x86.ActiveCfg = Debug|x86
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|x86.Build.0 = Debug|x86
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|x86.ActiveCfg = Release|x86
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|x86.Build.0 = Release|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.Build.0 = Debug|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|x86.ActiveCfg = Debug|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|x86.Build.0 = Debug|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Any CPU.ActiveCfg = Release|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Any CPU.Build.0 = Release|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|x86.ActiveCfg = Release|x86
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

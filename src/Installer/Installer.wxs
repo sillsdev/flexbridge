@@ -83,6 +83,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  WorkingDirectory="INSTALLDIR" Target="[!FieldWorksBridge.exe]"  Icon ="FieldWorksBridge.exe" />
 		  </Component>
 
+			<Component Id="FLExChorusPlugin.dll" Guid="{c1ed6db1-e382-11de-8a39-0800200c9a66}">
+			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll" />
+			</Component>
+
 		  <Component Id="Autofac.dll" Guid="{3d9bf2e0-4a25-11df-9879-0800200c9a66}">
 			<File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll" />
 		  </Component>
@@ -119,6 +123,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
 
 	  <ComponentRef Id ="FieldWorksBridge.exe"/>
+	  <ComponentRef Id ="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id ="removeShortcutDir"/>
 	  <ComponentRef Id ="Autofac.dll"/>
 	  <ComponentRef Id="LibChorus.dll"/>

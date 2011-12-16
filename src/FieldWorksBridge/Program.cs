@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FieldWorksBridge.Controller;
 using FieldWorksBridge.Properties;
+using FLEx_ChorusPlugin.Controller;
+using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 
 namespace FieldWorksBridge

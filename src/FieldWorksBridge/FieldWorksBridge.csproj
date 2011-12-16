@@ -12,7 +12,8 @@
 	<AssemblyName>FieldWorksBridge</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
-	<ApplicationIcon>chorus.ico</ApplicationIcon>
+	<ApplicationIcon>
+	</ApplicationIcon>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
 	<OldToolsVersion>3.5</OldToolsVersion>
@@ -74,10 +75,6 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Chorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
-	</Reference>
 	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
@@ -90,7 +87,6 @@
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
-	<Reference Include="System.Data" />
 	<Reference Include="System.Xml" />
 	<Reference Include="System.Xml.Linq">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -99,74 +95,8 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Controller\FwBridgeController.cs" />
-	<Compile Include="Infrastructure\AnthropologyBoundedContextService.cs" />
-	<Compile Include="Infrastructure\AnthropologyDomainServices.cs" />
-	<Compile Include="Infrastructure\CmObjectFlatteningService.cs" />
-	<Compile Include="Infrastructure\CmObjectNestingService.cs" />
-	<Compile Include="Infrastructure\DataSortingService.cs" />
-	<Compile Include="Infrastructure\DiscourseAnalysisBoundedContextService.cs" />
-	<Compile Include="Infrastructure\FileWriterService.cs" />
-	<Compile Include="Infrastructure\LexiconBoundedContextService.cs" />
-	<Compile Include="Infrastructure\LinguisticsBoundedContextService.cs" />
-	<Compile Include="Infrastructure\LinguisticsDomainServices.cs" />
-	<Compile Include="Infrastructure\MultipleFileServices.cs" />
-	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
-	<Compile Include="Infrastructure\PunctuationFormBoundedContextService.cs" />
-	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
-	<Compile Include="Infrastructure\ReversalBoundedContextService.cs" />
-	<Compile Include="Infrastructure\ScriptureBoundedContextService.cs" />
-	<Compile Include="Infrastructure\ScriptureDomainServices.cs" />
-	<Compile Include="Infrastructure\TextCorpusBoundedContextService.cs" />
-	<Compile Include="Infrastructure\WordformInventoryBoundedContextService.cs" />
-	<Compile Include="View\ExistingSystemView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\ExistingSystemView.designer.cs">
-	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\FieldWorksBridge.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="View\FieldWorksBridge.Designer.cs">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
-	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
-	<Compile Include="Model\LanguageProject.cs" />
-	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<EmbeddedResource Include="View\ExistingSystemView.resx">
-	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\FieldWorksBridge.resx">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\FwBridgeView.resx">
-	  <DependentUpon>FwBridgeView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\ProjectView.resx">
-	  <DependentUpon>ProjectView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\StartupNewView.resx">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	</Compile>
 	<None Include="app.config" />
 	<None Include="Properties\Settings.settings">
 	  <Generator>SettingsSingleFileGenerator</Generator>
@@ -177,38 +107,6 @@
 	  <DependentUpon>Settings.settings</DependentUpon>
 	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	</Compile>
-	<Compile Include="View\FwBridgeView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\FwBridgeView.Designer.cs">
-	  <DependentUpon>FwBridgeView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\GetSharedProject.cs" />
-	<Compile Include="View\IActiveProjectView.cs" />
-	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="View\IFwBridgeView.cs" />
-	<Compile Include="View\IProjectView.cs" />
-	<Compile Include="View\IGetSharedProject.cs" />
-	<Compile Include="View\IStartupNewView.cs" />
-	<Compile Include="View\ISynchronizeProject.cs" />
-	<Compile Include="View\ProjectView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\ProjectView.Designer.cs">
-	  <DependentUpon>ProjectView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\ProjectEventArgs.cs" />
-	<Compile Include="View\StartupNewView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\StartupNewView.designer.cs">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\StartupNewEventArgs.cs" />
-	<Compile Include="View\SynchronizeProject.cs" />
-  </ItemGroup>
-  <ItemGroup>
-	<Content Include="chorus.ico" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -226,6 +124,12 @@
 	  <ProductName>Windows Installer 3.1</ProductName>
 	  <Install>true</Install>
 	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
+	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
+	  <Name>FLEx-ChorusPlugin</Name>
+	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

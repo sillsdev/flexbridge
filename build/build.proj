@@ -17,7 +17,7 @@
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="0.1.0.$(BuildCounter)" >
+	<CreateProperty Value="0.3.0.$(BuildCounter)" >
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
@@ -41,6 +41,8 @@
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
 	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\Release"/>
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)"/>
   </Target>
 
   <Target Name="CreateDirectories">
@@ -50,7 +52,17 @@
 	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Installer\"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial">
+	<ItemGroup>
+		<ExistingObjectFiles
+			Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*"
+			Exclude="$(RootDir)/.hg/**/*"
+		/>
+	</ItemGroup>
+	<Target Name="Clean">
+		<Delete Files="@(ExistingObjectFiles)" />
+	</Target>
+
+  <Target Name="Build" DependsOnTargets="Clean; SetAssemblyVersion; UnzipMercurial">
 	<MSBuild Projects="$(teamcity_build_checkoutDir)/FieldWorksBridge VS2010.sln" Targets="Rebuild"
 	  Properties="Configuration=Release"/>
 	<Message Text="Build Complete"/>
@@ -77,13 +89,13 @@
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
 	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/Index.html"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/DownloadPointers.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/Index.html"/>
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
 	<Message Text="Attempting rsync of FieldWorksBridgeInstaller.$(Version).msi" Importance="high"/>
 
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FieldWorksBridgeInstaller.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/FieldWorksBridgeInstaller.$(Version).msi"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FieldWorksBridgeInstaller.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/FieldWorksBridgeInstaller.$(Version).msi"/>
 
 	<CallTarget Targets="MakeDownloadPointers"/>
   </Target>
