@@ -55,6 +55,7 @@
 			Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*"
 			Exclude="$(RootDir)/.hg/**/*"
 		/>
+	</ItemGroup>
 	<PropertyGroup>
 		<OutputDirectory>$(RootDir)/output/</OutputDirectory>
 	</PropertyGroup>
