@@ -50,7 +50,20 @@
 	<MakeDir Directories="$(teamcity_build_checkoutDir)\output\Installer\"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SetAssemblyVersion; UnzipMercurial">
+	<ItemGroup>
+		<ExistingObjectFiles
+			Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*"
+			Exclude="$(RootDir)/.hg/**/*"
+		/>
+	</ItemGroup>
+	<Target Name="Clean">
+		<Delete Files="@(ExistingObjectFiles)" />
+	</Target>
+
+  <Target Name="Build">
+		<CallTarget Targets="Clean"/>
+		<CallTarget Targets="SetAssemblyVersion"/>"/>
+		<CallTarget Targets="SetAssemblyVersion"/>
 	<MSBuild Projects="$(teamcity_build_checkoutDir)/FieldWorksBridge VS2010.sln" Targets="Rebuild"
 	  Properties="Configuration=Release"/>
 	<Message Text="Build Complete"/>
