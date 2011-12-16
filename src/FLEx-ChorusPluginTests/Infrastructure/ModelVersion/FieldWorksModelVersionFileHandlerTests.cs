@@ -15,12 +15,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 	[TestFixture]
 	public class FieldWorksModelVersionFileHandlerTests
 	{
-		private IChorusFileTypeHandler _fwModelVersionFileHandler;
+		private IChorusFileTypeHandler _fileHandler;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_fwModelVersionFileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 											  where handler.GetType().Name == "FieldWorksModelVersionFileHandler"
 											  select handler).First();
 		}
@@ -28,13 +28,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			_fwModelVersionFileHandler = null;
+			_fileHandler = null;
 		}
 
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fwModelVersionFileHandler.DescribeInitialContents(null, null);
+			var initialContents = _fileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -43,7 +43,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
-			var extensions = _fwModelVersionFileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
 			Assert.AreEqual("ModelVersion", extensions[0]);
 		}
@@ -55,7 +55,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fwModelVersionFileHandler.CanValidateFile(newpath));
+				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fwModelVersionFileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -79,7 +79,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fwModelVersionFileHandler.ValidateFile(newpath, null));
+				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -91,7 +91,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fwModelVersionFileHandler.ValidateFile(newpath, null));
+				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -113,7 +113,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation())
 					{ EventListener = listener };
-				_fwModelVersionFileHandler.Do3WayMerge(mergeOrder);
+				_fileHandler.Do3WayMerge(mergeOrder);
 				var mergedData = File.ReadAllText(ourTempFile.Path);
 				Assert.AreEqual(theirData, mergedData);
 				listener.AssertExpectedConflictCount(0);
@@ -139,7 +139,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation())
 					{EventListener = listener};
-				_fwModelVersionFileHandler.Do3WayMerge(mergeOrder);
+				_fileHandler.Do3WayMerge(mergeOrder);
 				var mergedData = File.ReadAllText(ourTempFile.Path);
 				Assert.AreEqual(ourData, mergedData);
 				listener.AssertExpectedConflictCount(0);
@@ -164,7 +164,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				_fwModelVersionFileHandler.Do3WayMerge(mergeOrder);
+				_fileHandler.Do3WayMerge(mergeOrder);
 				var mergedData = File.ReadAllText(ourTempFile.Path);
 				Assert.AreEqual(ourData, mergedData);
 				listener.AssertExpectedConflictCount(0);
@@ -189,7 +189,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				Assert.Throws<InvalidOperationException>(() => _fwModelVersionFileHandler.Do3WayMerge(mergeOrder));
+				Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				Assert.Throws<InvalidOperationException>(() => _fwModelVersionFileHandler.Do3WayMerge(mergeOrder));
+				Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
 			}
 		}
 
@@ -229,7 +229,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 
 				var listener = new ListenerForUnitTests();
 				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				_fwModelVersionFileHandler.Do3WayMerge(mergeOrder);
+				_fileHandler.Do3WayMerge(mergeOrder);
 				var mergedData = File.ReadAllText(ourTempFile.Path);
 				Assert.AreEqual(ourData, mergedData);
 				listener.AssertExpectedConflictCount(0);
@@ -250,7 +250,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 									select rev).ToList();
 				var first = allRevisions[0];
 				var firstFiR = hgRepository.GetFilesInRevision(first).First();
-				var result = _fwModelVersionFileHandler.Find2WayDifferences(null, firstFiR, hgRepository).ToList();
+				var result = _fileHandler.Find2WayDifferences(null, firstFiR, hgRepository).ToList();
 				Assert.AreEqual(1, result.Count);
 				Assert.IsInstanceOf(typeof(FieldWorksModelVersionAdditionChangeReport), result[0]);
 			}
@@ -274,7 +274,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 				var second = allRevisions[1];
 				var firstFiR = hgRepository.GetFilesInRevision(first).First();
 				var secondFiR = hgRepository.GetFilesInRevision(second).First();
-				var result = _fwModelVersionFileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
+				var result = _fileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
 				Assert.AreEqual(1, result.Count);
 				Assert.IsInstanceOf(typeof(FieldWorksModelVersionUpdatedReport), result[0]);
 			}

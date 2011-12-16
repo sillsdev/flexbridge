@@ -6,6 +6,7 @@ using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts.General;
+using FLEx_ChorusPluginTests.Properties;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Contexts.General
@@ -16,69 +17,67 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 	[TestFixture]
 	public class FieldWorksChangePresenterTests
 	{
-		private IChorusFileTypeHandler m_fwFileHandler;
-		private IChangePresenter m_changePresenter;
-		private string m_goodXmlPathname;
+		private IChorusFileTypeHandler _fileHandler;
+		private IChangePresenter _changePresenter;
+		private string _goodXmlPathname;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_fwFileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							   where handler.GetType().Name == "FieldWorksFileHandler"
 							   select handler).First();
-			m_changePresenter = new FieldWorksChangePresenter(
+			_changePresenter = new FieldWorksChangePresenter(
 				new XmlChangedRecordReport(
 					null,
 					null,
 					null,
 					null));
-			m_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-// ReSharper disable LocalizableElement
-			File.WriteAllText(m_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
-// ReSharper restore LocalizableElement
+			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			m_fwFileHandler = null;
-			m_changePresenter = null;
-			if (File.Exists(m_goodXmlPathname))
-				File.Delete(m_goodXmlPathname);
+			_fileHandler = null;
+			_changePresenter = null;
+			if (File.Exists(_goodXmlPathname))
+				File.Delete(_goodXmlPathname);
 		}
 
 		[Test]
-		public void Cannot_PresentFile_For_NonExtant_File()
+		public void CannotPresentFileForNonExtantFile()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanPresentFile("bogusPathname"));
+			Assert.IsFalse(_fileHandler.CanPresentFile("bogusPathname"));
 		}
 
 		[Test]
-		public void Cannot_PresentFile_For_Null_Pathname()
+		public void CannotPresentFileForNullPathname()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanPresentFile(null));
+			Assert.IsFalse(_fileHandler.CanPresentFile(null));
 		}
 
 		[Test]
-		public void Cannot_PresentFile_For_Empty_String_Pathname()
+		public void CannotPresentFileForEmptyStringPathname()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanPresentFile(string.Empty));
+			Assert.IsFalse(_fileHandler.CanPresentFile(string.Empty));
 		}
 
 		[Test]
-		public void Cannot_PresentFile_For_Nonfw_Pathname()
+		public void CannotPresentFileForNonfwPathname()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanPresentFile("bogus.txt"));
+			Assert.IsFalse(_fileHandler.CanPresentFile("bogus.txt"));
 		}
 
 		[Test]
-		public void Can_Present_Good_Fw_Xml_File()
+		public void CanPresentGoodFwXmlFile()
 		{
-			Assert.IsTrue(m_fwFileHandler.CanPresentFile(m_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanPresentFile(_goodXmlPathname));
 		}
 
 		[Test]
-		public void GetChangePresenter_Has_Three_Presentations()
+		public void GetChangePresenterHasThreePresentations()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -145,7 +144,7 @@ color: 'purple';
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber
 									select rev).ToList();
-				foreach (var report in m_fwFileHandler.Find2WayDifferences(
+				foreach (var report in _fileHandler.Find2WayDifferences(
 					hgRepository.GetFilesInRevision(allRevisions[0]).First(),
 					hgRepository.GetFilesInRevision(allRevisions[1]).First(),
 					hgRepository))
@@ -156,19 +155,19 @@ color: 'purple';
 					switch (report.GetType().Name)
 					{
 						case "XmlDeletionChangeReport":
-							presenter = m_fwFileHandler.GetChangePresenter(report, hgRepository);
+							presenter = _fileHandler.GetChangePresenter(report, hgRepository);
 							normalHtml = presenter.GetHtml("normal", stylsheet);
 							rawHtml = presenter.GetHtml("raw", stylsheet);
 							Assert.AreEqual(normalHtml, rawHtml);
 							break;
 						case "XmlChangedRecordReport":
-							presenter = m_fwFileHandler.GetChangePresenter(report, hgRepository);
+							presenter = _fileHandler.GetChangePresenter(report, hgRepository);
 							normalHtml = presenter.GetHtml("normal", stylsheet);
 							rawHtml = presenter.GetHtml("raw", stylsheet);
 							Assert.AreEqual(normalHtml, rawHtml);
 							break;
 						case "XmlAdditionChangeReport":
-							presenter = m_fwFileHandler.GetChangePresenter(report, hgRepository);
+							presenter = _fileHandler.GetChangePresenter(report, hgRepository);
 							normalHtml = presenter.GetHtml("normal", stylsheet);
 							rawHtml = presenter.GetHtml("raw", stylsheet);
 							Assert.AreEqual(normalHtml, rawHtml);
@@ -179,7 +178,7 @@ color: 'purple';
 		}
 
 		[Test]
-		public void GetDataLabel_Is_LexEntry()
+		public void GetDataLabelIsLexEntry()
 		{
 			var doc = new XmlDocument();
 			doc.AppendChild(doc.CreateElement("classdata"));
@@ -193,7 +192,7 @@ color: 'purple';
 		}
 
 		[Test]
-		public void GetActionLabel_Is_Change()
+		public void GetActionLabelIsChange()
 		{
 			var doc = new XmlDocument();
 			doc.AppendChild(doc.CreateElement("classdata"));
@@ -207,13 +206,13 @@ color: 'purple';
 		}
 
 		[Test]
-		public void GetHtml_Has_Null_Input()
+		public void GetHtmlHasNullInput()
 		{
-			Assert.Throws<NullReferenceException>(() => m_changePresenter.GetHtml(null, null));
+			Assert.Throws<NullReferenceException>(() => _changePresenter.GetHtml(null, null));
 		}
 
 		[Test]
-		public void GetTypeLabel_Is_FieldWorks_Data_Object()
+		public void GetTypeLabelIsFieldWorksDataObject()
 		{
 			var doc = new XmlDocument();
 			doc.AppendChild(doc.CreateElement("classdata"));
@@ -227,9 +226,9 @@ color: 'purple';
 		}
 
 		[Test]
-		public void GetIconName_Is_File()
+		public void GetIconNameIsFile()
 		{
-			Assert.AreEqual("file", m_changePresenter.GetIconName());
+			Assert.AreEqual("file", _changePresenter.GetIconName());
 		}
 	}
 }

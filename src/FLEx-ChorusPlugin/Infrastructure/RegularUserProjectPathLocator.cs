@@ -14,7 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			get
 			{
-				// TODO: Allow users to find them elsewhere, using a dlg multiple times to locate the paths.
 				return new HashSet<string>
 								{
 									FieldWorksProjectServices.ProjectsPath

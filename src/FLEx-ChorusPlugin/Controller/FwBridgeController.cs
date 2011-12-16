@@ -23,7 +23,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Constructor that makes a standard controller.
 		/// </summary>
 		internal FwBridgeController()
-			: this(new View.FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
+			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
 		{ }
 
 		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
@@ -57,44 +57,8 @@ namespace FLEx_ChorusPlugin.Controller
 		/// For testing only.
 		/// </summary>
 		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
-			: this(new View.FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
+			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
 		{ }
-
-		private static void ConfigureChorusProjectFolder(ChorusSystem chorusSystem)
-		{
-			// Exclude has precedence, but these are redundant as long as we're using the policy
-			// that we explicitly include all the files we understand.  At least someday, when these
-			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
-			// us a bit from other apps that might try to do a *.* include
-			var projFolder = chorusSystem.ProjectFolderConfiguration;
-
-			projFolder.ExcludePatterns.Add("*.fwdata");
-			projFolder.ExcludePatterns.Add("*.bak");
-			projFolder.ExcludePatterns.Add("*.lock");
-			projFolder.ExcludePatterns.Add("*.tmp");
-			projFolder.ExcludePatterns.Add("**/Temp");
-			projFolder.ExcludePatterns.Add("**/BackupSettings");
-			projFolder.ExcludePatterns.Add("**/ConfigurationSettings");
-			projFolder.ExcludePatterns.Add("WritingSystemStore/trash/*.*");
-			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
-			projFolder.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
-
-			projFolder.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
-			projFolder.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
-			projFolder.IncludePatterns.Add("DataFiles/**.ClassData");
-			projFolder.IncludePatterns.Add("DataFiles/**.ChorusNotes");
-			projFolder.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
-			projFolder.IncludePatterns.Add("Linguistics/**.ChorusNotes");
-			projFolder.IncludePatterns.Add("Anthropology/**.ChorusNotes");
-			projFolder.IncludePatterns.Add("Scripture/**.ChorusNotes");
-			projFolder.IncludePatterns.Add("do_not_share_project.txt");
-			projFolder.IncludePatterns.Add("WritingSystemStore/*.*");
-			projFolder.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
-			projFolder.IncludePatterns.Add("LinkedFiles/Others/*.*");
-			projFolder.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
-			projFolder.IncludePatterns.Add("SupportingFiles/*.*");
-			projFolder.IncludePatterns.Add(".hgignore");
-		}
 
 		internal Form MainForm { get; private set; }
 
@@ -131,7 +95,7 @@ namespace FLEx_ChorusPlugin.Controller
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
 			var chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
-			ConfigureChorusProjectFolder(chorusSystem);
+			FlexFolderSystem.ConfigureChorusProjectFolder(chorusSystem.ProjectFolderConfiguration);
 			var enableSendReceiveBtn = true;
 			var makeWarningsVisible = false;
 

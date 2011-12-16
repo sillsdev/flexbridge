@@ -148,6 +148,7 @@
 	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
 	<Compile Include="Infrastructure\FileWriterService.cs" />
+	<Compile Include="Infrastructure\FlexFolderSystem.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
 	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />

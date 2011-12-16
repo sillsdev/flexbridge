@@ -5,14 +5,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 {
 	///<summary>
 	///</summary>
-	public class FieldWorksModelVersionChangePresenter : IChangePresenter
+	internal sealed class FieldWorksModelVersionChangePresenter : IChangePresenter
 	{
 		private readonly FieldWorksModelVersionChangeReport _report;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public FieldWorksModelVersionChangePresenter(FieldWorksModelVersionChangeReport report)
+		internal FieldWorksModelVersionChangePresenter(FieldWorksModelVersionChangeReport report)
 		{
 			_report = report;
 		}

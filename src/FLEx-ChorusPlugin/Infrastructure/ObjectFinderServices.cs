@@ -17,7 +17,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			XElement ownerElement,
 			HashSet<string> excludedProperties)
 		{
-// ReSharper disable PossibleNullReferenceException
 			var classInfo = mdc.GetClassInfo(ownerElement.Attribute("class").Value);
 			foreach (var owningProperty in from pi in classInfo.AllProperties
 										   where pi.DataType == DataType.OwningAtomic || pi.DataType == DataType.OwningCollection || pi.DataType == DataType.OwningSequence
@@ -31,7 +30,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 				CollectOwnedObjectsForProperty(mdc, classData, guidToClassMapping, multiClassOutput, ownerElement, owningProperty.PropertyName);
 			}
-// ReSharper restore PossibleNullReferenceException
 		}
 
 		private static void CollectOwnedObjectsForProperty(
@@ -46,14 +44,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (propElement == null)
 				return;
 
-// ReSharper disable PossibleNullReferenceException
 			foreach (var guid in propElement.Elements("objsur").Select(osElement => osElement.Attribute("guid").Value.ToLowerInvariant()))
 			{
 				var currentElement = RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
 				// Recurse ownership.
 				CollectAllOwnedObjects(mdc, classData, guidToClassMapping, multiClassOutput, currentElement, new HashSet<string>());
 			}
-// ReSharper restore PossibleNullReferenceException
 		}
 
 		internal static XElement RegisterDataInBoundedContext(IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, IDictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid)
@@ -79,10 +75,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var propElement = textElement.Element(propertyName);
 
-// ReSharper disable PossibleNullReferenceException
 			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements("objsur")
 																 select osEl.Attribute("guid").Value.ToLowerInvariant()).ToList();
-// ReSharper restore PossibleNullReferenceException
 		}
 
 		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, XmlReaderSettings readerSettings, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)

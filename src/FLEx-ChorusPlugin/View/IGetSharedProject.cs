@@ -5,7 +5,7 @@ namespace FLEx_ChorusPlugin.View
 	/// <summary>
 	/// Interface that handles getting a teammate's shared FieldWorks project.
 	/// </summary>
-	public interface IGetSharedProject
+	internal interface IGetSharedProject
 	{
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.

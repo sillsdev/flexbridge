@@ -115,7 +115,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void ElementRenamed()
 		{
-			var results = CmObjectFlatteningService.FlattenObject(_interestingPropsCache,
+			CmObjectFlatteningService.FlattenObject(_interestingPropsCache,
 											  _reversalIndexElement,
 											  null);
 			Assert.IsTrue(_reversalIndexElement.Name.LocalName == "rt");

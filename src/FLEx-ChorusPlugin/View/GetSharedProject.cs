@@ -8,14 +8,20 @@ using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.View
 {
-	internal class GetSharedProject : IGetSharedProject
+	internal sealed class GetSharedProject : IGetSharedProject
 	{
+		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
+		{
+			if (newProjPath != currentRootDataPath)
+				Directory.Move(newProjPath, currentRootDataPath);
+		}
+
 		#region Implementation of IGetSharedProject
 
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.
 		/// </summary>
-		public bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource)
+		bool IGetSharedProject.GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource)
 		{
 			string currentRootDataPath;
 			// 1. Find out the name of the lang proj: langProjName. This is the folder where the clone will go.
@@ -75,7 +81,6 @@ namespace FLEx_ChorusPlugin.View
 								var sourcePath = Path.GetDirectoryName(fileFromDlg);
 								var x = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
-// ReSharper disable AssignNullToNotNullAttribute
 								var target = Path.Combine(currentBaseFieldWorksBridgePath, x);
 								if (Directory.Exists(target))
 									throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
@@ -83,7 +88,6 @@ namespace FLEx_ChorusPlugin.View
 								repo.CloneLocal(target);
 								// It made a clone, but maybe in the wrong name.
 								PossiblyRenameFolder(target, currentRootDataPath);
-// ReSharper restore AssignNullToNotNullAttribute
 								break;
 						}
 					}
@@ -104,12 +108,6 @@ namespace FLEx_ChorusPlugin.View
 					break;
 			}
 			return true;
-		}
-
-		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
-		{
-			if (newProjPath != currentRootDataPath)
-				Directory.Move(newProjPath, currentRootDataPath);
 		}
 
 		#endregion

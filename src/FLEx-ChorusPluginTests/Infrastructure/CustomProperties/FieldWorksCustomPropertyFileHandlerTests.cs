@@ -16,13 +16,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 	[TestFixture]
 	public class FieldWorksCustomPropertyFileHandlerTests
 	{
-		private IChorusFileTypeHandler _fwCustomPropertiesFileHandler;
+		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_fwCustomPropertiesFileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 											  where handler.GetType().Name == "FieldWorksCustomPropertyFileHandler"
 											  select handler).First();
 		}
@@ -30,13 +30,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			_fwCustomPropertiesFileHandler = null;
+			_fileHandler = null;
 		}
 
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fwCustomPropertiesFileHandler.DescribeInitialContents(null, null);
+			var initialContents = _fileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
-			var extensions = _fwCustomPropertiesFileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
 			Assert.AreEqual("CustomProperties", extensions[0]);
 		}
@@ -57,7 +57,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fwCustomPropertiesFileHandler.CanValidateFile(newpath));
+				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -72,7 +72,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fwCustomPropertiesFileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -84,7 +84,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "someext");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fwCustomPropertiesFileHandler.ValidateFile(newpath, null));
+				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -99,7 +99,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fwCustomPropertiesFileHandler.ValidateFile(newpath, null));
+				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -134,7 +134,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 				var second = allRevisions[1];
 				var firstFiR = hgRepository.GetFilesInRevision(first).First();
 				var secondFiR = hgRepository.GetFilesInRevision(second).First();
-				var result = _fwCustomPropertiesFileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
+				var result = _fileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
 				Assert.AreEqual(3, result.Count);
 			}
 		}
@@ -445,11 +445,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			_eventListener.AssertFirstConflictType<RemovedVsEditedElementConflict>();
 		}
 
-		private string DoMerge(string commonAncestor, string ourContent, string theirContent,
+		private void DoMerge(string commonAncestor, string ourContent, string theirContent,
 			IEnumerable<string> matchesExactlyOne, IEnumerable<string> isNull,
 			int expectedConflictCount, int expectedChangesCount)
 		{
-			string result;
 			using (var ours = new TempFile(ourContent))
 			using (var theirs = new TempFile(theirContent))
 			using (var ancestor = new TempFile(commonAncestor))
@@ -459,8 +458,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 				_eventListener = new ListenerForUnitTests();
 				mergeOrder.EventListener = _eventListener;
 
-				_fwCustomPropertiesFileHandler.Do3WayMerge(mergeOrder);
-				result = File.ReadAllText(ours.Path);
+				_fileHandler.Do3WayMerge(mergeOrder);
+				var result = File.ReadAllText(ours.Path);
 				foreach (var query in matchesExactlyOne)
 					XmlTestHelper.AssertXPathMatchesExactlyOne(result, query);
 				if (isNull != null)
@@ -471,7 +470,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 				_eventListener.AssertExpectedConflictCount(expectedConflictCount);
 				_eventListener.AssertExpectedChangesCount(expectedChangesCount);
 			}
-			return result;
 		}
 	}
 }

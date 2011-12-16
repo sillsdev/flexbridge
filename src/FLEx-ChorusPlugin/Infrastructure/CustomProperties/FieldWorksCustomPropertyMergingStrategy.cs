@@ -8,7 +8,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 	/// <summary>
 	/// A merge strategy for FieldWorks 7.0 custom properties data.
 	/// </summary>
-	public sealed class FieldWorksCustomPropertyMergingStrategy : IMergeStrategy
+	internal sealed class FieldWorksCustomPropertyMergingStrategy : IMergeStrategy
 	{
 		private const string CustomField = "CustomField";
 		private readonly XmlMerger _merger;
@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FieldWorksCustomPropertyMergingStrategy(MergeSituation mergeSituation)
+		internal FieldWorksCustomPropertyMergingStrategy(MergeSituation mergeSituation)
 		{
 			_merger = new XmlMerger(mergeSituation);
 

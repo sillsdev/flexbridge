@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	/// </summary>
 	internal static class ScriptureDomainServices
 	{
-		public static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			ScriptureBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
-		public static void RemoveBoundedContextData(string pathRoot)
+		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 
 		}

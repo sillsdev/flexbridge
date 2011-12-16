@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Model
 			get { return Path.GetDirectoryName(_fwdataFile); }
 		}
 
-		public bool IsRemoteCollaborationEnabled
+		internal bool IsRemoteCollaborationEnabled
 		{
 			get
 			{
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPlugin.Model
 			}
 		}
 
-		public bool FieldWorkProjectInUse
+		internal bool FieldWorkProjectInUse
 		{
 			get
 			{

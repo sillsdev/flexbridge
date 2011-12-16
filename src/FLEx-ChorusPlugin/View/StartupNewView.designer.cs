@@ -28,28 +28,28 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label2 = new System.Windows.Forms.Label();
+			this._label2 = new System.Windows.Forms.Label();
 			this._btnGetStarted = new System.Windows.Forms.Button();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this._groupBox = new System.Windows.Forms.GroupBox();
 			this._rbLocalNetwork = new System.Windows.Forms.RadioButton();
 			this._rbInternet = new System.Windows.Forms.RadioButton();
 			this._rbUsb = new System.Windows.Forms.RadioButton();
-			this.label3 = new System.Windows.Forms.Label();
+			this._label3 = new System.Windows.Forms.Label();
 			this._cbAcceptLimitation = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
+			this._label4 = new System.Windows.Forms.Label();
+			this._label5 = new System.Windows.Forms.Label();
+			this._groupBox.SuspendLayout();
 			this.SuspendLayout();
 			//
-			// label2
+			// _label2
 			//
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(10, 25);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(224, 13);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "and now I want to synchronize with them.";
+			this._label2.AutoSize = true;
+			this._label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._label2.Location = new System.Drawing.Point(10, 25);
+			this._label2.Name = "_label2";
+			this._label2.Size = new System.Drawing.Size(224, 13);
+			this._label2.TabIndex = 3;
+			this._label2.Text = "and now I want to synchronize with them.";
 			//
 			// _btnGetStarted
 			//
@@ -63,19 +63,19 @@
 			this._btnGetStarted.UseVisualStyleBackColor = true;
 			this._btnGetStarted.Click += new System.EventHandler(this.ContinueBtnClicked);
 			//
-			// groupBox1
+			// _groupBox
 			//
-			this.groupBox1.Controls.Add(this._rbLocalNetwork);
-			this.groupBox1.Controls.Add(this._rbInternet);
-			this.groupBox1.Controls.Add(this._rbUsb);
-			this.groupBox1.Enabled = false;
-			this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.groupBox1.Location = new System.Drawing.Point(10, 102);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(341, 93);
-			this.groupBox1.TabIndex = 6;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Get teammate\'s project from";
+			this._groupBox.Controls.Add(this._rbLocalNetwork);
+			this._groupBox.Controls.Add(this._rbInternet);
+			this._groupBox.Controls.Add(this._rbUsb);
+			this._groupBox.Enabled = false;
+			this._groupBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._groupBox.Location = new System.Drawing.Point(10, 102);
+			this._groupBox.Name = "_groupBox";
+			this._groupBox.Size = new System.Drawing.Size(341, 93);
+			this._groupBox.TabIndex = 6;
+			this._groupBox.TabStop = false;
+			this._groupBox.Text = "Get teammate\'s project from";
 			//
 			// _rbLocalNetwork
 			//
@@ -116,14 +116,14 @@
 			this._rbUsb.UseVisualStyleBackColor = true;
 			this._rbUsb.Click += new System.EventHandler(this.RadioButtonClicked);
 			//
-			// label3
+			// _label3
 			//
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(10, 9);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(268, 13);
-			this.label3.TabIndex = 7;
-			this.label3.Text = "Another teammate has already used FieldWorks Bridge,";
+			this._label3.AutoSize = true;
+			this._label3.Location = new System.Drawing.Point(10, 9);
+			this._label3.Name = "_label3";
+			this._label3.Size = new System.Drawing.Size(268, 13);
+			this._label3.TabIndex = 7;
+			this._label3.Text = "Another teammate has already used FieldWorks Bridge,";
 			//
 			// _cbAcceptLimitation
 			//
@@ -136,41 +136,41 @@
 			this._cbAcceptLimitation.UseVisualStyleBackColor = true;
 			this._cbAcceptLimitation.CheckedChanged += new System.EventHandler(this.AcceptLimitationsCheckChanged);
 			//
-			// label4
+			// _label4
 			//
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(27, 58);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(256, 13);
-			this.label4.TabIndex = 9;
-			this.label4.Text = "do not allow me to merge a project that already exists";
+			this._label4.AutoSize = true;
+			this._label4.Location = new System.Drawing.Point(27, 58);
+			this._label4.Name = "_label4";
+			this._label4.Size = new System.Drawing.Size(256, 13);
+			this._label4.TabIndex = 9;
+			this._label4.Text = "do not allow me to merge a project that already exists";
 			//
-			// label5
+			// _label5
 			//
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(27, 75);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(237, 13);
-			this.label5.TabIndex = 10;
-			this.label5.Text = "on my computer with the project of my teammate.";
+			this._label5.AutoSize = true;
+			this._label5.Location = new System.Drawing.Point(27, 75);
+			this._label5.Name = "_label5";
+			this._label5.Size = new System.Drawing.Size(237, 13);
+			this._label5.TabIndex = 10;
+			this._label5.Text = "on my computer with the project of my teammate.";
 			//
 			// StartupNewView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.Controls.Add(this.label5);
-			this.Controls.Add(this.label4);
+			this.Controls.Add(this._label5);
+			this.Controls.Add(this._label4);
 			this.Controls.Add(this._cbAcceptLimitation);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this._label3);
+			this.Controls.Add(this._groupBox);
 			this.Controls.Add(this._btnGetStarted);
-			this.Controls.Add(this.label2);
+			this.Controls.Add(this._label2);
 			this.MinimumSize = new System.Drawing.Size(332, 158);
 			this.Name = "StartupNewView";
 			this.Size = new System.Drawing.Size(392, 243);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
+			this._groupBox.ResumeLayout(false);
+			this._groupBox.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -178,15 +178,15 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label _label2;
 		internal System.Windows.Forms.Button _btnGetStarted;
-		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox _groupBox;
 		internal System.Windows.Forms.RadioButton _rbLocalNetwork;
 		internal System.Windows.Forms.RadioButton _rbInternet;
 		internal System.Windows.Forms.RadioButton _rbUsb;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label _label3;
 		private System.Windows.Forms.CheckBox _cbAcceptLimitation;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label _label4;
+		private System.Windows.Forms.Label _label5;
 	}
 }

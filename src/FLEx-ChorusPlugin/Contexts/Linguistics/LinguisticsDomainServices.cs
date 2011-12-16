@@ -18,7 +18,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	{
 		private const string LinguisticsBaseFolder = "Linguistics";
 
-		public static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
-		public static void RemoveBoundedContextData(string pathRoot)
+		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 			ReversalBoundedContextService.RemoveBoundedContextData(pathRoot);
 			//TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
@@ -49,7 +49,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			//LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 		}
 
-		public static IEnumerable<XElement> FlattenDomain(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootDir)
+		internal static IEnumerable<XElement> FlattenDomain(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootDir)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
 			var results = new List<XElement>(200000);

@@ -7,11 +7,11 @@ using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
 {
-	internal class SynchronizeProject : ISynchronizeProject
+	internal sealed class SynchronizeProject : ISynchronizeProject
 	{
 		#region Implementation of ISynchronizeProject
 
-		public void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		void ISynchronizeProject.SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");

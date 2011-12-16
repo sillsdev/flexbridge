@@ -6,14 +6,14 @@ using Chorus;
 
 namespace FLEx_ChorusPlugin.View
 {
-	public partial class ExistingSystemView : UserControl, IExistingSystemView
+	internal sealed partial class ExistingSystemView : UserControl, IExistingSystemView
 	{
-		public ExistingSystemView()
+		internal ExistingSystemView()
 		{
 			InitializeComponent();
 		}
 
-		public ChorusSystem ChorusSys
+		internal ChorusSystem ChorusSys
 		{
 			set
 			{
@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.View
 			}
 		}
 
-		public void SetSystem(ChorusSystem chorusSystem)
+		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem)
 		{
 			_tcMain.SuspendLayout();
 

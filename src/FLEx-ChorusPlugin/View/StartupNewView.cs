@@ -8,11 +8,11 @@ namespace FLEx_ChorusPlugin.View
 	///
 	/// The Startup event lets the controller know what the user wants to do (use extant repo or make new one).
 	/// </summary>
-	public sealed partial class StartupNewView : UserControl, IStartupNewView
+	internal sealed partial class StartupNewView : UserControl, IStartupNewView
 	{
 		public event StartupNewEventHandler Startup;
 
-		public StartupNewView()
+		internal StartupNewView()
 		{
 			InitializeComponent();
 		}
@@ -24,9 +24,9 @@ namespace FLEx_ChorusPlugin.View
 
 		private void UpdateEnabledControls()
 		{
-			groupBox1.Enabled = _cbAcceptLimitation.Checked;
+			_groupBox.Enabled = _cbAcceptLimitation.Checked;
 			_btnGetStarted.Enabled = _cbAcceptLimitation.Checked
-									 && groupBox1.Enabled &&(_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked);
+									 && _groupBox.Enabled &&(_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked);
 		}
 
 		private void AcceptLimitationsCheckChanged(object sender, EventArgs e)

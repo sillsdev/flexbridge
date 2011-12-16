@@ -24,3 +24,4 @@ src/FLEx-ChorusPluginTests/obj/*.*
 syntax: glob
 Perf test  results/*.app6results
 src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.ReSharper.user
+src/FLEx-ChorusPluginTests/FLEx-ChorusPluginTests.csproj.ReSharper.user

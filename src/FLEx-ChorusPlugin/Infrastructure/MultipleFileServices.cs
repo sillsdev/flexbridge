@@ -32,9 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			CheckPathname(mainFilePathname);
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-// ReSharper disable AssignNullToNotNullAttribute
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-// ReSharper restore AssignNullToNotNullAttribute
 			var customPropPathname = Path.Combine(pathRoot, projectName + ".CustomProperties");
 			if (File.Exists(customPropPathname))
 				File.Delete(customPropPathname);
@@ -72,15 +70,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
-// ReSharper disable PossibleNullReferenceException
 							var className = propElement.Attribute("class").Value;
 							var propName = propElement.Attribute("name").Value;
 							var typeAttr = propElement.Attribute("type");
 							var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
-// ReSharper disable RedundantCheckBeforeAssignment
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
-// ReSharper restore RedundantCheckBeforeAssignment
 							var customProp = new FdoPropertyInfo(
 								propName,
 								typeAttr.Value,
@@ -89,7 +84,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 							mdc.AddCustomPropInfo(
 								className,
 								customProp);
-// ReSharper restore PossibleNullReferenceException
 						}
 						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						foundOptionalFirstElement = false;
@@ -182,12 +176,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
 					// Remove 'key' attribute from CustomField elements, before writing to main file.
 					var doc = XDocument.Load(optionalCustomPropFile);
-// ReSharper disable PossibleNullReferenceException
 					var customFieldElements = doc.Root.Elements("CustomField");
-// ReSharper restore PossibleNullReferenceException
 					if (customFieldElements.Count() > 0)
 					{
-// ReSharper disable PossibleNullReferenceException
 						foreach (var cf in customFieldElements)
 						{
 							cf.Attribute("key").Remove();
@@ -198,7 +189,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute("class").Value], new FdoPropertyInfo(cf.Attribute("name").Value, propType, true));
 						}
 						FileWriterService.WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
-// ReSharper restore PossibleNullReferenceException
 					}
 					FileWriterService.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
 					writer.WriteEndElement();
@@ -218,9 +208,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!string.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,
-// ReSharper disable PossibleNullReferenceException
 				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
-// ReSharper restore PossibleNullReferenceException
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");
@@ -229,11 +217,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private static void CacheDataRecord(Dictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
-// ReSharper disable PossibleNullReferenceException
 			var className = rtElement.Attribute("class").Value;
 			var guid = rtElement.Attribute("guid").Value;
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
-// ReSharper restore PossibleNullReferenceException
 
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")

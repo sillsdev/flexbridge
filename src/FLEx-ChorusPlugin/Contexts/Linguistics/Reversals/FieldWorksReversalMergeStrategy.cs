@@ -5,7 +5,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
-	public class FieldWorksReversalMergeStrategy : IMergeStrategy
+	internal sealed class FieldWorksReversalMergeStrategy : IMergeStrategy
 	{
 		private readonly MetadataCache _mdc;
 		private readonly XmlMerger _merger;
@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FieldWorksReversalMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
+		internal FieldWorksReversalMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
 			_merger = new XmlMerger(mergeSituation);

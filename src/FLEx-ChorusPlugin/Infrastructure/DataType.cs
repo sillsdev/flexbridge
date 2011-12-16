@@ -3,7 +3,7 @@
 	/// <summary>
 	/// The types of data in the FDO properties.
 	/// </summary>
-	public enum DataType
+	internal enum DataType
 	{
 		/// <summary></summary>
 		OwningCollection,

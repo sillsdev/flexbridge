@@ -1,68 +1,80 @@
 using System.Collections.Generic;
+#if DEBUG
 using System.Diagnostics;
+#endif
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests
 {
-	public class ListenerForUnitTests : IMergeEventListener
+	internal sealed class ListenerForUnitTests : IMergeEventListener
 	{
-		public List<IConflict> Conflicts = new List<IConflict>();
-		public List<IConflict> Warnings = new List<IConflict>();
-		public List<IChangeReport> Changes = new List<IChangeReport>();
-		public List<ContextDescriptor> Contexts = new List<ContextDescriptor>();
+		internal List<IConflict> Conflicts = new List<IConflict>();
+		internal List<IConflict> Warnings = new List<IConflict>();
+		internal List<IChangeReport> Changes = new List<IChangeReport>();
+		internal List<ContextDescriptor> Contexts = new List<ContextDescriptor>();
 
-		public void ConflictOccurred(IConflict conflict)
+		#region Implementation of IMergeEventListener
+
+		void IMergeEventListener.ConflictOccurred(IConflict conflict)
 		{
 			Conflicts.Add(conflict);
 		}
 
-		public void WarningOccurred(IConflict warning)
+		void IMergeEventListener.WarningOccurred(IConflict warning)
 		{
 			Warnings.Add(warning);
 		}
 
-		public void ChangeOccurred(IChangeReport change)
+		void IMergeEventListener.ChangeOccurred(IChangeReport change)
 		{
 			Changes.Add(change);
 		}
 
-		public void EnteringContext(ContextDescriptor context)
+		void IMergeEventListener.EnteringContext(ContextDescriptor context)
 		{
 			Contexts.Add(context);
 		}
-		public void AssertExpectedConflictCount(int count)
+
+		#endregion Implementation of IMergeEventListener
+
+		internal void AssertExpectedConflictCount(int count)
 		{
 			if (count != Conflicts.Count)
 			{
+#if DEBUG
 				Debug.WriteLine("***Got these conflicts:");
 				foreach (var conflict in Conflicts)
 				{
 					Debug.WriteLine("    "+conflict.ToString());
 				}
+#endif
 				Assert.AreEqual(count, Conflicts.Count,"Unexpected Conflict Count");
 			}
 		}
 
-		public void AssertExpectedChangesCount(int count)
+		internal void AssertExpectedChangesCount(int count)
 		{
 			if (count != Changes.Count)
 			{
+#if DEBUG
 				Debug.WriteLine("***Got these changes:");
 				foreach (var change in Changes)
 				{
 					Debug.WriteLine("    "+change.ToString());
 				}
+#endif
 				Assert.AreEqual(count, Changes.Count,"Unexpected Change Count");
 			}
 		}
 
-		public void AssertFirstChangeType<TExpected>()
+		internal void AssertFirstChangeType<TExpected>()
 		{
 			Assert.AreEqual(typeof(TExpected), Changes[0].GetType());
 		}
-		public void AssertFirstConflictType<TExpected>()
+
+		internal void AssertFirstConflictType<TExpected>()
 		{
 			Assert.AreEqual(typeof(TExpected), Conflicts[0].GetType());
 		}

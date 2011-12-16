@@ -9,7 +9,7 @@ namespace FLEx_ChorusPlugin.View
 	internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
 	internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);
 
-	internal partial class FwBridgeView : UserControl, IFwBridgeView
+	internal sealed partial class FwBridgeView : UserControl, IFwBridgeView
 	{
 		private IEnumerable<LanguageProject> _projects;
 
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPlugin.View
 		public event ProjectSelectedEventHandler ProjectSelected;
 		public event SynchronizeProjectEventHandler SynchronizeProject;
 
-		public IEnumerable<LanguageProject> Projects
+		IEnumerable<LanguageProject> IFwBridgeView.Projects
 		{
 			set
 			{
@@ -66,17 +66,17 @@ namespace FLEx_ChorusPlugin.View
 			}
 		}
 
-		public IProjectView ProjectView
+		IProjectView IFwBridgeView.ProjectView
 		{
 			get { return _projectView; }
 		}
 
-		public void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
+		void IFwBridgeView.EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
 		{
 			_sendReceiveButton.Enabled = enableSendReceiveBtn;
 			_warninglabel1.Visible = makeWarningsVisible;
 			_warninglabel2.Visible = makeWarningsVisible;
-			pictureBox1.Visible = makeWarningsVisible;
+			_pictureBox.Visible = makeWarningsVisible;
 		}
 
 		#endregion

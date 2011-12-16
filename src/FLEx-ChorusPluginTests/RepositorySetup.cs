@@ -12,36 +12,35 @@ namespace FLEx_ChorusPluginTests
 	/// <summary>
 	/// Provides temporary directories and repositories.
 	/// </summary>
-	public class RepositorySetup :IDisposable
+	internal class RepositorySetup : IDisposable
 	{
 		private readonly StringBuilderProgress _stringBuilderProgress = new StringBuilderProgress();
-		private IProgress _progress;
-		public TemporaryFolder RootFolder;
-		public TemporaryFolder ProjectFolder;
-		public ProjectFolderConfiguration ProjectFolderConfig;
+		internal TemporaryFolder RootFolder;
+		internal TemporaryFolder ProjectFolder;
+		internal ProjectFolderConfiguration ProjectFolderConfig;
 
 		private void Init(string name)
 		{
-			Progress = new MultiProgress(new IProgress[] { new ConsoleProgress(){ShowVerbose=true}, _stringBuilderProgress });
+			Progress = new MultiProgress(new IProgress[] { new ConsoleProgress {ShowVerbose=true}, _stringBuilderProgress });
 			RootFolder = new TemporaryFolder("ChorusTest-" + name);
 		}
 
-		public RepositorySetup(string userName)
+		internal RepositorySetup(string userName)
 		{
 			Init(userName);
 
 			ProjectFolder = new TemporaryFolder(RootFolder, ProjectName);
 
-			RepositorySetup.MakeRepositoryForTest(ProjectFolder.Path, userName,Progress);
+			MakeRepositoryForTest(ProjectFolder.Path, userName,Progress);
 			ProjectFolderConfig = new ProjectFolderConfiguration(ProjectFolder.Path);
 
 		}
 
 
-		public RepositorySetup(string cloneName, RepositorySetup sourceToClone)
+		internal RepositorySetup(string cloneName, RepositorySetup sourceToClone)
 		{
 			Init(cloneName);
-			string pathToProject = RootFolder.Combine(ProjectName);
+			var pathToProject = RootFolder.Combine(ProjectName);
 			ProjectFolderConfig = sourceToClone.ProjectFolderConfig.Clone();
 			ProjectFolderConfig.FolderPath = pathToProject;
 
@@ -58,21 +57,21 @@ namespace FLEx_ChorusPluginTests
 			HgHighLevel.MakeCloneFromLocalToLocal(ProjectFolder.Path, pathToNewRepo, true, Progress);
 		}
 
-		public string GetProgressString()
+		internal string GetProgressString()
 		{
 			return _stringBuilderProgress.ToString();
 		}
 
-		public Synchronizer CreateSynchronizer()
+		internal Synchronizer CreateSynchronizer()
 		{
 			return Synchronizer.FromProjectConfiguration(ProjectFolderConfig, Progress);
 		}
 
-
-		public HgRepository Repository
+		internal HgRepository Repository
 		{
 			get { return new HgRepository(ProjectFolderConfig.FolderPath, Progress); }
 		}
+
 		public void Dispose()
 		{
 			if (Repository != null)
@@ -83,7 +82,7 @@ namespace FLEx_ChorusPluginTests
 			RootFolder.Dispose();
 		}
 
-		public void WriteIniContents(string s)
+		internal void WriteIniContents(string s)
 		{
 			File.WriteAllText(PathToHgrc, s);
 		}
@@ -93,103 +92,105 @@ namespace FLEx_ChorusPluginTests
 			get { return Path.Combine(Path.Combine(ProjectFolder.Path, ".hg"), "hgrc"); }
 		}
 
-		public void EnsureNoHgrcExists()
+		internal void EnsureNoHgrcExists()
 		{
 			if (File.Exists(PathToHgrc))
 				File.Delete(PathToHgrc);
 		}
 
-		public void AddAndCheckinFile(string fileName, string contents)
+		internal void AddAndCheckinFile(string fileName, string contents)
 		{
 			var p = ProjectFolder.Combine(fileName);
 			File.WriteAllText(p, contents);
 			Repository.AddAndCheckinFile(p);
 		}
 
-		public void ChangeFile(string fileName, string contents)
+		internal void ChangeFile(string fileName, string contents)
 		{
 			var p = ProjectFolder.Combine(fileName);
 			File.WriteAllText(p, contents);
 		}
-	   public void ChangeFileAndCommit(string fileName, string contents, string message)
+
+		internal void ChangeFileAndCommit(string fileName, string contents, string message)
 		{
 			var p = ProjectFolder.Combine(fileName);
 			File.WriteAllText(p, contents);
 		   Repository.Commit(false,message);
 		}
 
-		public void AddAndCheckIn()
+		internal void AddAndCheckIn()
 		{
-			SyncOptions options = new SyncOptions();
-			options.DoMergeWithOthers = false;
-			options.DoPullFromOthers = false;
-			options.DoSendToOthers = false;
+			var options = new SyncOptions
+							{
+								DoMergeWithOthers = false,
+								DoPullFromOthers = false,
+								DoSendToOthers = false
+							};
 
 			CreateSynchronizer().SyncNow(options);
 		}
-		public SyncResults CheckinAndPullAndMerge()
+
+		internal SyncResults CheckinAndPullAndMerge()
 		{
 			return CheckinAndPullAndMerge(null);
 		}
 
-		public SyncResults CheckinAndPullAndMerge(RepositorySetup otherUser)
+		internal SyncResults CheckinAndPullAndMerge(RepositorySetup otherUser)
 		{
-			SyncOptions options = new SyncOptions();
-			options.DoMergeWithOthers = true;
-			options.DoPullFromOthers = true;
-			options.DoSendToOthers = true;
+			var options = new SyncOptions
+							{
+								DoMergeWithOthers = true,
+								DoPullFromOthers = true,
+								DoSendToOthers = true
+							};
 
 			if(otherUser!=null)
 				options.RepositorySourcesToTry.Add(otherUser.GetRepositoryAddress());
 			return CreateSynchronizer().SyncNow(options);
 		}
 
-		public RepositoryAddress GetRepositoryAddress()
+		internal RepositoryAddress GetRepositoryAddress()
 		{
 			var x =   RepositoryAddress.Create("unknownname", ProjectFolder.Path, false);
 			x.Enabled = true;
 			return x;
 		}
 
-		public void AssertFileExistsRelativeToRoot(string relativePath)
+		internal void AssertFileExistsRelativeToRoot(string relativePath)
 		{
 			Assert.IsTrue(File.Exists(RootFolder.Combine(relativePath)));
 		}
 
-		public void AssertFileExistsInRepository(string pathRelativeToRepositoryRoot)
+		internal void AssertFileExistsInRepository(string pathRelativeToRepositoryRoot)
 		{
 			Assert.IsTrue(Repository.GetFileExistsInRepo(pathRelativeToRepositoryRoot));
 		}
 
-		public void AssertFileDoesNotExistInRepository(string pathRelativeToRepositoryRoot)
+		internal void AssertFileDoesNotExistInRepository(string pathRelativeToRepositoryRoot)
 		{
 			Assert.IsFalse(Repository.GetFileExistsInRepo(pathRelativeToRepositoryRoot));
 		}
 
-		public static void MakeRepositoryForTest(string newRepositoryPath, string userId, IProgress progress)
+		internal static void MakeRepositoryForTest(string newRepositoryPath, string userId, IProgress progress)
 		{
 			HgRepository.CreateRepositoryInExistingDir(newRepositoryPath,progress);
 			var hg = new HgRepository(newRepositoryPath, progress);
 			hg.SetUserNameInIni(userId,  progress);
 		}
 
-
-		public static string ProjectName
+		internal static string ProjectName
 		{
 			get { return "foo project"; }//nb: important that it have a space, as this helps catch failure to enclose in quotes
 		}
 
-		public IProgress Progress
-		{
-			get { return _progress; }
-			set { _progress = value; }
-		}
+		internal IProgress Progress { get; set; }
 
-		public IDisposable GetFileLockForReading(string localPath)
+		internal IDisposable GetFileLockForReading(string localPath)
 		{
 			return new StreamWriter(ProjectFolder.Combine(localPath));
 		}
-		public IDisposable GetFileLockForWriting(string localPath)
+
+		internal IDisposable GetFileLockForWriting(string localPath)
 		{
 #if MONO
 			// This doesn't work.  A mono bug perhaps? (CP)
@@ -205,25 +206,24 @@ namespace FLEx_ChorusPluginTests
 #endif
 		}
 
-
-		public void AssertSingleHead()
+		internal void AssertSingleHead()
 		{
 			var actual = Repository.GetHeads().Count;
-			Assert.AreEqual(1, actual, "There should be on only one head, but there are " + actual.ToString());
+			Assert.AreEqual(1, actual, "There should be on only one head, but there are " + actual);
 		}
 
-		public void AssertHeadCount(int count)
+		internal void AssertHeadCount(int count)
 		{
 			var actual = Repository.GetHeads().Count;
 			Assert.AreEqual(count, actual, "Wrong number of heads");
 		}
 
-		public void AssertFileExists(string relativePath)
+		internal void AssertFileExists(string relativePath)
 		{
 			Assert.IsTrue(File.Exists(ProjectFolder.Combine(relativePath)));
 		}
 
-		public void AssertFileContents(string relativePath, string expectedContents)
+		internal void AssertFileContents(string relativePath, string expectedContents)
 		{
 			Assert.AreEqual(expectedContents, File.ReadAllText(ProjectFolder.Combine(relativePath)));
 		}
@@ -231,22 +231,28 @@ namespace FLEx_ChorusPluginTests
 		/// <summary>
 		/// Obviously, don't leave this in a unit test... it's only for debugging
 		/// </summary>
-		public void ShowInTortoise()
+		internal void ShowInTortoise()
 		{
-			var start = new System.Diagnostics.ProcessStartInfo("hgtk", "log");
-			start.WorkingDirectory = ProjectFolder.Path;
+			var start = new System.Diagnostics.ProcessStartInfo("hgtk", "log")
+							{
+								WorkingDirectory = ProjectFolder.Path
+							};
 			System.Diagnostics.Process.Start(start);
 		}
 
-				   /// <summary>
+		/// <summary>
 		/// not called "CreateReject*Branch* because we're not naming it (but it is, technically, a branch)
 		/// </summary>
-		public void CreateRejectForkAndComeBack()
+		internal void CreateRejectForkAndComeBack()
 		{
 			var originalTip = Repository.GetTip();
 			ChangeFile("test.txt", "bad");
-			var options = new SyncOptions()
-							  {DoMergeWithOthers = true, DoPullFromOthers = true, DoSendToOthers = true};
+			var options = new SyncOptions
+							{
+								DoMergeWithOthers = true,
+								DoPullFromOthers = true,
+								DoSendToOthers = true
+							};
 			var synchronizer = CreateSynchronizer();
 			synchronizer.SyncNow(options);
 			var badRev = Repository.GetTip();
@@ -256,22 +262,22 @@ namespace FLEx_ChorusPluginTests
 			Repository.TagRevision(badRev.Number.Hash, Synchronizer.RejectTagSubstring);// this adds a new changeset
 			synchronizer.SyncNow(options);
 
-			Revision revision = Repository.GetRevisionWorkingSetIsBasedOn();
+			var revision = Repository.GetRevisionWorkingSetIsBasedOn();
 			revision.EnsureParentRevisionInfo();
 			 Assert.AreEqual(originalTip.Number.LocalRevisionNumber, revision.Parents[0].LocalRevisionNumber, "Should have moved back to original tip.");
 		}
 
-		public void AssertLocalRevisionNumber(int localNumber)
+		internal void AssertLocalRevisionNumber(int localNumber)
 		{
 			Assert.AreEqual(localNumber.ToString(), Repository.GetRevisionWorkingSetIsBasedOn().Number.LocalRevisionNumber);
 		}
 
-		public void AssertRevisionHasTag(int localRevisionNumber, string tag)
+		internal void AssertRevisionHasTag(int localRevisionNumber, string tag)
 		{
 			Assert.AreEqual(tag, Repository.GetRevision(localRevisionNumber.ToString()).Tag);
 		}
 
-		public void ChangeFileOnNamedBranchAndComeBack(string fileName, string contents, string branchName)
+		internal void ChangeFileOnNamedBranchAndComeBack(string fileName, string contents, string branchName)
 		{
 			string previousRevisionNumber = Repository.GetRevisionWorkingSetIsBasedOn().Number.LocalRevisionNumber;
 			Repository.Branch(branchName);
@@ -279,31 +285,29 @@ namespace FLEx_ChorusPluginTests
 			Repository.Update(previousRevisionNumber);//go back
 		}
 
-		public BookMark CreateBookmarkHere()
+		internal BookMark CreateBookmarkHere()
 		{
 			return new BookMark(Repository);
 		}
-
-
 	}
 
-	public class BookMark
+	internal class BookMark
 	{
 		private readonly HgRepository _repository;
-		private Revision _revision;
+		private readonly Revision _revision;
 
-		public BookMark(HgRepository repository)
+		internal BookMark(HgRepository repository)
 		{
 			_repository = repository;
 			_revision = _repository.GetRevisionWorkingSetIsBasedOn();
 		}
 
-		public void Go()
+		internal void Go()
 		{
 			_repository.Update(_revision.Number.Hash);
 		}
 
-		public void AssertRepoIsAtThisPoint()
+		internal void AssertRepoIsAtThisPoint()
 		{
 			Assert.AreEqual(_revision.Number.Hash, _repository.GetRevisionWorkingSetIsBasedOn().Number.Hash);
 		}

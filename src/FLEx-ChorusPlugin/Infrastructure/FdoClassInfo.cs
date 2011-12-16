@@ -6,16 +6,16 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	///<summary>
 	/// Class that holds some basic information about FDO classes.
 	///</summary>
-	public sealed class FdoClassInfo
+	internal sealed class FdoClassInfo
 	{
 		/// <summary>
 		/// Get the class name.
 		/// </summary>
-		public string ClassName { get; private set; }
+		internal string ClassName { get; private set; }
 		/// <summary>
 		/// Check if class is abstract.
 		/// </summary>
-		public bool IsAbstract { get; private set; }
+		internal bool IsAbstract { get; private set; }
 		private readonly List<FdoPropertyInfo> _properties = new List<FdoPropertyInfo>();
 
 		internal FdoClassInfo(string className, string superclassName)
@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>
-		public IEnumerable<FdoPropertyInfo> AllProperties
+		internal IEnumerable<FdoPropertyInfo> AllProperties
 		{
 			get
 			{
@@ -57,7 +57,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		///<summary>
 		/// Get a set of zero or more collection properties (reference or owning).
 		///</summary>
-		public IEnumerable<FdoPropertyInfo> AllCollectionProperties
+		internal IEnumerable<FdoPropertyInfo> AllCollectionProperties
 		{
 			get
 			{
@@ -70,11 +70,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Get the superclass name.
 		/// </summary>
-		public string SuperclassName { get; internal set; }
+		internal string SuperclassName { get; set; }
 
 		/// <summary>
 		/// Get the superclass.
 		/// </summary>
-		public FdoClassInfo Superclass { get; internal set; }
+		internal FdoClassInfo Superclass { get; set; }
 	}
 }

@@ -69,12 +69,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			var sortedCustomProperties = new SortedDictionary<string, XElement>();
 			foreach (var customProperty in customPropertiesElement.Elements())
 			{
-// ReSharper disable PossibleNullReferenceException
 				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
 				var keyValue = customProperty.Attribute("class").Value + customProperty.Attribute("name").Value;
 				customProperty.Add(new XAttribute("key", keyValue));
 				sortedCustomProperties.Add(keyValue, customProperty);
-// ReSharper restore PossibleNullReferenceException
 			}
 			customPropertiesElement.Elements().Remove();
 			foreach (var propertyKvp in sortedCustomProperties)
@@ -118,10 +116,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				var propName = propertyElement.Name.LocalName;
 				// <Custom name="Certified" val="True" />
-// ReSharper disable PossibleNullReferenceException
 				if (propName == "Custom")
 					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
-// ReSharper restore PossibleNullReferenceException
 				if (collData.Contains(propName))
 					SortCollectionProperties(propertyElement);
 				if (multiAltData.Contains(propName))
@@ -183,9 +179,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			var sortCollectionData = new SortedDictionary<string, XElement>();
 			foreach (var objsurElement in propertyElement.Elements("objsur"))
 			{
-// ReSharper disable PossibleNullReferenceException
 				var key = objsurElement.Attribute("guid").Value;
-// ReSharper restore PossibleNullReferenceException
 				if (!sortCollectionData.ContainsKey(key))
 					sortCollectionData.Add(key, objsurElement);
 			}

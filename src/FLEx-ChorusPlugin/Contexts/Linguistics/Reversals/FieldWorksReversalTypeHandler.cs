@@ -16,9 +16,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	///<summary>
 	/// Handler for '.reversal' extension for FieldWorks reversal files.
 	///</summary>
-	public class FieldWorksReversalTypeHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksReversalTypeHandler : IChorusFileTypeHandler
 	{
-		private const string kExtension = "reversal";
+		private const string Extension = "reversal";
 		private readonly MetadataCache _mdc = new MetadataCache();
 
 		#region Implementation of IChorusFileTypeHandler
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, kExtension))
+			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
 
 			return DoValidation(pathToFile) == null;
@@ -101,7 +101,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
-			yield return kExtension;
+			yield return Extension;
 		}
 
 		/// <summary>

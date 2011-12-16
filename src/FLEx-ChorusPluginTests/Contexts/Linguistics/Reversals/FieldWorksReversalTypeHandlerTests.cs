@@ -16,13 +16,13 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 {
 	public class FieldWorksReversalTypeHandlerTests
 	{
-		private IChorusFileTypeHandler _fwReversalFileHandler;
+		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_fwReversalFileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 									  where handler.GetType().Name == "FieldWorksReversalTypeHandler"
 											  select handler).First();
 		}
@@ -30,7 +30,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			_fwReversalFileHandler = null;
+			_fileHandler = null;
 		}
 
 		[SetUp]
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fwReversalFileHandler.DescribeInitialContents(null, null);
+			var initialContents = _fileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -57,7 +57,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
-			var extensions = _fwReversalFileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
 			Assert.AreEqual("reversal", extensions[0]);
 		}
@@ -69,7 +69,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fwReversalFileHandler.CanValidateFile(newpath));
+				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -83,7 +83,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fwReversalFileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -97,11 +97,11 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fwReversalFileHandler.CanValidateFile(newpath));
-				Assert.IsTrue(_fwReversalFileHandler.CanDiffFile(newpath));
-				Assert.IsTrue(_fwReversalFileHandler.CanMergeFile(newpath));
-				Assert.IsTrue(_fwReversalFileHandler.CanPresentFile(newpath));
-				Assert.IsTrue(_fwReversalFileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(_fileHandler.CanDiffFile(newpath));
+				Assert.IsTrue(_fileHandler.CanMergeFile(newpath));
+				Assert.IsTrue(_fileHandler.CanPresentFile(newpath));
+				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -113,7 +113,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fwReversalFileHandler.ValidateFile(newpath, null));
+				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -129,7 +129,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fwReversalFileHandler.ValidateFile(newpath, null));
+				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
 				File.Delete(newpath);
 			}
 		}
@@ -272,7 +272,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			var theirContent = commonAncestor.Replace("</Reversal>", "<ReversalIndexEntry guid='newbieTheirs'/></Reversal>");
 
 			FieldWorksTestServices.DoMerge(
-				_fwReversalFileHandler,
+				_fileHandler,
 				commonAncestor, ourContent, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
@@ -296,7 +296,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			var theirContent = commonAncestor.Replace("</ReversalIndexEntry>", "<Subentries><ReversalIndexEntry guid='newbieTheirs'/></Subentries></ReversalIndexEntry>");
 
 			FieldWorksTestServices.DoMerge(
-				_fwReversalFileHandler,
+				_fileHandler,
 				commonAncestor, ourContent, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry/Subentries/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry/Subentries/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
@@ -320,7 +320,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			var theirContent = commonAncestor.Replace("</ReversalIndexEntry>", "<Subentries><ReversalIndexEntry guid='newbieTheirs'/></Subentries></ReversalIndexEntry>");
 
 			FieldWorksTestServices.DoMerge(
-				_fwReversalFileHandler,
+				_fileHandler,
 				commonAncestor, ourContent, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""oldie""]/Subentries/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
@@ -356,7 +356,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			var theirContent = commonAncestor.Replace("commonName", "TheirName");
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fwReversalFileHandler,
+				_fileHandler,
 				commonAncestor, ourContent, theirContent,
 				null, null,
 				1, new List<Type> { typeof(BothEditedTheSameElement) },

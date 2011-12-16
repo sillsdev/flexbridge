@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	{
 		private const string LinguisticsRootFolder = "Linguistics";
 
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				"MoMorphData", "MoStratum", "MoEndoCompound", "MoExoCompound", "MoAlloAdhocProhib", "MoMorphAdhocProhib", "MoAdhocProhibGr", "WfiWordSet" });
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, LinguisticsRootFolder));
 		}

@@ -17,12 +17,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal static class FieldWorksMergingServices
 	{
-		private static readonly FindByKeyAttribute _wsKey = new FindByKeyAttribute(Ws);
-		private static readonly FindByKeyAttribute _guidKey = new FindByKeyAttribute(GuidStr);
-		private static readonly FindFirstElementWithSameName _sameName = new FindFirstElementWithSameName();
-		private static readonly FieldWorkObjectContextGenerator _contextGen = new FieldWorkObjectContextGenerator();
+		private static readonly FindByKeyAttribute WsKey = new FindByKeyAttribute(Ws);
+		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(GuidStr);
+		private static readonly FindFirstElementWithSameName SameName = new FindFirstElementWithSameName();
+		private static readonly FieldWorkObjectContextGenerator ContextGen = new FieldWorkObjectContextGenerator();
 		private const string MutableSingleton = "MutableSingleton";
-		private const string DateCreated = "DateCreated";
 		private const string Rt = "rt";
 		private const string ImmutableSingleton = "ImmutableSingleton";
 		private const string Objsur = "objsur";
@@ -55,7 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
-								MergePartnerFinder = _sameName,
+								MergePartnerFinder = SameName,
 								//ContextDescriptorGenerator = _contextGen
 							};
 			return strategy;
@@ -82,7 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
 		{
-			AddKeyedElementType(sharedElementStrategies, elementName, _wsKey, orderOfTheseIsRelevant, isAtomic);
+			AddKeyedElementType(sharedElementStrategies, elementName, WsKey, orderOfTheseIsRelevant, isAtomic);
 		}
 
 		private static void AddKeyedElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, IFindNodeToMerge findBykeyAttribute, bool orderOfTheseIsRelevant, bool isAtomic)
@@ -509,13 +508,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
 			var headerStrategy = CreateSingletonElementType(true);
-			headerStrategy.ContextDescriptorGenerator = _contextGen;
+			headerStrategy.ContextDescriptorGenerator = ContextGen;
 			strategiesForMerger.SetStrategy(Header, headerStrategy);
 
 			var classStrat = new ElementStrategy(false)
 								{
-									MergePartnerFinder = _guidKey,
-									ContextDescriptorGenerator = _contextGen,
+									MergePartnerFinder = GuidKey,
+									ContextDescriptorGenerator = ContextGen,
 									IsAtomic = false
 								};
 
@@ -575,12 +574,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var strategy = new ElementStrategy(false)
 			{
-				MergePartnerFinder = _guidKey
+				MergePartnerFinder = GuidKey
 			};
 			strategy.AttributesToIgnoreForMerging.Add("class"); // Immutable
 			strategy.AttributesToIgnoreForMerging.Add("guid"); // Immutable
 			sharedElementStrategies.Add(Rt, strategy);
-			strategy.ContextDescriptorGenerator = _contextGen;
+			strategy.ContextDescriptorGenerator = ContextGen;
 
 			CreateSharedElementStrategies(sharedElementStrategies);
 			CreateMergers(mdc, mergeSituation, sharedElementStrategies, mergers);

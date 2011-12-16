@@ -17,9 +17,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 	/// <remarks>
 	/// This file uses JSON data in the form: {"modelversion": #####}
 	/// </remarks>
-	public class FieldWorksModelVersionFileHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksModelVersionFileHandler : IChorusFileTypeHandler
 	{
-		private const string kExtension = "ModelVersion";
+		private const string Extension = "ModelVersion";
 
 		#region Implementation of IChorusFileTypeHandler
 
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, kExtension))
+			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
 
 			return DoValidation(pathToFile) == null;
@@ -140,7 +140,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
-			yield return kExtension;
+			yield return Extension;
 		}
 
 		/// <summary>

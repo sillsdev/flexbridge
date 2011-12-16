@@ -12,100 +12,100 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 	[TestFixture]
 	public class FieldWorksFileValidationTests
 	{
-		private IChorusFileTypeHandler m_handler;
-		private string m_goodXmlPathname;
-		private string m_illformedXmlPathname;
-		private string m_goodXmlButNotFwPathname;
-		private string m_nonXmlPathname;
+		private IChorusFileTypeHandler _fileHandler;
+		private string _goodXmlPathname;
+		private string _illformedXmlPathname;
+		private string _goodXmlButNotFwPathname;
+		private string _nonXmlPathname;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_handler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 						 where handler.GetType().Name == "FieldWorksFileHandler"
 						 select handler).First();
-			m_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-			File.WriteAllText(m_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
-			m_illformedXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-			File.WriteAllText(m_illformedXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata>");
-			m_goodXmlButNotFwPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-			File.WriteAllText(m_goodXmlButNotFwPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<nonfwstuff />");
-			m_nonXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".txt");
-			File.WriteAllText(m_nonXmlPathname, "This is not an xml file." + Environment.NewLine);
+			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			File.WriteAllText(_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
+			_illformedXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			File.WriteAllText(_illformedXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata>");
+			_goodXmlButNotFwPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			File.WriteAllText(_goodXmlButNotFwPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<nonfwstuff />");
+			_nonXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".txt");
+			File.WriteAllText(_nonXmlPathname, "This is not an xml file." + Environment.NewLine);
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			m_handler = null;
-			if (File.Exists(m_goodXmlPathname))
-				File.Delete(m_goodXmlPathname);
-			if (File.Exists(m_illformedXmlPathname))
-				File.Delete(m_illformedXmlPathname);
-			if (File.Exists(m_goodXmlButNotFwPathname))
-				File.Delete(m_goodXmlButNotFwPathname);
-			if (File.Exists(m_nonXmlPathname))
-				File.Delete(m_nonXmlPathname);
+			_fileHandler = null;
+			if (File.Exists(_goodXmlPathname))
+				File.Delete(_goodXmlPathname);
+			if (File.Exists(_illformedXmlPathname))
+				File.Delete(_illformedXmlPathname);
+			if (File.Exists(_goodXmlButNotFwPathname))
+				File.Delete(_goodXmlButNotFwPathname);
+			if (File.Exists(_nonXmlPathname))
+				File.Delete(_nonXmlPathname);
 		}
 
 		[Test]
 		public void Cannot_Validate_Nonexistant_File()
 		{
-			Assert.IsFalse(m_handler.CanValidateFile("bogusPathname"));
+			Assert.IsFalse(_fileHandler.CanValidateFile("bogusPathname"));
 		}
 
 		[Test]
 		public void Cannot_Validate_Null_File()
 		{
-			Assert.IsFalse(m_handler.CanValidateFile(null));
+			Assert.IsFalse(_fileHandler.CanValidateFile(null));
 		}
 
 		[Test]
 		public void Cannot_Validate_Empty_String_File()
 		{
-			Assert.IsFalse(m_handler.CanValidateFile(String.Empty));
+			Assert.IsFalse(_fileHandler.CanValidateFile(String.Empty));
 		}
 
 		[Test]
 		public void Cannot_Validate_Nonxml_File()
 		{
-			Assert.IsFalse(m_handler.CanValidateFile(m_nonXmlPathname));
+			Assert.IsFalse(_fileHandler.CanValidateFile(_nonXmlPathname));
 		}
 
 		[Test]
 		public void Can_Validate_Fw_Xml_File()
 		{
-			Assert.IsTrue(m_handler.CanValidateFile(m_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanValidateFile(_goodXmlPathname));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Empty_Pathname()
 		{
-			Assert.IsNotNull(m_handler.ValidateFile("", null));
+			Assert.IsNotNull(_fileHandler.ValidateFile("", null));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Null_Pathname()
 		{
-			Assert.IsNotNull(m_handler.ValidateFile(null, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(null, null));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Null_For_Good_File()
 		{
-			Assert.IsNull(m_handler.ValidateFile(m_goodXmlPathname, null));
+			Assert.IsNull(_fileHandler.ValidateFile(_goodXmlPathname, null));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Crummy_Xml_File()
 		{
-			Assert.IsNotNull(m_handler.ValidateFile(m_illformedXmlPathname, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_illformedXmlPathname, null));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Good_But_Not_Fw_Xml_File()
 		{
-			Assert.IsNotNull(m_handler.ValidateFile(m_goodXmlButNotFwPathname, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_goodXmlButNotFwPathname, null));
 		}
 	}
 }

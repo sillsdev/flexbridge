@@ -10,7 +10,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// <summary>
 	/// Cache to hold metadata about the CmObject classes.
 	/// </summary>
-	public sealed class MetadataCache
+	internal sealed class MetadataCache
 	{
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
 		private readonly IEnumerable<FdoClassInfo> _concreteClasses;
@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MetadataCache()
+		internal MetadataCache()
 		{
 			// TODO: If FW Bridge ever gets released into the wild,
 			// the MDC needs to be able to support various FW model versions.
@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <exception cref="KeyNotFoundException">
 		/// Thrown if <param name="className"/> is not a recognized class name.
 		/// </exception>
-		public FdoClassInfo GetClassInfo(string className)
+		internal FdoClassInfo GetClassInfo(string className)
 		{
 			if (string.IsNullOrEmpty(className))
 				throw new ArgumentNullException("classname", AnnotationImages.kNullOrEmptyString);
@@ -65,7 +65,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Return all concrete classes.
 		/// </summary>
-		public IEnumerable<FdoClassInfo> AllConcreteClasses
+		internal IEnumerable<FdoClassInfo> AllConcreteClasses
 		{
 			get { return _concreteClasses; }
 		}
@@ -73,7 +73,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Return classes that have collection properties.
 		/// </summary>
-		public IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
+		internal IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
 		{
 			get { return _classesWithCollectionProperties; }
 		}
@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Add a custom property to a class.
 		/// </summary>
-		public void AddCustomPropInfo(string className, FdoPropertyInfo propInfo)
+		internal void AddCustomPropInfo(string className, FdoPropertyInfo propInfo)
 		{
 			if (!propInfo.IsCustomProperty)
 				throw new ArgumentException("Property is not custom.");
@@ -107,10 +107,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return;
 
 			var doc = XDocument.Load(customFiles[0]);
-// ReSharper disable PossibleNullReferenceException
 			foreach (var customFieldElement in doc.Element("AdditionalFields").Elements("CustomField"))
 				AddCustomPropInfo(customFieldElement.Attribute("class").Value, new FdoPropertyInfo(customFieldElement.Attribute("name").Value, customFieldElement.Attribute("type").Value, true));
-// ReSharper restore PossibleNullReferenceException
 		}
 
 		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)

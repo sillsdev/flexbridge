@@ -6,7 +6,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 	/// <summary>
 	/// Abstract base class for FW Model version change reports
 	/// </summary>
-	public abstract class FieldWorksModelVersionChangeReport : ChangeReport
+	internal abstract class FieldWorksModelVersionChangeReport : ChangeReport
 	{
 		protected FieldWorksModelVersionChangeReport(FileInRevision parent, FileInRevision child, int newModelVersion)
 			: base(parent, child)
@@ -41,12 +41,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 	///<summary>
 	/// FW model change (addition) report
 	///</summary>
-	public class FieldWorksModelVersionAdditionChangeReport : FieldWorksModelVersionChangeReport
+	internal sealed class FieldWorksModelVersionAdditionChangeReport : FieldWorksModelVersionChangeReport
 	{
 		///<summary>
 		/// Constructor
 		///</summary>
-		public FieldWorksModelVersionAdditionChangeReport(FileInRevision fileInRevision, int modelVersion)
+		internal FieldWorksModelVersionAdditionChangeReport(FileInRevision fileInRevision, int modelVersion)
 			:base(fileInRevision, modelVersion)
 		{
 		}
@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 		/// <remarks>
 		/// When merging, the eventual revision is unknown, so feed that as the child.
 		/// </remarks>
-		public FieldWorksModelVersionAdditionChangeReport(string fullPath, int modelVersion)
+		internal FieldWorksModelVersionAdditionChangeReport(string fullPath, int modelVersion)
 			: base(null, new FileInUnknownRevision(fullPath, FileInRevision.Action.Modified), modelVersion)
 		{
 		}
@@ -83,18 +83,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 	///<summary>
 	/// Class that knows about model verison number updates.
 	///</summary>
-	public class FieldWorksModelVersionUpdatedReport : FieldWorksModelVersionChangeReport
+	internal sealed class FieldWorksModelVersionUpdatedReport : FieldWorksModelVersionChangeReport
 	{
 		///<summary>
 		/// Constructor.
 		///</summary>
-		public FieldWorksModelVersionUpdatedReport(FileInRevision parentFileInRevision, FileInRevision childFileInRevision, int oldModelVersion, int newModelVersion)
+		internal FieldWorksModelVersionUpdatedReport(FileInRevision parentFileInRevision, FileInRevision childFileInRevision, int oldModelVersion, int newModelVersion)
 			: base(parentFileInRevision, childFileInRevision, newModelVersion)
 		{
 			OldModelVersion = oldModelVersion;
 		}
 
-		public FieldWorksModelVersionUpdatedReport(string childPath, int oldModelVersion, int newModelVersion)
+		internal FieldWorksModelVersionUpdatedReport(string childPath, int oldModelVersion, int newModelVersion)
 			: base(childPath, newModelVersion)
 		{
 			OldModelVersion = oldModelVersion;

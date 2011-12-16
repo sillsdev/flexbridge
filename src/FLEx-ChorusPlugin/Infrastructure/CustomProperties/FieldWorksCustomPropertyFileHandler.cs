@@ -17,9 +17,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 	/// <summary>
 	/// Handle the FieldWorks custom properties file
 	/// </summary>
-	public class FieldWorksCustomPropertyFileHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksCustomPropertyFileHandler : IChorusFileTypeHandler
 	{
-		private const string kExtension = "CustomProperties";
+		private const string Extension = "CustomProperties";
 
 		#region Implementation of IChorusFileTypeHandler
 
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, kExtension))
+			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
 
 			return DoValidation(pathToFile) == null;
@@ -96,7 +96,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
-			yield return kExtension;
+			yield return Extension;
 		}
 
 		/// <summary>
@@ -118,10 +118,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.CustomProperties
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-// ReSharper disable PossibleNullReferenceException
 				if (root.Name.LocalName != "AdditionalFields" || root.Elements("CustomField").Count() == 0)
 					return "Not valid custom properties file";
-// ReSharper restore PossibleNullReferenceException
 
 				return null;
 			}

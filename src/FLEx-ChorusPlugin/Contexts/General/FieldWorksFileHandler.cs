@@ -15,9 +15,9 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	/// <summary>
 	/// File handler for a FieldWorks 7.0 xml class data file (not the main fwdata file).
 	/// </summary>
-	public class FieldWorksFileHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksFileHandler : IChorusFileTypeHandler
 	{
-		private const string kExtension = "ClassData";
+		private const string Extension = "ClassData";
 		private readonly Dictionary<string, bool> _filesChecked = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 		private readonly MetadataCache _mdc = new MetadataCache();
 
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, kExtension))
+			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
 
 			try
@@ -136,7 +136,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
-			yield return kExtension;
+			yield return Extension;
 		}
 
 		/// <summary>
@@ -154,7 +154,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 		private bool CheckThatInputIsValidFieldWorksFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, kExtension))
+			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
 
 			bool seenBefore;

@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 	{
 		private const string LexiconRootFolder = "Lexicon";
 
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
@@ -177,7 +177,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				"CmSemanticDomain", "CmDomainQ" });
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, LexiconRootFolder)));
 		}

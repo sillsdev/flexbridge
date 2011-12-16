@@ -10,11 +10,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	/// <summary>
 	/// Class that is a FieldWorks Presenter, which is part of Chorus' MVP system.
 	/// </summary>
-	public class FieldWorksChangePresenter : IChangePresenter
+	internal sealed class FieldWorksChangePresenter : IChangePresenter
 	{
 		private readonly IXmlChangeReport _report;
 
-		public FieldWorksChangePresenter(IXmlChangeReport report)
+		internal FieldWorksChangePresenter(IXmlChangeReport report)
 		{
 			_report = report;
 		}

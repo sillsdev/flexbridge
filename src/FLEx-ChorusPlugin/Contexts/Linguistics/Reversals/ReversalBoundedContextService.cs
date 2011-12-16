@@ -51,10 +51,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			{
 				var revIndex = reversalIndexKvp.Value;
 
-// ReSharper disable PossibleNullReferenceException
 				var ws = revIndex.Element("WritingSystem").Element("Uni").Value;
 				var reversalFilename = ws + ".reversal";
-// ReSharper restore PossibleNullReferenceException
 
 				CmObjectNestingService.NestObject(revIndex,
 					new Dictionary<string, HashSet<string>>(),
@@ -81,7 +79,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, ReversalRootFolder)));
 		}
 
-		public static void RemoveBoundedContextData(string pathRoot)
+		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 			var reversalDir = Path.Combine(pathRoot, Path.Combine("Linguistics", ReversalRootFolder));
 			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
@@ -89,10 +87,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 
-		public static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string linguisticsBaseDir)
+		internal static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string linguisticsBaseDir)
 		{
 			var result = new List<XElement>(50000);
-// ReSharper disable PossibleNullReferenceException
 			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
 			{
@@ -103,7 +100,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
 				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, revIdx, null));
 			}
-// ReSharper restore PossibleNullReferenceException
 			return result;
 		}
 	}

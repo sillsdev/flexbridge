@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
+using FLEx_ChorusPluginTests.Properties;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -14,51 +15,49 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 	[TestFixture]
 	public class FieldWorksFileDiffTests
 	{
-		private IChorusFileTypeHandler m_fwFileHandler;
-		private string m_goodXmlPathname;
+		private IChorusFileTypeHandler _fileHandler;
+		private string _goodXmlPathname;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_fwFileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							   where handler.GetType().Name == "FieldWorksFileHandler"
 							   select handler).First();
-			m_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-// ReSharper disable LocalizableElement
-			File.WriteAllText(m_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
-// ReSharper restore LocalizableElement
+			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
-			m_fwFileHandler = null;
-			if (File.Exists(m_goodXmlPathname))
-				File.Delete(m_goodXmlPathname);
+			_fileHandler = null;
+			if (File.Exists(_goodXmlPathname))
+				File.Delete(_goodXmlPathname);
 		}
 
 		[Test]
-		public void Cannot_Diff_Nonexistant_File()
+		public void CannotDiffNonexistantFile()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanDiffFile("bogusPathname"));
+			Assert.IsFalse(_fileHandler.CanDiffFile("bogusPathname"));
 		}
 
 		[Test]
-		public void Cannot_Diff_Null_File()
+		public void CannotDiffNullFile()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanDiffFile(null));
+			Assert.IsFalse(_fileHandler.CanDiffFile(null));
 		}
 
 		[Test]
-		public void Cannot_Diff_Empty_String_File()
+		public void CannotDiffEmptyStringFile()
 		{
-			Assert.IsFalse(m_fwFileHandler.CanDiffFile(String.Empty));
+			Assert.IsFalse(_fileHandler.CanDiffFile(String.Empty));
 		}
 
 		[Test]
-		public void Can_Diff_Good_Fw_Xml_File()
+		public void CanDiffGoodFwXmlFile()
 		{
-			Assert.IsTrue(m_fwFileHandler.CanDiffFile(m_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanDiffFile(_goodXmlPathname));
 		}
 
 		// This test is of a series that test:
@@ -69,7 +68,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		//	5. Custom field stuff.
 		//	6. Model version same or different. (Child is lower number?)
 		[Test]
-		public void NewObjectInChild_Reported()
+		public void NewObjectInChildReported()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -105,7 +104,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void GuidCaseDifference_Not_Reported()
+		public void GuidCaseDifferenceNotReported()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -139,7 +138,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void ObjectDeletedInChild_Reported()
+		public void ObjectDeletedInChildReported()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -175,7 +174,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void ObjectChangedInChild_Reported()
+		public void ObjectChangedInChildReported()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -204,7 +203,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void NoChangesInChild_Reported()
+		public void NoChangesInChildReported()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -241,7 +240,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void Find2WayDifferences_Reported_Three_Changes()
+		public void Find2WayDifferencesReportedThreeChanges()
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -284,7 +283,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 				var second = allRevisions[1];
 				var firstFiR = hgRepository.GetFilesInRevision(first).First();
 				var secondFiR = hgRepository.GetFilesInRevision(second).First();
-				var result = m_fwFileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository);
+				var result = _fileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository);
 				Assert.AreEqual(3, result.Count());
 			}
 		}

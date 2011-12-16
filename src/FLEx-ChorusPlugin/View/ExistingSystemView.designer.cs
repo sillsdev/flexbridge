@@ -1,6 +1,6 @@
 ﻿namespace FLEx_ChorusPlugin.View
 {
-	public partial class ExistingSystemView
+	internal partial class ExistingSystemView
 	{
 		/// <summary>
 		/// Required designer variable.

@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	/// These common ElementStrategy instances ought to be reusable by the various XmlMerger instances,
 	/// provided they are not changed by the XmlMerger while in use.
 	/// </remarks>
-	public sealed class FieldWorksMergingStrategy : IMergeStrategy
+	internal sealed class FieldWorksMergingStrategy : IMergeStrategy
 	{
 		private readonly MetadataCache _mdc;
 		private readonly Dictionary<string, ElementStrategy> _sharedElementStrategies = new Dictionary<string, ElementStrategy>(StringComparer.OrdinalIgnoreCase);
@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FieldWorksMergingStrategy(MergeSituation mergeSituation, MetadataCache mdc)
+		internal FieldWorksMergingStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
 			FieldWorksMergingServices.BootstrapSystem(_mdc, _sharedElementStrategies, _mergers, mergeSituation);
