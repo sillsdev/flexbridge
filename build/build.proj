@@ -56,8 +56,15 @@
 			Exclude="$(RootDir)/.hg/**/*"
 		/>
 	</ItemGroup>
+	<ItemGroup>
+		<OldAssemblies
+			Include="$(RootDir)/output/Release/FieldWorksBridgeTests.dll;$(RootDir)/output/Release/LibChorus.Tests.dll"
+			Exclude="$(RootDir)/.hg/**/*"
+		/>
+	</ItemGroup>
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
+		<Delete Files="@(OldAssemblies)" />
 	</Target>
 
   <Target Name="Build">
