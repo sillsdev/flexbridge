@@ -61,9 +61,9 @@
 	</Target>
 
   <Target Name="Build">
-		<CallTarget Targets="Clean"/>
-		<CallTarget Targets="SetAssemblyVersion"/>"/>
-		<CallTarget Targets="SetAssemblyVersion"/>
+		<CallTarget Targets="Clean" />
+		<CallTarget Targets="SetAssemblyVersion" />
+		<CallTarget Targets="UnzipMercurial" />
 	<MSBuild Projects="$(teamcity_build_checkoutDir)/FieldWorksBridge VS2010.sln" Targets="Rebuild"
 	  Properties="Configuration=Release"/>
 	<Message Text="Build Complete"/>
