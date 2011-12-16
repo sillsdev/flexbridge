@@ -55,11 +55,12 @@
 			Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*"
 			Exclude="$(RootDir)/.hg/**/*"
 		/>
-	</ItemGroup>
+	<PropertyGroup>
+		<OutputDirectory>$(RootDir)/output/</OutputDirectory>
+	</PropertyGroup>
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
-		<Delete Files="$(RootDir)/output/Release/FieldWorksBridgeTests.dll" />
-		<Delete Files="$(RootDir)/output/Release/LibChorus.Tests.dll" />
+		<RemoveDir Directories="$(OutputDirectory)" />
 	</Target>
 
   <Target Name="Build">
