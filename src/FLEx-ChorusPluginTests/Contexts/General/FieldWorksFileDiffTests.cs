@@ -3,8 +3,6 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
-using LibChorus.Tests;
-using LibChorus.Tests.merge.xml.generic;
 using NUnit.Framework;
 using Palaso.IO;
 

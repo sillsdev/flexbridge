@@ -5,9 +5,6 @@ using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using LibChorus.Tests;
-using LibChorus.Tests.merge.xml;
-using LibChorus.Tests.merge.xml.generic;
 using NUnit.Framework;
 using Palaso.IO;
 

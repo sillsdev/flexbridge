@@ -6,7 +6,6 @@ using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts.General;
-using LibChorus.Tests;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Contexts.General
