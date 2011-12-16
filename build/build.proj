@@ -41,6 +41,8 @@
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\common"/>
 	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
 	  TargetDirectory="$(teamcity_build_checkoutDir)\output\Release"/>
+	<Unzip ZipFileName="$(teamcity_build_checkoutDir)\lib\net2.0\MercurialExtensions.zip"
+	  TargetDirectory="$(teamcity_build_checkoutDir)"/>
   </Target>
 
   <Target Name="CreateDirectories">
@@ -56,12 +58,8 @@
 			Exclude="$(RootDir)/.hg/**/*"
 		/>
 	</ItemGroup>
-	<PropertyGroup>
-		<OutputDirectory>$(RootDir)/output/</OutputDirectory>
-	</PropertyGroup>
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
-		<RemoveDir Directories="$(OutputDirectory)" />
 	</Target>
 
   <Target Name="Build">
