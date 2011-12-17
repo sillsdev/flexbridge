@@ -104,4 +104,16 @@
 	<data name="kClassDataEmptyTag">
 		<value><![CDATA[<classdata />]]></value>
 	</data>
+	<data name="kTestRepoCreated">
+		<value xml:space="preserve">TestRepository Created: {0}</value>
+	</data>
+	<data name="kTestRepoCloned">
+		<value xml:space="preserve">TestRepository Cloned: {0}</value>
+	</data>
+	<data name="kTestRepoNotDeleted">
+		<value xml:space="preserve">TestRepository not deleted in {0}</value>
+	</data>
+	<data name="kTestRepoDeleted">
+		<value xml:space="preserve">TestRepository deleted {0}</value>
+	</data>
 </root>

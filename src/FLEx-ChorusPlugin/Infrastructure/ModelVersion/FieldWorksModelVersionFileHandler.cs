@@ -53,23 +53,26 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 		/// The must not have any UI, no interaction with the user.</remarks>
 		public void Do3WayMerge(MergeOrder mergeOrder)
 		{
-			// TODO: Update MDC to latest model version.
-
 			if (mergeOrder.EventListener is NullMergeEventListener)
 				mergeOrder.EventListener = new ChangeAndConflictAccumulator();
 
 			// The bigger model number wins, no matter if it came in ours or theirs.
 			var commonData = File.ReadAllText(mergeOrder.pathToCommonAncestor);
 			var commonNumber = Int32.Parse(SplitData(commonData)[1]);
+
 			var ourData = File.ReadAllText(mergeOrder.pathToOurs);
 			var ourNumber = Int32.Parse(SplitData(ourData)[1]);
+
 			var theirData = File.ReadAllText(mergeOrder.pathToTheirs);
 			var theirNumber = Int32.Parse(SplitData(theirData)[1]);
+
 			if (commonNumber == ourNumber && commonNumber == theirNumber)
 				return; // No changes.
-			if (ourNumber < commonNumber || theirNumber < commonNumber)
-				throw new InvalidOperationException("Downgrade in model version number");
 
+			if (ourNumber < commonNumber || theirNumber < commonNumber)
+				throw new InvalidOperationException("Downgrade in model version number.");
+
+			var mergedNumber = ourNumber;
 			var listener = mergeOrder.EventListener;
 			if (ourNumber > theirNumber)
 			{
@@ -77,11 +80,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 			}
 			else
 			{
+				mergedNumber = theirNumber;
 				// Put their number in our file. {"modelversion": #####}
 				var newFileContents = "{\"modelversion\": " + theirNumber + "}";
 				File.WriteAllText(mergeOrder.pathToOurs, newFileContents);
 				listener.ChangeOccurred(new FieldWorksModelVersionUpdatedReport(mergeOrder.pathToTheirs, commonNumber, theirNumber));
 			}
+
+			MetadataCache.MdCache.UpgradeToVersion(mergedNumber);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)

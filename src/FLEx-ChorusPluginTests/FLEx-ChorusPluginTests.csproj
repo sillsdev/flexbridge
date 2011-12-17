@@ -104,6 +104,8 @@
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
+	<Compile Include="Integration\MergeIntegrationTests.cs" />
+	<Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
 	<Compile Include="ListenerForUnitTests.cs" />
 	<Compile Include="LoadHandlersTests.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
@@ -124,6 +126,7 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>TestResources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="RepositoryWithFilesSetup.cs" />
 	<Compile Include="View\ViewTests.cs" />
 	<Compile Include="XmlTestHelper.cs" />
   </ItemGroup>
@@ -141,6 +144,7 @@
 	<EmbeddedResource Include="Properties\TestResources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

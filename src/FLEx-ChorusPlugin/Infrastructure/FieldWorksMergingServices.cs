@@ -585,7 +585,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			CreateMergers(mdc, mergeSituation, sharedElementStrategies, mergers);
 		}
 
-		internal static void SetupMdc(MetadataCache mdc, MergeOrder mergeOrder, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
+		internal static void AddCustomPropInfo(MetadataCache mdc, MergeOrder mergeOrder, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
 		{
 			if (mdc == null) throw new ArgumentNullException("mdc");
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");

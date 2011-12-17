@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
@@ -20,7 +19,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_mdc = new MetadataCache();
+			_mdc = MetadataCache.MdCache;
 		}
 
 		/// <summary></summary>
@@ -39,9 +38,32 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 		/// <summary></summary>
 		[Test]
-		public void AccessClassInfoWithBogusClassNameThrows()
+		public void AccessClassInfoWithNonExistantClassNameIsNull()
 		{
-			Assert.Throws<KeyNotFoundException>(() => _mdc.GetClassInfo("Bogus"));
+			Assert.IsNull(_mdc.GetClassInfo("Bogus"));
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void DowngradeModelVersionThrows()
+		{
+			Assert.Throws<InvalidOperationException>(() => _mdc.UpgradeToVersion(_mdc.ModelVersion - 1));
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void UpgradeModelVersionToSameNumberKeepsOriginalVersionNumber()
+		{
+			Assert.AreEqual(_mdc.ModelVersion, _mdc.UpgradeToVersion(_mdc.ModelVersion));
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void UpgradeModelNumberResetsProperty()
+		{
+			var newVersion = _mdc.ModelVersion + 1;
+			_mdc.UpgradeToVersion(newVersion);
+			Assert.AreEqual(newVersion, _mdc.ModelVersion);
 		}
 
 		/// <summary></summary>
@@ -80,6 +102,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void SegmentHasNoCollectionProperties()
 		{
 			Assert.IsTrue(_mdc.GetClassInfo("Segment").AllCollectionProperties.Count() == 0);
+		}
+
+		[Test]
+		public void UnsupportedUpdateThrows()
+		{
+			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
+			Assert.Throws<ArgumentOutOfRangeException>(() => mdc.UpgradeToVersion(Int32.MaxValue));
 		}
 	}
 }

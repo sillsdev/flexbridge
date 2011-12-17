@@ -19,7 +19,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_mdc = new MetadataCache();
+			_mdc = MetadataCache.MdCache;
 
 			// Add custom props to mdc.
 			var loneAardvarkProp = new FdoPropertyInfo(

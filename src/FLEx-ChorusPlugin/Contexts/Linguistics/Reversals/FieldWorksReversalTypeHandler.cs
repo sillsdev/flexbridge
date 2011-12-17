@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	internal sealed class FieldWorksReversalTypeHandler : IChorusFileTypeHandler
 	{
 		private const string Extension = "reversal";
-		private readonly MetadataCache _mdc = new MetadataCache();
+		private readonly MetadataCache _mdc = MetadataCache.MdCache;
 
 		#region Implementation of IChorusFileTypeHandler
 
@@ -56,7 +56,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
 			// Add optional custom property information to MDC.
-			FieldWorksMergingServices.SetupMdc(_mdc, mergeOrder, "Linguistics", 1);
+			FieldWorksMergingServices.AddCustomPropInfo(_mdc, mergeOrder, "Linguistics", 1);
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksReversalMergeStrategy(mergeOrder.MergeSituation, _mdc),

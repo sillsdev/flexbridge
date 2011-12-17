@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	{
 		private const string Extension = "ClassData";
 		private readonly Dictionary<string, bool> _filesChecked = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-		private readonly MetadataCache _mdc = new MetadataCache();
+		private readonly MetadataCache _mdc = MetadataCache.MdCache;
 
 		#region Implementation of IChorusFileTypeHandler
 
@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
 			// Add optional custom property information to MDC.
-			FieldWorksMergingServices.SetupMdc(_mdc, mergeOrder, "DataFiles", 1);
+			FieldWorksMergingServices.AddCustomPropInfo(_mdc, mergeOrder, "DataFiles", 1);
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksMergingStrategy(mergeOrder.MergeSituation, _mdc),

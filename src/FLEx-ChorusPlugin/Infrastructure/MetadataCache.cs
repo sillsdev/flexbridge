@@ -12,24 +12,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal sealed class MetadataCache
 	{
+		private const int StartingModelVersion = 7000044;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
 		private readonly IEnumerable<FdoClassInfo> _concreteClasses;
 		private readonly Dictionary<string, FdoClassInfo> _classesWithCollectionProperties;
+		private static MetadataCache _mdc;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal MetadataCache()
+		private MetadataCache()
 		{
-			// TODO: If FW Bridge ever gets released into the wild,
-			// the MDC needs to be able to support various FW model versions.
-			// This can be introduced with some kind of 'InitializeTo(string modelVersionNumber) method.
-			// There will be a base starting model version number,
-			// and the Init method will then move up one version at a time, and add/remove props/classes,
-			// for each FW migration to bring it up to the given number.
-			// This will still require all users of a repo to be on the same version,
-			// but it will allow different sets of users to be at different levels.
-			// I expect the MDC to be available in a static variable, and accessable via a getter.
 			AddMainClassInfo();
 			SetSuperclasses();
 			_concreteClasses = new List<FdoClassInfo>(from classInfo in _classes.Values
@@ -42,6 +35,102 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				_classesWithCollectionProperties.Add(classWithCollectionProp.ClassName, classWithCollectionProp);
 			}
+
+			ModelVersion = StartingModelVersion;
+		}
+
+		internal static MetadataCache MdCache
+		{
+			get { return _mdc ?? (_mdc = new MetadataCache()); }
+		}
+
+		internal static MetadataCache TestOnlyNewCache
+		{
+			get
+			{
+				_mdc = null;
+				return MdCache;
+			}
+		}
+
+		internal int ModelVersion { get; private set; }
+
+		internal IEnumerable<FdoClassInfo> AllClasses
+		{
+			get { return _classes.Values; }
+		}
+
+		internal int UpgradeToVersion(int newVersion)
+		{
+			if (newVersion < ModelVersion)
+				throw new InvalidOperationException("The version number cannot be downgraded.");
+			if (newVersion == ModelVersion)
+				return ModelVersion;
+
+			// 7000044: Starting point (FW 7.1 & 7.1.1)
+			// 70000xx: FW 7.2 released.
+
+			// FW 7.2
+			// NOTE: Changeset: 37085 added new prop, but no new version number.
+			// TBA: Modified Segment
+			//		Add: RA "Speaker"									[CmPerson]
+
+			var currentVersion = ModelVersion;
+			var cmObject = GetClassInfo("CmObject");
+			while (currentVersion < newVersion)
+			{
+				++currentVersion;
+				switch (currentVersion)
+				{
+					default:
+						throw new ArgumentOutOfRangeException(string.Format("Upgrading to version {0} is not yet supported.", newVersion));
+					case 7000045:
+						// 7000045: Modified Segment
+						//		Add: basic "Reference"								[String]
+						GetClassInfo("Segment").AddProperty(new FdoPropertyInfo("Reference", DataType.String));
+						break;
+					case 7000046:
+						// 7000046: Modified RnGenericRec
+						//		Add: OA "Text"										[Text]
+						GetClassInfo("RnGenericRec").AddProperty(new FdoPropertyInfo("Text", DataType.OwningAtomic));
+						break;
+					case 7000047: // Fall through
+					case 7000048:
+						// 7000047: No actual model change.
+						// 7000048: No actual model change.
+						// Do nothing update.
+						break;
+					case 7000049:
+						// 7000049:
+						//		1. Add CmObject::CmMediaContainer (concrete)
+						//			Add: basic "OffsetType"							[Unicode]
+						//			Add: OC "MediaURIs"								[CmMediaURI]
+						var newClass = CreateNewClass(cmObject, "CmMediaContainer", false);
+						newClass.AddProperty(new FdoPropertyInfo("OffsetType", DataType.Unicode, false));
+						newClass.AddProperty(new FdoPropertyInfo("MediaURIs", DataType.OwningCollection, false));
+						//		1A. Add: CmObject::CmMediaURI classes (concrete)
+						//			Add: basic "MediaURI"							[Unicode]
+						newClass = CreateNewClass(cmObject, "CmMediaURI", false);
+						newClass.AddProperty(new FdoPropertyInfo("MediaURI", DataType.Unicode, false));
+						//		2. Modified Segment
+						//			Add: RA "MediaURI"								[CmMediaURI]
+						//			Add: basic "BeginTimeOffset"					[Unicode]
+						//			Add: basic "EndTimeOffset"						[Unicode]
+						newClass = GetClassInfo("Segment");
+						newClass.AddProperty(new FdoPropertyInfo("MediaURI", DataType.ReferenceAtomic, false));
+						newClass.AddProperty(new FdoPropertyInfo("BeginTimeOffset", DataType.Unicode, false));
+						newClass.AddProperty(new FdoPropertyInfo("EndTimeOffset", DataType.Unicode, false));
+						//		3. Modified Text:
+						// NOT YET!!!			Remove: SoundFilePath							[Unicode]
+						//			Add: OA "MediaFiles"							[CmMediaContainer]
+						newClass = GetClassInfo("Text");
+						newClass.AddProperty(new FdoPropertyInfo("MediaFiles", DataType.OwningAtomic, false));
+						break;
+				}
+			}
+
+			ModelVersion = newVersion;
+			return ModelVersion;
 		}
 
 		///<summary>
@@ -59,7 +148,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (string.IsNullOrEmpty(className))
 				throw new ArgumentNullException("classname", AnnotationImages.kNullOrEmptyString);
 
-			return _classes[className];
+			FdoClassInfo result;
+			_classes.TryGetValue(className, out result);
+			return result; // May be null, which is fine.
 		}
 
 		/// <summary>
@@ -76,6 +167,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
 		{
 			get { return _classesWithCollectionProperties; }
+		}
+
+		private FdoClassInfo CreateNewClass(FdoClassInfo superclass, string newClassName, bool isAbtract)
+		{
+			var newClass = new FdoClassInfo(superclass, newClassName, isAbtract);
+			_classes.Add(newClass.ClassName, newClass);
+			return newClass;
 		}
 
 		/// <summary>

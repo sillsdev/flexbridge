@@ -398,7 +398,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			var mergeStrategy = new FieldWorksReversalMergeStrategy(new NullMergeSituation(), new MetadataCache());
+			var mergeStrategy = new FieldWorksReversalMergeStrategy(new NullMergeSituation(), MetadataCache.MdCache);
 			var result = mergeStrategy.MakeMergedEntry(_eventListener, ourNode, theirNode, ancestorNode);
 			Assert.IsTrue(result.Contains("2002-1-1 23:59:59.000"));
 			_eventListener.AssertExpectedConflictCount(0);
@@ -437,7 +437,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			var mergeStrategy = new FieldWorksReversalMergeStrategy(new NullMergeSituation(), new MetadataCache());
+			var mergeStrategy = new FieldWorksReversalMergeStrategy(new NullMergeSituation(), MetadataCache.MdCache);
 			var result = mergeStrategy.MakeMergedEntry(_eventListener, ourNode, theirNode, ancestorNode);
 			Assert.IsTrue(result.Contains("2002-1-1 23:59:59.000"));
 			_eventListener.AssertExpectedConflictCount(0);

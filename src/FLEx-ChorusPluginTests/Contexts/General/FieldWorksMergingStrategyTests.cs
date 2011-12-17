@@ -23,7 +23,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_mdc = new MetadataCache();
+			_mdc = MetadataCache.MdCache;
 			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
 		}
 

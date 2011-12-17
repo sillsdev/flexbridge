@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ModelVersion;
 using NUnit.Framework;
 using Palaso.IO;
@@ -99,9 +100,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[Test]
 		public void ShouldMergeTheirModelNumber()
 		{
-			const string commonData = "{\"modelversion\": 7000000}";
-			const string ourData = "{\"modelversion\": 7000000}";
-			const string theirData = "{\"modelversion\": 7000001}";
+			const string commonData = "{\"modelversion\": 7000044}";
+			const string ourData = "{\"modelversion\": 7000045}";
+			const string theirData = "{\"modelversion\": 7000046}";
 			using (var commonTempFile = new TempFile("Common.ModelVersion"))
 			using (var ourTempFile = new TempFile("Our.ModelVersion"))
 			using (var theirTempFile = new TempFile("Their.ModelVersion"))
@@ -125,9 +126,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[Test]
 		public void ShouldMergeOurModelNumber()
 		{
-			const string commonData = "{\"modelversion\": 7000000}";
-			const string ourData = "{\"modelversion\": 7000002}";
-			const string theirData = "{\"modelversion\": 7000001}";
+			const string commonData = "{\"modelversion\": 7000044}";
+			const string ourData = "{\"modelversion\": 7000046}";
+			const string theirData = "{\"modelversion\": 7000045}";
 			using (var commonTempFile = new TempFile("Common.ModelVersion"))
 			using (var ourTempFile = new TempFile("Our.ModelVersion"))
 			using (var theirTempFile = new TempFile("Their.ModelVersion"))
@@ -151,9 +152,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[Test]
 		public void BothDidSameUpgrade()
 		{
-			const string commonData = "{\"modelversion\": 7000000}";
-			const string ourData = "{\"modelversion\": 7000002}";
-			const string theirData = "{\"modelversion\": 7000002}";
+			//var mdc = MetadataCache.TestOnlyNewCache;
+			const string commonData = "{\"modelversion\": 7000044}";
+			const string ourData = "{\"modelversion\": 7000046}";
+			const string theirData = "{\"modelversion\": 7000046}";
 			using (var commonTempFile = new TempFile("Common.ModelVersion"))
 			using (var ourTempFile = new TempFile("Our.ModelVersion"))
 			using (var theirTempFile = new TempFile("Their.ModelVersion"))

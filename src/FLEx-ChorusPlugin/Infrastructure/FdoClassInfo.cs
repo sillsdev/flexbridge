@@ -30,6 +30,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			SuperclassName = superclassName;
 		}
 
+		public FdoClassInfo(FdoClassInfo superclass, string newClassName, bool isAbstract)
+		{
+			Superclass = superclass;
+			ClassName = newClassName;
+			IsAbstract = isAbstract;
+		}
+
 		internal void AddProperty(FdoPropertyInfo propertyinfo)
 		{
 			_properties.Add(propertyinfo);

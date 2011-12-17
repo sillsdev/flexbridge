@@ -17,7 +17,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_mdc = new MetadataCache();
+			_mdc = MetadataCache.MdCache;
 
 			_interestingPropsCache = DataSortingService.CacheInterestingProperties(_mdc);
 			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], new FdoPropertyInfo(

@@ -49,7 +49,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				Directory.CreateDirectory(multiFileDirRoot);
 			}
 
-			var mdc = new MetadataCache();
+			var mdc = MetadataCache.MdCache;
 			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
@@ -142,7 +142,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var tempPathname = Path.GetTempFileName();
-			var mdc = new MetadataCache();
+			var mdc = MetadataCache.MdCache;
 			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 			try

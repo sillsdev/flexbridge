@@ -70,6 +70,42 @@ namespace FLEx_ChorusPluginTests.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to TestRepository Cloned: {0}.
+		/// </summary>
+		internal static string kTestRepoCloned {
+			get {
+				return ResourceManager.GetString("kTestRepoCloned", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to TestRepository Created: {0}.
+		/// </summary>
+		internal static string kTestRepoCreated {
+			get {
+				return ResourceManager.GetString("kTestRepoCreated", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to TestRepository deleted {0}.
+		/// </summary>
+		internal static string kTestRepoDeleted {
+			get {
+				return ResourceManager.GetString("kTestRepoDeleted", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to TestRepository not deleted in {0}.
+		/// </summary>
+		internal static string kTestRepoNotDeleted {
+			get {
+				return ResourceManager.GetString("kTestRepoNotDeleted", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos;?&gt;.
 		/// </summary>
 		internal static string kXmlHeading {

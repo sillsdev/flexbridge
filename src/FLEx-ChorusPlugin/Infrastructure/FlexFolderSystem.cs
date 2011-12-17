@@ -23,19 +23,27 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			projectFolderConfiguration.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
 			projectFolderConfiguration.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
-			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");
-			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ChorusNotes");
-			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
-			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
-			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
+
+			// Overhead files.
 			projectFolderConfiguration.IncludePatterns.Add("do_not_share_project.txt");
+			projectFolderConfiguration.IncludePatterns.Add(".hgignore");
+
+			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add("WritingSystemStore/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/Others/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("SupportingFiles/*.*");
-			projectFolderConfiguration.IncludePatterns.Add(".hgignore");
+
+			// New files/folders/
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
+			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
+
+			// Older style files, hopefully, soon to be obsolete.
+			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");
+			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ChorusNotes");
 		}
 	}
 }
