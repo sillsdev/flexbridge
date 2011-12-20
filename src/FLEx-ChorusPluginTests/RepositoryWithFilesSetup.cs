@@ -69,8 +69,8 @@ namespace FLEx_ChorusPluginTests
 			Init(userName);
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = false,
 								DoPullFromOthers = false,
+								DoMergeWithOthers = false,
 								DoSendToOthers = false
 							};
 			Synchronizer.SyncNow(options);
@@ -145,8 +145,8 @@ namespace FLEx_ChorusPluginTests
 		{
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = true,
 								DoPullFromOthers = true,
+								DoMergeWithOthers = true,
 								DoSendToOthers = false
 							};
 
@@ -158,8 +158,8 @@ namespace FLEx_ChorusPluginTests
 		{
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = false,
 								DoPullFromOthers = false,
+								DoMergeWithOthers = false,
 								DoSendToOthers = false
 							};
 

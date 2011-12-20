@@ -122,8 +122,8 @@ namespace FLEx_ChorusPluginTests
 		{
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = false,
 								DoPullFromOthers = false,
+								DoMergeWithOthers = false,
 								DoSendToOthers = false
 							};
 
@@ -139,8 +139,8 @@ namespace FLEx_ChorusPluginTests
 		{
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = true,
 								DoPullFromOthers = true,
+								DoMergeWithOthers = true,
 								DoSendToOthers = true
 							};
 
@@ -249,8 +249,8 @@ namespace FLEx_ChorusPluginTests
 			ChangeFile("test.txt", "bad");
 			var options = new SyncOptions
 							{
-								DoMergeWithOthers = true,
 								DoPullFromOthers = true,
+								DoMergeWithOthers = true,
 								DoSendToOthers = true
 							};
 			var synchronizer = CreateSynchronizer();

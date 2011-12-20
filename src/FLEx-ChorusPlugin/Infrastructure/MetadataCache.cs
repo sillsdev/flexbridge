@@ -70,11 +70,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// 7000044: Starting point (FW 7.1 & 7.1.1)
 			// 70000xx: FW 7.2 released.
 
-			// FW 7.2
-			// NOTE: Changeset: 37085 added new prop, but no new version number.
-			// TBA: Modified Segment
-			//		Add: RA "Speaker"									[CmPerson]
-
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");
 			while (currentVersion < newVersion)
@@ -125,6 +120,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						//			Add: OA "MediaFiles"							[CmMediaContainer]
 						newClass = GetClassInfo("Text");
 						newClass.AddProperty(new FdoPropertyInfo("MediaFiles", DataType.OwningAtomic, false));
+						break;
+					case 7000050:
+						// 7000050:
+						// 1. Modified Segment
+						//		Add: RA "Speaker"									[CmPerson]
 						break;
 				}
 			}

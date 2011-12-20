@@ -38,6 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// New files/folders/
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
+			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
 

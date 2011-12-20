@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -7,123 +8,182 @@ using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
+	/// <summary>
+	/// Read/Write/Delete the Anthropology bounded context.
+	///
+	/// There is only one file for the anthropology context, which is named:
+	/// Root\Anthropology\DataNotebook.ntbk.
+	///
+	/// File format:
+	/// Notebook (root)
+	///	singleton - header
+	///		High-level RnResearchNbk element, with its Records element remaining, but emptied of content.
+	///		Series of lists owned by LangProj, each list wrapped in matching owning prop element name.
+	///	series (col prop) of RnGenericRec elements, nested, as needed.
+	/// </summary>
 	internal static class AnthropologyBoundedContextService
 	{
-		private const string AnthropologyRootFolder = "Anthropology";
-
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
+		internal static void NestContext(XmlReaderSettings readerSettings, string anthropologyDir,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var anthropologyBaseDir = Path.Combine(multiFileDirRoot, AnthropologyRootFolder);
-			if (!Directory.Exists(anthropologyBaseDir))
-				Directory.CreateDirectory(anthropologyBaseDir);
+			// No subfolders for anthropologyDir
+			if (!Directory.Exists(anthropologyDir))
+				Directory.CreateDirectory(anthropologyDir);
 
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
 			SortedDictionary<string, XElement> sortedInstanceData;
 			classData.TryGetValue("RnResearchNbk", out sortedInstanceData);
+			var langProj = classData["LangProject"].Values.First();
 
+			var headerElement = new XElement("header");
+			var rootElement = new XElement("Anthropology", headerElement);
 			if (sortedInstanceData.Count > 0)
 			{
-				var guid = sortedInstanceData.Keys.First();
-				var dataBytes = sortedInstanceData.Values.First();
-				var notebookDir = Path.Combine(anthropologyBaseDir, "Notebook");
-				if (!Directory.Exists(notebookDir))
-					Directory.CreateDirectory(notebookDir);
+				// 1. Main RnResearchNbk element.
+				var notebookElement = sortedInstanceData.Values.First();
+				headerElement.Add(notebookElement);
 
-				// 1. Write out the RnResearchNbk instance in anthropologyBaseDir, but not one of its lists.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, notebookDir, readerSettings, multiClassOutput, guid,
-					new HashSet<string> { "RecTypes" });
-
-				// 2. Write RecTypes list.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, anthropologyBaseDir,
-					dataBytes,
-					"RecTypes", "RecordTypes", false);
+				CmObjectNestingService.NestObject(notebookElement,
+					new Dictionary<string, HashSet<string>>(),
+					classData,
+					interestingPropertiesCache,
+					guidToClassMapping);
+				var recordsElement = notebookElement.Element("Records");
+				if (recordsElement != null && recordsElement.HasElements)
+				{
+					// Put nested (by this time) records all in as children of root.
+					rootElement.Add(recordsElement.Elements()); // NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Records" is a collection prop.
+					recordsElement.RemoveNodes(); // Leaves empty Records element placeholder in RnResearchNbk element.
+				}
+				else
+				{
+					// Add one bogus element, so fast splitter need not be changed for optional main sequence.
+					// Restore will remove it, if found.
+					rootElement.Add(new XElement("RnGenericRec",
+												   new XAttribute("guid", Guid.Empty)));
+				}
+				// Remove objsur node from owning LangProg
+				langProj.Element("ResearchNotebook").RemoveNodes();
 			}
 
-			// Other LangProj props to write here:
-			var langProjElement = classData["LangProject"].Values.First();
+			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
+			NestLists(classData,
+				guidToClassMapping,
+				interestingPropertiesCache,
+				classData["CmPossibilityList"],
+				headerElement,
+				langProj,
+				new List<string>
+								{
+									"AnthroList",
+									"ConfidenceLevels",
+									"Education",
+									"Locations",
+									"People",
+									"Positions",
+									"Restrictions",
+									"Roles",
+									"Status",
+									"TimeOfDay"
+								});
 
-			//	3. Write AnthroList
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"AnthroList", "AnthroList", false);
+			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
+					rootElement);
+			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, "DataNotebook.ntbk"), readerSettings, doc);
 
-			//	4. Write ConfidenceLevels (or lex?)
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"ConfidenceLevels", "ConfidenceLevels", false);
-
-			//	5. Write Restrictions (or lex?)
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Restrictions", "Restrictions", false);
-
-			//	6. Write Roles
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Roles", "Roles", false);
-
-			//	7. Write Status
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Status", "Status", false);
-
-			//	8. Write Locations
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Locations", "Locations", false);
-
-			//	9. Write People
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"People", "People", false);
-
-			//	10. Write Education
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Education", "Education", false);
-
-			//	11. Write TimeOfDay
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"TimeOfDay", "TimeOfDay", false);
-
-			//	12. Write Positions
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, anthropologyBaseDir,
-				langProjElement,
-				"Positions", "Positions", false);
-
-			//// No need to process it in the 'soup' now.
+			//// No need to process these in the 'soup' now.
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "RnResearchNbk", "RnGenericRec", "Reminder", "RnRoledPartic", "CmPerson", "CmAnthroItem", "CmLocation" });
 		}
 
-		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			string anthropologyBaseDir)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, AnthropologyRootFolder)));
+			// No subfolders for anthropologyDir
+			if (!Directory.Exists(anthropologyBaseDir))
+				return; // Nothing to do.
+
+			var langProjElement = highLevelData["LangProject"];
+			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
+			var root = doc.Root;
+			foreach (var headerChildElement in root.Element("header").Elements())
+			{
+				switch (headerChildElement.Name.LocalName)
+				{
+					case "RnResearchNbk":
+						var owningRnPropElement = langProjElement.Element("ResearchNotebook");
+						owningRnPropElement.Add(new XElement("objsur",
+															   new XAttribute("guid", headerChildElement.Attribute("guid").Value.ToLowerInvariant()),
+															   new XAttribute("t", "o")));
+						// Put all records back in RnResearchNbk, before sort and restore.
+						// EXCEPT, if there is only onne of them and it is guid.Empty, then skip it
+						var records = root.Elements("RnGenericRec").ToList();
+						if (records.Count > 1 || records[0].Attribute("guid").Value != Guid.Empty.ToString())
+							headerChildElement.Element("Records").Add();
+						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, headerChildElement, null); // object already has owning guid attr.
+						break;
+					case "AnthroList": // Fall through
+					case "ConfidenceLevels": // Fall through
+					case "Education": // Fall through
+					case "Locations": // Fall through
+					case "People": // Fall through
+					case "Positions": // Fall through
+					case "Restrictions": // Fall through
+					case "Roles": // Fall through
+					case "Status": // Fall through
+					case "TimeOfDay":
+						var listElement = headerChildElement.Element("CmPossibilityList");
+						RestoreLangProjListObjsurElement(langProjElement, listElement);
+						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, listElement, null); // object already has owning guid attr.
+						break;
+				}
+			}
+		}
+
+		internal static void RemoveBoundedContextData(string anthropologyBase)
+		{
+			var notebookPath = Path.Combine(anthropologyBase, "DataNotebook.ntbk");
+			if (File.Exists(notebookPath))
+				File.Delete(notebookPath);
+			FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
+		}
+
+		private static void RestoreLangProjListObjsurElement(XContainer langProjElement, XElement listElement)
+		{
+			var owningListPropElement = langProjElement.Element(listElement.Parent.Name.LocalName);
+			owningListPropElement.Add(new XElement("objsur",
+												   new XAttribute("guid", listElement.Attribute("guid").Value),
+												   new XAttribute("t", "o")));
+		}
+
+		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			IDictionary<string, XElement> posLists,
+			XContainer headerElement,
+			XContainer langProjElement,
+			IEnumerable<string> propNames)
+		{
+			var exceptions = new Dictionary<string, HashSet<string>>();
+			foreach (var propName in propNames)
+			{
+				var listPropElement = langProjElement.Element(propName);
+				if (listPropElement == null || !listPropElement.HasElements)
+					continue;
+
+				var listElement = posLists[listPropElement.Elements().First().Attribute("guid").Value];
+				CmObjectNestingService.NestObject(listElement,
+												  exceptions,
+												  classData,
+												  interestingPropertiesCache,
+												  guidToClassMapping);
+				listPropElement.RemoveNodes(); // Remove the single list objsur element.
+				headerElement.Add(new XElement(propName, listElement));
+			}
 		}
 	}
 }

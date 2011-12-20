@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	{
 		private const string Extension = "ClassData";
 		private readonly Dictionary<string, bool> _filesChecked = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-		private readonly MetadataCache _mdc = MetadataCache.MdCache;
+		private readonly MetadataCache _mdc = MetadataCache.MdCache; // Theory has it that the model veriosn file was process already, so the version is current.
 
 		#region Implementation of IChorusFileTypeHandler
 

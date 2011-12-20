@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Anthropology;
@@ -155,9 +156,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
-		internal static void WriteVersionNumberFile(string multiFileDirRoot, string projectName, string version)
+		internal static void WriteVersionNumberFile(string pathRoot, string projectName, string version)
 		{
-			File.WriteAllText(Path.Combine(multiFileDirRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
+			File.WriteAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
 		}
 
 		internal static void WriteClassDataToOriginal(XmlWriter writer, string rootFolder, XmlReaderSettings readerSettings)
@@ -184,56 +185,110 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// TODO: Remove below stuff, after everything is shifted to domains.
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
+			if (!Directory.Exists(multiFileDirRoot))
+			{
+				Directory.CreateDirectory(multiFileDirRoot);
+				return;
+			}
 			RemoveDataFiles(multiFileDirRoot);
-			RemoveEmptyFolders(multiFileDirRoot, false);
+			RemoveEmptyFolders(multiFileDirRoot, false); // Leave it, since we want it to be there, after this method is done.
 		}
 
 		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
 			XmlReaderSettings readerSettings,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
-			HashSet<string> skipwriteEmptyClassFiles)
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache)
 		{
-			LinguisticsDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			AnthropologyDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			var skipwriteEmptyClassFiles = new HashSet<string>();
+
+			//		LinguisticsDomainServices.WriteNestedDomainData will do old and new for a while yet.
+			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			//		LinguisticsDomainServices.WriteNestedDomainData does only new.
+			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			//		ScriptureDomainServices.WriteDomainData will do old for a while yet.
 			ScriptureDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
 			// but I'm not there yet.
 			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
+
+			// TODO: Props to not store in nested LangProj:
+			// TODO:	These are all for LangProj
+			/*
+			 * "ResearchNotebook"
+			 * "AnthroList",
+			 * "ConfidenceLevels",
+			 * "Restrictions",
+			 * "Roles",
+			 * "Status",
+			 * "Locations",
+			 * "People",
+			 * "Education",
+			 * "TimeOfDay",
+			 * "Positions"
+			*/
+
+			// TODO??: Maybe put everything that is left in "classData" in the 'General' context as: 1) series of regular 'rt' elements, or 2) nested objects, with the top elements being the unowned ones.
+			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
+			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
+			// Write data records in guid sorted order.
+			// Write class file for each concrete class, whether it has data or not.
+			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
+			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
+			{
+				var classDataPathname = Path.Combine(multiFileDirRoot, className + ".ClassData");
+				SortedDictionary<string, XElement> sortedInstanceData;
+				if (classData.TryGetValue(className, out sortedInstanceData))
+				{
+					// Only write one file, since there are no more high volume instances here.
+					WriteSecondaryFile(classDataPathname, readerSettings, sortedInstanceData);
+				}
+				else
+				{
+					// Write empty class file, unless it is empty by reason of it being emptied by a Bounded Context.
+					if (!skipwriteEmptyClassFiles.Contains(className))
+						WriteSecondaryFile(classDataPathname, readerSettings, null);
+				}
+			}
 		}
 
 		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string pathRoot)
 		{
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var restoredElement in LinguisticsDomainServices.FlattenDomain(interestingPropertiesCache, pathRoot))
-			{
-				DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, restoredElement);
-			}
+			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
-			// TODO: Add other two Domains and move remaining ling stuff into Ling domain.
-			//ReversalBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot.Replace("DataFiles", "Linguistics"));
-			//TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			//DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			//WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			//LexiconBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			//PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-			//LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-
-			//AnthropologyBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-
-			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+			// TODO: 'leftover' Domain.
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 			foreach (var classDataPathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories))
 			{
 				var classDataDoc = XDocument.Load(classDataPathname);
 				foreach (var rtElement in classDataDoc.Element("classdata").Elements("rt"))
 				{
+					var className = rtElement.Attribute("class").Value;
+					switch (className)
+					{
+						case "LangProject":
+							highLevelData.Add(className, rtElement);
+							break;
+						case "LexDb":
+							highLevelData.Add(className, rtElement);
+							break;
+					}
+
 					DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
 				}
 			}
+
+			// NB: These are flattened in reverse order from that of nesting, since I think 'sortedData' will be need for re-establishing some distal properties.
+			// TODO: When 'sortedData' is a parm to all Flatten calls, then the loop here can go away.
+
+			// TODO: Add Scripture Domain and 'leftover' Domain.
+			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
+
+			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
+			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
 
 			foreach (var rtElement in sortedData.Values)
 				WriteElement(writer, readerSettings, rtElement);
@@ -265,6 +320,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static void RemoveEmptyFolders(string baseDataFolder, bool removeTopLevelFolder)
 		{
+			if (!Directory.Exists(baseDataFolder))
+				return;
+
 			foreach (var folder in Directory.GetDirectories(baseDataFolder))
 			{
 				if (Directory.GetFileSystemEntries(folder).Length > 0)

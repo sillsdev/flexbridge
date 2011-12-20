@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if DEBUG
+using System.Diagnostics;
+#endif
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,32 +34,38 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			CheckPathname(mainFilePathname);
 
+			DeleteOldFiles(Path.GetDirectoryName(mainFilePathname), projectName);
+			RestoreNewFiles(mainFilePathname, projectName);
+
+#if DEBUG
+			// Enable ONLY for testing a round trip, and when enabled, stop the debugger, right aterwards.
+			// Do NOT go back to the caller.
+			RestoreMainFile(mainFilePathname, projectName);
+			Debug.Fail("Stop here.");
+#endif
+		}
+
+		private static void RestoreNewFiles(string mainFilePathname, string projectName)
+		{
+			var mdc = MetadataCache.MdCache; // Upgrade is done shortly.
+
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-			var customPropPathname = Path.Combine(pathRoot, projectName + ".CustomProperties");
-			if (File.Exists(customPropPathname))
-				File.Delete(customPropPathname);
-			// Leave ModelVersion file.
-
-			if (Directory.Exists(multiFileDirRoot))
+			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+			// 1. Write version number file.
+			using (var reader = XmlReader.Create(mainFilePathname, readerSettings))
 			{
-				// Brutal, but effective. :-)
-				FileWriterService.RemoveDomainData(pathRoot); // Deletes stuff in old and new locations.
-				// Leave all ChorusNotes files.
-			}
-			else
-			{
-				Directory.CreateDirectory(multiFileDirRoot);
+				reader.MoveToContent();
+				reader.MoveToAttribute("version");
+				var version = reader.Value;
+				FileWriterService.WriteVersionNumberFile(pathRoot, projectName, version);
+				mdc.UpgradeToVersion(int.Parse(version));
 			}
 
-			var mdc = MetadataCache.MdCache;
 			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
-
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
 			var guidToClassMapping = new Dictionary<string, string>();
-			byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
 				bool foundOptionalFirstElement;
@@ -65,27 +74,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				{
 					if (foundOptionalFirstElement)
 					{
-						// Cache custom prop file for later write.
-						var cpElement = DataSortingService.SortCustomPropertiesRecord(Utf8.GetString(record));
-						// Add custom property info to MDC, since it may need to be sorted in the data files.
-						foreach (var propElement in cpElement.Elements("CustomField"))
-						{
-							var className = propElement.Attribute("class").Value;
-							var propName = propElement.Attribute("name").Value;
-							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
-							if (adjustedTypeValue != typeAttr.Value)
-								typeAttr.Value = adjustedTypeValue;
-							var customProp = new FdoPropertyInfo(
-								propName,
-								typeAttr.Value,
-								true);
-							DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
-							mdc.AddCustomPropInfo(
-								className,
-								customProp);
-						}
-						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
+						// 2. Write custom properties file, even if has no custom innards.
+						WriteCustomPropertyFile(mdc, interestingPropertiesCache, readerSettings, pathRoot, projectName, record);
 						foundOptionalFirstElement = false;
 					}
 					else
@@ -95,45 +85,52 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				}
 			}
 
-			// Get the 'version' attr value from main file.
-			string version;
-			using (var reader = XmlReader.Create(mainFilePathname, new XmlReaderSettings {IgnoreWhitespace = true}))
+			// 3. Write all data files, here and there. [NB: The CmObject data in the XElements of 'classData' has all been sorted by this point.]
+			FileWriterService.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping, interestingPropertiesCache);
+		}
+
+		private static void WriteCustomPropertyFile(MetadataCache mdc,
+			IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			XmlReaderSettings readerSettings,
+			string pathRoot,
+			string projectName,
+			byte[] record)
+		{
+			var cpElement = DataSortingService.SortCustomPropertiesRecord(Utf8.GetString(record));
+			// Add custom property info to MDC, since it may need to be sorted in the data files.
+			foreach (var propElement in cpElement.Elements("CustomField"))
 			{
-				reader.MoveToContent();
-				reader.MoveToAttribute("version");
-				version = reader.Value;
+				var className = propElement.Attribute("class").Value;
+				var propName = propElement.Attribute("name").Value;
+				var typeAttr = propElement.Attribute("type");
+				var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
+				if (adjustedTypeValue != typeAttr.Value)
+					typeAttr.Value = adjustedTypeValue;
+				var customProp = new FdoPropertyInfo(
+					propName,
+					typeAttr.Value,
+					true);
+				DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
+				mdc.AddCustomPropInfo(
+					className,
+					customProp);
 			}
+			FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, Utf8.GetBytes(cpElement.ToString()));
+		}
 
-			// Write version number file.
-			FileWriterService.WriteVersionNumberFile(pathRoot, projectName, version);
-			// Write custom properties file, even if has no custom innards.
-			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-			FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, optionalFirstElement);
-
-			// NB: The CmObject data in the byte arrays of 'classData' has all been sorted by this point.
-			var skipwriteEmptyClassFiles = new HashSet<string>();
-			FileWriterService.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-
-			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
-			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
-			// Write data records in guid sorted order.
-			// Write class file for each concrete class, whether it has data or not.
-			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
-			{
-				SortedDictionary<string, XElement> sortedInstanceData;
-				if (classData.TryGetValue(className, out sortedInstanceData))
-				{
-					// Only write one file, since there are no more high volume instacnes here.
-					FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, sortedInstanceData);
-				}
-				else
-				{
-					// Write empty class file, unless it is empty by reason of it being emptied by a Bounded Context.
-					if (!skipwriteEmptyClassFiles.Contains(className))
-						FileWriterService.WriteSecondaryFile(Path.Combine(multiFileDirRoot, className + ".ClassData"), readerSettings, null);
-				}
-			}
-			//RestoreMainFile(mainFilePathname, projectName);
+		private static void DeleteOldFiles(string pathRoot, string projectName)
+		{
+			// Wipe out custom props file, as it will be re-created, even if it only has the root element in it.
+			var customPropPathname = Path.Combine(pathRoot, projectName + ".CustomProperties");
+			if (File.Exists(customPropPathname))
+				File.Delete(customPropPathname);
+			// Delete ModelVersion file, but it gets rewritten soon.
+			var modelVersionPathname = Path.Combine(pathRoot, projectName + ".ModelVersion");
+			if (File.Exists(modelVersionPathname))
+				File.Delete(modelVersionPathname);
+			// Deletes stuff in old and new locations. And (for now) makes sure "DataFiles" folder exists.
+			// Brutal, but effective. :-) (But, leaves all ChorusNotes files.)
+			FileWriterService.RemoveDomainData(pathRoot);
 		}
 
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)
@@ -142,8 +139,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var tempPathname = Path.GetTempFileName();
-			var mdc = MetadataCache.MdCache;
-			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 			try
 			{
@@ -169,7 +164,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					// Write out version number from the ModelVersion file.
 					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"));
 					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
-					writer.WriteAttributeString("version", splitModelVersionData[1].Trim());
+					var version = splitModelVersionData[1].Trim();
+					writer.WriteAttributeString("version", version);
+
+					var mdc = MetadataCache.MdCache; // This may really need to be a reset
+					mdc.UpgradeToVersion(int.Parse(version));
+					var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
 					// Write out optional custom property file.
 					// Actually, the file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
@@ -190,7 +190,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						}
 						FileWriterService.WriteElement(writer, readerSettings, Utf8.GetBytes(doc.Root.ToString()));
 					}
+
 					FileWriterService.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
+
 					writer.WriteEndElement();
 				}
 
@@ -214,7 +216,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		private static void CacheDataRecord(Dictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
+		private static void CacheDataRecord(
+			IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, string> guidToClassMapping,
+			byte[] record)
 		{
 			var rtElement = XElement.Parse(Utf8.GetString(record));
 			var className = rtElement.Attribute("class").Value;

@@ -14,6 +14,7 @@ using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 {
+	[TestFixture]
 	public class FieldWorksReversalTypeHandlerTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
@@ -101,7 +102,6 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 				Assert.IsTrue(_fileHandler.CanDiffFile(newpath));
 				Assert.IsTrue(_fileHandler.CanMergeFile(newpath));
 				Assert.IsTrue(_fileHandler.CanPresentFile(newpath));
-				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}

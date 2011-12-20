@@ -7,34 +7,40 @@ using FLEx_ChorusPlugin.Properties;
 namespace FLEx_ChorusPlugin.Infrastructure
 {
 	/// <summary>
-	/// This class takes a CmOject (as an XElement) and flattens out all owned objects.
+	/// This class takes a CmObject (as an XElement) and flattens out all owned objects.
 	/// </summary>
 	internal static class CmObjectFlatteningService
 	{
-		internal static IEnumerable<XElement> FlattenObject(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement element, string ownerguid)
+		internal static void FlattenObject(SortedDictionary<string, XElement> sortedData,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			XElement element, string ownerguid)
 		{
+			if (sortedData == null) throw new ArgumentNullException("sortedData");
 			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (element == null) throw new ArgumentNullException("element");
-			if (ownerguid != null)
-			{
-				if (ownerguid == string.Empty) throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
-			}
+			if (ownerguid != null && ownerguid == string.Empty)
+				throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
 
-			var result = new List<XElement>(50000)
-							{
-								element
-							};
+			var elementGuid = element.Attribute("guid").Value;
+			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject.
 			var className = element.Name.LocalName;
 			element.Name = "rt";
 			element.Add(new XAttribute("class", className));
-			if (ownerguid != null)
+			if (ownerguid != null && element.Attribute("ownerguid") == null)
 				element.Add(new XAttribute("ownerguid", ownerguid));
+
+			// Re-sort those attributes.
+			var sortedAttrs = new SortedDictionary<string, XAttribute>();
+			foreach (var attribute in element.Attributes())
+				sortedAttrs.Add(attribute.Name.LocalName, attribute);
+			element.Attributes().Remove();
+			element.Add(sortedAttrs.Values);
 
 			var owningPropsForClass = interestingPropertiesCache[className][DataSortingService.Owning];
 			if (owningPropsForClass.Count == 0)
-				return result;
+				return;
 
 			foreach (var propertyElement in element.Elements().ToArray())
 			{
@@ -46,17 +52,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					continue;
 				foreach (var ownedElement in propertyElement.Elements().ToArray())
 				{
+					if (ownedElement.Name.LocalName == "objsur")
+						break;
 					ownedElement.Remove();
 					var replacementOjSurElement = new XElement("objsur",
 															   new XAttribute("guid", ownedElement.Attribute("guid").Value),
 															   new XAttribute("t", "o"));
 					propertyElement.Add(replacementOjSurElement);
 					// Move down the nested set of owned objects, and do the same.
-					result.AddRange(FlattenObject(interestingPropertiesCache, ownedElement, element.Attribute("guid").Value));
+					FlattenObject(sortedData, interestingPropertiesCache, ownedElement, elementGuid);
 				}
 			}
-
-			return result;
 		}
 	}
 }

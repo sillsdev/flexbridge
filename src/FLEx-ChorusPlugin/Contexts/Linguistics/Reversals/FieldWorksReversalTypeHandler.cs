@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	internal sealed class FieldWorksReversalTypeHandler : IChorusFileTypeHandler
 	{
 		private const string Extension = "reversal";
-		private readonly MetadataCache _mdc = MetadataCache.MdCache;
+		private readonly MetadataCache _mdc = MetadataCache.MdCache; // Theory has it that the model veriosn file was process already, so the version is current.
 
 		#region Implementation of IChorusFileTypeHandler
 

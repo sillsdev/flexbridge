@@ -93,6 +93,7 @@
 	<Compile Include="Contexts\General\FieldWorksFileMergeTests.cs" />
 	<Compile Include="Contexts\General\FieldWorksFileValidationTests.cs" />
 	<Compile Include="Contexts\General\FieldWorksMergingStrategyTests.cs" />
+	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
 	<Compile Include="DummyFolderSystem.cs" />
@@ -137,7 +138,6 @@
 	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<Folder Include="Contexts\Anthropology\" />
 	<Folder Include="Contexts\Scripture\" />
   </ItemGroup>
   <ItemGroup>

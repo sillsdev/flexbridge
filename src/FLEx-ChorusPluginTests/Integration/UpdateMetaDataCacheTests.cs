@@ -79,9 +79,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "SoundFilePath", DataType.Unicode); // Do NOT remove it, yet.
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaFiles", DataType.OwningAtomic);
 
-			// TBA: Modified Segment
+			// 7000050: Modified Segment
 			//		Add: RA "Speaker"									[CmPerson]
-			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Segment", "Speaker");
+			CheckUpgrade(mdc, fileHandler, 7000050);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -8,7 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
 	/// <summary>
-	/// Read/Write the Reversal bounded context.
+	/// Read/Write/Delete the Reversal bounded context.
 	///
 	/// The Reversal Index instances, including all they own, need to then be removed from 'classData',
 	/// as that stuff will be stored elsewhere.
@@ -32,7 +33,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	{
 		private const string ReversalRootFolder = "Reversals";
 
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string baseDirectory,
+		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
@@ -41,6 +42,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			SortedDictionary<string, XElement> sortedInstanceData;
 			if (!classData.TryGetValue("ReversalIndex", out sortedInstanceData))
 				return;
+
+			var lexDb = classData["LexDb"].First().Value;
+			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
 			var reversalDir = Path.Combine(baseDirectory, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
@@ -63,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement("header", revIndex));
-				root.Add(entriesElement.Elements());
+				root.Add(entriesElement.Elements()); // NB: These were already sorted, why up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
 				entriesElement.RemoveNodes();
 				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
 					root);
@@ -74,33 +78,50 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
 		}
 
-		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			string linguisticsBaseDir)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, ReversalRootFolder)));
-		}
+			if (!Directory.Exists(linguisticsBaseDir))
+				return; // Nothing to do.
 
-		internal static void RemoveBoundedContextData(string pathRoot)
-		{
-			var reversalDir = Path.Combine(pathRoot, Path.Combine("Linguistics", ReversalRootFolder));
-			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
-				File.Delete(reversalPathname);
-			FileWriterService.RemoveEmptyFolders(reversalDir, true);
-		}
-
-		internal static IEnumerable<XElement> FlattenContext(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string linguisticsBaseDir)
-		{
-			var result = new List<XElement>(50000);
+			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
+// ReSharper disable ConvertClosureToMethodGroup
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
+// ReSharper restore ConvertClosureToMethodGroup
 			{
 				// Put entries back into index's Entries element.
 				var root = reversalDoc.Element("Reversal");
 				var header = root.Element("header");
 				var revIdx = header.Element("ReversalIndex");
 				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
-				result.AddRange(CmObjectFlatteningService.FlattenObject(interestingPropertiesCache, revIdx, null));
+				CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, revIdx, null);
+				var revIdxGuid = revIdx.Attribute("guid").Value.ToLowerInvariant();
+				sortedRevs.Add(revIdxGuid, new XElement("objsur", new XAttribute("guid", revIdxGuid), new XAttribute("t", "o")));
 			}
-			return result;
+
+			// Restore lexDb ReversalIndexes property in sorted order.
+			if (sortedRevs.Count > 0)
+			{
+				var reversalsOwningProp = highLevelData["LexDb"].Element("ReversalIndexes");
+				foreach (var sortedRev in sortedRevs.Values)
+					reversalsOwningProp.Add(sortedRev);
+			}
+		}
+
+		internal static void RemoveBoundedContextData(string linguisticsBase)
+		{
+			if (!Directory.Exists(linguisticsBase))
+				return;
+			var reversalDir = Path.Combine(linguisticsBase, ReversalRootFolder);
+			if (!Directory.Exists(reversalDir))
+				return;
+			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
+				File.Delete(reversalPathname);
+			FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 	}
 }
