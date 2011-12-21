@@ -34,6 +34,7 @@ namespace LiftBridgeTests.MockedViews
 
 		public event ExportLexiconEventHandler ExportLexicon;
 		public event ImportLexiconEventHandler ImportLexicon;
+		public event BasicLexiconImportEventHandler BasicImportLexicon;
 
 		public void SetSystem(ChorusSystem chorusSystem, LiftProject liftProject)
 		{

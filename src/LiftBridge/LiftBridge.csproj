@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
+	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="View\ExistingSystem.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>

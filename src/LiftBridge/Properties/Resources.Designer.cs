@@ -61,6 +61,24 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to basic.
+		/// </summary>
+		public static string kBasicFailureFileContents {
+			get {
+				return ResourceManager.GetString("kBasicFailureFileContents", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FLEx reported it was not able to do the initial import. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the initial import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive..
+		/// </summary>
+		public static string kBasicImportFailureMessage {
+			get {
+				return ResourceManager.GetString("kBasicImportFailureMessage", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Cannot clone onto an existing directory ({0}).
 		/// </summary>
 		public static string kCloneTrouble {
@@ -93,6 +111,24 @@ namespace SIL.LiftBridge.Properties {
 		public static string kFixingRelationLinks {
 			get {
 				return ResourceManager.GetString("kFixingRelationLinks", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FLEx Import failure.
+		/// </summary>
+		public static string kFlexImportFailureTitle {
+			get {
+				return ResourceManager.GetString("kFlexImportFailureTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FLEx reported it was not able to import the changes received. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive..
+		/// </summary>
+		public static string kFlexStandardImportFailureMessage {
+			get {
+				return ResourceManager.GetString("kFlexStandardImportFailureMessage", resourceCulture);
 			}
 		}
 
@@ -228,6 +264,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string ksExportingEntries {
 			get {
 				return ResourceManager.GetString("ksExportingEntries", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to standard.
+		/// </summary>
+		public static string kStandardFailureFileContents {
+			get {
+				return ResourceManager.GetString("kStandardFailureFileContents", resourceCulture);
 			}
 		}
 

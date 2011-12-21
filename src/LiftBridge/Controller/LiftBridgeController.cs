@@ -6,6 +6,7 @@ using Chorus.FileTypeHanders.lift;
 using LiftBridgeCore;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.Services;
 using SIL.LiftBridge.View;
 
 namespace SIL.LiftBridge.Controller
@@ -58,11 +59,13 @@ namespace SIL.LiftBridge.Controller
 			_liftBridgeView.ActivateView(_existingSystemView);
 			_existingSystemView.ImportLexicon += OnImportLexicon;
 			_existingSystemView.ExportLexicon += OnExportLexicon;
+			_existingSystemView.BasicImportLexicon += OnBasicImport;
 		}
 
 		void OnExportLexicon(object sender, LiftBridgeEventArgs e)
 		{
 			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
 			if (ExportLexicon != null)
 				ExportLexicon(this, e);
 			else
@@ -72,8 +75,19 @@ namespace SIL.LiftBridge.Controller
 		void OnImportLexicon(object sender, LiftBridgeEventArgs e)
 		{
 			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
 			if (ImportLexicon != null)
 				ImportLexicon(this, e);
+			else
+				e.Cancel = true;
+		}
+
+		void OnBasicImport(object sender, LiftBridgeEventArgs e)
+		{
+			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
+			if (BasicLexiconImport != null)
+				BasicLexiconImport(this, e);
 			else
 				e.Cancel = true;
 		}
@@ -114,8 +128,10 @@ namespace SIL.LiftBridge.Controller
 						BasicLexiconImport((ILiftBridge)this, eventArgs);
 						if (eventArgs.Cancel)
 						{
+							// Event handler could not complete the basic import.
+							ImportFailureServices.RegisterBasicImportFailure((_liftBridgeView as Form), Liftproject);
 							_liftBridgeView.Close();
-							return; // Event handler could not complete the basic import.
+							return;
 						}
 					}
 					break;
@@ -225,6 +241,7 @@ namespace SIL.LiftBridge.Controller
 				_startupNewView.Startup -= Startup;
 				_existingSystemView.ImportLexicon -= OnImportLexicon;
 				_existingSystemView.ExportLexicon -= OnExportLexicon;
+				_existingSystemView.BasicImportLexicon -= OnBasicImport;
 
 				MainForm.Dispose();
 			}

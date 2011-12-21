@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -25,6 +24,44 @@ namespace SIL.LiftBridge.View
 
 		private void SendReceiveButtonClick(object sender, EventArgs e)
 		{
+			var form = FindForm();
+			switch (ImportFailureServices.GetFailureStatus(_liftProject))
+			{
+				default:
+					throw new InvalidOperationException("Failure Status not recognized.");
+				case ImportFailureStatus.BasicImportNeeded:
+					// Initial basic import failed, so do the safe import again.
+					if (BasicImportLexicon == null)
+						return; // No handler.
+					var eventArgs = new LiftBridgeEventArgs(_liftProject.LiftPathname);
+					BasicImportLexicon(this, eventArgs);
+					if (eventArgs.Cancel)
+					{
+						ImportFailureServices.RegisterBasicImportFailure(form, _liftProject);
+						form.Close();
+						return;
+					}
+					break;
+				case ImportFailureStatus.StandardImportNeeded:
+					// A standard import failed, so retry it.
+					if (ImportLexicon == null)
+						return; // No handler.
+					var args = new LiftBridgeEventArgs(_liftProject.LiftPathname);
+					ImportLexicon(this, args);
+					if (args.Cancel)
+					{
+						// FLEx cancelled the import for reasons known only to FLEx.
+						ImportFailureServices.RegisterStandardImportFailure(form, _liftProject);
+						form.Close();
+						return;
+					}
+					break;
+				case ImportFailureStatus.NoImportNeeded:
+					// Everything is fine, so go on.
+					break;
+			}
+			ImportFailureServices.ClearImportFailure(_liftProject);
+
 			if (!_haveExportedFromFlex)
 			{
 				// Export Lift data, but only once per launch.
@@ -58,6 +95,7 @@ namespace SIL.LiftBridge.View
 							// Eat exception.
 						}
 // ReSharper restore EmptyGeneralCatchClause
+						FindForm().Close();
 						return;
 					}
 
@@ -71,20 +109,33 @@ namespace SIL.LiftBridge.View
 			// Use SyncDialog to do the S/R stuff.
 			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog())
 			{
-				syncDlg.SyncOptions.DoSendToOthers = true;
+				// Pull/Merge/Send(Push) is the order Chorus does it.
+				// (Setting the options here has no effect on Chorus processing oprder, but it does help humans know the order.)
 				syncDlg.SyncOptions.DoPullFromOthers = true;
 				syncDlg.SyncOptions.DoMergeWithOthers = true;
+				syncDlg.SyncOptions.DoSendToOthers = true;
 				var myForm = FindForm();
 				syncDlg.ShowDialog(myForm);
 				if (syncDlg.DialogResult != DialogResult.OK || !syncDlg.SyncResult.DidGetChangesFromOthers)
-					return; // User canceled of nothing came from 'afar'.
+					return; // User canceled or nothing came from 'afar'.
 
 				if (ImportLexicon == null)
 					return;// No event handler.
 
 				var eventArgs = new LiftBridgeEventArgs(_liftProject.LiftPathname);
 				ImportLexicon(this, eventArgs);
-				// Should we do anything special for an import cancelation?
+				if (eventArgs.Cancel)
+				{
+					// FLEx cancelled the import for reasons known only to FLEx.
+					ImportFailureServices.RegisterStandardImportFailure(form, _liftProject);
+					form.Close();
+					return;
+				}
+				ImportFailureServices.ClearImportFailure(_liftProject);
+
+				// In case the user does another S/R to another repo, after the import,
+				// we do want to have FLEx do the export again, just to get what it thinks its its latest.
+				_haveExportedFromFlex = false;
 			}
 		}
 
@@ -102,8 +153,8 @@ namespace SIL.LiftBridge.View
 		#region Implementation of IExistingSystemView
 
 		public event ExportLexiconEventHandler ExportLexicon;
-
 		public event ImportLexiconEventHandler ImportLexicon;
+		public event BasicLexiconImportEventHandler BasicImportLexicon;
 
 		public void SetSystem(ChorusSystem chorusSystem, LiftProject liftProject)
 		{

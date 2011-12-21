@@ -180,13 +180,28 @@
   <data name="kTitle" xml:space="preserve">
 	<value>LIFT Bridge: {0}</value>
   </data>
-	<data name="kLoneLiftFileWarning">
-		<value xml:space="preserve">The selected LIFT file appears to have been simply exported, and cannot be used for sharing. Please try another LIFT file.</value>
+  <data name="kLoneLiftFileWarning" xml:space="preserve">
+	<value>The selected LIFT file appears to have been simply exported, and cannot be used for sharing. Please try another LIFT file.</value>
+  </data>
+  <data name="kUnsipportedLiftFile" xml:space="preserve">
+	<value>Unsupported LIFT file</value>
+  </data>
+  <data name="lFolderAlreadyExists" xml:space="preserve">
+	<value>Folder Already Exists</value>
+  </data>
+  <data name="kFlexStandardImportFailureMessage" xml:space="preserve">
+	<value>FLEx reported it was not able to import the changes received. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive.</value>
+  </data>
+  <data name="kFlexImportFailureTitle" xml:space="preserve">
+	<value>FLEx Import failure</value>
+  </data>
+  <data name="kStandardFailureFileContents" xml:space="preserve">
+	<value>standard</value>
+  </data>
+	<data name="kBasicImportFailureMessage">
+		<value xml:space="preserve">FLEx reported it was not able to do the initial import. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the initial import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive.</value>
 	</data>
-	<data name="kUnsipportedLiftFile">
-		<value xml:space="preserve">Unsupported LIFT file</value>
-	</data>
-	<data name="lFolderAlreadyExists">
-		<value xml:space="preserve">Folder Already Exists</value>
+	<data name="kBasicFailureFileContents">
+		<value xml:space="preserve">basic</value>
 	</data>
 </root>

@@ -18,6 +18,12 @@ namespace SIL.LiftBridge.View
 		/// </summary>
 		event ImportLexiconEventHandler ImportLexicon;
 
+		/// <summary>
+		/// Do a basic 'safe' import, where entries in the internally held lexicon
+		/// that are not in the Lift file are not removed.
+		/// </summary>
+		event BasicLexiconImportEventHandler BasicImportLexicon;
+
 		void SetSystem(ChorusSystem chorusSystem, LiftProject liftProject);
 	}
 }
