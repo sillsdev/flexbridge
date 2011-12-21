@@ -42,7 +42,8 @@
 		</table>
 		<h1>Release Notes:</h1>
 		<ul>
-			<li>DEV_VERSION_NUMBER <ol> <li>Fixed bug in Lift bridge where user had selected a simple exported LIFT file. Fixed problem where Chorus tried to create a system where the folder already existed.</li> </ol> </li>
+			<li>DEV_VERSION_NUMBER <ol> <li>Set Lift Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, Lift Bridge will try to get FELx to import the data that had failed before. While a bit harsh, it protects the shared data.</li> </ol> </li>
+			<li>1.0.11.0 <ol> <li>Fixed bug in Lift bridge where user had selected a simple exported LIFT file. Fixed problem where Chorus tried to create a system where the folder already existed.</li> </ol> </li>
 			<li>1.0.10.0 <ol> <li>Fixed two bugs in Chorus related to merge conflicts.</li> </ol> </li>
 			<li>1.0.9.0 <ol> <li>Fixed bug with unexpected xml entities in 'id' attribute for LIFT entries.</li> </ol> </li>
 			<li>1.0.5.0 <ol> <li>Revert installation location to original place.</li> </ol> </li>
