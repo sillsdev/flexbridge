@@ -59,12 +59,8 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 			// These steps will do some 'pre-merging' work,
 			// which will avoid what could otherwise be conflicts.
-			FieldWorksMergingServices.MergeTimestamps(ourEntry, theirEntry);
-			FieldWorksMergingServices.MergeCheckSum(ourEntry, theirEntry, false);
-			FdoClassInfo info;
-			if (_mdc.ClassesWithCollectionProperties.TryGetValue(className, out info))
-				FieldWorksMergingServices.MergeCollectionProperties(eventListener, info, ourEntry, theirEntry, commonEntry, false);
 			var merger = _mergers[className];
+			FieldWorksMergingServices.PreMerge(false, eventListener, _mdc, ourEntry, theirEntry, commonEntry);
 
 			return FieldWorksMergingServices.GetOuterXml(merger.Merge(eventListener, ourEntry, theirEntry, commonEntry));
 		}

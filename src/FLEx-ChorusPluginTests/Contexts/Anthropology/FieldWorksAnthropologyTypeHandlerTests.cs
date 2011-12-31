@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.FileTypeHanders.xml;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -139,6 +141,94 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 			{
 				File.Delete(testPathname);
 			}
+		}
+
+		[Test]
+		public void NewEntryInChildReported()
+		{
+			const string parent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
+</Anthropology>";
+
+			const string child =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
+<RnGenericRec guid='c1ed6db4-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
+</Anthropology>";
+
+			using (var parentTempFile = new TempFile(parent))
+			using (var childTempFile = new TempFile(child))
+			{
+				var differ = Xml2WayDiffer.CreateFromFiles(parentTempFile.Path, childTempFile.Path, _eventListener,
+					"header",
+					"RnGenericRec",
+					"guid");
+				differ.ReportDifferencesToListener();
+				_eventListener.AssertExpectedChangesCount(1);
+				_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
+			}
+		}
+
+		[Test]
+		public void WinnerAndLoserEachAddedNewElement()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			var ourContent = commonAncestor.Replace("</Anthropology>", "<RnGenericRec guid='newbieOurs'/></Anthropology>");
+			var theirContent = commonAncestor.Replace("</Anthropology>", "<RnGenericRec guid='newbieTheirs'/></Anthropology>");
+
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				commonAncestor, ourContent, theirContent,
+				new List<string> { @"Anthropology/RnGenericRec[@guid=""oldie""]", @"Anthropology/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec[@guid=""newbieTheirs""]" }, null,
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+		}
+
+		[Test]
+		public void WinnerAndLoserEachAddedNewSubentry()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			var ourContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieOurs'/></SubRecords></RnGenericRec>");
+			var theirContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieTheirs'/></SubRecords></RnGenericRec>");
+
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				commonAncestor, ourContent, theirContent,
+				new List<string> { @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieTheirs""]" }, null,
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 	}
 }

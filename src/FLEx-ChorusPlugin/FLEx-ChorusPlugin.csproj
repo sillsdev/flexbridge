@@ -131,6 +131,7 @@
 	<Compile Include="Contexts\General\FieldWorksFileHandler.cs" />
 	<Compile Include="Contexts\General\FieldWorksMergingStrategy.cs" />
 	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyTypeHandler.cs" />
+	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyMergeStrategy.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalMergeStrategy.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalTypeHandler.cs" />
 	<Compile Include="Controller\FwBridgeController.cs" />

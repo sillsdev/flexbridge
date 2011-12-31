@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			// which will avoid what could otherwise be conflicts.
 			if (ourEntry.Name == "header")
 			{
-				// The 'header' element needs some pecial treatment, since it has PartOfSpeech objects that have 'DateModified' elements that need special merge handling.
+				// The 'header' element needs some special treatment, since it has PartOfSpeech objects that have 'DateModified' elements that need special merge handling.
 				// As of 12 Dec 2011, no other elements in the reversal system have this.
 				XmlNode parent = null;
 				foreach (XmlNode dateStampElement in ourEntry.SafeSelectNodes("descendant-or-self::*[name()='DateModified' or name()='DateResolved' or name()='RunDate']"))
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			}
 
 			// NB: The 'Subentries' property of ReversalIndexEntry is an owning collection, but I (RBR) don't think that is a worry in this new system.
-			// They will all be reordered when written out, and they are nested now. Time will tell, if my theroy is right. :-)
+			// They will all be reordered when written out, and they are nested now. Time will tell, if my theory is right. :-)
 
 			return FieldWorksMergingServices.GetOuterXml(_merger.Merge(eventListener, ourEntry, theirEntry, commonEntry));
 		}

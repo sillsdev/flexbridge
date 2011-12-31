@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using Palaso.IO;
@@ -46,12 +47,22 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		public void Do3WayMerge(MergeOrder mergeOrder)
 		{
-			throw new NotImplementedException();
+			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
+
+			// Add optional custom property information to MDC.
+			FieldWorksMergingServices.AddCustomPropInfo(_mdc, mergeOrder, "Linguistics", 1);
+
+			XmlMergeService.Do3WayMerge(mergeOrder,
+				new FieldWorksAnthropologyMergeStrategy(mergeOrder.MergeSituation, _mdc),
+				"header",
+				"RnGenericRec", "guid", WritePreliminaryInformation);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
-			throw new NotImplementedException();
+			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
+				"header",
+				"RnGenericRec", "guid");
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
@@ -107,6 +118,13 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				return e.Message;
 			}
 			return null;
+		}
+
+		private static void WritePreliminaryInformation(XmlReader reader, XmlWriter writer)
+		{
+			reader.MoveToContent();
+			writer.WriteStartElement("Anthropology");
+			reader.Read();
 		}
 	}
 }
