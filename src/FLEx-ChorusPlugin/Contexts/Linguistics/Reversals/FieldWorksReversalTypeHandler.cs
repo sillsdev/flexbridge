@@ -56,7 +56,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
 			// Add optional custom property information to MDC.
-			FieldWorksMergingServices.AddCustomPropInfo(_mdc, mergeOrder, "Linguistics", 1);
+			FieldWorksMergeStrategyServices.AddCustomPropInfo(_mdc, mergeOrder, "Linguistics", 1);
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksReversalMergeStrategy(mergeOrder.MergeSituation, _mdc),

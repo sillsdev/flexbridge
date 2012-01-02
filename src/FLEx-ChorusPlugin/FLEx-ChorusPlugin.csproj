@@ -147,6 +147,7 @@
 	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FdoClassInfo.cs" />
 	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
+	<Compile Include="Infrastructure\FieldWorksMergeStrategyServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
 	<Compile Include="Infrastructure\FileWriterService.cs" />

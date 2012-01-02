@@ -300,7 +300,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 				commonAncestor, ourContent, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry/Subentries/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry/Subentries/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+				3, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -391,8 +391,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 <ReversalIndexEntry guid='oldie'>
 </ReversalIndexEntry>
 </Reversal>";
-			var ourContent = commonAncestor.Replace("2000-1-1 23:59:59.000", "2002-1-1 23:59:59.000");
-			var theirContent = commonAncestor.Replace("2000-1-1 23:59:59.000", "2001-1-1 23:59:59.000");
+			var ourContent =	commonAncestor.Replace("2000-1-1 23:59:59.000", "2002-1-1 23:59:59.000");
+			var theirContent =	commonAncestor.Replace("2000-1-1 23:59:59.000", "2001-1-1 23:59:59.000");
 
 			XmlNode theirNode;
 			XmlNode ancestorNode;
@@ -430,8 +430,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 <ReversalIndexEntry guid='oldie'>
 </ReversalIndexEntry>
 </Reversal>";
-			var ourContent = commonAncestor.Replace("2000-1-1 23:59:59.000", "2001-1-1 23:59:59.000");
-			var theirContent = commonAncestor.Replace("2000-1-1 23:59:59.000", "2002-1-1 23:59:59.000");
+			var ourContent =	commonAncestor.Replace("2000-1-1 23:59:59.000", "2001-1-1 23:59:59.000");
+			var theirContent =	commonAncestor.Replace("2000-1-1 23:59:59.000", "2002-1-1 23:59:59.000");
 
 			XmlNode theirNode;
 			XmlNode ancestorNode;

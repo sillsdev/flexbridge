@@ -17,7 +17,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		{
 			_mdc = mdc;
 			_merger = new XmlMerger(mergeSituation);
-			FieldWorksMergingServices.BootstrapSystem(_mdc, _merger);
+			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
 		}
 
 		#region Implementation of IMergeStrategy
@@ -36,7 +36,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, ourEntry, theirEntry, commonEntry);
 			}
 
-			return FieldWorksMergingServices.GetOuterXml(_merger.Merge(eventListener, ourEntry, theirEntry, commonEntry));
+			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
 		}
 
 		#endregion

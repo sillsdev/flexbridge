@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
 			// Add optional custom property information to MDC.
-			FieldWorksMergingServices.AddCustomPropInfo(_mdc, mergeOrder, "DataFiles", 1);
+			FieldWorksMergeStrategyServices.AddCustomPropInfo(_mdc, mergeOrder, "DataFiles", 1);
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksMergingStrategy(mergeOrder.MergeSituation, _mdc),
