@@ -24,7 +24,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			// <header> children
 			if (ourEntry.Name == "header")
 			{
 				foreach (XmlNode headerChild in ourEntry.ChildNodes)

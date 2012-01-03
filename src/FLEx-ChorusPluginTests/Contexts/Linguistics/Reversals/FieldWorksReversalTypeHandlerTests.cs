@@ -360,7 +360,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 				commonAncestor, ourContent, theirContent,
 				null, null,
 				1, new List<Type> { typeof(BothEditedTheSameElement) },
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport) });
 
 			Assert.IsTrue(result.Contains("OurName"));
 		}

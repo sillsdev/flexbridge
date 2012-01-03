@@ -38,10 +38,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			RestoreNewFiles(mainFilePathname, projectName);
 
 #if DEBUG
-			// Enable ONLY for testing a round trip, and when enabled, stop the debugger, right aterwards.
-			// Do NOT go back to the caller.
-			RestoreMainFile(mainFilePathname, projectName);
-			Debug.Fail("Stop here.");
+			// Enable ONLY for testing a round trip.
+			//RestoreMainFile(mainFilePathname, projectName);
 #endif
 		}
 

@@ -228,7 +228,7 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 				commonAncestor, ourContent, theirContent,
 				new List<string> { @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+				3, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport), typeof(XmlAdditionChangeReport) });
 		}
 	}
 }

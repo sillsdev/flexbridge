@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.xml;
@@ -24,41 +22,27 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			MergeTimestamps(ourEntry, theirEntry);
 
 			var classInfo = mdc.GetClassInfo(isNewStyle ? ourEntry.Name : ourEntry.Attributes["class"].Value);
+			//  DONE. 2. Deal with reference collections. [New style only has objsur elements for ref col props.]
+			PreMergeReferenceCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
+			// TODO: 3. Deal with reference sequences. [New style only has objsur elements for ref seq props.]
+			PreMergeReferenceSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
+
+			// NB: Both owning colls and seqs allow owned elements to be included, but only once. Seq props are ordered, but colls are not.
+			// DONE. 4. Deal with owning collections
+			PreMergeOwningCollectionProperties(isNewStyle, eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
 
 			if (isNewStyle)
 			{
-				// New style.
-
-				////  DONE. 2. Deal with reference collections. [New style only has objsur elements for ref col props.]
-				PreMergeReferenceCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
-				//// 3. Deal with reference sequences. [New style only has objsur elements for ref seq props.]
-				PreMergeReferenceSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
-
-				//// NB: Both owning colls and seqs allow owned elements to be included, but only once. Seq props are ordered, but colls are not.
-				//// 4. Deal with owning collections
-				PreMergeOwningCollectionProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
-				//// 5. Deal with owning sequences
+				// TODO: 5. Deal with owning sequences (only partially done.)
 				PreMergeOwningSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
-				//// 6. Owning Atomic (gets nested objects.)
-				PreMergeAtomicOwningProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
 			}
 			else
 			{
-				// Old style.
-
-				////  DONE. 2. Deal with reference collections. [Old style only has objsur elements for ref props.]
-				PreMergeReferenceCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
-				//// TODO: 3. Deal with reference sequences. [Old style only has objsur elements for ref props.]
-				//PreMergeReferenceSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
-
-				//// NB: Both owning colls and seqs allow owned elements to be included, but only once. Seq props are ordered, but colls are not.
-				//// DONE. 4. Deal with owning collections
-				PreMergeOldStyleOwningCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
-				//// TODO: 5. Deal with owning sequences
-				//PreMergeOwningSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
-				//// TODO: 6. Owning Atomic (gets nested objects.)
-				//PreMergeAtomicOwningProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
+				// TODO: 5. Deal with owning sequences
+				PreMergeOldStyleOwningSequenceProperties(eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
 			}
+			// DONE. 6. Owning Atomic.
+			PreMergeAtomicOwningProperties(isNewStyle, eventListener, mdc, classInfo, ourEntry, theirEntry, commonEntry);
 		}
 
 		private static void MergeTimestamps(XmlNode ourEntry, XmlNode theirEntry)
@@ -105,108 +89,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private static XmlNode GetPropertyNode(XmlNode parentNode, string propertyName)
 		{
 			return (parentNode == null) ? null : parentNode.SelectSingleNode(propertyName);
-		}
-
-		private static void PreMergeOldStyleOwningCollectionProperties(IMergeEventListener eventListener, FdoClassInfo classWithCollectionProperties, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
-		{
-			var interestingProps = (from prop in classWithCollectionProperties.AllProperties
-									where prop.DataType == DataType.OwningCollection
-									select prop).ToList();
-			foreach (var owningCollectionProperty in interestingProps)
-			{
-				var commonValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var commonPropNode = GetPropertyNode(commonEntry, owningCollectionProperty.PropertyName);
-				if (commonPropNode != null)
-				{
-					var guids = from XmlNode objsurNode in commonPropNode.SafeSelectNodes(FieldWorksMergeStrategyServices.Objsur)
-								select objsurNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-
-					commonValues.UnionWith(guids);
-				}
-				var ourValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var ourPropNode = GetPropertyNode(ourEntry, owningCollectionProperty.PropertyName);
-				if (ourPropNode != null)
-				{
-					var guids = from XmlNode objsurNode in ourPropNode.SafeSelectNodes(FieldWorksMergeStrategyServices.Objsur)
-								select objsurNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-
-					ourValues.UnionWith(guids);
-					if (!commonValues.SetEquals(ourValues))
-					{
-						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, ourEntry));
-					}
-				}
-				var theirValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var theirPropNode = GetPropertyNode(theirEntry, owningCollectionProperty.PropertyName);
-				if (theirPropNode != null)
-				{
-					var guids = from XmlNode objsurNode in theirPropNode.SafeSelectNodes(FieldWorksMergeStrategyServices.Objsur)
-								select objsurNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-
-					theirValues.UnionWith(guids);
-					if (!commonValues.SetEquals(theirValues))
-					{
-						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, theirEntry));
-					}
-				}
-
-				// 0. If ours and theirs are the same, there is no conflict.
-				if (ourValues.SetEquals(theirValues))
-					continue; // NB: The merger will be told the prop is immutable, so it will not notice if the order is different.
-
-				// 1. Keep ones that are in all three. (Excludes removed items.)
-				var mergedCollection = new HashSet<string>(commonValues, StringComparer.OrdinalIgnoreCase);
-				mergedCollection.IntersectWith(ourValues);
-				mergedCollection.IntersectWith(theirValues);
-
-				// 2. Add ones that either added.
-				var ourAdditions = ourValues.Except(commonValues);
-				mergedCollection.UnionWith(ourAdditions);
-				var theirAdditions = theirValues.Except(commonValues);
-				mergedCollection.UnionWith(theirAdditions);
-
-				// 3. Update ours and theirs to the new collection.
-				if (mergedCollection.Count == 0)
-				{
-					// Remove prop node from both.
-					var gonerNode = GetPropertyNode(ourEntry, owningCollectionProperty.PropertyName);
-					if (gonerNode != null)
-						gonerNode.ParentNode.RemoveChild(gonerNode);
-					gonerNode = GetPropertyNode(theirEntry, owningCollectionProperty.PropertyName);
-					if (gonerNode != null)
-						gonerNode.ParentNode.RemoveChild(gonerNode);
-				}
-				else
-				{
-					var ourDoc = ourEntry.OwnerDocument;
-					var theirDoc = theirEntry.OwnerDocument;
-					if (ourPropNode == null)
-					{
-						ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, owningCollectionProperty.PropertyName, null);
-						ourEntry.AppendChild(ourPropNode);
-					}
-					else
-					{
-						ourPropNode.RemoveAll();
-					}
-					if (theirPropNode == null)
-					{
-						theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, owningCollectionProperty.PropertyName, null);
-						theirEntry.AppendChild(theirPropNode);
-					}
-					else
-					{
-						theirPropNode.RemoveAll();
-					}
-					const string propType = "o";
-					foreach (var newValue in mergedCollection)
-					{
-						// Add it to ours and theirs.
-						CreateObjsurNode(ourDoc, newValue, propType, ourPropNode);
-						CreateObjsurNode(theirDoc, newValue, propType, theirPropNode);
-					}
-				}
-			}
 		}
 
 		private static void CreateObjsurNode(XmlDocument srcDoc, string newValue, string propType, XmlNode srcPropNode)
@@ -341,15 +223,16 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
-		private static void PreMergeOwningCollectionProperties(IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
+		private static void PreMergeOwningCollectionProperties(bool isNewStyle, IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			var interestingProps = (from prop in classInfo.AllProperties
 									where prop.DataType == DataType.OwningCollection
 									select prop).ToList();
 			foreach (var owningCollectionProperty in interestingProps)
 			{
+				var propName = owningCollectionProperty.PropertyName;
 				var commonValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var commonPropNode = GetPropertyNode(commonEntry, owningCollectionProperty.PropertyName);
+				var commonPropNode = GetPropertyNode(commonEntry, propName);
 				if (commonPropNode != null)
 				{
 					var guids = from XmlNode childNode in commonPropNode.ChildNodes
@@ -357,7 +240,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					commonValues.UnionWith(guids);
 				}
 				var ourValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var ourPropNode = GetPropertyNode(ourEntry, owningCollectionProperty.PropertyName);
+				var ourPropNode = GetPropertyNode(ourEntry, propName);
 				if (ourPropNode != null)
 				{
 					var guids = from XmlNode childNode in ourPropNode.ChildNodes
@@ -369,7 +252,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					}
 				}
 				var theirValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var theirPropNode = GetPropertyNode(theirEntry, owningCollectionProperty.PropertyName);
+				var theirPropNode = GetPropertyNode(theirEntry, propName);
 				if (theirPropNode != null)
 				{
 					var guids = from XmlNode childNode in theirPropNode.ChildNodes
@@ -381,8 +264,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					}
 				}
 
-				// 1. Pre-merge objects that are in ours and theirs (may not be in common, however).
-				PreMerge(eventListener, mdc, commonPropNode, ourPropNode, theirPropNode, theirValues);
+				if (isNewStyle)
+				{
+					// 1. Pre-merge objects that are in ours and theirs (may not be in common, however).
+					PreMerge(eventListener, mdc, commonPropNode, ourPropNode, theirPropNode, theirValues);
+				}
 
 				// 2. If ours and theirs are the same, there is no conflict.
 				if (ourValues.SetEquals(theirValues))
@@ -403,10 +289,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				if (mergedCollection.Count == 0)
 				{
 					// Remove prop node from both.
-					var gonerNode = GetPropertyNode(ourEntry, owningCollectionProperty.PropertyName);
+					var gonerNode = GetPropertyNode(ourEntry, propName);
 					if (gonerNode != null)
 						gonerNode.ParentNode.RemoveChild(gonerNode);
-					gonerNode = GetPropertyNode(theirEntry, owningCollectionProperty.PropertyName);
+					gonerNode = GetPropertyNode(theirEntry, propName);
 					if (gonerNode != null)
 						gonerNode.ParentNode.RemoveChild(gonerNode);
 				}
@@ -418,7 +304,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					var theirOriginalData = new SortedDictionary<string, string>();
 					if (ourPropNode == null)
 					{
-						ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, owningCollectionProperty.PropertyName, null);
+						ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
 						ourEntry.AppendChild(ourPropNode);
 					}
 					else
@@ -429,7 +315,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					}
 					if (theirPropNode == null)
 					{
-						theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, owningCollectionProperty.PropertyName, null);
+						theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
 						theirEntry.AppendChild(theirPropNode);
 					}
 					else
@@ -453,23 +339,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
-		private static void AddNode(XmlDocument srcDoc, XmlNode parentNode, XElement newElementData)
+		private static void PreMergeOldStyleOwningSequenceProperties(IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			var newNode = srcDoc.CreateNode(XmlNodeType.Element, newElementData.Name.LocalName, null);
-			parentNode.AppendChild(newNode);
-			if (newElementData.HasAttributes)
+			var interestingProps = (from prop in classInfo.AllProperties
+									where prop.DataType == DataType.OwningSequence
+									select prop).ToList();
+			foreach (var ownSeqProp in interestingProps)
 			{
-				foreach (var attr in newElementData.Attributes())
-				{
-					var newAttr = srcDoc.CreateAttribute(attr.Name.LocalName);
-					newAttr.Value = attr.Value;
-					newNode.Attributes.Append(newAttr);
-				}
 			}
-			if (!newElementData.HasElements)
-				return;
-			foreach (XElement childElement in newElementData.Nodes())
-				AddNode(srcDoc, newNode, childElement);
 		}
 
 		private static void PreMergeOwningSequenceProperties(IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
@@ -479,43 +356,203 @@ namespace FLEx_ChorusPlugin.Infrastructure
 									select prop).ToList();
 			foreach (var ownSeqProp in interestingProps)
 			{
-				var commonValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var commonPropNode = GetPropertyNode(commonEntry, ownSeqProp.PropertyName);
+				var propName = ownSeqProp.PropertyName;
+				var commonValues = new List<string>();
+				var commonPropNode = GetPropertyNode(commonEntry, propName);
 				if (commonPropNode != null)
 				{
 					var guids = from XmlNode childNode in commonPropNode.ChildNodes
 								select childNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-					commonValues.UnionWith(guids);
+					commonValues.AddRange(guids);
 				}
-				var ourValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var ourPropNode = GetPropertyNode(ourEntry, ownSeqProp.PropertyName);
+				var ourValues = new List<string>();
+				var ourPropNode = GetPropertyNode(ourEntry, propName);
 				if (ourPropNode != null)
 				{
 					var guids = from XmlNode childNode in ourPropNode.ChildNodes
 								select childNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-					ourValues.UnionWith(guids);
-					if (!commonValues.SetEquals(ourValues))
+					ourValues.AddRange(guids);
+					if (!commonValues.Equals(ourValues))
 					{
 						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, ourEntry));
 					}
 				}
-				var theirValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var theirPropNode = GetPropertyNode(theirEntry, ownSeqProp.PropertyName);
+				var theirValues = new List<string>();
+				var theirPropNode = GetPropertyNode(theirEntry, propName);
 				if (theirPropNode != null)
 				{
 					var guids = from XmlNode childNode in theirPropNode.ChildNodes
 								select childNode.GetStringAttribute(FieldWorksMergeStrategyServices.GuidStr);
-					theirValues.UnionWith(guids);
-					if (!commonValues.SetEquals(theirValues))
+					theirValues.AddRange(guids);
+					if (!commonValues.Equals(theirValues))
 					{
 						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, theirEntry));
 					}
 				}
 
 				// 1. Pre-merge objects that are in ours and theirs (may not be in common, however).
-				PreMerge(eventListener, mdc, commonPropNode, ourPropNode, theirPropNode, theirValues);
+				PreMerge(eventListener, mdc, commonPropNode, ourPropNode, theirPropNode, new HashSet<string>(theirValues));
 
-				// TODO: Finish it.
+				if (commonValues.Equals(ourValues) && commonValues.Equals(theirValues))
+					continue; // No changes in the owning  property, so skip the harder merge attempt.
+
+				var ourDoc = ourEntry.OwnerDocument;
+				var ourOriginalData = new Dictionary<string, string>();
+				var theirDoc = theirEntry.OwnerDocument;
+				var theirOriginalData = new Dictionary<string, string>();
+				if (ourPropNode == null)
+				{
+					ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
+					ourEntry.AppendChild(ourPropNode);
+				}
+				else
+				{
+					ourOriginalData = ourPropNode
+						.ChildNodes
+						.Cast<XmlNode>()
+						.ToDictionary(
+								ourOriginal => XmlUtilities.GetStringAttribute(ourOriginal, "guid"),
+								ourOriginal => ourOriginal.OuterXml);
+					ourPropNode.RemoveAll();
+				}
+				if (theirPropNode == null)
+				{
+					theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
+					theirEntry.AppendChild(theirPropNode);
+				}
+				else
+				{
+					theirOriginalData = theirPropNode
+						.ChildNodes
+						.Cast<XmlNode>()
+						.ToDictionary(
+								theirOriginal => XmlUtilities.GetStringAttribute(theirOriginal, "guid"),
+								theirOriginal => theirOriginal.OuterXml);
+					theirPropNode.RemoveAll();
+				}
+
+				// Finish the regular part of the merge.
+				if (commonValues.Count > 0)
+				{
+					for (var idxInCommon = 0; idxInCommon < commonValues.Count; ++idxInCommon)
+					{
+						var commonValue = commonValues[idxInCommon];
+						var idxInOurs = ourValues.IndexOf(commonValue);
+						var idxInTheirs = theirValues.IndexOf(commonValue);
+						if (idxInOurs == -1)
+						{
+							if (idxInTheirs == -1)
+							{
+								// Both removed it, so no conflict. It would be nice to report they both removed it at some point.
+							}
+							// We removed it. Normally, edit trumps delete, but not here. (We can't tell if it was deleted or simply moved.)
+							theirValues.Remove(commonValue);
+							continue;
+						}
+
+						if (idxInTheirs == -1)
+						{
+							if (idxInOurs == -1)
+							{
+								// Can't get here. But if it did , then both removed it.
+							}
+							ourValues.Remove(commonValue);
+							continue;
+						}
+
+						var stop = false;
+						if (idxInOurs > 0)
+						{
+							// Add those that are in ours, but before commonValue. 'ours' wins if idxInTheirs is greater than -1.
+							while (idxInOurs > 0)
+							{
+								var ourCurrent = ourValues[0];
+								var ourData = ourOriginalData[ourCurrent];
+								var ourOrigElement = XElement.Parse(ourData);
+								AddNode(ourDoc, ourPropNode, ourOrigElement);
+								if (theirOriginalData.ContainsKey(ourCurrent))
+								{
+									AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[ourCurrent]));
+									theirOriginalData.Remove(ourCurrent);
+									theirValues.Remove(ourCurrent);
+									idxInTheirs = theirValues.IndexOf(commonValue);
+								}
+								else
+								{
+									AddNode(theirDoc, theirPropNode, XElement.Parse(ourOriginalData[ourCurrent]));
+								}
+								idxInOurs = ourValues.IndexOf(commonValue);
+							}
+							stop = true;
+						}
+						else if (idxInTheirs > 0)
+						{
+							while (idxInTheirs > 0)
+							{
+								var theirCurrent = theirValues[0];
+								var theirData = ourOriginalData[theirCurrent];
+								var theirOrigElement = XElement.Parse(theirData);
+								AddNode(theirDoc, theirPropNode, theirOrigElement);
+								if (ourOriginalData.ContainsKey(theirCurrent))
+								{
+									AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
+									ourOriginalData.Remove(theirCurrent);
+									ourValues.Remove(theirCurrent);
+									idxInOurs = ourValues.IndexOf(commonValue);
+								}
+								else
+								{
+									AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
+								}
+								idxInTheirs = theirValues.IndexOf(commonValue);
+							}
+							stop = true;
+						}
+						if (stop)
+							continue;
+
+						// Add respective data back into each, since they each still have it.
+						AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[commonValue]));
+						ourOriginalData.Remove(commonValue);
+						ourValues.Remove(commonValue);
+						AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[commonValue]));
+						theirOriginalData.Remove(commonValue);
+						theirValues.Remove(commonValue);
+					}
+				}
+				else
+				{
+					// ours and/or theirs added new stuff, so add them in some order, and report an ambigious insert.
+					// Just make sure they are added only once, if they are in both ours and theirs.
+					foreach (var ourValue in ourValues)
+					{
+						var ourData = ourOriginalData[ourValue];
+						var ourOrigElement = XElement.Parse(ourData);
+						AddNode(ourDoc, ourPropNode, ourOrigElement);
+						if (theirValues.Contains(ourValue))
+						{
+							// Both have it, but store possibly different data from theirs.
+							AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[ourValue]));
+							theirValues.Remove(ourValue);
+							theirOriginalData.Remove(ourValue);
+						}
+						else
+						{
+							AddNode(theirDoc, theirPropNode, ourOrigElement);
+						}
+					}
+					foreach (var theirValue in theirValues)
+					{
+						var theirData = theirOriginalData[theirValue];
+						var theirOrigElement = XElement.Parse(theirData);
+						AddNode(ourDoc, ourPropNode, theirOrigElement);
+						AddNode(theirDoc, theirPropNode, theirOrigElement);
+					}
+				}
+				if (!ourPropNode.HasChildNodes)
+					ourPropNode.ParentNode.RemoveChild(ourPropNode);
+				if (!theirPropNode.HasChildNodes)
+					theirPropNode.ParentNode.RemoveChild(theirPropNode);
 			}
 		}
 
@@ -538,29 +575,22 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
-		private static void PreMergeAtomicOwningProperties(IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
+		private static void PreMergeAtomicOwningProperties(bool isNewStyle, IMergeEventListener eventListener, MetadataCache mdc, FdoClassInfo classInfo, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
+
+			if (!isNewStyle)
+				return;
 			var interestingProps = (from prop in classInfo.AllProperties
 									where prop.DataType == DataType.OwningAtomic
 									select prop).ToList();
 			foreach (var ownAtomicProp in interestingProps)
 			{
-				// See if it is old or new style.
-				var ourAtomicOwningPropNode = GetPropertyNode(ourEntry, ownAtomicProp.PropertyName);
-				var theirAtomicOwningPropNode = GetPropertyNode(theirEntry, ownAtomicProp.PropertyName);
-				var commonAtomicOwningPropNode = GetPropertyNode(commonEntry, ownAtomicProp.PropertyName);
-				var isNewStyle = ourAtomicOwningPropNode == null
-									? theirAtomicOwningPropNode == null
-										? commonAtomicOwningPropNode == null
-											? false
-											: commonAtomicOwningPropNode.FirstChild.Name != "objsur"
-										: theirAtomicOwningPropNode.FirstChild.Name != "objsur"
-									: ourAtomicOwningPropNode.FirstChild.Name != "objsur";
-
-				if (!isNewStyle)
-					continue;
-
+				var propName = ownAtomicProp.PropertyName;
+				var ourAtomicOwningPropNode = GetPropertyNode(ourEntry, propName);
+				var theirAtomicOwningPropNode = GetPropertyNode(theirEntry, propName);
+				var commonAtomicOwningPropNode = GetPropertyNode(commonEntry, propName);
 				// If all three are the same object, then use the regular recursive call back to this method.
+				// If they are not the same, there is nothing that can be done to pre-merge them.
 				var ourOwnedItem = ourAtomicOwningPropNode == null ? null : ourAtomicOwningPropNode.FirstChild;
 				var theirOwnedItem = theirAtomicOwningPropNode == null ? null : theirAtomicOwningPropNode.FirstChild;
 				var commonOwnedItem = commonAtomicOwningPropNode == null ? null : commonAtomicOwningPropNode.FirstChild;
@@ -571,12 +601,31 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				{
 					PreMerge(true, eventListener, mdc, ourOwnedItem, theirOwnedItem, commonOwnedItem);
 				}
-				// If they are not the same, there is nothing that can be done to pre-merge them.
-				//else
-				//{
-				//	// Let old style go.
-				//}
 			}
+		}
+
+		private static void AddNode(XmlDocument srcDoc, XmlNode parentNode, XElement newElementData)
+		{
+			var newNode = srcDoc.CreateNode(XmlNodeType.Element, newElementData.Name.LocalName, null);
+			parentNode.AppendChild(newNode);
+			if (newElementData.HasAttributes)
+			{
+				foreach (var attr in newElementData.Attributes())
+				{
+					var newAttr = srcDoc.CreateAttribute(attr.Name.LocalName);
+					newAttr.Value = attr.Value;
+					newNode.Attributes.Append(newAttr);
+				}
+			}
+			if (newElementData.HasElements)
+			{
+				foreach (XElement childElement in newElementData.Nodes())
+					AddNode(srcDoc, newNode, childElement);
+				return;
+			}
+
+			// Text in an element.
+			newNode.AppendChild(srcDoc.CreateTextNode(newElementData.Value));
 		}
 	}
 }
