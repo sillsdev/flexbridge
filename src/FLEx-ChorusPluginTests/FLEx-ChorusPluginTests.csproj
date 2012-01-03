@@ -102,6 +102,7 @@
 	<Compile Include="Infrastructure\CmObjectNestingServiceTests.cs" />
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
+	<Compile Include="Infrastructure\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />

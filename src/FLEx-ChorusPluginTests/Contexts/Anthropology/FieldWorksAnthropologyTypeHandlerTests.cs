@@ -206,29 +206,5 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
-
-		[Test]
-		public void WinnerAndLoserEachAddedNewSubentry()
-		{
-			const string commonAncestor =
-@"<?xml version='1.0' encoding='utf-8'?>
-<Anthropology>
-<header>
-<RnResearchNbk guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
-</RnResearchNbk>
-</header>
-<RnGenericRec guid='oldie'>
-</RnGenericRec>
-</Anthropology>";
-			var ourContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieOurs'/></SubRecords></RnGenericRec>");
-			var theirContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieTheirs'/></SubRecords></RnGenericRec>");
-
-			FieldWorksTestServices.DoMerge(
-				_fileHandler,
-				commonAncestor, ourContent, theirContent,
-				new List<string> { @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec/SubRecords/RnGenericRec[@guid=""newbieTheirs""]" }, null,
-				0, new List<Type>(),
-				3, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport), typeof(XmlAdditionChangeReport) });
-		}
 	}
 }
