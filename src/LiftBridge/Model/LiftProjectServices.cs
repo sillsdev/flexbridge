@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress.LogBox;
 
 namespace SIL.LiftBridge.Model
 {
@@ -28,6 +30,20 @@ namespace SIL.LiftBridge.Model
 		internal static string PathToProject(LiftProject project)
 		{
 			var pathToProj = Path.Combine(BasePath, project.LiftProjectName);
+
+			if (!string.IsNullOrEmpty(project.RepositoryIdentifier))
+			{
+				// Check for matching repo.
+				foreach (var directory in from directory in Directory.GetDirectories(BasePath)
+										  where Directory.Exists(Path.Combine(directory, ".hg"))
+										  let repo = new HgRepository(directory, new NullProgress())
+										  where repo.Identifier == project.RepositoryIdentifier
+										  select directory)
+				{
+					pathToProj = directory;
+					break;
+				}
+			}
 
 			if (!Directory.Exists(pathToProj))
 				Directory.CreateDirectory(pathToProj);

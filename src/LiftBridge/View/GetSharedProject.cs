@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
@@ -50,8 +49,10 @@ namespace SIL.LiftBridge.View
 							default:
 								return false;
 							case DialogResult.OK:
-								// It made a clone, but maybe in the 'wrong' folder name.
-								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentRootDataPath);
+								//// It made a clone, but maybe in the 'wrong' folder name.
+								//PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentRootDataPath);
+								var repo = new HgRepository(internetCloneDlg.PathToNewProject, new NullProgress());
+								project.RepositoryIdentifier = repo.Identifier;
 								break;
 						}
 					}
@@ -100,8 +101,9 @@ namespace SIL.LiftBridge.View
 								}
 								var repo = new HgRepository(sourcePath, new StatusProgress());
 								repo.CloneLocal(target);
-								// It made a clone, but maybe in the 'wrong' folder name.
-								PossiblyRenameFolder(target, currentRootDataPath);
+								//// It made a clone, but maybe in the 'wrong' folder name.
+								//PossiblyRenameFolder(target, currentRootDataPath);
+								project.RepositoryIdentifier = repo.Identifier;
 // ReSharper restore AssignNullToNotNullAttribute
 								break;
 						}
@@ -116,20 +118,16 @@ namespace SIL.LiftBridge.View
 							default:
 								return false;
 							case DialogResult.OK:
-								// It made a clone, but maybe in the 'wrong' folder name.
-								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, currentRootDataPath);
+								//// It made a clone, but maybe in the 'wrong' folder name.
+								//PossiblyRenameFolder(usbCloneDlg.PathToNewProject, currentRootDataPath);
+								var repo = new HgRepository(usbCloneDlg.PathToNewProject, new NullProgress());
+								project.RepositoryIdentifier = repo.Identifier;
 								break;
 						}
 					}
 					break;
 			}
 			return true;
-		}
-
-		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
-		{
-			if (newProjPath.ToLowerInvariant() != currentRootDataPath.ToLowerInvariant() && !Directory.Exists(currentRootDataPath))
-				Directory.Move(newProjPath, currentRootDataPath);
 		}
 
 		#endregion

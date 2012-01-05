@@ -250,6 +250,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Value for RepositoryIdentifier may not be null or an empty string..
+		/// </summary>
+		public static string kRepoIdNotNull {
+			get {
+				return ResourceManager.GetString("kRepoIdNotNull", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Chorus Send/Receive.
 		/// </summary>
 		public static string kSendReceive {

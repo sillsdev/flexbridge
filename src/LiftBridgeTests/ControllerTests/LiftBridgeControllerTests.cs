@@ -123,8 +123,10 @@ namespace LiftBridgeTests.ControllerTests
 			Assert.IsFalse(mockedClient.HandledImportLexicon);
 			Assert.IsFalse(mockedClient.HandledExportLexicon);
 
+			_liftBridgeController.RepositoryIdentifier = "repoid";
 			_liftBridgeController.DoSendReceiveForLanguageProject(_parentForm, "BProject");
 			var lp = _liftBridgeController.Liftproject;
+			lp.RepositoryIdentifier = _liftBridgeController.RepositoryIdentifier;
 			_pathToProject = LiftProjectServices.PathToProject(lp);
 			var projPath = LiftProjectServices.PathToProject(lp);
 			var liftPathname = Path.Combine(projPath, "BProject.lift");

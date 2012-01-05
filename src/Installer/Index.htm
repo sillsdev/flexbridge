@@ -13,17 +13,33 @@
 		<table border="2">
 			<thead>
 				<tr>
-					<th colspan="3">FieldWorks</th>
+					<th colspan="4">FieldWorks</th>
 				</tr>
 				<tr>
 					<th bgcolor="red" style="padding:5px">6.0.6</th>
-					<th>7.1</th>
+					<th bgcolor="orange" style="padding:5px">7.0->7.1.1</th>
+					<th>7.2</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td bgcolor="red" style="padding:5px">
 						<p>No longer supported.<br /> Please switch to the<br /> FieldWorks 7 series.</p>
+					</td>
+					<td bgcolor="orange" style="padding:5px">
+						<table border="0" cellspacing="0" cellpadding="0">
+							<tbody>
+								<tr>
+									<td width="200">
+										<a href="http://downloads.palaso.org/LiftBridge/LiftBridgeForFW7Installer.1.0.13.0.msi">Lift Bridge 1.0.13.0</a>
+									</td>
+									<td>21/Dec/2011</td>
+								</tr>
+								<tr rowspan="2">
+									<p>No longer updated.<br /> Please switch to the<br /> FieldWorks 7.2 series, when it gets released.</p>
+								</tr>
+							</tbody>
+						</table>
 					</td>
 					<td style="padding:3px">
 						<table border="0" cellspacing="0" cellpadding="0">
@@ -42,7 +58,8 @@
 		</table>
 		<h1>Release Notes:</h1>
 		<ul>
-			<li>DEV_VERSION_NUMBER <ol> <li>Set Lift Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, Lift Bridge will try to get FELx to import the data that had failed before. While a bit harsh, it protects the shared data.</li> </ol> </li>
+			<li>DEV_VERSION_NUMBER <ol> <li>Have FLEx store the Mercurial repository identifier and give it to Lift Bridge.</li> </ol> </li>
+			<li>1.0.13.0 <ol> <li>Set Lift Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, Lift Bridge will try to get FLEx to import the data that had failed before. While a bit harsh, it protects the shared data.</li> </ol> </li>
 			<li>1.0.11.0 <ol> <li>Fixed bug in Lift bridge where user had selected a simple exported LIFT file. Fixed problem where Chorus tried to create a system where the folder already existed.</li> </ol> </li>
 			<li>1.0.10.0 <ol> <li>Fixed two bugs in Chorus related to merge conflicts.</li> </ol> </li>
 			<li>1.0.9.0 <ol> <li>Fixed bug with unexpected xml entities in 'id' attribute for LIFT entries.</li> </ol> </li>

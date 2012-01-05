@@ -11,12 +11,13 @@ using SIL.LiftBridge.View;
 
 namespace SIL.LiftBridge.Controller
 {
-	internal class LiftBridgeController : ILiftBridge
+	internal class LiftBridgeController : ILiftBridge2
 	{
 		private readonly ILiftBridgeView _liftBridgeView;
 		private readonly IStartupNewView _startupNewView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly IGetSharedProject _getSharedProject;
+		private string _repoIdentifier;
 
 		/// <summary>
 		/// Constructor used by ILiftBridge client (via Reflection).
@@ -122,6 +123,7 @@ namespace SIL.LiftBridge.Controller
 						_liftBridgeView.Close();
 						return;
 					}
+					RepositoryIdentifier = Liftproject.RepositoryIdentifier;
 					if (BasicLexiconImport != null)
 					{
 						var eventArgs = new LiftBridgeEventArgs(Liftproject.LiftPathname);
@@ -171,7 +173,7 @@ namespace SIL.LiftBridge.Controller
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName");
 
-			Liftproject = new LiftProject(projectName);
+			Liftproject = string.IsNullOrEmpty(_repoIdentifier) ? new LiftProject(projectName) : new LiftProject(projectName, _repoIdentifier);
 
 			try
 			{
@@ -184,6 +186,25 @@ namespace SIL.LiftBridge.Controller
 			finally
 			{
 				_liftBridgeView.Dispose();
+			}
+		}
+
+		#endregion
+
+		#region Implementation of ILiftBridge2
+
+		/// <summary>
+		/// Gets or sets the identifier for the repository.
+		/// </summary>
+		public string RepositoryIdentifier
+		{
+			get { return _repoIdentifier; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					throw new InvalidOperationException(Resources.kRepoIdNotNull);
+
+				_repoIdentifier = value;
 			}
 		}
 
