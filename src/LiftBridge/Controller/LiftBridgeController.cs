@@ -11,13 +11,13 @@ using SIL.LiftBridge.View;
 
 namespace SIL.LiftBridge.Controller
 {
-	internal class LiftBridgeController : ILiftBridge2
+	internal class LiftBridgeController : ILiftBridge, ILiftBridge3
 	{
 		private readonly ILiftBridgeView _liftBridgeView;
 		private readonly IStartupNewView _startupNewView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly IGetSharedProject _getSharedProject;
-		private string _repoIdentifier;
+		private Guid _languageProjectGuid = Guid.Empty;
 
 		/// <summary>
 		/// Constructor used by ILiftBridge client (via Reflection).
@@ -123,7 +123,6 @@ namespace SIL.LiftBridge.Controller
 						_liftBridgeView.Close();
 						return;
 					}
-					RepositoryIdentifier = Liftproject.RepositoryIdentifier;
 					if (BasicLexiconImport != null)
 					{
 						var eventArgs = new LiftBridgeEventArgs(Liftproject.LiftPathname);
@@ -173,14 +172,20 @@ namespace SIL.LiftBridge.Controller
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName");
 
-			Liftproject = string.IsNullOrEmpty(_repoIdentifier) ? new LiftProject(projectName) : new LiftProject(projectName, _repoIdentifier);
+			Liftproject = _languageProjectGuid != Guid.Empty
+				? new LiftProject(projectName, _languageProjectGuid)
+				: new LiftProject(projectName); // Try to support backwards compatibility.
 
 			try
 			{
 				if (LiftProjectServices.ProjectIsShared(Liftproject))
+				{
 					InstallExistingSystemControl();
+				}
 				else
+				{
 					InstallNewSystem();
+				}
 				_liftBridgeView.Show(parent, string.Format(Resources.kTitle, Liftproject.LiftProjectName));
 			}
 			finally
@@ -191,20 +196,16 @@ namespace SIL.LiftBridge.Controller
 
 		#endregion
 
-		#region Implementation of ILiftBridge2
+		#region Implementation of ILiftBridge3
 
-		/// <summary>
-		/// Gets or sets the identifier for the repository.
-		/// </summary>
-		public string RepositoryIdentifier
+		public Guid LanguageProjectGuid
 		{
-			get { return _repoIdentifier; }
 			set
 			{
-				if (string.IsNullOrEmpty(value))
-					throw new InvalidOperationException(Resources.kRepoIdNotNull);
+				if (value == Guid.Empty)
+					throw new InvalidOperationException("The value cannot be Guid.Empty.");
 
-				_repoIdentifier = value;
+				_languageProjectGuid = value;
 			}
 		}
 

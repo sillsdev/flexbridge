@@ -207,4 +207,7 @@
   <data name="kRepoIdNotNull" xml:space="preserve">
 	<value>Value for RepositoryIdentifier may not be null or an empty string.</value>
   </data>
+	<data name="kBasicMapFleContents">
+		<value><![CDATA[<?xml version='1.0' encoding='utf-8'?><Mappings></Mappings>]]></value>
+	</data>
 </root>

@@ -79,6 +79,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos;?&gt;&lt;Mappings&gt;&lt;/Mappings&gt;.
+		/// </summary>
+		public static string kBasicMapFleContents {
+			get {
+				return ResourceManager.GetString("kBasicMapFleContents", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Cannot clone onto an existing directory ({0}).
 		/// </summary>
 		public static string kCloneTrouble {

@@ -41,19 +41,8 @@ namespace LiftBridgeCore
 		void DoSendReceiveForLanguageProject(Form parent, string projectName);
 	}
 
-	/// <summary>
-	/// Extend ILiftBridge to deal with repo identifier.
-	///
-	/// Client will store the id when Lift Bridge creates the repos, or gets in in the first sync.
-	/// Client will then set this property before calling the DoSendReceiveForLanguageProject method of the base ILiftBridge interface.
-	///
-	/// Lift Bridge will use the identifier to locate the matching repo in the Lift Bridge storage location.
-	/// </summary>
-	public interface ILiftBridge2 : ILiftBridge
+	public interface ILiftBridge3
 	{
-		/// <summary>
-		/// Gets or sets the identifier for the repository.
-		/// </summary>
-		string RepositoryIdentifier { get; set; }
+		Guid LanguageProjectGuid { set; }
 	}
 }

@@ -5,7 +5,9 @@ using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
+using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
+using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Services;
 
@@ -132,9 +134,14 @@ namespace SIL.LiftBridge.View
 					return;
 				}
 				ImportFailureServices.ClearImportFailure(_liftProject);
+				if (_liftProject.RepositoryIdentifier == null)
+				{
+					var repo = new HgRepository(LiftProjectServices.PathToProject(_liftProject), new NullProgress());
+					_liftProject.RepositoryIdentifier = repo.Identifier;
+				}
 
 				// In case the user does another S/R to another repo, after the import,
-				// we do want to have FLEx do the export again, just to get what it thinks its its latest.
+				// we do want to have FLEx do the export again, just to get what it thinks is its latest.
 				_haveExportedFromFlex = false;
 			}
 		}
