@@ -22,7 +22,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-						 where handler.GetType().Name == "FieldWorksFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 						 select handler).First();
 			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
 			File.WriteAllText(_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");

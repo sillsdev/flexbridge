@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
-using Chorus.merge;
 using Chorus.merge.xml.generic;
 using NUnit.Framework;
 using Palaso.IO;
@@ -17,13 +17,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 	public class FieldWorksCustomPropertyFileHandlerTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
-		private ListenerForUnitTests _eventListener;
+		private TempFile _ourFile;
+		private TempFile _theirFile;
+		private TempFile _commonFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-											  where handler.GetType().Name == "FieldWorksCustomPropertyFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 											  select handler).First();
 		}
 
@@ -31,6 +33,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		public void FixtureTearDown()
 		{
 			_fileHandler = null;
+		}
+
+		[SetUp]
+		public void TestSetup()
+		{
+			FieldWorksTestServices.SetupTempFilesWithExstension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
+		}
+
+		[TearDown]
+		public void TestTearDown()
+		{
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -46,20 +60,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
-			Assert.AreEqual("CustomProperties", extensions[0]);
+			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.IsTrue(extensions.Contains("CustomProperties"));
 		}
 
 		[Test]
 		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
 		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
+			const string data = "<classdata />";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsFalse(_fileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -68,13 +78,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
-			using (var tempModelVersionFile = new TempFile(data))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -95,13 +100,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
-			using (var tempModelVersionFile = new TempFile(data))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "CustomProperties");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
 		}
 
 		[Test]
@@ -239,10 +239,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='OurNewClass' key='OurNewClassOurCertified' name='OurCertified' type='Boolean' /></AdditionalFields>");
 			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='TheirNewClass' key='TheirNewClassTheirCertified' name='TheirCertified' type='Boolean' /></AdditionalFields>");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
-				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""OurNewClassOurCertified""]", @"AdditionalFields/CustomField[@key=""TheirNewClassTheirCertified""]" }, null,
-				0, 2);
-			_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string>
+					{
+						@"AdditionalFields/CustomField[@key=""WfiWordformCertified""]",
+						@"AdditionalFields/CustomField[@key=""OurNewClassOurCertified""]",
+						@"AdditionalFields/CustomField[@key=""TheirNewClassTheirCertified""]"
+					},
+				null,
+				0, new List<Type>(),
+				2, new List<Type> {typeof (XmlAdditionChangeReport), typeof (XmlAdditionChangeReport)});
 		}
 
 		[Test]
@@ -256,10 +266,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' /></AdditionalFields>");
 			const string theirContent = commonAncestor;
 
-			DoMerge(commonAncestor, ourContent, theirContent,
-				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" }, null,
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
+				null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -273,10 +288,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			const string ourContent = commonAncestor;
 			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' /></AdditionalFields>");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
-				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" }, null,
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
+				null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -291,11 +311,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 			const string theirContent = commonAncestor;
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlDeletionChangeReport>();
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -310,10 +334,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			const string ourContent = commonAncestor;
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
-				0, 0);
+				0, new List<Type>(),
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -328,11 +357,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlDeletionChangeReport>();
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -346,11 +379,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("Boolean", "Integer");
 			var theirContent = commonAncestor.Replace("Boolean", "Integer");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Boolean""]" },
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlChangedRecordReport>();
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
 		}
 
 		[Test]
@@ -364,11 +401,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("Boolean", "Integer");
 			var theirContent = commonAncestor.Replace("Boolean", "Binary");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Binary""]" },
-				1, 0);
-			_eventListener.AssertFirstConflictType<BothEditedAttributeConflict>();
+				1, new List<Type> { typeof(BothEditedAttributeConflict) },
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -382,11 +423,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("Boolean", "Integer");
 			const string theirContent = commonAncestor;
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlChangedRecordReport>();
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
 		}
 
 		[Test]
@@ -400,11 +445,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			const string ourContent = commonAncestor;
 			var theirContent = commonAncestor.Replace("Boolean", "Integer");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
-				0, 1);
-			_eventListener.AssertFirstChangeType<XmlChangedRecordReport>();
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
 		}
 
 		[Test]
@@ -419,11 +468,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("Binary", "Integer");
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Binary' />", null);
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				null,
-				1, 0);
-			_eventListener.AssertFirstConflictType<EditedVsRemovedElementConflict>();
+				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -438,38 +491,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 			var ourContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Binary' />", null);
 			var theirContent = commonAncestor.Replace("Binary", "Integer");
 
-			DoMerge(commonAncestor, ourContent, theirContent,
+			FieldWorksTestServices.DoMerge(
+				_fileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				null,
-				1, 0);
-			_eventListener.AssertFirstConflictType<RemovedVsEditedElementConflict>();
-		}
-
-		private void DoMerge(string commonAncestor, string ourContent, string theirContent,
-			IEnumerable<string> matchesExactlyOne, IEnumerable<string> isNull,
-			int expectedConflictCount, int expectedChangesCount)
-		{
-			using (var ours = new TempFile(ourContent))
-			using (var theirs = new TempFile(theirContent))
-			using (var ancestor = new TempFile(commonAncestor))
-			{
-				var situation = new NullMergeSituation();
-				var mergeOrder = new MergeOrder(ours.Path, ancestor.Path, theirs.Path, situation);
-				_eventListener = new ListenerForUnitTests();
-				mergeOrder.EventListener = _eventListener;
-
-				_fileHandler.Do3WayMerge(mergeOrder);
-				var result = File.ReadAllText(ours.Path);
-				foreach (var query in matchesExactlyOne)
-					XmlTestHelper.AssertXPathMatchesExactlyOne(result, query);
-				if (isNull != null)
-				{
-					foreach (var query in isNull)
-						XmlTestHelper.AssertXPathIsNull(result, query);
-				}
-				_eventListener.AssertExpectedConflictCount(expectedConflictCount);
-				_eventListener.AssertExpectedChangesCount(expectedChangesCount);
-			}
+				1, new List<Type> { typeof(RemovedVsEditedElementConflict) },
+				0, new List<Type>());
 		}
 	}
 }

@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
-using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ModelVersion;
 using NUnit.Framework;
 using Palaso.IO;
@@ -17,12 +16,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 	public class FieldWorksModelVersionFileHandlerTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
+		private TempFile _ourFile;
+		private TempFile _theirFile;
+		private TempFile _commonFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-											  where handler.GetType().Name == "FieldWorksModelVersionFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 											  select handler).First();
 		}
 
@@ -30,6 +32,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		public void FixtureTearDown()
 		{
 			_fileHandler = null;
+		}
+
+		[SetUp]
+		public void TestSetup()
+		{
+			FieldWorksTestServices.SetupTempFilesWithExstension(".ModelVersion", out _ourFile, out _commonFile, out _theirFile);
+		}
+
+		[TearDown]
+		public void TestTearDown()
+		{
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -45,8 +59,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
-			Assert.AreEqual("ModelVersion", extensions[0]);
+			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.IsTrue(extensions.Contains("ModelVersion"));
 		}
 
 		[Test]
@@ -76,25 +90,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 		[Test]
 		public void ShouldNotBeAbleToValidateFile()
 		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
+			const string ourData = "<classdata />";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, null));
 		}
 
 		[Test]
 		public void ShouldBeAbleToValidateFile()
 		{
-			using (var tempModelVersionFile = new TempFile("{\"modelversion\": 7000037}"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
+			const string ourData = "{\"modelversion\": 7000037}";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
 		}
 
 		[Test]
@@ -103,24 +109,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			const string commonData = "{\"modelversion\": 7000044}";
 			const string ourData = "{\"modelversion\": 7000045}";
 			const string theirData = "{\"modelversion\": 7000046}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
 
-				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation())
-					{ EventListener = listener };
-				_fileHandler.Do3WayMerge(mergeOrder);
-				var mergedData = File.ReadAllText(ourTempFile.Path);
-				Assert.AreEqual(theirData, mergedData);
-				listener.AssertExpectedConflictCount(0);
-				listener.AssertExpectedChangesCount(1);
-				listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
-			}
+			File.WriteAllText(_commonFile.Path, commonData);
+			File.WriteAllText(_ourFile.Path, ourData);
+			File.WriteAllText(_theirFile.Path, theirData);
+
+			var listener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation()) { EventListener = listener };
+			_fileHandler.Do3WayMerge(mergeOrder);
+			var mergedData = File.ReadAllText(_ourFile.Path);
+			Assert.AreEqual(theirData, mergedData);
+			listener.AssertExpectedConflictCount(0);
+			listener.AssertExpectedChangesCount(1);
+			listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
 		}
 
 		[Test]
@@ -129,50 +130,40 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			const string commonData = "{\"modelversion\": 7000044}";
 			const string ourData = "{\"modelversion\": 7000046}";
 			const string theirData = "{\"modelversion\": 7000045}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
 
-				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation())
-					{EventListener = listener};
-				_fileHandler.Do3WayMerge(mergeOrder);
-				var mergedData = File.ReadAllText(ourTempFile.Path);
-				Assert.AreEqual(ourData, mergedData);
-				listener.AssertExpectedConflictCount(0);
-				listener.AssertExpectedChangesCount(1);
-				listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
-			}
+			File.WriteAllText(_commonFile.Path, commonData);
+			File.WriteAllText(_ourFile.Path, ourData);
+			File.WriteAllText(_theirFile.Path, theirData);
+
+			var listener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation()) { EventListener = listener };
+			_fileHandler.Do3WayMerge(mergeOrder);
+			var mergedData = File.ReadAllText(_ourFile.Path);
+			Assert.AreEqual(ourData, mergedData);
+			listener.AssertExpectedConflictCount(0);
+			listener.AssertExpectedChangesCount(1);
+			listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
 		}
 
 		[Test]
 		public void BothDidSameUpgrade()
 		{
-			//var mdc = MetadataCache.TestOnlyNewCache;
 			const string commonData = "{\"modelversion\": 7000044}";
 			const string ourData = "{\"modelversion\": 7000046}";
 			const string theirData = "{\"modelversion\": 7000046}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
 
-				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				_fileHandler.Do3WayMerge(mergeOrder);
-				var mergedData = File.ReadAllText(ourTempFile.Path);
-				Assert.AreEqual(ourData, mergedData);
-				listener.AssertExpectedConflictCount(0);
-				listener.AssertExpectedChangesCount(1);
-				listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
-			}
+			File.WriteAllText(_commonFile.Path, commonData);
+			File.WriteAllText(_ourFile.Path, ourData);
+			File.WriteAllText(_theirFile.Path, theirData);
+
+			var listener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _ourFile.Path, new NullMergeSituation()) { EventListener = listener };
+			_fileHandler.Do3WayMerge(mergeOrder);
+			var mergedData = File.ReadAllText(_ourFile.Path);
+			Assert.AreEqual(ourData, mergedData);
+			listener.AssertExpectedConflictCount(0);
+			listener.AssertExpectedChangesCount(1);
+			listener.AssertFirstChangeType<FieldWorksModelVersionUpdatedReport>();
 		}
 
 		[Test]
@@ -181,18 +172,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			const string commonData = "{\"modelversion\": 7000010}";
 			const string ourData = "{\"modelversion\": 7000009}";
 			const string theirData = "{\"modelversion\": 7000010}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
 
-				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
-			}
+			File.WriteAllText(_commonFile.Path, commonData);
+			File.WriteAllText(_ourFile.Path, ourData);
+			File.WriteAllText(_theirFile.Path, theirData);
+
+			var listener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation()) { EventListener = listener };
+			Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
 		}
 
 		[Test]
@@ -201,18 +188,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			const string commonData = "{\"modelversion\": 7000010}";
 			const string ourData = "{\"modelversion\": 7000010}";
 			const string theirData = "{\"modelversion\": 7000009}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
 
-				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
-				Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
-			}
+			File.WriteAllText(_commonFile.Path, commonData);
+			File.WriteAllText(_ourFile.Path, ourData);
+			File.WriteAllText(_theirFile.Path, theirData);
+
+			var listener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation()) { EventListener = listener };
+			Assert.Throws<InvalidOperationException>(() => _fileHandler.Do3WayMerge(mergeOrder));
 		}
 
 		[Test]
@@ -221,22 +204,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ModelVersion
 			const string commonData = "{\"modelversion\": 7000002}";
 			const string ourData = "{\"modelversion\": 7000002}";
 			const string theirData = "{\"modelversion\": 7000002}";
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
-			{
-				File.WriteAllText(commonTempFile.Path, commonData);
-				File.WriteAllText(ourTempFile.Path, ourData);
-				File.WriteAllText(theirTempFile.Path, theirData);
+
+				File.WriteAllText(_commonFile.Path, commonData);
+				File.WriteAllText(_ourFile.Path, ourData);
+				File.WriteAllText(_theirFile.Path, theirData);
 
 				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation()) { EventListener = listener };
+				var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation()) { EventListener = listener };
 				_fileHandler.Do3WayMerge(mergeOrder);
-				var mergedData = File.ReadAllText(ourTempFile.Path);
+				var mergedData = File.ReadAllText(_ourFile.Path);
 				Assert.AreEqual(ourData, mergedData);
 				listener.AssertExpectedConflictCount(0);
 				listener.AssertExpectedChangesCount(0);
-			}
 		}
 
 		[Test]

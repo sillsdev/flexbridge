@@ -15,47 +15,15 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	/// <summary>
 	/// File handler for a FieldWorks 7.0 xml class data file (not the main fwdata file).
 	/// </summary>
-	internal sealed class FieldWorksFileHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksFileHandler : FieldWorksInternalFieldWorksFileHandlerBase
 	{
 		private const string Extension = "ClassData";
 		private readonly Dictionary<string, bool> _filesChecked = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-		private readonly MetadataCache _mdc = MetadataCache.MdCache; // Theory has it that the model veriosn file was process already, so the version is current.
+		private readonly MetadataCache _mdc = MetadataCache.MdCache; // Theory has it that the model version file was process already, so the version is current.
 
-		#region Implementation of IChorusFileTypeHandler
-
-		public bool CanDiffFile(string pathToFile)
+		internal override bool CanValidateFile(string pathToFile)
 		{
 			return CheckThatInputIsValidFieldWorksFile(pathToFile);
-		}
-
-		public bool CanMergeFile(string pathToFile)
-		{
-			return CheckThatInputIsValidFieldWorksFile(pathToFile);
-		}
-
-		public bool CanPresentFile(string pathToFile)
-		{
-			return CheckThatInputIsValidFieldWorksFile(pathToFile);
-		}
-
-		public bool CanValidateFile(string pathToFile)
-		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
-				return false;
-
-			try
-			{
-				var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
-				using (var reader = XmlReader.Create(pathToFile, settings))
-				{
-					reader.MoveToContent();
-					return reader.LocalName == "classdata";
-				}
-			}
-			catch
-			{
-				return false;
-			}
 		}
 
 		/// <summary>
@@ -63,7 +31,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 		/// </summary>
 		/// <remarks>Implementations can exit with an exception, which the caller will catch and deal with.
 		/// The must not have any UI, no interaction with the user.</remarks>
-		public void Do3WayMerge(MergeOrder mergeOrder)
+		internal override void Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
@@ -76,14 +44,14 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				"rt", "guid", WritePreliminaryInformation);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		internal override IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
 				"rt", "guid");
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		internal override IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			if (report is IXmlChangeReport)
 				return new FieldWorksChangePresenter((IXmlChangeReport)report);
@@ -97,7 +65,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 		/// <summary>
 		/// return null if valid, otherwise nice verbose description of what went wrong
 		/// </summary>
-		public string ValidateFile(string pathToFile, IProgress progress)
+		internal override string ValidateFile(string pathToFile, IProgress progress)
 		{
 			try
 			{
@@ -124,33 +92,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			}
 			return null;
 		}
-
-		/// <summary>
-		/// This is like a diff, but for when the file is first checked in.  So, for example, a dictionary
-		/// handler might list any the words that were already in the dictionary when it was first checked in.
-		/// </summary>
-		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
-		{
-			return new IChangeReport[] { new DefaultChangeReport(fileInRevision, "Added") };
-		}
-
-		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
-		{
-			yield return Extension;
-		}
-
-		/// <summary>
-		/// Return the maximum file size that can be added to the repository.
-		/// </summary>
-		/// <remarks>
-		/// Return UInt32.MaxValue for no limit.
-		/// </remarks>
-		public uint MaximumFileSize
-		{
-			get { return UInt32.MaxValue; }
-		}
-
-		#endregion
 
 		private bool CheckThatInputIsValidFieldWorksFile(string pathToFile)
 		{

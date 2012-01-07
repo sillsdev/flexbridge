@@ -15,12 +15,15 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 	{
 		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
+		private TempFile _ourFile;
+		private TempFile _theirFile;
+		private TempFile _commonFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-									  where handler.GetType().Name == "FieldWorksReversalTypeHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 											  select handler).First();
 		}
 
@@ -34,12 +37,14 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
+			FieldWorksTestServices.SetupTempFilesWithExstension(".reversal", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			_eventListener = null;
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -55,8 +60,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
-			Assert.AreEqual("reversal", extensions[0]);
+			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.IsTrue(extensions.Contains("reversal"));
 		}
 
 		[Test]
@@ -76,13 +81,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		{
 			const string data = @"<Reversal>
 </Reversal>";
-			using (var tempModelVersionFile = new TempFile(data))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -90,28 +90,19 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 		{
 			const string data = @"<Reversal>
 </Reversal>";
-			using (var tempModelVersionFile = new TempFile(data))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
-				Assert.IsTrue(_fileHandler.CanDiffFile(newpath));
-				Assert.IsTrue(_fileHandler.CanMergeFile(newpath));
-				Assert.IsTrue(_fileHandler.CanPresentFile(newpath));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(_fileHandler.CanDiffFile(_ourFile.Path));
+			Assert.IsTrue(_fileHandler.CanMergeFile(_ourFile.Path));
+			Assert.IsTrue(_fileHandler.CanPresentFile(_ourFile.Path));
 		}
 
 		[Test]
 		public void ShouldNotBeAbleToValidateFile()
 		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
+			const string data = "<classdata />";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, null));
 		}
 
 		[Test]
@@ -121,13 +112,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 @"<?xml version='1.0' encoding='utf-8'?>
 <Reversal>
 </Reversal>";
-			using (var tempModelVersionFile = new TempFile(data))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
 		}
 
 		[Test]
@@ -157,17 +143,16 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 </ReversalIndexEntry>
 </Reversal>";
 
-			using (var parentTempFile = new TempFile(parent))
-			using (var childTempFile = new TempFile(child))
-			{
-				var differ = Xml2WayDiffer.CreateFromFiles(parentTempFile.Path, childTempFile.Path, _eventListener,
+			File.WriteAllText(_commonFile.Path, parent);
+			File.WriteAllText(_ourFile.Path, child);
+
+			var differ = Xml2WayDiffer.CreateFromFiles(_commonFile.Path, _ourFile.Path, _eventListener,
 					"header",
 					"ReversalIndexEntry",
 					"guid");
-				differ.ReportDifferencesToListener();
-				_eventListener.AssertExpectedChangesCount(1);
-				_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
-			}
+			differ.ReportDifferencesToListener();
+			_eventListener.AssertExpectedChangesCount(1);
+			_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
 		}
 
 		[Test]
@@ -199,17 +184,16 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 </ReversalIndexEntry>
 </Reversal>";
 
-			using (var parentTempFile = new TempFile(parent))
-			using (var childTempFile = new TempFile(child))
-			{
-				var differ = Xml2WayDiffer.CreateFromFiles(parentTempFile.Path, childTempFile.Path, _eventListener,
+			File.WriteAllText(_commonFile.Path, parent);
+			File.WriteAllText(_ourFile.Path, child);
+
+			var differ = Xml2WayDiffer.CreateFromFiles(_commonFile.Path, _ourFile.Path, _eventListener,
 					"header",
 					"ReversalIndexEntry",
 					"guid");
-				differ.ReportDifferencesToListener();
-				_eventListener.AssertExpectedChangesCount(1);
-				_eventListener.AssertFirstChangeType<XmlChangedRecordReport>();
-			}
+			differ.ReportDifferencesToListener();
+			_eventListener.AssertExpectedChangesCount(1);
+			_eventListener.AssertFirstChangeType<XmlChangedRecordReport>();
 		}
 
 		[Test]
@@ -239,17 +223,16 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 </ReversalIndexEntry>
 </Reversal>";
 
-			using (var parentTempFile = new TempFile(parent))
-			using (var childTempFile = new TempFile(child))
-			{
-				var differ = Xml2WayDiffer.CreateFromFiles(parentTempFile.Path, childTempFile.Path, _eventListener,
+			File.WriteAllText(_commonFile.Path, parent);
+			File.WriteAllText(_ourFile.Path, child);
+
+			var differ = Xml2WayDiffer.CreateFromFiles(_commonFile.Path, _ourFile.Path, _eventListener,
 					"header",
 					"ReversalIndexEntry",
 					"guid");
-				differ.ReportDifferencesToListener();
-				_eventListener.AssertExpectedChangesCount(1);
-				_eventListener.AssertFirstChangeType<XmlDeletionChangeReport>();
-			}
+			differ.ReportDifferencesToListener();
+			_eventListener.AssertExpectedChangesCount(1);
+			_eventListener.AssertFirstChangeType<XmlDeletionChangeReport>();
 		}
 
 		[Test]
@@ -270,7 +253,9 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
@@ -294,7 +279,9 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""oldie""]/Subentries/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlAdditionChangeReport) });
@@ -330,7 +317,9 @@ namespace FLEx_ChorusPluginTests.Contexts.Linguistics.Reversals
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				null, null,
 				1, new List<Type> { typeof(BothEditedTheSameElement) },
 				2, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport) });

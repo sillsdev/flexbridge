@@ -14,12 +14,15 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 	{
 		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
+		private TempFile _ourFile;
+		private TempFile _theirFile;
+		private TempFile _commonFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							where handler.GetType().Name == "FieldWorksAnthropologyTypeHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							select handler).First();
 		}
 
@@ -33,12 +36,14 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
+			FieldWorksTestServices.SetupTempFilesWithExstension(".ntbk", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			_eventListener = null;
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -54,8 +59,8 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
-			Assert.AreEqual("ntbk", extensions[0]);
+			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.IsTrue(extensions.Contains("ntbk"));
 		}
 
 		[Test]
@@ -170,17 +175,16 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 </RnGenericRec>
 </Anthropology>";
 
-			using (var parentTempFile = new TempFile(parent))
-			using (var childTempFile = new TempFile(child))
-			{
-				var differ = Xml2WayDiffer.CreateFromFiles(parentTempFile.Path, childTempFile.Path, _eventListener,
-					"header",
-					"RnGenericRec",
-					"guid");
-				differ.ReportDifferencesToListener();
-				_eventListener.AssertExpectedChangesCount(1);
-				_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
-			}
+			File.WriteAllText(_commonFile.Path, parent);
+			File.WriteAllText(_ourFile.Path, child);
+
+			var differ = Xml2WayDiffer.CreateFromFiles(_commonFile.Path, _ourFile.Path, _eventListener,
+				"header",
+				"RnGenericRec",
+				"guid");
+			differ.ReportDifferencesToListener();
+			_eventListener.AssertExpectedChangesCount(1);
+			_eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
 		}
 
 		[Test]
@@ -201,7 +205,9 @@ namespace FLEx_ChorusPluginTests.Contexts.Anthropology
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"Anthropology/RnGenericRec[@guid=""oldie""]", @"Anthropology/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });

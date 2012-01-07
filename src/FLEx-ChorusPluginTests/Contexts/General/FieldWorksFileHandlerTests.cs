@@ -16,7 +16,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-						 where handler.GetType().Name == "FieldWorksFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 						 select handler).First();
 		}
 
@@ -39,8 +39,8 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		public void GetExtensionsOfKnownTextFileTypesIsXml()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(1, extensions.Count(), "Wrong number of extensions.");
-			Assert.AreEqual("ClassData", extensions[0]);
+			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.IsTrue(extensions.Contains("ClassData"));
 		}
 	}
 }

@@ -128,6 +128,7 @@
   <ItemGroup>
 	<Compile Include="Contexts\General\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Contexts\General\FieldWorksChangePresenter.cs" />
+	<Compile Include="Infrastructure\FieldWorksCommonFileHandler.cs" />
 	<Compile Include="Contexts\General\FieldWorksFileHandler.cs" />
 	<Compile Include="Contexts\General\FieldWorksMergingStrategy.cs" />
 	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyTypeHandler.cs" />
@@ -147,6 +148,7 @@
 	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FdoClassInfo.cs" />
 	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
+	<Compile Include="Infrastructure\FieldWorksInternalFieldWorksFileHandlerBase.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergeStrategyServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />

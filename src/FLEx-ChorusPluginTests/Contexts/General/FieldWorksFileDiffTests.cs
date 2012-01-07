@@ -22,7 +22,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							   where handler.GetType().Name == "FieldWorksFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							   select handler).First();
 			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
 			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
@@ -273,8 +273,8 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 </classdata>";
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile("fwtest.xml", parent);
-				repositorySetup.ChangeFileAndCommit("fwtest.xml", child, "change it");
+				repositorySetup.AddAndCheckinFile("fwtest.ClassData", parent);
+				repositorySetup.ChangeFileAndCommit("fwtest.ClassData", child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									   orderby rev.Number.LocalRevisionNumber

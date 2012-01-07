@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPluginTests.Properties;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Contexts.General
 {
@@ -18,12 +19,15 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 	public class FieldWorksFileMergeTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
+		private TempFile _ourFile;
+		private TempFile _theirFile;
+		private TempFile _commonFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							   where handler.GetType().Name == "FieldWorksFileHandler"
+							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							   select handler).First();
 		}
 
@@ -31,6 +35,18 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		public void FixtureTearDown()
 		{
 			_fileHandler = null;
+		}
+
+		[SetUp]
+		public void TestSetup()
+		{
+			FieldWorksTestServices.SetupTempFilesWithExstension(".ClassData", out _ourFile, out _commonFile, out _theirFile);
+		}
+
+		[TearDown]
+		public void TestTearDown()
+		{
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -67,7 +83,7 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 		}
 
 		[Test]
-		public void Do3WayMergeThrowsOnNUllInput()
+		public void Do3WayMergeThrowsOnNullInput()
 		{
 			Assert.Throws<ArgumentNullException>(() => _fileHandler.Do3WayMerge(null));
 		}
@@ -85,7 +101,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@guid=""newbieOurs""]", @"classdata/rt[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
@@ -104,7 +122,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@guid=""newbieOurs""]" }, null,
 				0, new List<Type>(),
 				1, new List<Type> { typeof(XmlAdditionChangeReport) });
@@ -123,7 +143,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				1, new List<Type> { typeof(XmlAdditionChangeReport) });
@@ -143,7 +165,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]" },
 				new List<string> { @"classdata/rt[@guid=""goner""]" },
 				0, new List<Type>(),
@@ -164,7 +188,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]" },
 				new List<string> { @"classdata/rt[@guid=""goner""]" },
 				0, new List<Type>(),
@@ -185,7 +211,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]" },
 				new List<string> { @"classdata/rt[@guid=""goner""]" },
 				0, new List<Type>(),
@@ -206,7 +234,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
 				0, new List<Type>(),
@@ -227,7 +257,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> {@"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newWinningOwner""]"},
 				new List<string> {@"classdata/rt[@ownerguid=""originalOwner""]", @"classdata/rt[@ownerguid=""newLosingOwner""]"},
 				1, new List<Type> {typeof (BothEditedAttributeConflict)},
@@ -249,7 +281,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
 				0, new List<Type>(),
@@ -270,7 +304,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
 				0, new List<Type>(),
@@ -291,7 +327,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
@@ -312,7 +350,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
 				1, new List<Type> { typeof(RemovedVsEditedElementConflict) },
@@ -360,7 +400,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Comment/AStr[@ws='en']", @"classdata/rt/Comment/AStr/Run[@ws='en']" },
 				new List<string> { @"classdata/rt/Comment/AStr/Run[@ws='es']" },
 				0, new List<Type>(),
@@ -409,7 +451,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Comment/AStr[@ws='en']",
 					@"classdata/rt/Comment/AStr/Run[@ws='en']",
 					@"classdata/rt/Comment/AStr/Run[@ws='es']" },
@@ -470,7 +514,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Comment/AStr[@ws='en']",
 					@"classdata/rt/Comment/AStr[@ws='en']/Run[@ws='en']",
 					@"classdata/rt/Comment/AStr[@ws='en']/Run[@ws='es']",
@@ -527,7 +573,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Name/AUni[@ws='en']",
 					@"classdata/rt/Name/AUni[@ws='es']",
 					@"classdata/rt/Name/AUni[@ws='fr']"},
@@ -580,7 +628,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Name/AUni[@ws='en']" },
 				new List<string> { @"classdata/rt/Name/AUni[@ws='es']",
 					@"classdata/rt/Name/AUni[@ws='fr']" },
@@ -627,7 +677,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Form/Str/Run[@ws='x-ezpi']" },
 				null,
 				1, new List<Type> { typeof(BothEditedTheSameElement) },
@@ -671,7 +723,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			var result = FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Rules/Prop" },
 				null,
 				1, new List<Type> { typeof(BothEditedTheSameElement) },
@@ -716,7 +770,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Type/objsur[@guid='ourNew']" },
 				new List<string> { @"classdata/rt/Type/objsur[@guid='original']", @"classdata/rt/Type/objsur[@guid='theirNew']" },
 				1, new List<Type> { typeof(BothEditedAttributeConflict) },
@@ -759,7 +815,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Analyses/objsur[@guid='ourNew1']", @"classdata/rt/Analyses/objsur[@guid='ourNew2']" },
 				new List<string> { @"classdata/rt/Analyses/objsur[@guid='original1']", @"classdata/rt/Analyses/objsur[@guid='original2']", @"classdata/rt/Analyses/objsur[@guid='original3']",
 					@"classdata/rt/Analyses/objsur[@guid='theirNew1']" },
@@ -803,7 +861,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Notes/objsur[@guid='ourNew1']", @"classdata/rt/Notes/objsur[@guid='ourNew2']" },
 				new List<string> { @"classdata/rt/Notes/objsur[@guid='original1']", @"classdata/rt/Notes/objsur[@guid='original2']", @"classdata/rt/Notes/objsur[@guid='original3']",
 					@"classdata/rt/Notes/objsur[@guid='theirNew1']" },
@@ -848,7 +908,9 @@ namespace FLEx_ChorusPluginTests.Contexts.General
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
-				commonAncestor, ourContent, theirContent,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/SubFolders/objsur[@guid='ourNew1']", @"classdata/rt/SubFolders/objsur[@guid='ourNew2']", @"classdata/rt/SubFolders/objsur[@guid='theirNew1']" },
 				new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
 				0, new List<Type>(),

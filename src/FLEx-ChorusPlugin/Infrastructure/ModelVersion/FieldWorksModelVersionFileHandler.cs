@@ -17,28 +17,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 	/// <remarks>
 	/// This file uses JSON data in the form: {"modelversion": #####}
 	/// </remarks>
-	internal sealed class FieldWorksModelVersionFileHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksModelVersionFileHandler : FieldWorksInternalFieldWorksFileHandlerBase
 	{
 		private const string Extension = "ModelVersion";
 
-		#region Implementation of IChorusFileTypeHandler
-
-		public bool CanDiffFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanMergeFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanPresentFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanValidateFile(string pathToFile)
+		internal override bool CanValidateFile(string pathToFile)
 		{
 			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
@@ -51,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 		/// </summary>
 		/// <remarks>Implementations can exit with an exception, which the caller will catch and deal with.
 		/// The must not have any UI, no interaction with the user.</remarks>
-		public void Do3WayMerge(MergeOrder mergeOrder)
+		internal override void Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder.EventListener is NullMergeEventListener)
 				mergeOrder.EventListener = new ChangeAndConflictAccumulator();
@@ -90,7 +73,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 			MetadataCache.MdCache.UpgradeToVersion(mergedNumber);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		internal override IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			var diffReports = new List<IChangeReport>(1);
 
@@ -116,7 +99,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 			return diffReports;
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		internal override IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			if (report is FieldWorksModelVersionChangeReport)
 				return new FieldWorksModelVersionChangePresenter((FieldWorksModelVersionChangeReport)report);
@@ -130,37 +113,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ModelVersion
 		/// <summary>
 		/// return null if valid, otherwise nice verbose description of what went wrong
 		/// </summary>
-		public string ValidateFile(string pathToFile, IProgress progress)
+		internal override string ValidateFile(string pathToFile, IProgress progress)
 		{
 			return DoValidation(pathToFile);
 		}
-
-		/// <summary>
-		/// This is like a diff, but for when the file is first checked in.  So, for example, a dictionary
-		/// handler might list any the words that were already in the dictionary when it was first checked in.
-		/// </summary>
-		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
-		{
-			return new IChangeReport[] { new DefaultChangeReport(fileInRevision, "Added") };
-		}
-
-		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
-		{
-			yield return Extension;
-		}
-
-		/// <summary>
-		/// Return the maximum file size that can be added to the repository.
-		/// </summary>
-		/// <remarks>
-		/// Return UInt32.MaxValue for no limit.
-		/// </remarks>
-		public uint MaximumFileSize
-		{
-			get { return UInt32.MaxValue; }
-		}
-
-		#endregion
 
 		private static string DoValidation(string pathToFile)
 		{

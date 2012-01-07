@@ -12,29 +12,12 @@ using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
-	internal sealed class FieldWorksAnthropologyTypeHandler : IChorusFileTypeHandler
+	internal sealed class FieldWorksAnthropologyTypeHandler : FieldWorksInternalFieldWorksFileHandlerBase
 	{
 		private const string Extension = "ntbk";
 		private readonly MetadataCache _mdc = MetadataCache.MdCache; // Theory has it that the model veriosn file was process already, so the version is current.
 
-		#region Implementation of IChorusFileTypeHandler
-
-		public bool CanDiffFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanMergeFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanPresentFile(string pathToFile)
-		{
-			return CanValidateFile(pathToFile);
-		}
-
-		public bool CanValidateFile(string pathToFile)
+		internal override bool CanValidateFile(string pathToFile)
 		{
 			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
 				return false;
@@ -45,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			return DoValidation(pathToFile) == null;
 		}
 
-		public void Do3WayMerge(MergeOrder mergeOrder)
+		internal override void Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
 
@@ -58,39 +41,22 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				"RnGenericRec", "guid", WritePreliminaryInformation);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		internal override IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				"header",
 				"RnGenericRec", "guid");
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		internal override IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			throw new NotImplementedException();
 		}
 
-		public string ValidateFile(string pathToFile, IProgress progress)
+		internal override string ValidateFile(string pathToFile, IProgress progress)
 		{
 			return DoValidation(pathToFile);
 		}
-
-		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
-		{
-			return new IChangeReport[] { new DefaultChangeReport(fileInRevision, "Added") };
-		}
-
-		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
-		{
-			yield return Extension;
-		}
-
-		public uint MaximumFileSize
-		{
-			get { return int.MaxValue; }
-		}
-
-		#endregion
 
 		private static string DoValidation(string pathToFile)
 		{
