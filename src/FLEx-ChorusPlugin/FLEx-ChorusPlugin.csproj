@@ -23,6 +23,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<PlatformTarget>x86</PlatformTarget>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -112,7 +113,8 @@
 	<Reference Include="icu.net">
 	  <HintPath>..\..\lib\common\icu.net.dll</HintPath>
 	</Reference>
-	<Reference Include="LibChorus">
+	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
@@ -126,29 +128,28 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\FieldWorksCommonMergeStrategy.cs" />
 	<Compile Include="Contexts\General\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Contexts\General\FieldWorksChangePresenter.cs" />
 	<Compile Include="Infrastructure\FieldWorksCommonFileHandler.cs" />
-	<Compile Include="Contexts\General\FieldWorksFileHandler.cs" />
+	<Compile Include="Infrastructure\FieldWorksOldStyleValidationServices.cs" />
 	<Compile Include="Contexts\General\FieldWorksMergingStrategy.cs" />
-	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyTypeHandler.cs" />
-	<Compile Include="Contexts\Anthropology\FieldWorksAnthropologyMergeStrategy.cs" />
-	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalMergeStrategy.cs" />
-	<Compile Include="Contexts\Linguistics\Reversals\FieldWorksReversalTypeHandler.cs" />
+	<Compile Include="Infrastructure\FieldWorksAnthropologyValidationServices.cs" />
+	<Compile Include="Infrastructure\FieldWorksReversalValidationServices.cs" />
 	<Compile Include="Controller\FwBridgeController.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
 	<Compile Include="Infrastructure\CmObjectFlatteningService.cs" />
 	<Compile Include="Infrastructure\CmObjectNestingService.cs" />
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
-	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyFileHandler.cs" />
+	<Compile Include="Infrastructure\FieldWorksCustomPropertyValidationServices.cs" />
 	<Compile Include="Infrastructure\CustomProperties\FieldWorksCustomPropertyMergingStrategy.cs" />
 	<Compile Include="Infrastructure\DataSortingService.cs" />
 	<Compile Include="Infrastructure\DataType.cs" />
 	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
 	<Compile Include="Infrastructure\FdoClassInfo.cs" />
 	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
-	<Compile Include="Infrastructure\FieldWorksInternalFieldWorksFileHandlerBase.cs" />
+	<Compile Include="Infrastructure\FieldWorksFileHandlerServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergeStrategyServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksMergingServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
@@ -162,7 +163,7 @@
 	<Compile Include="Infrastructure\MetadataCache.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
 	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
-	<Compile Include="Infrastructure\ModelVersion\FieldWorksModelVersionFileHandler.cs" />
+	<Compile Include="Infrastructure\FieldWorksModelVersionValidationServices.cs" />
 	<Compile Include="Infrastructure\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\ObjectFinderServices.cs" />
 	<Compile Include="Contexts\Linguistics\WordformInventory\PunctuationFormBoundedContextService.cs" />

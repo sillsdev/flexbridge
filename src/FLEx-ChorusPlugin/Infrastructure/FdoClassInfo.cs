@@ -42,6 +42,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			_properties.Add(propertyinfo);
 		}
 
+		internal FdoPropertyInfo GetProperty(string propertyName)
+		{
+			return (from propInfo in AllProperties
+						  where propInfo.PropertyName == propertyName
+						  select propInfo).FirstOrDefault();
+		}
+
 		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>

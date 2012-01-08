@@ -5,6 +5,7 @@ using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -20,6 +21,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
+		private MetadataCache _mdc;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -38,12 +40,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 		[SetUp]
 		public void TestSetup()
 		{
+			_mdc = MetadataCache.TestOnlyNewCache;
 			FieldWorksTestServices.SetupTempFilesWithExstension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
+			_mdc = null;
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -236,8 +240,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 <AdditionalFields>
 <CustomField class='WfiWordform' key='WfiWordformCertified' name='Certified' type='Boolean' />
 </AdditionalFields>";
-			var ourContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='OurNewClass' key='OurNewClassOurCertified' name='OurCertified' type='Boolean' /></AdditionalFields>");
-			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='TheirNewClass' key='TheirNewClassTheirCertified' name='TheirCertified' type='Boolean' /></AdditionalFields>");
+			var ourContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformOurCertified' name='OurCertified' type='Boolean' /></AdditionalFields>");
+			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformTheirCertified' name='TheirCertified' type='Boolean' /></AdditionalFields>");
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
@@ -247,8 +251,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.CustomProperties
 				new List<string>
 					{
 						@"AdditionalFields/CustomField[@key=""WfiWordformCertified""]",
-						@"AdditionalFields/CustomField[@key=""OurNewClassOurCertified""]",
-						@"AdditionalFields/CustomField[@key=""TheirNewClassTheirCertified""]"
+						@"AdditionalFields/CustomField[@key=""WfiWordformOurCertified""]",
+						@"AdditionalFields/CustomField[@key=""WfiWordformTheirCertified""]"
 					},
 				null,
 				0, new List<Type>(),

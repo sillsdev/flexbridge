@@ -201,12 +201,22 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (customFiles.Count == 0)
 				customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
 
-			if (customFiles.Count < 1)
+			if (customFiles.Count == 0)
 				return;
 
 			var doc = XDocument.Load(customFiles[0]);
 			foreach (var customFieldElement in doc.Element("AdditionalFields").Elements("CustomField"))
-				AddCustomPropInfo(customFieldElement.Attribute("class").Value, new FdoPropertyInfo(customFieldElement.Attribute("name").Value, customFieldElement.Attribute("type").Value, true));
+			{
+				FdoClassInfo classInfo;
+				var className = customFieldElement.Attribute("class").Value;
+				if (_classes.TryGetValue(className, out classInfo))
+				{
+					var propertyName = customFieldElement.Attribute("name").Value;
+					var propInfo = classInfo.GetProperty(propertyName);
+					if (propInfo == null)
+						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));
+				}
+			}
 		}
 
 		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)

@@ -1,11 +1,10 @@
 ﻿using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using FLEx_ChorusPlugin.Infrastructure;
 
-namespace FLEx_ChorusPlugin.Contexts.Anthropology
+namespace FLEx_ChorusPlugin.Infrastructure
 {
-	internal sealed class FieldWorksAnthropologyMergeStrategy : IMergeStrategy
+	internal sealed class FieldWorksCommonMergeStrategy : IMergeStrategy
 	{
 		private readonly MetadataCache _mdc;
 		private readonly XmlMerger _merger;
@@ -13,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal FieldWorksAnthropologyMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
+		internal FieldWorksCommonMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
 			_merger = new XmlMerger(mergeSituation);
@@ -31,7 +30,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			}
 			else
 			{
-				// RnGenericRec element
 				FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, ourEntry, theirEntry, commonEntry);
 			}
 

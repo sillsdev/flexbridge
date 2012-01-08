@@ -13,13 +13,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 	{
 		private MetadataCache _mdc;
 
-		/// <summary>
-		/// Set up the test fixture class.
-		/// </summary>
-		[TestFixtureSetUp]
-		public void FixtureSetup()
+		[SetUp]
+		public void TestSetup()
 		{
-			_mdc = MetadataCache.MdCache;
+			_mdc = MetadataCache.TestOnlyNewCache;
+		}
+
+		[TearDown]
+		public void TestTearDown()
+		{
+			_mdc = null;
 		}
 
 		/// <summary></summary>
