@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts.Anthropology;
-using FLEx_ChorusPlugin.Contexts.Linguistics;
-using FLEx_ChorusPlugin.Contexts.Scripture;
+using FLEx_ChorusPlugin.Contexts;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 
@@ -14,20 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal static class FileWriterService
 	{
-		internal static void WriteNestedFile(string newPathname,
-			XmlReaderSettings readerSettings,
-			XElement nestedData,
-			string rootElementName)
-		{
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				writer.WriteStartElement(rootElementName);
-				if (nestedData != null)
-					WriteElement(writer, readerSettings, nestedData);
-				writer.WriteEndElement();
-			}
-		}
-
 		internal static void WriteNestedFile(string newPathname,
 			XmlReaderSettings readerSettings,
 			XDocument nestedDoc)
@@ -40,22 +26,74 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		private static void WriteDocument(XmlWriter writer, XmlReaderSettings readerSettings, XDocument nestedDoc)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(nestedDoc.ToString()), false), readerSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(nestedDoc.ToString()), false), readerSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
 		{
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element.ToString()), false), readerSettings))
+				writer.WriteNode(nodeReader, true);
+		}
+
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
+		{
+			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), readerSettings))
+				writer.WriteNode(nodeReader, true);
+		}
+
+		internal static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
+		{
+			if (element == null)
 			{
-				writer.WriteStartElement("classdata");
-				if (data != null)
-				{
-					foreach (var kvp in data)
-						WriteElement(writer, readerSettings, kvp.Value);
-				}
-				writer.WriteEndElement();
+				// Still write out file with just the root element.
+				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.OptionalFirstElementTag));
+				doc.Save(newPathname);
 			}
+			else
+			{
+				using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+					WriteElement(writer, readerSettings, element);
+			}
+		}
+
+		internal static void WriteVersionNumberFile(string pathRoot, string projectName, string version)
+		{
+			File.WriteAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
+		}
+
+		internal static void RemoveEmptyFolders(string baseDataFolder, bool removeTopLevelFolder)
+		{
+			if (!Directory.Exists(baseDataFolder))
+				return;
+
+			foreach (var folder in Directory.GetDirectories(baseDataFolder))
+			{
+				if (Directory.GetFileSystemEntries(folder).Length > 0)
+					RemoveEmptyFolders(folder, false); // Work down to leaf folders first.
+
+				if (Directory.GetFileSystemEntries(folder).Length == 0)
+					Directory.Delete(folder); // Empty now, so zap it.
+			}
+			if (removeTopLevelFolder && Directory.GetFileSystemEntries(baseDataFolder).Length == 0)
+				Directory.Delete(baseDataFolder); // Empty now, so zap it.
+		}
+
+		internal static void WriteObject(MetadataCache mdc,
+										 IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping,
+										 string baseDir,
+										 XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
+										 HashSet<string> omitProperties)
+		{
+			multiClassOutput.Clear();
+			var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+			ObjectFinderServices.CollectAllOwnedObjects(mdc,
+														classData, guidToClassMapping, multiClassOutput,
+														dataEl,
+														omitProperties);
+			foreach (var kvp in multiClassOutput)
+				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+			multiClassOutput.Clear();
 		}
 
 		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
@@ -129,221 +167,216 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
 		}
 
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
+		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(MultipleFileServices.Utf8.GetBytes(element.ToString()), false), readerSettings))
-				writer.WriteNode(nodeReader, true);
-		}
-
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), readerSettings))
-				writer.WriteNode(nodeReader, true);
-		}
-
-		internal static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
-		{
-			if (element == null)
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
-				// Still write out file with just the root element.
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("AdditionalFields"));
-				doc.Save(newPathname);
-			}
-			else
-			{
-				using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-					WriteElement(writer, readerSettings, element);
-			}
-		}
-
-		internal static void WriteVersionNumberFile(string pathRoot, string projectName, string version)
-		{
-			File.WriteAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
-		}
-
-		internal static void WriteClassDataToOriginal(XmlWriter writer, string rootFolder, XmlReaderSettings readerSettings)
-		{
-			foreach (var pathname in Directory.GetFiles(rootFolder, "*.ClassData"))
-			{
-				using (var reader = XmlReader.Create(pathname, readerSettings))
+				writer.WriteStartElement("classdata");
+				if (data != null)
 				{
-					reader.MoveToContent();
-					if (reader.IsEmptyElement)
-						continue; // No <rt> child elements.
-					reader.Read();
-					while (reader.IsStartElement())
-						writer.WriteNode(reader, false);
+					foreach (var kvp in data)
+						WriteElement(writer, readerSettings, kvp.Value);
 				}
+				writer.WriteEndElement();
 			}
 		}
 
-		internal static void RemoveDomainData(string pathRoot)
+		internal static void WriteCustomPropertyFile(MetadataCache mdc,
+													 IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+													 XmlReaderSettings readerSettings,
+													 string pathRoot,
+													 string projectName,
+													 byte[] record)
 		{
-			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot);
-			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot);
-			ScriptureDomainServices.RemoveBoundedContextData(pathRoot);
-
-			// TODO: Remove below stuff, after everything is shifted to domains.
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-			if (!Directory.Exists(multiFileDirRoot))
+			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+			// Add custom property info to MDC, since it may need to be sorted in the data files.
+			foreach (var propElement in cpElement.Elements("CustomField"))
 			{
-				Directory.CreateDirectory(multiFileDirRoot);
+				var className = propElement.Attribute("class").Value;
+				var propName = propElement.Attribute("name").Value;
+				var typeAttr = propElement.Attribute("type");
+				var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
+				if (adjustedTypeValue != typeAttr.Value)
+					typeAttr.Value = adjustedTypeValue;
+				var customProp = new FdoPropertyInfo(
+					propName,
+					typeAttr.Value,
+					true);
+				DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
+				mdc.AddCustomPropInfo(
+					className,
+					customProp);
+			}
+			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, SharedConstants.Utf8.GetBytes(cpElement.ToString()));
+		}
+
+		private static string AdjustedPropertyType(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName, string rawType)
+		{
+			string adjustedType;
+			switch (rawType)
+			{
+				default:
+					adjustedType = rawType;
+					break;
+
+				case "OC":
+					adjustedType = "OwningCollection";
+					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
+					break;
+				case "RC":
+					adjustedType = "ReferenceCollection";
+					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
+					break;
+
+				case "OS":
+					adjustedType = "OwningSequence";
+					break;
+
+				case "RS":
+					adjustedType = "ReferenceSequence";
+					break;
+
+				case "OA":
+					adjustedType = "OwningAtomic";
+					break;
+
+				case "RA":
+					adjustedType = "ReferenceAtomic";
+					break;
+			}
+			return adjustedType;
+		}
+
+		private static void AddCollectionPropertyToCache(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName)
+		{
+			Dictionary<string, HashSet<string>> classProps;
+			if (!sortablePropertiesCache.TryGetValue(className, out classProps))
+			{
+				classProps = new Dictionary<string, HashSet<string>>(2)
+								{
+									{SharedConstants.Collections, new HashSet<string>()},
+									{SharedConstants.MultiAlt, new HashSet<string>()}
+								};
+				sortablePropertiesCache.Add(className, classProps);
+			}
+			var collProps = classProps[SharedConstants.Collections];
+			collProps.Add(propName);
+		}
+
+		internal static void CheckPathname(string mainFilePathname)
+		{
+			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
+			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
+				&& File.Exists(mainFilePathname) // There has to be an actual file,
+				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
 				return;
-			}
-			RemoveDataFiles(multiFileDirRoot);
-			RemoveEmptyFolders(multiFileDirRoot, false); // Leave it, since we want it to be there, after this method is done.
+
+			throw new ApplicationException("Cannot process the given file.");
 		}
 
-		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
-			XmlReaderSettings readerSettings,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache)
+		internal static void RestoreMainFile(string mainFilePathname, string projectName)
 		{
-			var skipwriteEmptyClassFiles = new HashSet<string>();
+			CheckPathname(mainFilePathname);
 
-			//		LinguisticsDomainServices.WriteNestedDomainData will do old and new for a while yet.
-			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			//		LinguisticsDomainServices.WriteNestedDomainData does only new.
-			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			//		ScriptureDomainServices.WriteDomainData will do old for a while yet.
-			ScriptureDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			var tempPathname = Path.GetTempFileName();
 
-			// Remove the data that may be in multiple bounded Contexts.
-			// Eventually, there ought not be an need for writing the leftovers in the base folder,
-			// but I'm not there yet.
-			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
-
-			// TODO: Props to not store in nested LangProj:
-			// TODO:	These are all for LangProj
-			/*
-			 * "ResearchNotebook"
-			 * "AnthroList",
-			 * "ConfidenceLevels",
-			 * "Restrictions",
-			 * "Roles",
-			 * "Status",
-			 * "Locations",
-			 * "People",
-			 * "Education",
-			 * "TimeOfDay",
-			 * "Positions"
-			*/
-
-			// TODO??: Maybe put everything that is left in "classData" in the 'General' context as: 1) series of regular 'rt' elements, or 2) nested objects, with the top elements being the unowned ones.
-			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
-			// TODO: so no class data will be left to write at the 'multiFileDirRoot' level in the following code.
-			// Write data records in guid sorted order.
-			// Write class file for each concrete class, whether it has data or not.
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
+			try
 			{
-				var classDataPathname = Path.Combine(multiFileDirRoot, className + ".ClassData");
-				SortedDictionary<string, XElement> sortedInstanceData;
-				if (classData.TryGetValue(className, out sortedInstanceData))
-				{
-					// Only write one file, since there are no more high volume instances here.
-					WriteSecondaryFile(classDataPathname, readerSettings, sortedInstanceData);
-				}
-				else
-				{
-					// Write empty class file, unless it is empty by reason of it being emptied by a Bounded Context.
-					if (!skipwriteEmptyClassFiles.Contains(className))
-						WriteSecondaryFile(classDataPathname, readerSettings, null);
-				}
-			}
-		}
+				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
+				// but the optional custom props element must be first.
+				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+				// NB: This should follow current FW write settings practice.
+				var fwWriterSettings = new XmlWriterSettings
+										{
+											OmitXmlDeclaration = false,
+											CheckCharacters = true,
+											ConformanceLevel = ConformanceLevel.Document,
+											Encoding = new UTF8Encoding(false),
+											Indent = true,
+											IndentChars = (""),
+											NewLineOnAttributes = false
+										};
 
-		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string pathRoot)
-		{
-			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-
-			// TODO: 'leftover' Domain.
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-			foreach (var classDataPathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories))
-			{
-				var classDataDoc = XDocument.Load(classDataPathname);
-				foreach (var rtElement in classDataDoc.Element("classdata").Elements("rt"))
+				using (var writer = XmlWriter.Create(tempPathname, fwWriterSettings))
 				{
-					var className = rtElement.Attribute("class").Value;
-					switch (className)
+					writer.WriteStartElement("languageproject");
+
+					// Write out version number from the ModelVersion file.
+					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"));
+					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
+					var version = splitModelVersionData[1].Trim();
+					writer.WriteAttributeString("version", version);
+
+					var mdc = MetadataCache.MdCache; // This may really need to be a reset
+					mdc.UpgradeToVersion(Int32.Parse(version));
+					var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
+
+					// Write out optional custom property data.
+					// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
+					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
+					// Remove 'key' attribute from CustomField elements, before writing to main file.
+					var doc = XDocument.Load(optionalCustomPropFile);
+					var customFieldElements = doc.Root.Elements("CustomField");
+					if (customFieldElements.Count() > 0)
 					{
-						case "LangProject":
-							highLevelData.Add(className, rtElement);
-							break;
-						case "LexDb":
-							highLevelData.Add(className, rtElement);
-							break;
+						foreach (var cf in customFieldElements)
+						{
+							cf.Attribute("key").Remove();
+							// Restore type attr for object values.
+							var propType = cf.Attribute("type").Value;
+							cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+
+							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute("class").Value], new FdoPropertyInfo(cf.Attribute("name").Value, propType, true));
+						}
+						WriteElement(writer, readerSettings, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 					}
 
-					DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
+					BaseDomainServices.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
+
+					writer.WriteEndElement();
 				}
+
+				File.Copy(tempPathname, mainFilePathname, true);
 			}
-
-			// NB: These are flattened in reverse order from that of nesting, since I think 'sortedData' will be need for re-establishing some distal properties.
-			// TODO: When 'sortedData' is a parm to all Flatten calls, then the loop here can go away.
-
-			// TODO: Add Scripture Domain and 'leftover' Domain.
-			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-
-			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
-			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
-
-			foreach (var rtElement in sortedData.Values)
-				WriteElement(writer, readerSettings, rtElement);
-		}
-
-		internal static void WriteObject(MetadataCache mdc,
-			IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping,
-			string baseDir,
-			XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
-			HashSet<string> omitProperties)
-		{
-			multiClassOutput.Clear();
-			var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-			ObjectFinderServices.CollectAllOwnedObjects(mdc,
-														classData, guidToClassMapping, multiClassOutput,
-														dataEl,
-														omitProperties);
-			foreach (var kvp in multiClassOutput)
-				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-			multiClassOutput.Clear();
-		}
-
-		internal static void RemoveDataFiles(string baseDataFolder)
-		{
-			// Delete all data files at any folder depth.
-			foreach (var dataFilePathname in Directory.GetFiles(baseDataFolder, "*.ClassData", SearchOption.AllDirectories))
-				File.Delete(dataFilePathname);
-		}
-
-		internal static void RemoveEmptyFolders(string baseDataFolder, bool removeTopLevelFolder)
-		{
-			if (!Directory.Exists(baseDataFolder))
-				return;
-
-			foreach (var folder in Directory.GetDirectories(baseDataFolder))
+			finally
 			{
-				if (Directory.GetFileSystemEntries(folder).Length > 0)
-					RemoveEmptyFolders(folder, false); // Work down to leaf folders first.
-
-				if (Directory.GetFileSystemEntries(folder).Length == 0)
-					Directory.Delete(folder); // Empty now, so zap it.
+				if (File.Exists(tempPathname))
+					File.Delete(tempPathname);
 			}
-			if (removeTopLevelFolder && Directory.GetFileSystemEntries(baseDataFolder).Length == 0)
-				Directory.Delete(baseDataFolder); // Empty now, so zap it.
 		}
 
-		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)
+		private static string RestoreAdjustedTypeValue(string storedType)
 		{
-			if (!Directory.Exists(baseDir))
-				return;
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
 
-			WriteClassDataToOriginal(writer, baseDir, readerSettings);
+				case "OwningCollection":
+					adjustedType = "OC";
+					break;
+				case "ReferenceCollection":
+					adjustedType = "RC";
+					break;
 
-			foreach (var directory in Directory.GetDirectories(baseDir))
-				RestoreFiles(writer, readerSettings, directory);
+				case "OwningSequence":
+					adjustedType = "OS";
+					break;
+				case "ReferenceSequence":
+					adjustedType = "RS";
+					break;
+
+				case "OwningAtomic":
+					adjustedType = "OA";
+					break;
+				case "ReferenceAtomic":
+					adjustedType = "RA";
+					break;
+			}
+			return adjustedType;
 		}
 	}
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
 using FLEx_ChorusPlugin.Infrastructure;

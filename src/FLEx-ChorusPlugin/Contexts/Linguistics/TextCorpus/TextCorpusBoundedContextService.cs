@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 {
@@ -54,7 +56,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, TextCorpusRootFolder)));
+			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, TextCorpusRootFolder)));
 		}
 	}
 }

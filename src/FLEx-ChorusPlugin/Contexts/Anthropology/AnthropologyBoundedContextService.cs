@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
@@ -37,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			classData.TryGetValue("RnResearchNbk", out sortedInstanceData);
 			var langProj = classData["LangProject"].Values.First();
 
-			var headerElement = new XElement("header");
+			var headerElement = new XElement(SharedConstants.Header);
 			var rootElement = new XElement("Anthropology", headerElement);
 			if (sortedInstanceData.Count > 0)
 			{
@@ -62,7 +63,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					// Add one bogus element, so fast splitter need not be changed for optional main sequence.
 					// Restore will remove it, if found.
 					rootElement.Add(new XElement("RnGenericRec",
-												   new XAttribute("guid", Guid.Empty)));
+												   new XAttribute(SharedConstants.GuidStr, Guid.Empty)));
 				}
 				// Remove objsur node from owning LangProg
 				langProj.Element("ResearchNotebook").RemoveNodes();
@@ -110,19 +111,19 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var langProjElement = highLevelData["LangProject"];
 			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
 			var root = doc.Root;
-			foreach (var headerChildElement in root.Element("header").Elements())
+			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
 			{
 				switch (headerChildElement.Name.LocalName)
 				{
 					case "RnResearchNbk":
 						var owningRnPropElement = langProjElement.Element("ResearchNotebook");
-						owningRnPropElement.Add(new XElement("objsur",
-															   new XAttribute("guid", headerChildElement.Attribute("guid").Value.ToLowerInvariant()),
+						owningRnPropElement.Add(new XElement(SharedConstants.Objsur,
+															   new XAttribute(SharedConstants.GuidStr, headerChildElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
 															   new XAttribute("t", "o")));
 						// Put all records back in RnResearchNbk, before sort and restore.
 						// EXCEPT, if there is only onne of them and it is guid.Empty, then skip it
 						var records = root.Elements("RnGenericRec").ToList();
-						if (records.Count > 1 || records[0].Attribute("guid").Value != Guid.Empty.ToString())
+						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
 							headerChildElement.Element("Records").Add();
 						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, headerChildElement, null); // object already has owning guid attr.
 						break;
@@ -155,8 +156,8 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		private static void RestoreLangProjListObjsurElement(XContainer langProjElement, XElement listElement)
 		{
 			var owningListPropElement = langProjElement.Element(listElement.Parent.Name.LocalName);
-			owningListPropElement.Add(new XElement("objsur",
-												   new XAttribute("guid", listElement.Attribute("guid").Value),
+			owningListPropElement.Add(new XElement(SharedConstants.Objsur,
+												   new XAttribute(SharedConstants.GuidStr, listElement.Attribute(SharedConstants.GuidStr).Value),
 												   new XAttribute("t", "o")));
 		}
 
@@ -175,7 +176,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				if (listPropElement == null || !listPropElement.HasElements)
 					continue;
 
-				var listElement = posLists[listPropElement.Elements().First().Attribute("guid").Value];
+				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value];
 				CmObjectNestingService.NestObject(listElement,
 												  exceptions,
 												  classData,

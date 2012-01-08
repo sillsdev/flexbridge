@@ -21,11 +21,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void OneItemInCollectionRemains()
 		{
 			var collData = new XElement("CollectionProperty",
-										new XElement("objsur", new XAttribute("guid", "c1ecf889-e382-11de-8a39-0800200c9a66")));
+										new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf889-e382-11de-8a39-0800200c9a66")));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(1, collData.Elements().Count());
-			Assert.AreEqual("c1ecf889-e382-11de-8a39-0800200c9a66", collData.Element("objsur").Attribute("guid").Value);
+			Assert.AreEqual("c1ecf889-e382-11de-8a39-0800200c9a66", collData.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value);
 		}
 
 		/// <summary>
@@ -35,13 +35,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void CollectionPropertyIsSorted()
 		{
 			var collData = new XElement("CollectionProperty",
-				new XElement("objsur", new XAttribute("guid", "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement("objsur", new XAttribute("guid", "c1ecf88a-e382-11de-8a39-0800200c9a66")));
+				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
+				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88a-e382-11de-8a39-0800200c9a66")));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(2, collData.Elements().Count());
-			Assert.AreEqual("c1ecf88a-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(0).Attribute("guid").Value);
-			Assert.AreEqual("c1ecf88b-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(1).Attribute("guid").Value);
+			Assert.AreEqual("c1ecf88a-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(0).Attribute(SharedConstants.GuidStr).Value);
+			Assert.AreEqual("c1ecf88b-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(1).Attribute(SharedConstants.GuidStr).Value);
 		}
 
 		/// <summary>
@@ -51,14 +51,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void DuplicatesInCollectionPropertyAreRemoved()
 		{
 			var collData = new XElement("CollectionProperty",
-				new XElement("objsur", new XAttribute("guid", "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement("objsur", new XAttribute("guid", "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement("objsur", new XAttribute("guid", "c1ecf88a-e382-11de-8a39-0800200c9a66")));
+				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
+				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
+				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88a-e382-11de-8a39-0800200c9a66")));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(2, collData.Elements().Count());
-			Assert.AreEqual("c1ecf88a-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(0).Attribute("guid").Value);
-			Assert.AreEqual("c1ecf88b-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(1).Attribute("guid").Value);
+			Assert.AreEqual("c1ecf88a-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(0).Attribute(SharedConstants.GuidStr).Value);
+			Assert.AreEqual("c1ecf88b-e382-11de-8a39-0800200c9a66", collData.Elements().ElementAt(1).Attribute(SharedConstants.GuidStr).Value);
 		}
 
 		/// <summary>
@@ -125,7 +125,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 <CustomField wsSelector='-2' type='String' name='Paradigm' class='LexEntry' />
 </AdditionalFields>";
 			var sortedCustomDataElement = DataSortingService.SortCustomPropertiesRecord(sortedCustomData);
-			Assert.AreEqual("AdditionalFields", sortedCustomDataElement.Name.LocalName);
+			Assert.AreEqual(SharedConstants.OptionalFirstElementTag, sortedCustomDataElement.Name.LocalName);
 			Assert.AreEqual(3, sortedCustomDataElement.Elements().Count());
 
 			var customData = sortedCustomDataElement.Elements().ElementAt(0);
@@ -194,7 +194,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			//	}
 			//	var doc = XDocument.Load(tempOutputPathname);
 			Assert.AreEqual("class", rtElement.Attributes().ElementAt(0).Name.LocalName);
-			Assert.AreEqual("guid", rtElement.Attributes().ElementAt(1).Name.LocalName);
+			Assert.AreEqual(SharedConstants.GuidStr, rtElement.Attributes().ElementAt(1).Name.LocalName);
 			Assert.AreEqual("ownerguid", rtElement.Attributes().ElementAt(2).Name.LocalName);
 
 			Assert.AreEqual(4, rtElement.Elements().Count());
@@ -204,7 +204,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			Assert.AreEqual("Custom", rtElement.Elements().ElementAt(1).Name.LocalName);
 			Assert.AreEqual("DateCreated", rtElement.Elements().ElementAt(2).Name.LocalName);
 			sortedProp = rtElement.Elements().ElementAt(3);
-			Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element("objsur").Attribute("guid").Value); // Make sure SortMainElement called coll sorter.
+			Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement called coll sorter.
 			Assert.AreEqual("Possibilities", sortedProp.Name.LocalName);
 			//}
 			//finally
@@ -257,7 +257,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 				var sortedProp = rtElement.Elements().ElementAt(0);
 				Assert.AreEqual("LexEntry", sortedProp.Element("CustomField").Attribute("class").Value); // Make sure SortCustomPropertiesRecord was called.
 				sortedProp = rtElement.Elements().ElementAt(1);
-				Assert.AreEqual("c1ecf88c-e382-11de-8a39-0800200c9a66", sortedProp.Attribute("guid").Value); // Make sure SortMainElement was called.
+				Assert.AreEqual("c1ecf88c-e382-11de-8a39-0800200c9a66", sortedProp.Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement was called.
 			}
 			finally
 			{

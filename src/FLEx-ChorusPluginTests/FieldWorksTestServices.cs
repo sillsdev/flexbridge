@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
 

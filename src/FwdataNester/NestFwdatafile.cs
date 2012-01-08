@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Xml;
 
 namespace FwdataNester
@@ -42,12 +40,12 @@ namespace FwdataNester
 			var unownedObjects = new List<XElement>(10000);
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
 			var guidToClassMapping = new Dictionary<string, string>();
-			byte[] optionalFirstElement = null;
+			//byte[] optionalFirstElement = null;
 			using (var fastSplitter = new FastXmlElementSplitter(_openFileDialog.FileName))
 			{
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes("AdditionalFields", "rt", out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -72,7 +70,7 @@ namespace FwdataNester
 								className,
 								customProp);
 						}
-						optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
+						//optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						foundOptionalFirstElement = false;
 					}
 					else
@@ -142,12 +140,12 @@ namespace FwdataNester
 			{
 				classProps = new Dictionary<string, HashSet<string>>(2)
 								{
-									{DataSortingService.Collections, new HashSet<string>()},
-									{DataSortingService.MultiAlt, new HashSet<string>()}
+									{SharedConstants.Collections, new HashSet<string>()},
+									{SharedConstants.MultiAlt, new HashSet<string>()}
 								};
 				sortablePropertiesCache.Add(className, classProps);
 			}
-			var collProps = classProps[DataSortingService.Collections];
+			var collProps = classProps[SharedConstants.Collections];
 			collProps.Add(propName);
 		}
 
@@ -158,7 +156,7 @@ namespace FwdataNester
 			if (rtElement.Attribute("ownerguid") == null)
 				returnValue.Add(rtElement);
 			var className = rtElement.Attribute("class").Value;
-			var guid = rtElement.Attribute("guid").Value;
+			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 
 			// 1. Remove 'Checksum' from wordforms.

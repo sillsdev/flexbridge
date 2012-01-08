@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
@@ -66,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
-					new XElement("header", revIndex));
+					new XElement(SharedConstants.Header, revIndex));
 				root.Add(entriesElement.Elements()); // NB: These were already sorted, why up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
 				entriesElement.RemoveNodes();
 				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
@@ -95,12 +96,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			{
 				// Put entries back into index's Entries element.
 				var root = reversalDoc.Element("Reversal");
-				var header = root.Element("header");
+				var header = root.Element(SharedConstants.Header);
 				var revIdx = header.Element("ReversalIndex");
 				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
 				CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, revIdx, null);
-				var revIdxGuid = revIdx.Attribute("guid").Value.ToLowerInvariant();
-				sortedRevs.Add(revIdxGuid, new XElement("objsur", new XAttribute("guid", revIdxGuid), new XAttribute("t", "o")));
+				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				sortedRevs.Add(revIdxGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, revIdxGuid), new XAttribute("t", "o")));
 			}
 
 			// Restore lexDb ReversalIndexes property in sorted order.

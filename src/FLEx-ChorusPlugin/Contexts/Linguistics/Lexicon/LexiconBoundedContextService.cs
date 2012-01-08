@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 {
@@ -179,7 +181,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, LexiconRootFolder)));
+			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, LexiconRootFolder)));
 		}
 	}
 }

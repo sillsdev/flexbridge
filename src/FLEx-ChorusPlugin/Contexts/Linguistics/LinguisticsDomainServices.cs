@@ -47,9 +47,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, linguisticsBaseDir);
 
+			/* Currently handled by general domain.
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			/*
 			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
