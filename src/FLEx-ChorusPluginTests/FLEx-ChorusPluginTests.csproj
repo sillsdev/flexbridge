@@ -105,6 +105,7 @@
 	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
+	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />

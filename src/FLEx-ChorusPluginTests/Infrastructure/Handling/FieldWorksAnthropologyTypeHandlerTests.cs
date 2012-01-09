@@ -8,6 +8,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
@@ -123,7 +124,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsNotNull(_fileHandler.ValidateFile(testPathname, null));
+				Assert.IsNotNull(_fileHandler.ValidateFile(testPathname, new NullProgress()));
 			}
 			finally
 			{
@@ -142,7 +143,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsNull(_fileHandler.ValidateFile(testPathname, null));
+				Assert.IsNull(_fileHandler.ValidateFile(testPathname, new NullProgress()));
 			}
 			finally
 			{

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using NUnit.Framework;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
@@ -81,31 +82,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void ValidateFile_Returns_Message_For_Empty_Pathname()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile("", null));
+			Assert.IsNotNull(_fileHandler.ValidateFile("", new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Null_Pathname()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile(null, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(null, new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Null_For_Good_File()
 		{
-			Assert.IsNull(_fileHandler.ValidateFile(_goodXmlPathname, null));
+			Assert.IsNull(_fileHandler.ValidateFile(_goodXmlPathname, new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Crummy_Xml_File()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile(_illformedXmlPathname, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_illformedXmlPathname, new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Good_But_Not_Fw_Xml_File()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile(_goodXmlButNotFwPathname, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_goodXmlButNotFwPathname, new NullProgress()));
 		}
 	}
 }

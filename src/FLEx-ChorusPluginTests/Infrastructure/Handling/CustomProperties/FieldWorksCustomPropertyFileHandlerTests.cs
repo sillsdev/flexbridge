@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 {
@@ -87,17 +88,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
 		}
 
-		[Test]
-		public void ShouldNotBeAbleToValidateFile()
-		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "someext");
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
-				File.Delete(newpath);
-			}
-		}
+		// Now throws (NotSupportedException), which is tested in UnknownFileTypeHandlerTests
+		//[Test]
+		//public void ShouldNotBeAbleToValidateFile()
+		//{
+		//    using (var tempModelVersionFile = new TempFile("<classdata />"))
+		//    {
+		//        var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "someext");
+		//        File.Copy(tempModelVersionFile.Path, newpath, true);
+		//        Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
+		//        File.Delete(newpath);
+		//    }
+		//}
 
 		[Test]
 		public void ShouldBeAbleToValidateFile()
@@ -106,7 +108,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]

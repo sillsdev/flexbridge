@@ -8,6 +8,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 {
@@ -94,7 +95,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		{
 			const string ourData = "<classdata />";
 			File.WriteAllText(_ourFile.Path, ourData);
-			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -102,7 +103,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		{
 			const string ourData = "{\"modelversion\": 7000037}";
 			File.WriteAllText(_ourFile.Path, ourData);
-			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -218,25 +219,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 				Assert.AreEqual(ourData, mergedData);
 				listener.AssertExpectedConflictCount(0);
 				listener.AssertExpectedChangesCount(0);
-		}
-
-		[Test]
-		public void Find2WayDifferencesShouldReportOneAddition()
-		{
-			const string parent = "{\"modelversion\": 7000002}";
-			using (var repositorySetup = new RepositorySetup("randy"))
-			{
-				repositorySetup.AddAndCheckinFile("fwtest.ModelVersion", parent);
-				var hgRepository = repositorySetup.Repository;
-				var allRevisions = (from rev in hgRepository.GetAllRevisions()
-									orderby rev.Number.LocalRevisionNumber
-									select rev).ToList();
-				var first = allRevisions[0];
-				var firstFiR = hgRepository.GetFilesInRevision(first).First();
-				var result = _fileHandler.Find2WayDifferences(null, firstFiR, hgRepository).ToList();
-				Assert.AreEqual(1, result.Count);
-				Assert.IsInstanceOf(typeof(FieldWorksModelVersionAdditionChangeReport), result[0]);
-			}
 		}
 
 		[Test]

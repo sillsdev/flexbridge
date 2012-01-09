@@ -378,5 +378,18 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 			return adjustedType;
 		}
+
+		internal static string GetExtensionFromPathname(string pathname)
+		{
+			if (String.IsNullOrEmpty(pathname))
+				throw new ArgumentNullException("pathname");
+
+			var extension = Path.GetExtension(pathname);
+			return String.IsNullOrEmpty(extension)
+					? null
+					: (extension.Length == 1
+						? extension
+						: extension.Substring(1));
+		}
 	}
 }

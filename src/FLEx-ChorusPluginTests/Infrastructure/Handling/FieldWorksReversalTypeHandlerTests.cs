@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
@@ -104,7 +105,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, null));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -115,7 +116,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <Reversal>
 </Reversal>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, null));
+			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
