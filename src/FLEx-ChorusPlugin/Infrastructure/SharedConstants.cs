@@ -13,5 +13,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Objsur = "objsur";
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
+		internal const string ClassData = "ClassData";
+		internal const string Ntbk = "ntbk";
+		internal const string Reversal = "reversal";
+		internal const string CustomProperties = "CustomProperties";
+		internal const string ModelVersion = "ModelVersion";
 	}
 }

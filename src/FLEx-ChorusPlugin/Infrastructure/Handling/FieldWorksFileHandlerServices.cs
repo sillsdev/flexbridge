@@ -17,12 +17,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	internal static class FieldWorksFileHandlerServices
 	{
-		internal const string ClassData = "ClassData";
-		internal const string Ntbk = "ntbk";
-		internal const string Reversal = "reversal";
-		internal const string CustomProperties = "CustomProperties";
-		internal const string ModelVersion = "ModelVersion";
-
 		internal static string ValidateFile(string pathToFile)
 		{
 			if (String.IsNullOrEmpty(pathToFile))
@@ -34,7 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				default:
 					return "Unrecognized extension";
-				case ClassData:
+				case SharedConstants.ClassData:
 					try
 					{
 						var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
@@ -59,7 +53,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						return error.Message;
 					}
 					return null;
-				case Ntbk:
+				case SharedConstants.Ntbk:
 					try
 					{
 						var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
@@ -84,7 +78,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						return e.Message;
 					}
 					return null;
-				case Reversal:
+				case SharedConstants.Reversal:
 					try
 					{
 						var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
@@ -109,7 +103,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						return e.Message;
 					}
 					return null;
-				case CustomProperties:
+				case SharedConstants.CustomProperties:
 					try
 					{
 						var doc = XDocument.Load(pathToFile);
@@ -123,7 +117,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					{
 						return e.Message;
 					}
-				case ModelVersion:
+				case SharedConstants.ModelVersion:
 					try
 					{
 						// Uses JSON: {"modelversion": #####}
@@ -148,17 +142,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				{
 					default:
 						throw new ArgumentException("Extension not recognized.");
-					case Ntbk:
+					case SharedConstants.Ntbk:
 						throw new NotImplementedException();
-					case ClassData:
+					case SharedConstants.ClassData:
 						// Fall through for now.
 						//return new FieldWorksChangePresenter((IXmlChangeReport) report);
-					case Reversal:
+					case SharedConstants.Reversal:
 					// Fall through for now.
 						//return new FieldWorksChangePresenter((IXmlChangeReport)report);
-					case CustomProperties:
+					case SharedConstants.CustomProperties:
 						return new FieldWorksChangePresenter((IXmlChangeReport)report);
-					case ModelVersion:
+					case SharedConstants.ModelVersion:
 						return new FieldWorksModelVersionChangePresenter((FieldWorksModelVersionChangeReport)report);
 				}
 			}
@@ -179,22 +173,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				default:
 					throw new ArgumentException("Extension not recognized.");
-				case ClassData:
+				case SharedConstants.ClassData:
 					optionalElementName = null;
 					repeatingElementName = SharedConstants.RtTag;
 					break;
-				case Ntbk:
+				case SharedConstants.Ntbk:
 					repeatingElementName = "RnGenericRec";
 					break;
-				case Reversal:
+				case SharedConstants.Reversal:
 					repeatingElementName = "ReversalIndexEntry";
 					break;
-				case CustomProperties:
+				case SharedConstants.CustomProperties:
 					optionalElementName = null;
 					repeatingElementName = "CustomField";
 					keyAttrName = "key";
 					break;
-				case ModelVersion:
+				case SharedConstants.ModelVersion:
 					var diffReports = new List<IChangeReport>(1);
 
 					// The only relevant change to report is the version number.
@@ -241,26 +235,26 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				default:
 					throw new ArgumentException("Extension not recognized.");
-				case ClassData:
+				case SharedConstants.ClassData:
 					optionalElementName = null;
 					repeatingElementName = SharedConstants.RtTag;
 					FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "DataFiles", 1); // NB: Must be done before FieldWorksMergingStrategy is created.
 					mergeStrategy = new FieldWorksMergingStrategy(mergeOrder.MergeSituation, mdc);
 					writePreliminaryInformationDelegate = WritePreliminaryClassDataInformation;
 					break;
-				case Ntbk:
+				case SharedConstants.Ntbk:
 					repeatingElementName = "RnGenericRec";
 					FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "Anthropology", 1); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
 					mergeStrategy = new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc);
 					writePreliminaryInformationDelegate = WritePreliminaryAnthropologyInformation;
 					break;
-				case Reversal:
+				case SharedConstants.Reversal:
 					repeatingElementName = "ReversalIndexEntry";
 					FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "Linguistics", 1); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
 					mergeStrategy = new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc);
 					writePreliminaryInformationDelegate = WritePreliminaryReversalInformation;
 					break;
-				case CustomProperties:
+				case SharedConstants.CustomProperties:
 					optionalElementName = null;
 					repeatingElementName = "CustomField";
 					keyAttrName = "key";
@@ -268,7 +262,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					mergeStrategy = new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation);
 					writePreliminaryInformationDelegate = WritePreliminaryCustomPropertyInformation;
 					break;
-				case ModelVersion:
+				case SharedConstants.ModelVersion:
 					// NB: Doesn't need the mdc with custom props.
 					if (mergeOrder.EventListener is NullMergeEventListener)
 						mergeOrder.EventListener = new ChangeAndConflictAccumulator();
@@ -325,15 +319,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				default:
 					return false;
-				case ClassData:
+				case SharedConstants.ClassData:
 					return FieldWorksOldStyleValidationServices.CanValidateFile(pathToFile);
-				case Ntbk:
+				case SharedConstants.Ntbk:
 					return FieldWorksAnthropologyValidationServices.CanValidateFile(pathToFile);
-				case Reversal:
+				case SharedConstants.Reversal:
 					return FieldWorksReversalValidationServices.CanValidateFile(pathToFile);
-				case CustomProperties:
+				case SharedConstants.CustomProperties:
 					return FieldWorksCustomPropertyValidationServices.CanValidateFile(pathToFile);
-				case ModelVersion:
+				case SharedConstants.ModelVersion:
 					return FieldWorksModelVersionValidationServices.CanValidateFile(pathToFile);
 			}
 		}

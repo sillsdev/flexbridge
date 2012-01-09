@@ -7,11 +7,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FieldWorksAnthropologyValidationServices
 	{
-		private const string Extension = "ntbk";
-
 		internal static bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk))
 				return false;
 
 			if (Path.GetFileName(pathToFile) != "DataNotebook.ntbk")

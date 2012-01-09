@@ -66,7 +66,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains("CustomProperties"));
+			Assert.IsTrue(extensions.Contains(SharedConstants.CustomProperties));
 		}
 
 		[Test]

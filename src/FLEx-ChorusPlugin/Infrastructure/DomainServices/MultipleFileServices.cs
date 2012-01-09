@@ -6,20 +6,20 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
 using Palaso.Xml;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	/// <summary>
 	/// Service that will manage the multiple files and original fwdata file for a full FW data set.
-	/// </summary>
-	/// <remarks>
+	///
 	/// The task of the service is twofold:
 	/// 1. Break up the main fwdata file into multiple files
-	///		A. one for the custom property declarations, and
-	///		B. one for each concrete CmObject class instance
+	///		A. One file for the custom property declarations (even if there are no custom properties), and
+	///		B. One file for the model version
+	///		C. Various files for the CmObject data.
 	/// 2. Put the multiple files back together into the main fwdata file,
 	///		but only if a Send/Receive had new information brought back into the local repo.
 	///		NB: The client of the service decides if new information was found, and decides to call the service, or not.
-	/// </remarks>
+	/// </summary>
 	internal static class MultipleFileServices
 	{
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)

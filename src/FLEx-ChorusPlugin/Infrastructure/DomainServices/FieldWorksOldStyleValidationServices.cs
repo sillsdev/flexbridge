@@ -10,12 +10,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class FieldWorksOldStyleValidationServices
 	{
-		private const string Extension = "ClassData";
 		private static readonly Dictionary<string, bool> FilesChecked = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
 		internal static bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ClassData))
 				return false;
 
 			bool seenBefore;

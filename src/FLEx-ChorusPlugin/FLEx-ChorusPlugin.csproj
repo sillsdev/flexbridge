@@ -166,7 +166,7 @@
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
 	<Compile Include="Infrastructure\DomainServices\FieldWorksModelVersionValidationServices.cs" />
-	<Compile Include="Infrastructure\MultipleFileServices.cs" />
+	<Compile Include="Infrastructure\DomainServices\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\DomainServices\ObjectFinderServices.cs" />
 	<Compile Include="Contexts\Linguistics\WordformInventory\PunctuationFormBoundedContextService.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />

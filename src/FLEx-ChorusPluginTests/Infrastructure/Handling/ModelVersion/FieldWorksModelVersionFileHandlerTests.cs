@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
@@ -61,7 +62,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains("ModelVersion"));
+			Assert.IsTrue(extensions.Contains(SharedConstants.ModelVersion));
 		}
 
 		[Test]
@@ -69,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
+				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.ModelVersion);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
 				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
@@ -81,7 +82,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		{
 			using (var tempModelVersionFile = new TempFile("{\"modelversion\": 7000037}"))
 			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ModelVersion");
+				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.ModelVersion);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
 				Assert.IsTrue(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);

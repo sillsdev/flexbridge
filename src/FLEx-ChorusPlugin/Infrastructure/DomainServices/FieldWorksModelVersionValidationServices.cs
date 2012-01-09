@@ -12,11 +12,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </remarks>
 	internal static class FieldWorksModelVersionValidationServices
 	{
-		private const string Extension = "ModelVersion";
-
 		internal static bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ModelVersion))
 				return false;
 
 			return DoValidation(pathToFile) == null;

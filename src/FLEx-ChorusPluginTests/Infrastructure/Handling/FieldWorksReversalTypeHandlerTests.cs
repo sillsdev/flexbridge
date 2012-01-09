@@ -63,7 +63,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains("reversal"));
+			Assert.IsTrue(extensions.Contains(SharedConstants.Reversal));
 		}
 
 		[Test]
@@ -71,7 +71,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "reversal");
+				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
 				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);

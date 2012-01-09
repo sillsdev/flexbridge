@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View

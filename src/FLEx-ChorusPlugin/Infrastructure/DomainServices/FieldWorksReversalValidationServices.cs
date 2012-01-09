@@ -9,11 +9,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	///</summary>
 	internal static class FieldWorksReversalValidationServices
 	{
-		private const string Extension = "reversal";
-
 		internal static bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Reversal))
 				return false;
 
 			return DoValidation(pathToFile) == null;

@@ -11,11 +11,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	{
 		private readonly HashSet<string> _extensions = new HashSet<string>
 			{
-				FieldWorksFileHandlerServices.ClassData,
-				FieldWorksFileHandlerServices.Ntbk,
-				FieldWorksFileHandlerServices.Reversal,
-				FieldWorksFileHandlerServices.CustomProperties,
-				FieldWorksFileHandlerServices.ModelVersion
+				SharedConstants.ClassData,
+				SharedConstants.Ntbk,
+				SharedConstants.Reversal,
+				SharedConstants.CustomProperties,
+				SharedConstants.ModelVersion
 			};
 
 		#region Implementation of IChorusFileTypeHandler

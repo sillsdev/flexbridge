@@ -10,11 +10,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class FieldWorksCustomPropertyValidationServices
 	{
-		private const string Extension = "CustomProperties";
-
 		internal static bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, Extension))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
 				return false;
 
 			return DoValidation(pathToFile) == null;
