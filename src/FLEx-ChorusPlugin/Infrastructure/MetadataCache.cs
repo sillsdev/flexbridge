@@ -70,11 +70,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// 7000044: Starting point (FW 7.1 & 7.1.1)
 			// 70000xx: FW 7.2 released.
 
-			// FW 7.2
-			// NOTE: Changeset: 37085 added new prop, but no new version number.
-			// TBA: Modified Segment
-			//		Add: RA "Speaker"									[CmPerson]
-
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");
 			while (currentVersion < newVersion)
@@ -125,6 +120,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						//			Add: OA "MediaFiles"							[CmMediaContainer]
 						newClass = GetClassInfo("Text");
 						newClass.AddProperty(new FdoPropertyInfo("MediaFiles", DataType.OwningAtomic, false));
+						break;
+					case 7000050:
+						// 7000050:
+						// 1. Modified Segment
+						//		Add: RA "Speaker"									[CmPerson]
 						break;
 				}
 			}
@@ -201,12 +201,22 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (customFiles.Count == 0)
 				customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
 
-			if (customFiles.Count < 1)
+			if (customFiles.Count == 0)
 				return;
 
 			var doc = XDocument.Load(customFiles[0]);
-			foreach (var customFieldElement in doc.Element("AdditionalFields").Elements("CustomField"))
-				AddCustomPropInfo(customFieldElement.Attribute("class").Value, new FdoPropertyInfo(customFieldElement.Attribute("name").Value, customFieldElement.Attribute("type").Value, true));
+			foreach (var customFieldElement in doc.Element(SharedConstants.OptionalFirstElementTag).Elements("CustomField"))
+			{
+				FdoClassInfo classInfo;
+				var className = customFieldElement.Attribute("class").Value;
+				if (_classes.TryGetValue(className, out classInfo))
+				{
+					var propertyName = customFieldElement.Attribute("name").Value;
+					var propInfo = classInfo.GetProperty(propertyName);
+					if (propInfo == null)
+						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));
+				}
+			}
 		}
 
 		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Mocks;
 using NUnit.Framework;
 

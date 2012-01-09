@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Integration

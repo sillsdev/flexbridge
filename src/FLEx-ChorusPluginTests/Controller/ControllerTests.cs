@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FLEx_ChorusPlugin.Controller;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Mocks;
 using NUnit.Framework;
 
@@ -68,20 +70,31 @@ namespace FLEx_ChorusPluginTests.Controller
 			Assert.AreEqual(2, _mockedFwBridgeView.Projects.Count());
 		}
 
-		[Test, Ignore("Work up test.")]
-		public void EnsureSendReceiveBtnIsDisabledForUnsharableProject()
+		[Test]
+		public void EnsureSendReceiveBtnIsDisabledForSharableProject()
 		{
-			var unsharableProject = (from project in _mockedFwBridgeView.Projects
-									 where !project.IsRemoteCollaborationEnabled
+			var sharableButLockedProject = (from project in _mockedFwBridgeView.Projects
+									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
-			_mockedFwBridgeView.RaiseProjectSelected(unsharableProject);
-			Assert.IsFalse(_mockedFwBridgeView.EnableSendReceive);
+			// Add lock file.
+			var lockPathname = Path.Combine(sharableButLockedProject.DirectoryName, sharableButLockedProject.Name + ".fwdata.lock");
+			File.WriteAllText(lockPathname, "");
+			try
+			{
+				_mockedFwBridgeView.RaiseProjectSelected(sharableButLockedProject);
+				Assert.IsFalse(_mockedFwBridgeView.EnableSendReceive);
 
-			// Tests IProjectView_ActivateView
-			Assert.AreSame(_mockedStartupNewView, _mockedProjectView.ActiveView);
+				// Tests IProjectView_ActivateView
+				Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
 
-			// Tests IExistingSystemView_ChorusSys
-			Assert.IsNull(_mockedExistingSystemView.ChorusSys);
+				// Tests IExistingSystemView_ChorusSys
+				Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+			}
+			finally
+			{
+				if (File.Exists(lockPathname))
+					File.Delete(lockPathname);
+			}
 		}
 
 		[Test]

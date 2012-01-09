@@ -2,7 +2,9 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 {
@@ -44,7 +46,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder)));
+			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, PunctuationFormInventoryRootFolder)));
 		}
 	}
 }

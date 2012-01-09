@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
@@ -26,9 +26,10 @@ namespace FLEx_ChorusPlugin.View
 			{
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
-					syncDlg.SyncOptions.DoSendToOthers = true;
+					// Chorus does it in ths order: local Commit/Pull/[if needed Merge]/Send(Push).
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
+					syncDlg.SyncOptions.DoSendToOthers = true;
 					syncDlg.ShowDialog(parent);
 
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)

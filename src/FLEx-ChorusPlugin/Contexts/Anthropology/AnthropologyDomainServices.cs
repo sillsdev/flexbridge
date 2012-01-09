@@ -2,7 +2,6 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
@@ -11,22 +10,29 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyDomainServices
 	{
-		internal static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
-			MetadataCache mdc,
+		private const string AnthropologyRootFolder = "Anthropology";
+
+		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var anthropologyBaseDir = Path.Combine(rootDir, "Anthropology");
-			// TODO: Switch to right location.
-			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			AnthropologyBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			AnthropologyBoundedContextService.NestContext(readerSettings, Path.Combine(rootDir, "Anthropology"), classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+		}
+
+		internal static void FlattenDomain(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			string pathRoot)
+		{
+			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, Path.Combine(pathRoot, AnthropologyRootFolder));
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-
+			AnthropologyBoundedContextService.RemoveBoundedContextData(Path.Combine(pathRoot, AnthropologyRootFolder));
 		}
 	}
 }

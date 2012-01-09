@@ -1,5 +1,5 @@
 ﻿using System;
-using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
 

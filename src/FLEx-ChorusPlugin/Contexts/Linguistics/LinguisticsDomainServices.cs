@@ -18,7 +18,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	{
 		private const string LinguisticsBaseFolder = "Linguistics";
 
-		internal static void WriteDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -26,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
-			ReversalBoundedContextService.ExtractBoundedContexts(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ReversalBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
@@ -38,26 +38,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
-		internal static void RemoveBoundedContextData(string pathRoot)
-		{
-			ReversalBoundedContextService.RemoveBoundedContextData(pathRoot);
-			//TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			//DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			//WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			//LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			//PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			//LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-		}
-
-		internal static IEnumerable<XElement> FlattenDomain(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootDir)
+		internal static void FlattenDomain(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
+			string rootDir)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
-			var results = new List<XElement>(200000);
-			results.AddRange(ReversalBoundedContextService.FlattenContext(interestingPropertiesCache, linguisticsBaseDir));
+			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, linguisticsBaseDir);
 
+			/* Currently handled by general domain.
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			/*
 			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
@@ -65,7 +57,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			LinguisticsBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			*/
-			return results;
+		}
+
+		internal static void RemoveBoundedContextData(string pathRoot)
+		{
+			var linguisticsBaseDir = Path.Combine(pathRoot, LinguisticsBaseFolder);
+			ReversalBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
+			//TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			//DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			//WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			//LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			//PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+			//LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 		}
 	}
 }

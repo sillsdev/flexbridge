@@ -11,19 +11,18 @@ namespace FLEx_ChorusPluginTests
 		[Test]
 		public void EnsureHandlersAreLoaded()
 		{
-			// As long as each individual handler is being tested, then this is not needed,
-			// since the individual test gets the right handler from the collection.
 			var handlerNames = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							   select handler.GetType().Name).ToList();
-			var expectedBridgeHandlers = new HashSet<string>
+			Assert.IsTrue(handlerNames.Contains("FieldWorksCommonFileHandler"));
+			var unexpectedBridgeHandlers = new HashSet<string>
 											{
 												"FieldWorksCustomPropertyFileHandler",
 												"FieldWorksModelVersionFileHandler",
 												"FieldWorksFileHandler",
 												"FieldWorksReversalTypeHandler"
 											};
-			foreach (var expectedBridgeHandler in expectedBridgeHandlers)
-				Assert.IsTrue(handlerNames.Contains(expectedBridgeHandler));
+			foreach (var unexpectedBridgeHandler in unexpectedBridgeHandlers)
+				Assert.IsFalse(handlerNames.Contains(unexpectedBridgeHandler));
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		{
 			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
 			var fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							   where handler.GetType().Name == "FieldWorksModelVersionFileHandler"
+							   where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							   select handler).First();
 
 			// 7000045: Modified Segment
@@ -79,9 +80,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "SoundFilePath", DataType.Unicode); // Do NOT remove it, yet.
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaFiles", DataType.OwningAtomic);
 
-			// TBA: Modified Segment
+			// 7000050: Modified Segment
 			//		Add: RA "Speaker"									[CmPerson]
-			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Segment", "Speaker");
+			CheckUpgrade(mdc, fileHandler, 7000050);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
@@ -135,21 +136,28 @@ namespace FLEx_ChorusPluginTests.Integration
 
 		private static void DoMerge(IChorusFileTypeHandler fileHandler, int ours)
 		{
-			using (var commonTempFile = new TempFile("Common.ModelVersion"))
-			using (var ourTempFile = new TempFile("Our.ModelVersion"))
-			using (var theirTempFile = new TempFile("Their.ModelVersion"))
+			TempFile ourFile;
+			TempFile commonFile;
+			TempFile theirFile;
+			FieldWorksTestServices.SetupTempFilesWithExstension(".ModelVersion", out  ourFile, out commonFile, out theirFile);
+
+			try
 			{
 				var baseModelVersion = ours - 1;
-				File.WriteAllText(commonTempFile.Path, FormatModelVersionData(baseModelVersion));
-				File.WriteAllText(ourTempFile.Path, FormatModelVersionData(ours));
-				File.WriteAllText(theirTempFile.Path, FormatModelVersionData(baseModelVersion));
+				File.WriteAllText(commonFile.Path, FormatModelVersionData(baseModelVersion));
+				File.WriteAllText(ourFile.Path, FormatModelVersionData(ours));
+				File.WriteAllText(theirFile.Path, FormatModelVersionData(baseModelVersion));
 
 				var listener = new ListenerForUnitTests();
-				var mergeOrder = new MergeOrder(ourTempFile.Path, commonTempFile.Path, theirTempFile.Path, new NullMergeSituation())
-									{
-										EventListener = listener
-									};
+				var mergeOrder = new MergeOrder(ourFile.Path, commonFile.Path, theirFile.Path, new NullMergeSituation())
+				{
+					EventListener = listener
+				};
 				fileHandler.Do3WayMerge(mergeOrder);
+			}
+			finally
+			{
+				FieldWorksTestServices.RemoveTempFiles(ref ourFile, ref commonFile, ref theirFile);
 			}
 		}
 

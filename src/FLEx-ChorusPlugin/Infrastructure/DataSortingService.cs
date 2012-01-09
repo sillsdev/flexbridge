@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Palaso.Xml;
@@ -14,13 +13,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal static class DataSortingService
 	{
-		internal static readonly Encoding Utf8 = Encoding.UTF8;
-		private const string OptionalFirstElementTag = "AdditionalFields";
-		private const string StartTag = "rt";
-		internal const string Collections = "Collections";
-		internal const string MultiAlt = "MultiAlt";
-		internal const string Owning = "Owning";
-
 		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XmlWriter writer, string pathname)
 		{
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
@@ -30,7 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				var sortedObjects = new SortedDictionary<string, string>();
 				bool foundOptionalFirstElement;
-				foreach (var record in fastSplitter.GetSecondLevelElementStrings(OptionalFirstElementTag, StartTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -42,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					{
 						// Step 2B: Sort main CmObject record.
 						var sortedMainObject = SortMainElement(interestingPropertiesCache, record);
-						sortedObjects.Add(sortedMainObject.Attribute("guid").Value, sortedMainObject.ToString());
+						sortedObjects.Add(sortedMainObject.Attribute(SharedConstants.GuidStr).Value, sortedMainObject.ToString());
 					}
 				}
 				foreach (var sortedObjectKvp in sortedObjects)
@@ -102,14 +94,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				// Appears to be a newly obsolete instance of 'className'.
 				sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
 												{
-													{Collections, new HashSet<string>()},
-													{MultiAlt, new HashSet<string>()}
+													{SharedConstants.Collections, new HashSet<string>()},
+													{SharedConstants.MultiAlt, new HashSet<string>()}
 												};
 				interestingPropertiesCache.Add(className, sortablePropertiesForClass);
 			}
 
-			var collData = sortablePropertiesForClass[Collections];
-			var multiAltData = sortablePropertiesForClass[MultiAlt];
+			var collData = sortablePropertiesForClass[SharedConstants.Collections];
+			var multiAltData = sortablePropertiesForClass[SharedConstants.MultiAlt];
 
 			var sortedPropertyElements = new SortedDictionary<string, XElement>();
 			foreach (var propertyElement in rootData.Elements())
@@ -177,9 +169,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Write collection properties in guid sorted order,
 			// since order is not significant in collections.
 			var sortCollectionData = new SortedDictionary<string, XElement>();
-			foreach (var objsurElement in propertyElement.Elements("objsur"))
+			foreach (var objsurElement in propertyElement.Elements(SharedConstants.Objsur))
 			{
-				var key = objsurElement.Attribute("guid").Value;
+				var key = objsurElement.Attribute(SharedConstants.GuidStr).Value;
 				if (!sortCollectionData.ContainsKey(key))
 					sortCollectionData.Add(key, objsurElement);
 			}
@@ -196,21 +188,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, string element)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(Utf8.GetBytes(element), false), readerSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element), false), readerSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 
 		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement restorableElement)
 		{
 			SortMainElement(interestingPropertiesCache, restorableElement);
-			sortedData.Add(restorableElement.Attribute("guid").Value.ToLowerInvariant(), restorableElement);
+			sortedData.Add(restorableElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), restorableElement);
 		}
 
 		internal static void CacheProperty(IDictionary<string, HashSet<string>> interestingPropertiesForClass, FdoPropertyInfo propertyInfo)
 		{
-			var collData = interestingPropertiesForClass[Collections];
-			var multiAltData = interestingPropertiesForClass[MultiAlt];
-			var owningData = interestingPropertiesForClass[Owning];
+			var collData = interestingPropertiesForClass[SharedConstants.Collections];
+			var multiAltData = interestingPropertiesForClass[SharedConstants.MultiAlt];
+			var owningData = interestingPropertiesForClass[SharedConstants.Owning];
 			switch (propertyInfo.DataType)
 			{
 				case DataType.OwningSequence: // Fall through.
@@ -244,9 +236,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					// Appears to be a newly obsolete instance of 'className'.
 					sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
 													{
-														{Collections, new HashSet<string>()},
-														{MultiAlt, new HashSet<string>()},
-														{Owning, new HashSet<string>()}
+														{SharedConstants.Collections, new HashSet<string>()},
+														{SharedConstants.MultiAlt, new HashSet<string>()},
+														{SharedConstants.Owning, new HashSet<string>()}
 													};
 					results.Add(concreteClass.ClassName, sortablePropertiesForClass);
 				}
