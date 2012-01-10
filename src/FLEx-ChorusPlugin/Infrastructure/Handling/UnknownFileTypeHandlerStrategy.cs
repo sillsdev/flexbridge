@@ -35,6 +35,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			throw new NotSupportedException("'Do3WayMerge' method is not supported for unknown file types.");
 		}
 
+		public string Extension
+		{
+			get { throw new NotSupportedException("'Extension' property is not supported for unknown file types."); }
+		}
+
 		#endregion
 	}
 }

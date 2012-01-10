@@ -69,6 +69,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				"CustomField", "key", WritePreliminaryCustomPropertyInformation);
 		}
 
+		public string Extension
+		{
+			get { return SharedConstants.CustomProperties; }
+		}
+
 		#endregion
 
 		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
@@ -11,15 +13,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	internal sealed class FieldWorksCommonFileHandler : IChorusFileTypeHandler
 	{
-		private readonly IFieldWorksFileHandler _unknownFileTypeHandler = new UnknownFileTypeHandlerStrategy();
-		private readonly Dictionary<string, IFieldWorksFileHandler> _knownHandlers = new Dictionary<string, IFieldWorksFileHandler>
+		private readonly IFieldWorksFileHandler _unknownFileTypeHandler;
+		private readonly Dictionary<string, IFieldWorksFileHandler> _knownHandlers;
+
+		internal FieldWorksCommonFileHandler()
+		{
+			_knownHandlers = new Dictionary<string, IFieldWorksFileHandler>();
+			var fbAssembly = Assembly.GetExecutingAssembly();
+			var fileHandlerTypes = (fbAssembly.GetTypes().Where(typeof(IFieldWorksFileHandler).IsAssignableFrom)).ToList();
+			foreach (var fileHandlerType in fileHandlerTypes)
 			{
-				{SharedConstants.ModelVersion, new ModelVersionFileTypeHandlerStrategy()},
-				{SharedConstants.CustomProperties, new CustomPropertiesTypeHandlerStrategy()},
-				{SharedConstants.ClassData, new ClassDataFileTypeHandlerStrategy()},
-				{SharedConstants.Ntbk, new NtbkFileTypeHandlerStrategy()},
-				{SharedConstants.Reversal, new ReversalFileTypeHandlerStrategy()}
-			};
+				if (fileHandlerType.IsInterface)
+					continue;
+				var constInfo = fileHandlerType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+				if (constInfo == null)
+					continue; // It does need at least one public or non-public default constructor.
+				var instance = (IFieldWorksFileHandler)constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
+				if (fileHandlerType.Name == "UnknownFileTypeHandlerStrategy")
+					_unknownFileTypeHandler = instance;
+				else
+					_knownHandlers.Add(instance.Extension, instance);
+			}
+		}
 
 		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
 		{

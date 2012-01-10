@@ -78,6 +78,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				"ReversalIndexEntry", SharedConstants.GuidStr, WritePreliminaryReversalInformation);
 		}
 
+		public string Extension
+		{
+			get { return SharedConstants.Reversal; }
+		}
+
 		#endregion
 
 		private static void WritePreliminaryReversalInformation(XmlReader reader, XmlWriter writer)

@@ -82,6 +82,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				"RnGenericRec", SharedConstants.GuidStr, WritePreliminaryAnthropologyInformation);
 		}
 
+		public string Extension
+		{
+			get { return SharedConstants.Ntbk; }
+		}
+
 		#endregion
 
 		private static void WritePreliminaryAnthropologyInformation(XmlReader reader, XmlWriter writer)

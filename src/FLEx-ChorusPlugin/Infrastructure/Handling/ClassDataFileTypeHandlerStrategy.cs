@@ -77,6 +77,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.RtTag, SharedConstants.GuidStr, WritePreliminaryClassDataInformation);
 		}
 
+		public string Extension
+		{
+			get { return SharedConstants.ClassData; }
+		}
+
 		#endregion
 
 		private static void WritePreliminaryClassDataInformation(XmlReader reader, XmlWriter writer)

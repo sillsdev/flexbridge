@@ -117,6 +117,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			mdc.UpgradeToVersion(mergedNumber);
 		}
 
+		public string Extension
+		{
+			get { return SharedConstants.ModelVersion; }
+		}
+
 		#endregion
 
 		private static string[] SplitData(string data)
