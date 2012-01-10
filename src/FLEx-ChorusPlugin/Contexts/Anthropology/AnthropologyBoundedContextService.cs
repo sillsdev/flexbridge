@@ -126,10 +126,10 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 															   new XAttribute(SharedConstants.GuidStr, headerChildElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
 															   new XAttribute("t", "o")));
 						// Put all records back in RnResearchNbk, before sort and restore.
-						// EXCEPT, if there is only onne of them and it is guid.Empty, then skip it
+						// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 						var records = root.Elements("RnGenericRec").ToList();
 						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
-							headerChildElement.Element("Records").Add();
+							headerChildElement.Element("Records").Add(records);
 						CmObjectFlatteningService.FlattenObject(sortedData,
 							interestingPropertiesCache,
 							headerChildElement,

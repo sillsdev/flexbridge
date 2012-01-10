@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
@@ -24,7 +26,74 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	{
 		internal static void RestoreMainFile(string mainFilePathname, string projectName)
 		{
-			FileWriterService.RestoreMainFile(mainFilePathname, projectName);
+			FileWriterService.CheckPathname(mainFilePathname);
+
+			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			var tempPathname = Path.GetTempFileName();
+
+			try
+			{
+				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
+				// but the optional custom props element must be first.
+				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+				// NB: This should follow current FW write settings practice.
+				var fwWriterSettings = new XmlWriterSettings
+				{
+					OmitXmlDeclaration = false,
+					CheckCharacters = true,
+					ConformanceLevel = ConformanceLevel.Document,
+					Encoding = new UTF8Encoding(false),
+					Indent = true,
+					IndentChars = (""),
+					NewLineOnAttributes = false
+				};
+
+				using (var writer = XmlWriter.Create(tempPathname, fwWriterSettings))
+				{
+					writer.WriteStartElement("languageproject");
+
+					// Write out version number from the ModelVersion file.
+					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"));
+					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
+					var version = splitModelVersionData[1].Trim();
+					writer.WriteAttributeString("version", version);
+
+					var mdc = MetadataCache.MdCache; // This may really need to be a reset
+					mdc.UpgradeToVersion(Int32.Parse(version));
+					var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
+
+					// Write out optional custom property data.
+					// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
+					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
+					// Remove 'key' attribute from CustomField elements, before writing to main file.
+					var doc = XDocument.Load(optionalCustomPropFile);
+					var customFieldElements = doc.Root.Elements("CustomField");
+					if (customFieldElements.Count() > 0)
+					{
+						foreach (var cf in customFieldElements)
+						{
+							cf.Attribute("key").Remove();
+							// Restore type attr for object values.
+							var propType = cf.Attribute("type").Value;
+							cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+
+							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute(SharedConstants.Class).Value], new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
+						}
+						FileWriterService.WriteElement(writer, readerSettings, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
+					}
+
+					BaseDomainServices.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
+
+					writer.WriteEndElement();
+				}
+
+				File.Copy(tempPathname, mainFilePathname, true);
+			}
+			finally
+			{
+				if (File.Exists(tempPathname))
+					File.Delete(tempPathname);
+			}
 		}
 
 		internal static void BreakupMainFile(string mainFilePathname, string projectName)
@@ -63,20 +132,27 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var guidToClassMapping = new Dictionary<string, string>();
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
+				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
 				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
-						// 2. Write custom properties file, even if has no custom innards.
+						// 2. Write custom properties file.
 						FileWriterService.WriteCustomPropertyFile(mdc, interestingPropertiesCache, readerSettings, pathRoot, projectName, record);
 						foundOptionalFirstElement = false;
+						haveWrittenCustomFile = true;
 					}
 					else
 					{
 						CacheDataRecord(interestingPropertiesCache, classData, guidToClassMapping, record);
 					}
+				}
+				if (!haveWrittenCustomFile)
+				{
+					// Write empty file.
+					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, null);
 				}
 			}
 
@@ -132,6 +208,39 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				classData.Add(className, recordData);
 			}
 			recordData.Add(guid, rtElement);
+		}
+
+		private static string RestoreAdjustedTypeValue(string storedType)
+		{
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
+
+				case "OwningCollection":
+					adjustedType = "OC";
+					break;
+				case "ReferenceCollection":
+					adjustedType = "RC";
+					break;
+
+				case "OwningSequence":
+					adjustedType = "OS";
+					break;
+				case "ReferenceSequence":
+					adjustedType = "RS";
+					break;
+
+				case "OwningAtomic":
+					adjustedType = "OA";
+					break;
+				case "ReferenceAtomic":
+					adjustedType = "RA";
+					break;
+			}
+			return adjustedType;
 		}
 	}
 }

@@ -71,8 +71,17 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement(SharedConstants.Header, revIndex));
-				root.Add(entriesElement.Elements()); // NB: These were already sorted, why up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
-				entriesElement.RemoveNodes();
+				if (entriesElement == null || entriesElement.Elements().Count() == 0)
+				{
+					// Add dummy entry, so FastXmlSplitter will have something to work with.
+					root.Add(new XElement("ReversalIndexEntry",
+												   new XAttribute(SharedConstants.GuidStr, Guid.Empty)));
+				}
+				else
+				{
+					root.Add(entriesElement.Elements()); // NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
+					entriesElement.RemoveNodes();
+				}
 				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
 					root);
 
@@ -102,7 +111,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var root = reversalDoc.Element("Reversal");
 				var header = root.Element(SharedConstants.Header);
 				var revIdx = header.Element("ReversalIndex");
-				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
+				// Put all records back in ReversalIndex, before sort and restore.
+				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
+				var records = root.Elements("ReversalIndexEntry").ToList();
+				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
+					revIdx.Element("Entries").Add(records);
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					revIdx,
