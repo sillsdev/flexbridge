@@ -71,7 +71,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			const string revIdxGuid = "fe832a87-4846-4895-9c7e-98c5da0c84ba";
 			_rt = new XElement(SharedConstants.RtTag,
-								  new XAttribute("class", "ReversalIndex"),
+								  new XAttribute(SharedConstants.Class, "ReversalIndex"),
 								  new XAttribute(SharedConstants.GuidStr, revIdxGuid));
 			_classData = new Dictionary<string, SortedDictionary<string, XElement>>
 								{
@@ -156,7 +156,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 											  _interestingPropsCache,
 											  _guidToClassMapping);
 			Assert.IsTrue(_rt.Name.LocalName == "ReversalIndex");
-			Assert.IsNull(_rt.Attribute("class"));
+			Assert.IsNull(_rt.Attribute(SharedConstants.Class));
 		}
 
 		[Test]
@@ -204,7 +204,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_interestingPropsCache,
 				_guidToClassMapping);
 			var loneAardvarkPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "LoneAardvark").First();
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
 			var contentElements = loneAardvarkPropElement.Elements();
 			Assert.AreEqual(1, contentElements.Count());
 			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
@@ -220,7 +220,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_interestingPropsCache,
 				_guidToClassMapping);
 			var gaggleOfAardvarksPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "GaggleOfAardvarks").First();
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
 			var contentElements = gaggleOfAardvarksPropElement.Elements();
 			Assert.AreEqual(2, contentElements.Count());
 			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
@@ -237,7 +237,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_interestingPropsCache,
 				_guidToClassMapping);
 			var aardvarksInARowPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute("name").Value == "GaggleOfAardvarks").First();
+				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
 			var contentElements = aardvarksInARowPropElement.Elements();
 			Assert.AreEqual(2, contentElements.Count());
 			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
@@ -250,21 +250,21 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var rtGuid = _rt.Attribute(SharedConstants.GuidStr).Value;
 			var data = new SortedDictionary<string, XElement>();
 			var entry1 = new XElement(SharedConstants.RtTag,
-									  new XAttribute("class", "ReversalIndexEntry"),
+									  new XAttribute(SharedConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
-									  new XAttribute("ownerguid", rtGuid));
+									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
 			data.Add("0039739a-7fcf-4838-8b75-566b8815a29f", entry1);
 			_guidToClassMapping.Add("0039739a-7fcf-4838-8b75-566b8815a29f", "ReversalIndexEntry");
 			var subentry1 = new XElement(SharedConstants.RtTag,
-									  new XAttribute("class", "ReversalIndexEntry"),
+									  new XAttribute(SharedConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(SharedConstants.GuidStr, "14a6b4bc-1bb3-4c67-b70c-5a195e411e27"),
-									  new XAttribute("ownerguid", "0039739a-7fcf-4838-8b75-566b8815a29f"));
+									  new XAttribute(SharedConstants.OwnerGuid, "0039739a-7fcf-4838-8b75-566b8815a29f"));
 			data.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", subentry1);
 			_guidToClassMapping.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", "ReversalIndexEntry");
 			var entry2 = new XElement(SharedConstants.RtTag,
-									  new XAttribute("class", "ReversalIndexEntry"),
+									  new XAttribute(SharedConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
-									  new XAttribute("ownerguid", rtGuid));
+									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
 			data.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", entry2);
 			_guidToClassMapping.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "ReversalIndexEntry");
 			_classData.Add("ReversalIndexEntry", data);
@@ -284,9 +284,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 
 			// Add the POS list, with nothing in it.
 			var posList = new XElement(SharedConstants.RtTag,
-									  new XAttribute("class", "CmPossibilityList"),
+									  new XAttribute(SharedConstants.Class, "CmPossibilityList"),
 									  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
-									  new XAttribute("ownerguid", rtGuid));
+									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
 			entriesElement = new XElement("PartsOfSpeech",
 											  new XElement(SharedConstants.Objsur,
 												  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
@@ -301,7 +301,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 
 			// Add lone aardvark.
 			var customPropElement = new XElement("Custom",
-												 new XAttribute("name", "LoneAardvark"),
+												 new XAttribute(SharedConstants.Name, "LoneAardvark"),
 												 new XAttribute("type", "OwningAtomic"),
 												 new XElement(SharedConstants.Objsur,
 													 new XAttribute(SharedConstants.GuidStr, "c1ed46b3-e382-11de-8a39-0800200c9a66"),
@@ -311,7 +311,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 
 			// Add gaggle of aardvarks.
 			customPropElement = new XElement("Custom",
-												 new XAttribute("name", "GaggleOfAardvarks"),
+												 new XAttribute(SharedConstants.Name, "GaggleOfAardvarks"),
 												 new XAttribute("type", "OwningCollection"),
 												 new XElement(SharedConstants.Objsur,
 													 new XAttribute(SharedConstants.GuidStr, "c1ed46b4-e382-11de-8a39-0800200c9a66"),
@@ -325,7 +325,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 
 			// Add row of aardvarks.
 			customPropElement = new XElement("Custom",
-												 new XAttribute("name", "AardvarksInARow"),
+												 new XAttribute(SharedConstants.Name, "AardvarksInARow"),
 												 new XAttribute("type", "OwningSequence"),
 												 new XElement(SharedConstants.Objsur,
 													 new XAttribute(SharedConstants.GuidStr, "c1ed46b6-e382-11de-8a39-0800200c9a66"),
@@ -340,25 +340,25 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			data = new SortedDictionary<string, XElement>
 					{
 						{"c1ed46b3-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute("class", "Aardvark"),
+										   new XAttribute(SharedConstants.Class, "Aardvark"),
 										   new XAttribute(SharedConstants.GuidStr, "c1ed46b3-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute("ownerguid", rtGuid))},
+										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
 						{"c1ed46b4-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute("class", "Aardvark"),
+										   new XAttribute(SharedConstants.Class, "Aardvark"),
 										   new XAttribute(SharedConstants.GuidStr, "c1ed46b4-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute("ownerguid", rtGuid))},
+										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
 						{"c1ed46b5-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute("class", "Aardvark"),
+										   new XAttribute(SharedConstants.Class, "Aardvark"),
 										   new XAttribute(SharedConstants.GuidStr, "c1ed46b5-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute("ownerguid", rtGuid))},
+										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
 						{"c1ed46b6-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute("class", "Aardvark"),
+										   new XAttribute(SharedConstants.Class, "Aardvark"),
 										   new XAttribute(SharedConstants.GuidStr, "c1ed46b6-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute("ownerguid", rtGuid))},
+										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
 						{"c1ed46b7-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute("class", "Aardvark"),
+										   new XAttribute(SharedConstants.Class, "Aardvark"),
 										   new XAttribute(SharedConstants.GuidStr, "c1ed46b7-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute("ownerguid", rtGuid))}
+										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))}
 					};
 			_classData.Add("Aardvark", data);
 		}

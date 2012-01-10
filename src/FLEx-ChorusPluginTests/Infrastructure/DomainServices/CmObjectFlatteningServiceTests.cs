@@ -14,6 +14,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		private MetadataCache _mdc;
 		private XElement _reversalIndexElement;
 		private Dictionary<string, Dictionary<string, HashSet<string>>> _interestingPropsCache;
+		private const string ReversalOwnerGuid = "c1ed6db5-e382-11de-8a39-0800200c9a66";
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -136,9 +137,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_reversalIndexElement,
 				null);
 			Assert.IsTrue(_reversalIndexElement.Name.LocalName == SharedConstants.RtTag);
-			var classAttr = _reversalIndexElement.Attribute("class");
+			var classAttr = _reversalIndexElement.Attribute(SharedConstants.Class);
 			Assert.IsNotNull(classAttr);
 			Assert.AreEqual("ReversalIndex", classAttr.Value);
+		}
+
+		public void ReversalIndexOwnerRestored()
+		{
+			var sortedData = new SortedDictionary<string, XElement>();
+			CmObjectFlatteningService.FlattenObject(
+				sortedData,
+				_interestingPropsCache,
+				_reversalIndexElement,
+				ReversalOwnerGuid);
+			Assert.IsTrue(_reversalIndexElement.Attribute(SharedConstants.OwnerGuid).Value == ReversalOwnerGuid);
 		}
 
 		[Test]
@@ -151,10 +163,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_reversalIndexElement,
 				null);
 			Assert.AreEqual(10, sortedData.Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute("class").Value == "ReversalIndex").Count());
-			Assert.AreEqual(3, sortedData.Values.Where(rt => rt.Attribute("class").Value == "ReversalIndexEntry").Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute("class").Value == "CmPossibilityList").Count());
-			Assert.AreEqual(5, sortedData.Values.Where(rt => rt.Attribute("class").Value == "Aardvark").Count());
+			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex").Count());
+			Assert.AreEqual(3, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry").Count());
+			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList").Count());
+			Assert.AreEqual(5, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "Aardvark").Count());
 		}
 
 		[Test]
@@ -166,7 +178,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_interestingPropsCache,
 				_reversalIndexElement,
 				null);
-			var revIdx = sortedData.Values.Where(rt => rt.Attribute("class").Value == "ReversalIndex").First();
+			var revIdx = sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex").First();
 			var owningProp = revIdx.Element("Entries");
 			CheckOwningProperty(owningProp, 2);
 			owningProp = sortedData.Values.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "0039739a-7fcf-4838-8b75-566b8815a29f").First().Element("Subentries");
@@ -174,11 +186,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			owningProp = revIdx.Element("PartsOfSpeech");
 			CheckOwningProperty(owningProp, 1);
 			var customProps = revIdx.Elements("Custom");
-			owningProp = customProps.Where(cp => cp.Attribute("name").Value == "LoneAardvark").First();
+			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
 			CheckOwningProperty(owningProp, 1);
-			owningProp = customProps.Where(cp => cp.Attribute("name").Value == "GaggleOfAardvarks").First();
+			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
 			CheckOwningProperty(owningProp, 2);
-			owningProp = customProps.Where(cp => cp.Attribute("name").Value == "AardvarksInARow").First();
+			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "AardvarksInARow").First();
 			CheckOwningProperty(owningProp, 2);
 		}
 
@@ -193,7 +205,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				null);
 			var loneAardvarkProp = sortedData.Values
 				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute("name").Value == "LoneAardvark").First();
+				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
 			Assert.AreEqual(1, loneAardvarkProp.Elements().Count());
 			Assert.AreEqual("c1ed46b3-e382-11de-8a39-0800200c9a66", loneAardvarkProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value);
 		}
@@ -209,7 +221,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				null);
 			var gaggleOfAardvarksProp = sortedData.Values
 				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute("name").Value == "GaggleOfAardvarks").First();
+				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
 			var expectedGuids = new HashSet<string>
 									{
 										"c1ed46b4-e382-11de-8a39-0800200c9a66",
@@ -231,7 +243,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				null);
 			var aardvarksInARowProp = sortedData.Values
 				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute("name").Value == "AardvarksInARow").First();
+				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "AardvarksInARow").First();
 			Assert.AreEqual(2, aardvarksInARowProp.Elements().Count());
 			Assert.AreEqual("c1ed46b6-e382-11de-8a39-0800200c9a66", ((XElement)aardvarksInARowProp.FirstNode).Attribute(SharedConstants.GuidStr).Value);
 			Assert.AreEqual("c1ed46b7-e382-11de-8a39-0800200c9a66", ((XElement)aardvarksInARowProp.LastNode).Attribute(SharedConstants.GuidStr).Value);

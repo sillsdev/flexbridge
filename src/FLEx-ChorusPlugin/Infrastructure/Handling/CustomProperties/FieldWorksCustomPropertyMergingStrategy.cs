@@ -23,7 +23,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			// Custom property declaration.
 			var strategy = new ElementStrategy(false)
 							{
-								MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> {"name", "class"}),
+								MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> { SharedConstants.Name, SharedConstants.Class }),
 								ContextDescriptorGenerator = new FieldWorksCustomPropertyContextGenerator()
 							};
 			_merger.MergeStrategies.SetStrategy(CustomField, strategy);

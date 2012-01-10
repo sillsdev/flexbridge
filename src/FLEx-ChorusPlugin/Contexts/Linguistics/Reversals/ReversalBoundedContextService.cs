@@ -65,6 +65,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					interestingPropertiesCache,
 					guidToClassMapping);
 
+				// Remove 'ownerguid'.
+				revIndex.Attribute(SharedConstants.OwnerGuid).Remove();
+
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement(SharedConstants.Header, revIndex));
@@ -88,6 +91,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			if (!Directory.Exists(linguisticsBaseDir))
 				return; // Nothing to do.
 
+			var lexDb = highLevelData["LexDb"];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
 // ReSharper disable ConvertClosureToMethodGroup
@@ -99,7 +103,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var header = root.Element(SharedConstants.Header);
 				var revIdx = header.Element("ReversalIndex");
 				revIdx.Element("Entries").Add(root.Elements("ReversalIndexEntry"));
-				CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, revIdx, null);
+				CmObjectFlatteningService.FlattenObject(sortedData,
+					interestingPropertiesCache,
+					revIdx,
+					lexDb.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to indices.
 				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedRevs.Add(revIdxGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, revIdxGuid), new XAttribute("t", "o")));
 			}

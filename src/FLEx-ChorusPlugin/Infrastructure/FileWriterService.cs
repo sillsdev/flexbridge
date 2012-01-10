@@ -192,8 +192,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			foreach (var propElement in cpElement.Elements("CustomField"))
 			{
-				var className = propElement.Attribute("class").Value;
-				var propName = propElement.Attribute("name").Value;
+				var className = propElement.Attribute(SharedConstants.Class).Value;
+				var propName = propElement.Attribute(SharedConstants.Name).Value;
 				var typeAttr = propElement.Attribute("type");
 				var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
 				if (adjustedTypeValue != typeAttr.Value)
@@ -327,7 +327,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 							var propType = cf.Attribute("type").Value;
 							cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
 
-							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute("class").Value], new FdoPropertyInfo(cf.Attribute("name").Value, propType, true));
+							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute(SharedConstants.Class).Value], new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 						}
 						WriteElement(writer, readerSettings, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 					}

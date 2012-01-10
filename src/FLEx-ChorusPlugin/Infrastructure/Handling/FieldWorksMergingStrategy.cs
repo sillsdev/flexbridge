@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			//		So, if the owned object reports an owner conflict,
 			//		then make sure the 'loser' owner also has a conflict.
 
-			var className = XmlUtilities.GetStringAttribute(extantNode, "class");
+			var className = XmlUtilities.GetStringAttribute(extantNode, SharedConstants.Class);
 
 			// These steps will do some 'pre-merging' work,
 			// which will avoid what could otherwise be conflicts.

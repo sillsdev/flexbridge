@@ -54,8 +54,8 @@ namespace FwdataNester
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
 						foreach (var propElement in cpElement.Elements("CustomField"))
 						{
-							var className = propElement.Attribute("class").Value;
-							var propName = propElement.Attribute("name").Value;
+							var className = propElement.Attribute(SharedConstants.Class).Value;
+							var propName = propElement.Attribute(SharedConstants.Name).Value;
 							var typeAttr = propElement.Attribute("type");
 							var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
 							if (adjustedTypeValue != typeAttr.Value)
@@ -153,9 +153,9 @@ namespace FwdataNester
 		{
 			var returnValue = new List<XElement>();
 			var rtElement = XElement.Parse(Utf8.GetString(record));
-			if (rtElement.Attribute("ownerguid") == null)
+			if (rtElement.Attribute(SharedConstants.OwnerGuid) == null)
 				returnValue.Add(rtElement);
-			var className = rtElement.Attribute("class").Value;
+			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 

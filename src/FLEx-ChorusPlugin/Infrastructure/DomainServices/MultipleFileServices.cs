@@ -107,7 +107,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			byte[] record)
 		{
 			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
-			var className = rtElement.Attribute("class").Value;
+			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 

@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var customPropertyElement = XElement.Parse(mergeElement);
-			var label = customPropertyElement.Attribute("class").Value + ": " + customPropertyElement.Attribute("name").Value;
+			var label = customPropertyElement.Attribute(SharedConstants.Class).Value + ": " + customPropertyElement.Attribute(SharedConstants.Name).Value;
 			return new ContextDescriptor(label, "FIXTHIS");
 		}
 

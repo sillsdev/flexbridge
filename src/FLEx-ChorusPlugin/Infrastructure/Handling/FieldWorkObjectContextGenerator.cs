@@ -14,7 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var label = rtElement.Name.LocalName == SharedConstants.Header
 				? "header for context"
 				: rtElement.Name.LocalName == SharedConstants.RtTag
-						? rtElement.Attribute("class").Value + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value
+						? rtElement.Attribute(SharedConstants.Class).Value + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value
 						: rtElement.Name.LocalName + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value;
 			return new ContextDescriptor(label, "FIXTHIS");
 		}

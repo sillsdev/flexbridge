@@ -130,17 +130,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 			var customData = sortedCustomDataElement.Elements().ElementAt(0);
 			CheckAttributes(customData,
-				new List<string> { "class", "key", "name", "type", "wsSelector" },
+				new List<string> { SharedConstants.Class, "key", SharedConstants.Name, "type", "wsSelector" },
 				new List<string> { "LexEntry", "LexEntryParadigm", "Paradigm", "String", "-2" });
 
 			customData = sortedCustomDataElement.Elements().ElementAt(1);
 			CheckAttributes(customData,
-				new List<string> { "class", "destclass", "key", "listRoot", "name", "type" },
+				new List<string> { SharedConstants.Class, "destclass", "key", "listRoot", SharedConstants.Name, "type" },
 				new List<string> { "LexEntry", "7", "LexEntryTone", "53241fd4-72ae-4082-af55-6b659657083c", "Tone", "RC" });
 
 			customData = sortedCustomDataElement.Elements().ElementAt(2);
 			CheckAttributes(customData,
-				new List<string> { "class", "key", "name", "type" },
+				new List<string> { SharedConstants.Class, "key", SharedConstants.Name, "type" },
 				new List<string> { "WfiWordform", "WfiWordformCertified", "Certified", "Boolean" });
 		}
 
@@ -193,9 +193,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			//		writer.Close();
 			//	}
 			//	var doc = XDocument.Load(tempOutputPathname);
-			Assert.AreEqual("class", rtElement.Attributes().ElementAt(0).Name.LocalName);
+			Assert.AreEqual(SharedConstants.Class, rtElement.Attributes().ElementAt(0).Name.LocalName);
 			Assert.AreEqual(SharedConstants.GuidStr, rtElement.Attributes().ElementAt(1).Name.LocalName);
-			Assert.AreEqual("ownerguid", rtElement.Attributes().ElementAt(2).Name.LocalName);
+			Assert.AreEqual(SharedConstants.OwnerGuid, rtElement.Attributes().ElementAt(2).Name.LocalName);
 
 			Assert.AreEqual(4, rtElement.Elements().Count());
 			var sortedProp = rtElement.Elements().ElementAt(0);
@@ -255,7 +255,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 				var rtElement = doc.Root;
 				Assert.AreEqual(3, rtElement.Elements().Count());
 				var sortedProp = rtElement.Elements().ElementAt(0);
-				Assert.AreEqual("LexEntry", sortedProp.Element("CustomField").Attribute("class").Value); // Make sure SortCustomPropertiesRecord was called.
+				Assert.AreEqual("LexEntry", sortedProp.Element("CustomField").Attribute(SharedConstants.Class).Value); // Make sure SortCustomPropertiesRecord was called.
 				sortedProp = rtElement.Elements().ElementAt(1);
 				Assert.AreEqual("c1ecf88c-e382-11de-8a39-0800200c9a66", sortedProp.Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement was called.
 			}

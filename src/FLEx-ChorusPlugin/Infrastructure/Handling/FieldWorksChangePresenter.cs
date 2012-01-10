@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public string GetDataLabel()
 		{
 			var firstNode = FirstNonNullNode;
-			return firstNode.Name == SharedConstants.RtTag ? firstNode.Attributes["class"].Value : "Custom property";
+			return firstNode.Name == SharedConstants.RtTag ? firstNode.Attributes[SharedConstants.Class].Value : "Custom property";
 		}
 
 		public string GetActionLabel()

@@ -46,12 +46,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
 				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
-				var propName = isCustomProperty ? propertyElement.Attribute("name").Value : propertyElement.Name.LocalName;
+				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningProps.Contains(propName))
 					continue;
 				if (!propertyElement.HasElements)
 					continue;
-				// By this point, theory has it that all 'objsur' elemtents must be owning,
+				// By this point, theory has it that all 'objsur' elements must be owning,
 				// but the filter will ensure some unexpected reference data doesn't get treated as owning.
 				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o");
 				if (owningObjSurElements.Count() == 0)
@@ -72,7 +72,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var classOfOwnedObject = guidToClassMapping[guid];
 					guidToClassMapping.Remove(guid);
 					var ownedElement = classData[classOfOwnedObject][guid];
-					ownedElement.Attribute("ownerguid").Remove();
+					ownedElement.Attribute(SharedConstants.OwnerGuid).Remove();
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(ownedElement, exceptions, classData, interestingPropertiesCache, guidToClassMapping);
@@ -82,7 +82,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		private static string RenameElement(XElement obj)
 		{
-			var classAttr = obj.Attribute("class");
+			var classAttr = obj.Attribute(SharedConstants.Class);
 			obj.Name = classAttr.Value;
 			classAttr.Remove();
 

@@ -17,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			XElement ownerElement,
 			HashSet<string> excludedProperties)
 		{
-			var classInfo = mdc.GetClassInfo(ownerElement.Attribute("class").Value);
+			var classInfo = mdc.GetClassInfo(ownerElement.Attribute(SharedConstants.Class).Value);
 			foreach (var owningProperty in from pi in classInfo.AllProperties
 										   where pi.DataType == DataType.OwningAtomic || pi.DataType == DataType.OwningCollection || pi.DataType == DataType.OwningSequence
 										   select pi)

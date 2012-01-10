@@ -121,7 +121,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static void ProcessCustomProperty(IDictionary<string, ElementStrategy> sharedElementStrategies, MergeStrategies strategiesForMerger, FdoPropertyInfo propInfo, ElementStrategy mutableSingleton)
 		{
 			// Start all with basic keyed strategy.
-			var strategyForCurrentProperty = ElementStrategy.CreateForKeyedElement("name", false);
+			var strategyForCurrentProperty = ElementStrategy.CreateForKeyedElement(SharedConstants.Name, false);
 			ElementStrategy extantStrategy;
 			switch (propInfo.DataType)
 			{
@@ -286,7 +286,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				{
 					var isCustom = propertyInfo.IsCustomProperty;
 					var propStrategy = isCustom
-										? ElementStrategy.CreateForKeyedElement("name", false)
+										? ElementStrategy.CreateForKeyedElement(SharedConstants.Name, false)
 										: ElementStrategy.CreateSingletonElement();
 					switch (propertyInfo.DataType)
 					{
@@ -337,7 +337,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							{
 								MergePartnerFinder = GuidKey
 							};
-			strategy.AttributesToIgnoreForMerging.Add("class"); // Immutable
+			strategy.AttributesToIgnoreForMerging.Add(SharedConstants.Class); // Immutable
 			strategy.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr); // Immutable
 			sharedElementStrategies.Add(SharedConstants.RtTag, strategy);
 			strategy.ContextDescriptorGenerator = ContextGen;

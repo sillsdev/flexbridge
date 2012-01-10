@@ -89,7 +89,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				var classDataDoc = XDocument.Load(classDataPathname);
 				foreach (var rtElement in classDataDoc.Element("classdata").Elements(SharedConstants.RtTag))
 				{
-					var className = rtElement.Attribute("class").Value;
+					var className = rtElement.Attribute(SharedConstants.Class).Value;
 					switch (className)
 					{
 						case "LangProject":

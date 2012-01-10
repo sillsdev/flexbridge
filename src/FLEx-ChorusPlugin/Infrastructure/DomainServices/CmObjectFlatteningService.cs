@@ -18,8 +18,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (sortedData == null) throw new ArgumentNullException("sortedData");
 			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (element == null) throw new ArgumentNullException("element");
+			// No, since unowned stuff will feed a null.
+			//if (string.IsNullOrEmpty(ownerguid)) throw new ArgumentNullException(SharedConstants.OwnerGuid);
 			if (ownerguid != null && ownerguid == string.Empty)
-				throw new ArgumentException(Resources.kOwnerGuidEmpty, "ownerguid");
+				throw new ArgumentException(Resources.kOwnerGuidEmpty, SharedConstants.OwnerGuid);
 
 			var elementGuid = element.Attribute(SharedConstants.GuidStr).Value;
 			sortedData.Add(elementGuid, element);
@@ -27,9 +29,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// The name of 'element' is the class of CmObject.
 			var className = element.Name.LocalName;
 			element.Name = SharedConstants.RtTag;
-			element.Add(new XAttribute("class", className));
-			if (ownerguid != null && element.Attribute("ownerguid") == null)
-				element.Add(new XAttribute("ownerguid", ownerguid));
+			element.Add(new XAttribute(SharedConstants.Class, className));
+			//if (element.Attribute(SharedConstants.OwnerGuid) == null)
+			if (ownerguid != null) // && element.Attribute(SharedConstants.OwnerGuid) == null)
+				element.Add(new XAttribute(SharedConstants.OwnerGuid, ownerguid));
 
 			// Re-sort those attributes.
 			var sortedAttrs = new SortedDictionary<string, XAttribute>();
@@ -45,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			foreach (var propertyElement in element.Elements().ToArray())
 			{
 				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
-				var propName = isCustomProperty ? propertyElement.Attribute("name").Value : propertyElement.Name.LocalName;
+				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningPropsForClass.Contains(propName))
 					continue;
 				if (!propertyElement.HasElements)

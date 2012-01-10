@@ -208,10 +208,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			foreach (var customFieldElement in doc.Element(SharedConstants.OptionalFirstElementTag).Elements("CustomField"))
 			{
 				FdoClassInfo classInfo;
-				var className = customFieldElement.Attribute("class").Value;
+				var className = customFieldElement.Attribute(SharedConstants.Class).Value;
 				if (_classes.TryGetValue(className, out classInfo))
 				{
-					var propertyName = customFieldElement.Attribute("name").Value;
+					var propertyName = customFieldElement.Attribute(SharedConstants.Name).Value;
 					var propInfo = classInfo.GetProperty(propertyName);
 					if (propInfo == null)
 						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));

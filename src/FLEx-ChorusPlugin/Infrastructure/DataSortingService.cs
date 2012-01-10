@@ -62,7 +62,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			foreach (var customProperty in customPropertiesElement.Elements())
 			{
 				// Needs to add 'key' attr, which is class+name, so fast splitter has one id attr to use in its work.
-				var keyValue = customProperty.Attribute("class").Value + customProperty.Attribute("name").Value;
+				var keyValue = customProperty.Attribute(SharedConstants.Class).Value + customProperty.Attribute(SharedConstants.Name).Value;
 				customProperty.Add(new XAttribute("key", keyValue));
 				sortedCustomProperties.Add(keyValue, customProperty);
 			}
@@ -85,7 +85,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static void SortMainElement(IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement rootData)
 		{
-			var className = rootData.Attribute("class").Value;
+			var className = rootData.Attribute(SharedConstants.Class).Value;
 
 			// Get collection properties for the class.
 			Dictionary<string, HashSet<string>> sortablePropertiesForClass;
@@ -109,7 +109,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				var propName = propertyElement.Name.LocalName;
 				// <Custom name="Certified" val="True" />
 				if (propName == "Custom")
-					propName = propertyElement.Attribute("name").Value; // Sort custom props by their name attrs.
+					propName = propertyElement.Attribute(SharedConstants.Name).Value; // Sort custom props by their name attrs.
 				if (collData.Contains(propName))
 					SortCollectionProperties(propertyElement);
 				if (multiAltData.Contains(propName))

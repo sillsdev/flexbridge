@@ -21,7 +21,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// DONE. 1. Deal with DateStamps
 			MergeTimestamps(ourEntry, theirEntry);
 
-			var classInfo = mdc.GetClassInfo(isNewStyle ? ourEntry.Name : ourEntry.Attributes["class"].Value);
+			var classInfo = mdc.GetClassInfo(isNewStyle ? ourEntry.Name : ourEntry.Attributes[SharedConstants.Class].Value);
 			//  DONE. 2. Deal with reference collections. [New style only has objsur elements for ref col props.]
 			PreMergeReferenceCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
 			// TODO: 3. Deal with reference sequences. [New style only has objsur elements for ref seq props.]

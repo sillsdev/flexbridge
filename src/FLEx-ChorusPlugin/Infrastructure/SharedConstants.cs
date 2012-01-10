@@ -18,5 +18,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Reversal = "reversal";
 		internal const string CustomProperties = "CustomProperties";
 		internal const string ModelVersion = "ModelVersion";
+		internal const string OwnerGuid = "ownerguid";
+		internal const string Class = "class";
+		internal const string Name = "name";
 	}
 }

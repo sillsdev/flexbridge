@@ -51,6 +51,10 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					classData,
 					interestingPropertiesCache,
 					guidToClassMapping);
+
+				// Remove 'ownerguid'.
+				notebookElement.Attribute(SharedConstants.OwnerGuid).Remove();
+
 				var recordsElement = notebookElement.Element("Records");
 				if (recordsElement != null && recordsElement.HasElements)
 				{
@@ -65,7 +69,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					rootElement.Add(new XElement("RnGenericRec",
 												   new XAttribute(SharedConstants.GuidStr, Guid.Empty)));
 				}
-				// Remove objsur node from owning LangProg
+				// Remove child objsur nodes from owning LangProg
 				langProj.Element("ResearchNotebook").RemoveNodes();
 			}
 
@@ -109,6 +113,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				return; // Nothing to do.
 
 			var langProjElement = highLevelData["LangProject"];
+			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value;
 			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
 			var root = doc.Root;
 			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
@@ -125,7 +130,10 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 						var records = root.Elements("RnGenericRec").ToList();
 						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
 							headerChildElement.Element("Records").Add();
-						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, headerChildElement, null); // object already has owning guid attr.
+						CmObjectFlatteningService.FlattenObject(sortedData,
+							interestingPropertiesCache,
+							headerChildElement,
+							langProjElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to notebook.
 						break;
 					case "AnthroList": // Fall through
 					case "ConfidenceLevels": // Fall through
@@ -139,7 +147,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "TimeOfDay":
 						var listElement = headerChildElement.Element("CmPossibilityList");
 						RestoreLangProjListObjsurElement(langProjElement, listElement);
-						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, listElement, null); // object already has owning guid attr.
+						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, listElement, langProjGuid); // Restore 'ownerguid' to list.
 						break;
 				}
 			}
@@ -177,6 +185,8 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					continue;
 
 				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value];
+				// Remove 'ownerguid'.
+				listElement.Attribute(SharedConstants.OwnerGuid).Remove();
 				CmObjectNestingService.NestObject(listElement,
 												  exceptions,
 												  classData,
