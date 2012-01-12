@@ -7,49 +7,26 @@ using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Contexts.Linguistics;
 using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
-using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void WriteNestedFile(string newPathname,
-											 XmlReaderSettings readerSettings,
-											 XElement nestedData,
-											 string rootElementName)
-		{
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				writer.WriteStartElement(rootElementName);
-				if (nestedData != null)
-					FileWriterService.WriteElement(writer, readerSettings, nestedData);
-				writer.WriteEndElement();
-			}
-		}
-
-		internal static void RemoveDomainData(string pathRoot)
-		{
-			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot);
-			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot);
-			ScriptureDomainServices.RemoveBoundedContextData(pathRoot);
-
-			OldStyleDomainServices.RemoveDataFiles(pathRoot);
-		}
-
 		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
 											 XmlReaderSettings readerSettings,
 											 Dictionary<string, SortedDictionary<string, XElement>> classData,
 											 Dictionary<string, string> guidToClassMapping,
 											 Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache)
 		{
+			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
 
 			//		LinguisticsDomainServices.WriteNestedDomainData will do old and new for a while yet.
 			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 			//		LinguisticsDomainServices.WriteNestedDomainData does only new.
 			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			//		ScriptureDomainServices.WriteDomainData will do old for a while yet.
-			ScriptureDomainServices.WriteDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			// ScriptureDomainServices.WriteNestedDomainData now writes all new style.
+			ScriptureDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
@@ -80,16 +57,25 @@ namespace FLEx_ChorusPlugin.Contexts
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
+			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
 			OldStyleDomainServices.RestoreOldStyleData(sortedData, interestingPropertiesCache, highLevelData, pathRoot);
 
-			// TODO: Add Scripture Domain.
-			//ScriptureBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
-
+			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
 			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
 			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
 
 			foreach (var rtElement in sortedData.Values)
 				FileWriterService.WriteElement(writer, readerSettings, rtElement);
+		}
+
+		internal static void RemoveDomainData(string pathRoot)
+		{
+			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot); // TODO: Not doing it all yet.
+			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
+			ScriptureDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
+			// TODO: Leave OldStyleDomainServices.RemoveDataFiles in until Linguistics does it all.
+			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
+			OldStyleDomainServices.RemoveDataFiles(pathRoot);
 		}
 	}
 }

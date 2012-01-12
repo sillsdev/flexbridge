@@ -69,7 +69,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				foreach (var objsurElement in owningObjSurElements.ToArray())
 				{
 					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value;
-					var classOfOwnedObject = guidToClassMapping[guid];
+					string classOfOwnedObject;
+					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
+						continue;
 					guidToClassMapping.Remove(guid);
 					var ownedElement = classData[classOfOwnedObject][guid];
 					ownedElement.Attribute(SharedConstants.OwnerGuid).Remove();

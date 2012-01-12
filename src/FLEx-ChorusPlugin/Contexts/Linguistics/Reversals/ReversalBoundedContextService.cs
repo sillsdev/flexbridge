@@ -115,7 +115,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 				var records = root.Elements("ReversalIndexEntry").ToList();
 				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
-					revIdx.Element("Entries").Add(records);
+					revIdx.Element("Entries").Add(records); // NB: These full objects will be turned into regular objsur elements in the flattening process.
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					revIdx,
@@ -125,12 +125,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			}
 
 			// Restore lexDb ReversalIndexes property in sorted order.
-			if (sortedRevs.Count > 0)
-			{
-				var reversalsOwningProp = highLevelData["LexDb"].Element("ReversalIndexes");
-				foreach (var sortedRev in sortedRevs.Values)
-					reversalsOwningProp.Add(sortedRev);
-			}
+			if (sortedRevs.Count == 0)
+				return;
+			var reversalsOwningProp = highLevelData["LexDb"].Element("ReversalIndexes");
+			foreach (var sortedRev in sortedRevs.Values)
+				reversalsOwningProp.Add(sortedRev);
 		}
 
 		internal static void RemoveBoundedContextData(string linguisticsBase)

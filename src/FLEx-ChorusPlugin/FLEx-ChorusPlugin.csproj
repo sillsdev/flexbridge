@@ -130,6 +130,11 @@
   <ItemGroup>
 	<Compile Include="Contexts\BaseDomainServices.cs" />
 	<Compile Include="Contexts\General\OldStyleDomainServices.cs" />
+	<Compile Include="Contexts\Scripture\ArchivedDrafts\ArchivedDraftsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ImportSettings\ImportSettingsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\Styles\StylesBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\CheckLists\ScriptureCheckListsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />

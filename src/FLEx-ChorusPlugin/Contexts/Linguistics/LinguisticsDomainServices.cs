@@ -33,9 +33,36 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+
+			/*
+			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
+			var translationTagsProp = languageProjectElement.Element("TranslationTags");
+			if (translationTagsProp != null)
+			{
+				var translationTagsObjSurElement = translationTagsProp.Element(SharedConstants.Objsur);
+				if (translationTagsObjSurElement != null)
+				{
+					var tranTagListGuid = translationTagsObjSurElement.Attribute(SharedConstants.GuidStr).Value;
+					var className = guidToClassMapping[tranTagListGuid];
+					var tranTagList = classData[className][tranTagListGuid];
+
+					CmObjectNestingService.NestObject(tranTagList,
+						new Dictionary<string, HashSet<string>>(),
+						classData,
+						interestingPropertiesCache,
+						guidToClassMapping);
+					// Remove 'ownerguid'.
+					tranTagList.Attribute(SharedConstants.OwnerGuid).Remove();
+					var listDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
+						new XElement("TranslationTags", tranTagList));
+					FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, "TranslationTags." + SharedConstants.List), readerSettings, listDoc);
+					languageProjectElement.Element("TranslationTags").RemoveNodes();
+				}
+			}
+			*/
 		}
 
 		internal static void FlattenDomain(

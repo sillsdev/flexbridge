@@ -5,6 +5,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	internal static class SharedConstants
 	{
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
+
 		internal const string OptionalFirstElementTag = "AdditionalFields";
 		internal const string RtTag = "rt";
 		internal const string Collections = "Collections";
@@ -21,5 +22,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string OwnerGuid = "ownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
+		internal const string ScriptureReferenceSystem = "ReferenceSystem";
+		internal const string List = "list";
+		internal const string ArchivedDrafts = "ArchivedDrafts";
+		internal const string ArchivedDraftExt = "ArchivedDraft";
+		internal const string Styles = "Styles";
+		internal const string ImportSettings = "ImportSettings";
+		internal const string ImportSettingExt = "ImportSetting";
+		internal const string Trans = "trans";
 	}
 }

@@ -18,6 +18,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (sortedData == null) throw new ArgumentNullException("sortedData");
 			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (element == null) throw new ArgumentNullException("element");
+
 			// No, since unowned stuff will feed a null.
 			//if (string.IsNullOrEmpty(ownerguid)) throw new ArgumentNullException(SharedConstants.OwnerGuid);
 			if (ownerguid != null && ownerguid == string.Empty)
@@ -66,6 +67,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					FlattenObject(sortedData, interestingPropertiesCache, ownedElement, elementGuid);
 				}
 			}
+		}
+
+		internal static void RestoreObjsurElement(XContainer owningElement, string owningPropertyName, XElement ownedElement)
+		{
+			var owningPropElement = owningElement.Element(owningPropertyName);
+			owningPropElement.Add(new XElement(SharedConstants.Objsur,
+												   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value),
+												   new XAttribute("t", "o")));
 		}
 	}
 }

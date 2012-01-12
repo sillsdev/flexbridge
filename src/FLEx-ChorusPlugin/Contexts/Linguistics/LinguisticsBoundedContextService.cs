@@ -90,7 +90,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			}
 
 			// There could be a Linguistics\MorphologyAndSyntax\Syntax folder, eventually.
-			// 8ff.
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
 				"PhPhonData", "PhPhonemeSet", "PhEnvironment", "PhPhoneme", "PhBdryMarker", "PhCode", "PhNCSegments",

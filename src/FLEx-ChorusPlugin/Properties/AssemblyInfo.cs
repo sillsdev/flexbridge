@@ -37,4 +37,4 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("FieldWorksBridge")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
-[assembly: InternalsVisibleTo("FwdataNester")]
+[assembly: InternalsVisibleTo("FwdataTestApp")]
