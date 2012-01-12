@@ -79,7 +79,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (File.Exists(transScripPathname))
 				File.Delete(transScripPathname);
 
-			FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
+			// Scripture domain does it all.
+			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

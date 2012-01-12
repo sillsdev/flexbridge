@@ -100,7 +100,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 			foreach (var archivedDraftPathname in Directory.GetFiles(draftsDir, "*.ArchivedDraft", SearchOption.TopDirectoryOnly))
 				File.Delete(archivedDraftPathname);
 
-			FileWriterService.RemoveEmptyFolders(draftsDir, true);
+			// Scripture domain does it all.
+			// FileWriterService.RemoveEmptyFolders(draftsDir, true);
 		}
 	}
 }

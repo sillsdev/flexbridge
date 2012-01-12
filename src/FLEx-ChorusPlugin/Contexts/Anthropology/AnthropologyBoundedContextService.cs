@@ -30,10 +30,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			// No subfolders for anthropologyDir
-			if (!Directory.Exists(anthropologyDir))
-				Directory.CreateDirectory(anthropologyDir);
-
 			SortedDictionary<string, XElement> sortedInstanceData;
 			classData.TryGetValue("RnResearchNbk", out sortedInstanceData);
 			var langProj = classData["LangProject"].Values.First();
@@ -108,10 +104,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string anthropologyBaseDir)
 		{
-			// No subfolders for anthropologyDir
-			if (!Directory.Exists(anthropologyBaseDir))
-				return; // Nothing to do.
-
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value;
 			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
@@ -158,7 +150,9 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var notebookPath = Path.Combine(anthropologyBase, "DataNotebook.ntbk");
 			if (File.Exists(notebookPath))
 				File.Delete(notebookPath);
-			FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
+
+			// Let domain do it.
+			// FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
 		}
 
 		private static void RestoreLangProjListObjsurElement(XContainer langProjElement, XElement listElement)

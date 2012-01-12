@@ -102,7 +102,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.CheckLists
 			foreach (var checkListPathname in Directory.GetFiles(clDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
 				File.Delete(checkListPathname);
 
-			FileWriterService.RemoveEmptyFolders(clDir, true);
+			// Scripture domain does it all.
+			//FileWriterService.RemoveEmptyFolders(clDir, true);
 		}
 	}
 }

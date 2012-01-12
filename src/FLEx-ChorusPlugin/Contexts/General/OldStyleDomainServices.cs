@@ -55,16 +55,13 @@ namespace FLEx_ChorusPlugin.Contexts.General
 		{
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
 			if (!Directory.Exists(multiFileDirRoot))
-			{
-				Directory.CreateDirectory(multiFileDirRoot);
 				return;
-			}
 
 			// Delete all data files at any folder depth.
 			foreach (var dataFilePathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories))
 				File.Delete(dataFilePathname);
 
-			FileWriterService.RemoveEmptyFolders(multiFileDirRoot, false); // Leave "DataFiles", since we want it to be there, after this method is done.
+			FileWriterService.RemoveEmptyFolders(multiFileDirRoot, true);
 		}
 
 		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)

@@ -44,6 +44,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/srs.ReferenceSystem");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureStyles.style");
 
 			// Older style files, hopefully, soon to be obsolete.
 			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");

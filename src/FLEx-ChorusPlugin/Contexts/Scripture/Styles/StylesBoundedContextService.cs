@@ -11,6 +11,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 {
 	internal static class StylesBoundedContextService
 	{
+		private const string StyleFilename = "ScriptureStyles.style";
+
 		internal static void NestContext(XElement stylesProperty,
 			XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
@@ -24,9 +26,14 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 			if (styles.Count() == 0)
 				return;
 
-			var stylesDir = Path.Combine(baseDirectory, SharedConstants.Styles);
+			var stylesDir = baseDirectory; // Just use main folder. // Path.Combine(baseDirectory, SharedConstants.Styles);
 			if (!Directory.Exists(stylesDir))
 				Directory.CreateDirectory(stylesDir);
+
+			// Use only one file for all of them.
+			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+			var root = new XElement("Styles");
+			doc.Add(root);
 
 			foreach (var styleObjSur in styles)
 			{
@@ -42,12 +49,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 
 				// Remove 'ownerguid'.
 				style.Attribute(SharedConstants.OwnerGuid).Remove();
-
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement("Style", style));
-
-				FileWriterService.WriteNestedFile(Path.Combine(stylesDir, style.Attribute(SharedConstants.GuidStr).Value + ".style"), readerSettings, doc);
+				root.Add(style);
 			}
+
+			FileWriterService.WriteNestedFile(Path.Combine(stylesDir, StyleFilename), readerSettings, doc);
 
 			stylesProperty.RemoveNodes();
 
@@ -61,19 +66,21 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
-			var stylesDir = Path.Combine(scriptureBaseDir, SharedConstants.Styles);
+			var stylesDir = scriptureBaseDir; // Just use main folder. // Path.Combine(baseDirectory, SharedConstants.Styles);
 			if (!Directory.Exists(stylesDir))
 				return;
 
-			// Owned by Scripture in ArchivedDrafts coll prop.
+			var stylePathname = Path.Combine(scriptureBaseDir, StyleFilename);
+			if (!File.Exists(stylePathname))
+				return;
+
+			var doc = XDocument.Load(stylePathname);
+			// StStyle instances are owned by Scripture in its Styles coll prop.
 			var scrElement = highLevelData["Scripture"];
 			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
 			var sortedStyles = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-// ReSharper disable ConvertClosureToMethodGroup
-			foreach (var styleDoc in Directory.GetFiles(stylesDir, "*.style", SearchOption.TopDirectoryOnly).Select(stylePathname => XDocument.Load(stylePathname)))
-// ReSharper restore ConvertClosureToMethodGroup
+			foreach (var styleElement in doc.Root.Elements("StStyle"))
 			{
-				var styleElement = styleDoc.Element("Style").Elements().First();
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					styleElement,
@@ -95,14 +102,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
-			var stylesDir = Path.Combine(scriptureBaseDir, SharedConstants.Styles);
-			if (!Directory.Exists(stylesDir))
-				return;
-
-			foreach (var stylePathname in Directory.GetFiles(stylesDir, "*.style", SearchOption.TopDirectoryOnly))
+			var stylePathname = Path.Combine(scriptureBaseDir, StyleFilename);
+			if (File.Exists(stylePathname))
 				File.Delete(stylePathname);
 
-			FileWriterService.RemoveEmptyFolders(stylesDir, true);
+			// Scripture domain does it all.
+			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

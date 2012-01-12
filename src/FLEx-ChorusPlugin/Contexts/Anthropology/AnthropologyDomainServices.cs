@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
@@ -18,7 +19,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			AnthropologyBoundedContextService.NestContext(readerSettings, Path.Combine(rootDir, "Anthropology"), classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			var anthropologyBaseDir = Path.Combine(rootDir, AnthropologyRootFolder);
+			if (!Directory.Exists(anthropologyBaseDir))
+				Directory.CreateDirectory(anthropologyBaseDir);
+
+			AnthropologyBoundedContextService.NestContext(readerSettings, anthropologyBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 		}
 
 		internal static void FlattenDomain(
@@ -27,12 +32,22 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string pathRoot)
 		{
-			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, Path.Combine(pathRoot, AnthropologyRootFolder));
+			var anthropologyBaseDir = Path.Combine(pathRoot, AnthropologyRootFolder);
+			if (!Directory.Exists(anthropologyBaseDir))
+				return; // Nothing to do.
+
+			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, anthropologyBaseDir);
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			AnthropologyBoundedContextService.RemoveBoundedContextData(Path.Combine(pathRoot, AnthropologyRootFolder));
+			var anthropologyBaseDir = Path.Combine(pathRoot, AnthropologyRootFolder);
+			if (!Directory.Exists(anthropologyBaseDir))
+				return;
+
+			AnthropologyBoundedContextService.RemoveBoundedContextData(anthropologyBaseDir);
+
+			FileWriterService.RemoveEmptyFolders(anthropologyBaseDir, true);
 		}
 	}
 }

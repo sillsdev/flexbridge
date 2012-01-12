@@ -89,12 +89,18 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 			var scriptureBaseDir = Path.Combine(pathRoot, ScriptureRootFolder);
+			if (!Directory.Exists(scriptureBaseDir))
+				return;
+
 			ArchivedDraftsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureCheckListsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ImportSettingsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			StylesBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureReferenceSystemBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
+
+			// This will also zap any empty subfolders all the way down.
+			FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

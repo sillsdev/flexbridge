@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string OwnerGuid = "ownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
-		internal const string ScriptureReferenceSystem = "ReferenceSystem";
+		internal const string ScriptureReferenceSystem = "ScriptureReferenceSystem";
 		internal const string List = "list";
 		internal const string ArchivedDrafts = "ArchivedDrafts";
 		internal const string ArchivedDraftExt = "ArchivedDraft";

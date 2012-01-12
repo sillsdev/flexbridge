@@ -16,6 +16,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureReferenceSystemBoundedContextService
 	{
+		private const string ScriptureReferenceSystemFilename = SharedConstants.ScriptureReferenceSystem + ".srs";
+
 		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -42,7 +44,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 				new XElement(SharedConstants.ScriptureReferenceSystem, refSystem));
 
-			FileWriterService.WriteNestedFile(Path.Combine(baseDirectory, "srs." + SharedConstants.ScriptureReferenceSystem), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(baseDirectory, ScriptureReferenceSystemFilename), readerSettings, doc);
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ScrRefSystem", "ScrBookRef" });
 		}
@@ -56,7 +58,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
 
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, "srs." + SharedConstants.ScriptureReferenceSystem));
+			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, ScriptureReferenceSystemFilename));
 			CmObjectFlatteningService.FlattenObject(sortedData,
 				interestingPropertiesCache,
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
@@ -68,11 +70,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
-			const string refSysPathname = "srs." + SharedConstants.ScriptureReferenceSystem;
+			var refSysPathname = Path.Combine(scriptureBaseDir, ScriptureReferenceSystemFilename);
 			if (File.Exists(refSysPathname))
 				File.Delete(refSysPathname);
 
-			FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
+			// Scripture domain does it all.
+			//FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

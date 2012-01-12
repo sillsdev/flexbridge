@@ -97,12 +97,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string linguisticsBaseDir)
 		{
-			if (!Directory.Exists(linguisticsBaseDir))
-				return; // Nothing to do.
+			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
+			if (!Directory.Exists(reversalDir))
+				return;
 
 			var lexDb = highLevelData["LexDb"];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var reversalDoc in Directory.GetFiles(Path.Combine(linguisticsBaseDir, ReversalRootFolder), "*.reversal", SearchOption.TopDirectoryOnly)
+			foreach (var reversalDoc in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly)
 // ReSharper disable ConvertClosureToMethodGroup
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
 // ReSharper restore ConvertClosureToMethodGroup
@@ -134,14 +135,15 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 
 		internal static void RemoveBoundedContextData(string linguisticsBase)
 		{
-			if (!Directory.Exists(linguisticsBase))
-				return;
 			var reversalDir = Path.Combine(linguisticsBase, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				return;
+
 			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
 				File.Delete(reversalPathname);
-			FileWriterService.RemoveEmptyFolders(reversalDir, true);
+
+			// Linguistics domain will call this.
+			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 	}
 }

@@ -26,10 +26,16 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
+			if (!Directory.Exists(linguisticsBaseDir))
+				Directory.CreateDirectory(linguisticsBaseDir);
+
 			ReversalBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 
-			// TODO: Switch to right location.
+			// TODO: Switch to proper location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
+			if (!Directory.Exists(multiFileDirRoot))
+				Directory.CreateDirectory(multiFileDirRoot);
+
 			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
@@ -72,9 +78,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			string rootDir)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
+			if (!Directory.Exists(linguisticsBaseDir))
+				return;
+
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, linguisticsBaseDir);
 
-			/* Currently handled by general domain.
+			/* Currently handled by BaseDomainServices.
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
 			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
@@ -89,6 +98,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 			var linguisticsBaseDir = Path.Combine(pathRoot, LinguisticsBaseFolder);
+			if (!Directory.Exists(linguisticsBaseDir))
+				return;
+
 			ReversalBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 			//TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
@@ -96,6 +108,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			//LexiconBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
+
+			FileWriterService.RemoveEmptyFolders(linguisticsBaseDir, true);
 		}
 	}
 }

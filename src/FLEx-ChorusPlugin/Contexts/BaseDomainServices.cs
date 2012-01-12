@@ -21,11 +21,11 @@ namespace FLEx_ChorusPlugin.Contexts
 			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
 
-			//		LinguisticsDomainServices.WriteNestedDomainData will do old and new for a while yet.
+			// Does both old and new for a while yet.
 			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			//		LinguisticsDomainServices.WriteNestedDomainData does only new.
+			// Does only new.
 			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
-			// ScriptureDomainServices.WriteNestedDomainData now writes all new style.
+			// Does only new.
 			ScriptureDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			 * "TimeOfDay",
 			 * "Positions"
 			*/
-
+			// Does 'leftover' stuff in old style.
 			OldStyleDomainServices.WriteData(readerSettings, pathRoot, mdc, classData, skipwriteEmptyClassFiles);
 		}
 
@@ -70,11 +70,12 @@ namespace FLEx_ChorusPlugin.Contexts
 
 		internal static void RemoveDomainData(string pathRoot)
 		{
-			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot); // TODO: Not doing it all yet.
+			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot); // TODO: Does all new, but no old.
 			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
 			ScriptureDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
+
 			// TODO: Leave OldStyleDomainServices.RemoveDataFiles in until Linguistics does it all.
-			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
+			// TODO: Even then, there will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
 			OldStyleDomainServices.RemoveDataFiles(pathRoot);
 		}
 	}

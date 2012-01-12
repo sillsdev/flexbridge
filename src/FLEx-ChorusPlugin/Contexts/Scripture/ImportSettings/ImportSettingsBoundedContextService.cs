@@ -100,7 +100,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 			foreach (var importSettingsPathname in Directory.GetFiles(importSettingsDir, "*." + SharedConstants.ImportSettingExt, SearchOption.TopDirectoryOnly))
 				File.Delete(importSettingsPathname);
 
-			FileWriterService.RemoveEmptyFolders(importSettingsDir, true);
+			// Scripture domain does it all.
+			//FileWriterService.RemoveEmptyFolders(importSettingsDir, true);
 		}
 	}
 }
