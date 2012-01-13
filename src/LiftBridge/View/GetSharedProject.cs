@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
+using Palaso.IO;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -76,29 +77,16 @@ namespace SIL.LiftBridge.View
 								var sourcePath = Path.GetDirectoryName(fileFromDlg);
 								if (Directory.GetDirectories(sourcePath, ".hg").Count() == 0)
 								{
-									MessageBox.Show(parent, Resources.kLoneLiftFileWarning, Resources.kUnsipportedLiftFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+									MessageBox.Show(parent, Resources.kLoneLiftFileWarning, Resources.kUnsupportedLiftFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 									return false;
 								}
 								var x = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
-								var target = Path.Combine(LiftProjectServices.BasePath, x);
-								if (Directory.Exists(target))
-								{
-									var dlgResultfolderExists = MessageBox.Show(parent,
-													string.Format("It appears that the folder: {0} already exists. It needs to be deleted, before continuing.", target),
-													Resources.lFolderAlreadyExists, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-									if (dlgResultfolderExists == DialogResult.OK)
-									{
-										Directory.Delete(target, true);
-									}
-									else
-									{
-										return false;
-									}
-								}
+								var target = DirectoryUtilities.GetUniqueFolderPath(Path.Combine(LiftProjectServices.BasePath, x));
 								var repo = new HgRepository(sourcePath, new StatusProgress());
 								repo.CloneLocal(target);
-								project.RepositoryIdentifier = repo.Identifier;
+								var targetRepo = new HgRepository(target, new StatusProgress());
+								project.RepositoryIdentifier = targetRepo.Identifier;
 								break;
 						}
 					}

@@ -5,10 +5,9 @@ using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
-using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
-using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.Properties;
 using SIL.LiftBridge.Services;
 
 namespace SIL.LiftBridge.View
@@ -66,7 +65,7 @@ namespace SIL.LiftBridge.View
 
 			if (!_haveExportedFromFlex)
 			{
-				// Export Lift data, but only once per launch.
+				// Export Lift data, but only once per launch, if no real import was done.
 				if (ExportLexicon != null)
 				{
 					// 1. Keep track of all extant files in all folders, except the .hg (or .git) folder.
@@ -80,6 +79,9 @@ namespace SIL.LiftBridge.View
 					ExportLexicon(this, eventArgs);
 					if (eventArgs.Cancel)
 					{
+						MessageBox.Show(form,
+										Resources.kFlexExportProblemMessage,
+										Resources.kFlexExportProblemTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						try
 						{
 							// 2. Do search of all files and folders (except .hg) and delete any files not found in #1, above.
@@ -97,7 +99,7 @@ namespace SIL.LiftBridge.View
 							// Eat exception.
 						}
 // ReSharper restore EmptyGeneralCatchClause
-						FindForm().Close();
+						form.Close();
 						return;
 					}
 
@@ -136,8 +138,7 @@ namespace SIL.LiftBridge.View
 				ImportFailureServices.ClearImportFailure(_liftProject);
 				if (_liftProject.RepositoryIdentifier == null)
 				{
-					var repo = new HgRepository(LiftProjectServices.PathToProject(_liftProject), new NullProgress());
-					_liftProject.RepositoryIdentifier = repo.Identifier;
+					_liftProject.RepositoryIdentifier = _chorusSystem.Repository.Identifier;
 				}
 
 				// In case the user does another S/R to another repo, after the import,

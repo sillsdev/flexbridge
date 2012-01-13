@@ -183,7 +183,7 @@
   <data name="kLoneLiftFileWarning" xml:space="preserve">
 	<value>The selected LIFT file appears to have been simply exported, and cannot be used for sharing. Please try another LIFT file.</value>
   </data>
-  <data name="kUnsipportedLiftFile" xml:space="preserve">
+  <data name="kUnsupportedLiftFile" xml:space="preserve">
 	<value>Unsupported LIFT file</value>
   </data>
   <data name="lFolderAlreadyExists" xml:space="preserve">
@@ -209,5 +209,11 @@
   </data>
 	<data name="kBasicMapFleContents">
 		<value><![CDATA[<?xml version='1.0' encoding='utf-8'?><Mappings></Mappings>]]></value>
+	</data>
+	<data name="kFlexExportProblemMessage">
+		<value xml:space="preserve">FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue.</value>
+	</data>
+	<data name="kFlexExportProblemTitle">
+		<value xml:space="preserve">FLEx export problem</value>
 	</data>
 </root>

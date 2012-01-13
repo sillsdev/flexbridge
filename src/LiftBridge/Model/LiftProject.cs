@@ -12,6 +12,7 @@ namespace SIL.LiftBridge.Model
 		internal LiftProject(string liftProjectName)
 		{
 			LiftProjectName = liftProjectName;
+			_id = Guid.Empty;
 		}
 
 		internal LiftProject(string liftProjectName, Guid langProjId)

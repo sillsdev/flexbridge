@@ -5,7 +5,6 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress.LogBox;
-using SIL.LiftBridge.Properties;
 
 namespace SIL.LiftBridge.Model
 {
@@ -14,6 +13,12 @@ namespace SIL.LiftBridge.Model
 	/// </summary>
 	internal static class LiftProjectServices
 	{
+		private static readonly string MappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
+		private const string MappingsTag = "Mappings";
+		private const string MappingTag = "Mapping";
+		private const string ProjectguidAttrTag = "projectguid";
+		private const string RepositoryidentifierAttrTag = "repositoryidentifier";
+
 		internal static string BasePath
 		{
 			get
@@ -84,59 +89,95 @@ namespace SIL.LiftBridge.Model
 
 		internal static void StoreIdentifiers(Guid langProjId, string repositoryIdentifier)
 		{
-			var mappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
+			if (repositoryIdentifier != null)
+				repositoryIdentifier =  repositoryIdentifier.Trim();
+			if (langProjId == Guid.Empty)
+				return; // Don't bother with older FLEx versions, since they don't know how to give us the LP guid.
 
-			if (!File.Exists(mappingPathname))
-				File.WriteAllText(mappingPathname, Resources.kBasicMapFleContents);
-
-			var doc = XDocument.Load(mappingPathname);
-			var root = doc.Root;
-
-			var mapForProject = (from mapping in root.Elements()
-								 where mapping.Attribute("projectguid").Value.ToLowerInvariant() == langProjId.ToString().ToLowerInvariant()
-								 select mapping).FirstOrDefault();
+			var doc = GetMappingDoc();
+			var root = doc.Element(MappingsTag);
+			var childElements = root.Elements(MappingTag);
+			var mapForProject = (childElements.Count() == 0)
+				? null
+				: (from mapping in childElements
+				   where mapping.Attribute(ProjectguidAttrTag).Value == langProjId.ToString()
+				   select mapping).FirstOrDefault(); // Still will be null, if there is no matching LP id.
 			if (mapForProject == null)
 			{
-				mapForProject = new XElement("Mapping",
-											 new XAttribute("projectguid", langProjId.ToString().ToLowerInvariant()),
+				mapForProject = new XElement(MappingTag,
+											 new XAttribute(ProjectguidAttrTag, langProjId.ToString()),
 											 string.IsNullOrEmpty(repositoryIdentifier)
 												? null
-												: new XAttribute("repositoryidentifier", repositoryIdentifier.ToLowerInvariant()));
+												: new XAttribute(RepositoryidentifierAttrTag, repositoryIdentifier));
 				root.Add(mapForProject);
 			}
 			else
 			{
-				var repoIdAttr = mapForProject.Attribute("repositoryidentifier");
+				// Have mapForProject
+				var repoIdAttr = mapForProject.Attribute(RepositoryidentifierAttrTag);
 				if (repoIdAttr == null)
 				{
 					// repositoryidentifier may be null on first use, so write out what is in project.
 					if (!string.IsNullOrEmpty(repositoryIdentifier))
-						mapForProject.Add(new XAttribute("repositoryidentifier", repositoryIdentifier));
+						mapForProject.Add(new XAttribute(RepositoryidentifierAttrTag, repositoryIdentifier));
 				}
 				else
 				{
-					// But, if repositoryidentifier has a value, then it better be the same as the one in project.
-					if (repoIdAttr.Value.ToLowerInvariant() != repositoryIdentifier.ToLowerInvariant())
-						throw new InvalidOperationException("There is a mis-match in the stored repository identifier and the current project identifier.");
+					// Has repoIdAttr.
+					if (string.IsNullOrEmpty(repoIdAttr.Value))
+					{
+						// Not sure how it could have attr, with no value, but...
+						if (string.IsNullOrEmpty(repositoryIdentifier))
+							repoIdAttr.Remove();
+						else
+							repoIdAttr.Value = repositoryIdentifier;
+					}
+					else
+					{
+						// But, if repoIdAttr has a value, then it better be the same as the one in project.
+						if (!string.IsNullOrEmpty(repositoryIdentifier) && repoIdAttr.Value.Trim() != repositoryIdentifier)
+						{
+							throw new InvalidOperationException(string.Format("There is a mis-match in the stored repository identifier and the current project identifier. Expected: '{0}' Actual: '{1}'", repoIdAttr.Value.Trim(), repositoryIdentifier));
+						}
+						//else
+						//{
+						//    // Do nothing, since they are the same.
+						//}
+					}
 				}
 			}
-			doc.Save(mappingPathname);
+			doc.Save(MappingPathname);
+		}
+
+		private static XDocument GetMappingDoc()
+		{
+			XDocument doc;
+			if (!File.Exists(MappingPathname))
+			{
+				doc = new XDocument(
+					new XDeclaration("1.0", "utf-8", "yes"),
+					new XElement(MappingsTag));
+				doc.Save(MappingPathname);
+			}
+			else
+			{
+				doc = XDocument.Load(MappingPathname);
+			}
+			return doc;
 		}
 
 		internal static string GetRepositoryIdentifier(Guid languageProjectId)
 		{
-			var mappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
+			if (languageProjectId == Guid.Empty)
+				return null;
 
-			if (!File.Exists(mappingPathname))
-				File.WriteAllText(mappingPathname, Resources.kBasicMapFleContents);
-
-			var doc = XDocument.Load(mappingPathname);
+			var doc = GetMappingDoc();
 			var mapForProject = (from mapping in doc.Root.Elements()
-								 where mapping.Attribute("projectguid").Value.ToLowerInvariant() == languageProjectId.ToString().ToLowerInvariant()
+								 where mapping.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() == languageProjectId.ToString().ToLowerInvariant()
 								 select mapping).FirstOrDefault();
 			if (mapForProject == null)
 				return null;
-			var repoIdAttr = mapForProject.Attribute("repositoryidentifier");
+			var repoIdAttr = mapForProject.Attribute(RepositoryidentifierAttrTag);
 			return repoIdAttr == null
 				? null
 				: (string.IsNullOrEmpty(repoIdAttr.Value)

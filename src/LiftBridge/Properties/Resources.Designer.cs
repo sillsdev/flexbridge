@@ -124,6 +124,24 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue..
+		/// </summary>
+		public static string kFlexExportProblemMessage {
+			get {
+				return ResourceManager.GetString("kFlexExportProblemMessage", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FLEx export problem.
+		/// </summary>
+		public static string kFlexExportProblemTitle {
+			get {
+				return ResourceManager.GetString("kFlexExportProblemTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx Import failure.
 		/// </summary>
 		public static string kFlexImportFailureTitle {
@@ -306,9 +324,9 @@ namespace SIL.LiftBridge.Properties {
 		/// <summary>
 		///   Looks up a localized string similar to Unsupported LIFT file.
 		/// </summary>
-		public static string kUnsipportedLiftFile {
+		public static string kUnsupportedLiftFile {
 			get {
-				return ResourceManager.GetString("kUnsipportedLiftFile", resourceCulture);
+				return ResourceManager.GetString("kUnsupportedLiftFile", resourceCulture);
 			}
 		}
 

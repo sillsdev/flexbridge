@@ -3,7 +3,9 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
+using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
+using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 using SIL.LiftBridge.Services;
@@ -106,13 +108,19 @@ namespace SIL.LiftBridge.Controller
 				default:
 					throw new InvalidOperationException("Unrecognized type of shared system.");
 				case SharedSystemType.New:
-					File.WriteAllText(
-						Path.Combine(
-							LiftProjectServices.PathToProject(Liftproject),
-							Liftproject.LiftProjectName + ".lift"),
+					// Create new repo with empty LIFT file.
+					var newRepoPath = LiftProjectServices.PathToProject(Liftproject); // DirectoryUtilities.GetUniqueFolderPath(LiftProjectServices.PathToProject(Liftproject));
+					var newLiftPathname = Path.Combine(
+						newRepoPath,
+						Liftproject.LiftProjectName + ".lift");
+					File.WriteAllText(newLiftPathname,
 @"<?xml version='1.0' encoding='UTF-8'?>
 <lift version='0.13'>
 </lift>");
+					HgRepository.CreateRepositoryInExistingDir(newRepoPath, new NullProgress());
+					var repo = new HgRepository(newRepoPath, new NullProgress());
+					repo.AddAndCheckinFile(newLiftPathname);
+					Liftproject.RepositoryIdentifier = repo.Identifier;
 					break;
 				case SharedSystemType.Extant:
 					if (!_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject))
@@ -172,9 +180,9 @@ namespace SIL.LiftBridge.Controller
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName");
 
-			Liftproject = _languageProjectGuid != Guid.Empty
-				? new LiftProject(projectName, _languageProjectGuid)
-				: new LiftProject(projectName); // Try to support backwards compatibility.
+			Liftproject = _languageProjectGuid == Guid.Empty
+				? new LiftProject(projectName) // Try to support backwards compatibility.
+				: new LiftProject(projectName, _languageProjectGuid);
 
 			try
 			{
