@@ -25,6 +25,8 @@ namespace FLEx_ChorusPlugin.View
 		{
 			string currentRootDataPath;
 			// 1. Find out the name of the lang proj: langProjName. This is the folder where the clone will go.
+			// NB: TODO: Can't do this in a folder with stuff in it, so the rest of the code best not be called.
+			// TODO: I suspect that the FLEx New LP menu (or some other clone option menu) will be needed, if someone wants to go the clone route.
 			using (var folderBrowserDlg = new FolderBrowserDialog())
 			{
 				folderBrowserDlg.RootFolder = Environment.SpecialFolder.LocalApplicationData;
@@ -39,6 +41,10 @@ namespace FLEx_ChorusPlugin.View
 			// Make sure it is an empty folder.
 			if (Directory.GetFiles(currentRootDataPath).Length > 0 || Directory.GetDirectories(currentRootDataPath).Length > 0)
 				return false;
+
+			// Actually, we don't want the folder to exist at all.
+			// Just delete it, or Chorus will not be happy.
+			Directory.Delete(currentRootDataPath);
 
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = Directory.GetParent(currentRootDataPath).FullName;
@@ -56,6 +62,7 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
+								// TODO: Put Humpty together again.
 								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentRootDataPath);
 								break;
 						}
@@ -85,7 +92,9 @@ namespace FLEx_ChorusPlugin.View
 								if (Directory.Exists(target))
 									throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
 								var repo = new HgRepository(sourcePath, new StatusProgress());
-								repo.CloneLocal(target);
+								repo.CloneLocalWithoutUpdate(target);
+								repo.Update();
+								// TODO: Put Humpty together again.
 								// It made a clone, but maybe in the wrong name.
 								PossiblyRenameFolder(target, currentRootDataPath);
 								break;
@@ -101,6 +110,7 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
+								// TODO: Put Humpty together again.
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, currentRootDataPath);
 								break;
 						}
