@@ -86,10 +86,11 @@ namespace SIL.LiftBridge.View
 								var expectedTarget = Path.Combine(LiftProjectServices.BasePath, x);
 								var repo = new HgRepository(sourcePath, new StatusProgress());
 								var actualTarget = repo.CloneLocalWithoutUpdate(expectedTarget);
-								var targetRepo = new HgRepository(actualTarget, new StatusProgress());
+								var newClonedRepo = new HgRepository(actualTarget, new StatusProgress());
+								newClonedRepo.Update();
 								var alias = HgRepository.GetAliasFromPath(actualTarget);
-								targetRepo.SetTheOnlyAddressOfThisType(RepositoryAddress.Create(alias, actualTarget));
-								project.RepositoryIdentifier = targetRepo.Identifier;
+								newClonedRepo.SetTheOnlyAddressOfThisType(RepositoryAddress.Create(alias, actualTarget));
+								project.RepositoryIdentifier = newClonedRepo.Identifier;
 								// TODO: Try to put it into expected location for older FLEx versions, if possible.
 								break;
 						}
