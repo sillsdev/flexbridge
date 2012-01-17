@@ -89,11 +89,11 @@ namespace SIL.LiftBridge.Model
 
 		internal static void StoreIdentifiers(Guid langProjId, string repositoryIdentifier)
 		{
-			if (repositoryIdentifier != null)
-				repositoryIdentifier =  repositoryIdentifier.Trim();
 			if (langProjId == Guid.Empty)
 				return; // Don't bother with older FLEx versions, since they don't know how to give us the LP guid.
 
+			if (repositoryIdentifier != null)
+				repositoryIdentifier =  repositoryIdentifier.Trim();
 			var doc = GetMappingDoc();
 			var root = doc.Element(MappingsTag);
 			var childElements = root.Elements(MappingTag);

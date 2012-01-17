@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
+using Chorus.VcsDrivers;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.IO;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -52,6 +52,7 @@ namespace SIL.LiftBridge.View
 							case DialogResult.OK:
 								var repo = new HgRepository(internetCloneDlg.PathToNewProject, new NullProgress());
 								project.RepositoryIdentifier = repo.Identifier;
+								// TODO: Try to put it into expected location for older FLEx versions, if possible.
 								break;
 						}
 					}
@@ -82,11 +83,14 @@ namespace SIL.LiftBridge.View
 								}
 								var x = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
-								var target = DirectoryUtilities.GetUniqueFolderPath(Path.Combine(LiftProjectServices.BasePath, x));
+								var expectedTarget = Path.Combine(LiftProjectServices.BasePath, x);
 								var repo = new HgRepository(sourcePath, new StatusProgress());
-								repo.CloneLocal(target);
-								var targetRepo = new HgRepository(target, new StatusProgress());
+								var actualTarget = repo.CloneLocalWithoutUpdate(expectedTarget);
+								var targetRepo = new HgRepository(actualTarget, new StatusProgress());
+								var alias = HgRepository.GetAliasFromPath(actualTarget);
+								targetRepo.SetTheOnlyAddressOfThisType(RepositoryAddress.Create(alias, actualTarget));
 								project.RepositoryIdentifier = targetRepo.Identifier;
+								// TODO: Try to put it into expected location for older FLEx versions, if possible.
 								break;
 						}
 					}
@@ -102,6 +106,7 @@ namespace SIL.LiftBridge.View
 							case DialogResult.OK:
 								var repo = new HgRepository(usbCloneDlg.PathToNewProject, new NullProgress());
 								project.RepositoryIdentifier = repo.Identifier;
+								// TODO: Try to put it into expected location for older FLEx versions, if possible.
 								break;
 						}
 					}
