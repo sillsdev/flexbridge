@@ -20,3 +20,6 @@ LiftBridge VS2010.userprefs
 src/LiftBridge/LiftBridge.pidb
 src/LiftBridgeCore/LiftBridgeCore.pidb
 src/LiftBridgeTests/LiftBridgeTests.pidb
+glob:LiftBridge VS2010.6.1.ReSharper.user
+glob:LiftBridge VS2010.sln.DotSettings.user
+glob:src/LiftBridge/LiftBridge.csproj.DotSettings.user
