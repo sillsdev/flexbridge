@@ -8,10 +8,9 @@ using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 {
 	internal sealed class CustomPropertiesTypeHandlerStrategy : IFieldWorksFileHandler
 	{
@@ -31,7 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.OptionalFirstElementTag || root.Elements("CustomField").Count() == 0)
+				if (root.Name.LocalName != SharedConstants.OptionalFirstElementTag || !root.Elements("CustomField").Any())
 					return "Not valid custom properties file";
 
 				return null;
@@ -44,8 +43,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			if (report is IXmlChangeReport)
-				return new FieldWorksChangePresenter((IXmlChangeReport)report);
+			var xmlChangeReport = report as IXmlChangeReport;
+			if (xmlChangeReport != null)
+				return new FieldWorksChangePresenter(xmlChangeReport);
 
 			if (report is ErrorDeterminingChangeReport)
 				return (IChangePresenter)report;

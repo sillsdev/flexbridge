@@ -225,7 +225,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static Dictionary<string, Dictionary<string, HashSet<string>>> CacheInterestingProperties(MetadataCache mdc)
 		{
-			var concreteClasses = mdc.AllConcreteClasses;
+			var concreteClasses = mdc.AllConcreteClasses.ToList();
 			var results = new Dictionary<string, Dictionary<string, HashSet<string>>>(concreteClasses.Count());
 
 			foreach (var concreteClass in concreteClasses)

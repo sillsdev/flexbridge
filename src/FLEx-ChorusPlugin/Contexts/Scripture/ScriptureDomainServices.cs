@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts;
 using FLEx_ChorusPlugin.Contexts.Scripture.CheckLists;
 using FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings;
-using FLEx_ChorusPlugin.Contexts.Scripture.Styles;
 using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture

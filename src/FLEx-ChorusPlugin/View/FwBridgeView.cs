@@ -59,7 +59,7 @@ namespace FLEx_ChorusPlugin.View
 				_cbProjects.Items.Clear();
 				foreach (var project in _projects)
 					_cbProjects.Items.Add(project);
-				if (_projects.Count() > 0)
+				if (_projects.Any())
 					_cbProjects.SelectedIndex = 0;
 
 				_cbProjects.ResumeLayout();

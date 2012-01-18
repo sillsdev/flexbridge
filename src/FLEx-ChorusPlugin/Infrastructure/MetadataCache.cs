@@ -30,7 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 													  select classInfo);
 			_classesWithCollectionProperties = new Dictionary<string, FdoClassInfo>(_concreteClasses.Count());
 			foreach (var classWithCollectionProp in from classInfo in _classes.Values
-													where classInfo.AllCollectionProperties.Count() > 0
+													where classInfo.AllCollectionProperties.Any()
 													select classInfo)
 			{
 				_classesWithCollectionProperties.Add(classWithCollectionProp.ClassName, classWithCollectionProp);
@@ -146,7 +146,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal FdoClassInfo GetClassInfo(string className)
 		{
 			if (string.IsNullOrEmpty(className))
-				throw new ArgumentNullException("classname", AnnotationImages.kNullOrEmptyString);
+				throw new ArgumentNullException("className", AnnotationImages.kNullOrEmptyString);
 
 			FdoClassInfo result;
 			_classes.TryGetValue(className, out result);

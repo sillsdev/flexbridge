@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -76,19 +77,32 @@ namespace FwdataTestApp
 			var srcFwdataPathname = _openFileDialog.FileName;
 			Cursor = Cursors.WaitCursor;
 			var sb = new StringBuilder();
+			var nestTimer = new Stopwatch();
+			var breakupTimer = new Stopwatch();
+			var restoreTimer = new Stopwatch();
+			var verifyTimer = new Stopwatch();
 			try
 			{
 				if (_cbNestFile.Checked)
+				{
+					nestTimer.Start();
 					NestFile(srcFwdataPathname);
+					nestTimer.Stop();
+				}
 				if (_cbRoundTripData.Checked)
 				{
 					var projectName = Path.GetFileNameWithoutExtension(srcFwdataPathname);
 					File.Copy(srcFwdataPathname, srcFwdataPathname + ".orig", true); // Keep it safe.
+					breakupTimer.Start();
 					MultipleFileServices.BreakupMainFile(srcFwdataPathname, projectName);
+					breakupTimer.Stop();
+					restoreTimer.Start();
 					MultipleFileServices.RestoreMainFile(srcFwdataPathname, projectName);
+					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)
 					{
+						verifyTimer.Start();
 						// Figure out how to do this, but it needs to compare .orig with srcFwdataPathname.
 						var mdc = MetadataCache.TestOnlyNewCache; // Want it fresh.
 						var interestingPropertiesCacheSrc = DataSortingService.CacheInterestingProperties(mdc);
@@ -217,6 +231,7 @@ namespace FwdataTestApp
 								}
 							}
 						}
+						verifyTimer.Stop();
 					}
 				}
 			}
@@ -230,6 +245,13 @@ namespace FwdataTestApp
 				File.WriteAllText(Path.Combine(Path.GetDirectoryName(srcFwdataPathname), "Comparison.txt"), compTxt);
 				Cursor = Cursors.Default;
 			}
+			MessageBox.Show(this,
+							String.Format("Time to nest file: {0} Time to breakup file: {1}. Time to restore file: {2}. Time to verify retoration: {3}",
+							_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString() : "Not run",
+							_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString() : "Not run",
+							_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString() : "Not run",
+							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString() : "Not run"),
+							"Times");
 		}
 
 		private static void NestFile(string srcFwdataPathname)

@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
@@ -51,7 +51,7 @@
 	<UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -73,7 +73,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="Palaso, Version=1.9.198.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />

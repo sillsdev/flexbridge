@@ -11,30 +11,15 @@ using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
-namespace FLEx_ChorusPluginTests.Infrastructure.Handling
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 {
 	[TestFixture]
-	public class FieldWorksReversalTypeHandlerTests
+	public class FieldWorksReversalTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
-		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							where handler.GetType().Name == "FieldWorksCommonFileHandler"
-											  select handler).First();
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_fileHandler = null;
-		}
 
 		[SetUp]
 		public void TestSetup()
@@ -53,7 +38,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fileHandler.DescribeInitialContents(null, null);
+			var initialContents = FileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -62,7 +47,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
-			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.Reversal));
 		}
@@ -74,7 +59,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
+				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -85,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string data = @"<Reversal>
 </Reversal>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -94,10 +79,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string data = @"<Reversal>
 </Reversal>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
-			Assert.IsTrue(_fileHandler.CanDiffFile(_ourFile.Path));
-			Assert.IsTrue(_fileHandler.CanMergeFile(_ourFile.Path));
-			Assert.IsTrue(_fileHandler.CanPresentFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanDiffFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanMergeFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanPresentFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -105,7 +90,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNotNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -116,7 +101,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <Reversal>
 </Reversal>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -255,7 +240,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("</Reversal>", "<ReversalIndexEntry guid='newbieTheirs'/></Reversal>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -281,7 +266,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("</ReversalIndexEntry>", "<Subentries><ReversalIndexEntry guid='newbieTheirs'/></Subentries></ReversalIndexEntry>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -319,7 +304,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("commonName", "TheirName");
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,

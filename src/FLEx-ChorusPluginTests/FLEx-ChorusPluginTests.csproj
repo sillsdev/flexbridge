@@ -89,14 +89,15 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenterTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileDiffTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileMergeTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileValidationTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksAnthropologyTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksReversalTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
 	<Compile Include="BorrowedCode\DummyFolderSystem.cs" />
 	<Compile Include="FieldWorksTestServices.cs" />
@@ -146,6 +147,9 @@
 	<Folder Include="Contexts\General\" />
 	<Folder Include="Contexts\Linguistics\Reversals\" />
 	<Folder Include="Contexts\Scripture\" />
+	<Folder Include="Infrastructure\Handling\Scripture\ArchivedDrafts\" />
+	<Folder Include="Infrastructure\Handling\Scripture\CheckLists\" />
+	<Folder Include="Infrastructure\Handling\Scripture\ImportSettings\" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="Properties\TestResources.resx">

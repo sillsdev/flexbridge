@@ -10,30 +10,15 @@ using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
-namespace FLEx_ChorusPluginTests.Infrastructure.Handling
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 {
 	[TestFixture]
-	public class FieldWorksAnthropologyTypeHandlerTests
+	public class FieldWorksAnthropologyTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
-		private IChorusFileTypeHandler _fileHandler;
 		private ListenerForUnitTests _eventListener;
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							where handler.GetType().Name == "FieldWorksCommonFileHandler"
-							select handler).First();
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_fileHandler = null;
-		}
 
 		[SetUp]
 		public void TestSetup()
@@ -52,7 +37,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fileHandler.DescribeInitialContents(null, null);
+			var initialContents = FileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -61,7 +46,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
-			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains("ntbk"));
 		}
@@ -73,7 +58,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "ntbk");
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(_fileHandler.CanValidateFile(newpath));
+				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -87,7 +72,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsTrue(_fileHandler.CanValidateFile(testPathname));
+				Assert.IsTrue(FileHandler.CanValidateFile(testPathname));
 			}
 			finally
 			{
@@ -104,10 +89,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsTrue(_fileHandler.CanValidateFile(testPathname));
-				Assert.IsTrue(_fileHandler.CanDiffFile(testPathname));
-				Assert.IsTrue(_fileHandler.CanMergeFile(testPathname));
-				Assert.IsTrue(_fileHandler.CanPresentFile(testPathname));
+				Assert.IsTrue(FileHandler.CanValidateFile(testPathname));
+				Assert.IsTrue(FileHandler.CanDiffFile(testPathname));
+				Assert.IsTrue(FileHandler.CanMergeFile(testPathname));
+				Assert.IsTrue(FileHandler.CanPresentFile(testPathname));
 			}
 			finally
 			{
@@ -124,7 +109,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsNotNull(_fileHandler.ValidateFile(testPathname, new NullProgress()));
+				Assert.IsNotNull(FileHandler.ValidateFile(testPathname, new NullProgress()));
 			}
 			finally
 			{
@@ -143,7 +128,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			File.WriteAllText(testPathname, data);
 			try
 			{
-				Assert.IsNull(_fileHandler.ValidateFile(testPathname, new NullProgress()));
+				Assert.IsNull(FileHandler.ValidateFile(testPathname, new NullProgress()));
 			}
 			finally
 			{
@@ -207,7 +192,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("</Anthropology>", "<RnGenericRec guid='newbieTheirs'/></Anthropology>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,

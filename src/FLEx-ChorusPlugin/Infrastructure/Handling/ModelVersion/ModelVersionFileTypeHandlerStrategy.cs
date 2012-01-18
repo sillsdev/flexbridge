@@ -6,10 +6,9 @@ using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 {
 	internal sealed class ModelVersionFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{

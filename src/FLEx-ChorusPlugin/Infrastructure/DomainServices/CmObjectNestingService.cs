@@ -53,8 +53,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					continue;
 				// By this point, theory has it that all 'objsur' elements must be owning,
 				// but the filter will ensure some unexpected reference data doesn't get treated as owning.
-				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o");
-				if (owningObjSurElements.Count() == 0)
+				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o").ToList();
+				if (!owningObjSurElements.Any())
 					continue;
 				// NB: There is no way the user can declare an owning custom property to be an exception, so not to worry about them.
 				if (!isCustomProperty)

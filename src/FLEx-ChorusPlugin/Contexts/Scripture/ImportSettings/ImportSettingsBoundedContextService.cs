@@ -20,8 +20,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 		{
 			if (importSettingsProperty == null)
 				return;
-			var importSettings = importSettingsProperty.Elements();
-			if (importSettings.Count() == 0)
+			var importSettings = importSettingsProperty.Elements().ToList();
+			if (!importSettings.Any())
 				return;
 
 			var importSettingsDir = Path.Combine(baseDirectory, SharedConstants.ImportSettings);

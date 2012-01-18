@@ -67,8 +67,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
 					// Remove 'key' attribute from CustomField elements, before writing to main file.
 					var doc = XDocument.Load(optionalCustomPropFile);
-					var customFieldElements = doc.Root.Elements("CustomField");
-					if (customFieldElements.Count() > 0)
+					var customFieldElements = doc.Root.Elements("CustomField").ToList();
+					if (customFieldElements.Any())
 					{
 						foreach (var cf in customFieldElements)
 						{

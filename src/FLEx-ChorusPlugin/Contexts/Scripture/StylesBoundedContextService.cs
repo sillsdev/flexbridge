@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
-namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
+namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class StylesBoundedContextService
 	{
@@ -22,8 +22,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.Styles
 		{
 			if (stylesProperty == null)
 				return;
-			var styles = stylesProperty.Elements();
-			if (styles.Count() == 0)
+			var styles = stylesProperty.Elements().ToList();
+			if (!styles.Any())
 				return;
 
 			var stylesDir = baseDirectory; // Just use main folder. // Path.Combine(baseDirectory, SharedConstants.Styles);

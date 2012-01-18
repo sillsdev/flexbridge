@@ -132,11 +132,11 @@
 	<Compile Include="Contexts\General\OldStyleDomainServices.cs" />
 	<Compile Include="Contexts\Scripture\ArchivedDrafts\ArchivedDraftsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ImportSettings\ImportSettingsBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\Styles\StylesBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\StylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\CheckLists\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\CustomPropertiesTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
@@ -160,9 +160,9 @@
 	<Compile Include="Infrastructure\FileWriterService.cs" />
 	<Compile Include="Infrastructure\FlexFolderSystem.cs" />
 	<Compile Include="Infrastructure\Handling\IFieldWorksFileHandler.cs" />
-	<Compile Include="Infrastructure\Handling\ModelVersionFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\NtbkFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\ReversalFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\ModelVersion\ModelVersionFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Anthropology\NtbkFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
@@ -236,7 +236,11 @@
 	</Compile>
 	<Compile Include="View\SynchronizeProject.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<Folder Include="Infrastructure\Handling\Scripture\ArchivedDrafts\" />
+	<Folder Include="Infrastructure\Handling\Scripture\CheckLists\" />
+	<Folder Include="Infrastructure\Handling\Scripture\ImportSettings\" />
+  </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="View\ExistingSystemView.resx">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>

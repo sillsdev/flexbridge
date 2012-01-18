@@ -20,8 +20,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 		{
 			if (archivedDraftsProperty == null)
 				return;
-			var drafts = archivedDraftsProperty.Elements();
-			if (drafts.Count() == 0)
+			var drafts = archivedDraftsProperty.Elements().ToList();
+			if (!drafts.Any())
 				return;
 
 			var draftsDir = Path.Combine(baseDirectory, SharedConstants.ArchivedDrafts);

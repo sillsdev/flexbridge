@@ -71,7 +71,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement(SharedConstants.Header, revIndex));
-				if (entriesElement == null || entriesElement.Elements().Count() == 0)
+				if (entriesElement == null || !entriesElement.Elements().Any())
 				{
 					// Add dummy entry, so FastXmlSplitter will have something to work with.
 					root.Add(new XElement("ReversalIndexEntry",

@@ -28,3 +28,8 @@ syntax: glob
 Perf test  results/*.app6results
 src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.ReSharper.user
 src/FLEx-ChorusPluginTests/FLEx-ChorusPluginTests.csproj.ReSharper.user
+FieldWorksBridge VS2010.6.1.ReSharper.user
+FieldWorksBridge VS2010.sln.DotSettings.user
+src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.DotSettings.user
+src/FLEx-ChorusPluginTests/FLEx-ChorusPluginTests.csproj.DotSettings.user
+src/FieldWorksBridge/FieldWorksBridge.csproj.DotSettings.user
