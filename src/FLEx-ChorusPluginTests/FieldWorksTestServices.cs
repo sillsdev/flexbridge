@@ -12,6 +12,8 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
+		internal const int ExpectedExtensionCount = 6;
+
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
 			ourFile.Dispose();
@@ -24,7 +26,7 @@ namespace FLEx_ChorusPluginTests
 			theirFile = null;
 		}
 
-		internal static void SetupTempFilesWithExstension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
+		internal static void SetupTempFilesWithExtension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
 			ourFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
 			commonFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));

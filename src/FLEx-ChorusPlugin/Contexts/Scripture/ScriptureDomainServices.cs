@@ -59,7 +59,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// These are intentionally out of order from the above numbering scheme.
 			var scripture = classData["Scripture"].Values.First();
 			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
-			StylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 			ScriptureBoundedContextService.NestContext(langProj, scripture, readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
 		}
@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// The main obj gets stuffed into highLevelData, so the owned stuff can have owner guid restored.
 			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
 			ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
-			StylesBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
+			ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
 			ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
 		}
 
@@ -94,7 +94,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			ArchivedDraftsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureCheckListsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ImportSettingsBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
-			StylesBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
+			ScriptureStylesBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureReferenceSystemBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 			ScriptureBoundedContextService.RemoveBoundedContextData(scriptureBaseDir);
 

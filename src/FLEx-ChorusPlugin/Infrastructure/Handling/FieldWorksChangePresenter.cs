@@ -1,7 +1,9 @@
+using System;
 using System.Text;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 
@@ -10,6 +12,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// <summary>
 	/// Class that is a FieldWorks Presenter, which is part of Chorus' MVP system.
 	/// </summary>
+	/// <remarks>
+	/// This class will need to be broken up at some some. Maybe one for each context, or file extension.
+	/// </remarks>
 	internal sealed class FieldWorksChangePresenter : IChangePresenter
 	{
 		private readonly IXmlChangeReport _report;
@@ -19,12 +24,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			_report = report;
 		}
 
+		internal static IChangePresenter GetCommonChangePresenter(IChangeReport report, HgRepository repository)
+		{
+			var xmlChangeReport = report as IXmlChangeReport;
+			if (xmlChangeReport != null)
+				return new FieldWorksChangePresenter(xmlChangeReport);
+
+			if (report is ErrorDeterminingChangeReport)
+				return (IChangePresenter)report;
+
+			return new DefaultChangePresenter(report, repository);
+		}
+
 		private XmlNode FirstNonNullNode
 		{
-			get
-			{
-				return _report.ChildNode ?? _report.ParentNode;
-			}
+			get { return _report.ChildNode ?? _report.ParentNode; }
 		}
 
 		private static void GetRawXmlRendering(StringBuilder builder, XmlNode node)
@@ -38,7 +52,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public string GetDataLabel()
 		{
 			var firstNode = FirstNonNullNode;
-			return firstNode.Name == SharedConstants.RtTag ? firstNode.Attributes[SharedConstants.Class].Value : "Custom property";
+			var nodeLocalName = firstNode.LocalName;
+			string label;
+			switch (nodeLocalName)
+			{
+				case SharedConstants.RtTag:
+					label = firstNode.Attributes[SharedConstants.Class].Value;
+					break;
+				case "CustomField":
+					label = "Custom property";
+					break;
+				default:
+					label = nodeLocalName; // Good start, but...
+					break;
+			}
+			return label;
 		}
 
 		public string GetActionLabel()
@@ -68,7 +96,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							GetRawXmlRendering(builder, additionChangeReport.ChildNode);
 							break;
 						default:
-							return string.Empty;
+							return String.Empty;
 					}
 					break;
 				case "XmlDeletionChangeReport":
@@ -83,13 +111,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							GetRawXmlRendering(builder, deletionChangeReport.ParentNode);
 							break;
 						default:
-							return string.Empty;
+							return String.Empty;
 					}
 					break;
 				case "XmlChangedRecordReport":
 					var changedRecordReport = (XmlChangedRecordReport)_report;
 					switch (style.ToLower())
 					{
+						default:
+							break;
 						case "normal": // Fall through for now.
 						//var original = GetHtmlForEntry(changedRecordReport.ParentNode);
 						//// XmlUtilities.GetXmlForShowingInHtml("<entry>" + r.ParentNode.InnerXml + "</entry>");
@@ -104,8 +134,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							GetRawXmlRendering(builder, changedRecordReport.ParentNode);
 							builder.Append("<h3>To</h3>");
 							GetRawXmlRendering(builder, changedRecordReport.ChildNode);
-							break;
-						default:
 							break;
 					}
 					break;

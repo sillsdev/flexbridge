@@ -1,23 +1,26 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
 {
-	internal sealed class CustomPropertiesTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class ArchivedDraftsTypeHandlerStrategy : IFieldWorksFileHandler
 	{
+		private const string Draft = "Draft";
+		private const string ScrDraft = "ScrDraft";
+
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraftExt))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -29,8 +32,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.OptionalFirstElementTag || !root.Elements("CustomField").Any())
-					return "Not valid custom properties file";
+				if (root.Name.LocalName != Draft || !root.Elements(ScrDraft).Any())
+					return "Not valid archived draft file.";
 
 				return null;
 			}
@@ -49,29 +52,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"CustomField", "key");
+				ScrDraft, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			// NB: Doesn't need the mdc updated with custom props.
+			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, SharedConstants.ArchivedDrafts, 2); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
+
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
+				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"CustomField", "key", WritePreliminaryCustomPropertyInformation);
+				ScrDraft, SharedConstants.GuidStr, WritePreliminaryArchivedDraftInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.CustomProperties; }
+			get { return SharedConstants.ArchivedDraftExt; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryArchivedDraftInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.OptionalFirstElementTag);
+			writer.WriteStartElement(Draft);
 			reader.Read();
 		}
 	}

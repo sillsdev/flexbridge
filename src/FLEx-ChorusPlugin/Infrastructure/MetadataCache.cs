@@ -126,6 +126,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						// 1. Modified Segment
 						//		Add: RA "Speaker"									[CmPerson]
 						break;
+					case 7000051:
+						// 7000051: No actual model change.
+						break;
 				}
 			}
 

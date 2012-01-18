@@ -144,11 +144,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			return new List<string>
 			{
+				// Common
 				SharedConstants.ModelVersion,
 				SharedConstants.CustomProperties,
 
+				// Old style
 				SharedConstants.ClassData,
+
+				// Scripture
+				SharedConstants.ArchivedDraftExt,
+
+				// Anthropology
 				SharedConstants.Ntbk,
+
+				// Linguistics
 				SharedConstants.Reversal
 			};
 		}

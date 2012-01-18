@@ -73,7 +73,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void CmObjectHasNoProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("CmObject").AllProperties.Count() == 0);
+			Assert.IsTrue(!_mdc.GetClassInfo("CmObject").AllProperties.Any());
 		}
 
 		/// <summary></summary>
@@ -97,14 +97,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void LexDbHasCollectionProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Count() > 0);
+			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
 		}
 
 		/// <summary></summary>
 		[Test]
 		public void SegmentHasNoCollectionProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("Segment").AllCollectionProperties.Count() == 0);
+			Assert.IsTrue(!_mdc.GetClassInfo("Segment").AllCollectionProperties.Any());
 		}
 
 		[Test]

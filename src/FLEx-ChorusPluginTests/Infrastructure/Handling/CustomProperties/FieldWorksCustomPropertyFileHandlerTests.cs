@@ -26,7 +26,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithExstension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.CustomProperties));
 		}
 

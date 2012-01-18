@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithExstension(".ClassData", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".ClassData", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -544,7 +544,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech</AUni>
-<AUni ws='es'>Categorías Gramáticas</AUni>
+<AUni ws='es'>Categorï¿½as Gramï¿½ticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -555,7 +555,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech We Changed</AUni>
-<AUni ws='es'>Categorías Gramáticas</AUni>
+<AUni ws='es'>Categorï¿½as Gramï¿½ticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -566,7 +566,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech They Changed</AUni>
-<AUni ws='es'>Categorías Gramáticas</AUni>
+<AUni ws='es'>Categorï¿½as Gramï¿½ticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -601,7 +601,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech</AUni>
-<AUni ws='es'>Categorías Gramáticas</AUni>
+<AUni ws='es'>Categorï¿½as Gramï¿½ticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -622,7 +622,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech</AUni>
-<AUni ws='es'>Categorías Gramáticas</AUni>
+<AUni ws='es'>Categorï¿½as Gramï¿½ticas</AUni>
 </Name>
 </rt>
 </classdata>";

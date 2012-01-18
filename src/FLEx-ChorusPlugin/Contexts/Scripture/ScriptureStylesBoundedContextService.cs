@@ -9,7 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
-	internal static class StylesBoundedContextService
+	internal static class ScriptureStylesBoundedContextService
 	{
 		private const string StyleFilename = "ScriptureStyles.style";
 

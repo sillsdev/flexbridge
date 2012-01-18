@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
@@ -56,14 +55,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			var xmlChangeReport = report as IXmlChangeReport;
-			if (xmlChangeReport != null)
-				return new FieldWorksChangePresenter(xmlChangeReport);
-
-			if (report is ErrorDeterminingChangeReport)
-				return (IChangePresenter)report;
-
-			return new DefaultChangePresenter(report, repository);
+			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)

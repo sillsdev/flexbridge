@@ -30,5 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSettingExt = "ImportSetting";
 		internal const string Trans = "trans";
+		internal const string Style = "style";
+		internal const string StStyle = "StStyle";
 	}
 }

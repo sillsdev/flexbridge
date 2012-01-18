@@ -4,20 +4,24 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {
-	internal sealed class CustomPropertiesTypeHandlerStrategy : IFieldWorksFileHandler
+	/// <summary>
+	/// This class deals with files with extension of "style".
+	/// The files may be located in various contexts.
+	/// </summary>
+	internal class StyleFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Style))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -29,8 +33,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.OptionalFirstElementTag || !root.Elements("CustomField").Any())
-					return "Not valid custom properties file";
+				if (root.Name.LocalName != SharedConstants.Styles || !root.Elements(SharedConstants.StStyle).Any())
+					return "Not valid styles file";
 
 				return null;
 			}
@@ -49,29 +53,38 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"CustomField", "key");
+				SharedConstants.StStyle, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			// NB: Doesn't need the mdc updated with custom props.
+			var dir = "Scripture";
+			ushort upLevels = 1;
+
+			var path = mergeOrder.pathToOurs;
+			if (path.Contains("Linguistics"))
+				dir = "Linguistics";
+
+			// NB: Must be done before FieldWorksCommonMergeStrategy is created.
+			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, dir, upLevels);
+
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
+				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"CustomField", "key", WritePreliminaryCustomPropertyInformation);
+				SharedConstants.StStyle, SharedConstants.GuidStr, WritePreliminaryStyleInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.CustomProperties; }
+			get { return SharedConstants.Style; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryStyleInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.OptionalFirstElementTag);
+			writer.WriteStartElement("Styles");
 			reader.Read();
 		}
 	}

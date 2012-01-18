@@ -25,7 +25,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
-			FieldWorksTestServices.SetupTempFilesWithExstension(".reversal", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".reversal", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		public void ExtensionOfKnownFileTypesShouldBeReversal()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.Reversal));
 		}
 

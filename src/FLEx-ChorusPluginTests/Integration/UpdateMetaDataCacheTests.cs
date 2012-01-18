@@ -83,6 +83,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			// 7000050: Modified Segment
 			//		Add: RA "Speaker"									[CmPerson]
 			CheckUpgrade(mdc, fileHandler, 7000050);
+
+			// 7000051: No actual model change.
+			CheckUpgrade(mdc, fileHandler, 7000051);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
@@ -139,7 +142,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			TempFile ourFile;
 			TempFile commonFile;
 			TempFile theirFile;
-			FieldWorksTestServices.SetupTempFilesWithExstension(".ModelVersion", out  ourFile, out commonFile, out theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".ModelVersion", out  ourFile, out commonFile, out theirFile);
 
 			try
 			{

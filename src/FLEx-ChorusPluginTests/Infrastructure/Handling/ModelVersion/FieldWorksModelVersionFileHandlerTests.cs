@@ -24,7 +24,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithExstension(".ModelVersion", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".ModelVersion", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -46,7 +46,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.ModelVersion));
 		}
 

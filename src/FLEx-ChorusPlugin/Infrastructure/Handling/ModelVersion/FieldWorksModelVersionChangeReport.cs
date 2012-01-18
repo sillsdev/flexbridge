@@ -72,7 +72,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 		}
 
 		///<summary>
-		/// Return the verison number that was added.
+		/// Return the version number that was added.
 		///</summary>
 		public override string GetFullHumanReadableDescription()
 		{
