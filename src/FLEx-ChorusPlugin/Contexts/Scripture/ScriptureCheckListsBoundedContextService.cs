@@ -7,22 +7,21 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
-namespace FLEx_ChorusPlugin.Contexts.Scripture.CheckLists
+namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureCheckListsBoundedContextService
 	{
 		private const string CheckLists = "CheckLists";
 
 		internal static void NestContext(XElement langProj,
-			XmlReaderSettings readerSettings, string baseDirectory,
+			XmlReaderSettings readerSettings, string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var clDir = Path.Combine(baseDirectory, CheckLists);
-			if (!Directory.Exists(clDir))
-				Directory.CreateDirectory(clDir);
+			if (!Directory.Exists(scriptureBaseDir))
+				return;
 
 			var clPropElement = langProj.Element(CheckLists);
 			if (clPropElement == null || !clPropElement.HasElements)
@@ -46,7 +45,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.CheckLists
 				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					new XElement("CheckList", checkList));
 
-				FileWriterService.WriteNestedFile(Path.Combine(clDir, checkList.Attribute(SharedConstants.GuidStr).Value + "." + SharedConstants.List), readerSettings, doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value + "." + SharedConstants.List), readerSettings, doc);
 			}
 
 			clPropElement.RemoveNodes();
@@ -60,18 +59,14 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.CheckLists
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
-			// No subfolders for scriptureBaseDir
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
-			var clDir = Path.Combine(scriptureBaseDir, CheckLists);
-			if (!Directory.Exists(clDir))
-				return;
 
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value;
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 // ReSharper disable ConvertClosureToMethodGroup
-			foreach (var listDoc in Directory.GetFiles(clDir, "*.list", SearchOption.TopDirectoryOnly).Select(listPathname => XDocument.Load(listPathname)))
+			foreach (var listDoc in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly).Select(listPathname => XDocument.Load(listPathname)))
 // ReSharper restore ConvertClosureToMethodGroup
 			{
 				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
@@ -95,11 +90,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.CheckLists
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var clDir = Path.Combine(scriptureBaseDir, CheckLists);
-			if (!Directory.Exists(clDir))
-				return;
 
-			foreach (var checkListPathname in Directory.GetFiles(clDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
+			foreach (var checkListPathname in Directory.GetFiles(scriptureBaseDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
 				File.Delete(checkListPathname);
 
 			// Scripture domain does it all.

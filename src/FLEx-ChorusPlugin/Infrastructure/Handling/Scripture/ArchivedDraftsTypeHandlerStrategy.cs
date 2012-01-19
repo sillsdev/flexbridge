@@ -9,18 +9,18 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	internal sealed class ArchivedDraftsTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		private const string Draft = "Draft";
+		private const string ArchivedDrafts = "ArchivedDrafts";
 		private const string ScrDraft = "ScrDraft";
 
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraftExt))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraft))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -32,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != Draft || !root.Elements(ScrDraft).Any())
+				if (root.Name.LocalName != ArchivedDrafts || !root.Elements(ScrDraft).Any())
 					return "Not valid archived draft file.";
 
 				return null;
@@ -57,7 +57,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, SharedConstants.ArchivedDrafts, 2); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
+			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, SharedConstants.Scripture, 1); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
 
 		public string Extension
 		{
-			get { return SharedConstants.ArchivedDraftExt; }
+			get { return SharedConstants.ArchivedDraft; }
 		}
 
 		#endregion
@@ -75,7 +75,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture.ArchivedDrafts
 		private static void WritePreliminaryArchivedDraftInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(Draft);
+			writer.WriteStartElement(ArchivedDrafts);
 			reader.Read();
 		}
 	}

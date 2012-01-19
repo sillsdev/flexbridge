@@ -35,16 +35,25 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("SupportingFiles/*.*");
 
-			// New files/folders/
+			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			// TODO: Add others.
 
+			// Anthropology
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
 
+			// Scripture
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/srs.ReferenceSystem");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureStyles.style");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureReferenceSystem.srs");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureStyleSheet.style");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/*.list");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureTranslation.trans");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
+
+			// Leftovers
+			// TODO: Add whatever doesn't readily fit into the three main domains.
 
 			// Older style files, hopefully, soon to be obsolete.
 			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");

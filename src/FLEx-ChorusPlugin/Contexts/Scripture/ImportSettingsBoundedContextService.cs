@@ -7,12 +7,14 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
-namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
+namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ImportSettingsBoundedContextService
 	{
+		private const string ImportSettingsFilename = "Settings." + SharedConstants.ImportSetting;
+
 		internal static void NestContext(XElement importSettingsProperty,
-										 XmlReaderSettings readerSettings, string baseDirectory,
+										 XmlReaderSettings readerSettings, string scriptureBaseDir,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
 										 Dictionary<string, string> guidToClassMapping,
 										 Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
@@ -24,9 +26,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 			if (!importSettings.Any())
 				return;
 
-			var importSettingsDir = Path.Combine(baseDirectory, SharedConstants.ImportSettings);
-			if (!Directory.Exists(importSettingsDir))
-				Directory.CreateDirectory(importSettingsDir);
+			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+			var root = new XElement(SharedConstants.ImportSettings);
+			doc.Add(root);
 
 			foreach (var importSettingObjSur in importSettings)
 			{
@@ -43,11 +45,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 				// Remove 'ownerguid'.
 				importSetting.Attribute(SharedConstants.OwnerGuid).Remove();
 
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-										new XElement("ImportSetting", importSetting));
-
-				FileWriterService.WriteNestedFile(Path.Combine(importSettingsDir, importSetting.Attribute(SharedConstants.GuidStr).Value + "." + SharedConstants.ImportSettingExt), readerSettings, doc);
+				root.Add(importSetting);
 			}
+
+			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, ImportSettingsFilename), readerSettings, doc);
 
 			importSettingsProperty.RemoveNodes();
 
@@ -60,19 +61,19 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
-			var importSettingsDir = Path.Combine(scriptureBaseDir, SharedConstants.ImportSettings);
-			if (!Directory.Exists(importSettingsDir))
+			if (!Directory.Exists(scriptureBaseDir))
+				return;
+			var pathname = Path.Combine(scriptureBaseDir, ImportSettingsFilename);
+			if (!File.Exists(pathname))
 				return;
 
 			// Owned by Scripture in ArchivedDrafts coll prop.
-			var scrElement = highLevelData["Scripture"];
+			var scrElement = highLevelData[SharedConstants.Scripture];
 			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
 			var sortedImportSettings = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-// ReSharper disable ConvertClosureToMethodGroup
-			foreach (var importSettingsDoc in Directory.GetFiles(importSettingsDir, "*." + SharedConstants.ImportSettingExt, SearchOption.TopDirectoryOnly).Select(importSettingsPathname => XDocument.Load(importSettingsPathname)))
-// ReSharper restore ConvertClosureToMethodGroup
+			var doc = XDocument.Load(pathname);
+			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
 			{
-				var importSettingsElement = importSettingsDoc.Element("ImportSetting").Elements().First();
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					importSettingsElement,
@@ -93,12 +94,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ImportSettings
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var importSettingsDir = Path.Combine(scriptureBaseDir, SharedConstants.ImportSettings);
-			if (!Directory.Exists(importSettingsDir))
-				return;
-
-			foreach (var importSettingsPathname in Directory.GetFiles(importSettingsDir, "*." + SharedConstants.ImportSettingExt, SearchOption.TopDirectoryOnly))
-				File.Delete(importSettingsPathname);
+			var pathname = Path.Combine(scriptureBaseDir, ImportSettingsFilename);
+			if (File.Exists(pathname))
+				File.Delete(pathname);
 
 			// Scripture domain does it all.
 			//FileWriterService.RemoveEmptyFolders(importSettingsDir, true);

@@ -25,6 +25,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				throw new ArgumentException(Resources.kOwnerGuidEmpty, SharedConstants.OwnerGuid);
 
 			var elementGuid = element.Attribute(SharedConstants.GuidStr).Value;
+			// TODO: LT-12524 "Handle merge in case of conflicting move object to different destination".
+			// This need will manifest itself in the guid already being in 'sortedData' and an exception being thrown.
+			// At this point element has not been flattened, so stuff it owns will still be in it.
+			// That is good, if we go with JohnT's idea of using a new guid for guids that are already in 'sortedData'.
+			// By changing it before flattening, then the owned stuff will get the new one for their ownerguid attrs.
+			// The owned stuff will also be dup, so the idea is to also change their guids (NB: HERE).
+			// Just be sure to change 'elementGuid' to the new one. :-)
 			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject.

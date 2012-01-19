@@ -6,6 +6,7 @@ using System.Reflection;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
@@ -152,7 +153,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.ClassData,
 
 				// Scripture
-				SharedConstants.ArchivedDraftExt,
+				SharedConstants.ArchivedDraft,
 
 				// Anthropology
 				SharedConstants.Ntbk,

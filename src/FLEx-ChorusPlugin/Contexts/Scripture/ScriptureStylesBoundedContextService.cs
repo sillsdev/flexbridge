@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureStylesBoundedContextService
 	{
-		private const string StyleFilename = "ScriptureStyles.style";
+		private const string StyleFilename = "ScriptureStyleSheet.style";
 
 		internal static void NestContext(XElement stylesProperty,
 			XmlReaderSettings readerSettings, string baseDirectory,
@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			var doc = XDocument.Load(stylePathname);
 			// StStyle instances are owned by Scripture in its Styles coll prop.
-			var scrElement = highLevelData["Scripture"];
+			var scrElement = highLevelData[SharedConstants.Scripture];
 			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
 			var sortedStyles = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var styleElement in doc.Root.Elements("StStyle"))

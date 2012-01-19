@@ -130,15 +130,15 @@
   <ItemGroup>
 	<Compile Include="Contexts\BaseDomainServices.cs" />
 	<Compile Include="Contexts\General\OldStyleDomainServices.cs" />
-	<Compile Include="Contexts\Scripture\ArchivedDrafts\ArchivedDraftsBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ImportSettings\ImportSettingsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ArchivedDraftsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ImportSettingsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\CheckLists\ScriptureCheckListsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDrafts\ArchivedDraftsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
@@ -160,7 +160,7 @@
 	<Compile Include="Infrastructure\Handling\FieldWorksMergeStrategyServices.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServices.cs" />
 	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
-	<Compile Include="Infrastructure\FileWriterService.cs" />
+	<Compile Include="Infrastructure\DomainServices\FileWriterService.cs" />
 	<Compile Include="Infrastructure\FlexFolderSystem.cs" />
 	<Compile Include="Infrastructure\Handling\IFieldWorksFileHandler.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\ModelVersionFileTypeHandlerStrategy.cs" />
@@ -239,10 +239,7 @@
 	</Compile>
 	<Compile Include="View\SynchronizeProject.cs" />
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Infrastructure\Handling\Scripture\CheckLists\" />
-	<Folder Include="Infrastructure\Handling\Scripture\ImportSettings\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
 	<EmbeddedResource Include="View\ExistingSystemView.resx">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>

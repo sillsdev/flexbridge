@@ -89,7 +89,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDrafts\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenterTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileDiffTests.cs" />
@@ -148,8 +148,6 @@
 	<Folder Include="Contexts\General\" />
 	<Folder Include="Contexts\Linguistics\Reversals\" />
 	<Folder Include="Contexts\Scripture\" />
-	<Folder Include="Infrastructure\Handling\Scripture\CheckLists\" />
-	<Folder Include="Infrastructure\Handling\Scripture\ImportSettings\" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="Properties\TestResources.resx">

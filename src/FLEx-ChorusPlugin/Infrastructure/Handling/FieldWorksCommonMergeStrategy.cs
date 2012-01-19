@@ -23,6 +23,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
+			if (ourEntry.Name == "ScrDraft")
+			{
+				// Immutable, so common, if different.
+				if (ourEntry.OuterXml != commonEntry.OuterXml || theirEntry.OuterXml != commonEntry.OuterXml)
+				{
+					return commonEntry.OuterXml;
+				}
+			}
 			if (ourEntry.Name == SharedConstants.Header)
 			{
 				foreach (XmlNode headerChild in ourEntry.ChildNodes)

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {

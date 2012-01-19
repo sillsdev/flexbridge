@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			languageProjectElement.Element("TranslatedScripture").RemoveNodes();
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
-				"Scripture",
+				SharedConstants.Scripture,
 				"ScrBook", "ScrSection", "ScrTxtPara", "ScrFootnote", "ScrDifference",
 				"ScrImportSet", "ScrImportSource", "ScrImportP6Project", "ScrImportSFFiles", "ScrMarkerMapping",
 				"ScrBookAnnotations", "ScrScriptureNote", "ScrCheckRun" });

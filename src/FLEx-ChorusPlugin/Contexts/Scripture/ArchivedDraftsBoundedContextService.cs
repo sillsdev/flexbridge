@@ -7,12 +7,14 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
-namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
+namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ArchivedDraftsBoundedContextService
 	{
+		private const string DraftsFilename = "Drafts." + SharedConstants.ArchivedDraft;
+
 		internal static void NestContext(XElement archivedDraftsProperty,
-			XmlReaderSettings readerSettings, string baseDirectory,
+			XmlReaderSettings readerSettings, string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
@@ -24,10 +26,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 			if (!drafts.Any())
 				return;
 
-			var draftsDir = Path.Combine(baseDirectory, SharedConstants.ArchivedDrafts);
-			if (!Directory.Exists(draftsDir))
-				Directory.CreateDirectory(draftsDir);
-
+			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+			var root = new XElement(SharedConstants.ArchivedDrafts);
+			doc.Add(root);
 			foreach (var draftObjSur in drafts)
 			{
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value;
@@ -43,11 +44,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 				// Remove 'ownerguid'.
 				draft.Attribute(SharedConstants.OwnerGuid).Remove();
 
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement("Draft", draft));
-
-				FileWriterService.WriteNestedFile(Path.Combine(draftsDir, draft.Attribute(SharedConstants.GuidStr).Value + "." + SharedConstants.ArchivedDraftExt), readerSettings, doc);
+				root.Add(draft); // They should still be in the original sorted order, so just add them.
 			}
+			if (root.HasElements)
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), readerSettings, doc);
 
 			archivedDraftsProperty.RemoveNodes();
 
@@ -60,19 +60,19 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
-			var draftsDir = Path.Combine(scriptureBaseDir, SharedConstants.ArchivedDrafts);
-			if (!Directory.Exists(draftsDir))
+			if (!Directory.Exists(scriptureBaseDir))
+				return;
+			var pathname = Path.Combine(scriptureBaseDir, DraftsFilename);
+			if (!File.Exists(pathname))
 				return;
 
 			// Owned by Scripture in ArchivedDrafts coll prop.
-			var scrElement = highLevelData["Scripture"];
+			var scrElement = highLevelData[SharedConstants.Scripture];
 			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
 			var sortedDrafts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-// ReSharper disable ConvertClosureToMethodGroup
-			foreach (var draftDoc in Directory.GetFiles(draftsDir, "*." + SharedConstants.ArchivedDraftExt, SearchOption.TopDirectoryOnly).Select(draftPathname => XDocument.Load(draftPathname)))
-// ReSharper restore ConvertClosureToMethodGroup
+			var doc = XDocument.Load(pathname);
+			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
 			{
-				var draftElement = draftDoc.Element("Draft").Element("ScrDraft");
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					draftElement,
@@ -93,15 +93,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture.ArchivedDrafts
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var draftsDir = Path.Combine(scriptureBaseDir, SharedConstants.ArchivedDrafts);
-			if (!Directory.Exists(draftsDir))
-				return;
-
-			foreach (var archivedDraftPathname in Directory.GetFiles(draftsDir, "*.ArchivedDraft", SearchOption.TopDirectoryOnly))
-				File.Delete(archivedDraftPathname);
+			var draftsPathname = Path.Combine(scriptureBaseDir, DraftsFilename);
+			if (File.Exists(draftsPathname))
+				File.Delete(draftsPathname);
 
 			// Scripture domain does it all.
-			// FileWriterService.RemoveEmptyFolders(draftsDir, true);
+			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{

@@ -235,7 +235,7 @@ namespace FwdataTestApp
 					}
 				}
 			}
-			catch
+			catch (Exception err)
 			{
 				File.Copy(srcFwdataPathname + ".orig", srcFwdataPathname, true); // Restore it.
 			}

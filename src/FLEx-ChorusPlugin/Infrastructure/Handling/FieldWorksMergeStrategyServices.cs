@@ -281,6 +281,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
+				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
+				if (classInfo.ClassName == "ScrDraft")
+					classStrat.IsImmutable = true;
+				else
+					classStrat.IsImmutable = false;
+
 				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 				foreach (var propertyInfo in classInfo.AllProperties)
 				{

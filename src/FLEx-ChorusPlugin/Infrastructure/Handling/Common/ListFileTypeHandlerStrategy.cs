@@ -14,7 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 	internal class ListFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		private const string CmPossibilityList = "CmPossibilityList";
-		//private const string ScrDraft = "ScrDraft";
 
 		#region Implementation of IFieldWorksFileHandler
 
@@ -57,7 +56,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			var dir = "Scripture";
+			var dir = SharedConstants.Scripture;
 			ushort upLevels = 1;
 
 			var path = mergeOrder.pathToOurs;

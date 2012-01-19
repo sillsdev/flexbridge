@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				// Replace each objsur node with actual element.
 				foreach (var objsurElement in owningObjSurElements.ToArray())
 				{
-					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value;
+					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					string classOfOwnedObject;
 					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
 						continue;

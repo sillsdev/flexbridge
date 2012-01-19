@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			var dir = "Scripture";
+			var dir = SharedConstants.Scripture;
 			ushort upLevels = 1;
 
 			var path = mergeOrder.pathToOurs;

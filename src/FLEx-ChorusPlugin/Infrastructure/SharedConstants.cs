@@ -25,12 +25,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystem = "ScriptureReferenceSystem";
 		internal const string List = "list";
 		internal const string ArchivedDrafts = "ArchivedDrafts";
-		internal const string ArchivedDraftExt = "ArchivedDraft";
+		internal const string ArchivedDraft = "ArchivedDraft";
 		internal const string Styles = "Styles";
 		internal const string ImportSettings = "ImportSettings";
-		internal const string ImportSettingExt = "ImportSetting";
+		internal const string ImportSetting = "ImportSetting";
 		internal const string Trans = "trans";
 		internal const string Style = "style";
 		internal const string StStyle = "StStyle";
+		internal const string Scripture = "Scripture";
 	}
 }
