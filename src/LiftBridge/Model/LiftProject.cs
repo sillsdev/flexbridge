@@ -22,6 +22,8 @@ namespace SIL.LiftBridge.Model
 			LiftProjectServices.StoreIdentifiers(langProjId, null);
 		}
 
+		internal Guid Id { get { return _id; } }
+
 		internal string LiftProjectName { get; private set; }
 
 		internal string RepositoryIdentifier

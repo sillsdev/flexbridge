@@ -14,12 +14,12 @@ namespace LiftBridgeTests.MockedViews
 		/// Get a teammate's shared Lift project from the specified source.
 		/// </summary>
 		/// <returns>
-		/// 'true' if the shared project was cloned, otherwise 'false'.
+		/// One of several of the enum values.
 		/// </returns>
-		public bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, LiftProject project)
+		public CloneResult GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, LiftProject project)
 		{
 			RepoSource = extantRepoSource;
-			return true;
+			return CloneResult.Created;
 		}
 
 		#endregion

@@ -216,4 +216,28 @@
 	<data name="kFlexExportProblemTitle">
 		<value xml:space="preserve">FLEx export problem</value>
 	</data>
+  <data name="kCancelGetMeOutOfHere">
+	<value xml:space="preserve">'Cancel' means: 'Get me out of here. I'd rather not do Send/Receive now.'</value>
+  </data>
+  <data name="kExtantSharedSystem">
+	<value xml:space="preserve">There seems to be an existing shared system that could be used. Do you want to use it?</value>
+  </data>
+  <data name="kExtantNonEmptyFolder">
+	<value xml:space="preserve">There seems to be an existing folder that could be used, but it is not empty. Do you want to use it?</value>
+  </data>
+  <data name="kExistingSharedStstemTitle">
+	<value xml:space="preserve">Existing Shared System Found</value>
+  </data>
+  <data name="kNonEmptyFolderTitle">
+	<value xml:space="preserve">Existing Non-empty Folder Found</value>
+  </data>
+  <data name="kUseExtantRepo">
+	<value xml:space="preserve"> 'Yes' means: 'I feel lucky. Use it.'</value>
+  </data>
+  <data name="kUseExtantNonEmptyFolder">
+	<value xml:space="preserve"> 'Ok' means 'I feel lucky. Delete everything in it and re-use it.'</value>
+  </data>
+  <data name="kWIpeOutExtantRepoAndReuseFolder">
+	<value xml:space="preserve"> 'No' means: 'Wipe it out and start fresh.'</value>
+  </data>
 </root>

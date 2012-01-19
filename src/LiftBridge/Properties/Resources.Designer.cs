@@ -88,6 +88,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to &apos;Cancel&apos; means: &apos;Get me out of here. I&apos;d rather not do Send/Receive now.&apos;.
+		/// </summary>
+		public static string kCancelGetMeOutOfHere {
+			get {
+				return ResourceManager.GetString("kCancelGetMeOutOfHere", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Cannot clone onto an existing directory ({0}).
 		/// </summary>
 		public static string kCloneTrouble {
@@ -106,11 +115,38 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Existing Shared System Found.
+		/// </summary>
+		public static string kExistingSharedStstemTitle {
+			get {
+				return ResourceManager.GetString("kExistingSharedStstemTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Export LIFT Lexicon.
 		/// </summary>
 		public static string kExportLiftLexicon {
 			get {
 				return ResourceManager.GetString("kExportLiftLexicon", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to There seems to be an existing folder that could be used, but it is not empty. Do you want to use it?.
+		/// </summary>
+		public static string kExtantNonEmptyFolder {
+			get {
+				return ResourceManager.GetString("kExtantNonEmptyFolder", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to There seems to be an existing shared system that could be used. Do you want to use it?.
+		/// </summary>
+		public static string kExtantSharedSystem {
+			get {
+				return ResourceManager.GetString("kExtantSharedSystem", resourceCulture);
 			}
 		}
 
@@ -241,6 +277,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Existing Non-empty Folder Found.
+		/// </summary>
+		public static string kNonEmptyFolderTitle {
+			get {
+				return ResourceManager.GetString("kNonEmptyFolderTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Something went wrong while FLEx was attempting to import {0}..
 		/// </summary>
 		public static string kProblem {
@@ -331,6 +376,24 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to  &apos;Ok&apos; means &apos;I feel lucky. Delete everything in it and re-use it.&apos;.
+		/// </summary>
+		public static string kUseExtantNonEmptyFolder {
+			get {
+				return ResourceManager.GetString("kUseExtantNonEmptyFolder", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to  &apos;Yes&apos; means: &apos;I feel lucky. Use it.&apos;.
+		/// </summary>
+		public static string kUseExtantRepo {
+			get {
+				return ResourceManager.GetString("kUseExtantRepo", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to This utility allows for: 1) exporting FLEx lexical data in the LIFT format, 2) sending it to other LIFT users, and 3) receiving entries from them..
 		/// </summary>
 		public static string kWhatDescription {
@@ -345,6 +408,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kWhenDescription {
 			get {
 				return ResourceManager.GetString("kWhenDescription", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to  &apos;No&apos; means: &apos;Wipe it out and start fresh.&apos;.
+		/// </summary>
+		public static string kWIpeOutExtantRepoAndReuseFolder {
+			get {
+				return ResourceManager.GetString("kWIpeOutExtantRepoAndReuseFolder", resourceCulture);
 			}
 		}
 
