@@ -73,8 +73,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (extension[0] != '.')
 				return false;
 
-			return GetHandlerfromExtension(extension.Substring(1))
-				.CanValidateFile(pathToFile);
+			var handler = GetHandlerfromExtension(extension.Substring(1));
+			return handler.CanValidateFile(pathToFile);
 		}
 
 		public void Do3WayMerge(MergeOrder mergeOrder)
@@ -125,12 +125,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (extension[0] != '.')
 				return "File has no extension.";
 
-			return GetHandlerfromExtension(extension.Substring(1)).ValidateFile(pathToFile);
+			var handler = GetHandlerfromExtension(extension.Substring(1));
+			return handler.ValidateFile(pathToFile);
 		}
 
 		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
 		{
-			// Skip check, since DefaultChangeReport doesn't reuire it.
+			// Skip check, since DefaultChangeReport doesn't require it.
 			//if (fileInRevision == null)
 			//    throw new ArgumentNullException("fileInRevision");
 
@@ -148,12 +149,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// Common
 				SharedConstants.ModelVersion,
 				SharedConstants.CustomProperties,
+				// list
+				// style
 
 				// Old style
 				SharedConstants.ClassData,
 
 				// Scripture
 				SharedConstants.ArchivedDraft,
+				SharedConstants.ImportSetting,
+				// Scr ref sys: srs
 
 				// Anthropology
 				SharedConstants.Ntbk,

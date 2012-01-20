@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Chorus.FileTypeHanders.xml;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;

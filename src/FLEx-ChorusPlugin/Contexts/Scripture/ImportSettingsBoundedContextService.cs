@@ -11,8 +11,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ImportSettingsBoundedContextService
 	{
-		private const string ImportSettingsFilename = "Settings." + SharedConstants.ImportSetting;
-
 		internal static void NestContext(XElement importSettingsProperty,
 										 XmlReaderSettings readerSettings, string scriptureBaseDir,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
@@ -48,7 +46,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				root.Add(importSetting);
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, ImportSettingsFilename), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename), readerSettings, doc);
 
 			importSettingsProperty.RemoveNodes();
 
@@ -63,7 +61,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var pathname = Path.Combine(scriptureBaseDir, ImportSettingsFilename);
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename);
 			if (!File.Exists(pathname))
 				return;
 
@@ -94,7 +92,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var pathname = Path.Combine(scriptureBaseDir, ImportSettingsFilename);
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename);
 			if (File.Exists(pathname))
 				File.Delete(pathname);
 

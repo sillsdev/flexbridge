@@ -33,5 +33,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Style = "style";
 		internal const string StStyle = "StStyle";
 		internal const string Scripture = "Scripture";
+		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 	}
 }
