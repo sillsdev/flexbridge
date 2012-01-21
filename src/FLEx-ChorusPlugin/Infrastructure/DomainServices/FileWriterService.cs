@@ -43,7 +43,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (element == null)
 			{
 				// Still write out file with just the root element.
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.OptionalFirstElementTag));
+				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.AdditionalFieldsTag));
 				doc.Save(newPathname);
 			}
 			else

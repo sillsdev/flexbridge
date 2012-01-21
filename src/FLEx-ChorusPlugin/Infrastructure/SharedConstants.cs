@@ -6,7 +6,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	{
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 
-		internal const string OptionalFirstElementTag = "AdditionalFields";
+		internal const string AdditionalFieldsTag = "AdditionalFields";
 		internal const string RtTag = "rt";
 		internal const string Collections = "Collections";
 		internal const string MultiAlt = "MultiAlt";
@@ -34,5 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string StStyle = "StStyle";
 		internal const string Scripture = "Scripture";
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
+		internal const string Srs = "srs";
+		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
 	}
 }

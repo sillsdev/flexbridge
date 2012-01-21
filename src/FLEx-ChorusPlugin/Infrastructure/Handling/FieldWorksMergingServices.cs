@@ -21,7 +21,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// DONE. 1. Deal with DateStamps
 			MergeTimestamps(ourEntry, theirEntry);
 
-			var classInfo = mdc.GetClassInfo(isNewStyle ? ourEntry.Name : ourEntry.Attributes[SharedConstants.Class].Value);
+			var extantEntry = ourEntry ?? theirEntry;
+			var classInfo = mdc.GetClassInfo(isNewStyle ? extantEntry.Name : extantEntry.Attributes[SharedConstants.Class].Value);
 			//  DONE. 2. Deal with reference collections. [New style only has objsur elements for ref col props.]
 			PreMergeReferenceCollectionProperties(eventListener, classInfo, ourEntry, theirEntry, commonEntry);
 			// TODO: 3. Deal with reference sequences. [New style only has objsur elements for ref seq props.]
@@ -48,8 +49,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static void MergeTimestamps(XmlNode ourEntry, XmlNode theirEntry)
 		{
 			const string xpath = "DateModified | DateResolved | RunDate";
-			var ourDateTimeNodes = ourEntry.SelectNodes(xpath);
-			var theirDateTimeNodes = theirEntry.SelectNodes(xpath);
+			var ourDateTimeNodes = ourEntry == null ? null : ourEntry.SelectNodes(xpath);
+			var theirDateTimeNodes = theirEntry == null ? null : theirEntry.SelectNodes(xpath);
 			if ((ourDateTimeNodes == null || ourDateTimeNodes.Count == 0) &&
 				(theirDateTimeNodes == null || theirDateTimeNodes.Count == 0))
 				return;
@@ -118,7 +119,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (commonPropNode != null)
 				{
 					var guids = from XmlNode objsurNode in commonPropNode.SafeSelectNodes(SharedConstants.Objsur)
-								select objsurNode.GetStringAttribute(SharedConstants.GuidStr);
+								select objsurNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 
 					commonValues.UnionWith(guids);
 				}
@@ -127,7 +128,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ourPropNode != null)
 				{
 					var guids = from XmlNode objsurNode in ourPropNode.SafeSelectNodes(SharedConstants.Objsur)
-								select objsurNode.GetStringAttribute(SharedConstants.GuidStr);
+								select objsurNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 
 					ourValues.UnionWith(guids);
 					if (!commonValues.SetEquals(ourValues))
@@ -140,7 +141,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (theirPropNode != null)
 				{
 					var guids = from XmlNode objsurNode in theirPropNode.SafeSelectNodes(SharedConstants.Objsur)
-								select objsurNode.GetStringAttribute(SharedConstants.GuidStr);
+								select objsurNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 
 					theirValues.UnionWith(guids);
 					if (!commonValues.SetEquals(theirValues))
@@ -236,7 +237,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (commonPropNode != null)
 				{
 					var guids = from XmlNode childNode in commonPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					commonValues.UnionWith(guids);
 				}
 				var ourValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -244,7 +245,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ourPropNode != null)
 				{
 					var guids = from XmlNode childNode in ourPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					ourValues.UnionWith(guids);
 					if (!commonValues.SetEquals(ourValues))
 					{
@@ -256,7 +257,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (theirPropNode != null)
 				{
 					var guids = from XmlNode childNode in theirPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					theirValues.UnionWith(guids);
 					if (!commonValues.SetEquals(theirValues))
 					{
@@ -298,30 +299,36 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				}
 				else
 				{
-					var ourDoc = ourEntry.OwnerDocument;
+					var ourDoc = ourEntry == null ? null : ourEntry.OwnerDocument;
 					var ourOriginalData = new SortedDictionary<string, string>();
-					var theirDoc = theirEntry.OwnerDocument;
+					var theirDoc = theirEntry == null ? null : theirEntry.OwnerDocument;
 					var theirOriginalData = new SortedDictionary<string, string>();
 					if (ourPropNode == null)
 					{
-						ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
-						ourEntry.AppendChild(ourPropNode);
+						if (ourEntry != null)
+						{
+							ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
+							ourEntry.AppendChild(ourPropNode);
+						}
 					}
 					else
 					{
 						foreach (XmlNode ourOriginal in ourPropNode.ChildNodes)
-							ourOriginalData.Add(XmlUtilities.GetStringAttribute(ourOriginal, SharedConstants.GuidStr), ourOriginal.OuterXml);
+							ourOriginalData.Add(XmlUtilities.GetStringAttribute(ourOriginal, SharedConstants.GuidStr).ToLowerInvariant(), ourOriginal.OuterXml);
 						ourPropNode.RemoveAll();
 					}
 					if (theirPropNode == null)
 					{
-						theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
-						theirEntry.AppendChild(theirPropNode);
+						if (theirEntry != null)
+						{
+							theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
+							theirEntry.AppendChild(theirPropNode);
+						}
 					}
 					else
 					{
 						foreach (XmlNode theirOriginal in theirPropNode.ChildNodes)
-							theirOriginalData.Add(XmlUtilities.GetStringAttribute(theirOriginal, SharedConstants.GuidStr), theirOriginal.OuterXml);
+							theirOriginalData.Add(XmlUtilities.GetStringAttribute(theirOriginal, SharedConstants.GuidStr).ToLowerInvariant(), theirOriginal.OuterXml);
 						theirPropNode.RemoveAll();
 					}
 					foreach (var newValue in mergedCollection)
@@ -329,11 +336,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						var ourData = ourOriginalData.ContainsKey(newValue)
 										? ourOriginalData[newValue]
 										: theirOriginalData[newValue];
-						AddNode(ourDoc, ourPropNode, XElement.Parse(ourData));
+						if (ourDoc != null)
+							AddNode(ourDoc, ourPropNode, XElement.Parse(ourData));
 						var theirData = theirOriginalData.ContainsKey(newValue)
 											? theirOriginalData[newValue]
 											: ourOriginalData[newValue];
-						AddNode(theirDoc, theirPropNode, XElement.Parse(theirData));
+						if (theirDoc != null)
+							AddNode(theirDoc, theirPropNode, XElement.Parse(theirData));
 					}
 				}
 			}
@@ -362,7 +371,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (commonPropNode != null)
 				{
 					var guids = from XmlNode childNode in commonPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					commonValues.AddRange(guids);
 				}
 				var ourValues = new List<string>();
@@ -370,9 +379,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ourPropNode != null)
 				{
 					var guids = from XmlNode childNode in ourPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					ourValues.AddRange(guids);
-					if (!commonValues.Equals(ourValues))
+					if (!commonValues.SequenceEqual(ourValues, StringComparer.OrdinalIgnoreCase))
 					{
 						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, ourEntry));
 					}
@@ -382,9 +391,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (theirPropNode != null)
 				{
 					var guids = from XmlNode childNode in theirPropNode.ChildNodes
-								select childNode.GetStringAttribute(SharedConstants.GuidStr);
+								select childNode.GetStringAttribute(SharedConstants.GuidStr).ToLowerInvariant();
 					theirValues.AddRange(guids);
-					if (!commonValues.Equals(theirValues))
+					if (!commonValues.SequenceEqual(theirValues, StringComparer.OrdinalIgnoreCase))
 					{
 						eventListener.ChangeOccurred(new XmlChangedRecordReport(null, null, commonEntry, theirEntry));
 					}
@@ -393,17 +402,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// 1. Pre-merge objects that are in ours and theirs (may not be in common, however).
 				PreMerge(eventListener, mdc, commonPropNode, ourPropNode, theirPropNode, new HashSet<string>(theirValues));
 
-				if (commonValues.Equals(ourValues) && commonValues.Equals(theirValues))
+				if (commonValues.SequenceEqual(ourValues, StringComparer.OrdinalIgnoreCase) && commonValues.SequenceEqual(theirValues, StringComparer.OrdinalIgnoreCase))
 					continue; // No changes in the owning  property, so skip the harder merge attempt.
 
-				var ourDoc = ourEntry.OwnerDocument;
+				var ourDoc = ourEntry == null ? null : ourEntry.OwnerDocument;
 				var ourOriginalData = new Dictionary<string, string>();
-				var theirDoc = theirEntry.OwnerDocument;
+				var theirDoc = theirEntry == null ? null : theirEntry.OwnerDocument;
 				var theirOriginalData = new Dictionary<string, string>();
 				if (ourPropNode == null)
 				{
-					ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
-					ourEntry.AppendChild(ourPropNode);
+					if (ourDoc != null)
+					{
+						ourPropNode = ourDoc.CreateNode(XmlNodeType.Element, propName, null);
+						ourEntry.AppendChild(ourPropNode);
+					}
 				}
 				else
 				{
@@ -411,14 +423,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						.ChildNodes
 						.Cast<XmlNode>()
 						.ToDictionary(
-								ourOriginal => XmlUtilities.GetStringAttribute(ourOriginal, SharedConstants.GuidStr),
+								ourOriginal => XmlUtilities.GetStringAttribute(ourOriginal, SharedConstants.GuidStr).ToLowerInvariant(),
 								ourOriginal => ourOriginal.OuterXml);
 					ourPropNode.RemoveAll();
 				}
 				if (theirPropNode == null)
 				{
-					theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
-					theirEntry.AppendChild(theirPropNode);
+					if (theirDoc != null)
+					{
+						theirPropNode = theirDoc.CreateNode(XmlNodeType.Element, propName, null);
+						theirEntry.AppendChild(theirPropNode);
+					}
 				}
 				else
 				{
@@ -426,7 +441,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						.ChildNodes
 						.Cast<XmlNode>()
 						.ToDictionary(
-								theirOriginal => XmlUtilities.GetStringAttribute(theirOriginal, SharedConstants.GuidStr),
+								theirOriginal => XmlUtilities.GetStringAttribute(theirOriginal, SharedConstants.GuidStr).ToLowerInvariant(),
 								theirOriginal => theirOriginal.OuterXml);
 					theirPropNode.RemoveAll();
 				}
@@ -469,7 +484,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								var ourCurrent = ourValues[0];
 								var ourData = ourOriginalData[ourCurrent];
 								var ourOrigElement = XElement.Parse(ourData);
-								AddNode(ourDoc, ourPropNode, ourOrigElement);
+								if (ourDoc != null)
+									AddNode(ourDoc, ourPropNode, ourOrigElement);
 								if (theirOriginalData.ContainsKey(ourCurrent))
 								{
 									AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[ourCurrent]));
@@ -479,7 +495,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								}
 								else
 								{
-									AddNode(theirDoc, theirPropNode, XElement.Parse(ourOriginalData[ourCurrent]));
+									if (theirDoc != null)
+										AddNode(theirDoc, theirPropNode, XElement.Parse(ourOriginalData[ourCurrent]));
 								}
 								idxInOurs = ourValues.IndexOf(commonValue);
 							}
@@ -492,17 +509,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								var theirCurrent = theirValues[0];
 								var theirData = ourOriginalData[theirCurrent];
 								var theirOrigElement = XElement.Parse(theirData);
-								AddNode(theirDoc, theirPropNode, theirOrigElement);
+								if (theirDoc != null)
+									AddNode(theirDoc, theirPropNode, theirOrigElement);
 								if (ourOriginalData.ContainsKey(theirCurrent))
 								{
-									AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
+									if (ourDoc != null)
+										AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
 									ourOriginalData.Remove(theirCurrent);
 									ourValues.Remove(theirCurrent);
 									idxInOurs = ourValues.IndexOf(commonValue);
 								}
 								else
 								{
-									AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
+									if (ourDoc != null)
+										AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[theirCurrent]));
 								}
 								idxInTheirs = theirValues.IndexOf(commonValue);
 							}
@@ -512,10 +532,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							continue;
 
 						// Add respective data back into each, since they each still have it.
-						AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[commonValue]));
+						if (ourDoc != null)
+							AddNode(ourDoc, ourPropNode, XElement.Parse(ourOriginalData[commonValue]));
 						ourOriginalData.Remove(commonValue);
 						ourValues.Remove(commonValue);
-						AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[commonValue]));
+						if (theirDoc != null)
+							AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[commonValue]));
 						theirOriginalData.Remove(commonValue);
 						theirValues.Remove(commonValue);
 					}
@@ -528,30 +550,35 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					{
 						var ourData = ourOriginalData[ourValue];
 						var ourOrigElement = XElement.Parse(ourData);
-						AddNode(ourDoc, ourPropNode, ourOrigElement);
+						if (ourDoc != null)
+							AddNode(ourDoc, ourPropNode, ourOrigElement);
 						if (theirValues.Contains(ourValue))
 						{
 							// Both have it, but store possibly different data from theirs.
-							AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[ourValue]));
+							if (theirDoc != null)
+								AddNode(theirDoc, theirPropNode, XElement.Parse(theirOriginalData[ourValue]));
 							theirValues.Remove(ourValue);
 							theirOriginalData.Remove(ourValue);
 						}
 						else
 						{
-							AddNode(theirDoc, theirPropNode, ourOrigElement);
+							if (theirDoc != null)
+								AddNode(theirDoc, theirPropNode, ourOrigElement);
 						}
 					}
 					foreach (var theirValue in theirValues)
 					{
 						var theirData = theirOriginalData[theirValue];
 						var theirOrigElement = XElement.Parse(theirData);
-						AddNode(ourDoc, ourPropNode, theirOrigElement);
-						AddNode(theirDoc, theirPropNode, theirOrigElement);
+						if (ourDoc != null)
+							AddNode(ourDoc, ourPropNode, theirOrigElement);
+						if (theirDoc != null)
+							AddNode(theirDoc, theirPropNode, theirOrigElement);
 					}
 				}
-				if (!ourPropNode.HasChildNodes)
+				if (ourPropNode != null && !ourPropNode.HasChildNodes)
 					ourPropNode.ParentNode.RemoveChild(ourPropNode);
-				if (!theirPropNode.HasChildNodes)
+				if (theirPropNode != null && !theirPropNode.HasChildNodes)
 					theirPropNode.ParentNode.RemoveChild(theirPropNode);
 			}
 		}
@@ -563,7 +590,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			foreach (XmlNode ourChild in ourPropNode.ChildNodes)
 			{
-				var ourChildGuid = XmlUtilities.GetStringAttribute(ourChild, SharedConstants.GuidStr);
+				var ourChildGuid = XmlUtilities.GetStringAttribute(ourChild, SharedConstants.GuidStr).ToLowerInvariant();
 				if (!theirValues.Contains(ourChildGuid))
 					continue;
 
@@ -597,7 +624,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ourOwnedItem != null && ourOwnedItem.Name != SharedConstants.Objsur
 					&& theirOwnedItem != null && theirOwnedItem.Name != SharedConstants.Objsur
 					&& commonOwnedItem != null && commonOwnedItem.Name != SharedConstants.Objsur
-					&& ourOwnedItem.Attributes[SharedConstants.GuidStr].Value == theirOwnedItem.Attributes[SharedConstants.GuidStr].Value) // Allows for common to be different.
+					&& ourOwnedItem.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirOwnedItem.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()) // Allows for common to be different.
 				{
 					PreMerge(true, eventListener, mdc, ourOwnedItem, theirOwnedItem, commonOwnedItem);
 				}

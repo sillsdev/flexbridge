@@ -37,7 +37,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			foreach (var styleObjSur in styles)
 			{
-				var styleGuid = styleObjSur.Attribute(SharedConstants.GuidStr).Value;
+				var styleGuid = styleObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
 				var style = classData[className][styleGuid];
 
@@ -77,7 +77,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(stylePathname);
 			// StStyle instances are owned by Scripture in its Styles coll prop.
 			var scrElement = highLevelData[SharedConstants.Scripture];
-			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
+			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedStyles = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var styleElement in doc.Root.Elements("StStyle"))
 			{
@@ -85,7 +85,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					interestingPropertiesCache,
 					styleElement,
 					scrOwningGuid); // Restore 'ownerguid' to styleElement.
-				var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value;
+				var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedStyles.Add(styleGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, styleGuid), new XAttribute("t", "o")));
 			}
 

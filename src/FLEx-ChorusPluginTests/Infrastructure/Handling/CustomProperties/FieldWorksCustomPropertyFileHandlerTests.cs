@@ -331,7 +331,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -358,7 +358,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
-		public void WinnerAndLoserBothMadeSameChangeToElement()
+		public void WinnerAndLoserBothMadeSameChangeToAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -376,11 +376,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Boolean""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
 		}
 
 		[Test]
-		public void WinnerAndLoserBothChangedElementButInDifferentWays()
+		public void WinnerAndLoserBothChangedAttributeButInDifferentWays()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -402,7 +402,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
-		public void WinnerChangedElement()
+		public void WinnerChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -420,11 +420,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
 		}
 
 		[Test]
-		public void LoserChangedElement()
+		public void LoserChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -442,7 +442,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
 		}
 
 		[Test]

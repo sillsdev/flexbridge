@@ -37,7 +37,7 @@ namespace FwdataTestApp
 		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, XElement>> unownedObjects, IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, string record)
 		{
 			var rtElement = XElement.Parse(record);
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
+			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			if (rtElement.Attribute(SharedConstants.OwnerGuid) == null)
 			{
@@ -293,7 +293,7 @@ namespace FwdataTestApp
 			{
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{

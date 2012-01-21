@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.FileTypeHanders.text;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -195,7 +196,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt[@guid=""oldie""]" },
 				new List<string> { @"classdata/rt[@guid=""goner""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> {typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -228,20 +229,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 @"<?xml version='1.0' encoding='utf-8'?>
 <classdata>
 <rt class='LexEntry' guid='oldie'/>
-<rt class='LexEntry' guid='dirtball' ownerguid='originalOwner'/>
+<rt class='LexEntry' guid='dirtball' ownerguid='originalowner'/>
 </classdata>";
-			var ourContent = commonAncestor.Replace("originalOwner", "newOwner");
-			var theirContent = commonAncestor.Replace("originalOwner", "newOwner");
+			var ourContent = commonAncestor.Replace("originalowner", "newowner");
+			var theirContent = commonAncestor.Replace("originalowner", "newowner");
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
-				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
+				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
+				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: This ought to be a new attr changed report. Let it fail, untl it gets added, then change the expected class.
 		}
 
 		[Test]
@@ -275,9 +276,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <classdata>
 <rt		class='LexEntry' guid='oldie'/>
 <rt
-	class='LexEntry' guid='dirtball' ownerguid='originalOwner'/>
+	class='LexEntry' guid='dirtball' ownerguid='originalowner'/>
 </classdata>";
-			var ourContent = commonAncestor.Replace("originalOwner", "newOwner");
+			var ourContent = commonAncestor.Replace("originalowner", "newowner");
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
@@ -285,10 +286,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
-				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
+				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
+				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
 		}
 
 		[Test]
@@ -298,20 +299,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 @"<?xml version='1.0' encoding='utf-8'?>
 <classdata>
 <rt class='LexEntry' guid='oldie'/>
-<rt class='LexEntry' guid='dirtball' ownerguid='originalOwner'/>
+<rt class='LexEntry' guid='dirtball' ownerguid='originalowner'/>
 </classdata>";
 			const string ourContent = commonAncestor;
-			var theirContent = commonAncestor.Replace("originalOwner", "newOwner");
+			var theirContent = commonAncestor.Replace("originalowner", "newowner");
 
 			FieldWorksTestServices.DoMerge(
 				_fileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newOwner""]" },
-				new List<string> { @"classdata/rt[@ownerguid=""originalOwner""]" },
+				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
+				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
 		}
 
 		[Test]
@@ -407,7 +408,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt/Comment/AStr[@ws='en']", @"classdata/rt/Comment/AStr/Run[@ws='en']" },
 				new List<string> { @"classdata/rt/Comment/AStr/Run[@ws='es']" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Let this keep failing, until new change reports are added in MergeAtomicElementService Run method.
 		}
 
 		[Test]
@@ -544,7 +545,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech</AUni>
-<AUni ws='es'>Categor�as Gram�ticas</AUni>
+<AUni ws='es'>Categorias Gramiticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -555,7 +556,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech We Changed</AUni>
-<AUni ws='es'>Categor�as Gram�ticas</AUni>
+<AUni ws='es'>Categorias Gramiticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -566,7 +567,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <rt class='CmPossibilityList' guid='d72a1748-be3b-4164-9858-bc99de37e434' ownerguid='9719a466-2240-4dea-9722-9fe0746a30a6'>
 <Name>
 <AUni ws='en'>Parts Of Speech They Changed</AUni>
-<AUni ws='es'>Categor�as Gram�ticas</AUni>
+<AUni ws='es'>Categorias Gramiticas</AUni>
 <AUni ws='fr'>Parties du Discours</AUni>
 </Name>
 </rt>
@@ -581,7 +582,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					@"classdata/rt/Name/AUni[@ws='es']",
 					@"classdata/rt/Name/AUni[@ws='fr']"},
 				null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) }, // 1 conflict, since both edited the 'en' alternative.
+				1, new List<Type> { typeof(BothEditedTextConflict) }, // 1 conflict, since both edited the 'en' alternative.
 				0, new List<Type>());
 
 			var doc = XDocument.Parse(result);

@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.IsAtomic = true;
 			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, false, true);
+			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
 		}
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
@@ -307,8 +307,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							break;
 
 						case DataType.OwningSequence: // Fall through. // TODO: Sort out ownership issues for conflicts.
+							break;
 						case DataType.ReferenceSequence:
 							// Use IsAtomic for whole property.
+							//In new system, this prevents
 							propStrategy.IsAtomic = true;
 							break;
 

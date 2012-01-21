@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				var sortedObjects = new SortedDictionary<string, string>();
 				bool foundOptionalFirstElement;
-				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -34,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					{
 						// Step 2B: Sort main CmObject record.
 						var sortedMainObject = SortMainElement(interestingPropertiesCache, record);
-						sortedObjects.Add(sortedMainObject.Attribute(SharedConstants.GuidStr).Value, sortedMainObject.ToString());
+						sortedObjects.Add(sortedMainObject.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), sortedMainObject.ToString());
 					}
 				}
 				foreach (var sortedObjectKvp in sortedObjects)
@@ -168,10 +168,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Write collection properties in guid sorted order,
 			// since order is not significant in collections.
-			var sortCollectionData = new SortedDictionary<string, XElement>();
+			var sortCollectionData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var objsurElement in propertyElement.Elements(SharedConstants.Objsur))
 			{
-				var key = objsurElement.Attribute(SharedConstants.GuidStr).Value;
+				var key = objsurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				if (!sortCollectionData.ContainsKey(key))
 					sortCollectionData.Add(key, objsurElement);
 			}

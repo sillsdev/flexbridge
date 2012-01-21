@@ -125,7 +125,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 <CustomField wsSelector='-2' type='String' name='Paradigm' class='LexEntry' />
 </AdditionalFields>";
 			var sortedCustomDataElement = DataSortingService.SortCustomPropertiesRecord(sortedCustomData);
-			Assert.AreEqual(SharedConstants.OptionalFirstElementTag, sortedCustomDataElement.Name.LocalName);
+			Assert.AreEqual(SharedConstants.AdditionalFieldsTag, sortedCustomDataElement.Name.LocalName);
 			Assert.AreEqual(3, sortedCustomDataElement.Elements().Count());
 
 			var customData = sortedCustomDataElement.Elements().ElementAt(0);

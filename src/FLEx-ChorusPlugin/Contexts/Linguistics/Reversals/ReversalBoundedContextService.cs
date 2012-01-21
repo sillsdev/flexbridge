@@ -75,7 +75,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				{
 					// Add dummy entry, so FastXmlSplitter will have something to work with.
 					root.Add(new XElement("ReversalIndexEntry",
-												   new XAttribute(SharedConstants.GuidStr, Guid.Empty)));
+												   new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
 				}
 				else
 				{
@@ -115,12 +115,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				// Put all records back in ReversalIndex, before sort and restore.
 				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 				var records = root.Elements("ReversalIndexEntry").ToList();
-				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
+				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 					revIdx.Element("Entries").Add(records); // NB: These full objects will be turned into regular objsur elements in the flattening process.
 				CmObjectFlatteningService.FlattenObject(sortedData,
 					interestingPropertiesCache,
 					revIdx,
-					lexDb.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to indices.
+					lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
 				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedRevs.Add(revIdxGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, revIdxGuid), new XAttribute("t", "o")));
 			}

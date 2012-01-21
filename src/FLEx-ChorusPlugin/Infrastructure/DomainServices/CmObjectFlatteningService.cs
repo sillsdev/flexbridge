@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (ownerguid != null && ownerguid == string.Empty)
 				throw new ArgumentException(Resources.kOwnerGuidEmpty, SharedConstants.OwnerGuid);
 
-			var elementGuid = element.Attribute(SharedConstants.GuidStr).Value;
+			var elementGuid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			// TODO: LT-12524 "Handle merge in case of conflicting move object to different destination".
 			// This need will manifest itself in the guid already being in 'sortedData' and an exception being thrown.
 			// At this point element has not been flattened, so stuff it owns will still be in it.
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						break;
 					ownedElement.Remove();
 					var replacementOjSurElement = new XElement(SharedConstants.Objsur,
-															   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value),
+															   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
 															   new XAttribute("t", "o"));
 					propertyElement.Add(replacementOjSurElement);
 					// Move down the nested set of owned objects, and do the same.
@@ -80,7 +80,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			var owningPropElement = owningElement.Element(owningPropertyName);
 			owningPropElement.Add(new XElement(SharedConstants.Objsur,
-												   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value),
+												   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
 												   new XAttribute("t", "o")));
 		}
 	}

@@ -30,7 +30,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			foreach (var importSettingObjSur in importSettings)
 			{
-				var styleGuid = importSettingObjSur.Attribute(SharedConstants.GuidStr).Value;
+				var styleGuid = importSettingObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
 				var importSetting = classData[className][styleGuid];
 
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// Owned by Scripture in ArchivedDrafts coll prop.
 			var scrElement = highLevelData[SharedConstants.Scripture];
-			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
+			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedImportSettings = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var doc = XDocument.Load(pathname);
 			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					interestingPropertiesCache,
 					importSettingsElement,
 					scrOwningGuid); // Restore 'ownerguid' to importSettingsElement.
-				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value;
+				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedImportSettings.Add(importSettingsGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, importSettingsGuid), new XAttribute("t", "o")));
 			}
 

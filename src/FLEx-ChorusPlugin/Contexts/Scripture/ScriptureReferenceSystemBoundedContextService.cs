@@ -16,8 +16,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureReferenceSystemBoundedContextService
 	{
-		private const string ScriptureReferenceSystemFilename = SharedConstants.ScriptureReferenceSystem + ".srs";
-
 		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -44,7 +42,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 				new XElement(SharedConstants.ScriptureReferenceSystem, refSystem));
 
-			FileWriterService.WriteNestedFile(Path.Combine(baseDirectory, ScriptureReferenceSystemFilename), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(baseDirectory, SharedConstants.ScriptureReferenceSystemFilename), readerSettings, doc);
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ScrRefSystem", "ScrBookRef" });
 		}
@@ -58,7 +56,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
 
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, ScriptureReferenceSystemFilename));
+			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename));
 			CmObjectFlatteningService.FlattenObject(sortedData,
 				interestingPropertiesCache,
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
@@ -70,7 +68,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
-			var refSysPathname = Path.Combine(scriptureBaseDir, ScriptureReferenceSystemFilename);
+			var refSysPathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename);
 			if (File.Exists(refSysPathname))
 				File.Delete(refSysPathname);
 

@@ -29,7 +29,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			foreach (var checkListObjSurElement in clPropElement.Elements())
 			{
-				var checkListGuid = checkListObjSurElement.Attribute(SharedConstants.GuidStr).Value;
+				var checkListGuid = checkListObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[checkListGuid];
 				var checkList = classData[className][checkListGuid];
 
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					new XElement("CheckList", checkList));
 
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value + "." + SharedConstants.List), readerSettings, doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List), readerSettings, doc);
 			}
 
 			clPropElement.RemoveNodes();
@@ -63,7 +63,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				return; // Nothing to do.
 
 			var langProjElement = highLevelData["LangProject"];
-			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value;
+			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 // ReSharper disable ConvertClosureToMethodGroup
 			foreach (var listDoc in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly).Select(listPathname => XDocument.Load(listPathname)))

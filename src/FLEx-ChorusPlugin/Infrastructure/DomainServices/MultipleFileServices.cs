@@ -135,7 +135,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -184,8 +184,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
-			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
+			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			guidToClassMapping.Add(guid, className);
 
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")

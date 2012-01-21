@@ -64,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			CmObjectFlatteningService.FlattenObject(sortedData,
 				interestingPropertiesCache,
 				scrElement,
-				langProjElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to scrElement.
+				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
 
 			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);
 		}

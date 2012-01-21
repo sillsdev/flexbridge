@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.FileTypeHanders.text;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -309,8 +310,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				null, null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
-				2, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(BothEditedTextConflict) },
+				0, new List<Type>());
 
 			Assert.IsTrue(result.Contains("OurName"));
 		}

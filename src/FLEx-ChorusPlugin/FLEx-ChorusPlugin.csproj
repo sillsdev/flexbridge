@@ -167,6 +167,8 @@
 	<Compile Include="Infrastructure\Handling\Anthropology\NtbkFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />

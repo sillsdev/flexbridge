@@ -183,7 +183,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <objsur guid='four' t='r' />
 <objsur guid='five' t='r' />
 <objsur guid='six' t='r' />
-<objsur guid='weAdded' t='r' />
+<objsur guid='weadded' t='r' />
 </PlacesOfResidence>
 </rt>
 </classdata>";
@@ -194,7 +194,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <PlacesOfResidence>
 <objsur guid='one' t='r' />
 <objsur guid='two' t='r' />
-<objsur guid='theyAdded' t='r' />
+<objsur guid='theyadded' t='r' />
 <objsur guid='three' t='r' />
 <objsur guid='four' t='r' />
 <objsur guid='six' t='r' />
@@ -236,10 +236,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							  where target.Attribute(SharedConstants.GuidStr).Value == "six"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "theyAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "theyadded"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "weAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "weadded"
 							  select target).FirstOrDefault());
 
 			resElement = XElement.Parse(theirNode.OuterXml);
@@ -265,10 +265,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							  where target.Attribute(SharedConstants.GuidStr).Value == "six"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "theyAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "theyadded"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "weAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "weadded"
 							  select target).FirstOrDefault());
 		}
 

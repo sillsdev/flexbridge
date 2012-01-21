@@ -158,7 +158,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// Scripture
 				SharedConstants.ArchivedDraft,
 				SharedConstants.ImportSetting,
-				// Scr ref sys: srs
+				SharedConstants.Srs,
+				// trans
 
 				// Anthropology
 				SharedConstants.Ntbk,

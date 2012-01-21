@@ -29,7 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.OptionalFirstElementTag || !root.Elements("CustomField").Any())
+				if (root.Name.LocalName != SharedConstants.AdditionalFieldsTag || !root.Elements("CustomField").Any())
 					return "Not valid custom properties file";
 
 				return null;
@@ -71,7 +71,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.OptionalFirstElementTag);
+			writer.WriteStartElement(SharedConstants.AdditionalFieldsTag);
 			reader.Read();
 		}
 	}

@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			doc.Add(root);
 			foreach (var draftObjSur in drafts)
 			{
-				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value;
+				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[draftGuid];
 				var draft = classData[className][draftGuid];
 
@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// Owned by Scripture in ArchivedDrafts coll prop.
 			var scrElement = highLevelData[SharedConstants.Scripture];
-			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value;
+			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedDrafts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var doc = XDocument.Load(pathname);
 			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
@@ -77,7 +77,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					interestingPropertiesCache,
 					draftElement,
 					scrOwningGuid); // Restore 'ownerguid' to draftElement.
-				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value;
+				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedDrafts.Add(draftGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, draftGuid), new XAttribute("t", "o")));
 			}
 

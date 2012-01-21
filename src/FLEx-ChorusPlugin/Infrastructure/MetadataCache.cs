@@ -208,7 +208,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return;
 
 			var doc = XDocument.Load(customFiles[0]);
-			foreach (var customFieldElement in doc.Element(SharedConstants.OptionalFirstElementTag).Elements("CustomField"))
+			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
 			{
 				FdoClassInfo classInfo;
 				var className = customFieldElement.Attribute(SharedConstants.Class).Value;

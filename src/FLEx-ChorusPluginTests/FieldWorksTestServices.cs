@@ -12,7 +12,7 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 7;
+		internal const int ExpectedExtensionCount = 8;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
@@ -56,6 +56,9 @@ namespace FLEx_ChorusPluginTests
 		{
 			var tempPath = Path.GetTempFileName();
 			var dirName = Path.GetDirectoryName(tempPath);
+			var newDirName = dirName + counter;
+			if (Directory.Exists(newDirName))
+				Directory.Delete(newDirName, true);
 			Directory.CreateDirectory(dirName + counter);
 			var replacement = Path.Combine(dirName + counter, filename);
 			File.Move(tempPath, replacement);
@@ -73,6 +76,8 @@ namespace FLEx_ChorusPluginTests
 		{
 			var tempPath = Path.GetTempFileName();
 			var replacement = tempPath.Replace(Path.GetExtension(tempPath), extension);
+			if (File.Exists(replacement))
+				File.Delete(replacement);
 			File.Move(tempPath, replacement);
 			return replacement;
 		}
