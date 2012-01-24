@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -9,6 +10,22 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed class SynchronizeProject : ISynchronizeProject
 	{
+		/// <summary>
+		/// The name of the environment variable into which we push the project name, so that routines like
+		/// GenerateContextDescriptor will be able to retrieve it within the merge modules.
+		/// </summary>
+		internal const string kProjectEnvironmentId = "FlexChorusProjectName";
+
+		static void PushProjectNameIntoEnvironment(string projectName)
+		{
+			Environment.SetEnvironmentVariable(kProjectEnvironmentId, projectName);
+		}
+
+		internal static string GetProjectNameFromEnvironment()
+		{
+			return Environment.GetEnvironmentVariable(kProjectEnvironmentId) ?? "";
+		}
+
 		#region Implementation of ISynchronizeProject
 
 		void ISynchronizeProject.SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
@@ -26,6 +43,7 @@ namespace FLEx_ChorusPlugin.View
 			{
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
+					PushProjectNameIntoEnvironment(langProject.Name);
 					// Chorus does it in ths order: local Commit/Pull/[if needed Merge]/Send(Push).
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;

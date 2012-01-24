@@ -123,6 +123,7 @@
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Drawing" />
+	<Reference Include="System.Web" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="System.Xml" />
@@ -135,6 +136,7 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
+	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />

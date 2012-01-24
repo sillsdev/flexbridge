@@ -1,5 +1,8 @@
+using System;
 using System.Xml.Linq;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -11,12 +14,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var rtElement = XElement.Parse(mergeElement);
-			var label = rtElement.Name.LocalName == SharedConstants.Header
-				? "header for context"
-				: rtElement.Name.LocalName == SharedConstants.RtTag
-						? rtElement.Attribute(SharedConstants.Class).Value + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()
-						: rtElement.Name.LocalName + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			return new ContextDescriptor(label, "FIXTHIS");
+			string label;
+			string url = "";
+			switch (rtElement.Name.LocalName)
+			{
+				case SharedConstants.Header:
+					label = "header for context";
+					break;
+				case SharedConstants.RtTag:
+					string className = rtElement.Attribute(SharedConstants.Class).Value;
+					string guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
+					label = className + ": " + guid;
+					string projectName = SynchronizeProject.GetProjectNameFromEnvironment();
+					// Todo JohnT: pass something like "default" for app name, since we can't readily
+					// figure out here which we need.
+					url = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid)).ToString();
+					break;
+				default:
+					label = rtElement.Name.LocalName + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value;
+					break;
+			}
+
+			return new ContextDescriptor(label, url);
 		}
 	}
 }
