@@ -31,9 +31,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			string label = className + ": " + guid;
 			// Todo JohnT: pass something like "default" for app name, since we can't readily
 			// figure out here which we need.
-			string url = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid)).ToString();
+			var fwAppArgs = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid));
 			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
-			url += "?label=" + label;
+			fwAppArgs.AddProperty("label", label);
+			string url = fwAppArgs.ToString();
 			return new ContextDescriptor(label, url);
 		}
 	}

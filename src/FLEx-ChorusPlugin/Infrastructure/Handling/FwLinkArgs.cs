@@ -100,6 +100,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		protected string m_toolName = string.Empty;
 		/// <summary></summary>
 		protected string m_tag = string.Empty;
+		private readonly List<Property> m_propertyTableEntries = new List<Property>();
 		//private readonly List<Property> m_propertyTableEntries = new List<Property>();
 		#endregion
 
@@ -125,6 +126,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public Guid TargetGuid { get; protected set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Additional information to be included in the property table. Will never be null.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal List<Property> PropertyTableEntries
+		{
+			get { return m_propertyTableEntries; }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -239,6 +250,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return (ToString() == link.ToString());
 		}
 
+		public void AddProperty(string name, string val)
+		{
+			PropertyTableEntries.Add(new Property() {name=name, value=val});
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a URL corresponding to this link
@@ -253,6 +269,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			uriBuilder.Path = kLink;
 			StringBuilder query = new StringBuilder();
 			AddProperties(query);
+
+			foreach (Property property in PropertyTableEntries)
+				query.AppendFormat("&{0}={1}", property.name, Encode(property.value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
 			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
@@ -870,4 +889,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		#endregion
 	}
 	#endregion
+
+	internal class Property
+	{
+		public string name = null;
+		public object value = null;
+	}
 }
