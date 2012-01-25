@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.UI.Review;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -54,10 +56,26 @@ namespace FLEx_ChorusPlugin.View
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
 				//ResetTabPage(2, TODO: Figure out what to do on About page.);
+				chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
 			}
 
 			_tcMain.ResumeLayout(true);
 			_tcMain.Enabled = (chorusSystem != null);
+		}
+
+		private void JumpToFlexObject(string url)
+		{
+			// Todo JohnT:
+			// 1. insert project name (while FlexBridge remains stand-alone).
+			// 2. When we are embedded in FLEx, should be able to do something like this:
+			//var args = new LocalLinkArgs() { Link = url };
+			//if (Mediator != null)
+			//{
+			//    Mediator.SendMessage("HandleLocalHotlink", args);
+			//    if (args.LinkHandledLocally)
+			//        return;
+			//}
+			Process.Start(url);
 		}
 
 		private void ResetPage(int idx, Control newContent)
