@@ -14,27 +14,26 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var rtElement = XElement.Parse(mergeElement);
-			string label;
-			string url = "";
+			string className;
 			switch (rtElement.Name.LocalName)
 			{
 				case SharedConstants.Header:
-					label = "header for context";
-					break;
+					return new ContextDescriptor( "header for context", "");
 				case SharedConstants.RtTag:
-					string className = rtElement.Attribute(SharedConstants.Class).Value;
-					string guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
-					label = className + ": " + guid;
-					string projectName = SynchronizeProject.GetProjectNameFromEnvironment();
-					// Todo JohnT: pass something like "default" for app name, since we can't readily
-					// figure out here which we need.
-					url = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid)).ToString();
+					className = rtElement.Attribute(SharedConstants.Class).Value;
 					break;
 				default:
-					label = rtElement.Name.LocalName + ": " + rtElement.Attribute(SharedConstants.GuidStr).Value;
+					className = rtElement.Name.LocalName;
 					break;
 			}
-
+			string projectName = SynchronizeProject.GetProjectNameFromEnvironment();
+			string guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
+			string label = className + ": " + guid;
+			// Todo JohnT: pass something like "default" for app name, since we can't readily
+			// figure out here which we need.
+			string url = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid)).ToString();
+			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
+			url += "?label=" + label;
 			return new ContextDescriptor(label, url);
 		}
 	}
