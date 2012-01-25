@@ -27,12 +27,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					className = rtElement.Name.LocalName;
 					break;
 			}
-			string projectName = SynchronizeProject.GetProjectNameFromEnvironment();
 			string guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
 			string label = className + ": " + guid;
 			// Todo JohnT: pass something like "default" for app name, since we can't readily
 			// figure out here which we need.
-			var fwAppArgs = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid));
+			var fwAppArgs = new FwAppArgs("FLEx", "current", "", "default", new Guid(guid));
 			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
 			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
 			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));

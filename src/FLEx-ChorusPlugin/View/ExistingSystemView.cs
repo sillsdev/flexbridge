@@ -6,6 +6,7 @@ using System.Web;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Review;
+using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -41,9 +42,12 @@ namespace FLEx_ChorusPlugin.View
 			}
 		}
 
-		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem)
+		private LanguageProject _project;
+
+		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem, LanguageProject project)
 		{
 			_tcMain.SuspendLayout();
+			_project = project;
 
 			if (chorusSystem == null)
 			{
@@ -82,7 +86,8 @@ namespace FLEx_ChorusPlugin.View
 			if (hostLength < 0)
 				return; // can't do it, not a valid FLEx url.
 			var host = url.Substring(0, hostLength);
-			var query = HttpUtility.UrlEncode(url.Substring(hostLength + 1));
+			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _project.Name);
+			var query = HttpUtility.UrlEncode(originalQuery);
 			var fwUrl = host + "?" + query;
 
 			Process.Start(fwUrl);
