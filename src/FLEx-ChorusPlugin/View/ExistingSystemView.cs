@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Web;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Review;
@@ -75,7 +76,16 @@ namespace FLEx_ChorusPlugin.View
 			//    if (args.LinkHandledLocally)
 			//        return;
 			//}
-			Process.Start(url);
+
+			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
+			var hostLength = url.IndexOf("?");
+			if (hostLength < 0)
+				return; // can't do it, not a valid FLEx url.
+			var host = url.Substring(0, hostLength);
+			var query = HttpUtility.UrlEncode(url.Substring(hostLength + 1));
+			var fwUrl = host + "?" + query;
+
+			Process.Start(fwUrl);
 		}
 
 		private void ResetPage(int idx, Control newContent)

@@ -1,4 +1,5 @@
 using System;
+using System.Web;
 using System.Xml.Linq;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
@@ -33,8 +34,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// figure out here which we need.
 			var fwAppArgs = new FwAppArgs("FLEx", projectName, "", "default", new Guid(guid));
 			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
-			fwAppArgs.AddProperty("label", label);
-			string url = fwAppArgs.ToString();
+			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
+			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
+			// The FwUrl has all the query part encoded.
+			// Chorus needs it unencoded so it can extract the label.
+			string fwUrl = fwAppArgs.ToString();
+			var hostLength = fwUrl.IndexOf("?");
+			var host = fwUrl.Substring(0, hostLength);
+			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
+			var url = host + "?" + query;
 			return new ContextDescriptor(label, url);
 		}
 	}
