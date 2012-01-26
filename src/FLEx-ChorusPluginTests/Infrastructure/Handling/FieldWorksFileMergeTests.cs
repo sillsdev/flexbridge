@@ -223,7 +223,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
-		public void WinnerAndLoserBothMadeSameChangeToElement()
+		public void WinnerAndLoserBothMadeSameChangeToAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -242,7 +242,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: This ought to be a new attr changed report. Let it fail, untl it gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport) });
 		}
 
 		[Test]
@@ -269,7 +269,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
-		public void WinnerChangedElement()
+		public void WinnerChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -289,11 +289,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
-		public void LoserChangedElement()
+		public void LoserChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -312,7 +312,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt[@guid=""oldie""]", @"classdata/rt[@ownerguid=""newowner""]" },
 				new List<string> { @"classdata/rt[@ownerguid=""originalowner""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
@@ -582,7 +582,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					@"classdata/rt/Name/AUni[@ws='es']",
 					@"classdata/rt/Name/AUni[@ws='fr']"},
 				null,
-				1, new List<Type> { typeof(BothEditedTextConflict) }, // 1 conflict, since both edited the 'en' alternative.
+				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) }, // 1 conflict, since both edited the 'en' alternative.
 				0, new List<Type>());
 
 			var doc = XDocument.Parse(result);
@@ -637,7 +637,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt/Name/AUni[@ws='es']",
 					@"classdata/rt/Name/AUni[@ws='fr']" },
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlDeletionChangeReport), typeof(XmlDeletionChangeReport) });
+				2, new List<Type> { typeof(XmlTextDeletedReport), typeof(XmlTextDeletedReport) });
 		}
 
 		[Test]

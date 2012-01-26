@@ -170,7 +170,7 @@ ws='en'>Default</AUni>
 				_theirFile, theirContent,
 				new List<string> { @"ImportSettings/ScrImportSet/ImportType[@val=""3""]" }, null,
 				0, new List<Type>(),
-				2 , new List<Type>{ typeof(TextEditChangeReport)}); // TODO: Needs one for the attr change. Leave it failing, until it gets added in Chorus, then add right class.
+				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlTextChangedReport) });
 			Assert.IsTrue(results.Contains("Basic"));
 		}
 
@@ -198,7 +198,7 @@ ws='en'>Default</AUni>
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				null, null,
-				1, new List<Type> { typeof(BothEditedTextConflict) },
+				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("Complex"));
 		}

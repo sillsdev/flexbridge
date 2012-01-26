@@ -310,7 +310,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				null, null,
-				1, new List<Type> { typeof(BothEditedTextConflict) },
+				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
 
 			Assert.IsTrue(result.Contains("OurName"));

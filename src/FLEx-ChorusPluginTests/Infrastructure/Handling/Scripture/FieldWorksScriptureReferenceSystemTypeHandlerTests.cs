@@ -179,7 +179,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(TextEditChangeReport), typeof(TextEditChangeReport) });
+				2, new List<Type> { typeof(XmlTextChangedReport), typeof(XmlTextChangedReport) });
 			Assert.IsTrue(results.Contains(">Start<"));
 			Assert.IsTrue(results.Contains(">StartSp<"));
 		}
@@ -211,7 +211,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				null, null,
-				1, new List<Type> { typeof(BothEditedTextConflict) },
+				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("GenesisSpOurs"));
 		}

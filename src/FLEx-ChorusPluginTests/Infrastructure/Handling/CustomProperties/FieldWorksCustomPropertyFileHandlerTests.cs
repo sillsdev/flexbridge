@@ -376,7 +376,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Boolean""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport) });
 		}
 
 		[Test]
@@ -420,7 +420,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
@@ -442,7 +442,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) }); // TODO: Add some new attr changed report in Chorus. Leave it failing, until that gets added, then change the expected class.
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
