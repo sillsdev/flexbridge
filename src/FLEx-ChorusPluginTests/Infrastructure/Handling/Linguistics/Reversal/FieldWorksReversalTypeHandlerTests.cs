@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.text;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -260,18 +259,22 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 <ReversalIndex guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
 </ReversalIndex>
 </header>
-<ReversalIndexEntry guid='oldie'>
+<ReversalIndexEntry guid='c1ed6dc3-e382-11de-8a39-0800200c9a66'>
 </ReversalIndexEntry>
 </Reversal>";
-			var ourContent = commonAncestor.Replace("</Reversal>", "<ReversalIndexEntry guid='newbieOurs'/></Reversal>");
-			var theirContent = commonAncestor.Replace("</ReversalIndexEntry>", "<Subentries><ReversalIndexEntry guid='newbieTheirs'/></Subentries></ReversalIndexEntry>");
+			var ourContent = commonAncestor.Replace("</Reversal>", "<ReversalIndexEntry guid='c1ed6dc4-e382-11de-8a39-0800200c9a66'/></Reversal>");
+			var theirContent = commonAncestor.Replace("</ReversalIndexEntry>", "<Subentries><ReversalIndexEntry guid='c1ed6dc5-e382-11de-8a39-0800200c9a66'/></Subentries></ReversalIndexEntry>");
 
 			FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""oldie""]/Subentries/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
+				new List<string>
+					{
+						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc3-e382-11de-8a39-0800200c9a66""]",
+						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc4-e382-11de-8a39-0800200c9a66""]",
+						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc3-e382-11de-8a39-0800200c9a66""]/Subentries/ReversalIndexEntry[@guid=""c1ed6dc5-e382-11de-8a39-0800200c9a66""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlChangedRecordReport), typeof(XmlAdditionChangeReport) });
 		}

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.text;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
