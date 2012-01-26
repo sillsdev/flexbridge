@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
+using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
@@ -199,6 +200,198 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 				new List<string> { @"Anthropology/RnGenericRec[@guid=""oldie""]", @"Anthropology/RnGenericRec[@guid=""newbieOurs""]", @"Anthropology/RnGenericRec[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+		}
+
+		[Test]
+		public void We_JasonDeletedRecordThey_JohnAddedDescription()
+		{
+			const string ancestor = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='db4bc870-40b5-4e7d-b55a-ddb33f0ddd52'>
+		<DateCreated
+			val='2002-3-14 6:0:0.0' />
+		<DateModified
+			val='2003-5-13 12:32:21.380' />
+		<DateOfEvent
+			val='200203141' />
+		<Description>
+			<StText
+				guid='5eec4b34-320c-436f-8a10-25cf16345917'>
+				<DateModified
+					val='2011-2-2 19:24:11.11' />
+				<Paragraphs>
+					<StTxtPara
+						guid='4e6bd967-355b-4918-9c78-4e3f9b38f43c'>
+					</StTxtPara>
+				</Paragraphs>
+			</StText>
+		</Description>
+	</RnGenericRec>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string johnThey =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='db4bc870-40b5-4e7d-b55a-ddb33f0ddd52'>
+		<DateCreated
+			val='2002-3-14 6:0:0.0' />
+		<DateModified
+			val='2003-5-13 12:32:21.380' />
+		<DateOfEvent
+			val='200203141' />
+		<Description>
+			<StText
+				guid='5eec4b34-320c-436f-8a10-25cf16345917'>
+				<DateModified
+					val='2011-2-2 19:24:11.11' />
+				<Paragraphs>
+					<StTxtPara
+						guid='4e6bd967-355b-4918-9c78-4e3f9b38f43c'>
+						<Contents>
+							<Str>
+								<Run
+									ws='en'>New stuff.</Run>
+							</Str>
+						</Contents>
+					</StTxtPara>
+				</Paragraphs>
+			</StText>
+		</Description>
+	</RnGenericRec>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string jasonWe = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			var result = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, jasonWe,
+				_commonFile, ancestor,
+				_theirFile, johnThey,
+				new List<string> { @"Anthropology/RnGenericRec[@guid=""db4bc870-40b5-4e7d-b55a-ddb33f0ddd52""]" }, null,
+				1, new List<Type> { typeof(RemovedVsEditedElementConflict) },
+				0, new List<Type>());
+			Assert.IsTrue(result.Contains("New stuff."));
+		}
+
+		[Test]
+		public void They_JasonDeletedRecordWe_JohnAddedDescription()
+		{
+			const string ancestor = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='db4bc870-40b5-4e7d-b55a-ddb33f0ddd52'>
+		<DateCreated
+			val='2002-3-14 6:0:0.0' />
+		<DateModified
+			val='2003-5-13 12:32:21.380' />
+		<DateOfEvent
+			val='200203141' />
+		<Description>
+			<StText
+				guid='5eec4b34-320c-436f-8a10-25cf16345917'>
+				<DateModified
+					val='2011-2-2 19:24:11.11' />
+				<Paragraphs>
+					<StTxtPara
+						guid='4e6bd967-355b-4918-9c78-4e3f9b38f43c'>
+					</StTxtPara>
+				</Paragraphs>
+			</StText>
+		</Description>
+	</RnGenericRec>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string johnWe =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='db4bc870-40b5-4e7d-b55a-ddb33f0ddd52'>
+		<DateCreated
+			val='2002-3-14 6:0:0.0' />
+		<DateModified
+			val='2003-5-13 12:32:21.380' />
+		<DateOfEvent
+			val='200203141' />
+		<Description>
+			<StText
+				guid='5eec4b34-320c-436f-8a10-25cf16345917'>
+				<DateModified
+					val='2011-2-2 19:24:11.11' />
+				<Paragraphs>
+					<StTxtPara
+						guid='4e6bd967-355b-4918-9c78-4e3f9b38f43c'>
+						<Contents>
+							<Str>
+								<Run
+									ws='en'>New stuff.</Run>
+							</Str>
+						</Contents>
+					</StTxtPara>
+				</Paragraphs>
+			</StText>
+		</Description>
+	</RnGenericRec>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string jasonThey = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+	<RnGenericRec
+		guid='dbad582e-1e2d-4bc6-ac9a-e31e03d6903d'>
+	</RnGenericRec>
+</Anthropology>";
+
+			var result = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, johnWe,
+				_commonFile, ancestor,
+				_theirFile, jasonThey,
+				new List<string> { @"Anthropology/RnGenericRec[@guid=""db4bc870-40b5-4e7d-b55a-ddb33f0ddd52""]" }, null,
+				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
+				0, new List<Type>());
+			Assert.IsTrue(result.Contains("New stuff."));
 		}
 	}
 }
