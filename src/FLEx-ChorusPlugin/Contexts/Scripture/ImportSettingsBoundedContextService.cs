@@ -15,7 +15,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 										 XmlReaderSettings readerSettings, string scriptureBaseDir,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
 										 Dictionary<string, string> guidToClassMapping,
-										 Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 										 HashSet<string> skipWriteEmptyClassFiles)
 		{
 			if (importSettingsProperty == null)
@@ -34,10 +33,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[styleGuid];
 				var importSetting = classData[className][styleGuid];
 
-				CmObjectNestingService.NestObject(importSetting,
+				CmObjectNestingService.NestObject(false, importSetting,
 												  new Dictionary<string, HashSet<string>>(),
 												  classData,
-												  interestingPropertiesCache,
 												  guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -56,7 +54,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -73,7 +70,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
 			{
 				CmObjectFlatteningService.FlattenObject(sortedData,
-					interestingPropertiesCache,
 					importSettingsElement,
 					scrOwningGuid); // Restore 'ownerguid' to importSettingsElement.
 				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

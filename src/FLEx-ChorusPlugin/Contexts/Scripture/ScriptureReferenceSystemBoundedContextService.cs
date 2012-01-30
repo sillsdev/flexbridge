@@ -19,7 +19,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			SortedDictionary<string, XElement> sortedInstanceData;
@@ -33,10 +32,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			var refSystem = sortedInstanceData.First().Value;
 
-			CmObjectNestingService.NestObject(refSystem,
+			CmObjectNestingService.NestObject(false, refSystem,
 				new Dictionary<string, HashSet<string>>(),
 				classData,
-				interestingPropertiesCache,
 				guidToClassMapping);
 
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
@@ -50,7 +48,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -58,7 +55,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename));
 			CmObjectFlatteningService.FlattenObject(sortedData,
-				interestingPropertiesCache,
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
 				null); // Not owned.
 		}

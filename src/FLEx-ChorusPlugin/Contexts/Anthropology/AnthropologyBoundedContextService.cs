@@ -27,7 +27,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		internal static void NestContext(XmlReaderSettings readerSettings, string anthropologyDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			SortedDictionary<string, XElement> sortedInstanceData;
@@ -42,10 +41,9 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				var notebookElement = sortedInstanceData.Values.First();
 				headerElement.Add(notebookElement);
 
-				CmObjectNestingService.NestObject(notebookElement,
+				CmObjectNestingService.NestObject(false, notebookElement,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
-					interestingPropertiesCache,
 					guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -72,7 +70,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
 			NestLists(classData,
 				guidToClassMapping,
-				interestingPropertiesCache,
 				classData["CmPossibilityList"],
 				headerElement,
 				langProj,
@@ -101,7 +98,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string anthropologyBaseDir)
 		{
 			var langProjElement = highLevelData["LangProject"];
@@ -123,7 +119,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 							headerChildElement.Element("Records").Add(records);
 						CmObjectFlatteningService.FlattenObject(sortedData,
-							interestingPropertiesCache,
 							headerChildElement,
 							langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to notebook.
 						break;
@@ -139,7 +134,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "TimeOfDay":
 						var listElement = headerChildElement.Element("CmPossibilityList");
 						RestoreLangProjListObjsurElement(langProjElement, listElement);
-						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, listElement, langProjGuid); // Restore 'ownerguid' to list.
+						CmObjectFlatteningService.FlattenObject(sortedData, listElement, langProjGuid); // Restore 'ownerguid' to list.
 						break;
 				}
 			}
@@ -165,7 +160,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			IDictionary<string, XElement> posLists,
 			XContainer headerElement,
 			XContainer langProjElement,
@@ -181,11 +175,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
 				// Remove 'ownerguid'.
 				listElement.Attribute(SharedConstants.OwnerGuid).Remove();
-				CmObjectNestingService.NestObject(listElement,
-												  exceptions,
-												  classData,
-												  interestingPropertiesCache,
-												  guidToClassMapping);
+				CmObjectNestingService.NestObject(false,
+					listElement,
+					exceptions,
+					classData,
+					guidToClassMapping);
 				listPropElement.RemoveNodes(); // Remove the single list objsur element.
 				headerElement.Add(new XElement(propName, listElement));
 			}

@@ -6,6 +6,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	internal sealed class FieldWorksCommonMergeStrategy : IMergeStrategy
 	{
+		private readonly MergeSituation _mergeSituation;
 		private readonly MetadataCache _mdc;
 		private readonly XmlMerger _merger;
 
@@ -14,6 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		internal FieldWorksCommonMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
+			_mergeSituation = mergeSituation;
 			_mdc = mdc;
 			_merger = new XmlMerger(mergeSituation);
 			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
@@ -24,39 +26,43 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			var extantNode = ourEntry ?? theirEntry ?? commonEntry;
-			if (extantNode.Name == "ScrDraft")
+
+			switch (extantNode.Name)
 			{
-				// Immutable, so common, if different.
-				if ((ourEntry != null && ourEntry.OuterXml != commonEntry.OuterXml) || (theirEntry != null && theirEntry.OuterXml != commonEntry.OuterXml))
-				{
-					return commonEntry.OuterXml;
-				}
-				// I (RBR) don't think both can be null, but....
-				if (ourEntry == null && theirEntry == null)
-					return commonEntry.OuterXml;
-			}
-			if (extantNode.Name == SharedConstants.Header)
-			{
-				if (ourEntry != null)
-				{
-					foreach (XmlNode headerChild in ourEntry.ChildNodes)
-						FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name), commonEntry.SelectSingleNode(headerChild.Name));
-				}
-				else
-				{
-					foreach (XmlNode headerChild in theirEntry.ChildNodes)
-						FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, null, headerChild, commonEntry.SelectSingleNode(headerChild.Name));
-				}
-			}
-			else
-			{
-				FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, ourEntry, theirEntry, commonEntry);
+				default:
+					FieldWorksMergingServices.MergeTimestamps(ourEntry, theirEntry);
+					break;
+				case "ScrDraft":
+					// Immutable, so common, if different.
+					if ((ourEntry != null && ourEntry.OuterXml != commonEntry.OuterXml) || (theirEntry != null && theirEntry.OuterXml != commonEntry.OuterXml))
+					{
+						return commonEntry.OuterXml;
+					}
+					// I (RBR) don't think both can be null, but....
+					if (ourEntry == null && theirEntry == null)
+						return commonEntry.OuterXml;
+					break;
+				case SharedConstants.Header:
+					if (ourEntry != null)
+					{
+						foreach (XmlNode headerChild in ourEntry.ChildNodes)
+						{
+							if (_mdc.GetClassInfo(headerChild.Name) == null)
+							{
+								// Not a class, as what is found in the Anthro file. Go another level deeper to the class data.
+								// This node only has one child, and it is class data.
+								var dataCarryingChild = headerChild.FirstChild;
+								FieldWorksMergingServices.MergeTimestamps(dataCarryingChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild);
+							}
+							else
+							{
+								FieldWorksMergingServices.MergeTimestamps(headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name));
+							}
+						}
+					}
+					break;
 			}
 
-			if (ourEntry == null)
-				return theirEntry.OuterXml;
-			if (theirEntry == null)
-				return ourEntry.OuterXml;
 			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
 		}
 

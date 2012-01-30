@@ -12,11 +12,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	internal static class CmObjectFlatteningService
 	{
 		internal static void FlattenObject(SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			XElement element, string ownerguid)
 		{
 			if (sortedData == null) throw new ArgumentNullException("sortedData");
-			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (element == null) throw new ArgumentNullException("element");
 
 			// No, since unowned stuff will feed a null.
@@ -35,9 +33,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject.
-			var className = element.Name.LocalName;
+			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq;
+			var className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
 			element.Name = SharedConstants.RtTag;
-			element.Add(new XAttribute(SharedConstants.Class, className));
+			if (!isOwnSeqNode)
+				element.Add(new XAttribute(SharedConstants.Class, className));
 			//if (element.Attribute(SharedConstants.OwnerGuid) == null)
 			if (ownerguid != null) // && element.Attribute(SharedConstants.OwnerGuid) == null)
 				element.Add(new XAttribute(SharedConstants.OwnerGuid, ownerguid));
@@ -49,7 +49,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			element.Attributes().Remove();
 			element.Add(sortedAttrs.Values);
 
-			var owningPropsForClass = interestingPropertiesCache[className][SharedConstants.Owning];
+			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
+			// Restore any ref seq props to have 'objsur' elements.
+			var refSeqPropNames = (from referenceSequenceProperty in classInfo.AllReferenceSequenceProperties
+								  select referenceSequenceProperty.PropertyName).ToList();
+
+			var owningPropsForClass = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			if (owningPropsForClass.Count == 0)
 				return;
 
@@ -58,7 +63,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
 				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningPropsForClass.Contains(propName))
+				{
+					if (refSeqPropNames.Contains(propName))
+					{
+						foreach (var refSeqNode in propertyElement.Elements(SharedConstants.Refseq))
+						{
+							refSeqNode.Name = SharedConstants.Objsur;
+						}
+					}
 					continue;
+				}
 				if (!propertyElement.HasElements)
 					continue;
 				foreach (var ownedElement in propertyElement.Elements().ToArray())
@@ -71,7 +85,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 															   new XAttribute("t", "o"));
 					propertyElement.Add(replacementOjSurElement);
 					// Move down the nested set of owned objects, and do the same.
-					FlattenObject(sortedData, interestingPropertiesCache, ownedElement, elementGuid);
+					FlattenObject(sortedData, ownedElement, elementGuid);
 				}
 			}
 		}

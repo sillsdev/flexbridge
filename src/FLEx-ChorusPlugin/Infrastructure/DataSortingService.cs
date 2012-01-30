@@ -13,14 +13,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal static class DataSortingService
 	{
-		internal static void SortEntireFile(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XmlWriter writer, string pathname)
+		internal static void SortEntireFile(XmlWriter writer, string pathname)
 		{
 			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 
 			// Step 2: Sort and rewrite file.
 			using (var fastSplitter = new FastXmlElementSplitter(pathname))
 			{
-				var sortedObjects = new SortedDictionary<string, string>();
+				var sortedObjects = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 				bool foundOptionalFirstElement;
 				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					else
 					{
 						// Step 2B: Sort main CmObject record.
-						var sortedMainObject = SortMainElement(interestingPropertiesCache, record);
+						var sortedMainObject = SortMainElement(record);
 						sortedObjects.Add(sortedMainObject.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), sortedMainObject.ToString());
 					}
 				}
@@ -48,13 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var customPropertiesElement = XElement.Parse(optionalFirstElement);
 
-			SortCustomPropertiesRecord(customPropertiesElement);
-
-			return customPropertiesElement;
-		}
-
-		internal static void SortCustomPropertiesRecord(XElement customPropertiesElement)
-		{
+			//SortCustomPropertiesRecord(customPropertiesElement);
 			// <CustomField name="Certified" class="WfiWordform" type="Boolean" ... />
 
 			// 1. Sort child elements by using a compound key of 'class'+'name'.
@@ -72,36 +66,27 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Sort all attributes.
 			SortAttributes(customPropertiesElement);
+
+			return customPropertiesElement;
 		}
 
-		internal static XElement SortMainElement(Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string rootData)
+		internal static XElement SortMainElement(string rootData)
 		{
 			var sortedResult = XElement.Parse(rootData);
 
-			SortMainElement(interestingPropertiesCache, sortedResult);
+			SortMainElement(sortedResult);
 
 			return sortedResult;
 		}
 
-		internal static void SortMainElement(IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement rootData)
+		internal static void SortMainElement(XElement rootData)
 		{
 			var className = rootData.Attribute(SharedConstants.Class).Value;
+			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
 
 			// Get collection properties for the class.
-			Dictionary<string, HashSet<string>> sortablePropertiesForClass;
-			if (!interestingPropertiesCache.TryGetValue(className, out sortablePropertiesForClass))
-			{
-				// Appears to be a newly obsolete instance of 'className'.
-				sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
-												{
-													{SharedConstants.Collections, new HashSet<string>()},
-													{SharedConstants.MultiAlt, new HashSet<string>()}
-												};
-				interestingPropertiesCache.Add(className, sortablePropertiesForClass);
-			}
-
-			var collData = sortablePropertiesForClass[SharedConstants.Collections];
-			var multiAltData = sortablePropertiesForClass[SharedConstants.MultiAlt];
+			var collData = (from collProp in classInfo.AllCollectionProperties select collProp.PropertyName).ToList();
+			var multiAltData = (from multiAltProp in classInfo.AllMultiAltProperties select multiAltProp.PropertyName).ToList();
 
 			var sortedPropertyElements = new SortedDictionary<string, XElement>();
 			foreach (var propertyElement in rootData.Elements())
@@ -192,64 +177,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, XElement restorableElement)
+		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, XElement restorableElement)
 		{
-			SortMainElement(interestingPropertiesCache, restorableElement);
+			SortMainElement(restorableElement);
 			sortedData.Add(restorableElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), restorableElement);
-		}
-
-		internal static void CacheProperty(IDictionary<string, HashSet<string>> interestingPropertiesForClass, FdoPropertyInfo propertyInfo)
-		{
-			var collData = interestingPropertiesForClass[SharedConstants.Collections];
-			var multiAltData = interestingPropertiesForClass[SharedConstants.MultiAlt];
-			var owningData = interestingPropertiesForClass[SharedConstants.Owning];
-			switch (propertyInfo.DataType)
-			{
-				case DataType.OwningSequence: // Fall through.
-				case DataType.OwningAtomic:
-					owningData.Add(propertyInfo.PropertyName);
-					break;
-				case DataType.OwningCollection:
-					owningData.Add(propertyInfo.PropertyName);
-					collData.Add(propertyInfo.PropertyName);
-					break;
-				case DataType.ReferenceCollection:
-					collData.Add(propertyInfo.PropertyName);
-					break;
-				case DataType.MultiUnicode:
-				case DataType.MultiString:
-					multiAltData.Add(propertyInfo.PropertyName);
-					break;
-			}
-		}
-
-		internal static Dictionary<string, Dictionary<string, HashSet<string>>> CacheInterestingProperties(MetadataCache mdc)
-		{
-			var concreteClasses = mdc.AllConcreteClasses.ToList();
-			var results = new Dictionary<string, Dictionary<string, HashSet<string>>>(concreteClasses.Count());
-
-			foreach (var concreteClass in concreteClasses)
-			{
-				Dictionary<string, HashSet<string>> sortablePropertiesForClass;
-				if (!results.TryGetValue(concreteClass.ClassName, out sortablePropertiesForClass))
-				{
-					// Appears to be a newly obsolete instance of 'className'.
-					sortablePropertiesForClass = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase)
-													{
-														{SharedConstants.Collections, new HashSet<string>()},
-														{SharedConstants.MultiAlt, new HashSet<string>()},
-														{SharedConstants.Owning, new HashSet<string>()}
-													};
-					results.Add(concreteClass.ClassName, sortablePropertiesForClass);
-				}
-
-				foreach (var propertyInfo in concreteClass.AllProperties)
-				{
-					CacheProperty(sortablePropertiesForClass, propertyInfo);
-				}
-			}
-
-			return results;
 		}
 	}
 }

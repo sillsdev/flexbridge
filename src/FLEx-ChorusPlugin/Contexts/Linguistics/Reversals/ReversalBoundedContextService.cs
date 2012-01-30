@@ -37,7 +37,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			SortedDictionary<string, XElement> sortedInstanceData;
@@ -59,10 +58,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var ws = revIndex.Element("WritingSystem").Element("Uni").Value;
 				var reversalFilename = ws + ".reversal";
 
-				CmObjectNestingService.NestObject(revIndex,
+				CmObjectNestingService.NestObject(false, revIndex,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
-					interestingPropertiesCache,
 					guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -94,7 +92,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string linguisticsBaseDir)
 		{
 			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
@@ -118,7 +115,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 					revIdx.Element("Entries").Add(records); // NB: These full objects will be turned into regular objsur elements in the flattening process.
 				CmObjectFlatteningService.FlattenObject(sortedData,
-					interestingPropertiesCache,
 					revIdx,
 					lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
 				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

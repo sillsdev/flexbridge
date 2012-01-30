@@ -69,6 +69,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
+
+			// Add element for "refseq"
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
+			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
+			// Add element for "ownseq"
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
+			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
+			// Add element for "objsur".
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, "t" });
+			sharedElementStrategies.Add(SharedConstants.Objsur, elementStrategy);
 		}
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
@@ -268,9 +281,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
-			var headerStrategy = CreateSingletonElementType(true);
-			headerStrategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy(SharedConstants.Header, headerStrategy);
+			BootstrapHeaderElementNonClassStrategies(strategiesForMerger);
 
 			var classStrat = new ElementStrategy(false)
 								{
@@ -294,49 +305,53 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var propStrategy = isCustom
 										? ElementStrategy.CreateForKeyedElement(SharedConstants.Name, false)
 										: ElementStrategy.CreateSingletonElement();
-					switch (propertyInfo.DataType)
+					if (propertyInfo.DataType == DataType.Time)
 					{
-						case DataType.OwningCollection:
-							propStrategy.IsImmutable = false;
-							break;
-							// These two are immutable, in a manner of speaking.
-							// DateCreated is honestly, and the other two are because 'ours' and 'theirs' have been made to be the same already.
-						case DataType.Time: // Fall through // DateTime
-						case DataType.ReferenceCollection:
-							propStrategy.IsImmutable = true;
-							break;
-
-						case DataType.OwningSequence: // Fall through. // TODO: Sort out ownership issues for conflicts.
-							break;
-						case DataType.ReferenceSequence:
-							// Use IsAtomic for whole property.
-							//In new system, this prevents
-							propStrategy.IsAtomic = true;
-							break;
-
-						case DataType.OwningAtomic: // Fall through. // TODO: Think about implications of a conflict.
-						case DataType.ReferenceAtomic:
-
-							// Other data types
-						case DataType.MultiUnicode:
-						case DataType.MultiString:
-						case DataType.Unicode: // Ordinary C# string
-						case DataType.String: // TsString
-						case DataType.Binary:
-						case DataType.TextPropBinary:
-							// NB: Booleans can never be in conflict in a 3-way merge environment.
-							// One or the other can toggle the bool, so the one changing it 'wins'.
-							// If both change it then it's no big deal either.
-						case DataType.Boolean: // Fall through.
-						case DataType.GenDate: // Fall through.
-						case DataType.Guid: // Fall through.
-						case DataType.Integer: // Fall through.
-							// Simple, mutable properties.
-							break;
+						propStrategy.IsImmutable = true; // Immutable, because we have pre-merged them to be so.
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
 			}
+		}
+
+		private static void BootstrapHeaderElementNonClassStrategies(MergeStrategies strategiesForMerger)
+		{
+			var strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy(SharedConstants.Header, strategy);
+
+			// Add all anthro pos list elements.
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("AnthroList", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("ConfidenceLevels", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Education", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Locations", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("People", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Positions", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Restrictions", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Roles", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Status", strategy);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("TimeOfDay", strategy);
+
+			// As of 26 Jan 2012, no other context has non-class wrapper elements.
 		}
 
 		internal static void BootstrapSystem(MetadataCache mdc, Dictionary<string, ElementStrategy> sharedElementStrategies, Dictionary<string, XmlMerger> mergers, MergeSituation mergeSituation)

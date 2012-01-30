@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				RestoreFiles(writer, readerSettings, directory);
 		}
 
-		internal static void RestoreOldStyleData(SortedDictionary<string, XElement> sortedData, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, SortedDictionary<string, XElement> highLevelData, string pathRoot)
+		internal static void RestoreOldStyleData(SortedDictionary<string, XElement> sortedData, SortedDictionary<string, XElement> highLevelData, string pathRoot)
 		{
 			// NB: These are flattened in reverse order from that of nesting, since I think 'sortedData' will be need for re-establishing some distal properties.
 			// TODO: When 'sortedData' is a parm to all Flatten calls, then the loop here can go away.
@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 							break;
 					}
 
-					DataSortingService.SortAndStoreElement(sortedData, interestingPropertiesCache, rtElement);
+					DataSortingService.SortAndStoreElement(sortedData, rtElement);
 				}
 			}
 		}

@@ -26,6 +26,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			_mdc = MetadataCache.MdCache;
 			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			_mdc.ResetCaches();
 		}
 
 		[TestFixtureTearDown]

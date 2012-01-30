@@ -17,7 +17,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			XmlReaderSettings readerSettings, string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -33,10 +32,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[checkListGuid];
 				var checkList = classData[className][checkListGuid];
 
-				CmObjectNestingService.NestObject(checkList,
+				CmObjectNestingService.NestObject(false, checkList,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
-					interestingPropertiesCache,
 					guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -56,7 +54,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -71,7 +68,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
 				CmObjectFlatteningService.FlattenObject(sortedData,
-					interestingPropertiesCache,
 					listElement,
 					langProjGuid); // Restore 'ownerguid' to list.
 				var listGuid = listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

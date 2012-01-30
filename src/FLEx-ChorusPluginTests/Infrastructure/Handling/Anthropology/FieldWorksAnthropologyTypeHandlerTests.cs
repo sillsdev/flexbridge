@@ -205,6 +205,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		[Test]
 		public void We_JasonDeletedRecordThey_JohnAddedDescription()
 		{
+			// Part 1 of 2 of the DN merge failure: https://www.pivotaltracker.com/story/show/23829153
 			const string ancestor = @"<?xml version='1.0' encoding='utf-8'?>
 <Anthropology>
 <header>
@@ -301,6 +302,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		[Test]
 		public void They_JasonDeletedRecordWe_JohnAddedDescription()
 		{
+			// Part 1 of 2 of the DN merge failure: https://www.pivotaltracker.com/story/show/23829153
 			const string ancestor = @"<?xml version='1.0' encoding='utf-8'?>
 <Anthropology>
 <header>
@@ -392,6 +394,208 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
 				0, new List<Type>());
 			Assert.IsTrue(result.Contains("New stuff."));
+		}
+
+		[Test]
+		public void WeRemovedStuffAndTheyEditedItInAListInHeader()
+		{
+			// Part 2 of 2 of the DN merge failure: https://www.pivotaltracker.com/story/show/23829153
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad6'>
+						<Name>
+							<AUni
+								ws='en'>Project Variables</AUni>
+						</Name>
+					</CmAnthroItem>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			const string ourContent = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			const string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad6'>
+						<Name>
+							<AUni
+								ws='en'>Their Deletion Prevention Change</AUni>
+						</Name>
+					</CmAnthroItem>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(RemovedVsEditedElementConflict) },
+				0, new List<Type>());
+			Assert.IsTrue(results.Contains("Their Deletion Prevention Change"));
+			Assert.IsTrue(results.Contains("Project Stable Things"));
+		}
+
+		[Test]
+		public void WeEditedStuffAndTheyRemovedItInAListInHeader()
+		{
+			// Part 2 of 2 of the DN merge failure: https://www.pivotaltracker.com/story/show/23829153
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad6'>
+						<Name>
+							<AUni
+								ws='en'>Project Variables</AUni>
+						</Name>
+					</CmAnthroItem>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			const string ourContent = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad6'>
+						<Name>
+							<AUni
+								ws='en'>Our Deletion Prevention Change</AUni>
+						</Name>
+					</CmAnthroItem>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+			const string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+		<AnthroList>
+			<CmPossibilityList
+				guid='d87ba7c6-ea5e-11de-9dd2-0013722f8dec'>
+				<Possibilities>
+					<CmAnthroItem
+						guid='27df36c2-3a78-436b-b1ff-fd632039cad7'>
+						<Name>
+							<AUni
+								ws='en'>Project Stable Things</AUni>
+						</Name>
+					</CmAnthroItem>
+				</Possibilities>
+			</CmPossibilityList>
+		</AnthroList>
+</header>
+<RnGenericRec guid='oldie'>
+</RnGenericRec>
+</Anthropology>";
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
+				0, new List<Type>());
+			Assert.IsTrue(results.Contains("Our Deletion Prevention Change"));
+			Assert.IsTrue(results.Contains("Project Stable Things"));
 		}
 	}
 }

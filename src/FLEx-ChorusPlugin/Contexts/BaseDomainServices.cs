@@ -16,18 +16,17 @@ namespace FLEx_ChorusPlugin.Contexts
 		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
 											 XmlReaderSettings readerSettings,
 											 Dictionary<string, SortedDictionary<string, XElement>> classData,
-											 Dictionary<string, string> guidToClassMapping,
-											 Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache)
+											 Dictionary<string, string> guidToClassMapping)
 		{
 			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
 			var skipwriteEmptyClassFiles = new HashSet<string>();
 
 			// Does both old and new for a while yet.
-			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			LinguisticsDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			// Does only new.
-			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			AnthropologyDomainServices.WriteNestedDomainData(readerSettings, pathRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			// Does only new.
-			ScriptureDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, interestingPropertiesCache, skipwriteEmptyClassFiles);
+			ScriptureDomainServices.WriteNestedDomainData(readerSettings, pathRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 
 			// Remove the data that may be in multiple bounded Contexts.
 			// Eventually, there ought not be an need for writing the leftovers in the base folder,
@@ -53,17 +52,17 @@ namespace FLEx_ChorusPlugin.Contexts
 			OldStyleDomainServices.WriteData(readerSettings, pathRoot, mdc, classData, skipwriteEmptyClassFiles);
 		}
 
-		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, string pathRoot)
+		internal static void RestoreDomainData(XmlWriter writer, XmlReaderSettings readerSettings, string pathRoot)
 		{
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
 			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
-			OldStyleDomainServices.RestoreOldStyleData(sortedData, interestingPropertiesCache, highLevelData, pathRoot);
+			OldStyleDomainServices.RestoreOldStyleData(sortedData, highLevelData, pathRoot);
 
-			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
-			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
-			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, interestingPropertiesCache, pathRoot);
+			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
+			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
+			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
 
 			foreach (var rtElement in sortedData.Values)
 				FileWriterService.WriteElement(writer, readerSettings, rtElement);

@@ -34,7 +34,7 @@ namespace FwdataTestApp
 			_btnNest.Enabled = true;
 		}
 
-		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, XElement>> unownedObjects, IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, string record)
+		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, XElement>> unownedObjects, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, string record)
 		{
 			var rtElement = XElement.Parse(record);
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
@@ -60,7 +60,7 @@ namespace FwdataTestApp
 			}
 
 			// 2. Sort <rt>
-			DataSortingService.SortMainElement(sortablePropertiesCache, rtElement);
+			DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
 			SortedDictionary<string, XElement> recordData;
@@ -105,24 +105,22 @@ namespace FwdataTestApp
 						verifyTimer.Start();
 						// Figure out how to do this, but it needs to compare .orig with srcFwdataPathname.
 						var mdc = MetadataCache.TestOnlyNewCache; // Want it fresh.
-						var interestingPropertiesCacheSrc = DataSortingService.CacheInterestingProperties(mdc);
 						var unownedObjectsSrc = new Dictionary<string, SortedDictionary<string, XElement>>(200);
 						// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
 						// The inner dictionary has a caseless guid as the key and the byte array as the value.
 						var classDataSrc = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
 						var guidToClassMappingSrc = new Dictionary<string, string>();
-						TokenizeFile(mdc, srcFwdataPathname + ".orig", interestingPropertiesCacheSrc, unownedObjectsSrc, classDataSrc, guidToClassMappingSrc);
+						TokenizeFile(mdc, srcFwdataPathname + ".orig", unownedObjectsSrc, classDataSrc, guidToClassMappingSrc);
 						sb.AppendFormat("Number of records: {0}", guidToClassMappingSrc.Count);
 						sb.AppendLine();
 
 						mdc = MetadataCache.TestOnlyNewCache; // Want it fresh.
-						var interestingPropertiesCacheTgt = DataSortingService.CacheInterestingProperties(mdc);
 						var unownedObjectsTgt = new Dictionary<string, SortedDictionary<string, XElement>>(200);
 						// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
 						// The inner dictionary has a caseless guid as the key and the byte array as the value.
 						var classDataTgt = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
 						var guidToClassMappingTgt = new Dictionary<string, string>();
-						TokenizeFile(mdc, srcFwdataPathname, interestingPropertiesCacheTgt, unownedObjectsTgt, classDataTgt, guidToClassMappingTgt);
+						TokenizeFile(mdc, srcFwdataPathname, unownedObjectsTgt, classDataTgt, guidToClassMappingTgt);
 
 						// Deal with guid+class mappings.
 						if (guidToClassMappingSrc.Count != guidToClassMappingTgt.Count)
@@ -257,13 +255,12 @@ namespace FwdataTestApp
 		private static void NestFile(string srcFwdataPathname)
 		{
 			var mdc = MetadataCache.TestOnlyNewCache; // Want it fresh.
-			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 			var unownedObjects = new Dictionary<string, SortedDictionary<string, XElement>>(200);
 			// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
 			var guidToClassMapping = new Dictionary<string, string>();
-			TokenizeFile(mdc, srcFwdataPathname, interestingPropertiesCache, unownedObjects, classData, guidToClassMapping);
+			TokenizeFile(mdc, srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
 
 			var root = new XElement("root");
 			var nestedDoc = new XDocument(
@@ -277,17 +274,16 @@ namespace FwdataTestApp
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
 					classElement.Add(unownedElement);
-					CmObjectNestingService.NestObject(unownedElement,
+					CmObjectNestingService.NestObject(false, unownedElement,
 												  new Dictionary<string, HashSet<string>>(),
 												  classData,
-												  interestingPropertiesCache,
 												  guidToClassMapping);}
 				root.Add(classElement);
 			}
 			nestedDoc.Save(srcFwdataPathname + ".nested");
 		}
 
-		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache, Dictionary<string, SortedDictionary<string, XElement>> unownedObjects, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, SortedDictionary<string, XElement>> unownedObjects, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			using (var fastSplitter = new FastXmlElementSplitter(srcFwdataPathname))
 			{
@@ -305,7 +301,7 @@ namespace FwdataTestApp
 							var className = propElement.Attribute(SharedConstants.Class).Value;
 							var propName = propElement.Attribute(SharedConstants.Name).Value;
 							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = FileWriterService.AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
+							var adjustedTypeValue = FileWriterService.AdjustedPropertyType(className, propName, typeAttr.Value);
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
 							var customProp = new FdoPropertyInfo(
@@ -313,17 +309,17 @@ namespace FwdataTestApp
 								typeAttr.Value,
 								true);
 							// TODO: TLP has a custom prop that has an abstract class, and its className is *not* in interestingPropertiesCache.
-							DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
 							mdc.AddCustomPropInfo(
 								className,
 								customProp);
 						}
+						mdc.ResetCaches();
 						//optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						foundOptionalFirstElement = false;
 					}
 					else
 					{
-						CacheDataRecord(unownedObjects, interestingPropertiesCache, classData, guidToClassMapping, record);
+						CacheDataRecord(unownedObjects, classData, guidToClassMapping, record);
 					}
 				}
 			}

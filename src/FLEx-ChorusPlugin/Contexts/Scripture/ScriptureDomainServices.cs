@@ -17,7 +17,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 /*
@@ -48,37 +47,36 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
-			ScriptureReferenceSystemBoundedContextService.NestContext(readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ScriptureReferenceSystemBoundedContextService.NestContext(readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			var langProj = classData["LangProject"].Values.First();
-			ScriptureCheckListsBoundedContextService.NestContext(langProj, readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ScriptureCheckListsBoundedContextService.NestContext(langProj, readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 
 			// These are intentionally out of order from the above numbering scheme.
 			var scripture = classData[SharedConstants.Scripture].Values.First();
-			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
-			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
-			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
-			ScriptureBoundedContextService.NestContext(langProj, scripture, readerSettings, scriptureBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureBoundedContextService.NestContext(langProj, scripture, readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
 		internal static void FlattenDomain(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string rootDir)
 		{
 			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Scripture);
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
-			ScriptureReferenceSystemBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
-			ScriptureCheckListsBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
+			ScriptureReferenceSystemBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ScriptureCheckListsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 
 			// Have to flatten the main Scripture context, before the rest, since the main context owns the other four.
 			// The main obj gets stuffed into highLevelData, so the owned stuff can have owner guid restored.
-			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
-			ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
-			ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
-			ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, scriptureBaseDir);
+			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)

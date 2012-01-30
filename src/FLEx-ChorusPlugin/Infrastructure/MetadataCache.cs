@@ -14,8 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	{
 		private const int StartingModelVersion = 7000044;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
-		private readonly IEnumerable<FdoClassInfo> _concreteClasses;
-		private readonly Dictionary<string, FdoClassInfo> _classesWithCollectionProperties;
+		private IEnumerable<FdoClassInfo> _concreteClasses;
 		private static MetadataCache _mdc;
 
 		/// <summary>
@@ -25,18 +24,19 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			AddMainClassInfo();
 			SetSuperclasses();
+
+			ModelVersion = StartingModelVersion;
+
+			ResetCaches();
+		}
+
+		internal void ResetCaches()
+		{
 			_concreteClasses = new List<FdoClassInfo>(from classInfo in _classes.Values
 													  where !classInfo.IsAbstract
 													  select classInfo);
-			_classesWithCollectionProperties = new Dictionary<string, FdoClassInfo>(_concreteClasses.Count());
-			foreach (var classWithCollectionProp in from classInfo in _classes.Values
-													where classInfo.AllCollectionProperties.Any()
-													select classInfo)
-			{
-				_classesWithCollectionProperties.Add(classWithCollectionProp.ClassName, classWithCollectionProp);
-			}
 
-			ModelVersion = StartingModelVersion;
+			_classes["CmObject"].ResetCaches(new Dictionary<string, FdoClassInfo>(_classes));
 		}
 
 		internal static MetadataCache MdCache
@@ -132,6 +132,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				}
 			}
 
+			ResetCaches();
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
@@ -164,13 +165,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			get { return _concreteClasses; }
 		}
 
-		/// <summary>
-		/// Return classes that have collection properties.
-		/// </summary>
-		internal IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
-		{
-			get { return _classesWithCollectionProperties; }
-		}
+		///// <summary>
+		///// Return classes that have collection properties.
+		///// </summary>
+		//internal IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
+		//{
+		//    get { return _classesWithCollectionProperties; }
+		//}
 
 		private FdoClassInfo CreateNewClass(FdoClassInfo superclass, string newClassName, bool isAbtract)
 		{
@@ -220,6 +221,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));
 				}
 			}
+			ResetCaches();
 		}
 
 		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
@@ -405,36 +407,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Structure", DataType.Integer));
 			clsInfo.AddProperty(new FdoPropertyInfo("Function", DataType.Integer));
 			clsInfo.AddProperty(new FdoPropertyInfo("Usage", DataType.MultiUnicode));
-
-			// Removed in DM31.
-			//clsInfo = new FdoClassInfo("UserView", "CmObject");
-			//_classes.Add("UserView", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Name", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Type", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("App", DataType.Guid));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Records", DataType.OwningCollection));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Details", DataType.Binary));
-			//clsInfo.AddProperty(new FdoPropertyInfo("System", DataType.Boolean));
-			//clsInfo.AddProperty(new FdoPropertyInfo("SubType", DataType.Integer));
-
-			//clsInfo = new FdoClassInfo("UserViewRec", "CmObject");
-			//_classes.Add("UserViewRec", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Clsid", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Level", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Fields", DataType.OwningSequence));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Details", DataType.Binary));
-
-			//clsInfo = new FdoClassInfo("UserViewField", "CmObject");
-			//_classes.Add("UserViewField", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Label", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("HelpString", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Type", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Flid", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Required", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Style", DataType.Unicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("PossList", DataType.ReferenceAtomic));
-			//clsInfo.AddProperty(new FdoPropertyInfo("WritingSystem", DataType.Unicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("WsSelector", DataType.Integer));
 
 			clsInfo = new FdoClassInfo("CmOverlay", "CmObject");
 			_classes.Add("CmOverlay", clsInfo);
@@ -966,16 +938,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("MainEntriesOrSenses", DataType.ReferenceSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("Comment", DataType.MultiString));
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotUseForParsing", DataType.Boolean));
-			//Removed DM41: clsInfo.AddProperty(new FdoPropertyInfo("ExcludeAsHeadword", DataType.Boolean));
 			clsInfo.AddProperty(new FdoPropertyInfo("LexemeForm", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("AlternateForms", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("Pronunciations", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("ImportResidue", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
 			clsInfo.AddProperty(new FdoPropertyInfo("EntryRefs", DataType.OwningSequence));
-			// Added DM 38
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
-			// Added DM41
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotShowMainEntryIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("ConstChartRow", "CmObject");
@@ -995,12 +964,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Reference", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("Translations", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
-			// Added DM 38
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("LexDb", "CmMajorObject");
 			_classes.Add("LexDb", clsInfo);
-			// Went away in DM 28 clsInfo.AddProperty(new FdoPropertyInfo("Entries", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("Appendixes", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("SenseTypes", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("UsageTypes", DataType.OwningAtomic));
@@ -1016,7 +983,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Resources", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("VariantEntryTypes", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("ComplexEntryTypes", DataType.OwningAtomic));
-			// Added DM 38
 			clsInfo.AddProperty(new FdoPropertyInfo("PublicationTypes", DataType.OwningAtomic));
 
 			clsInfo = new FdoClassInfo("ConstituentChartCellPart", true, "CmObject");
@@ -1089,7 +1055,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Pictures", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("ImportResidue", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
-			// Added DM 38
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("MoAdhocProhib", true, "CmObject");
@@ -1627,7 +1592,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Summary", DataType.MultiString));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
 			clsInfo.AddProperty(new FdoPropertyInfo("RefType", DataType.Integer));
-			// Added DM40
 			clsInfo.AddProperty(new FdoPropertyInfo("ShowComplexFormsIn", DataType.ReferenceSequence));
 
 			clsInfo = new FdoClassInfo("PhSegmentRule", "CmObject");
@@ -1710,7 +1674,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("DiscourseData", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("TextMarkupTags", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("PhFeatureSystem", DataType.OwningAtomic));
-			// Added in DM 38
+
 			clsInfo = new FdoClassInfo("VirtualOrdering", true, "CmObject");
 			_classes.Add("VirtualOrdering", clsInfo);
 			clsInfo.AddProperty(new FdoPropertyInfo("Source", DataType.ReferenceAtomic));

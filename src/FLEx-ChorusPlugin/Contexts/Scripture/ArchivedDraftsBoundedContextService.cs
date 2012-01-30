@@ -17,7 +17,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			XmlReaderSettings readerSettings, string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			if (archivedDraftsProperty == null)
@@ -35,10 +34,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[draftGuid];
 				var draft = classData[className][draftGuid];
 
-				CmObjectNestingService.NestObject(draft,
+				CmObjectNestingService.NestObject(false, draft,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
-					interestingPropertiesCache,
 					guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -57,7 +55,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -74,7 +71,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
 			{
 				CmObjectFlatteningService.FlattenObject(sortedData,
-					interestingPropertiesCache,
 					draftElement,
 					scrOwningGuid); // Restore 'ownerguid' to draftElement.
 				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

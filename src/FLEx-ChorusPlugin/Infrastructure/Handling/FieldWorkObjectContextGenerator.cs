@@ -24,6 +24,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					className = rtElement.Attribute(SharedConstants.Class).Value;
 					break;
 				default:
+					if (MetadataCache.MdCache.GetClassInfo(rtElement.Name.LocalName) == null)
+						return new ContextDescriptor("wrapper for class in header", "");
 					className = rtElement.Name.LocalName;
 					break;
 			}

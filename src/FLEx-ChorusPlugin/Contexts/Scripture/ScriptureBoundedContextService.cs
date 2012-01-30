@@ -14,16 +14,14 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 										 XmlReaderSettings readerSettings, string baseDirectory,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
 										 Dictionary<string, string> guidToClassMapping,
-										 Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 										 HashSet<string> skipWriteEmptyClassFiles)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
 			var scriptureBaseDir = baseDirectory;
 
-			CmObjectNestingService.NestObject(scriptureElement,
+			CmObjectNestingService.NestObject(false, scriptureElement,
 				new Dictionary<string, HashSet<string>>(),
 				classData,
-				interestingPropertiesCache,
 				guidToClassMapping);
 
 			// Remove 'ownerguid'.
@@ -47,7 +45,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string scriptureBaseDir)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -62,7 +59,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			CmObjectFlatteningService.RestoreObjsurElement(langProjElement, "TranslatedScripture", scrElement);
 
 			CmObjectFlatteningService.FlattenObject(sortedData,
-				interestingPropertiesCache,
 				scrElement,
 				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
 

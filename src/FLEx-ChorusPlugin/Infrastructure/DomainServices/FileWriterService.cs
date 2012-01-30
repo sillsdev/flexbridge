@@ -178,7 +178,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
-													 IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 													 XmlReaderSettings readerSettings,
 													 string pathRoot,
 													 string projectName,
@@ -186,27 +185,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
+			var hasCustomProperties = false;
 			foreach (var propElement in cpElement.Elements("CustomField"))
 			{
+				hasCustomProperties = true;
 				var className = propElement.Attribute(SharedConstants.Class).Value;
 				var propName = propElement.Attribute(SharedConstants.Name).Value;
 				var typeAttr = propElement.Attribute("type");
-				var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
+				var adjustedTypeValue = AdjustedPropertyType(className, propName, typeAttr.Value);
 				if (adjustedTypeValue != typeAttr.Value)
 					typeAttr.Value = adjustedTypeValue;
 				var customProp = new FdoPropertyInfo(
 					propName,
 					typeAttr.Value,
 					true);
-				DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
 				mdc.AddCustomPropInfo(
 					className,
 					customProp);
 			}
+			if (hasCustomProperties)
+				mdc.ResetCaches();
 			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, SharedConstants.Utf8.GetBytes(cpElement.ToString()));
 		}
 
-		internal static string AdjustedPropertyType(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName, string rawType)
+		internal static string AdjustedPropertyType(string className, string propName, string rawType)
 		{
 			string adjustedType;
 			switch (rawType)
@@ -217,11 +219,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 				case "OC":
 					adjustedType = "OwningCollection";
-					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 				case "RC":
 					adjustedType = "ReferenceCollection";
-					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 
 				case "OS":
@@ -241,22 +241,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					break;
 			}
 			return adjustedType;
-		}
-
-		private static void AddCollectionPropertyToCache(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName)
-		{
-			Dictionary<string, HashSet<string>> classProps;
-			if (!sortablePropertiesCache.TryGetValue(className, out classProps))
-			{
-				classProps = new Dictionary<string, HashSet<string>>(2)
-								{
-									{SharedConstants.Collections, new HashSet<string>()},
-									{SharedConstants.MultiAlt, new HashSet<string>()}
-								};
-				sortablePropertiesCache.Add(className, classProps);
-			}
-			var collProps = classProps[SharedConstants.Collections];
-			collProps.Add(propName);
 		}
 
 		internal static void CheckPathname(string mainFilePathname)

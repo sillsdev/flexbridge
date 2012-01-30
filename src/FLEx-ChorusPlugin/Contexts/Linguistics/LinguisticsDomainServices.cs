@@ -23,14 +23,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
-			ReversalBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			ReversalBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 
 			// TODO: Switch to proper location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
@@ -75,14 +74,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 		internal static void FlattenDomain(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string rootDir)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
 			if (!Directory.Exists(linguisticsBaseDir))
 				return;
 
-			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, linguisticsBaseDir);
+			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 
 			/* Currently handled by BaseDomainServices.
 			// TODO: Switch to right location.

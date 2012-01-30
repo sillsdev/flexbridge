@@ -16,27 +16,25 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
 			var anthropologyBaseDir = Path.Combine(rootDir, AnthropologyRootFolder);
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
-			AnthropologyBoundedContextService.NestContext(readerSettings, anthropologyBaseDir, classData, guidToClassMapping, interestingPropertiesCache, skipWriteEmptyClassFiles);
+			AnthropologyBoundedContextService.NestContext(readerSettings, anthropologyBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
 		internal static void FlattenDomain(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string pathRoot)
 		{
 			var anthropologyBaseDir = Path.Combine(pathRoot, AnthropologyRootFolder);
 			if (!Directory.Exists(anthropologyBaseDir))
 				return; // Nothing to do.
 
-			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, interestingPropertiesCache, anthropologyBaseDir);
+			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, anthropologyBaseDir);
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)
