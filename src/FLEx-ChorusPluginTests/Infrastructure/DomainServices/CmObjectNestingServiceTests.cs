@@ -11,22 +11,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	[TestFixture]
 	public class CmObjectNestingServiceTests
 	{
-		private MetadataCache _mdc;
 		private XElement _rt;
 		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
 		private Dictionary<string, string> _guidToClassMapping;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
 
 		[SetUp]
 		public void SetupTest()
@@ -117,7 +104,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
 			Assert.AreEqual(2, entriesElements.Count());
-			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements("CmPossibilityList").Count());
+			entriesElements = _rt.Element("PartsOfSpeech").Elements("CmPossibilityList");
+			Assert.AreEqual(1, entriesElements.Count());
+			entriesElements = entriesElements.ToList()[0].Element("Possibilities").Elements(SharedConstants.Ownseq);
+			Assert.AreEqual(2, entriesElements.Count());
+			var pos = entriesElements.ToList()[0];
+			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc6-e382-11de-8a39-0800200c9a66");
+			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
+			pos = entriesElements.ToList()[1];
+			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc7-e382-11de-8a39-0800200c9a66");
+			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
 		}
 
 		[Test]
@@ -137,6 +133,34 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.AreEqual(2, entriesElements.Count());
 			Assert.AreEqual(0, _rt.Element("PartsOfSpeech").Elements("CmPossibilityList").Count());
 			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements(SharedConstants.Objsur).Count());
+		}
+
+		[Test]
+		public void RefSeqPropertiesAreChangedToRefseq()
+		{
+			var rt = new XElement(SharedConstants.RtTag,
+								  new XAttribute(SharedConstants.Class, "Segment"),
+								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+								  new XElement("Analyses",
+									  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
+												  new XAttribute("t", "r")),
+										new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
+												  new XAttribute("t", "r"))));
+			var classData = new Dictionary<string, SortedDictionary<string, XElement>>();
+			var data = new SortedDictionary<string, XElement>
+						{
+							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", rt}
+						};
+			classData.Add("Segment", data);
+			var guidToClassMapping = new Dictionary<string, string> {{"c1ed6dc8-e382-11de-8a39-0800200c9a66", "Segment"}};
+			CmObjectNestingService.NestObject(false, rt,
+				new Dictionary<string, HashSet<string>>(),
+				classData,
+				guidToClassMapping);
+			var result = rt.ToString();
+			Assert.IsTrue(result.Contains(SharedConstants.Refseq));
 		}
 
 		private void AddOwnedObjects()
@@ -177,19 +201,47 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 												  new XAttribute("t", "o")));
 			entry1.Add(entriesElement);
 
-			// Add the POS list, with nothing in it.
+			// Add the POS list, with two possibilities (own-seq prop).
+			const string posListGuid = "fb5e83e5-6576-455d-aba0-0b7a722b9b5d";
 			var posList = new XElement(SharedConstants.RtTag,
 									  new XAttribute(SharedConstants.Class, "CmPossibilityList"),
-									  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
+									  new XAttribute(SharedConstants.GuidStr, posListGuid),
 									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
-			entriesElement = new XElement("PartsOfSpeech",
+			var pos1 = new XElement(SharedConstants.RtTag,
+									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
+									new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
+									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
+									new XElement("DateCreated", new XAttribute("val", "created")));
+			var pos2 = new XElement(SharedConstants.RtTag,
+									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
+									new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
+									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
+									new XElement("DateCreated", new XAttribute("val", "created")));
+			entriesElement = new XElement("Possibilities",
 											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
+												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
+												  new XAttribute("t", "o")),
+											  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
 												  new XAttribute("t", "o")));
-			_guidToClassMapping.Add("fb5e83e5-6576-455d-aba0-0b7a722b9b5d", "CmPossibilityList");
+			_guidToClassMapping.Add("c1ed6dc6-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
+			_guidToClassMapping.Add("c1ed6dc7-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
 			data = new SortedDictionary<string, XElement>
 					{
-						{"fb5e83e5-6576-455d-aba0-0b7a722b9b5d", posList}
+						{"c1ed6dc6-e382-11de-8a39-0800200c9a66", pos1},
+						{"c1ed6dc7-e382-11de-8a39-0800200c9a66", pos2}
+					};
+			_classData.Add("PartOfSpeech", data);
+			posList.Add(entriesElement);
+
+			entriesElement = new XElement("PartsOfSpeech",
+											  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, posListGuid),
+												  new XAttribute("t", "o")));
+			_guidToClassMapping.Add(posListGuid, "CmPossibilityList");
+			data = new SortedDictionary<string, XElement>
+					{
+						{posListGuid, posList}
 					};
 			_classData.Add("CmPossibilityList", data);
 			_rt.Add(entriesElement);

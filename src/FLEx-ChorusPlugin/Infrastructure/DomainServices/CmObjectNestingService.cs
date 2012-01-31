@@ -26,8 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// 1. Rename element to that of the class, if isOwningSeqProp == false.
 			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant top be true.
 			var className = RenameElement(isOwningSeqProp, obj);
-			if (className == "Aardvark")
-				className = "Aardvark";
 
 			// 2. Nest owned objects in 'obj'.
 			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
@@ -56,7 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					continue;
 				foreach (var objsurNode in objsurNodes)
 				{
-					objsurNode.Name = "refseq";
+					objsurNode.Name = SharedConstants.Refseq;
 				}
 			}
 		}
@@ -67,8 +65,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
+			var className = owningObjElement.Name.LocalName == SharedConstants.Ownseq
+								? owningObjElement.Attribute(SharedConstants.Class).Value
+								: owningObjElement.Name.LocalName;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(owningObjElement.Name.LocalName);
-			var owningProps = (from owningPropInfo in MetadataCache.MdCache.GetClassInfo(owningObjElement.Name.LocalName).AllOwningProperties select owningPropInfo.PropertyName).ToList();
+			var owningProps = (from owningPropInfo in MetadataCache.MdCache.GetClassInfo(className).AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
 				var isCustomProperty = propertyElement.Name.LocalName == "Custom";

@@ -11,21 +11,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	[TestFixture]
 	public class CmObjectFlatteningServiceTests
 	{
-		private MetadataCache _mdc;
 		private XElement _reversalIndexElement;
 		private const string ReversalOwnerGuid = "c1ed6db5-e382-11de-8a39-0800200c9a66";
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
 
 		[SetUp]
 		public void SetupTest()
@@ -41,7 +28,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	<ReversalIndexEntry guid='00b560a2-9af0-4185-bbeb-c0eb3c5e3769' />
   </Entries>
   <PartsOfSpeech>
-	<CmPossibilityList guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d' />
+	<CmPossibilityList guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d'>
+		<Possibilities>
+			<ownseq class='PartOfSpeech' guid='c1ed6dc6-e382-11de-8a39-0800200c9a66' />
+			<ownseq class='PartOfSpeech' guid='c1ed6dc7-e382-11de-8a39-0800200c9a66' />
+		</Possibilities>
+	</CmPossibilityList>
   </PartsOfSpeech>
 </ReversalIndex>";
 
@@ -113,10 +105,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				sortedData,
 				_reversalIndexElement,
 				null);
-			Assert.AreEqual(5, sortedData.Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex").Count());
-			Assert.AreEqual(3, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry").Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList").Count());
+			Assert.AreEqual(7, sortedData.Count());
+			Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex"));
+			Assert.AreEqual(3, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"));
+			Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList"));
+			Assert.AreEqual(2, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "PartOfSpeech"));
 		}
 
 		[Test]
@@ -134,12 +127,36 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			CheckOwningProperty(owningProp, 1);
 			owningProp = revIdx.Element("PartsOfSpeech");
 			CheckOwningProperty(owningProp, 1);
+			var posList = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList");
+			owningProp = posList.Element("Possibilities");
+			CheckOwningProperty(owningProp, 2);
+		}
+
+		[Test]
+		public void RefSeqElementsRestoredToObjsurElements()
+		{
+			var sortedData = new SortedDictionary<string, XElement>();
+			var segment = new XElement("Segment",
+								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+								  new XElement("Analyses",
+									  new XElement(SharedConstants.Refseq,
+												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
+												  new XAttribute("t", "r")),
+										new XElement(SharedConstants.Refseq,
+												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
+												  new XAttribute("t", "r"))));
+			CmObjectFlatteningService.FlattenObject(
+				sortedData,
+				segment,
+				null);
+			var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
+			Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
 		}
 
 		private static void CheckOwningProperty(XContainer owningProp, int expectedCount)
 		{
-			var ownedElements = owningProp.Elements();
-			Assert.AreEqual(expectedCount, ownedElements.Count());
+			var ownedElements = owningProp.Elements().ToList();
+			Assert.AreEqual(expectedCount, ownedElements.Count);
 			foreach (var ownedElement in ownedElements)
 			{
 				Assert.IsTrue(ownedElement.Name.LocalName == SharedConstants.Objsur);
