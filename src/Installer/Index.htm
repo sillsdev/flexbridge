@@ -5,38 +5,34 @@
 	</head>
 	<body>
 		<h1>Overview</h1>
-		<p><a href="http://projects.palaso.org/projects/liftbridge">Lift Bridge</a> is a plugin for <a href="http://www.sil.org/computing/fieldworks/flex/">FieldWorks Language Explorer</a> which permits sharing of <a href="http://projects.palaso.org/projects/lift">LIFT</a> dictionary data with remote colleagues such as <a href="http://wesay.org/wiki/Main_Page">WeSay</a>.</p>
+		<p><a href="http://projects.palaso.org/projects/liftbridge">LIFT Bridge</a> is a plugin for <a href="http://www.sil.org/computing/fieldworks/flex/">FieldWorks Language Explorer</a> which permits sharing of <a href="http://projects.palaso.org/projects/lift">LIFT</a> dictionary data with remote colleagues such as <a href="http://wesay.org/wiki/Main_Page">WeSay</a>.</p>
 		<h1>Usage</h1>
-		<p>See <a href="http://projects.palaso.org/projects/liftbridge/wiki">documentation</a> for details on how to use Lift Bridge.</p>
+		<p>See <a href="http://projects.palaso.org/projects/liftbridge/wiki">documentation</a> for details on how to use LIFT Bridge.</p>
 		<h1>Downloads</h1>
-		<p>Lift Bridge is now available for use with only one version of FieldWorks, which is the 7 series (7.1 or higher). The older version that worked with FieldWorks 6.0.6 is no longer available, since the older version of FieldWorks is not getting required bug fixes in it that are needed to run Lift Bridge properly.</p>
+		<p>LIFT Bridge is now available for use with only one version of FieldWorks, which is the 7 series (7.2+).</p>
 		<table border="2">
 			<thead>
 				<tr>
-					<th colspan="4">FieldWorks</th>
+					<th colspan="2">FieldWorks</th>
 				</tr>
 				<tr>
-					<th bgcolor="red" style="padding:5px">6.0.6</th>
-					<th bgcolor="orange" style="padding:5px">7.0->7.1.1</th>
-					<th>7.2</th>
+					<th bgcolor="red" style="padding:5px">7.0->7.1.1</th>
+					<th>7.2+</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td bgcolor="red" style="padding:5px">
-						<p>No longer supported.<br /> Please switch to the<br /> FieldWorks 7 series.</p>
-					</td>
-					<td bgcolor="orange" style="padding:5px">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tbody>
 								<tr>
 									<td width="200">
-										<a href="http://downloads.palaso.org/LiftBridge/LiftBridgeForFW7Installer.1.0.13.0.msi">Lift Bridge 1.0.13.0</a>
+										<a href="http://downloads.palaso.org/LiftBridge/LiftBridgeForFW7Installer.1.0.13.0.msi">LIFT Bridge 1.0.13.0</a>
 									</td>
 									<td>21/Dec/2011</td>
 								</tr>
 								<tr rowspan="2">
-									<p>No longer updated.<br /> Please switch to the<br /> FieldWorks 7.2 series, when it gets released.</p>
+									<p>No longer updated.<br /> Please switch to the<br /> FieldWorks 7.2 series.</p>
 								</tr>
 							</tbody>
 						</table>
@@ -58,25 +54,30 @@
 		</table>
 		<h1>Release Notes:</h1>
 		<ul>
-			<li>DEV_VERSION_NUMBER <ol> <li>Fix bug in Chorus where chages were not displayed properly in some cases.</li>	</ol> </li>
-			<li>1.3.0.7 <ol> <li>Fix undesirable 'feature' I introduced in Chorus where it updated the USB repository, rather than the new clone in the Lift Bridge folder. :-(</li>	</ol> </li>
-			<li>1.3.0.5 <ol> <li>Fix a problem in Chorus where Lift Bridge crashed when Refresh buttne was clicked multiple times (LT-12513).</li>
+			<li>DEV_VERSION_NUMBER<ol><li>Fix LIFT Bridge to be better backwards compatible.</li>
+			<li>Fix bug locating a shared network folder.</li>
+			</ol></li>
+			<li>1.3.0.8<ol><li>Fix bug in Chorus where changes were not displayed properly in some cases.</li></ol></li>
+			<li>1.3.0.7<ol><li>Fix undesirable 'feature' I introduced in Chorus where it updated the USB repository, rather than the new clone in the LIFT Bridge folder. :-(</li></ol></li>
+			<li>1.3.0.5<ol><li>Fix a problem in Chorus where LIFT Bridge crashed when Refresh button was clicked multiple times (LT-12513).</li>
 <li>Fixed more cloning issues for USB drives and shared network folders.</li>
 <li>USB drives and shared network folders are no longer updated with latest files from the repository. Only the repository is updated.</li>
-			</ol> </li>
-			<li>1.3.0.4 <ol> <li>Fix some problems in Chorus related to cloning onto a USB drive (LT-12511).</li> </ol> </li>
-			<li>1.3.0.2 <ol> <li>Fix null reference crash (LT-12497) and add new message if FLEx fails to export LIFT file.</li> </ol> </li>
-			<li>1.3.0.1 <ol> <li>Revise how LIFT Bridge and FLEX handle repository identifier.</li> </ol> </li>
-			<li>1.2.0.1 <ol> <li>Have FLEx store the Mercurial repository identifier and give it to Lift Bridge.</li> </ol> </li>
-			<li>1.0.13.0 <ol> <li>Set Lift Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, Lift Bridge will try to get FLEx to import the data that had failed before. While a bit harsh, it protects the shared data.</li> </ol> </li>
-			<li>1.0.11.0 <ol> <li>Fixed bug in Lift bridge where user had selected a simple exported LIFT file. Fixed problem where Chorus tried to create a system where the folder already existed.</li> </ol> </li>
-			<li>1.0.10.0 <ol> <li>Fixed two bugs in Chorus related to merge conflicts.</li> </ol> </li>
-			<li>1.0.9.0 <ol> <li>Fixed bug with unexpected xml entities in 'id' attribute for LIFT entries.</li> </ol> </li>
-			<li>1.0.5.0 <ol> <li>Revert installation location to original place.</li> </ol> </li>
-			<li>1.0.1.4 <ol> <li>Fix installation path to what FLEx expects.</li> </ol> </li>
-			<li>1.0.1.1 <ol> <li>Added support to Chorus to process the writing system files (ldml) better. [Chorus is used by LiftBridge in its work.]</li> </ol> </li>
-			<li>1.0.0.5 <ol> <li>Moved the installed location to be easier for a Linux version.</li> </ol> </li>
-			<li>0.7.32 <ol> <li>Last in the FieldWorks 7.0.x series.</li> </ol> </li>
+			</ol></li>
+			<li>1.3.0.4<ol><li>Fix some problems in Chorus related to cloning onto a USB drive (LT-12511).</li></ol></li>
+			<li>1.3.0.2<ol><li>Fix null reference crash (LT-12497) and add new message if FLEx fails to export LIFT file.</li></ol></li>
+			<li>1.3.0.1<ol><li>Revise how LIFT Bridge and FLEX handle repository identifier.</li></ol></li>
+			<li>1.2.0.1<ol><li>Have FLEx store the Mercurial repository identifier and give it to LIFT Bridge.</li></ol></li>
+			<li>1.0.13.0<ol><li>Set LIFT Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, LIFT Bridge will try to get FLEx to import the data that had failed before. While a bit harsh, it protects the shared data.</li></ol></li>
+			<li>1.0.11.0<ol><li>Fixed bug in LIFT Bridge where user had selected a simple exported LIFT file.</li>
+<li>Fixed problem where Chorus tried to create a system where the folder already existed.</li>
+			</ol></li>
+			<li>1.0.10.0<ol><li>Fixed two bugs in Chorus related to merge conflicts.</li></ol></li>
+			<li>1.0.9.0<ol><li>Fixed bug with unexpected xml entities in 'id' attribute for LIFT entries.</li></ol></li>
+			<li>1.0.5.0<ol><li>Revert installation location to original place.</li></ol></li>
+			<li>1.0.1.4<ol><li>Fix installation path to what FLEx expects.</li></ol></li>
+			<li>1.0.1.1<ol><li>Added support to Chorus to process the writing system files (ldml) better. [Chorus is used by LIFT Bridge in its work.]</li></ol></li>
+			<li>1.0.0.5<ol><li>Moved the installed location to be easier for a Linux version.</li></ol></li>
+			<li>0.7.32<ol><li>Last in the FieldWorks 7.0.x series.</li> </ol> </li>
 		</ul>
 	</body>
 </html>

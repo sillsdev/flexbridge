@@ -60,6 +60,18 @@ namespace SIL.LiftBridge.Properties {
 			}
 		}
 
+		public static System.IO.UnmanagedMemoryStream errorSound {
+			get {
+				return ResourceManager.GetStream("errorSound", resourceCulture);
+			}
+		}
+
+		public static System.IO.UnmanagedMemoryStream finishedSound {
+			get {
+				return ResourceManager.GetStream("finishedSound", resourceCulture);
+			}
+		}
+
 		/// <summary>
 		///   Looks up a localized string similar to basic.
 		/// </summary>
@@ -111,6 +123,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kDidNotCloneSystem {
 			get {
 				return ResourceManager.GetString("kDidNotCloneSystem", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Error.
+		/// </summary>
+		public static string kError {
+			get {
+				return ResourceManager.GetString("kError", resourceCulture);
 			}
 		}
 
@@ -268,6 +289,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Locate a networked *computer* that is to contain the shared LIFT data..
+		/// </summary>
+		public static string KLocateNetworkedComputer {
+			get {
+				return ResourceManager.GetString("KLocateNetworkedComputer", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to The selected LIFT file appears to have been simply exported, and cannot be used for sharing. Please try another LIFT file..
 		/// </summary>
 		public static string kLoneLiftFileWarning {
@@ -282,6 +312,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kNonEmptyFolderTitle {
 			get {
 				return ResourceManager.GetString("kNonEmptyFolderTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Not a networked computer.
+		/// </summary>
+		public static string kNotNetworkedComputer {
+			get {
+				return ResourceManager.GetString("kNotNetworkedComputer", resourceCulture);
 			}
 		}
 
@@ -327,6 +366,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kRepoIdNotNull {
 			get {
 				return ResourceManager.GetString("kRepoIdNotNull", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to The selection does not appear to be a networked computer..
+		/// </summary>
+		public static string kSelectionIsNotANetworkedComputer {
+			get {
+				return ResourceManager.GetString("kSelectionIsNotANetworkedComputer", resourceCulture);
 			}
 		}
 

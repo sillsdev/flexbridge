@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
-using Chorus.VcsDrivers;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
@@ -72,43 +70,19 @@ namespace SIL.LiftBridge.View
 					}
 					break;
 				case ExtantRepoSource.LocalNetwork:
-					using (var openFileDlg = new OpenFileDialog())
+					using (var getCloneFromSharedNetworkFolderdlg = new GetCloneFromSharedNetworkFolderDialog(LiftProjectServices.BasePath))
 					{
-						openFileDlg.AutoUpgradeEnabled = true;
-						openFileDlg.Title = Resources.kLocateLiftFile;
-						openFileDlg.AutoUpgradeEnabled = true;
-						openFileDlg.RestoreDirectory = true;
-						openFileDlg.DefaultExt = ".lift";
-						openFileDlg.Filter = Resources.kLiftFileFilter;
-						openFileDlg.Multiselect = false;
-
-						var dlgResult = openFileDlg.ShowDialog(parent);
+						var dlgResult = getCloneFromSharedNetworkFolderdlg.ShowDialog(parent);
 						switch (dlgResult)
 						{
-							default: // DialogResult.Cancel;
+							default: // DialogResult.Cancel
 								return CloneResult.Cancel;
 							case DialogResult.OK:
-								var fileFromDlg = openFileDlg.FileName;
-								var sourcePath = Path.GetDirectoryName(fileFromDlg);
-								if (!Directory.GetDirectories(sourcePath, ".hg").Any())
-								{
-									MessageBox.Show(parent, Resources.kLoneLiftFileWarning, Resources.kUnsupportedLiftFile, MessageBoxButtons.OK,
-													MessageBoxIcon.Warning);
-									return CloneResult.NotCreated;
-								}
-								// Make a clone the hard way.
-								var expectedTarget = Path.Combine(LiftProjectServices.BasePath, Path.GetFileNameWithoutExtension(fileFromDlg));
-								var repo = new HgRepository(sourcePath, new StatusProgress());
-								var actualTarget = repo.CloneLocalWithoutUpdate(expectedTarget);
-								var newClonedRepo = new HgRepository(actualTarget, new StatusProgress());
-								newClonedRepo.Update();
-								var alias = HgRepository.GetAliasFromPath(actualTarget);
-								newClonedRepo.SetTheOnlyAddressOfThisType(RepositoryAddress.Create(alias, actualTarget));
-								project.RepositoryIdentifier = newClonedRepo.Identifier;
-								break;
+								var repo = new HgRepository(getCloneFromSharedNetworkFolderdlg.PathToNewProject, new NullProgress());
+								project.RepositoryIdentifier = repo.Identifier;
+								return CloneResult.Created;
 						}
 					}
-					break;
 				case ExtantRepoSource.Usb:
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(LiftProjectServices.BasePath))
 					{

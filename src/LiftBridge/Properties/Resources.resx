@@ -207,37 +207,56 @@
   <data name="kRepoIdNotNull" xml:space="preserve">
 	<value>Value for RepositoryIdentifier may not be null or an empty string.</value>
   </data>
-	<data name="kBasicMapFleContents">
-		<value><![CDATA[<?xml version='1.0' encoding='utf-8'?><Mappings></Mappings>]]></value>
-	</data>
-	<data name="kFlexExportProblemMessage">
-		<value xml:space="preserve">FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue.</value>
-	</data>
-	<data name="kFlexExportProblemTitle">
-		<value xml:space="preserve">FLEx export problem</value>
-	</data>
-  <data name="kCancelGetMeOutOfHere">
-	<value xml:space="preserve">'Cancel' means: 'Get me out of here. I'd rather not do Send/Receive now.'</value>
+  <data name="kBasicMapFleContents" xml:space="preserve">
+	<value>&lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;Mappings&gt;&lt;/Mappings&gt;</value>
   </data>
-  <data name="kExtantSharedSystem">
-	<value xml:space="preserve">There seems to be an existing shared system that could be used. Do you want to use it?</value>
+  <data name="kFlexExportProblemMessage" xml:space="preserve">
+	<value>FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue.</value>
   </data>
-  <data name="kExtantNonEmptyFolder">
-	<value xml:space="preserve">There seems to be an existing folder that could be used, but it is not empty. Do you want to use it?</value>
+  <data name="kFlexExportProblemTitle" xml:space="preserve">
+	<value>FLEx export problem</value>
   </data>
-  <data name="kExistingSharedStstemTitle">
-	<value xml:space="preserve">Existing Shared System Found</value>
+  <data name="kCancelGetMeOutOfHere" xml:space="preserve">
+	<value>'Cancel' means: 'Get me out of here. I'd rather not do Send/Receive now.'</value>
   </data>
-  <data name="kNonEmptyFolderTitle">
-	<value xml:space="preserve">Existing Non-empty Folder Found</value>
+  <data name="kExtantSharedSystem" xml:space="preserve">
+	<value>There seems to be an existing shared system that could be used. Do you want to use it?</value>
   </data>
-  <data name="kUseExtantRepo">
-	<value xml:space="preserve"> 'Yes' means: 'I feel lucky. Use it.'</value>
+  <data name="kExtantNonEmptyFolder" xml:space="preserve">
+	<value>There seems to be an existing folder that could be used, but it is not empty. Do you want to use it?</value>
   </data>
-  <data name="kUseExtantNonEmptyFolder">
-	<value xml:space="preserve"> 'Ok' means 'I feel lucky. Delete everything in it and re-use it.'</value>
+  <data name="kExistingSharedStstemTitle" xml:space="preserve">
+	<value>Existing Shared System Found</value>
   </data>
-  <data name="kWIpeOutExtantRepoAndReuseFolder">
-	<value xml:space="preserve"> 'No' means: 'Wipe it out and start fresh.'</value>
+  <data name="kNonEmptyFolderTitle" xml:space="preserve">
+	<value>Existing Non-empty Folder Found</value>
+  </data>
+  <data name="kUseExtantRepo" xml:space="preserve">
+	<value> 'Yes' means: 'I feel lucky. Use it.'</value>
+  </data>
+  <data name="kUseExtantNonEmptyFolder" xml:space="preserve">
+	<value> 'Ok' means 'I feel lucky. Delete everything in it and re-use it.'</value>
+  </data>
+  <data name="kWIpeOutExtantRepoAndReuseFolder" xml:space="preserve">
+	<value> 'No' means: 'Wipe it out and start fresh.'</value>
+  </data>
+  <data name="KLocateNetworkedComputer" xml:space="preserve">
+	<value>Locate a networked *computer* that is to contain the shared LIFT data.</value>
+  </data>
+  <data name="kSelectionIsNotANetworkedComputer" xml:space="preserve">
+	<value>The selection does not appear to be a networked computer.</value>
+  </data>
+  <data name="kNotNetworkedComputer" xml:space="preserve">
+	<value>Not a networked computer</value>
+  </data>
+  <data name="kError" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="errorSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\error.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="finishedSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\finished.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
