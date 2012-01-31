@@ -244,11 +244,12 @@ namespace FwdataTestApp
 				Cursor = Cursors.Default;
 			}
 			MessageBox.Show(this,
-							String.Format("Time to nest file: {0} Time to breakup file: {1}. Time to restore file: {2}. Time to verify retoration: {3}",
+							String.Format("Time to nest file: {0}{4}Time to breakup file: {1}.{4}Time to restore file: {2}.{4}Time to verify restoration: {3}",
 							_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString() : "Not run",
 							_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString() : "Not run",
 							_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString() : "Not run",
-							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString() : "Not run"),
+							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString() : "Not run",
+							Environment.NewLine),
 							"Times");
 		}
 
@@ -266,6 +267,7 @@ namespace FwdataTestApp
 			var nestedDoc = new XDocument(
 				new XDeclaration("1.0", "utf-8", "yes"),
 				root);
+			var exceptions = new Dictionary<string, HashSet<string>>();
 			foreach (var unownedElementKvp in unownedObjects)
 			{
 				var className = unownedElementKvp.Key;
@@ -275,9 +277,10 @@ namespace FwdataTestApp
 				{
 					classElement.Add(unownedElement);
 					CmObjectNestingService.NestObject(false, unownedElement,
-												  new Dictionary<string, HashSet<string>>(),
+												  exceptions,
 												  classData,
-												  guidToClassMapping);}
+												  guidToClassMapping);
+				}
 				root.Add(classElement);
 			}
 			nestedDoc.Save(srcFwdataPathname + ".nested");
@@ -308,7 +311,6 @@ namespace FwdataTestApp
 								propName,
 								typeAttr.Value,
 								true);
-							// TODO: TLP has a custom prop that has an abstract class, and its className is *not* in interestingPropertiesCache.
 							mdc.AddCustomPropInfo(
 								className,
 								customProp);

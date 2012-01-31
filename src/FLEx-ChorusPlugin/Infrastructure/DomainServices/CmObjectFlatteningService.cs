@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			foreach (var propertyElement in element.Elements().ToArray())
 			{
-				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
+				var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
 				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningPropsForClass.Contains(propName))
 				{

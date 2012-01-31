@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					continue;
 				}
 
-				CollectOwnedObjectsForProperty(mdc, classData, guidToClassMapping, multiClassOutput, ownerElement, owningProperty.PropertyName);
+				CollectOwnedObjectsForProperty(mdc, classData, guidToClassMapping, multiClassOutput, ownerElement, classInfo.GetProperty(owningProperty.PropertyName).IsCustomProperty, owningProperty.PropertyName);
 			}
 		}
 
@@ -38,9 +38,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			IDictionary<string, string> guidToClassMapping,
 			IDictionary<string, SortedDictionary<string, XElement>> multiClassOutput,
 			XContainer ownerElement,
+			bool isCustomProperty,
 			string propertyName)
 		{
-			var propElement = ownerElement.Element(propertyName);
+			var propElement = isCustomProperty
+				? (from customProp in ownerElement.Elements(SharedConstants.Custom) where customProp.Attribute(SharedConstants.Name).Value == propertyName select customProp).FirstOrDefault()
+				: ownerElement.Element(propertyName);
 			if (propElement == null)
 				return;
 

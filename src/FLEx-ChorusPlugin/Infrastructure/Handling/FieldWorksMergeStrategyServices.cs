@@ -26,7 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private const string Ws = "ws";
 		private const string Binary = "Binary";
 		private const string Prop = "Prop";
-		private const string Custom = "Custom";
 
 		internal static ElementStrategy AddSharedImmutableSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant)
 		{
@@ -192,7 +191,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					// Simple, mutable properties.
 					break;
 			}
-			strategiesForMerger.SetStrategy(Custom + "_" + propInfo.PropertyName, strategyForCurrentProperty);
+			strategiesForMerger.SetStrategy(SharedConstants.Custom + "_" + propInfo.PropertyName, strategyForCurrentProperty);
 		}
 
 		private static void ProcessStandardProperty(IDictionary<string, ElementStrategy> sharedElementStrategies, MergeStrategies strategiesForMerger, FdoPropertyInfo propInfo, ElementStrategy mutableSingleton, ElementStrategy immSingleton)

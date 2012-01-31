@@ -38,5 +38,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
 		internal const string Ownseq = "ownseq";
 		internal const string Refseq = "refseq";
+		internal const string Custom = "Custom";
 	}
 }

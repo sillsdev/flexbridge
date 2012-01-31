@@ -93,7 +93,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				var propName = propertyElement.Name.LocalName;
 				// <Custom name="Certified" val="True" />
-				if (propName == "Custom")
+				if (propName == SharedConstants.Custom)
 					propName = propertyElement.Attribute(SharedConstants.Name).Value; // Sort custom props by their name attrs.
 				if (collData.Contains(propName))
 					SortCollectionProperties(propertyElement);

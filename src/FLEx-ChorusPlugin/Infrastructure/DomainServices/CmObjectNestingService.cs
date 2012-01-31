@@ -68,11 +68,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var className = owningObjElement.Name.LocalName == SharedConstants.Ownseq
 								? owningObjElement.Attribute(SharedConstants.Class).Value
 								: owningObjElement.Name.LocalName;
-			var classInfo = MetadataCache.MdCache.GetClassInfo(owningObjElement.Name.LocalName);
-			var owningProps = (from owningPropInfo in MetadataCache.MdCache.GetClassInfo(className).AllOwningProperties select owningPropInfo.PropertyName).ToList();
+			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
+			var owningProps = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
-				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
+				var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
 				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningProps.Contains(propName))
 					continue;
