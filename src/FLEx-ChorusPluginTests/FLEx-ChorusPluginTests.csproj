@@ -109,6 +109,7 @@
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />

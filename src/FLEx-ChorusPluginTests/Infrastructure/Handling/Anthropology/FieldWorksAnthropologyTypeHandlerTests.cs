@@ -65,7 +65,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data = @"<Anthropology>
 </Anthropology>";

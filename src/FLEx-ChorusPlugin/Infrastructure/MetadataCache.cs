@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return ModelVersion;
 
 			// 7000044: Starting point (FW 7.1 & 7.1.1)
-			// 70000xx: FW 7.2 released.
+			// 7000051: FW 7.2 released.
 
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");

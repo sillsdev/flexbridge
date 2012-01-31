@@ -61,7 +61,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>

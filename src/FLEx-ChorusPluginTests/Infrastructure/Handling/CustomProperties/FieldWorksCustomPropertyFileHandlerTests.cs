@@ -61,7 +61,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />

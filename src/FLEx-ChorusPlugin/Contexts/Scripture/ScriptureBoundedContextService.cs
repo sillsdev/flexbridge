@@ -28,12 +28,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			scriptureElement.Attribute(SharedConstants.OwnerGuid).Remove();
 
 			FileWriterService.WriteNestedFile(
-				Path.Combine(scriptureBaseDir, "ScriptureTranslation." + SharedConstants.Trans),
+				Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename),
 				readerSettings,
 				new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement("TranslatedScripture", scriptureElement)));
+					new XElement(SharedConstants.TranslatedScripture, scriptureElement)));
 
-			languageProjectElement.Element("TranslatedScripture").RemoveNodes();
+			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
 				SharedConstants.Scripture,
@@ -51,12 +51,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				return;
 
 			// scriptureBaseDir is root/Scripture.
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, "ScriptureTranslation." + SharedConstants.Trans));
-			var scrElement = doc.Element("TranslatedScripture").Elements().First();
+			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename));
+			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData["LangProject"];
-			CmObjectFlatteningService.RestoreObjsurElement(langProjElement, "TranslatedScripture", scrElement);
+			CmObjectFlatteningService.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
 			CmObjectFlatteningService.FlattenObject(sortedData,
 				scrElement,
@@ -71,7 +71,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
-			const string transScripPathname = "ScriptureTranslation." + SharedConstants.Trans;
+			const string transScripPathname = SharedConstants.ScriptureTransFilename;
 			if (File.Exists(transScripPathname))
 				File.Delete(transScripPathname);
 

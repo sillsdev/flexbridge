@@ -159,7 +159,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.ArchivedDraft,
 				SharedConstants.ImportSetting,
 				SharedConstants.Srs,
-				// trans
+				SharedConstants.Trans,
 
 				// Anthropology
 				SharedConstants.Ntbk,

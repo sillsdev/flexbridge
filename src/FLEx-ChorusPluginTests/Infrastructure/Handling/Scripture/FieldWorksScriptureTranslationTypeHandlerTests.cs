@@ -13,7 +13,7 @@ using Palaso.Progress.LogBox;
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 {
 	[TestFixture]
-	public class FieldWorksImportSettingsTypeHandlerTests : BaseFieldWorksTypeHandlerTests
+	public class FieldWorksScriptureTranslationTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
 		private TempFile _ourFile;
 		private TempFile _theirFile;
@@ -22,7 +22,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ImportSettingsFilename, out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ScriptureTransFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains(SharedConstants.ImportSetting));
+			Assert.IsTrue(extensions.Contains(SharedConstants.Trans));
 		}
 
 		[Test]
@@ -65,9 +65,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</TranslatedScripture>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -78,9 +78,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</TranslatedScripture>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -103,9 +103,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</TranslatedScripture>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -116,18 +116,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
-</ScrImportSet>
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<VerseSepr>
+			<Uni>,</Uni>
+		</VerseSepr>
+</Scripture>
+</TranslatedScripture>";
 
-			var child = parent.Replace("val='2'", "val='3'");
+			var child = parent.Replace("<Uni>,</Uni>", "<Uni>+</Uni>");
 
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile(SharedConstants.ImportSettingsFilename, parent);
-				repositorySetup.ChangeFileAndCommit(SharedConstants.ImportSettingsFilename, child, "change it");
+				repositorySetup.AddAndCheckinFile(SharedConstants.ScriptureTransFilename, parent);
+				repositorySetup.ChangeFileAndCommit(SharedConstants.ScriptureTransFilename, child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber
@@ -149,28 +151,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
-<Name>
-<AUni
-ws='en'>Default</AUni>
-</Name>
-</ScrImportSet>
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<VerseSepr>
+			<Uni>,</Uni>
+		</VerseSepr>
+</Scripture>
+</TranslatedScripture>";
 
-			var ourContent = commonAncestor.Replace("val='2'", "val='3'");
-			var theirContent = commonAncestor.Replace("Default", "Basic");
+			var ourContent = commonAncestor.Replace("<Uni>,</Uni>", "<Uni>+</Uni>");
+			const string theirContent = commonAncestor;
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"ImportSettings/ScrImportSet/ImportType[@val=""3""]" }, null,
+				null, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlTextChangedReport) });
-			Assert.IsTrue(results.Contains("Basic"));
+				1, new List<Type> { typeof(XmlTextChangedReport) });
+			Assert.IsTrue(results.Contains("<Uni>+</Uni>"));
 		}
 
 		[Test]
@@ -178,18 +178,16 @@ ws='en'>Default</AUni>
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
-<Name>
-<AUni
-ws='en'>Default</AUni>
-</Name>
-</ScrImportSet>
-</ImportSettings>";
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<VerseSepr>
+			<Uni>,</Uni>
+		</VerseSepr>
+</Scripture>
+</TranslatedScripture>";
 
-			var ourContent = commonAncestor.Replace("Default", "Complex");
-			var theirContent = commonAncestor.Replace("Default", "Basic");
+			var ourContent = commonAncestor.Replace("<Uni>,</Uni>", "<Uni>+</Uni>");
+			var theirContent = commonAncestor.Replace("<Uni>,</Uni>", "<Uni>-</Uni>");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -199,7 +197,7 @@ ws='en'>Default</AUni>
 				null, null,
 				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
-			Assert.IsTrue(results.Contains("Complex"));
+			Assert.IsTrue(results.Contains("<Uni>+</Uni>"));
 		}
 	}
 }

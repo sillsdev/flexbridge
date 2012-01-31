@@ -65,7 +65,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data = @"<Reversal>
 </Reversal>";

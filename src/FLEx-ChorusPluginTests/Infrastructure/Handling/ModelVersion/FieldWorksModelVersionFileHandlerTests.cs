@@ -63,7 +63,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			using (var tempModelVersionFile = new TempFile("{\"modelversion\": 7000037}"))
 			{
