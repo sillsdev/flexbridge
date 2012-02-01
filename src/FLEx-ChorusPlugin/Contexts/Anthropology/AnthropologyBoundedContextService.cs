@@ -27,13 +27,8 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		internal static void NestContext(XmlReaderSettings readerSettings, string anthropologyDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			// No subfolders for anthropologyDir
-			if (!Directory.Exists(anthropologyDir))
-				Directory.CreateDirectory(anthropologyDir);
-
 			SortedDictionary<string, XElement> sortedInstanceData;
 			classData.TryGetValue("RnResearchNbk", out sortedInstanceData);
 			var langProj = classData["LangProject"].Values.First();
@@ -46,10 +41,9 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				var notebookElement = sortedInstanceData.Values.First();
 				headerElement.Add(notebookElement);
 
-				CmObjectNestingService.NestObject(notebookElement,
+				CmObjectNestingService.NestObject(false, notebookElement,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
-					interestingPropertiesCache,
 					guidToClassMapping);
 
 				// Remove 'ownerguid'.
@@ -67,7 +61,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					// Add one bogus element, so fast splitter need not be changed for optional main sequence.
 					// Restore will remove it, if found.
 					rootElement.Add(new XElement("RnGenericRec",
-												   new XAttribute(SharedConstants.GuidStr, Guid.Empty)));
+												   new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
 				}
 				// Remove child objsur nodes from owning LangProg
 				langProj.Element("ResearchNotebook").RemoveNodes();
@@ -76,7 +70,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
 			NestLists(classData,
 				guidToClassMapping,
-				interestingPropertiesCache,
 				classData["CmPossibilityList"],
 				headerElement,
 				langProj,
@@ -96,7 +89,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					rootElement);
-			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, "DataNotebook.ntbk"), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, SharedConstants.DataNotebookFilename), readerSettings, doc);
 
 			//// No need to process these in the 'soup' now.
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "RnResearchNbk", "RnGenericRec", "Reminder", "RnRoledPartic", "CmPerson", "CmAnthroItem", "CmLocation" });
@@ -105,16 +98,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		internal static void FlattenContext(
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			string anthropologyBaseDir)
 		{
-			// No subfolders for anthropologyDir
-			if (!Directory.Exists(anthropologyBaseDir))
-				return; // Nothing to do.
-
 			var langProjElement = highLevelData["LangProject"];
-			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value;
-			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
+			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename));
 			var root = doc.Root;
 			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
 			{
@@ -128,12 +116,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 						// Put all records back in RnResearchNbk, before sort and restore.
 						// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 						var records = root.Elements("RnGenericRec").ToList();
-						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value != Guid.Empty.ToString())
+						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 							headerChildElement.Element("Records").Add(records);
 						CmObjectFlatteningService.FlattenObject(sortedData,
-							interestingPropertiesCache,
 							headerChildElement,
-							langProjElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to notebook.
+							langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to notebook.
 						break;
 					case "AnthroList": // Fall through
 					case "ConfidenceLevels": // Fall through
@@ -147,7 +134,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "TimeOfDay":
 						var listElement = headerChildElement.Element("CmPossibilityList");
 						RestoreLangProjListObjsurElement(langProjElement, listElement);
-						CmObjectFlatteningService.FlattenObject(sortedData, interestingPropertiesCache, listElement, langProjGuid); // Restore 'ownerguid' to list.
+						CmObjectFlatteningService.FlattenObject(sortedData, listElement, langProjGuid); // Restore 'ownerguid' to list.
 						break;
 				}
 			}
@@ -155,23 +142,24 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		internal static void RemoveBoundedContextData(string anthropologyBase)
 		{
-			var notebookPath = Path.Combine(anthropologyBase, "DataNotebook.ntbk");
+			var notebookPath = Path.Combine(anthropologyBase, SharedConstants.DataNotebookFilename);
 			if (File.Exists(notebookPath))
 				File.Delete(notebookPath);
-			FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
+
+			// Let domain do it.
+			// FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
 		}
 
 		private static void RestoreLangProjListObjsurElement(XContainer langProjElement, XElement listElement)
 		{
 			var owningListPropElement = langProjElement.Element(listElement.Parent.Name.LocalName);
 			owningListPropElement.Add(new XElement(SharedConstants.Objsur,
-												   new XAttribute(SharedConstants.GuidStr, listElement.Attribute(SharedConstants.GuidStr).Value),
+												   new XAttribute(SharedConstants.GuidStr, listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
 												   new XAttribute("t", "o")));
 		}
 
 		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			IDictionary<string, XElement> posLists,
 			XContainer headerElement,
 			XContainer langProjElement,
@@ -184,14 +172,14 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				if (listPropElement == null || !listPropElement.HasElements)
 					continue;
 
-				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value];
+				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
 				// Remove 'ownerguid'.
 				listElement.Attribute(SharedConstants.OwnerGuid).Remove();
-				CmObjectNestingService.NestObject(listElement,
-												  exceptions,
-												  classData,
-												  interestingPropertiesCache,
-												  guidToClassMapping);
+				CmObjectNestingService.NestObject(false,
+					listElement,
+					exceptions,
+					classData,
+					guidToClassMapping);
 				listPropElement.RemoveNodes(); // Remove the single list objsur element.
 				headerElement.Add(new XElement(propName, listElement));
 			}

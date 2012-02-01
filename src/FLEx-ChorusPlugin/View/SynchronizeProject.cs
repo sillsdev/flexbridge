@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -26,7 +27,11 @@ namespace FLEx_ChorusPlugin.View
 			{
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
-					// Chorus does it in ths order: local Commit/Pull/[if needed Merge]/Send(Push).
+					// Chorus does it in ths order:
+					// local Commit
+					// Pull
+					// Merge (Only if anything came in with the pull from other sources)
+					// Push
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
 					syncDlg.SyncOptions.DoSendToOthers = true;

@@ -12,5 +12,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository);
 		IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository);
 		void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder);
+		string Extension { get; }
 	}
 }

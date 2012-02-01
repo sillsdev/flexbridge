@@ -40,7 +40,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void GetExtensionsOfKnownTextFileTypesIsXml()
 		{
 			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.ClassData));
 		}
 	}

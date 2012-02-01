@@ -70,7 +70,7 @@ namespace FLEx_ChorusPlugin.Controller
 				_chorusSystem = null;
 			}
 			_chorusSystem = system;
-			_existingSystemView.SetSystem(_chorusSystem); // May be null, which is fine.
+			_existingSystemView.SetSystem(_chorusSystem, _currentLanguageProject); // May be null, which is fine.
 		}
 
 		void FwBridgeViewSynchronizeProjectHandler(object sender, EventArgs e)

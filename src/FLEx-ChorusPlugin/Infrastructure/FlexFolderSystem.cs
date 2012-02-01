@@ -20,6 +20,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/trash/*.*");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
+			projectFolderConfiguration.ExcludePatterns.Add("Shares/*.*"); // Presumed folder for future LIFT and PT-FLEx repos.
 
 			projectFolderConfiguration.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
 			projectFolderConfiguration.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
@@ -35,12 +36,27 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/Pictures/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("SupportingFiles/*.*");
 
-			// New files/folders/
-			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
-			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/Lexicon.lexdb");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/*.list");
+			// TODO: Add others.
+
+			// Anthropology
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
+			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
+
+			// Scripture
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureReferenceSystem.srs");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureStyleSheet.style");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/*.list");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureTranslation.trans");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
+
+			// Leftovers
+			// TODO: Add whatever doesn't readily fit into the three main domains.
 
 			// Older style files, hopefully, soon to be obsolete.
 			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");

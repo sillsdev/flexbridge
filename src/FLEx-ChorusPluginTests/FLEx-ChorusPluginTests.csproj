@@ -89,14 +89,18 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenterTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileDiffTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileMergeTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileValidationTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksAnthropologyTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksReversalTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
 	<Compile Include="BorrowedCode\DummyFolderSystem.cs" />
 	<Compile Include="FieldWorksTestServices.cs" />
@@ -105,6 +109,10 @@
 	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />

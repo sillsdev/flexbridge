@@ -17,46 +17,28 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 	/// Test the FW custom property file handler.
 	/// </summary>
 	[TestFixture]
-	public class FieldWorksCustomPropertyFileHandlerTests
+	public class FieldWorksCustomPropertyFileHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
-		private IChorusFileTypeHandler _fileHandler;
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
-		private MetadataCache _mdc;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							where handler.GetType().Name == "FieldWorksCommonFileHandler"
-											  select handler).First();
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_fileHandler = null;
-		}
 
 		[SetUp]
 		public void TestSetup()
 		{
-			_mdc = MetadataCache.TestOnlyNewCache;
-			FieldWorksTestServices.SetupTempFilesWithExstension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			_mdc = null;
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = _fileHandler.DescribeInitialContents(null, null);
+			var initialContents = FileHandler.DescribeInitialContents(null, null);
 			Assert.AreEqual(1, initialContents.Count());
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
@@ -65,8 +47,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		[Test]
 		public void ExtensionOfKnownFileTypesShouldBeCustomProperties()
 		{
-			var extensions = _fileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
-			Assert.AreEqual(5, extensions.Count(), "Wrong number of extensions.");
+			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
+			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.CustomProperties));
 		}
 
@@ -75,17 +57,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(_fileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormatedFile()
+		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsTrue(_fileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		// Now throws (NotSupportedException), which is tested in UnknownFileTypeHandlerTests
@@ -108,7 +90,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNull(_fileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -141,7 +123,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				var second = allRevisions[1];
 				var firstFiR = hgRepository.GetFilesInRevision(first).First();
 				var secondFiR = hgRepository.GetFilesInRevision(second).First();
-				var result = _fileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
+				var result = FileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
 				Assert.AreEqual(3, result.Count);
 			}
 		}
@@ -247,7 +229,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformTheirCertified' name='TheirCertified' type='Boolean' /></AdditionalFields>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -274,7 +256,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -296,7 +278,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("</AdditionalFields>", "<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' /></AdditionalFields>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -319,7 +301,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -342,14 +324,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -365,7 +347,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Boolean' />", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -376,7 +358,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
-		public void WinnerAndLoserBothMadeSameChangeToElement()
+		public void WinnerAndLoserBothMadeSameChangeToAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -387,18 +369,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("Boolean", "Integer");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Boolean""]" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport) });
 		}
 
 		[Test]
-		public void WinnerAndLoserBothChangedElementButInDifferentWays()
+		public void WinnerAndLoserBothChangedAttributeButInDifferentWays()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -409,7 +391,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("Boolean", "Binary");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -420,7 +402,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
-		public void WinnerChangedElement()
+		public void WinnerChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -431,18 +413,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
-		public void LoserChangedElement()
+		public void LoserChangedAttribute()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -453,14 +435,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("Boolean", "Integer");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlChangedRecordReport) });
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 		}
 
 		[Test]
@@ -476,7 +458,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("<CustomField class='WfiWordform' key='WfiWordformAttested' name='Attested' type='Binary' />", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -499,7 +481,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			var theirContent = commonAncestor.Replace("Binary", "Integer");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,

@@ -16,7 +16,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// Check if class is abstract.
 		/// </summary>
 		internal bool IsAbstract { get; private set; }
-		private readonly List<FdoPropertyInfo> _properties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _directProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allReferenceSequenceProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allOwningSequenceProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoClassInfo> _allDirectSubclass = new List<FdoClassInfo>();
+		private readonly List<FdoPropertyInfo> _allCollectionProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allMultiAltProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allOwningProperties = new List<FdoPropertyInfo>();
 
 		internal FdoClassInfo(string className, string superclassName)
 			: this(className, false, superclassName)
@@ -39,7 +46,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal void AddProperty(FdoPropertyInfo propertyinfo)
 		{
-			_properties.Add(propertyinfo);
+			_directProperties.Add(propertyinfo);
 		}
 
 		internal FdoPropertyInfo GetProperty(string propertyName)
@@ -56,28 +63,62 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			get
 			{
-				var results = new List<FdoPropertyInfo>();
-
-				if (Superclass != null)
-					results.AddRange(Superclass.AllProperties);
-
-				if (_properties.Count > 0)
-					results.AddRange(_properties);
-
-				return results;
+				return _allProperties;
 			}
 		}
 
-		///<summary>
-		/// Get a set of zero or more collection properties (reference or owning).
-		///</summary>
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllReferenceSequenceProperties
+		{
+			get
+			{
+				return _allReferenceSequenceProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllOwningSequenceProperties
+		{
+			get
+			{
+				return _allOwningSequenceProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllOwningProperties
+		{
+			get
+			{
+				return _allOwningProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
 		internal IEnumerable<FdoPropertyInfo> AllCollectionProperties
 		{
 			get
 			{
-				return new List<FdoPropertyInfo>(from prop in AllProperties
-														where prop.DataType == DataType.OwningCollection || prop.DataType == DataType.ReferenceCollection
-														select prop);
+				return _allCollectionProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllMultiAltProperties
+		{
+			get
+			{
+				return _allMultiAltProperties;
 			}
 		}
 
@@ -90,5 +131,50 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// Get the superclass.
 		/// </summary>
 		internal FdoClassInfo Superclass { get; set; }
+
+		public void ResetCaches(Dictionary<string, FdoClassInfo> classes)
+		{
+			// No. _directProperties.Clear();
+			_allProperties.Clear();
+			_allDirectSubclass.Clear();
+			_allCollectionProperties.Clear();
+			_allMultiAltProperties.Clear();
+			_allOwningProperties.Clear();
+			_allReferenceSequenceProperties.Clear();
+			_allOwningSequenceProperties.Clear();
+
+			if (Superclass != null)
+				_allProperties.AddRange(Superclass._allProperties);
+			if (_directProperties.Count > 0)
+			{
+				_allProperties.AddRange(_directProperties);
+			}
+
+			if (_allProperties.Count > 0)
+			{
+				_allReferenceSequenceProperties.AddRange(from prop in _allProperties
+														 where prop.DataType == DataType.ReferenceSequence
+														 select prop);
+				_allOwningSequenceProperties.AddRange(from prop in _allProperties
+													  where prop.DataType == DataType.OwningSequence
+													  select prop);
+				_allCollectionProperties.AddRange(from prop in _allProperties
+												  where prop.DataType == DataType.OwningCollection || prop.DataType == DataType.ReferenceCollection
+												  select prop);
+				_allMultiAltProperties.AddRange(from prop in _allProperties
+												where prop.DataType == DataType.MultiString || prop.DataType == DataType.MultiUnicode
+												select prop);
+				_allOwningProperties.AddRange(from prop in _allProperties
+											  where prop.DataType == DataType.OwningAtomic || prop.DataType == DataType.OwningCollection || prop.DataType == DataType.OwningSequence
+											  select prop);
+			}
+
+			classes.Remove(ClassName);
+			_allDirectSubclass.AddRange(from classInfo in classes.Values
+									where classInfo.Superclass == this
+									select classInfo);
+			foreach (var directSubclass in _allDirectSubclass)
+				directSubclass.ResetCaches(classes);
+		}
 	}
 }

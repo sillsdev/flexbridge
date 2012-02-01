@@ -26,7 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private const string Ws = "ws";
 		private const string Binary = "Binary";
 		private const string Prop = "Prop";
-		private const string Custom = "Custom";
 
 		internal static ElementStrategy AddSharedImmutableSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant)
 		{
@@ -68,7 +67,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.IsAtomic = true;
 			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, false, true);
+			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
+
+			// Add element for "refseq"
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
+			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
+			// Add element for "ownseq"
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
+			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
+			// Add element for "objsur".
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, "t" });
+			sharedElementStrategies.Add(SharedConstants.Objsur, elementStrategy);
 		}
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
@@ -179,7 +191,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					// Simple, mutable properties.
 					break;
 			}
-			strategiesForMerger.SetStrategy(Custom + "_" + propInfo.PropertyName, strategyForCurrentProperty);
+			strategiesForMerger.SetStrategy(SharedConstants.Custom + "_" + propInfo.PropertyName, strategyForCurrentProperty);
 		}
 
 		private static void ProcessStandardProperty(IDictionary<string, ElementStrategy> sharedElementStrategies, MergeStrategies strategiesForMerger, FdoPropertyInfo propInfo, ElementStrategy mutableSingleton, ElementStrategy immSingleton)
@@ -268,9 +280,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
-			var headerStrategy = CreateSingletonElementType(true);
-			headerStrategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy(SharedConstants.Header, headerStrategy);
+			BootstrapHeaderElementNonClassStrategies(strategiesForMerger);
 
 			var classStrat = new ElementStrategy(false)
 								{
@@ -281,6 +291,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
+				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
+				if (classInfo.ClassName == "ScrDraft")
+					classStrat.IsImmutable = true;
+				else
+					classStrat.IsImmutable = false;
+
 				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 				foreach (var propertyInfo in classInfo.AllProperties)
 				{
@@ -288,47 +304,53 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var propStrategy = isCustom
 										? ElementStrategy.CreateForKeyedElement(SharedConstants.Name, false)
 										: ElementStrategy.CreateSingletonElement();
-					switch (propertyInfo.DataType)
+					if (propertyInfo.DataType == DataType.Time)
 					{
-						case DataType.OwningCollection:
-							propStrategy.IsImmutable = false;
-							break;
-							// These two are immutable, in a manner of speaking.
-							// DateCreated is honestly, and the other two are because 'ours' and 'theirs' have been made to be the same already.
-						case DataType.Time: // Fall through // DateTime
-						case DataType.ReferenceCollection:
-							propStrategy.IsImmutable = true;
-							break;
-
-						case DataType.OwningSequence: // Fall through. // TODO: Sort out ownership issues for conflicts.
-						case DataType.ReferenceSequence:
-							// Use IsAtomic for whole property.
-							propStrategy.IsAtomic = true;
-							break;
-
-						case DataType.OwningAtomic: // Fall through. // TODO: Think about implications of a conflict.
-						case DataType.ReferenceAtomic:
-
-							// Other data types
-						case DataType.MultiUnicode:
-						case DataType.MultiString:
-						case DataType.Unicode: // Ordinary C# string
-						case DataType.String: // TsString
-						case DataType.Binary:
-						case DataType.TextPropBinary:
-							// NB: Booleans can never be in conflict in a 3-way merge environment.
-							// One or the other can toggle the bool, so the one changing it 'wins'.
-							// If both change it then it's no big deal either.
-						case DataType.Boolean: // Fall through.
-						case DataType.GenDate: // Fall through.
-						case DataType.Guid: // Fall through.
-						case DataType.Integer: // Fall through.
-							// Simple, mutable properties.
-							break;
+						propStrategy.IsImmutable = true; // Immutable, because we have pre-merged them to be so.
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
 			}
+		}
+
+		private static void BootstrapHeaderElementNonClassStrategies(MergeStrategies strategiesForMerger)
+		{
+			var strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy(SharedConstants.Header, strategy);
+
+			// Add all anthro pos list elements.
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("AnthroList", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("ConfidenceLevels", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Education", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Locations", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("People", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Positions", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Restrictions", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Roles", strategy);
+			strategy = CreateSingletonElementType(true);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("Status", strategy);
+			strategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy("TimeOfDay", strategy);
+
+			// As of 26 Jan 2012, no other context has non-class wrapper elements.
 		}
 
 		internal static void BootstrapSystem(MetadataCache mdc, Dictionary<string, ElementStrategy> sharedElementStrategies, Dictionary<string, XmlMerger> mergers, MergeSituation mergeSituation)
@@ -344,29 +366,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			CreateSharedElementStrategies(sharedElementStrategies);
 			CreateMergers(mdc, mergeSituation, sharedElementStrategies, mergers);
-		}
-
-		internal static void AddCustomPropInfo(MetadataCache mdc, MergeOrder mergeOrder, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
-		{
-			if (mdc == null) throw new ArgumentNullException("mdc");
-			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
-			if (String.IsNullOrEmpty(customPropTargetDir)) throw new ArgumentException(AnnotationImages.kInvalidArgument, "customPropTargetDir");
-
-			// Add optional custom property information to MDC.
-			string mainCustomPropPathname;
-			string altCustomPropPathname;
-			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
-			{
-				default:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					break;
-				case MergeOrder.ConflictHandlingModeChoices.TheyWin:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					break;
-			}
-			mdc.AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
 		}
 	}
 }

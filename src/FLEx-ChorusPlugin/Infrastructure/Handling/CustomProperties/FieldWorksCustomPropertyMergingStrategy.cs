@@ -37,7 +37,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		/// <returns>XML of the merged object.</returns>
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
+			return ourEntry == null
+					? theirEntry.OuterXml
+					: (theirEntry == null
+						? ourEntry.OuterXml
+						: _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml);
 		}
 
 		#endregion

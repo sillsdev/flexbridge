@@ -11,41 +11,68 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class CmObjectNestingService
 	{
-		internal static void NestObject(XElement obj,
+		internal static void NestObject(
+			bool isOwningSeqProp,
+			XElement obj,
 			Dictionary<string, HashSet<string>> exceptions,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (exceptions == null) throw new ArgumentNullException("exceptions");
 			if (classData == null) throw new ArgumentNullException("classData");
-			if (interestingPropertiesCache == null) throw new ArgumentNullException("interestingPropertiesCache");
 			if (guidToClassMapping == null) throw new ArgumentNullException("guidToClassMapping");
 
-			// 1. Rename element to that of the class.
-			var className = RenameElement(obj);
+			// 1. Rename element to that of the class, if isOwningSeqProp == false.
+			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant top be true.
+			var className = RenameElement(isOwningSeqProp, obj);
 
 			// 2. Nest owned objects in 'obj'.
-			NestOwnedObjects(exceptions, classData, interestingPropertiesCache, guidToClassMapping, obj);
+			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
 
-			// 3. Remove 'obj' from lists.
+			// 3. Reset ref seq prop nodes from "objsur" to "refseq", so they can use a special ElementStrategy for "refseq" that has isOrderRelevant top be true.
+			RenameReferenceSequenceObjsurNodes(className, obj);
+
+			// 4. Remove 'obj' from lists.
 			var guid = obj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			classData[className].Remove(guid);
 			guidToClassMapping.Remove(guid);
 		}
 
+		private static void RenameReferenceSequenceObjsurNodes(string className, XElement obj)
+		{
+			var refSeqProps = MetadataCache.MdCache.GetClassInfo(className).AllReferenceSequenceProperties.ToList();
+			if (refSeqProps.Count == 0)
+				return;
+			foreach (var refSeqProp in refSeqProps)
+			{
+				var propNode = obj.Element(refSeqProp.PropertyName);
+				if (propNode == null)
+					continue;
+				var objsurNodes = propNode.Elements(SharedConstants.Objsur).ToList();
+				if (!objsurNodes.Any())
+					continue;
+				foreach (var objsurNode in objsurNodes)
+				{
+					objsurNode.Name = SharedConstants.Refseq;
+				}
+			}
+		}
+
 		private static void NestOwnedObjects(
 			Dictionary<string, HashSet<string>> exceptions,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
-			var owningProps = interestingPropertiesCache[owningObjElement.Name.LocalName][SharedConstants.Owning];
+			var className = owningObjElement.Name.LocalName == SharedConstants.Ownseq
+								? owningObjElement.Attribute(SharedConstants.Class).Value
+								: owningObjElement.Name.LocalName;
+			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
+			var owningProps = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
-				var isCustomProperty = propertyElement.Name.LocalName == "Custom";
+				var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
 				var propName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 				if (!owningProps.Contains(propName))
 					continue;
@@ -53,8 +80,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					continue;
 				// By this point, theory has it that all 'objsur' elements must be owning,
 				// but the filter will ensure some unexpected reference data doesn't get treated as owning.
-				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o");
-				if (owningObjSurElements.Count() == 0)
+				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o").ToList();
+				if (!owningObjSurElements.Any())
 					continue;
 				// NB: There is no way the user can declare an owning custom property to be an exception, so not to worry about them.
 				if (!isCustomProperty)
@@ -65,26 +92,36 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						continue;
 				}
 
+				var isOwningSeqProp = classInfo.GetProperty(propName).DataType == DataType.OwningSequence;
 				// Replace each objsur node with actual element.
 				foreach (var objsurElement in owningObjSurElements.ToArray())
 				{
-					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value;
-					var classOfOwnedObject = guidToClassMapping[guid];
+					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+					string classOfOwnedObject;
+					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
+						continue;
 					guidToClassMapping.Remove(guid);
 					var ownedElement = classData[classOfOwnedObject][guid];
 					ownedElement.Attribute(SharedConstants.OwnerGuid).Remove();
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
-					NestObject(ownedElement, exceptions, classData, interestingPropertiesCache, guidToClassMapping);
+					NestObject(isOwningSeqProp, ownedElement, exceptions, classData, guidToClassMapping);
 				}
 			}
 		}
 
-		private static string RenameElement(XElement obj)
+		private static string RenameElement(bool isOwningSeqProp, XElement obj)
 		{
 			var classAttr = obj.Attribute(SharedConstants.Class);
-			obj.Name = classAttr.Value;
-			classAttr.Remove();
+			if (isOwningSeqProp)
+			{
+				obj.Name = "ownseq";
+			}
+			else
+			{
+				obj.Name = classAttr.Value;
+				classAttr.Remove();
+			}
 
 			return classAttr.Value;
 		}

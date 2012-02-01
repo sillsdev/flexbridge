@@ -11,20 +11,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	[TestFixture]
 	public class FieldWorksMergingServicesTests
 	{
-		private MetadataCache _mdc = MetadataCache.MdCache;
 		private ListenerForUnitTests _eventListener;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
 
 		[SetUp]
 		public void TestSetup()
@@ -38,7 +25,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_eventListener = null;
 		}
 
-		[Test]
+		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
 		public void WinnerAndLoserEachAddedNewOwnedItemToEmptyOwningSequenceProperty()
 		{
 			const string commonAncestor =
@@ -48,17 +35,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </RnGenericRec>
 </Root>";
 
-			var ourContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieOurs'/></SubRecords></RnGenericRec>");
-			var theirContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><RnGenericRec guid='newbieTheirs'/></SubRecords></RnGenericRec>");
+			var ourContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><ownseq class='RnGenericRec' guid='newbieOurs'/></SubRecords></RnGenericRec>");
+			var theirContent = commonAncestor.Replace("</RnGenericRec>", "<SubRecords><ownseq class='RnGenericRec' guid='newbieTheirs'/></SubRecords></RnGenericRec>");
 
 			XmlNode theirNode;
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(true, _eventListener, _mdc,
-				ourNode,
-				theirNode,
-				ancestorNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			// oldie should have two new child elements in ours and theirs, and in the right order.
 			Assert.IsTrue(ourNode.HasChildNodes);
@@ -88,13 +72,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<PartsOfSpeech>
 		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Possibilities>
-				<PartOfSpeech guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<DateModified val='2000-1-1 23:59:59.000' />
 					<Name>
 						<AUni
 							ws='en'>commonName</AUni>
 					</Name>
-				</PartOfSpeech>
+				</ownseq>
 			</Possibilities>
 		</CmPossibilityList>
 	</PartsOfSpeech>
@@ -107,10 +91,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(true, _eventListener, _mdc,
-				ourNode,
-				theirNode,
-				ancestorNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
@@ -127,13 +108,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<PartsOfSpeech>
 		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Possibilities>
-				<PartOfSpeech guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<DateModified val='2000-1-1 23:59:59.000' />
 					<Name>
 						<AUni
 							ws='en'>commonName</AUni>
 					</Name>
-				</PartOfSpeech>
+				</ownseq>
 			</Possibilities>
 		</CmPossibilityList>
 	</PartsOfSpeech>
@@ -146,17 +127,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(true, _eventListener, _mdc,
-				ourNode,
-				theirNode,
-				ancestorNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			_eventListener.AssertExpectedConflictCount(0);
 		}
 
-		[Test]
+		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
 		public void EnsureReferenceCollectionDoesNotConflictOnMerge()
 		{
 			const string commonAncestor =
@@ -183,7 +161,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <objsur guid='four' t='r' />
 <objsur guid='five' t='r' />
 <objsur guid='six' t='r' />
-<objsur guid='weAdded' t='r' />
+<objsur guid='weadded' t='r' />
 </PlacesOfResidence>
 </rt>
 </classdata>";
@@ -194,7 +172,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 <PlacesOfResidence>
 <objsur guid='one' t='r' />
 <objsur guid='two' t='r' />
-<objsur guid='theyAdded' t='r' />
+<objsur guid='theyadded' t='r' />
 <objsur guid='three' t='r' />
 <objsur guid='four' t='r' />
 <objsur guid='six' t='r' />
@@ -206,10 +184,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(false, _eventListener, _mdc,
-				ourNode,
-				theirNode,
-				ancestorNode);
+			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 
@@ -236,10 +211,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							  where target.Attribute(SharedConstants.GuidStr).Value == "six"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "theyAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "theyadded"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "weAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "weadded"
 							  select target).FirstOrDefault());
 
 			resElement = XElement.Parse(theirNode.OuterXml);
@@ -265,14 +240,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							  where target.Attribute(SharedConstants.GuidStr).Value == "six"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "theyAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "theyadded"
 							  select target).FirstOrDefault());
 			Assert.IsNotNull((from target in refTargets
-							  where target.Attribute(SharedConstants.GuidStr).Value == "weAdded"
+							  where target.Attribute(SharedConstants.GuidStr).Value == "weadded"
 							  select target).FirstOrDefault());
 		}
 
-		[Test]
+		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
 		public void EnsureReferenceCollectionDoesNotConflictOnMergeWhenBothMadeTheSameChanges()
 		{
 			const string commonAncestor =
@@ -322,10 +297,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(false, _eventListener, _mdc,
-				ourNode,
-				theirNode,
-				ancestorNode);
+			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace FwdataNester
+namespace FwdataTestApp
 {
 	static class Program
 	{

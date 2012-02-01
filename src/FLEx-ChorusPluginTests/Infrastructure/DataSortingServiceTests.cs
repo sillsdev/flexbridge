@@ -125,7 +125,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 <CustomField wsSelector='-2' type='String' name='Paradigm' class='LexEntry' />
 </AdditionalFields>";
 			var sortedCustomDataElement = DataSortingService.SortCustomPropertiesRecord(sortedCustomData);
-			Assert.AreEqual(SharedConstants.OptionalFirstElementTag, sortedCustomDataElement.Name.LocalName);
+			Assert.AreEqual(SharedConstants.AdditionalFieldsTag, sortedCustomDataElement.Name.LocalName);
 			Assert.AreEqual(3, sortedCustomDataElement.Elements().Count());
 
 			var customData = sortedCustomDataElement.Elements().ElementAt(0);
@@ -160,6 +160,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void SortMainElement()
 		{
+
+			// Possibilities is an owning seq prop of CmPossibilityList.
 			const string rt =
 @"<rt ownerguid='fe832a87-4846-4895-9c7e-98c5da0c84ba' class='CmPossibilityList' guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d'>
 <Possibilities>
@@ -173,9 +175,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 <AUni ws='en'>Parts Of Speech</AUni>
 </Abbreviation>
 </rt>";
-			var interestingPropertiesCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+
 			var pl = new Dictionary<string, HashSet<string>>();
-			interestingPropertiesCache.Add("CmPossibilityList", pl);
 			var hs = new HashSet<string> {"Possibilities"};
 			pl.Add("Collections", hs);
 			hs = new HashSet<string> { "Abbreviation" };
@@ -188,7 +189,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			//{
 			//	using (var writer = XmlWriter.Create(tempOutputPathname))
 			//	{
-			var rtElement = DataSortingService.SortMainElement(interestingPropertiesCache, rt);
+			var rtElement = DataSortingService.SortMainElement(rt);
 			//		writer.Flush();
 			//		writer.Close();
 			//	}
@@ -201,10 +202,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			var sortedProp = rtElement.Elements().ElementAt(0);
 			Assert.AreEqual("en", sortedProp.Element("AUni").Attribute("ws").Value); // Make sure SortMainElement called mutli sorter.
 			Assert.AreEqual("Abbreviation", sortedProp.Name.LocalName);
-			Assert.AreEqual("Custom", rtElement.Elements().ElementAt(1).Name.LocalName);
+			Assert.AreEqual(SharedConstants.Custom, rtElement.Elements().ElementAt(1).Name.LocalName);
 			Assert.AreEqual("DateCreated", rtElement.Elements().ElementAt(2).Name.LocalName);
 			sortedProp = rtElement.Elements().ElementAt(3);
-			Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement called coll sorter.
+			//Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement called coll sorter.
 			Assert.AreEqual("Possibilities", sortedProp.Name.LocalName);
 			//}
 			//finally
@@ -231,9 +232,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 <rt guid='c1ecf88c-e382-11de-8a39-0800200c9a66' class='LexEntry' />
 </languageproject>";
 
-			var interestingPropertiesCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 			var pl = new Dictionary<string, HashSet<string>>();
-			interestingPropertiesCache.Add("CmPossibilityList", pl);
 			var hs = new HashSet<string> { "Possibilities" };
 			pl.Add("Collections", hs);
 			hs = new HashSet<string> { "Abbreviation" };
@@ -246,7 +245,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 				using (var writer = XmlWriter.Create(tempOutputPathname))
 				{
 					writer.WriteStartElement("languageproject");
-					DataSortingService.SortEntireFile(interestingPropertiesCache, writer, tempInputPathname);
+					DataSortingService.SortEntireFile(writer, tempInputPathname);
 					writer.WriteEndElement();
 					writer.Flush();
 					writer.Close();

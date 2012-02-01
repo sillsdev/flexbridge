@@ -23,14 +23,42 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			if (ourEntry.Name == SharedConstants.Header)
+			var extantNode = ourEntry ?? theirEntry ?? commonEntry;
+
+			switch (extantNode.Name)
 			{
-				foreach (XmlNode headerChild in ourEntry.ChildNodes)
-					FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, headerChild, theirEntry.SelectSingleNode(headerChild.Name), commonEntry.SelectSingleNode(headerChild.Name));
-			}
-			else
-			{
-				FieldWorksMergingServices.PreMerge(true, eventListener, _mdc, ourEntry, theirEntry, commonEntry);
+				default:
+					FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, ourEntry, theirEntry);
+					break;
+				case "ScrDraft":
+					// Immutable, so common, if different.
+					if ((ourEntry != null && ourEntry.OuterXml != commonEntry.OuterXml) || (theirEntry != null && theirEntry.OuterXml != commonEntry.OuterXml))
+					{
+						return commonEntry.OuterXml;
+					}
+					// I (RBR) don't think both can be null, but....
+					if (ourEntry == null && theirEntry == null)
+						return commonEntry.OuterXml;
+					break;
+				case SharedConstants.Header:
+					if (ourEntry != null)
+					{
+						foreach (XmlNode headerChild in ourEntry.ChildNodes)
+						{
+							if (_mdc.GetClassInfo(headerChild.Name) == null)
+							{
+								// Not a class, as what is found in the Anthro file. Go another level deeper to the class data.
+								// This node only has one child, and it is class data.
+								var dataCarryingChild = headerChild.FirstChild;
+								FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, dataCarryingChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild);
+							}
+							else
+							{
+								FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name));
+							}
+						}
+					}
+					break;
 			}
 
 			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;

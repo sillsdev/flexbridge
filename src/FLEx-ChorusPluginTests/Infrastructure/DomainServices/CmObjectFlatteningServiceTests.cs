@@ -11,43 +11,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	[TestFixture]
 	public class CmObjectFlatteningServiceTests
 	{
-		private MetadataCache _mdc;
 		private XElement _reversalIndexElement;
-		private Dictionary<string, Dictionary<string, HashSet<string>>> _interestingPropsCache;
 		private const string ReversalOwnerGuid = "c1ed6db5-e382-11de-8a39-0800200c9a66";
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-
-			_interestingPropsCache = DataSortingService.CacheInterestingProperties(_mdc);
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], new FdoPropertyInfo(
-				"LoneAardvark",
-				DataType.OwningAtomic,
-				true));
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], new FdoPropertyInfo(
-				"GaggleOfAardvarks",
-				DataType.OwningCollection,
-				true));
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], new FdoPropertyInfo(
-				"AardvarksInARow",
-				DataType.OwningSequence,
-				true));
-			// Add aardvark class to _interestingPropsCache, with nothing of interest in it.
-			_interestingPropsCache.Add("Aardvark", new Dictionary<string, HashSet<string>>
-													{
-														{SharedConstants.Collections, new HashSet<string>()},
-														{SharedConstants.MultiAlt, new HashSet<string>()},
-														{SharedConstants.Owning, new HashSet<string>()}
-													});
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
 
 		[SetUp]
 		public void SetupTest()
@@ -63,19 +28,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	<ReversalIndexEntry guid='00b560a2-9af0-4185-bbeb-c0eb3c5e3769' />
   </Entries>
   <PartsOfSpeech>
-	<CmPossibilityList guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d' />
+	<CmPossibilityList guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d'>
+		<Possibilities>
+			<ownseq class='PartOfSpeech' guid='c1ed6dc6-e382-11de-8a39-0800200c9a66' />
+			<ownseq class='PartOfSpeech' guid='c1ed6dc7-e382-11de-8a39-0800200c9a66' />
+		</Possibilities>
+	</CmPossibilityList>
   </PartsOfSpeech>
-  <Custom name='LoneAardvark' type='OwningAtomic'>
-	<Aardvark guid='c1ed46b3-e382-11de-8a39-0800200c9a66' />
-  </Custom>
-  <Custom name='GaggleOfAardvarks' type='OwningCollection'>
-	<Aardvark guid='c1ed46b4-e382-11de-8a39-0800200c9a66' />
-	<Aardvark guid='c1ed46b5-e382-11de-8a39-0800200c9a66' />
-  </Custom>
-  <Custom name='AardvarksInARow' type='OwningSequence'>
-	<Aardvark guid='c1ed46b6-e382-11de-8a39-0800200c9a66' />
-	<Aardvark guid='c1ed46b7-e382-11de-8a39-0800200c9a66' />
-  </Custom>
 </ReversalIndex>";
 
 			_reversalIndexElement = XElement.Parse(nestedReversal);
@@ -92,17 +51,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
 				null,
-				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
-				new XElement("junk"),
-				null));
-		}
-
-		[Test]
-		public void NullInterestingPropertiesCacheThrows()
-		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
-				new SortedDictionary<string, XElement>(),
-				null,
 				new XElement("junk"),
 				null));
 		}
@@ -112,7 +60,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
 				new SortedDictionary<string, XElement>(),
-				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
 				null,
 				null));
 		}
@@ -122,7 +69,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenObject(
 				new SortedDictionary<string, XElement>(),
-				new Dictionary<string, Dictionary<string, HashSet<string>>>(),
 				new XElement("junk"),
 				string.Empty));
 		}
@@ -133,7 +79,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var sortedData = new SortedDictionary<string, XElement>();
 			CmObjectFlatteningService.FlattenObject(
 				sortedData,
-				_interestingPropsCache,
 				_reversalIndexElement,
 				null);
 			Assert.IsTrue(_reversalIndexElement.Name.LocalName == SharedConstants.RtTag);
@@ -147,7 +92,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var sortedData = new SortedDictionary<string, XElement>();
 			CmObjectFlatteningService.FlattenObject(
 				sortedData,
-				_interestingPropsCache,
 				_reversalIndexElement,
 				ReversalOwnerGuid);
 			Assert.IsTrue(_reversalIndexElement.Attribute(SharedConstants.OwnerGuid).Value == ReversalOwnerGuid);
@@ -159,14 +103,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var sortedData = new SortedDictionary<string, XElement>();
 			CmObjectFlatteningService.FlattenObject(
 				sortedData,
-				_interestingPropsCache,
 				_reversalIndexElement,
 				null);
-			Assert.AreEqual(10, sortedData.Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex").Count());
-			Assert.AreEqual(3, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry").Count());
-			Assert.AreEqual(1, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList").Count());
-			Assert.AreEqual(5, sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "Aardvark").Count());
+			Assert.AreEqual(7, sortedData.Count());
+			Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex"));
+			Assert.AreEqual(3, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"));
+			Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList"));
+			Assert.AreEqual(2, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "PartOfSpeech"));
 		}
 
 		[Test]
@@ -175,84 +118,45 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var sortedData = new SortedDictionary<string, XElement>();
 			CmObjectFlatteningService.FlattenObject(
 				sortedData,
-				_interestingPropsCache,
 				_reversalIndexElement,
 				null);
-			var revIdx = sortedData.Values.Where(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex").First();
+			var revIdx = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex");
 			var owningProp = revIdx.Element("Entries");
 			CheckOwningProperty(owningProp, 2);
-			owningProp = sortedData.Values.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "0039739a-7fcf-4838-8b75-566b8815a29f").First().Element("Subentries");
+			owningProp = sortedData.Values.First(rt => rt.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == "0039739a-7fcf-4838-8b75-566b8815a29f".ToLowerInvariant()).Element("Subentries");
 			CheckOwningProperty(owningProp, 1);
 			owningProp = revIdx.Element("PartsOfSpeech");
 			CheckOwningProperty(owningProp, 1);
-			var customProps = revIdx.Elements("Custom");
-			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
-			CheckOwningProperty(owningProp, 1);
-			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
-			CheckOwningProperty(owningProp, 2);
-			owningProp = customProps.Where(cp => cp.Attribute(SharedConstants.Name).Value == "AardvarksInARow").First();
+			var posList = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList");
+			owningProp = posList.Element("Possibilities");
 			CheckOwningProperty(owningProp, 2);
 		}
 
 		[Test]
-		public void LoneAardvarkHasCorrectObsurElement()
+		public void RefSeqElementsRestoredToObjsurElements()
 		{
 			var sortedData = new SortedDictionary<string, XElement>();
+			var segment = new XElement("Segment",
+								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+								  new XElement("Analyses",
+									  new XElement(SharedConstants.Refseq,
+												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
+												  new XAttribute("t", "r")),
+										new XElement(SharedConstants.Refseq,
+												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
+												  new XAttribute("t", "r"))));
 			CmObjectFlatteningService.FlattenObject(
 				sortedData,
-				_interestingPropsCache,
-				_reversalIndexElement,
+				segment,
 				null);
-			var loneAardvarkProp = sortedData.Values
-				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
-			Assert.AreEqual(1, loneAardvarkProp.Elements().Count());
-			Assert.AreEqual("c1ed46b3-e382-11de-8a39-0800200c9a66", loneAardvarkProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value);
-		}
-
-		[Test]
-		public void GaggleOfAardvarksHasCorrectObsurElements()
-		{
-			var sortedData = new SortedDictionary<string, XElement>();
-			CmObjectFlatteningService.FlattenObject(
-				sortedData,
-				_interestingPropsCache,
-				_reversalIndexElement,
-				null);
-			var gaggleOfAardvarksProp = sortedData.Values
-				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
-			var expectedGuids = new HashSet<string>
-									{
-										"c1ed46b4-e382-11de-8a39-0800200c9a66",
-										"c1ed46b5-e382-11de-8a39-0800200c9a66"
-									};
-			Assert.AreEqual(2, gaggleOfAardvarksProp.Elements().Count());
-			foreach (var objsurElement in gaggleOfAardvarksProp.Elements())
-				Assert.IsTrue(expectedGuids.Contains(objsurElement.Attribute(SharedConstants.GuidStr).Value));
-		}
-
-		[Test]
-		public void AardvarksInARowHasCorrectObsurElements()
-		{
-			var sortedData = new SortedDictionary<string, XElement>();
-			CmObjectFlatteningService.FlattenObject(
-				sortedData,
-				_interestingPropsCache,
-				_reversalIndexElement,
-				null);
-			var aardvarksInARowProp = sortedData.Values
-				.Where(rt => rt.Attribute(SharedConstants.GuidStr).Value == "fe832a87-4846-4895-9c7e-98c5da0c84ba").First()
-				.Elements("Custom").Where(cp => cp.Attribute(SharedConstants.Name).Value == "AardvarksInARow").First();
-			Assert.AreEqual(2, aardvarksInARowProp.Elements().Count());
-			Assert.AreEqual("c1ed46b6-e382-11de-8a39-0800200c9a66", ((XElement)aardvarksInARowProp.FirstNode).Attribute(SharedConstants.GuidStr).Value);
-			Assert.AreEqual("c1ed46b7-e382-11de-8a39-0800200c9a66", ((XElement)aardvarksInARowProp.LastNode).Attribute(SharedConstants.GuidStr).Value);
+			var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
+			Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
 		}
 
 		private static void CheckOwningProperty(XContainer owningProp, int expectedCount)
 		{
-			var ownedElements = owningProp.Elements();
-			Assert.AreEqual(expectedCount, ownedElements.Count());
+			var ownedElements = owningProp.Elements().ToList();
+			Assert.AreEqual(expectedCount, ownedElements.Count);
 			foreach (var ownedElement in ownedElements)
 			{
 				Assert.IsTrue(ownedElement.Name.LocalName == SharedConstants.Objsur);

@@ -11,60 +11,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	[TestFixture]
 	public class CmObjectNestingServiceTests
 	{
-		private MetadataCache _mdc;
 		private XElement _rt;
 		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
-		private Dictionary<string, Dictionary<string, HashSet<string>>> _interestingPropsCache;
 		private Dictionary<string, string> _guidToClassMapping;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-
-			// Add custom props to mdc.
-			var loneAardvarkProp = new FdoPropertyInfo(
-				"LoneAardvark",
-				DataType.OwningAtomic,
-				true);
-			_mdc.AddCustomPropInfo(
-				"ReversalIndexEntry",
-				loneAardvarkProp);
-
-			var gaggleOfAardvarksProp = new FdoPropertyInfo(
-				"GaggleOfAardvarks",
-				DataType.OwningCollection,
-				true);
-			_mdc.AddCustomPropInfo(
-				"ReversalIndexEntry",
-				gaggleOfAardvarksProp);
-
-			var aardvarksInARowProp = new FdoPropertyInfo(
-				"AardvarksInARow",
-				DataType.OwningSequence,
-				true);
-			_mdc.AddCustomPropInfo(
-				"ReversalIndexEntry",
-				aardvarksInARowProp);
-
-			_interestingPropsCache = DataSortingService.CacheInterestingProperties(_mdc);
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], loneAardvarkProp);
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], gaggleOfAardvarksProp);
-			DataSortingService.CacheProperty(_interestingPropsCache["ReversalIndex"], aardvarksInARowProp);
-			// Add aardvark class to _interestingPropsCache, with nothing of interest in it.
-			_interestingPropsCache.Add("Aardvark", new Dictionary<string, HashSet<string>>
-													{
-														{SharedConstants.Collections, new HashSet<string>()},
-														{SharedConstants.MultiAlt, new HashSet<string>()},
-														{SharedConstants.Owning, new HashSet<string>()}
-													});
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
 
 		[SetUp]
 		public void SetupTest()
@@ -100,39 +49,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void NullObjectThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(null,
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, null,
 				new Dictionary<string, HashSet<string>>(),
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
-				new Dictionary<string, Dictionary<string, HashSet<string>>>(),
 				new Dictionary<string, string>()));
 		}
 
 		[Test]
 		public void NullExceptionListThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
 				null,
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
-				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
 				new Dictionary<string, string>()));
 		}
 
 		[Test]
 		public void NullClassDataThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
 				new Dictionary<string, HashSet<string>>(),
-				null,
-				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
-				new Dictionary<string, string>()));
-		}
-
-		[Test]
-		public void NullInterestingPropsCacheThrows()
-		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
-				new Dictionary<string, HashSet<string>>(),
-				new Dictionary<string,SortedDictionary<string,XElement>>(),
 				null,
 				new Dictionary<string, string>()));
 		}
@@ -140,20 +76,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void NullGuidToClassMappingThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(new XElement("junk"),
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
 				new Dictionary<string, HashSet<string>>(),
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
-				new Dictionary<string,Dictionary<string,HashSet<string>>>(),
 				null));
 		}
 
 		[Test]
 		public void ElementRenamed()
 		{
-			CmObjectNestingService.NestObject(_rt,
+			CmObjectNestingService.NestObject(false, _rt,
 											  new Dictionary<string, HashSet<string>>(),
 											  _classData,
-											  _interestingPropsCache,
 											  _guidToClassMapping);
 			Assert.IsTrue(_rt.Name.LocalName == "ReversalIndex");
 			Assert.IsNull(_rt.Attribute(SharedConstants.Class));
@@ -163,15 +97,23 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void OwnedObjectsAreNested()
 		{
 			AddOwnedObjects();
-			CmObjectNestingService.NestObject(_rt,
+			CmObjectNestingService.NestObject(false, _rt,
 				new Dictionary<string, HashSet<string>>(),
 				_classData,
-				_interestingPropsCache,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
 			Assert.AreEqual(2, entriesElements.Count());
-			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements("CmPossibilityList").Count());
+			entriesElements = _rt.Element("PartsOfSpeech").Elements("CmPossibilityList");
+			Assert.AreEqual(1, entriesElements.Count());
+			entriesElements = entriesElements.ToList()[0].Element("Possibilities").Elements(SharedConstants.Ownseq);
+			Assert.AreEqual(2, entriesElements.Count());
+			var pos = entriesElements.ToList()[0];
+			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc6-e382-11de-8a39-0800200c9a66");
+			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
+			pos = entriesElements.ToList()[1];
+			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc7-e382-11de-8a39-0800200c9a66");
+			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
 		}
 
 		[Test]
@@ -182,10 +124,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 									{"ReversalIndex", new HashSet<string> {"PartsOfSpeech"}}
 								};
 			AddOwnedObjects();
-			CmObjectNestingService.NestObject(_rt,
+			CmObjectNestingService.NestObject(false, _rt,
 				exclusions,
 				_classData,
-				_interestingPropsCache,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
@@ -195,53 +136,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
-		public void LoneAardvarkIsNested()
+		public void RefSeqPropertiesAreChangedToRefseq()
 		{
-			AddOwnedObjects();
-			CmObjectNestingService.NestObject(_rt,
-				new Dictionary<string,HashSet<string>>(),
-				_classData,
-				_interestingPropsCache,
-				_guidToClassMapping);
-			var loneAardvarkPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "LoneAardvark").First();
-			var contentElements = loneAardvarkPropElement.Elements();
-			Assert.AreEqual(1, contentElements.Count());
-			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
-		}
-
-		[Test]
-		public void GaggleOfAardvarksAreNested()
-		{
-			AddOwnedObjects();
-			CmObjectNestingService.NestObject(_rt,
+			var rt = new XElement(SharedConstants.RtTag,
+								  new XAttribute(SharedConstants.Class, "Segment"),
+								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+								  new XElement("Analyses",
+									  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
+												  new XAttribute("t", "r")),
+										new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
+												  new XAttribute("t", "r"))));
+			var classData = new Dictionary<string, SortedDictionary<string, XElement>>();
+			var data = new SortedDictionary<string, XElement>
+						{
+							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", rt}
+						};
+			classData.Add("Segment", data);
+			var guidToClassMapping = new Dictionary<string, string> {{"c1ed6dc8-e382-11de-8a39-0800200c9a66", "Segment"}};
+			CmObjectNestingService.NestObject(false, rt,
 				new Dictionary<string, HashSet<string>>(),
-				_classData,
-				_interestingPropsCache,
-				_guidToClassMapping);
-			var gaggleOfAardvarksPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
-			var contentElements = gaggleOfAardvarksPropElement.Elements();
-			Assert.AreEqual(2, contentElements.Count());
-			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
-			Assert.AreEqual("Aardvark", contentElements.Last().Name.LocalName);
-		}
-
-		[Test]
-		public void RowOfAardvarksAreNested()
-		{
-			AddOwnedObjects();
-			CmObjectNestingService.NestObject(_rt,
-				new Dictionary<string, HashSet<string>>(),
-				_classData,
-				_interestingPropsCache,
-				_guidToClassMapping);
-			var aardvarksInARowPropElement =
-				_rt.Elements("Custom").Where(atomic => atomic.Attribute(SharedConstants.Name).Value == "GaggleOfAardvarks").First();
-			var contentElements = aardvarksInARowPropElement.Elements();
-			Assert.AreEqual(2, contentElements.Count());
-			Assert.AreEqual("Aardvark", contentElements.First().Name.LocalName);
-			Assert.AreEqual("Aardvark", contentElements.Last().Name.LocalName);
+				classData,
+				guidToClassMapping);
+			var result = rt.ToString();
+			Assert.IsTrue(result.Contains(SharedConstants.Refseq));
 		}
 
 		private void AddOwnedObjects()
@@ -282,85 +201,50 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 												  new XAttribute("t", "o")));
 			entry1.Add(entriesElement);
 
-			// Add the POS list, with nothing in it.
+			// Add the POS list, with two possibilities (own-seq prop).
+			const string posListGuid = "fb5e83e5-6576-455d-aba0-0b7a722b9b5d";
 			var posList = new XElement(SharedConstants.RtTag,
 									  new XAttribute(SharedConstants.Class, "CmPossibilityList"),
-									  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
+									  new XAttribute(SharedConstants.GuidStr, posListGuid),
 									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
-			entriesElement = new XElement("PartsOfSpeech",
+			var pos1 = new XElement(SharedConstants.RtTag,
+									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
+									new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
+									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
+									new XElement("DateCreated", new XAttribute("val", "created")));
+			var pos2 = new XElement(SharedConstants.RtTag,
+									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
+									new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
+									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
+									new XElement("DateCreated", new XAttribute("val", "created")));
+			entriesElement = new XElement("Possibilities",
 											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "fb5e83e5-6576-455d-aba0-0b7a722b9b5d"),
+												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
+												  new XAttribute("t", "o")),
+											  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
 												  new XAttribute("t", "o")));
-			_guidToClassMapping.Add("fb5e83e5-6576-455d-aba0-0b7a722b9b5d", "CmPossibilityList");
+			_guidToClassMapping.Add("c1ed6dc6-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
+			_guidToClassMapping.Add("c1ed6dc7-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
 			data = new SortedDictionary<string, XElement>
 					{
-						{"fb5e83e5-6576-455d-aba0-0b7a722b9b5d", posList}
+						{"c1ed6dc6-e382-11de-8a39-0800200c9a66", pos1},
+						{"c1ed6dc7-e382-11de-8a39-0800200c9a66", pos2}
+					};
+			_classData.Add("PartOfSpeech", data);
+			posList.Add(entriesElement);
+
+			entriesElement = new XElement("PartsOfSpeech",
+											  new XElement(SharedConstants.Objsur,
+												  new XAttribute(SharedConstants.GuidStr, posListGuid),
+												  new XAttribute("t", "o")));
+			_guidToClassMapping.Add(posListGuid, "CmPossibilityList");
+			data = new SortedDictionary<string, XElement>
+					{
+						{posListGuid, posList}
 					};
 			_classData.Add("CmPossibilityList", data);
 			_rt.Add(entriesElement);
-
-			// Add lone aardvark.
-			var customPropElement = new XElement("Custom",
-												 new XAttribute(SharedConstants.Name, "LoneAardvark"),
-												 new XAttribute("type", "OwningAtomic"),
-												 new XElement(SharedConstants.Objsur,
-													 new XAttribute(SharedConstants.GuidStr, "c1ed46b3-e382-11de-8a39-0800200c9a66"),
-													 new XAttribute("t", "o")));
-			_rt.Add(customPropElement);
-			_guidToClassMapping.Add("c1ed46b3-e382-11de-8a39-0800200c9a66", "Aardvark");
-
-			// Add gaggle of aardvarks.
-			customPropElement = new XElement("Custom",
-												 new XAttribute(SharedConstants.Name, "GaggleOfAardvarks"),
-												 new XAttribute("type", "OwningCollection"),
-												 new XElement(SharedConstants.Objsur,
-													 new XAttribute(SharedConstants.GuidStr, "c1ed46b4-e382-11de-8a39-0800200c9a66"),
-													 new XAttribute("t", "o")),
-												 new XElement(SharedConstants.Objsur,
-													 new XAttribute(SharedConstants.GuidStr, "c1ed46b5-e382-11de-8a39-0800200c9a66"),
-													 new XAttribute("t", "o")));
-			_rt.Add(customPropElement);
-			_guidToClassMapping.Add("c1ed46b4-e382-11de-8a39-0800200c9a66", "Aardvark");
-			_guidToClassMapping.Add("c1ed46b5-e382-11de-8a39-0800200c9a66", "Aardvark");
-
-			// Add row of aardvarks.
-			customPropElement = new XElement("Custom",
-												 new XAttribute(SharedConstants.Name, "AardvarksInARow"),
-												 new XAttribute("type", "OwningSequence"),
-												 new XElement(SharedConstants.Objsur,
-													 new XAttribute(SharedConstants.GuidStr, "c1ed46b6-e382-11de-8a39-0800200c9a66"),
-													 new XAttribute("t", "o")),
-												 new XElement(SharedConstants.Objsur,
-													 new XAttribute(SharedConstants.GuidStr, "c1ed46b7-e382-11de-8a39-0800200c9a66"),
-													 new XAttribute("t", "o")));
-			_rt.Add(customPropElement);
-			_guidToClassMapping.Add("c1ed46b6-e382-11de-8a39-0800200c9a66", "Aardvark");
-			_guidToClassMapping.Add("c1ed46b7-e382-11de-8a39-0800200c9a66", "Aardvark");
-
-			data = new SortedDictionary<string, XElement>
-					{
-						{"c1ed46b3-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute(SharedConstants.Class, "Aardvark"),
-										   new XAttribute(SharedConstants.GuidStr, "c1ed46b3-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
-						{"c1ed46b4-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute(SharedConstants.Class, "Aardvark"),
-										   new XAttribute(SharedConstants.GuidStr, "c1ed46b4-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
-						{"c1ed46b5-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute(SharedConstants.Class, "Aardvark"),
-										   new XAttribute(SharedConstants.GuidStr, "c1ed46b5-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
-						{"c1ed46b6-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute(SharedConstants.Class, "Aardvark"),
-										   new XAttribute(SharedConstants.GuidStr, "c1ed46b6-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))},
-						{"c1ed46b7-e382-11de-8a39-0800200c9a66", new XElement(SharedConstants.RtTag,
-										   new XAttribute(SharedConstants.Class, "Aardvark"),
-										   new XAttribute(SharedConstants.GuidStr, "c1ed46b7-e382-11de-8a39-0800200c9a66"),
-										   new XAttribute(SharedConstants.OwnerGuid, rtGuid))}
-					};
-			_classData.Add("Aardvark", data);
 		}
 	}
 }

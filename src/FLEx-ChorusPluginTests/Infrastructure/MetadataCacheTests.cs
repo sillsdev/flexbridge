@@ -73,7 +73,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void CmObjectHasNoProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("CmObject").AllProperties.Count() == 0);
+			Assert.IsTrue(!_mdc.GetClassInfo("CmObject").AllProperties.Any());
 		}
 
 		/// <summary></summary>
@@ -86,6 +86,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 							  select propInfo).FirstOrDefault());
 
 			_mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
+			_mdc.ResetCaches();
 
 			Assert.IsNotNull((from propInfo in wordformInfo.AllProperties
 									 where propInfo.PropertyName == "Certified"
@@ -93,19 +94,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 		}
 
-		/// <summary></summary>
-		[Test]
-		public void LexDbHasCollectionProperties()
-		{
-			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Count() > 0);
-		}
+		///// <summary></summary>
+		//[Test]
+		//public void LexDbHasCollectionProperties()
+		//{
+		//    Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
+		//}
 
-		/// <summary></summary>
-		[Test]
-		public void SegmentHasNoCollectionProperties()
-		{
-			Assert.IsTrue(_mdc.GetClassInfo("Segment").AllCollectionProperties.Count() == 0);
-		}
+		///// <summary></summary>
+		//[Test]
+		//public void SegmentHasNoCollectionProperties()
+		//{
+		//    Assert.IsTrue(!_mdc.GetClassInfo("Segment").AllCollectionProperties.Any());
+		//}
 
 		[Test]
 		public void UnsupportedUpdateThrows()

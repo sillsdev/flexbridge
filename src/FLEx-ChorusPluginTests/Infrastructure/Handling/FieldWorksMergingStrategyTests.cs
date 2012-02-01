@@ -26,6 +26,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			_mdc = MetadataCache.MdCache;
 			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			_mdc.ResetCaches();
 		}
 
 		[TestFixtureTearDown]
@@ -109,8 +110,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 
 			var result = _fwMergeStrategy.MakeMergedEntry(_eventListener, randyNode, sueNode, ancestorNode);
 			var resElement = XElement.Parse(result);
-			Assert.IsTrue(resElement.Elements("Custom").Count() == 1);
-			var aStrNodes = resElement.Element("Custom").Elements("AStr");
+			Assert.IsTrue(resElement.Elements(SharedConstants.Custom).Count() == 1);
+			var aStrNodes = resElement.Element(SharedConstants.Custom).Elements("AStr");
 			Assert.IsTrue(aStrNodes.Count() == 2);
 			var aStrNode = aStrNodes.ElementAt(0);
 			Assert.IsTrue(aStrNode.Attribute("ws").Value == "qaa-x-ezpi");

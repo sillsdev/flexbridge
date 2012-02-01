@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Xml;
 using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
@@ -52,13 +51,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			if (report is IXmlChangeReport)
-				return new FieldWorksChangePresenter((IXmlChangeReport)report);
-
-			if (report is ErrorDeterminingChangeReport)
-				return (IChangePresenter)report;
-
-			return new DefaultChangePresenter(report, repository);
+			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
@@ -70,11 +63,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "DataFiles", 1); // NB: Must be done before FieldWorksMergingStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksMergingStrategy is created.
+
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksMergingStrategy(mergeOrder.MergeSituation, mdc),
 				null,
 				SharedConstants.RtTag, SharedConstants.GuidStr, WritePreliminaryClassDataInformation);
+		}
+
+		public string Extension
+		{
+			get { return SharedConstants.ClassData; }
 		}
 
 		#endregion

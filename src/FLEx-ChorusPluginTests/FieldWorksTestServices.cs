@@ -12,6 +12,8 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
+		internal const int ExpectedExtensionCount = 12;
+
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
 			ourFile.Dispose();
@@ -24,7 +26,46 @@ namespace FLEx_ChorusPluginTests
 			theirFile = null;
 		}
 
-		internal static void SetupTempFilesWithExstension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
+		internal static void RemoveTempFilesAndParentDir(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
+		{
+			var parentDir = Path.GetDirectoryName(ourFile.Path);
+			ourFile.Dispose();
+			ourFile = null;
+			Directory.Delete(parentDir);
+
+			parentDir = Path.GetDirectoryName(commonFile.Path);
+			commonFile.Dispose();
+			commonFile = null;
+			Directory.Delete(parentDir);
+
+			parentDir = Path.GetDirectoryName(theirFile.Path);
+			theirFile.Dispose();
+			theirFile = null;
+			Directory.Delete(parentDir);
+		}
+
+		internal static void SetupTempFilesWithName(string filename, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
+		{
+			var counter = 1;
+			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter++));
+			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter++));
+			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter));
+		}
+
+		internal static string CreateTempFileWithName(string filename, int counter)
+		{
+			var tempPath = Path.GetTempFileName();
+			var dirName = Path.GetDirectoryName(tempPath);
+			var newDirName = dirName + counter;
+			if (Directory.Exists(newDirName))
+				Directory.Delete(newDirName, true);
+			Directory.CreateDirectory(dirName + counter);
+			var replacement = Path.Combine(dirName + counter, filename);
+			File.Move(tempPath, replacement);
+			return replacement;
+		}
+
+		internal static void SetupTempFilesWithExtension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
 			ourFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
 			commonFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
@@ -34,8 +75,11 @@ namespace FLEx_ChorusPluginTests
 		internal static string CreateTempFileWithExtension(string extension)
 		{
 			var tempPath = Path.GetTempFileName();
-			File.Copy(tempPath, tempPath.Replace(Path.GetExtension(tempPath), extension));
-			return tempPath.Replace(Path.GetExtension(tempPath), extension);
+			var replacement = tempPath.Replace(Path.GetExtension(tempPath), extension);
+			if (File.Exists(replacement))
+				File.Delete(replacement);
+			File.Move(tempPath, replacement);
+			return replacement;
 		}
 
 		internal static string DoMerge(

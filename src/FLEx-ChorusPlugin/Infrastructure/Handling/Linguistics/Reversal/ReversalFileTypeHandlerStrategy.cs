@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 {
-	internal sealed class NtbkFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class ReversalFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk))
-				return false;
-
-			if (Path.GetFileName(pathToFile) != "DataNotebook.ntbk")
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Reversal))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -34,7 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				using (var reader = XmlReader.Create(pathToFile, settings))
 				{
 					reader.MoveToContent();
-					if (reader.LocalName == "Anthropology")
+					if (reader.LocalName == "Reversal")
 					{
 						// It would be nice, if it could really validate it.
 						while (reader.Read())
@@ -43,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					}
 					else
 					{
-						throw new InvalidOperationException("Not a FieldWorks data notebook file.");
+						throw new InvalidOperationException("Not a FieldWorks reversal file.");
 					}
 				}
 			}
@@ -56,38 +51,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			if (report is IXmlChangeReport)
-				return new FieldWorksChangePresenter((IXmlChangeReport)report);
-
-			if (report is ErrorDeterminingChangeReport)
-				return (IChangePresenter)report;
-
-			return new DefaultChangePresenter(report, repository);
+			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				SharedConstants.Header,
-				"RnGenericRec", SharedConstants.GuidStr);
+				"ReversalIndexEntry", SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "Anthropology", 1); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
-				"RnGenericRec", SharedConstants.GuidStr, WritePreliminaryAnthropologyInformation);
+				"ReversalIndexEntry", SharedConstants.GuidStr, WritePreliminaryReversalInformation);
+		}
+
+		public string Extension
+		{
+			get { return SharedConstants.Reversal; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryAnthropologyInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryReversalInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement("Anthropology");
+			writer.WriteStartElement("Reversal");
 			reader.Read();
 		}
 	}

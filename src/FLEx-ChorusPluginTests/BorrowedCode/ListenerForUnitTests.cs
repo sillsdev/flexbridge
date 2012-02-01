@@ -62,7 +62,7 @@ namespace FLEx_ChorusPluginTests.BorrowedCode
 				Debug.WriteLine("***Got these changes:");
 				foreach (var change in Changes)
 				{
-					Debug.WriteLine("    " + change);
+					Debug.WriteLine("    " + change.GetType().Name);
 				}
 #endif
 				Assert.AreEqual(count, Changes.Count, "Unexpected Change Count");

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
@@ -11,15 +14,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	internal sealed class FieldWorksCommonFileHandler : IChorusFileTypeHandler
 	{
-		private readonly IFieldWorksFileHandler _unknownFileTypeHandler = new UnknownFileTypeHandlerStrategy();
-		private readonly Dictionary<string, IFieldWorksFileHandler> _knownHandlers = new Dictionary<string, IFieldWorksFileHandler>
+		private readonly IFieldWorksFileHandler _unknownFileTypeHandler;
+		private readonly Dictionary<string, IFieldWorksFileHandler> _knownHandlers;
+
+		internal FieldWorksCommonFileHandler()
+		{
+			_knownHandlers = new Dictionary<string, IFieldWorksFileHandler>();
+			var fbAssembly = Assembly.GetExecutingAssembly();
+			var fileHandlerTypes = (fbAssembly.GetTypes().Where(typeof(IFieldWorksFileHandler).IsAssignableFrom)).ToList();
+			foreach (var fileHandlerType in fileHandlerTypes)
 			{
-				{SharedConstants.ModelVersion, new ModelVersionFileTypeHandlerStrategy()},
-				{SharedConstants.CustomProperties, new CustomPropertiesTypeHandlerStrategy()},
-				{SharedConstants.ClassData, new ClassDataFileTypeHandlerStrategy()},
-				{SharedConstants.Ntbk, new NtbkFileTypeHandlerStrategy()},
-				{SharedConstants.Reversal, new ReversalFileTypeHandlerStrategy()}
-			};
+				if (fileHandlerType.IsInterface)
+					continue;
+				var constInfo = fileHandlerType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+				if (constInfo == null)
+					continue; // It does need at least one public or non-public default constructor.
+				var instance = (IFieldWorksFileHandler)constInfo.Invoke(BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
+				if (fileHandlerType.Name == "UnknownFileTypeHandlerStrategy")
+					_unknownFileTypeHandler = instance;
+				else
+					_knownHandlers.Add(instance.Extension, instance);
+			}
+		}
 
 		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
 		{
@@ -57,8 +73,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (extension[0] != '.')
 				return false;
 
-			return GetHandlerfromExtension(extension.Substring(1))
-				.CanValidateFile(pathToFile);
+			var handler = GetHandlerfromExtension(extension.Substring(1));
+			return handler.CanValidateFile(pathToFile);
 		}
 
 		public void Do3WayMerge(MergeOrder mergeOrder)
@@ -109,12 +125,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (extension[0] != '.')
 				return "File has no extension.";
 
-			return GetHandlerfromExtension(extension.Substring(1)).ValidateFile(pathToFile);
+			var handler = GetHandlerfromExtension(extension.Substring(1));
+			return handler.ValidateFile(pathToFile);
 		}
 
 		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
 		{
-			// Skip check, since DefaultChangeReport doesn't reuire it.
+			// Skip check, since DefaultChangeReport doesn't require it.
 			//if (fileInRevision == null)
 			//    throw new ArgumentNullException("fileInRevision");
 
@@ -129,12 +146,27 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			return new List<string>
 			{
+				// Common
 				SharedConstants.ModelVersion,
 				SharedConstants.CustomProperties,
+				SharedConstants.Style,
+				SharedConstants.List,
 
+				// Old style
 				SharedConstants.ClassData,
+
+				// Scripture
+				SharedConstants.ArchivedDraft,
+				SharedConstants.ImportSetting,
+				SharedConstants.Srs,
+				SharedConstants.Trans,
+
+				// Anthropology
 				SharedConstants.Ntbk,
-				SharedConstants.Reversal
+
+				// Linguistics
+				SharedConstants.Reversal,
+				SharedConstants.Lexdb // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
 			};
 		}
 

@@ -8,8 +8,8 @@
 	<ProjectGuid>{C036E79E-49D8-4AB3-BB9A-792C514A817F}</ProjectGuid>
 	<OutputType>WinExe</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FwdataNester</RootNamespace>
-	<AssemblyName>FwdataNester</AssemblyName>
+	<RootNamespace>FwdataTestApp</RootNamespace>
+	<AssemblyName>FwdataTestApp</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
@@ -48,9 +48,10 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
 	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
 	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -64,8 +65,17 @@
 	<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
+  <PropertyGroup>
+	<ApplicationIcon>chorus.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="LibChorus, Version=1.3.642.0, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso, Version=1.9.198.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
@@ -93,6 +103,7 @@
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DependentUpon>Resources.resx</DependentUpon>
+	  <DesignTime>True</DesignTime>
 	</Compile>
 	<None Include="Properties\Settings.settings">
 	  <Generator>SettingsSingleFileGenerator</Generator>
@@ -109,6 +120,9 @@
 	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
 	  <Name>FLEx-ChorusPlugin</Name>
 	</ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="chorus.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

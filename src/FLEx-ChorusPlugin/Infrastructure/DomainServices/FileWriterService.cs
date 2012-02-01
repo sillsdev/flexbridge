@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{
@@ -47,7 +43,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (element == null)
 			{
 				// Still write out file with just the root element.
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.OptionalFirstElementTag));
+				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.AdditionalFieldsTag));
 				doc.Save(newPathname);
 			}
 			else
@@ -182,7 +178,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		}
 
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
-													 IDictionary<string, Dictionary<string, HashSet<string>>> interestingPropertiesCache,
 													 XmlReaderSettings readerSettings,
 													 string pathRoot,
 													 string projectName,
@@ -190,27 +185,30 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
+			var hasCustomProperties = false;
 			foreach (var propElement in cpElement.Elements("CustomField"))
 			{
+				hasCustomProperties = true;
 				var className = propElement.Attribute(SharedConstants.Class).Value;
 				var propName = propElement.Attribute(SharedConstants.Name).Value;
 				var typeAttr = propElement.Attribute("type");
-				var adjustedTypeValue = AdjustedPropertyType(interestingPropertiesCache, className, propName, typeAttr.Value);
+				var adjustedTypeValue = AdjustedPropertyType(className, propName, typeAttr.Value);
 				if (adjustedTypeValue != typeAttr.Value)
 					typeAttr.Value = adjustedTypeValue;
 				var customProp = new FdoPropertyInfo(
 					propName,
 					typeAttr.Value,
 					true);
-				DataSortingService.CacheProperty(interestingPropertiesCache[className], customProp);
 				mdc.AddCustomPropInfo(
 					className,
 					customProp);
 			}
+			if (hasCustomProperties)
+				mdc.ResetCaches();
 			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, SharedConstants.Utf8.GetBytes(cpElement.ToString()));
 		}
 
-		private static string AdjustedPropertyType(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName, string rawType)
+		internal static string AdjustedPropertyType(string className, string propName, string rawType)
 		{
 			string adjustedType;
 			switch (rawType)
@@ -221,11 +219,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 				case "OC":
 					adjustedType = "OwningCollection";
-					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 				case "RC":
 					adjustedType = "ReferenceCollection";
-					AddCollectionPropertyToCache(sortablePropertiesCache, className, propName);
 					break;
 
 				case "OS":
@@ -245,22 +241,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					break;
 			}
 			return adjustedType;
-		}
-
-		private static void AddCollectionPropertyToCache(IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache, string className, string propName)
-		{
-			Dictionary<string, HashSet<string>> classProps;
-			if (!sortablePropertiesCache.TryGetValue(className, out classProps))
-			{
-				classProps = new Dictionary<string, HashSet<string>>(2)
-								{
-									{SharedConstants.Collections, new HashSet<string>()},
-									{SharedConstants.MultiAlt, new HashSet<string>()}
-								};
-				sortablePropertiesCache.Add(className, classProps);
-			}
-			var collProps = classProps[SharedConstants.Collections];
-			collProps.Add(propName);
 		}
 
 		internal static void CheckPathname(string mainFilePathname)

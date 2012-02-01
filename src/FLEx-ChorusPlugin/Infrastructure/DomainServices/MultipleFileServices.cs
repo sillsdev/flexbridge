@@ -60,15 +60,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 					var mdc = MetadataCache.MdCache; // This may really need to be a reset
 					mdc.UpgradeToVersion(Int32.Parse(version));
-					var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 
-					// Write out optional custom property data.
+					// Write out optional custom property data to the fwdata file.
 					// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
 					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
 					// Remove 'key' attribute from CustomField elements, before writing to main file.
 					var doc = XDocument.Load(optionalCustomPropFile);
-					var customFieldElements = doc.Root.Elements("CustomField");
-					if (customFieldElements.Count() > 0)
+					var customFieldElements = doc.Root.Elements("CustomField").ToList();
+					if (customFieldElements.Any())
 					{
 						foreach (var cf in customFieldElements)
 						{
@@ -77,12 +76,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							var propType = cf.Attribute("type").Value;
 							cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
 
-							DataSortingService.CacheProperty(interestingPropertiesCache[cf.Attribute(SharedConstants.Class).Value], new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
+							mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 						}
+						mdc.ResetCaches();
 						FileWriterService.WriteElement(writer, readerSettings, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 					}
 
-					BaseDomainServices.RestoreDomainData(writer, readerSettings, interestingPropertiesCache, pathRoot);
+					BaseDomainServices.RestoreDomainData(writer, readerSettings, pathRoot);
 
 					writer.WriteEndElement();
 				}
@@ -125,7 +125,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				mdc.UpgradeToVersion(int.Parse(version));
 			}
 
-			var interestingPropertiesCache = DataSortingService.CacheInterestingProperties(mdc);
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
@@ -135,18 +134,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.OptionalFirstElementTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
 						// 2. Write custom properties file.
-						FileWriterService.WriteCustomPropertyFile(mdc, interestingPropertiesCache, readerSettings, pathRoot, projectName, record);
+						FileWriterService.WriteCustomPropertyFile(mdc, readerSettings, pathRoot, projectName, record);
 						foundOptionalFirstElement = false;
 						haveWrittenCustomFile = true;
 					}
 					else
 					{
-						CacheDataRecord(interestingPropertiesCache, classData, guidToClassMapping, record);
+						CacheDataRecord(classData, guidToClassMapping, record);
 					}
 				}
 				if (!haveWrittenCustomFile)
@@ -157,7 +156,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 
 			// 3. Write all data files, here and there. [NB: The CmObject data in the XElements of 'classData' has all been sorted by this point.]
-			BaseDomainServices.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping, interestingPropertiesCache);
+			BaseDomainServices.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping);
 		}
 
 		private static void DeleteOldFiles(string pathRoot, string projectName)
@@ -177,15 +176,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		private static void CacheDataRecord(
-			IDictionary<string, Dictionary<string, HashSet<string>>> sortablePropertiesCache,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			IDictionary<string, string> guidToClassMapping,
 			byte[] record)
 		{
 			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
-			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
+			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			guidToClassMapping.Add(guid, className);
 
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")
@@ -198,7 +196,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 
 			// 2. Sort <rt>
-			DataSortingService.SortMainElement(sortablePropertiesCache, rtElement);
+			DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
 			SortedDictionary<string, XElement> recordData;
