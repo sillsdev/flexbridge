@@ -115,7 +115,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var classAttr = obj.Attribute(SharedConstants.Class);
 			if (isOwningSeqProp)
 			{
-				obj.Name = "ownseq";
+				var className = obj.Attribute(SharedConstants.Class).Value;
+				obj.Name = (className == "StTxtPara" || className == "ScrTxtPara") ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
 			}
 			else
 			{

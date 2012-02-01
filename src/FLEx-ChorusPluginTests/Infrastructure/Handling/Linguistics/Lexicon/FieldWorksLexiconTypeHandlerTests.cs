@@ -221,6 +221,47 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
+		public void SampleMergeWithAtomicConflictWeWin()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+<header>
+<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
+	  <Introduction>
+		<StText guid='45b78bcf-2400-48d5-a9c1-973447d36d4e'>
+		  <DateModified val='2011-2-2 19:39:28.829' />
+		  <Paragraphs>
+			<ownseqatomic class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
+			<Contents>
+			  <Str>
+				<Run ws='en'>This is the first paragraph.</Run>
+			  </Str>
+			</Contents>
+			</ownseqatomic>
+		  </Paragraphs>
+		</StText>
+	  </Introduction>
+</LexDb>
+</header>
+<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("the first paragraph", "MY first paragraph");
+			var theirContent = commonAncestor.Replace("the first paragraph", "THEIR first paragraph"); ;
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+			Assert.IsTrue(results.Contains("MY first paragraph"));
+		}
+
+		[Test]
 		public void MergeHasNoReportsForDeepDateModifiedChanges()
 		{
 			const string commonAncestor =
