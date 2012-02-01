@@ -1,24 +1,26 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 {
-	internal sealed class NtbkFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class LexiconFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Lexdb))
 				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.DataNotebookFilename)
+			if (Path.GetFileName(pathToFile) != SharedConstants.LexiconFilename)
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -28,28 +30,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 		{
 			try
 			{
-				var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
-				using (var reader = XmlReader.Create(pathToFile, settings))
+				var doc = XDocument.Load(pathToFile);
+				var root = doc.Root;
+				if (root.Name.LocalName != SharedConstants.Lexicon
+					|| root.Element(SharedConstants.Header) == null
+					|| root.Element(SharedConstants.Header).Element("LexDb") == null
+					|| !root.Elements(SharedConstants.LexEntry).Any())
 				{
-					reader.MoveToContent();
-					if (reader.LocalName == SharedConstants.Anthropology)
-					{
-						// It would be nice, if it could really validate it.
-						while (reader.Read())
-						{
-						}
-					}
-					else
-					{
-						throw new InvalidOperationException("Not a FieldWorks data notebook file.");
-					}
+					return "Not valid lexicon file";
 				}
+
+				return null;
 			}
 			catch (Exception e)
 			{
 				return e.Message;
 			}
-			return null;
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
@@ -61,30 +57,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				SharedConstants.Header,
-				"RnGenericRec", SharedConstants.GuidStr);
+				SharedConstants.LexEntry, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
-				"RnGenericRec", SharedConstants.GuidStr, WritePreliminaryAnthropologyInformation);
+				SharedConstants.LexEntry, SharedConstants.GuidStr, WritePreliminaryLexiconInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.Ntbk; }
+			get { return SharedConstants.Lexdb; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryAnthropologyInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryLexiconInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement("Anthropology");
+			writer.WriteStartElement(SharedConstants.Lexicon);
 			reader.Read();
 		}
 	}

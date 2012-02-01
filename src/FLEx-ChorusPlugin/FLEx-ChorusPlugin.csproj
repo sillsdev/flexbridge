@@ -140,6 +140,7 @@
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />

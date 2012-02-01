@@ -46,20 +46,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			var extantNode = ourEntry ?? theirEntry ?? commonEntry;
 
-			// TODO: Figure out what to do about an owner being changed.
-			// 1. If only one person changed it, there should be no problem.
-			// 2. If two people changed the owner, there could be trouble:
-			//		A. The owned would report a merge conflict,
-			//		B. The new owner(s) may not report a conflict,
-			//		So, if the owned object reports an owner conflict,
-			//		then make sure the 'loser' owner also has a conflict.
-
 			var className = XmlUtilities.GetStringAttribute(extantNode, SharedConstants.Class);
 
 			// These steps will do some 'pre-merging' work,
 			// which will avoid what could otherwise be conflicts.
 			var merger = _mergers[className];
-			FieldWorksMergingServices.MergeTimestamps(ourEntry, theirEntry);
+			FieldWorksMergingServices.PreMergeTimestamps(false, _mdc, ourEntry, theirEntry);
 
 			return merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
 		}

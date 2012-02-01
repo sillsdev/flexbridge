@@ -72,19 +72,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
-		/*
-			const string data =
-@"<?xml version='1.0' encoding='utf-8'?>
-<TranslatedScripture>
-<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
-</TranslatedScripture>";
-
-			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
-			Assert.IsTrue(FileHandler.CanDiffFile(_ourFile.Path));
-			Assert.IsTrue(FileHandler.CanMergeFile(_ourFile.Path));
-			Assert.IsTrue(FileHandler.CanPresentFile(_ourFile.Path));
-		*/
 
 		[Test]
 		public void ShouldBeAbleToDoAllCanOperations()

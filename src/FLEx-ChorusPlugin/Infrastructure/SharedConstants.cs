@@ -42,6 +42,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Reversal = "reversal";
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
+		internal const string LexEntry = "LexEntry";
 		internal const string LexiconFilename = Lexicon + "." + Lexdb;
 
 		// Anthropology

@@ -232,7 +232,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return SharedConstants.Anthropology;
 			if (currentPathname.Contains(SharedConstants.ClassData))
 				return SharedConstants.ClassData;
-			return "*"; // Not legal, so it will never be found.
+			return currentPathname; // Must be a test.
 		}
 
 		internal void AddCustomPropInfo(string mainCustomPropPathname, string altCustomPropPathname, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)

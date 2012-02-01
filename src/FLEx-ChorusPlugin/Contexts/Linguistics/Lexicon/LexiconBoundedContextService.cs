@@ -11,19 +11,19 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 {
 	internal static class LexiconBoundedContextService
 	{
-		private const string LexiconRootFolder = "Lexicon";
+		private const string LexDb = "LexDb";
 
 		public static void NestContext(XmlReaderSettings readerSettings, string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var lexiconDir = Path.Combine(linguisticsBaseDir, LexiconRootFolder);
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
 				Directory.CreateDirectory(lexiconDir);
 
-			var lexDb = classData["LexDb"].First().Value; // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
+			var lexDb = classData[LexDb].First().Value; // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
 			lexDb.Attribute(SharedConstants.OwnerGuid).Remove();
 			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
 			var langProjElement = classData["LangProject"].Values.First();
-			langProjElement.Element("LexDb").RemoveNodes();
+			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
 			var lists = classData["CmPossibilityList"];
@@ -63,12 +63,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				guidToClassMapping);
 
 			SortedDictionary<string, XElement> sortedInstanceData;
-			classData.TryGetValue("LexEntry", out sortedInstanceData);
+			classData.TryGetValue(SharedConstants.LexEntry, out sortedInstanceData);
 			if (sortedInstanceData == null || sortedInstanceData.Count == 0)
 			{
 				// Add a dummy LexEntry, so fast xml splitter won't choke.
 				// Restore will remove it, if found.
-				root.Add(new XElement("LexEntry", new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
+				root.Add(new XElement(SharedConstants.LexEntry, new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
 			}
 			else
 			{
@@ -85,8 +85,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 
 			doc.Save(Path.Combine(lexiconDir, SharedConstants.LexiconFilename));
 
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "LexDb",
-				"LexEntry", "LexSense",
+			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { LexDb,
+				SharedConstants.LexEntry, "LexSense",
 				"LexEntryRef", "LexEtymology",
 				"LexExampleSentence", "LexEntryType",
 				"MoMorphType", "LexReference", "LexRefType", "LexAppendix",
@@ -98,22 +98,22 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
 		{
-			var lexiconDir = Path.Combine(linguisticsBaseDir, LexiconRootFolder);
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
 				return;
 
 			// No. Won't be there now, so fish it out of the file and put it in.
-			// var lexDb = highLevelData["LexDb"];
+			// var lexDb = highLevelData[LexDb];
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var lexDbDoc = XDocument.Load(Path.Combine(lexiconDir, SharedConstants.LexiconFilename));
 			var rootLexDbDoc = lexDbDoc.Root;
 			var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
-			var lexDb = headerLexDbDoc.Element("LexDb");
-			highLevelData["LexDb"] = lexDb;
+			var lexDb = headerLexDbDoc.Element(LexDb);
+			highLevelData[LexDb] = lexDb;
 			var lexDbGuid = lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			// Add LexDb <objsur> element to LP.
-			langProjElement.Element("LexDb").Add(new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, lexDbGuid), new XAttribute("t", "o")));
+			langProjElement.Element(LexDb).Add(new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, lexDbGuid), new XAttribute("t", "o")));
 			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
 				var listDoc = XDocument.Load(listPathname);
@@ -142,7 +142,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				langProjGuid); // Restore 'ownerguid' to LexDb.
 
 			// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
-			foreach (var entryElement in rootLexDbDoc.Elements("LexEntry").TakeWhile(entryElement => entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant()))
+			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry).TakeWhile(entryElement => entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant()))
 			{
 				CmObjectFlatteningService.FlattenObject(sortedData,
 														entryElement,
@@ -152,7 +152,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 
 		internal static void RemoveBoundedContextData(string linguisticsBaseDir)
 		{
-			var lexiconDir = Path.Combine(linguisticsBaseDir, LexiconRootFolder);
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
 				return;
 

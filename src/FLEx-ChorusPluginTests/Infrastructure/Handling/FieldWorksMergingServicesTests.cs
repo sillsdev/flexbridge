@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
-	[TestFixture, Ignore("FieldWorksMergingServices only does top level timestamps now.")]
+	[TestFixture]
 	public class FieldWorksMergingServicesTests
 	{
 		private ListenerForUnitTests _eventListener;
@@ -42,7 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.MergeTimestamps(ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			// oldie should have two new child elements in ours and theirs, and in the right order.
 			Assert.IsTrue(ourNode.HasChildNodes);
@@ -62,7 +62,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_eventListener.AssertExpectedConflictCount(0);
 		}
 
-		[Test, Ignore("MergeTimestamps does not do nested owned obejcts now. Should it?")]
+		[Test]
 		public void NewerTimestampInOurWins()
 		{
 			const string commonAncestor =
@@ -72,13 +72,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<PartsOfSpeech>
 		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Possibilities>
-				<PartOfSpeech guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<DateModified val='2000-1-1 23:59:59.000' />
 					<Name>
 						<AUni
 							ws='en'>commonName</AUni>
 					</Name>
-				</PartOfSpeech>
+				</ownseq>
 			</Possibilities>
 		</CmPossibilityList>
 	</PartsOfSpeech>
@@ -91,14 +91,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.MergeTimestamps(ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			_eventListener.AssertExpectedConflictCount(0);
 		}
 
-		[Test, Ignore("MergeTimestamps does not do nested owned obejcts now. Should it?")]
+		[Test]
 		public void NewerTimestampInTheirsWins()
 		{
 			const string commonAncestor =
@@ -108,13 +108,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<PartsOfSpeech>
 		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Possibilities>
-				<PartOfSpeech guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<DateModified val='2000-1-1 23:59:59.000' />
 					<Name>
 						<AUni
 							ws='en'>commonName</AUni>
 					</Name>
-				</PartOfSpeech>
+				</ownseq>
 			</Possibilities>
 		</CmPossibilityList>
 	</PartsOfSpeech>
@@ -127,7 +127,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.MergeTimestamps(ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
@@ -184,7 +184,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.MergeTimestamps(ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 
@@ -297,7 +297,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.MergeTimestamps(ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 

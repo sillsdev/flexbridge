@@ -165,7 +165,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Ntbk,
 
 				// Linguistics
-				SharedConstants.Reversal
+				SharedConstants.Reversal,
+				SharedConstants.Lexdb // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
 			};
 		}
 

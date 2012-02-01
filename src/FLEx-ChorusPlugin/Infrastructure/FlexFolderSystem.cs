@@ -20,6 +20,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/trash/*.*");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
+			projectFolderConfiguration.ExcludePatterns.Add("Shares/*.*"); // Presumed folder for future LIFT and PT-FLEx repos.
 
 			projectFolderConfiguration.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
 			projectFolderConfiguration.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
@@ -38,6 +39,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/Lexicon.lexdb");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/*.list");
 			// TODO: Add others.
 
 			// Anthropology

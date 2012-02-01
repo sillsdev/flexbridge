@@ -6,7 +6,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	internal sealed class FieldWorksCommonMergeStrategy : IMergeStrategy
 	{
-		private readonly MergeSituation _mergeSituation;
 		private readonly MetadataCache _mdc;
 		private readonly XmlMerger _merger;
 
@@ -15,7 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		internal FieldWorksCommonMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
-			_mergeSituation = mergeSituation;
 			_mdc = mdc;
 			_merger = new XmlMerger(mergeSituation);
 			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
@@ -30,7 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			switch (extantNode.Name)
 			{
 				default:
-					FieldWorksMergingServices.MergeTimestamps(ourEntry, theirEntry);
+					FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, ourEntry, theirEntry);
 					break;
 				case "ScrDraft":
 					// Immutable, so common, if different.
@@ -52,11 +50,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								// Not a class, as what is found in the Anthro file. Go another level deeper to the class data.
 								// This node only has one child, and it is class data.
 								var dataCarryingChild = headerChild.FirstChild;
-								FieldWorksMergingServices.MergeTimestamps(dataCarryingChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild);
+								FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, dataCarryingChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild);
 							}
 							else
 							{
-								FieldWorksMergingServices.MergeTimestamps(headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name));
+								FieldWorksMergingServices.PreMergeTimestamps(true, _mdc, headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name));
 							}
 						}
 					}
