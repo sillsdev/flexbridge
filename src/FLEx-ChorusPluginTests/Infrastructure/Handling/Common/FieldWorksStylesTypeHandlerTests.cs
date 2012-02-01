@@ -10,10 +10,10 @@ using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
-namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 {
 	[TestFixture]
-	public class FieldWorksScriptureReferenceSystemTypeHandlerTests : BaseFieldWorksTypeHandlerTests
+	public class FieldWorksStylesTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
 		private TempFile _ourFile;
 		private TempFile _theirFile;
@@ -22,13 +22,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ScriptureReferenceSystemFilename, out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.Style, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -41,11 +41,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		}
 
 		[Test]
-		public void ExtensionOfKnownFileTypesShouldBeSrs()
+		public void ExtensionOfKnownFileTypesShouldBeStyle()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains(SharedConstants.Srs));
+			Assert.IsTrue(extensions.Contains(SharedConstants.Style));
 		}
 
 		[Test]
@@ -53,7 +53,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
+				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Style);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
 				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
@@ -65,9 +65,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</Styles>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -78,9 +78,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</Styles>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -103,9 +103,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</Styles>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -116,24 +116,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-		<Books>
-			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
-				<BookName>
-					<AUni ws='en'>Genesis</AUni>
-				</BookName>
-			</ScrBookRef>
-		</Books>
-	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<Name>
+			<Uni>Line3</Uni>
+		</Name>
+</StStyle>
+</Styles>";
 
-			var child = parent.Replace("Genesis", "Startup");
+			var child = parent.Replace("Line3", "Line4");
 
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile(SharedConstants.ScriptureReferenceSystemFilename, parent);
-				repositorySetup.ChangeFileAndCommit(SharedConstants.ScriptureReferenceSystemFilename, child, "change it");
+				repositorySetup.AddAndCheckinFile("sample." + SharedConstants.Style, parent);
+				repositorySetup.ChangeFileAndCommit("sample." + SharedConstants.Style, child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber
@@ -155,21 +151,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-		<Books>
-			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
-				<BookName>
-					<AUni ws='en'>Genesis</AUni>
-					<AUni ws='es'>GenesisSp</AUni>
-				</BookName>
-			</ScrBookRef>
-		</Books>
-	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<Name>
+			<Uni>Line3</Uni>
+		</Name>
+</StStyle>
+</Styles>";
 
-			var ourContent = commonAncestor.Replace(">Genesis<", ">Start<");
-			var theirContent = commonAncestor.Replace(">GenesisSp<", ">StartSp<");
+			var ourContent = commonAncestor.Replace("Line3", "Line4");
+			const string theirContent = commonAncestor;
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -178,9 +169,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlTextChangedReport), typeof(XmlTextChangedReport) });
-			Assert.IsTrue(results.Contains(">Start<"));
-			Assert.IsTrue(results.Contains(">StartSp<"));
+				1, new List<Type> { typeof(XmlTextChangedReport) });
+			Assert.IsTrue(results.Contains("Line4"));
 		}
 
 		[Test]
@@ -188,21 +178,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
-	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-		<Books>
-			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
-				<BookName>
-					<AUni ws='en'>Genesis</AUni>
-					<AUni ws='es'>GenesisSp</AUni>
-				</BookName>
-			</ScrBookRef>
-		</Books>
-	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+<Styles>
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<Name>
+			<Uni>Line3</Uni>
+		</Name>
+</StStyle>
+</Styles>";
 
-			var ourContent = commonAncestor.Replace("GenesisSp", "GenesisSpOurs");
-			var theirContent = commonAncestor.Replace("GenesisSp", "GenesisSpTheirs");
+			var ourContent = commonAncestor.Replace("Line3", "Line4");
+			var theirContent = commonAncestor.Replace("Line3", "Line5");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -212,7 +197,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 				null, null,
 				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
-			Assert.IsTrue(results.Contains("GenesisSpOurs"));
+			Assert.IsTrue(results.Contains("Line4"));
 		}
 	}
 }

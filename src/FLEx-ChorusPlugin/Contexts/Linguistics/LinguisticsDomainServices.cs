@@ -17,15 +17,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	/// </summary>
 	internal static class LinguisticsDomainServices
 	{
-		private const string LinguisticsBaseFolder = "Linguistics";
-
 		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
+			var linguisticsBaseDir = Path.Combine(rootDir, SharedConstants.Linguistics);
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
@@ -76,7 +74,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			SortedDictionary<string, XElement> sortedData,
 			string rootDir)
 		{
-			var linguisticsBaseDir = Path.Combine(rootDir, LinguisticsBaseFolder);
+			var linguisticsBaseDir = Path.Combine(rootDir, SharedConstants.Linguistics);
 			if (!Directory.Exists(linguisticsBaseDir))
 				return;
 
@@ -96,7 +94,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			var linguisticsBaseDir = Path.Combine(pathRoot, LinguisticsBaseFolder);
+			var linguisticsBaseDir = Path.Combine(pathRoot, SharedConstants.Linguistics);
 			if (!Directory.Exists(linguisticsBaseDir))
 				return;
 

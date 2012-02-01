@@ -149,8 +149,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// Common
 				SharedConstants.ModelVersion,
 				SharedConstants.CustomProperties,
-				// list
-				// style
+				SharedConstants.Style,
+				SharedConstants.List,
 
 				// Old style
 				SharedConstants.ClassData,

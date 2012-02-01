@@ -58,15 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			var dir = SharedConstants.Scripture;
-			ushort upLevels = 1;
-
-			var path = mergeOrder.pathToOurs;
-			if (path.Contains("Linguistics"))
-				dir = "Linguistics";
-
-			// NB: Must be done before FieldWorksCommonMergeStrategy is created.
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, dir, upLevels);
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),

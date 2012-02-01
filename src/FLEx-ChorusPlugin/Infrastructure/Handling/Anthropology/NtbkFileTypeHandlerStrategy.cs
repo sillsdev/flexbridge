@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "Anthropology", 1); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),

@@ -367,28 +367,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			CreateSharedElementStrategies(sharedElementStrategies);
 			CreateMergers(mdc, mergeSituation, sharedElementStrategies, mergers);
 		}
-
-		internal static void AddCustomPropInfo(MetadataCache mdc, MergeOrder mergeOrder, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
-		{
-			if (mdc == null) throw new ArgumentNullException("mdc");
-			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
-			if (String.IsNullOrEmpty(customPropTargetDir)) throw new ArgumentException(AnnotationImages.kInvalidArgument, "customPropTargetDir");
-
-			// Add optional custom property information to MDC.
-			string mainCustomPropPathname;
-			string altCustomPropPathname;
-			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
-			{
-				default:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					break;
-				case MergeOrder.ConflictHandlingModeChoices.TheyWin:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					break;
-			}
-			mdc.AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
-		}
 	}
 }

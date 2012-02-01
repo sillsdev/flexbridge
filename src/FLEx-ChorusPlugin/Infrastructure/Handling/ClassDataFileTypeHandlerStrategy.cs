@@ -63,7 +63,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksMergeStrategyServices.AddCustomPropInfo(mdc, mergeOrder, "DataFiles", 1); // NB: Must be done before FieldWorksMergingStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksMergingStrategy is created.
+
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksMergingStrategy(mergeOrder.MergeSituation, mdc),
 				null,

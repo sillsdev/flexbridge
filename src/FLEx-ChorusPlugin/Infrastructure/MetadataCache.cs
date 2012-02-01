@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.Properties;
+using Chorus.merge;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -78,7 +79,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				switch (currentVersion)
 				{
 					default:
-						throw new ArgumentOutOfRangeException(string.Format("Upgrading to version {0} is not yet supported.", newVersion));
+						throw new ArgumentOutOfRangeException(String.Format("Upgrading to version {0} is not yet supported.", newVersion));
 					case 7000045:
 						// 7000045: Modified Segment
 						//		Add: basic "Reference"								[String]
@@ -149,7 +150,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// </exception>
 		internal FdoClassInfo GetClassInfo(string className)
 		{
-			if (string.IsNullOrEmpty(className))
+			if (String.IsNullOrEmpty(className))
 				throw new ArgumentNullException("className", AnnotationImages.kNullOrEmptyString);
 
 			FdoClassInfo result;
@@ -197,6 +198,41 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				classInfo.Superclass = _classes[classInfo.SuperclassName];
 				classInfo.SuperclassName = null;
 			}
+		}
+
+		internal void AddCustomPropInfo(MergeOrder mergeOrder)
+		{
+			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
+
+			// Add optional custom property information to MDC.
+			string mainCustomPropPathname;
+			string altCustomPropPathname;
+			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
+			{
+				default:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
+					break;
+				case MergeOrder.ConflictHandlingModeChoices.TheyWin:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					break;
+			}
+			AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, GetMetaDataCacheOffsetFolder(mergeOrder), 1);
+		}
+
+		private static string GetMetaDataCacheOffsetFolder(MergeOrder mergeOrder)
+		{
+			var currentPathname = mergeOrder.pathToOurs;
+			if (currentPathname.Contains(SharedConstants.Scripture))
+				return SharedConstants.Scripture;
+			if (currentPathname.Contains(SharedConstants.Linguistics))
+				return SharedConstants.Linguistics;
+			if (currentPathname.Contains(SharedConstants.Anthropology))
+				return SharedConstants.Anthropology;
+			if (currentPathname.Contains(SharedConstants.ClassData))
+				return SharedConstants.ClassData;
+			return "*"; // Not legal, so it will never be found.
 		}
 
 		internal void AddCustomPropInfo(string mainCustomPropPathname, string altCustomPropPathname, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)

@@ -25,14 +25,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
-			FieldWorksTestServices.SetupTempFilesWithExtension(".ntbk", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DataNotebookFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			_eventListener = null;
-			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -49,7 +49,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains("ntbk"));
+			Assert.IsTrue(extensions.Contains(SharedConstants.Ntbk));
 		}
 
 		[Test]
@@ -69,36 +69,33 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		{
 			const string data = @"<Anthropology>
 </Anthropology>";
-			var testPathname = Path.Combine(Path.GetTempPath(), "DataNotebook.ntbk");
-			File.WriteAllText(testPathname, data);
-			try
-			{
-				Assert.IsTrue(FileHandler.CanValidateFile(testPathname));
-			}
-			finally
-			{
-				File.Delete(testPathname);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
+		/*
+			const string data =
+@"<?xml version='1.0' encoding='utf-8'?>
+<TranslatedScripture>
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</TranslatedScripture>";
+
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanDiffFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanMergeFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanPresentFile(_ourFile.Path));
+		*/
 
 		[Test]
 		public void ShouldBeAbleToDoAllCanOperations()
 		{
 			const string data = @"<Anthropology>
 </Anthropology>";
-			var testPathname = Path.Combine(Path.GetTempPath(), "DataNotebook.ntbk");
-			File.WriteAllText(testPathname, data);
-			try
-			{
-				Assert.IsTrue(FileHandler.CanValidateFile(testPathname));
-				Assert.IsTrue(FileHandler.CanDiffFile(testPathname));
-				Assert.IsTrue(FileHandler.CanMergeFile(testPathname));
-				Assert.IsTrue(FileHandler.CanPresentFile(testPathname));
-			}
-			finally
-			{
-				File.Delete(testPathname);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanDiffFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanMergeFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanPresentFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -106,16 +103,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		{
 			const string data = @"<classdata>
 </classdata>";
-			var testPathname = Path.Combine(Path.GetTempPath(), "DataNotebook.ntbk");
-			File.WriteAllText(testPathname, data);
-			try
-			{
-				Assert.IsNotNull(FileHandler.ValidateFile(testPathname, new NullProgress()));
-			}
-			finally
-			{
-				File.Delete(testPathname);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -125,16 +114,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 @"<?xml version='1.0' encoding='utf-8'?>
 <Anthropology>
 </Anthropology>";
-			var testPathname = Path.Combine(Path.GetTempPath(), "DataNotebook.ntbk");
-			File.WriteAllText(testPathname, data);
-			try
-			{
-				Assert.IsNull(FileHandler.ValidateFile(testPathname, new NullProgress()));
-			}
-			finally
-			{
-				File.Delete(testPathname);
-			}
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]

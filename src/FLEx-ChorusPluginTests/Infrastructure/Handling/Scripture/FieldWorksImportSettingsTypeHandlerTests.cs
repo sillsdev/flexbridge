@@ -41,7 +41,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		}
 
 		[Test]
-		public void ExtensionOfKnownFileTypesShouldBeArchivedDraft()
+		public void ExtensionOfKnownFileTypesShouldBeImportSetting()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
@@ -11,14 +12,12 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyDomainServices
 	{
-		private const string AnthropologyRootFolder = "Anthropology";
-
 		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var anthropologyBaseDir = Path.Combine(rootDir, AnthropologyRootFolder);
+			var anthropologyBaseDir = Path.Combine(rootDir, SharedConstants.Anthropology);
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
@@ -30,7 +29,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			SortedDictionary<string, XElement> sortedData,
 			string pathRoot)
 		{
-			var anthropologyBaseDir = Path.Combine(pathRoot, AnthropologyRootFolder);
+			var anthropologyBaseDir = Path.Combine(pathRoot, SharedConstants.Anthropology);
 			if (!Directory.Exists(anthropologyBaseDir))
 				return; // Nothing to do.
 
@@ -39,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			var anthropologyBaseDir = Path.Combine(pathRoot, AnthropologyRootFolder);
+			var anthropologyBaseDir = Path.Combine(pathRoot, SharedConstants.Anthropology);
 			if (!Directory.Exists(anthropologyBaseDir))
 				return;
 
