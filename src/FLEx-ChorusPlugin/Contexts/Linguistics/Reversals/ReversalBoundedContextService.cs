@@ -101,9 +101,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			var lexDb = highLevelData["LexDb"];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var reversalDoc in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly)
-// ReSharper disable ConvertClosureToMethodGroup
 				.Select(reversalPathname => XDocument.Load(reversalPathname)))
-// ReSharper restore ConvertClosureToMethodGroup
 			{
 				// Put entries back into index's Entries element.
 				var root = reversalDoc.Element("Reversal");
@@ -124,7 +122,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			// Restore lexDb ReversalIndexes property in sorted order.
 			if (sortedRevs.Count == 0)
 				return;
-			var reversalsOwningProp = highLevelData["LexDb"].Element("ReversalIndexes");
+			var reversalsOwningProp = lexDb.Element("ReversalIndexes");
 			foreach (var sortedRev in sortedRevs.Values)
 				reversalsOwningProp.Add(sortedRev);
 		}

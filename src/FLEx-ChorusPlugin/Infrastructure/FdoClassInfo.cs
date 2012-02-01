@@ -140,6 +140,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			_allCollectionProperties.Clear();
 			_allMultiAltProperties.Clear();
 			_allOwningProperties.Clear();
+			_allReferenceSequenceProperties.Clear();
+			_allOwningSequenceProperties.Clear();
 
 			if (Superclass != null)
 				_allProperties.AddRange(Superclass._allProperties);

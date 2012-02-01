@@ -55,8 +55,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 								  select referenceSequenceProperty.PropertyName).ToList();
 
 			var owningPropsForClass = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
-			if (owningPropsForClass.Count == 0)
-				return;
+			if (owningPropsForClass.Count == 0 && refSeqPropNames.Count == 0)
+				return; // Nothing special to be done for normal properties.
 
 			foreach (var propertyElement in element.Elements().ToArray())
 			{

@@ -38,12 +38,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string StStyle = "StStyle";
 
 		// Linguistics
+		internal const string Linguistics = "Linguistics";
 		internal const string Reversal = "reversal";
+		internal const string Lexicon = "Lexicon";
+		internal const string Lexdb = "lexdb";
+		internal const string LexiconFilename = Lexicon + "." + Lexdb;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";
 		internal const string Ntbk = "ntbk";
 		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
+		internal const string Anthropology = "Anthropology";
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
@@ -59,7 +64,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
 		internal const string ScriptureTranslation = "ScriptureTranslation";
 		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
-		internal const string Linguistics = "Linguistics";
-		internal const string Anthropology = "Anthropology";
+
+		/***** Relocate ones that get added below here. *****/
 	}
 }

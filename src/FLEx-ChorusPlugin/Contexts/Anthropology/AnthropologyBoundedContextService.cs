@@ -89,7 +89,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					rootElement);
-			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, "DataNotebook.ntbk"), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, SharedConstants.DataNotebookFilename), readerSettings, doc);
 
 			//// No need to process these in the 'soup' now.
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "RnResearchNbk", "RnGenericRec", "Reminder", "RnRoledPartic", "CmPerson", "CmAnthroItem", "CmLocation" });
@@ -102,7 +102,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		{
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, "DataNotebook.ntbk"));
+			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename));
 			var root = doc.Root;
 			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
 			{
@@ -142,7 +142,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		internal static void RemoveBoundedContextData(string anthropologyBase)
 		{
-			var notebookPath = Path.Combine(anthropologyBase, "DataNotebook.ntbk");
+			var notebookPath = Path.Combine(anthropologyBase, SharedConstants.DataNotebookFilename);
 			if (File.Exists(notebookPath))
 				File.Delete(notebookPath);
 
