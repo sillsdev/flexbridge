@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Chorus.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -73,10 +71,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
+
 			// Add element for "ownseq"
 			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
+
+			// Add element for "ownseqatomic"
+			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
+			elementStrategy.IsAtomic = true;
+			sharedElementStrategies.Add(SharedConstants.OwnseqAtomic, elementStrategy);
+
 			// Add element for "objsur".
 			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, "t" });
@@ -292,10 +298,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
 				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
-				if (classInfo.ClassName == "ScrDraft")
-					classStrat.IsImmutable = true;
-				else
-					classStrat.IsImmutable = false;
+				classStrat.IsImmutable = classInfo.ClassName == "ScrDraft";
+				// Didn't work, since the paras are actually in an 'ownseq' element.
+				// So, use a new ownseatomic element tag.
+				// classStrat.IsAtomic = classInfo.ClassName == "StTxtPara" || classInfo.ClassName == "ScrTxtPara";
 
 				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 				foreach (var propertyInfo in classInfo.AllProperties)

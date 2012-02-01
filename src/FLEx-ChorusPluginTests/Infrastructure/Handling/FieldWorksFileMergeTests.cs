@@ -459,7 +459,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					@"classdata/rt/Comment/AStr/Run[@ws='en']",
 					@"classdata/rt/Comment/AStr/Run[@ws='es']" },
 				null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 
 			var doc = XDocument.Parse(result);
@@ -524,7 +524,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					@"classdata/rt/Comment/AStr[@ws='es']",
 					@"classdata/rt/Comment/AStr[@ws='es']/Run[@ws='es']" },
 				null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) }, // 1 conflict, since both edited the 'en' alternative.
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) }, // 1 conflict, since both edited the 'en' alternative.
 				1, new List<Type> { typeof(XmlAdditionChangeReport) }); // 1 change, since 'they' added the new 'es' altenative.
 
 			var doc = XDocument.Parse(result);
@@ -683,7 +683,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Form/Str/Run[@ws='x-ezpi']" },
 				null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 
 			var doc = XDocument.Parse(result);
@@ -729,7 +729,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				_theirFile, theirContent,
 				new List<string> { @"classdata/rt/Rules/Prop" },
 				null,
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 
 			var doc = XDocument.Parse(result);
@@ -822,7 +822,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt/Analyses/objsur[@guid='ourNew1']", @"classdata/rt/Analyses/objsur[@guid='ourNew2']" },
 				new List<string> { @"classdata/rt/Analyses/objsur[@guid='original1']", @"classdata/rt/Analyses/objsur[@guid='original2']", @"classdata/rt/Analyses/objsur[@guid='original3']",
 					@"classdata/rt/Analyses/objsur[@guid='theirNew1']" },
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 		}
 
@@ -868,7 +868,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				new List<string> { @"classdata/rt/Notes/objsur[@guid='ourNew1']", @"classdata/rt/Notes/objsur[@guid='ourNew2']" },
 				new List<string> { @"classdata/rt/Notes/objsur[@guid='original1']", @"classdata/rt/Notes/objsur[@guid='original2']", @"classdata/rt/Notes/objsur[@guid='original3']",
 					@"classdata/rt/Notes/objsur[@guid='theirNew1']" },
-				1, new List<Type> { typeof(BothEditedTheSameElement) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 		}
 

@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject.
-			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq;
+			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq || element.Name.LocalName == SharedConstants.OwnseqAtomic;
 			var className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
 			element.Name = SharedConstants.RtTag;
 			if (!isOwnSeqNode)
