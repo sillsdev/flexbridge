@@ -81,9 +81,8 @@ namespace FLEx_ChorusPlugin.Controller
 		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)
 		{
 			_currentLanguageProject = e.Project;
-
 			// 1. If langProj is null, then show the revised 'fetch from afar' view, and return.
-			if (_currentLanguageProject == null)
+			if (_currentLanguageProject == null || _currentLanguageProject.Name == LanguageProject.OBTAINPROJECT)
 			{
 				_fwBridgeView.EnableSendReceiveControls(false, false);
 				_projectView.ActivateView(_startupNewView);
@@ -125,7 +124,7 @@ namespace FLEx_ChorusPlugin.Controller
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 
-			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource);
+			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder);
 		}
 
 		#region Implementation of IDisposable

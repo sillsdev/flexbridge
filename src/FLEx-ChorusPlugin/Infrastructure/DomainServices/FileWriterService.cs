@@ -245,6 +245,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void CheckPathname(string mainFilePathname)
 		{
+			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
+				&& Directory.Exists(Path.GetDirectoryName(mainFilePathname))) // There has to be an actual folder,
+				return;
+
+			throw new ApplicationException("Cannot process the given file.");
+		}
+
+		internal static void CheckFilename(string mainFilePathname)
+		{
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,

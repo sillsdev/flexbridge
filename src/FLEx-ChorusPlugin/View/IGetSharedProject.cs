@@ -13,6 +13,6 @@ namespace FLEx_ChorusPlugin.View
 		/// <returns>
 		/// 'true' if the shared project was cloned, otherwise 'false'.
 		/// </returns>
-		bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource);
+		bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectDir);
 	}
 }

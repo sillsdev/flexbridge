@@ -14,7 +14,7 @@ namespace FLEx_ChorusPluginTests.Mocks
 		/// <returns>
 		/// 'true' if the shared project was cloned, otherwsie 'false'.
 		/// </returns>
-		public bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource)
+		public bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectDir)
 		{
 			throw new NotImplementedException();
 		}

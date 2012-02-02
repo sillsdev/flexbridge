@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void BreakupMainFile(string mainFilePathname, string projectName)
 		{
-			FileWriterService.CheckPathname(mainFilePathname);
+			FileWriterService.CheckFilename(mainFilePathname);
 
 			DeleteOldFiles(Path.GetDirectoryName(mainFilePathname), projectName);
 			RestoreFiles(mainFilePathname, projectName);

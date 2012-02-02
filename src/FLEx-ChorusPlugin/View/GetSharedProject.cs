@@ -5,6 +5,7 @@ using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress.LogBox;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -21,35 +22,11 @@ namespace FLEx_ChorusPlugin.View
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.
 		/// </summary>
-		bool IGetSharedProject.GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource)
+		bool IGetSharedProject.GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectFolder)
 		{
-			string currentRootDataPath;
-			// 1. Find out the name of the lang proj: langProjName. This is the folder where the clone will go.
-			// NB: TODO: Can't do this in a folder with stuff in it, so the rest of the code best not be called.
-			// TODO: I suspect that the FLEx New LP menu (or some other clone option menu) will be needed, if someone wants to go the clone route.
-			using (var folderBrowserDlg = new FolderBrowserDialog())
-			{
-				folderBrowserDlg.RootFolder = Environment.SpecialFolder.LocalApplicationData;
-				folderBrowserDlg.ShowNewFolderButton = true;
-				folderBrowserDlg.Description = Resources.kSelectClonedDataFolder;
-				if (folderBrowserDlg.ShowDialog(parent) == DialogResult.OK)
-					currentRootDataPath = folderBrowserDlg.SelectedPath;
-				else
-					return false;
-			}
-
-			// Make sure it is an empty folder.
-			if (Directory.GetFiles(currentRootDataPath).Length > 0 || Directory.GetDirectories(currentRootDataPath).Length > 0)
-				return false;
-
-			// Actually, we don't want the folder to exist at all.
-			// Just delete it, or Chorus will not be happy.
-			Directory.Delete(currentRootDataPath);
-
 			// 2. Make clone from some source.
-			var currentBaseFieldWorksBridgePath = Directory.GetParent(currentRootDataPath).FullName;
-			var dirInfo = new DirectoryInfo(currentRootDataPath);
-			var langProjName = dirInfo.Name;
+			var currentBaseFieldWorksBridgePath = flexProjectFolder;
+			string langProjName = "NOT YET IMPEMENTED FOR THIS SOURCE";
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
@@ -62,8 +39,8 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
-								// TODO: Put Humpty together again.
-								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentRootDataPath);
+								MultipleFileServices.RestoreMainFile(currentBaseFieldWorksBridgePath, langProjName);
+								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
 								break;
 						}
 					}
@@ -94,9 +71,9 @@ namespace FLEx_ChorusPlugin.View
 								var repo = new HgRepository(sourcePath, new StatusProgress());
 								repo.CloneLocalWithoutUpdate(target);
 								repo.Update();
-								// TODO: Put Humpty together again.
+								MultipleFileServices.RestoreMainFile(currentBaseFieldWorksBridgePath, langProjName);
 								// It made a clone, but maybe in the wrong name.
-								PossiblyRenameFolder(target, currentRootDataPath);
+								PossiblyRenameFolder(target, currentBaseFieldWorksBridgePath);
 								break;
 						}
 					}
@@ -109,14 +86,17 @@ namespace FLEx_ChorusPlugin.View
 							default:
 								return false;
 							case DialogResult.OK:
-								// It made a clone, but maybe in the wrong name.
-								// TODO: Put Humpty together again.
-								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, currentRootDataPath);
+								// It made a clone, grab the project name.
+								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
+								string mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
+								MultipleFileServices.RestoreMainFile(mainFilePathName, langProjName);
+								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
 					}
 					break;
 			}
+
 			return true;
 		}
 
