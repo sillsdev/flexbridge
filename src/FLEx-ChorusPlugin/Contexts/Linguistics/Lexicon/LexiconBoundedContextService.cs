@@ -106,7 +106,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			// var lexDb = highLevelData[LexDb];
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			var lexDbDoc = XDocument.Load(Path.Combine(lexiconDir, SharedConstants.LexiconFilename));
+			var lexDbPathname = Path.Combine(lexiconDir, SharedConstants.LexiconFilename);
+			var lexDbDoc = XDocument.Load(lexDbPathname);
 			var rootLexDbDoc = lexDbDoc.Root;
 			var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
 			var lexDb = headerLexDbDoc.Element(LexDb);
@@ -130,23 +131,29 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 						// In LP. Restore the <objsur> element in LP, and then flatten the list by itself.
 						RestoreLangProjListObjsurElement(langProjElement, listFilenameSansExtension, listElement);
 						// Flatten the LP list by itself.
-						CmObjectFlatteningService.FlattenObject(sortedData,
+						CmObjectFlatteningService.FlattenObject(
+							listPathname,
+							sortedData,
 							listElement,
 							langProjGuid); // Restore 'ownerguid' to list.
 						break;
 				}
 			}
 			// Flatten lexDb.
-			CmObjectFlatteningService.FlattenObject(sortedData,
+			CmObjectFlatteningService.FlattenObject(
+				lexDbPathname,
+				sortedData,
 				lexDb,
 				langProjGuid); // Restore 'ownerguid' to LexDb.
 
 			// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
 			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry).TakeWhile(entryElement => entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant()))
 			{
-				CmObjectFlatteningService.FlattenObject(sortedData,
-														entryElement,
-														null); // Entries are not owned.
+				CmObjectFlatteningService.FlattenObject(
+					lexDbPathname,
+					sortedData,
+					entryElement,
+					null); // Entries are not owned.
 			}
 		}
 

@@ -62,12 +62,13 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-// ReSharper disable ConvertClosureToMethodGroup
-			foreach (var listDoc in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly).Select(listPathname => XDocument.Load(listPathname)))
-// ReSharper restore ConvertClosureToMethodGroup
+			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
+				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(
+					listPathname,
+					sortedData,
 					listElement,
 					langProjGuid); // Restore 'ownerguid' to list.
 				var listGuid = listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

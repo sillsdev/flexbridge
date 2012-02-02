@@ -70,7 +70,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(pathname);
 			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
 			{
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(pathname,
+					sortedData,
 					draftElement,
 					scrOwningGuid); // Restore 'ownerguid' to draftElement.
 				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

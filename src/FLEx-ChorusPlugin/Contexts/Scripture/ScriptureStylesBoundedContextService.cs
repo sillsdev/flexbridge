@@ -78,7 +78,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var sortedStyles = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var styleElement in doc.Root.Elements("StStyle"))
 			{
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(
+					stylePathname,
+					sortedData,
 					styleElement,
 					scrOwningGuid); // Restore 'ownerguid' to styleElement.
 				var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

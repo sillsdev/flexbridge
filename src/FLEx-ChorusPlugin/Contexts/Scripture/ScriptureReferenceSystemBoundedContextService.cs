@@ -53,8 +53,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
 
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename));
-			CmObjectFlatteningService.FlattenObject(sortedData,
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename);
+			var doc = XDocument.Load(pathname);
+			CmObjectFlatteningService.FlattenObject(
+				pathname,
+				sortedData,
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
 				null); // Not owned.
 		}

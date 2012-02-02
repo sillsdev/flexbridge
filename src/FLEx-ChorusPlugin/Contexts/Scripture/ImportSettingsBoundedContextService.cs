@@ -69,7 +69,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(pathname);
 			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
 			{
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(
+					pathname,
+					sortedData,
 					importSettingsElement,
 					scrOwningGuid); // Restore 'ownerguid' to importSettingsElement.
 				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();

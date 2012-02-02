@@ -51,14 +51,17 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				return;
 
 			// scriptureBaseDir is root/Scripture.
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename));
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename);
+			var doc = XDocument.Load(pathname);
 			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData["LangProject"];
 			CmObjectFlatteningService.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
-			CmObjectFlatteningService.FlattenObject(sortedData,
+			CmObjectFlatteningService.FlattenObject(
+				pathname,
+				sortedData,
 				scrElement,
 				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
 

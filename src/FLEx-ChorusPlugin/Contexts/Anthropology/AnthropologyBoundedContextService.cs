@@ -102,7 +102,8 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 		{
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			var doc = XDocument.Load(Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename));
+			var dnPathname = Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename);
+			var doc = XDocument.Load(dnPathname);
 			var root = doc.Root;
 			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
 			{
@@ -118,7 +119,9 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 						var records = root.Elements("RnGenericRec").ToList();
 						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 							headerChildElement.Element("Records").Add(records);
-						CmObjectFlatteningService.FlattenObject(sortedData,
+						CmObjectFlatteningService.FlattenObject(
+							dnPathname,
+							sortedData,
 							headerChildElement,
 							langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to notebook.
 						break;
@@ -134,7 +137,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "TimeOfDay":
 						var listElement = headerChildElement.Element("CmPossibilityList");
 						RestoreLangProjListObjsurElement(langProjElement, listElement);
-						CmObjectFlatteningService.FlattenObject(sortedData, listElement, langProjGuid); // Restore 'ownerguid' to list.
+						CmObjectFlatteningService.FlattenObject(
+							dnPathname,
+							sortedData,
+							listElement,
+							langProjGuid); // Restore 'ownerguid' to list.
 						break;
 				}
 			}
