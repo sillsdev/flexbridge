@@ -2,6 +2,7 @@
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
+using System.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
@@ -54,12 +55,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		}
 
 		[Test]
-		public void NotFwDataFileForRestoreShouldThrow()
+		public void NonExistantPathForRestoreShouldThrow()
 		{
-			using (var tempFile = new TempFile(""))
-			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path, "ZPI"));
-			}
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(Path.Combine(new TempFile().Path, "Itaintthere") , "ZPI"));
 		}
 	}
 }

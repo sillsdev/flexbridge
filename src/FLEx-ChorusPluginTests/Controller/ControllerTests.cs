@@ -67,7 +67,9 @@ namespace FLEx_ChorusPluginTests.Controller
 		[Test]
 		public void EnsureProjectsHasTwoSampleProjects()
 		{
-			Assert.AreEqual(2, _mockedFwBridgeView.Projects.Count());
+			//Note: The Obtain Project option gets added so we need to test for 3
+			//      when there are 2 samples
+			Assert.AreEqual(3, _mockedFwBridgeView.Projects.Count());
 		}
 
 		[Test]

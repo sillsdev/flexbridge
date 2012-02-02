@@ -35,8 +35,9 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void EnsureCorrectNumberOfProjects()
 		{
+			//A third project gets added for the Obtain Project option.
 			var projects = _languageProjectRepository.AllLanguageProjects;
-			Assert.AreEqual(2, projects.Count());
+			Assert.AreEqual(3, projects.Count());
 		}
 
 		[Test]
