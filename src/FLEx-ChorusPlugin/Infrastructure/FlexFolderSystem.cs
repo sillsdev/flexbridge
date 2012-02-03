@@ -29,6 +29,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("do_not_share_project.txt");
 			projectFolderConfiguration.IncludePatterns.Add(".hgignore");
 
+			// Common at all levels.
+			projectFolderConfiguration.IncludePatterns.Add("**.ChorusNotes"); // Not really needed, since Chorus adds them. But, knows for how long?
+			projectFolderConfiguration.IncludePatterns.Add("**.list");
+			projectFolderConfiguration.IncludePatterns.Add("**.style");
+
 			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add("WritingSystemStore/*.*");
 			projectFolderConfiguration.IncludePatterns.Add("LinkedFiles/AudioVisual/*.*");
@@ -37,21 +42,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("SupportingFiles/*.*");
 
 			// Linguistics
-			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/Lexicon.lexdb");
-			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/*.list");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/TextCorpus/*.textincorpus");
 			// TODO: Add others.
 
 			// Anthropology
-			projectFolderConfiguration.IncludePatterns.Add("Anthropology/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
 
 			// Scripture
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/**.ChorusNotes");
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureReferenceSystem.srs");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureStyleSheet.style");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/*.list");
+			projectFolderConfiguration.IncludePatterns.Add("Scripture/*.ArchivedDraft");
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureTranslation.trans");
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
 
@@ -60,7 +61,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Older style files, hopefully, soon to be obsolete.
 			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");
-			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ChorusNotes");
 		}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -14,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		private const string DraftsFilename = "Drafts." + SharedConstants.ArchivedDraft;
 
 		internal static void NestContext(XElement archivedDraftsProperty,
-			XmlReaderSettings readerSettings, string scriptureBaseDir,
+			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -39,13 +38,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					classData,
 					guidToClassMapping);
 
-				// Remove 'ownerguid'.
-				draft.Attribute(SharedConstants.OwnerGuid).Remove();
-
 				root.Add(draft); // They should still be in the original sorted order, so just add them.
 			}
 			if (root.HasElements)
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), readerSettings, doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), doc);
 
 			archivedDraftsProperty.RemoveNodes();
 
@@ -70,11 +66,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(pathname);
 			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
 			{
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(pathname,
+					sortedData,
 					draftElement,
 					scrOwningGuid); // Restore 'ownerguid' to draftElement.
 				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedDrafts.Add(draftGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, draftGuid), new XAttribute("t", "o")));
+				sortedDrafts.Add(draftGuid, BaseDomainServices.CreateObjSurElement(draftGuid));
 			}
 
 			// Restore scrElement ArchivedDrafts property in sorted order.

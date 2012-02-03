@@ -69,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)
 		{
-			// May retrtun null, which is fine.
+			// May return null, which is fine.
 			return isCustomProperty
 				? (currentEntry.SelectNodes(SharedConstants.Custom).Cast<XmlNode>().Where(customProp => customProp.Attributes[SharedConstants.Name].Value == propName)).FirstOrDefault()
 				: currentEntry.SelectSingleNode(propName);

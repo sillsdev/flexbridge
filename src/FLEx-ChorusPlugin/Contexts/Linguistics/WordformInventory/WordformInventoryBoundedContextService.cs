@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 	{
 		private const string WordformInventoryRootFolder = "WordformInventory";
 
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
@@ -42,13 +42,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				{
 					default:
 						// Only write one file.
-						FileWriterService.WriteSecondaryFile(Path.Combine(wfiBaseDir, classname + ".ClassData"), readerSettings, kvp.Value);
+						FileWriterService.WriteSecondaryFile(Path.Combine(wfiBaseDir, classname + ".ClassData"), kvp.Value);
 						break;
 					case "WfiWordform":
 					case "WfiAnalysis":
 					case "WfiMorphBundle":
 						// Write 10 files for each high volume class.
-						FileWriterService.WriteSecondaryFiles(wfiBaseDir, classname, readerSettings, kvp.Value);
+						FileWriterService.WriteSecondaryFiles(wfiBaseDir, classname, kvp.Value);
 						break;
 				}
 			}

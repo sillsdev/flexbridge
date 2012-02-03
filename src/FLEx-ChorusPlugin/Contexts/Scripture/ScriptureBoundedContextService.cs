@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -11,7 +10,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureBoundedContextService
 	{
 		internal static void NestContext(XElement languageProjectElement, XElement scriptureElement,
-										 XmlReaderSettings readerSettings, string baseDirectory,
+										 string baseDirectory,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
 										 Dictionary<string, string> guidToClassMapping,
 										 HashSet<string> skipWriteEmptyClassFiles)
@@ -24,12 +23,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				classData,
 				guidToClassMapping);
 
-			// Remove 'ownerguid'.
-			scriptureElement.Attribute(SharedConstants.OwnerGuid).Remove();
-
 			FileWriterService.WriteNestedFile(
 				Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename),
-				readerSettings,
 				new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					new XElement(SharedConstants.TranslatedScripture, scriptureElement)));
 
@@ -51,14 +46,17 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				return;
 
 			// scriptureBaseDir is root/Scripture.
-			var doc = XDocument.Load(Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename));
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename);
+			var doc = XDocument.Load(pathname);
 			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData["LangProject"];
-			CmObjectFlatteningService.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
+			BaseDomainServices.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
-			CmObjectFlatteningService.FlattenObject(sortedData,
+			CmObjectFlatteningService.FlattenObject(
+				pathname,
+				sortedData,
 				scrElement,
 				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
 

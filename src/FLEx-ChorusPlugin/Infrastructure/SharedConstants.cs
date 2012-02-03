@@ -45,6 +45,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Lexdb = "lexdb";
 		internal const string LexEntry = "LexEntry";
 		internal const string LexiconFilename = Lexicon + "." + Lexdb;
+		internal const string TextInCorpus = "textincorpus";
+		internal const string TextCorpus = "TextCorpus";
+		internal const string GenreList = "GenreList";
+		internal const string GenreListFilename = GenreList + "." + List;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";

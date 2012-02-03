@@ -20,7 +20,7 @@ namespace FLEx_ChorusPlugin.View
 
 			var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
 			// Break up into smaller files.
-			MultipleFileServices.BreakupMainFile(origPathname, langProject.Name);
+			MultipleFileServices.PushHumptyOffTheWall(origPathname, langProject.Name);
 
 			// Do the Chorus business.
 			try
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						MultipleFileServices.RestoreMainFile(origPathname, langProject.Name);
+						MultipleFileServices.PutHumptyTogetherAgain(origPathname, langProject.Name);
 					}
 				}
 			}

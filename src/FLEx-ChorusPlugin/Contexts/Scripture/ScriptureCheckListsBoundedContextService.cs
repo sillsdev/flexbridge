@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -14,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		private const string CheckLists = "CheckLists";
 
 		internal static void NestContext(XElement langProj,
-			XmlReaderSettings readerSettings, string scriptureBaseDir,
+			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -37,13 +35,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					classData,
 					guidToClassMapping);
 
-				// Remove 'ownerguid'.
-				checkList.Attribute(SharedConstants.OwnerGuid).Remove();
-
 				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					new XElement("CheckList", checkList));
 
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List), readerSettings, doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List), doc);
 			}
 
 			clPropElement.RemoveNodes();
@@ -62,16 +57,17 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-// ReSharper disable ConvertClosureToMethodGroup
-			foreach (var listDoc in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly).Select(listPathname => XDocument.Load(listPathname)))
-// ReSharper restore ConvertClosureToMethodGroup
+			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
+				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
-				CmObjectFlatteningService.FlattenObject(sortedData,
+				CmObjectFlatteningService.FlattenObject(
+					listPathname,
+					sortedData,
 					listElement,
 					langProjGuid); // Restore 'ownerguid' to list.
 				var listGuid = listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedLists.Add(listGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, listGuid), new XAttribute("t", "o")));
+				sortedLists.Add(listGuid, BaseDomainServices.CreateObjSurElement(listGuid));
 			}
 
 			if (sortedLists.Count == 0)

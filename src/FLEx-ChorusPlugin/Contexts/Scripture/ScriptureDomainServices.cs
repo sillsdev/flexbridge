@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -13,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	/// </summary>
 	internal static class ScriptureDomainServices
 	{
-		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteNestedDomainData(string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -47,16 +46,16 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
-			ScriptureReferenceSystemBoundedContextService.NestContext(readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 			var langProj = classData["LangProject"].Values.First();
-			ScriptureCheckListsBoundedContextService.NestContext(langProj, readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 
 			// These are intentionally out of order from the above numbering scheme.
 			var scripture = classData[SharedConstants.Scripture].Values.First();
-			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ScriptureBoundedContextService.NestContext(langProj, scripture, readerSettings, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
 		internal static void FlattenDomain(

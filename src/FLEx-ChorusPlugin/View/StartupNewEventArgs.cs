@@ -1,4 +1,5 @@
 ﻿using System;
+using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -14,10 +15,14 @@ namespace FLEx_ChorusPlugin.View
 	internal sealed class StartupNewEventArgs : EventArgs
 	{
 		internal ExtantRepoSource ExtantRepoSource { get; private set; }
+		internal string ProjectFolder { get; private set; }
 
 		internal StartupNewEventArgs(ExtantRepoSource extantRepoSource)
 		{
 			ExtantRepoSource = extantRepoSource;
+			var pathLocatorItr = new RegularUserProjectPathLocator().BaseFolderPaths.GetEnumerator();
+			pathLocatorItr.MoveNext();
+			ProjectFolder = pathLocatorItr.Current;
 		}
 	}
 

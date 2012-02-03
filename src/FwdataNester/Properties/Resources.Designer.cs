@@ -59,5 +59,14 @@ namespace FwdataTestApp.Properties {
 				resourceCulture = value;
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Times.
+		/// </summary>
+		internal static string kTimes {
+			get {
+				return ResourceManager.GetString("kTimes", resourceCulture);
+			}
+		}
 	}
 }
