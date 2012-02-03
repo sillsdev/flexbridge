@@ -21,6 +21,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		private IChorusFileTypeHandler _fileHandler;
 		private IChangePresenter _changePresenter;
 		private string _goodXmlPathname;
+		private string _tempfilePathname;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -34,7 +35,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					null,
 					null,
 					null));
-			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			_tempfilePathname = Path.GetTempFileName();
+			_goodXmlPathname = Path.ChangeExtension(_tempfilePathname, ".ClassData");
 			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
 		}
 
@@ -43,6 +45,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			_fileHandler = null;
 			_changePresenter = null;
+			if (File.Exists(_tempfilePathname))
+				File.Delete(_tempfilePathname);
 			if (File.Exists(_goodXmlPathname))
 				File.Delete(_goodXmlPathname);
 		}

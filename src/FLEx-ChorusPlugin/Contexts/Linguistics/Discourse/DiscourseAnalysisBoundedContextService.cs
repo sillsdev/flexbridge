@@ -20,46 +20,61 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 
 		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 			MetadataCache mdc,
-			IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var discourseBaseDir = Path.Combine(multiFileDirRoot, DiscourseRootFolder);
 			if (Directory.Exists(discourseBaseDir))
 				Directory.Delete(discourseBaseDir, true);
 
-			SortedDictionary<string, XElement> sortedInstanceData;
-			if (!classData.TryGetValue("DsDiscourseData", out sortedInstanceData))
+			var sortedInstanceData = classData["DsDiscourseData"];
+			if (sortedInstanceData.Count == 0)
 				return;
 
-			// TODO: Are there any other lists, other than thse two?
 			// ConstChartTempl and ChartMarkers are two lists owned by DsDiscourseData.
-			// How about lang proj's:  <owning num="55" id="TextMarkupTags" card="atomic" sig="CmPossibilityList">
 			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-			if (sortedInstanceData.Count > 0)
-			{
-				Directory.CreateDirectory(discourseBaseDir);
+			Directory.CreateDirectory(discourseBaseDir);
 
-				var guid = sortedInstanceData.Keys.First();
-				var dataEl = sortedInstanceData.Values.First();
+			var guid = sortedInstanceData.Keys.First();
+			var dataEl = sortedInstanceData.Values.First();
 
-				// 1. Write out the DsDiscourseData instance in discourseBaseDir, but not the charts it owns.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, discourseBaseDir, multiClassOutput, guid, new HashSet<string> { "Charts" });
+			// 1. Write out the DsDiscourseData instance in discourseBaseDir, but not the charts it owns.
+			FileWriterService.WriteObject(mdc, classData, guidToClassMapping, discourseBaseDir, multiClassOutput, guid, new HashSet<string> { "Charts" });
 
-				// 2. Each chart it owns needs to be written in its own subfolder of discourseBaseDir, a la texts.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					discourseBaseDir,
-					dataEl,
-					"Charts", "Chart_", true);
-			}
-
-			// No need to process these in the 'soup' now.
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "DsDiscourseData", "DsConstChart", "ConstChartRow", "ConstChartWordGroup", "ConstChartMovedTextMarker", "ConstChartClauseMarker", "ConstChartTag" });
+			// 2. Each chart it owns needs to be written in its own subfolder of discourseBaseDir, a la texts.
+			WritePropertyInFolders(mdc,
+				classData, guidToClassMapping, multiClassOutput,
+				discourseBaseDir,
+				dataEl,
+				"Charts", "Chart_", true);
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
 		{
 			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, DiscourseRootFolder)));
+		}
+
+		private static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
+		{
+			foreach (var guid in ObjectFinderServices.GetGuids(dataElement, propertyName))
+			{
+				multiClassOutput.Clear();
+
+				var currentElement = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
+				ObjectFinderServices.CollectAllOwnedObjects(mdc,
+															classData, guidToClassMapping, multiClassOutput,
+															currentElement,
+															new HashSet<string>());
+
+				// Write out data in a separate folder.
+				var dirPath = Path.Combine(baseDir, dirPrefix);
+				if (appendGuid)
+					dirPath = Path.Combine(baseDir, dirPrefix + guid);
+				if (!Directory.Exists(dirPath))
+					Directory.CreateDirectory(dirPath);
+				foreach (var kvp in multiClassOutput)
+					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), kvp.Value);
+			}
+			multiClassOutput.Clear();
 		}
 	}
 }

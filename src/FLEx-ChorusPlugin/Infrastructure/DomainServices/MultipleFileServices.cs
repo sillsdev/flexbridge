@@ -125,7 +125,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
-			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
+			// (Only has current concrete classes.)
+			var classData = GenerateBasicClassData(mdc);
 			var guidToClassMapping = new Dictionary<string, string>();
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
@@ -155,6 +156,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// 3. Write all data files, here and there. [NB: The CmObject data in the XElements of 'classData' has all been sorted by this point.]
 			BaseDomainServices.WriteDomainData(mdc, pathRoot, classData, guidToClassMapping);
+		}
+
+		private static Dictionary<string, SortedDictionary<string, XElement>> GenerateBasicClassData(MetadataCache mdc)
+		{
+			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
 		}
 
 		private static void DeleteOldFiles(string pathRoot, string projectName)
@@ -197,13 +203,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
-			SortedDictionary<string, XElement> recordData;
-			if (!classData.TryGetValue(className, out recordData))
-			{
-				recordData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-				classData.Add(className, recordData);
-			}
-			recordData.Add(guid, rtElement);
+			classData[className].Add(guid, rtElement);
 		}
 
 		private static string RestoreAdjustedTypeValue(string storedType)

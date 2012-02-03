@@ -14,8 +14,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement langProj,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
@@ -35,15 +34,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					classData,
 					guidToClassMapping);
 
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement("CheckList", checkList));
-
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List), doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, checkList.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List), new XElement("CheckList", checkList));
 			}
 
 			clPropElement.RemoveNodes();
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ChkTerm", "ChkRef", "ChkRendering" });
 		}
 
 		internal static void FlattenContext(

@@ -12,8 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement languageProjectElement, XElement scriptureElement,
 										 string baseDirectory,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
-										 Dictionary<string, string> guidToClassMapping,
-										 HashSet<string> skipWriteEmptyClassFiles)
+										 Dictionary<string, string> guidToClassMapping)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
 			var scriptureBaseDir = baseDirectory;
@@ -25,16 +24,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			FileWriterService.WriteNestedFile(
 				Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename),
-				new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement(SharedConstants.TranslatedScripture, scriptureElement)));
+				new XElement(SharedConstants.TranslatedScripture, scriptureElement));
 
 			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
-				SharedConstants.Scripture,
-				"ScrBook", "ScrSection", "ScrTxtPara", "ScrFootnote", "ScrDifference",
-				"ScrImportSet", "ScrImportSource", "ScrImportP6Project", "ScrImportSFFiles", "ScrMarkerMapping",
-				"ScrBookAnnotations", "ScrScriptureNote", "ScrCheckRun" });
 		}
 
 		internal static void FlattenContext(
@@ -47,6 +39,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// scriptureBaseDir is root/Scripture.
 			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename);
+			if (!File.Exists(pathname))
+				return; // Nobody home.
 			var doc = XDocument.Load(pathname);
 			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
 

@@ -18,18 +18,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		internal static void WriteNestedFile(string newPathname,
-			XDocument nestedDoc)
+			XElement root)
 		{
+			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), root);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(doc.ToString()), false), CanonicalReaderSettings))
 			{
-				WriteDocument(writer, CanonicalReaderSettings, nestedDoc);
-			}
-		}
-
-		private static void WriteDocument(XmlWriter writer, XmlReaderSettings readerSettings, XDocument nestedDoc)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(nestedDoc.ToString()), false), readerSettings))
 				writer.WriteNode(nodeReader, true);
+			}
 		}
 
 		internal static void WriteElement(XmlWriter writer, XElement element)
@@ -49,8 +45,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (element == null)
 			{
 				// Still write out file with just the root element.
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.AdditionalFieldsTag));
-				WriteNestedFile(newPathname, doc);
+				WriteNestedFile(newPathname, new XElement(SharedConstants.AdditionalFieldsTag));
 			}
 			else
 			{
@@ -98,87 +93,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			multiClassOutput.Clear();
 		}
 
-		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, SortedDictionary<string, XElement> data)
-		{
-			// Divide 'data' into the 10 zero-based buckets.
-			var bucket0 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket1 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket2 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket3 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket4 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket5 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket6 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket7 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket8 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var bucket9 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-
-			foreach (var kvp in data)
-			{
-				var key = kvp.Key;
-				var bucket = (int)((uint)new Guid(key).GetHashCode() % 10);
-				SortedDictionary<string, XElement> currentBucket;
-				switch (bucket)
-				{
-					default:
-						throw new InvalidOperationException("Bucket not recognized.");
-					case 0:
-						currentBucket = bucket0;
-						break;
-					case 1:
-						currentBucket = bucket1;
-						break;
-					case 2:
-						currentBucket = bucket2;
-						break;
-					case 3:
-						currentBucket = bucket3;
-						break;
-					case 4:
-						currentBucket = bucket4;
-						break;
-					case 5:
-						currentBucket = bucket5;
-						break;
-					case 6:
-						currentBucket = bucket6;
-						break;
-					case 7:
-						currentBucket = bucket7;
-						break;
-					case 8:
-						currentBucket = bucket8;
-						break;
-					case 9:
-						currentBucket = bucket9;
-						break;
-				}
-				currentBucket.Add(key, kvp.Value);
-			}
-
-			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
-			var basePath = Path.Combine(multiFileDirRoot, className);
-			WriteSecondaryFile(basePath + "_01.ClassData", bucket0); // 1-based files vs 0-based buckets.
-			WriteSecondaryFile(basePath + "_02.ClassData", bucket1);
-			WriteSecondaryFile(basePath + "_03.ClassData", bucket2);
-			WriteSecondaryFile(basePath + "_04.ClassData", bucket3);
-			WriteSecondaryFile(basePath + "_05.ClassData", bucket4);
-			WriteSecondaryFile(basePath + "_06.ClassData", bucket5);
-			WriteSecondaryFile(basePath + "_07.ClassData", bucket6);
-			WriteSecondaryFile(basePath + "_08.ClassData", bucket7);
-			WriteSecondaryFile(basePath + "_09.ClassData", bucket8);
-			WriteSecondaryFile(basePath + "_10.ClassData", bucket9);
-		}
-
 		internal static void WriteSecondaryFile(string newPathname, SortedDictionary<string, XElement> data)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
 				writer.WriteStartElement("classdata");
-				if (data != null)
-				{
-					foreach (var kvp in data)
-						WriteElement(writer, kvp.Value);
-				}
+				foreach (var kvp in data)
+					WriteElement(writer, kvp.Value);
 				writer.WriteEndElement();
 			}
 		}

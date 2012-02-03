@@ -57,7 +57,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NonExistantPathForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(Path.Combine(new TempFile().Path, "Itaintthere") , "ZPI"));
+			using (var tempFile = new TempFile())
+			{
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(Path.Combine(tempFile.Path, "Itaintthere"), "ZPI"));
+			}
 		}
 	}
 }

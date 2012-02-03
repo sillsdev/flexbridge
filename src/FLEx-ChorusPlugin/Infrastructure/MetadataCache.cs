@@ -130,6 +130,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000051:
 						// 7000051: No actual model change.
 						break;
+					case 7000052:
+						// 7000052: No actual model change.
+						break;
 				}
 			}
 

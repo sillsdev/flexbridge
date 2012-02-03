@@ -10,7 +10,6 @@ using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using FwdataTestApp.Properties;
 using Palaso.Xml;
 
 namespace FwdataTestApp
@@ -77,6 +76,7 @@ namespace FwdataTestApp
 		private void RunSelected(object sender, EventArgs e)
 		{
 			var srcFwdataPathname = _openFileDialog.FileName;
+			var workingDir = Path.GetDirectoryName(srcFwdataPathname);
 			Cursor = Cursors.WaitCursor;
 			var sb = new StringBuilder();
 			var nestTimer = new Stopwatch();
@@ -224,8 +224,8 @@ namespace FwdataTestApp
 								var srcElement = innerSrcKvp.Value;
 								if (!XmlUtilities.AreXmlElementsEqual(new XmlInput(trgElement.ToString()), new XmlInput(srcElement.ToString())))
 								{
-									File.WriteAllText(Path.Combine(Path.GetDirectoryName(srcFwdataPathname), srcGuid + "-SRC.txt"), srcElement.ToString());
-									File.WriteAllText(Path.Combine(Path.GetDirectoryName(srcFwdataPathname), srcGuid + "-TRG.txt"), trgElement.ToString());
+									File.WriteAllText(Path.Combine(workingDir, srcGuid + "-SRC.txt"), srcElement.ToString());
+									File.WriteAllText(Path.Combine(workingDir, srcGuid + "-TRG.txt"), trgElement.ToString());
 									sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
 									sb.AppendLine();
 								}
@@ -237,22 +237,24 @@ namespace FwdataTestApp
 			}
 			catch (Exception err)
 			{
-				File.Copy(srcFwdataPathname + ".orig", srcFwdataPathname, true); // Restore it.
+				File.Delete(srcFwdataPathname);
+				File.Move(srcFwdataPathname + ".orig", srcFwdataPathname); // Restore it.
+				File.WriteAllText(Path.Combine(workingDir, "StackTrace.log"), err.GetType().Name + Environment.NewLine +  err.StackTrace);
 			}
 			finally
 			{
-				var compTxt = sb.ToString();
-				File.WriteAllText(Path.Combine(Path.GetDirectoryName(srcFwdataPathname), "Comparison.txt"), compTxt);
+				var compTxt = String.Format(
+					"Time to nest file: {0}{5}Time to breakup file: {1}.{5}Time to restore file: {2}.{5}Time to verify restoration: {3}{5}{5}{4}",
+					_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					sb,
+					Environment.NewLine);
+				File.WriteAllText(Path.Combine(workingDir, "Comparison.log"), compTxt);
 				Cursor = Cursors.Default;
+				Close();
 			}
-			MessageBox.Show(this,
-							String.Format("Time to nest file: {0}{4}Time to breakup file: {1}.{4}Time to restore file: {2}.{4}Time to verify restoration: {3}",
-							_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-							_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-							_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-							Environment.NewLine),
-							Resources.kTimes);
 		}
 
 		private static void NestFile(string srcFwdataPathname)
@@ -266,9 +268,6 @@ namespace FwdataTestApp
 			TokenizeFile(mdc, srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
 
 			var root = new XElement("root");
-			var nestedDoc = new XDocument(
-				new XDeclaration("1.0", "utf-8", "yes"),
-				root);
 			var exceptions = new Dictionary<string, HashSet<string>>();
 			foreach (var unownedElementKvp in unownedObjects)
 			{
@@ -285,8 +284,7 @@ namespace FwdataTestApp
 				}
 				root.Add(classElement);
 			}
-			nestedDoc.Save(srcFwdataPathname + ".nested");
-			FileWriterService.WriteNestedFile(srcFwdataPathname + ".nested", nestedDoc);
+			FileWriterService.WriteNestedFile(srcFwdataPathname + ".nested", root);
 		}
 
 		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, SortedDictionary<string, XElement>> unownedObjects, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)

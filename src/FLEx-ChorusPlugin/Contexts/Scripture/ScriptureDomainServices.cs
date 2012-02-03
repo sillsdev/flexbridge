@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void WriteNestedDomainData(string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
 /*
 		BC 1. ScrRefSystem (no owner)
@@ -46,16 +45,18 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
-			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
 			var langProj = classData["LangProject"].Values.First();
-			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 
 			// These are intentionally out of order from the above numbering scheme.
-			var scripture = classData[SharedConstants.Scripture].Values.First();
-			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			var scripture = classData[SharedConstants.Scripture].Values.FirstOrDefault();
+			if (scripture == null)
+				return; // Lela Teli-3 has nul.
+			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
+			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
+			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
+			ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(

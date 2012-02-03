@@ -13,8 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement importSettingsProperty,
 										 string scriptureBaseDir,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
-										 Dictionary<string, string> guidToClassMapping,
-										 HashSet<string> skipWriteEmptyClassFiles)
+										 Dictionary<string, string> guidToClassMapping)
 		{
 			if (importSettingsProperty == null)
 				return;
@@ -22,9 +21,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!importSettings.Any())
 				return;
 
-			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
 			var root = new XElement(SharedConstants.ImportSettings);
-			doc.Add(root);
 
 			foreach (var importSettingObjSur in importSettings)
 			{
@@ -40,11 +37,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				root.Add(importSetting);
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename), doc);
+			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename), root);
 
 			importSettingsProperty.RemoveNodes();
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ScrImportSet", "ScrImportSource", "ScrImportP6Project", "ScrImportSFFiles", "ScrMarkerMapping" });
 		}
 
 		internal static void FlattenContext(

@@ -23,7 +23,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// </summary>
 	internal static class TextCorpusBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipWriteEmptyClassFiles)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
 			if (!Directory.Exists(textCorpusBaseDir))
@@ -32,8 +32,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var langProjElement = classData["LangProject"].Values.First();
 
 			// Write Genre list (owning atomic CmPossibilityList)
-			// "root" makes this list be two levels down in <GenreList><GenreList></GenreList></GenreList>.
-			// So, since we need to provide a node to NestList, jsut use root. first kid
+			// "randomElement" makes this list be two levels down in <GenreList><GenreList></GenreList></GenreList>.
+			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
 			var randomElement = new XElement(SharedConstants.GenreList);
 			BaseDomainServices.NestList(classData,
 				guidToClassMapping,
@@ -44,8 +44,23 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (randomElement.HasElements)
 			{
 				// NB: Write file, but only if LP has the genre list.
-				var genreListDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), randomElement.FirstNode);
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename), genreListDoc);
+				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename), (XElement)randomElement.FirstNode);
+			}
+
+			// Write text markup tags list (owning atomic CmPossibilityList)
+			// "randomElement" makes this list be two levels down in <TextMarkupTags><TextMarkupTags></TextMarkupTags></TextMarkupTags>.
+			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
+			randomElement = new XElement(SharedConstants.TextMarkupTags);
+			BaseDomainServices.NestList(classData,
+				guidToClassMapping,
+				classData["CmPossibilityList"],
+				randomElement,
+				langProjElement,
+				SharedConstants.TextMarkupTags);
+			if (randomElement.HasElements)
+			{
+				// NB: Write file, but only if LP has the markup list.
+				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename), (XElement)randomElement.FirstNode);
 			}
 
 			var texts = classData["Text"];
@@ -63,11 +78,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(
 					Path.Combine(textCorpusBaseDir, "Test_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
-					new XDocument(new XDeclaration("1.0", "utf-8", "yes"), rootElement));
+					rootElement);
 			}
-
-			// No, since Text instances are also owned elsewhere.
-			// ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Text" });
 		}
 
 		internal static void FlattenContext(
@@ -86,6 +98,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var pathname = Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename);
 			var doc = XDocument.Load(pathname);
 			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element("CmPossibilityList"));
+			// Put the markup tags list back in the right place.
+			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename);
+			doc = XDocument.Load(pathname);
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element("CmPossibilityList"));
 
 			// Put Texts back into LP.
 			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);

@@ -18,6 +18,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		private string _illformedXmlPathname;
 		private string _goodXmlButNotFwPathname;
 		private string _nonXmlPathname;
+		private string _tempfilePathname1;
+		private string _tempfilePathname2;
+		private string _tempfilePathname3;
+		private string _tempfilePathname4;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -25,13 +29,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 						 select handler).First();
-			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			_tempfilePathname1 = Path.GetTempFileName();
+			_goodXmlPathname = Path.ChangeExtension(_tempfilePathname1, ".ClassData");
 			File.WriteAllText(_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
-			_illformedXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+
+			_tempfilePathname2 = Path.GetTempFileName();
+			_illformedXmlPathname = Path.ChangeExtension(_tempfilePathname2, ".ClassData");
 			File.WriteAllText(_illformedXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata>");
-			_goodXmlButNotFwPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+
+			_tempfilePathname3 = Path.GetTempFileName();
+			_goodXmlButNotFwPathname = Path.ChangeExtension(_tempfilePathname3, ".ClassData");
 			File.WriteAllText(_goodXmlButNotFwPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<nonfwstuff />");
-			_nonXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".txt");
+
+			_tempfilePathname4 = Path.GetTempFileName();
+			_nonXmlPathname = Path.ChangeExtension(_tempfilePathname4, ".txt");
 			File.WriteAllText(_nonXmlPathname, "This is not an xml file." + Environment.NewLine);
 		}
 
@@ -39,6 +50,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void FixtureTearDown()
 		{
 			_fileHandler = null;
+
+			if (File.Exists(_tempfilePathname1))
+				File.Delete(_tempfilePathname1);
+			if (File.Exists(_tempfilePathname2))
+				File.Delete(_tempfilePathname2);
+			if (File.Exists(_tempfilePathname3))
+				File.Delete(_tempfilePathname3);
+			if (File.Exists(_tempfilePathname4))
+				File.Delete(_tempfilePathname4);
+
 			if (File.Exists(_goodXmlPathname))
 				File.Delete(_goodXmlPathname);
 			if (File.Exists(_illformedXmlPathname))

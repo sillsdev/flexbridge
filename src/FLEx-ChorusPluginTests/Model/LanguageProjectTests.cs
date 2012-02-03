@@ -56,6 +56,7 @@ namespace FLEx_ChorusPluginTests.Model
 			}
 			finally
 			{
+				File.Delete(temp);
 				File.Delete(tempFile);
 			}
 		}
@@ -76,6 +77,7 @@ namespace FLEx_ChorusPluginTests.Model
 			}
 			finally
 			{
+				File.Delete(temp);
 				File.Delete(tempFile);
 			}
 		}
@@ -98,6 +100,7 @@ namespace FLEx_ChorusPluginTests.Model
 			}
 			finally
 			{
+				// Bad idea!! Directory.Delete(tempFolder, true);
 				Directory.Delete(tempDir.FullName, true);
 			}
 		}
@@ -118,6 +121,7 @@ namespace FLEx_ChorusPluginTests.Model
 			}
 			finally
 			{
+				File.Delete(temp);
 				File.Delete(tempFile);
 			}
 		}

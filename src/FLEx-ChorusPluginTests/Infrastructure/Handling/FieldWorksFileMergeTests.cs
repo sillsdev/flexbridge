@@ -65,7 +65,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void CanMergeGoodFwXmlFile()
 		{
-			var goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
+			var tempPathname = Path.GetTempFileName();
+			var goodXmlPathname = Path.ChangeExtension(tempPathname, ".ClassData");
 			try
 			{
 				File.WriteAllText(goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
@@ -73,6 +74,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			}
 			finally
 			{
+				File.Delete(tempPathname);
 				File.Delete(goodXmlPathname);
 			}
 		}

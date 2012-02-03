@@ -142,6 +142,7 @@
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
@@ -184,7 +185,6 @@
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
 	<Compile Include="Infrastructure\DomainServices\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\DomainServices\ObjectFinderServices.cs" />
-	<Compile Include="Contexts\Linguistics\WordformInventory\PunctuationFormBoundedContextService.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />

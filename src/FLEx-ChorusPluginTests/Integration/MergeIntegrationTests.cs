@@ -124,6 +124,13 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
 					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
 					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));
+
+					// Take care a a problem in Palaso where it creates the "unnamedTestFolder",
+					// but then swaps out the path to somthing else (and creates it, along with "unnamedTestFolder",
+					// but then leaves "unnamedTestFolder", when Dispose is done.
+					var unnamedTestFolder = Path.Combine(Path.GetTempPath(), "unnamedTestFolder");
+					if (Directory.Exists(unnamedTestFolder))
+						Directory.Delete(unnamedTestFolder, true);
 				}
 			}
 		}

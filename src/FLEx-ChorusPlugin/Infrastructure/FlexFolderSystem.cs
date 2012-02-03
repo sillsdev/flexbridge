@@ -45,6 +45,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Reversals/*.reversal");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Lexicon/Lexicon.lexdb");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/TextCorpus/*.textincorpus");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Inventory/WordformInventory.inventory");
 			// TODO: Add others.
 
 			// Anthropology

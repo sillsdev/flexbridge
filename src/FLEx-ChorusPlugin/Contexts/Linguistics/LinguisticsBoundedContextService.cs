@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 
 		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
+												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var linguisticsBaseDir = Path.Combine(multiFileDirRoot, LinguisticsRootFolder);
 			if (!Directory.Exists(linguisticsBaseDir))
@@ -52,7 +51,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				Directory.CreateDirectory(morphAndSynDir);
 			guids = ObjectFinderServices.GetGuids(langProjElement, "MsFeatureSystem");
 			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "PartsOfSpeech"));
-			guids.AddRange(ObjectFinderServices.GetGuids(langProjElement, "TextMarkupTags"));
 			foreach (var guid in guids)
 			{
 				var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
@@ -90,13 +88,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			}
 
 			// There could be a Linguistics\MorphologyAndSyntax\Syntax folder, eventually.
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
-				"PhPhonData", "PhPhonemeSet", "PhEnvironment", "PhPhoneme", "PhBdryMarker", "PhCode", "PhNCSegments",
-				"CmAgent", "CmAgentEvaluation",
-				"FsFeatureSystem",
-				"PartOfSpeech",
-				"MoMorphData", "MoStratum", "MoEndoCompound", "MoExoCompound", "MoAlloAdhocProhib", "MoMorphAdhocProhib", "MoAdhocProhibGr", "WfiWordSet" });
 		}
 
 		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)

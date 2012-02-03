@@ -6,7 +6,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// This implementation is suitable for FieldWorks end users,
 	/// who may have projects in: HKLM.software.SIL.FieldWorks.7.0.ProjectsDir
 	/// </summary>
-	internal class RegularUserProjectPathLocator : IProjectPathLocator
+	internal sealed class RegularUserProjectPathLocator : IProjectPathLocator
 	{
 		#region Implementation of IProjectPathLocator
 

@@ -33,19 +33,22 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	{
 		private const string ReversalRootFolder = "Reversals";
 
-		internal static void NestContext(string baseDirectory,
+		internal static void NestContext(string linguisticsBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
-			SortedDictionary<string, XElement> sortedInstanceData;
-			if (!classData.TryGetValue("ReversalIndex", out sortedInstanceData))
-				return;
+			var allLexDbs = classData["LexDb"].FirstOrDefault();
+			if (allLexDbs.Value == null)
+				return; // No LexDb, then there can be no reversals.
 
-			var lexDb = classData["LexDb"].First().Value;
+			SortedDictionary<string, XElement> sortedInstanceData = classData["ReversalIndex"];
+			if (sortedInstanceData.Count == 0)
+				return; // no reversals, as in Lela-Teli-3.
+
+			var lexDb = allLexDbs.Value;
 			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
-			var reversalDir = Path.Combine(baseDirectory, ReversalRootFolder);
+			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				Directory.CreateDirectory(reversalDir);
 
@@ -76,13 +79,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					root.Add(entriesElement.Elements()); // NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
 					entriesElement.RemoveNodes();
 				}
-				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
-					root);
 
-				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), fullRevObject);
+				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), root);
 			}
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
 		}
 
 		internal static void FlattenContext(
@@ -121,9 +120,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				reversalsOwningProp.Add(sortedRev);
 		}
 
-		internal static void RemoveBoundedContextData(string linguisticsBase)
+		internal static void RemoveBoundedContextData(string linguisticsBaseDir)
 		{
-			var reversalDir = Path.Combine(linguisticsBase, ReversalRootFolder);
+			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				return;
 
