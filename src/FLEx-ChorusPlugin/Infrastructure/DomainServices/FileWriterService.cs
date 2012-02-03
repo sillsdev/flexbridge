@@ -10,13 +10,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{
+		private readonly static XmlReaderSettings ReaderSettings = new XmlReaderSettings { IgnoreWhitespace = true };
+
+		internal static XmlReaderSettings CanonicalReaderSettings
+		{
+			get { return ReaderSettings; }
+		}
+
 		internal static void WriteNestedFile(string newPathname,
-			XmlReaderSettings readerSettings,
 			XDocument nestedDoc)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
-					WriteDocument(writer, readerSettings, nestedDoc);
+				WriteDocument(writer, CanonicalReaderSettings, nestedDoc);
 			}
 		}
 
@@ -26,30 +32,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
+		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element.ToString()), false), readerSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element.ToString()), false), CanonicalReaderSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] optionalFirstElement)
+		internal static void WriteElement(XmlWriter writer, byte[] optionalFirstElement)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), readerSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), CanonicalReaderSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 
-		internal static void WriteCustomPropertyFile(string newPathname, XmlReaderSettings readerSettings, byte[] element)
+		internal static void WriteCustomPropertyFile(string newPathname, byte[] element)
 		{
 			if (element == null)
 			{
 				// Still write out file with just the root element.
 				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(SharedConstants.AdditionalFieldsTag));
-				doc.Save(newPathname);
+				WriteNestedFile(newPathname, doc);
 			}
 			else
 			{
 				using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-					WriteElement(writer, readerSettings, element);
+					WriteElement(writer, element);
 			}
 		}
 
@@ -78,7 +84,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		internal static void WriteObject(MetadataCache mdc,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping,
 										 string baseDir,
-										 XmlReaderSettings readerSettings, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
+										 Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
 										 HashSet<string> omitProperties)
 		{
 			multiClassOutput.Clear();
@@ -88,11 +94,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 														dataEl,
 														omitProperties);
 			foreach (var kvp in multiClassOutput)
-				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), kvp.Value);
 			multiClassOutput.Clear();
 		}
 
-		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
+		internal static void WriteSecondaryFiles(string multiFileDirRoot, string className, SortedDictionary<string, XElement> data)
 		{
 			// Divide 'data' into the 10 zero-based buckets.
 			var bucket0 = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
@@ -151,19 +157,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// Write out each bucket (another SortedDictionary) using regular WriteSecondaryFile method.
 			var basePath = Path.Combine(multiFileDirRoot, className);
-			WriteSecondaryFile(basePath + "_01.ClassData", readerSettings, bucket0); // 1-based files vs 0-based buckets.
-			WriteSecondaryFile(basePath + "_02.ClassData", readerSettings, bucket1);
-			WriteSecondaryFile(basePath + "_03.ClassData", readerSettings, bucket2);
-			WriteSecondaryFile(basePath + "_04.ClassData", readerSettings, bucket3);
-			WriteSecondaryFile(basePath + "_05.ClassData", readerSettings, bucket4);
-			WriteSecondaryFile(basePath + "_06.ClassData", readerSettings, bucket5);
-			WriteSecondaryFile(basePath + "_07.ClassData", readerSettings, bucket6);
-			WriteSecondaryFile(basePath + "_08.ClassData", readerSettings, bucket7);
-			WriteSecondaryFile(basePath + "_09.ClassData", readerSettings, bucket8);
-			WriteSecondaryFile(basePath + "_10.ClassData", readerSettings, bucket9);
+			WriteSecondaryFile(basePath + "_01.ClassData", bucket0); // 1-based files vs 0-based buckets.
+			WriteSecondaryFile(basePath + "_02.ClassData", bucket1);
+			WriteSecondaryFile(basePath + "_03.ClassData", bucket2);
+			WriteSecondaryFile(basePath + "_04.ClassData", bucket3);
+			WriteSecondaryFile(basePath + "_05.ClassData", bucket4);
+			WriteSecondaryFile(basePath + "_06.ClassData", bucket5);
+			WriteSecondaryFile(basePath + "_07.ClassData", bucket6);
+			WriteSecondaryFile(basePath + "_08.ClassData", bucket7);
+			WriteSecondaryFile(basePath + "_09.ClassData", bucket8);
+			WriteSecondaryFile(basePath + "_10.ClassData", bucket9);
 		}
 
-		internal static void WriteSecondaryFile(string newPathname, XmlReaderSettings readerSettings, SortedDictionary<string, XElement> data)
+		internal static void WriteSecondaryFile(string newPathname, SortedDictionary<string, XElement> data)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
@@ -171,14 +177,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (data != null)
 				{
 					foreach (var kvp in data)
-						WriteElement(writer, readerSettings, kvp.Value);
+						WriteElement(writer, kvp.Value);
 				}
 				writer.WriteEndElement();
 			}
 		}
 
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
-													 XmlReaderSettings readerSettings,
 													 string pathRoot,
 													 string projectName,
 													 byte[] record)
@@ -205,7 +210,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 			if (hasCustomProperties)
 				mdc.ResetCaches();
-			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, SharedConstants.Utf8.GetBytes(cpElement.ToString()));
+			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
 		}
 
 		internal static string AdjustedPropertyType(string className, string propName, string rawType)

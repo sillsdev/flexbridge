@@ -11,19 +11,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(null, "ZPI"));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("", "ZPI"));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("Bogus.fwdata", "ZPI"));
 		}
 
 		[Test]
@@ -31,26 +31,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(tempFile.Path, "ZPI"));
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(tempFile.Path, "ZPI"));
 			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(null, "ZPI"));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("", "ZPI"));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("Bogus.fwdata", "ZPI"));
 		}
 
 		[Test]
@@ -58,7 +58,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path, "ZPI"));
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(tempFile.Path, "ZPI"));
 			}
 		}
 	}

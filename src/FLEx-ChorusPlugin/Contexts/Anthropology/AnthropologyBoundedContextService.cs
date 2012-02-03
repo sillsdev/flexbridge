@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -24,7 +23,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyBoundedContextService
 	{
-		internal static void NestContext(XmlReaderSettings readerSettings, string anthropologyDir,
+		internal static void NestContext(string anthropologyDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -34,7 +33,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var langProj = classData["LangProject"].Values.First();
 
 			var headerElement = new XElement(SharedConstants.Header);
-			var rootElement = new XElement("Anthropology", headerElement);
+			var rootElement = new XElement(SharedConstants.Anthropology, headerElement);
 			if (sortedInstanceData.Count > 0)
 			{
 				// 1. Main RnResearchNbk element.
@@ -45,9 +44,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
-
-				// Remove 'ownerguid'.
-				notebookElement.Attribute(SharedConstants.OwnerGuid).Remove();
 
 				var recordsElement = notebookElement.Element("Records");
 				if (recordsElement != null && recordsElement.HasElements)
@@ -68,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			}
 
 			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
-			NestLists(classData,
+			BaseDomainServices.NestLists(classData,
 				guidToClassMapping,
 				classData["CmPossibilityList"],
 				headerElement,
@@ -89,7 +85,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 					rootElement);
-			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, SharedConstants.DataNotebookFilename), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, SharedConstants.DataNotebookFilename), doc);
 
 			//// No need to process these in the 'soup' now.
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "RnResearchNbk", "RnGenericRec", "Reminder", "RnRoledPartic", "CmPerson", "CmAnthroItem", "CmLocation" });
@@ -110,20 +106,14 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				switch (headerChildElement.Name.LocalName)
 				{
 					case "RnResearchNbk":
-						var owningRnPropElement = langProjElement.Element("ResearchNotebook");
-						owningRnPropElement.Add(new XElement(SharedConstants.Objsur,
-															   new XAttribute(SharedConstants.GuidStr, headerChildElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
-															   new XAttribute("t", "o")));
 						// Put all records back in RnResearchNbk, before sort and restore.
 						// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 						var records = root.Elements("RnGenericRec").ToList();
 						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
 							headerChildElement.Element("Records").Add(records);
-						CmObjectFlatteningService.FlattenObject(
-							dnPathname,
-							sortedData,
-							headerChildElement,
-							langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to notebook.
+						BaseDomainServices.RestoreElement(dnPathname, sortedData,
+							langProjElement, "ResearchNotebook",
+							headerChildElement);
 						break;
 					case "AnthroList": // Fall through
 					case "ConfidenceLevels": // Fall through
@@ -135,13 +125,9 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "Roles": // Fall through
 					case "Status": // Fall through
 					case "TimeOfDay":
-						var listElement = headerChildElement.Element("CmPossibilityList");
-						RestoreLangProjListObjsurElement(langProjElement, listElement);
-						CmObjectFlatteningService.FlattenObject(
-							dnPathname,
-							sortedData,
-							listElement,
-							langProjGuid); // Restore 'ownerguid' to list.
+						BaseDomainServices.RestoreElement(dnPathname, sortedData,
+							langProjElement, headerChildElement.Name.LocalName,
+							headerChildElement.Element("CmPossibilityList"));
 						break;
 				}
 			}
@@ -155,41 +141,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 			// Let domain do it.
 			// FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
-		}
-
-		private static void RestoreLangProjListObjsurElement(XContainer langProjElement, XElement listElement)
-		{
-			var owningListPropElement = langProjElement.Element(listElement.Parent.Name.LocalName);
-			owningListPropElement.Add(new XElement(SharedConstants.Objsur,
-												   new XAttribute(SharedConstants.GuidStr, listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
-												   new XAttribute("t", "o")));
-		}
-
-		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			IDictionary<string, XElement> posLists,
-			XContainer headerElement,
-			XContainer langProjElement,
-			IEnumerable<string> propNames)
-		{
-			var exceptions = new Dictionary<string, HashSet<string>>();
-			foreach (var propName in propNames)
-			{
-				var listPropElement = langProjElement.Element(propName);
-				if (listPropElement == null || !listPropElement.HasElements)
-					continue;
-
-				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
-				// Remove 'ownerguid'.
-				listElement.Attribute(SharedConstants.OwnerGuid).Remove();
-				CmObjectNestingService.NestObject(false,
-					listElement,
-					exceptions,
-					classData,
-					guidToClassMapping);
-				listPropElement.RemoveNodes(); // Remove the single list objsur element.
-				headerElement.Add(new XElement(propName, listElement));
-			}
 		}
 	}
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
@@ -20,8 +21,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void OneItemInCollectionRemains()
 		{
-			var collData = new XElement("CollectionProperty",
-										new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf889-e382-11de-8a39-0800200c9a66")));
+			var collData = new XElement("CollectionProperty", BaseDomainServices.CreateObjSurElement("c1ecf889-e382-11de-8a39-0800200c9a66"));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(1, collData.Elements().Count());
@@ -35,8 +35,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void CollectionPropertyIsSorted()
 		{
 			var collData = new XElement("CollectionProperty",
-				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88a-e382-11de-8a39-0800200c9a66")));
+				BaseDomainServices.CreateObjSurElement("c1ecf88b-e382-11de-8a39-0800200c9a66"),
+				BaseDomainServices.CreateObjSurElement("c1ecf88a-e382-11de-8a39-0800200c9a66"));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(2, collData.Elements().Count());
@@ -51,9 +51,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		public void DuplicatesInCollectionPropertyAreRemoved()
 		{
 			var collData = new XElement("CollectionProperty",
-				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88b-e382-11de-8a39-0800200c9a66")),
-				new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, "c1ecf88a-e382-11de-8a39-0800200c9a66")));
+				BaseDomainServices.CreateObjSurElement("c1ecf88b-e382-11de-8a39-0800200c9a66"),
+				BaseDomainServices.CreateObjSurElement("c1ecf88b-e382-11de-8a39-0800200c9a66"),
+				BaseDomainServices.CreateObjSurElement("c1ecf88a-e382-11de-8a39-0800200c9a66"));
 			DataSortingService.SortCollectionProperties(collData);
 			Assert.AreEqual("CollectionProperty", collData.Name.LocalName);
 			Assert.AreEqual(2, collData.Elements().Count());

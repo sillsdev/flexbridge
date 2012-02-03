@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 	{
 		private const string PunctuationFormInventoryRootFolder = "PunctuationFormInventory";
 
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
@@ -37,7 +37,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			}
 			foreach (var kvp in multiClassOutput)
 			{
-				FileWriterService.WriteSecondaryFile(Path.Combine(pfiBaseDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+				FileWriterService.WriteSecondaryFile(Path.Combine(pfiBaseDir, kvp.Key + ".ClassData"), kvp.Value);
 			}
 
 			// No need to process it in the 'soup' now.

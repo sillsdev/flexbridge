@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -82,7 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 																 select osEl.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()).ToList();
 		}
 
-		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, XmlReaderSettings readerSettings, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
+		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
 		{
 			foreach (var guid in GetGuids(dataElement, propertyName))
 			{
@@ -101,7 +100,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (!Directory.Exists(dirPath))
 					Directory.CreateDirectory(dirPath);
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), kvp.Value);
 			}
 			multiClassOutput.Clear();
 		}

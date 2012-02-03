@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class MultipleFileServices
 	{
-		internal static void RestoreMainFile(string mainFilePathname, string projectName)
+		internal static void PutHumptyTogetherAgain(string mainFilePathname, string projectName)
 		{
 			FileWriterService.CheckPathname(mainFilePathname);
 
@@ -35,7 +35,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			{
 				// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
 				// but the optional custom props element must be first.
-				var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 				// NB: This should follow current FW write settings practice.
 				var fwWriterSettings = new XmlWriterSettings
 				{
@@ -79,10 +78,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 						}
 						mdc.ResetCaches();
-						FileWriterService.WriteElement(writer, readerSettings, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
+						FileWriterService.WriteElement(writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 					}
 
-					BaseDomainServices.RestoreDomainData(writer, readerSettings, pathRoot);
+					BaseDomainServices.RestoreDomainData(writer, pathRoot);
 
 					writer.WriteEndElement();
 				}
@@ -96,7 +95,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static void BreakupMainFile(string mainFilePathname, string projectName)
+		internal static void PushHumptyOffTheWall(string mainFilePathname, string projectName)
 		{
 			FileWriterService.CheckPathname(mainFilePathname);
 
@@ -105,7 +104,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 #if DEBUG
 			// Enable ONLY for testing a round trip.
-			//RestoreMainFile(mainFilePathname, projectName);
+			//PutHumptyTogetherAgain(mainFilePathname, projectName);
 #endif
 		}
 
@@ -114,9 +113,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var mdc = MetadataCache.MdCache; // Upgrade is done shortly.
 
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
 			// 1. Write version number file.
-			using (var reader = XmlReader.Create(mainFilePathname, readerSettings))
+			using (var reader = XmlReader.Create(mainFilePathname, FileWriterService.CanonicalReaderSettings))
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
@@ -139,7 +137,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					if (foundOptionalFirstElement)
 					{
 						// 2. Write custom properties file.
-						FileWriterService.WriteCustomPropertyFile(mdc, readerSettings, pathRoot, projectName, record);
+						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, projectName, record);
 						foundOptionalFirstElement = false;
 						haveWrittenCustomFile = true;
 					}
@@ -151,12 +149,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (!haveWrittenCustomFile)
 				{
 					// Write empty file.
-					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), readerSettings, null);
+					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), null);
 				}
 			}
 
 			// 3. Write all data files, here and there. [NB: The CmObject data in the XElements of 'classData' has all been sorted by this point.]
-			BaseDomainServices.WriteDomainData(mdc, pathRoot, readerSettings, classData, guidToClassMapping);
+			BaseDomainServices.WriteDomainData(mdc, pathRoot, classData, guidToClassMapping);
 		}
 
 		private static void DeleteOldFiles(string pathRoot, string projectName)

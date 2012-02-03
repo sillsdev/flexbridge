@@ -1,9 +1,7 @@
 using System;
 using System.Web;
 using System.Xml.Linq;
-using Chorus.merge;
 using Chorus.merge.xml.generic;
-using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -16,7 +14,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			var rtElement = XElement.Parse(mergeElement);
 			string className;
-			switch (rtElement.Name.LocalName)
+			var name = rtElement.Name.LocalName;
+			switch (name)
 			{
 				case SharedConstants.Header:
 					return new ContextDescriptor( "header for context", "");
@@ -24,13 +23,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					className = rtElement.Attribute(SharedConstants.Class).Value;
 					break;
 				default:
-					if (MetadataCache.MdCache.GetClassInfo(rtElement.Name.LocalName) == null)
+					if (MetadataCache.MdCache.GetClassInfo(name) == null)
 						return new ContextDescriptor("wrapper for class in header", "");
-					className = rtElement.Name.LocalName;
+					className = name;
 					break;
 			}
-			string guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
-			string label = className + ": " + guid;
+			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value;
+			var label = className + ": " + guid;
 			// Todo JohnT: pass something like "default" for app name, since we can't readily
 			// figure out here which we need.
 			var fwAppArgs = new FwAppArgs("FLEx", "current", "", "default", new Guid(guid));
@@ -39,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
 			// The FwUrl has all the query part encoded.
 			// Chorus needs it unencoded so it can extract the label.
-			string fwUrl = fwAppArgs.ToString();
+			var fwUrl = fwAppArgs.ToString();
 			var hostLength = fwUrl.IndexOf("?");
 			var host = fwUrl.Substring(0, hostLength);
 			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));

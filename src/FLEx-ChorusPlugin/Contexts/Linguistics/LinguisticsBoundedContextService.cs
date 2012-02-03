@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	{
 		private const string LinguisticsRootFolder = "Linguistics";
 
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 												  MetadataCache mdc,
 												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 												  HashSet<string> skipWriteEmptyClassFiles)
@@ -42,7 +42,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				if (!Directory.Exists(phonologyDir))
 					Directory.CreateDirectory(phonologyDir);
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(phonologyDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+					FileWriterService.WriteSecondaryFile(Path.Combine(phonologyDir, kvp.Key + ".ClassData"), kvp.Value);
 				multiClassOutput.Clear();
 			}
 
@@ -64,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			if (multiClassOutput.Count > 0)
 			{
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(morphAndSynDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+					FileWriterService.WriteSecondaryFile(Path.Combine(morphAndSynDir, kvp.Key + ".ClassData"), kvp.Value);
 				multiClassOutput.Clear();
 			}
 
@@ -85,7 +85,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				if (!Directory.Exists(morphDir))
 					Directory.CreateDirectory(morphDir);
 				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(morphDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
+					FileWriterService.WriteSecondaryFile(Path.Combine(morphDir, kvp.Key + ".ClassData"), kvp.Value);
 				multiClassOutput.Clear();
 			}
 

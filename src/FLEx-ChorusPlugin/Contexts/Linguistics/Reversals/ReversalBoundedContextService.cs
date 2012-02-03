@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -34,7 +33,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	{
 		private const string ReversalRootFolder = "Reversals";
 
-		internal static void NestContext(XmlReaderSettings readerSettings, string baseDirectory,
+		internal static void NestContext(string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -63,9 +62,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					classData,
 					guidToClassMapping);
 
-				// Remove 'ownerguid'.
-				revIndex.Attribute(SharedConstants.OwnerGuid).Remove();
-
 				var entriesElement = revIndex.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement(SharedConstants.Header, revIndex));
@@ -83,7 +79,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var fullRevObject = new XDocument( new XDeclaration("1.0", "utf-8", "yes"),
 					root);
 
-				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), readerSettings, fullRevObject);
+				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), fullRevObject);
 			}
 
 			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ReversalIndex", "ReversalIndexEntry" });
@@ -114,7 +110,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					revIdx.Element("Entries").Add(records); // NB: These full objects will be turned into regular objsur elements in the flattening process.
 				CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdx, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
 				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedRevs.Add(revIdxGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, revIdxGuid), new XAttribute("t", "o")));
+				sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
 			}
 
 			// Restore lexDb ReversalIndexes property in sorted order.

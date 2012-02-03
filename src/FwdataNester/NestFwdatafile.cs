@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FwdataTestApp.Properties;
 using Palaso.Xml;
 
 namespace FwdataTestApp
@@ -94,10 +96,10 @@ namespace FwdataTestApp
 					var projectName = Path.GetFileNameWithoutExtension(srcFwdataPathname);
 					File.Copy(srcFwdataPathname, srcFwdataPathname + ".orig", true); // Keep it safe.
 					breakupTimer.Start();
-					MultipleFileServices.BreakupMainFile(srcFwdataPathname, projectName);
+					MultipleFileServices.PushHumptyOffTheWall(srcFwdataPathname, projectName);
 					breakupTimer.Stop();
 					restoreTimer.Start();
-					MultipleFileServices.RestoreMainFile(srcFwdataPathname, projectName);
+					MultipleFileServices.PutHumptyTogetherAgain(srcFwdataPathname, projectName);
 					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)
@@ -245,12 +247,12 @@ namespace FwdataTestApp
 			}
 			MessageBox.Show(this,
 							String.Format("Time to nest file: {0}{4}Time to breakup file: {1}.{4}Time to restore file: {2}.{4}Time to verify restoration: {3}",
-							_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString() : "Not run",
-							_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString() : "Not run",
-							_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString() : "Not run",
-							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString() : "Not run",
+							_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+							_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+							_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+							_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 							Environment.NewLine),
-							"Times");
+							Resources.kTimes);
 		}
 
 		private static void NestFile(string srcFwdataPathname)
@@ -284,6 +286,7 @@ namespace FwdataTestApp
 				root.Add(classElement);
 			}
 			nestedDoc.Save(srcFwdataPathname + ".nested");
+			FileWriterService.WriteNestedFile(srcFwdataPathname + ".nested", nestedDoc);
 		}
 
 		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, SortedDictionary<string, XElement>> unownedObjects, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
