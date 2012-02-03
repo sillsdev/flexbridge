@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Chorus.clone;
 using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
@@ -46,34 +47,30 @@ namespace FLEx_ChorusPlugin.View
 					}
 					break;
 				case ExtantRepoSource.LocalNetwork:
-					using (var openFileDlg = new OpenFileDialog())
+					var cloner = new CloneFromUsb();
+					using (var openFileDlg = new FolderBrowserDialog())
 					{
-						openFileDlg.AutoUpgradeEnabled = true;
-						openFileDlg.Title = Resources.kLocateFwDataFile;
-						openFileDlg.AutoUpgradeEnabled = true;
-						openFileDlg.RestoreDirectory = true;
-						openFileDlg.DefaultExt = ".fwdata";
-						openFileDlg.Filter = Resources.kFwDataFileFilter;
-						openFileDlg.Multiselect = false;
+						openFileDlg.Description = Resources.ksFindProjectDirectory;
+						openFileDlg.ShowNewFolderButton = false;
 
 						switch (openFileDlg.ShowDialog(parent))
 						{
 							default:
 								return false;
 							case DialogResult.OK:
-								var fileFromDlg = openFileDlg.FileName;
-								var sourcePath = Path.GetDirectoryName(fileFromDlg);
-								var x = Path.GetFileNameWithoutExtension(fileFromDlg);
+								var fileFromDlg = openFileDlg.SelectedPath;
+								langProjName = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
-								var target = Path.Combine(currentBaseFieldWorksBridgePath, x);
+								var target = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
 								if (Directory.Exists(target))
-									throw new ApplicationException(string.Format(Resources.kCloneTrouble, target));
-								var repo = new HgRepository(sourcePath, new StatusProgress());
-								repo.CloneLocalWithoutUpdate(target);
-								repo.Update();
-								MultipleFileServices.PutHumptyTogetherAgain(currentBaseFieldWorksBridgePath, langProjName);
-								// It made a clone, but maybe in the wrong name.
-								PossiblyRenameFolder(target, currentBaseFieldWorksBridgePath);
+								{
+									MessageBox.Show(parent, Resources.ksTargetDirectoryExistsContent, Resources.ksTargetDirectoryExistsTitle);
+									return false;
+								}
+								cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
+
+								string mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
+								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName, langProjName);
 								break;
 						}
 					}
