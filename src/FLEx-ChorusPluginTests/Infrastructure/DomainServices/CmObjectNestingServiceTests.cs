@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
@@ -18,10 +19,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[SetUp]
 		public void SetupTest()
 		{
+			const string revIdxOwnerGuid = "c1ed6dca-e382-11de-8a39-0800200c9a66";
 			const string revIdxGuid = "fe832a87-4846-4895-9c7e-98c5da0c84ba";
 			_rt = new XElement(SharedConstants.RtTag,
 								  new XAttribute(SharedConstants.Class, "ReversalIndex"),
-								  new XAttribute(SharedConstants.GuidStr, revIdxGuid));
+								  new XAttribute(SharedConstants.GuidStr, revIdxGuid),
+								  new XAttribute(SharedConstants.OwnerGuid, revIdxOwnerGuid));
 			_classData = new Dictionary<string, SortedDictionary<string, XElement>>
 								{
 									{
@@ -142,12 +145,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 								  new XAttribute(SharedConstants.Class, "Segment"),
 								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
 								  new XElement("Analyses",
-									  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
-												  new XAttribute("t", "r")),
-										new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
-												  new XAttribute("t", "r"))));
+									  BaseDomainServices.CreateObjSurElement("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
+									  BaseDomainServices.CreateObjSurElement("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")));
 			var classData = new Dictionary<string, SortedDictionary<string, XElement>>();
 			var data = new SortedDictionary<string, XElement>
 						{
@@ -161,6 +160,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				guidToClassMapping);
 			var result = rt.ToString();
 			Assert.IsTrue(result.Contains(SharedConstants.Refseq));
+		}
+
+		[Test]
+		public void EnsureOwnerGuidAttributesAreRemoved()
+		{
+			AddOwnedObjects();
+			foreach (var originalElement in _classData.Values.SelectMany(top => top.Values))
+				Assert.IsTrue(originalElement.ToString().Contains(SharedConstants.OwnerGuid));
+
+			CmObjectNestingService.NestObject(false, _rt,
+				new Dictionary<string, HashSet<string>>(),
+				_classData,
+				_guidToClassMapping);
+			Assert.IsFalse(_rt.ToString().Contains(SharedConstants.OwnerGuid));
 		}
 
 		private void AddOwnedObjects()
@@ -188,17 +201,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			_guidToClassMapping.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "ReversalIndexEntry");
 			_classData.Add("ReversalIndexEntry", data);
 			var entriesElement = new XElement("Entries",
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
-												  new XAttribute("t", "o")),
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
-												  new XAttribute("t", "o")));
+											BaseDomainServices.CreateObjSurElement("0039739a-7fcf-4838-8b75-566b8815a29f"),
+											BaseDomainServices.CreateObjSurElement("00b560a2-9af0-4185-bbeb-c0eb3c5e3769"));
 			_rt.Add(entriesElement);
 			entriesElement = new XElement("Subentries",
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "14a6b4bc-1bb3-4c67-b70c-5a195e411e27"),
-												  new XAttribute("t", "o")));
+											BaseDomainServices.CreateObjSurElement("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"));
 			entry1.Add(entriesElement);
 
 			// Add the POS list, with two possibilities (own-seq prop).
@@ -218,12 +225,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
 									new XElement("DateCreated", new XAttribute("val", "created")));
 			entriesElement = new XElement("Possibilities",
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
-												  new XAttribute("t", "o")),
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
-												  new XAttribute("t", "o")));
+											BaseDomainServices.CreateObjSurElement("c1ed6dc6-e382-11de-8a39-0800200c9a66"),
+											BaseDomainServices.CreateObjSurElement("c1ed6dc7-e382-11de-8a39-0800200c9a66"));
 			_guidToClassMapping.Add("c1ed6dc6-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
 			_guidToClassMapping.Add("c1ed6dc7-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
 			data = new SortedDictionary<string, XElement>
@@ -235,9 +238,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			posList.Add(entriesElement);
 
 			entriesElement = new XElement("PartsOfSpeech",
-											  new XElement(SharedConstants.Objsur,
-												  new XAttribute(SharedConstants.GuidStr, posListGuid),
-												  new XAttribute("t", "o")));
+											BaseDomainServices.CreateObjSurElement(posListGuid));
 			_guidToClassMapping.Add(posListGuid, "CmPossibilityList");
 			data = new SortedDictionary<string, XElement>
 					{

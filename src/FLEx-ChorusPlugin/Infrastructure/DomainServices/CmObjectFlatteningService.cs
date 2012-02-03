@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -40,8 +41,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				// At this point element has not been flattened, so stuff it owns will still be in it.
 				// That is good, if we go with JohnT's idea of using a new guid for guids that are already in 'sortedData'.
 				// By changing it before flattening, then the owned stuff will get the new one for their ownerguid attrs.
-				// The owned stuff will also be dup, so the idea is to also change their guids (NB: HERE).
+				// The owned stuff will also be dup, so the idea is to also change their guids right now. [ChangeGuids is recursive down the owning tree.]
 				// Just be sure to change 'elementGuid' to the new one. :-)
+				// The first item added to sortedData has been flattened by this point, but not any following ones.
 				elementGuid = ChangeGuids(mdc, classInfo, element);
 				using (var listener = new ChorusNotesMergeEventListener(ChorusNotesMergeEventListener.GetChorusNotesFilePath(pathname)))
 				{
@@ -96,11 +98,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					if (ownedElement.Name.LocalName == SharedConstants.Objsur)
 						break;
+					// Do before the removal call, so we know the parent, and thus, the property name.
+					if (isCustomProperty)
+					{
+						BaseDomainServices.RestoreObjsurElement((element.Elements().Where(
+							customNode =>
+							customNode.Name.LocalName == SharedConstants.Custom
+							&& customNode.Attribute(SharedConstants.Name) != null
+							&& customNode.Attribute(SharedConstants.Name).Value == propertyElement.Attribute(SharedConstants.Name).Value)).First(), ownedElement);
+					}
+					else
+					{
+						BaseDomainServices.RestoreObjsurElement(element, ownedElement.Parent.Name.LocalName, ownedElement);
+					}
 					ownedElement.Remove();
-					var replacementOjSurElement = new XElement(SharedConstants.Objsur,
-															   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
-															   new XAttribute("t", "o"));
-					propertyElement.Add(replacementOjSurElement);
 					// Move down the nested set of owned objects, and do the same.
 					FlattenObject(pathname, sortedData, ownedElement, elementGuid);
 				}
@@ -115,14 +126,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
 			classInfo = mdc.GetClassInfo(className);
 			return isOwnSeqNode;
-		}
-
-		internal static void RestoreObjsurElement(XContainer owningElement, string owningPropertyName, XElement ownedElement)
-		{
-			var owningPropElement = owningElement.Element(owningPropertyName);
-			owningPropElement.Add(new XElement(SharedConstants.Objsur,
-												   new XAttribute(SharedConstants.GuidStr, ownedElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()),
-												   new XAttribute("t", "o")));
 		}
 
 		internal static string ChangeGuids(MetadataCache mdc, FdoClassInfo classInfo, XElement element)

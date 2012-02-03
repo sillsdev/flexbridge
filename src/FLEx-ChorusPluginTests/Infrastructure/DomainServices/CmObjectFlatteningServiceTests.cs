@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
@@ -228,11 +229,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 									  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
 									  new XElement("Analyses",
 										  new XElement(SharedConstants.Refseq,
-													  new XAttribute(SharedConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
-													  new XAttribute("t", "r")),
+													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
 											new XElement(SharedConstants.Refseq,
-													  new XAttribute(SharedConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
-													  new XAttribute("t", "r"))));
+													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
 				CmObjectFlatteningService.FlattenObject(
 					tempPath,
 					sortedData,

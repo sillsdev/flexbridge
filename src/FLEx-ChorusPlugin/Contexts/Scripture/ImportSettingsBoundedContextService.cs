@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -12,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ImportSettingsBoundedContextService
 	{
 		internal static void NestContext(XElement importSettingsProperty,
-										 XmlReaderSettings readerSettings, string scriptureBaseDir,
+										 string scriptureBaseDir,
 										 IDictionary<string, SortedDictionary<string, XElement>> classData,
 										 Dictionary<string, string> guidToClassMapping,
 										 HashSet<string> skipWriteEmptyClassFiles)
@@ -38,13 +37,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 												  classData,
 												  guidToClassMapping);
 
-				// Remove 'ownerguid'.
-				importSetting.Attribute(SharedConstants.OwnerGuid).Remove();
-
 				root.Add(importSetting);
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename), doc);
 
 			importSettingsProperty.RemoveNodes();
 
@@ -75,7 +71,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					importSettingsElement,
 					scrOwningGuid); // Restore 'ownerguid' to importSettingsElement.
 				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedImportSettings.Add(importSettingsGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, importSettingsGuid), new XAttribute("t", "o")));
+				sortedImportSettings.Add(importSettingsGuid, BaseDomainServices.CreateObjSurElement(importSettingsGuid));
 			}
 
 			// Restore scrElement ImportSettings property in sorted order.

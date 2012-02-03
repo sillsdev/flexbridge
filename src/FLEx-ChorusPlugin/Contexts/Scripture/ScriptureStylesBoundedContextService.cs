@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -14,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		private const string StyleFilename = "ScriptureStyleSheet.style";
 
 		internal static void NestContext(XElement stylesProperty,
-			XmlReaderSettings readerSettings, string baseDirectory,
+			string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -44,13 +43,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
-
-				// Remove 'ownerguid'.
-				style.Attribute(SharedConstants.OwnerGuid).Remove();
 				root.Add(style);
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(stylesDir, StyleFilename), readerSettings, doc);
+			FileWriterService.WriteNestedFile(Path.Combine(stylesDir, StyleFilename), doc);
 
 			stylesProperty.RemoveNodes();
 
@@ -84,7 +80,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					styleElement,
 					scrOwningGuid); // Restore 'ownerguid' to styleElement.
 				var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedStyles.Add(styleGuid, new XElement(SharedConstants.Objsur, new XAttribute(SharedConstants.GuidStr, styleGuid), new XAttribute("t", "o")));
+				sortedStyles.Add(styleGuid, BaseDomainServices.CreateObjSurElement(styleGuid));
 			}
 
 			// Restore scrElement Styles property in sorted order.
