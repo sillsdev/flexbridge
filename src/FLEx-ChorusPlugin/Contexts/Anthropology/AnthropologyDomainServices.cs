@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -12,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyDomainServices
 	{
-		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteNestedDomainData(string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -21,7 +20,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
-			AnthropologyBoundedContextService.NestContext(readerSettings, anthropologyBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 		}
 
 		internal static void FlattenDomain(

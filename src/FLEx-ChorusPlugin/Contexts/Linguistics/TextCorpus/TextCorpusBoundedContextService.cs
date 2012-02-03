@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
@@ -15,48 +14,117 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// The Text instances owned in the Texts property of lang proj, including all they own, need to then be removed from 'classData',
 	/// as that stuff will be stored elsewhere.
 	///
-	/// Each Text instance will be in its own folder, along with everything it owns (nested ownership as well).
+	/// Each Text instance will be in its own file, along with everything it owns (nested ownership as well).
 	/// The folder pattern is:
-	/// DataFiles\TextCorpus\foo, where foo is the guid of a Text.
+	/// Linguistics\TextCorpus\foo.textincorpus, where foo is the guid of a Text.
 	///
-	/// Data that is common to all texts will be in the main DataFiles\TextCorpus folder.
-	/// I think the "GenreList" property of Lang Proj is one such common text corpus piece of data.
+	/// Data that is common to all texts will be in the main Linguistics\TextCorpus folder,
+	/// such as the "GenreList" property of Lang Proj.
 	/// </summary>
 	internal static class TextCorpusBoundedContextService
 	{
-		private const string TextCorpusRootFolder = "TextCorpus";
-
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-			MetadataCache mdc,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			IDictionary<string, string> guidToClassMapping,
-			HashSet<string> skipwriteEmptyClassFiles)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipWriteEmptyClassFiles)
 		{
-			var textCorpusBaseDir = Path.Combine(multiFileDirRoot, TextCorpusRootFolder);
+			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
 			var langProjElement = classData["LangProject"].Values.First();
 
-			// 1. Find the "GenreList" list (and its possibilities) owned by lang proj
-			//		Store in main TextCorpus folder.
-			var guids = ObjectFinderServices.GetGuids(langProjElement, "GenreList");
-			if (guids.Count > 0)
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, textCorpusBaseDir, readerSettings, multiClassOutput, guids[0], new HashSet<string>());
+			// Write Genre list (owning atomic CmPossibilityList)
+			// "root" makes this list be two levels down in <GenreList><GenreList></GenreList></GenreList>.
+			// So, since we need to provide a node to NestList, jsut use root. first kid
+			var randomElement = new XElement(SharedConstants.GenreList);
+			BaseDomainServices.NestList(classData,
+				guidToClassMapping,
+				classData["CmPossibilityList"],
+				randomElement,
+				langProjElement,
+				SharedConstants.GenreList);
+			if (randomElement.HasElements)
+			{
+				// NB: Write file, but only if LP has the genre list.
+				var genreListDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), randomElement.FirstNode);
+				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename), genreListDoc);
+			}
 
-			// 2. Find and store Text instances (and everything they own) that are owned in "Texts" property of Lang Proj.
-			ObjectFinderServices.WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				readerSettings, textCorpusBaseDir,
-				langProjElement, "Texts", "Text_", true);
+			var texts = classData["Text"];
+			var textGuidsInLangProj = ObjectFinderServices.GetGuids(langProjElement, "Texts");
+			foreach (var textGuid in textGuidsInLangProj)
+			{
+				var rootElement = new XElement("TextInCorpus");
+				var textElement = texts[textGuid];
+				rootElement.Add(textElement);
+				CmObjectNestingService.NestObject(
+					false,
+					textElement,
+					new Dictionary<string, HashSet<string>>(),
+					classData,
+					guidToClassMapping);
+				FileWriterService.WriteNestedFile(
+					Path.Combine(textCorpusBaseDir, "Test_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
+					new XDocument(new XDeclaration("1.0", "utf-8", "yes"), rootElement));
+			}
 
-			ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Text" });
+			// No, since Text instances are also owned elsewhere.
+			// ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "Text" });
 		}
 
-		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			string linguisticsBaseDir)
 		{
-			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, TextCorpusRootFolder)));
+			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
+			if (!Directory.Exists(textCorpusBaseDir))
+				return;
+
+			var langProjElement = highLevelData["LangProject"];
+			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+
+			// Put the Genre list back in the right place.
+			var pathname = Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename);
+			var doc = XDocument.Load(pathname);
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element("CmPossibilityList"));
+
+			// Put Texts back into LP.
+			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			foreach (var textPathname in Directory.GetFiles(textCorpusBaseDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
+			{
+				var textDoc = XDocument.Load(textPathname);
+				// Put texts back into index's Entries element.
+				var root = textDoc.Root;
+				var textElement = root.Elements().First();
+				CmObjectFlatteningService.FlattenObject(
+					textPathname,
+					sortedData,
+					textElement,
+					langProjGuid); // Restore 'ownerguid' to text.
+				var textGuid = textElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				sortedTexts.Add(textGuid, BaseDomainServices.CreateObjSurElement(textGuid));
+			}
+			// Restore LP Texts property in sorted order.
+			if (sortedTexts.Count == 0)
+				return;
+			var langProjOwningProp = langProjElement.Element("Texts");
+			foreach (var sortedTextObjSurElement in sortedTexts.Values)
+				langProjOwningProp.Add(sortedTextObjSurElement);
+		}
+
+		internal static void RemoveBoundedContextData(string linguisticsBase)
+		{
+			var textCorpusDir = Path.Combine(linguisticsBase, SharedConstants.TextCorpus);
+			if (!Directory.Exists(textCorpusDir))
+				return;
+
+			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
+				File.Delete(textPathname);
+
+			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
+				File.Delete(textPathname);
+
+			// Linguistics domain will call this.
+			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 	}
 }

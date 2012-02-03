@@ -26,6 +26,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// 1. Rename element to that of the class, if isOwningSeqProp == false.
 			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant top be true.
 			var className = RenameElement(isOwningSeqProp, obj);
+			// Remove 'ownerguid', if present.
+			var ownerGuidAttribute = obj.Attribute(SharedConstants.OwnerGuid);
+			if (ownerGuidAttribute != null)
+				ownerGuidAttribute.Remove();
 
 			// 2. Nest owned objects in 'obj'.
 			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
@@ -65,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
-			var className = owningObjElement.Name.LocalName == SharedConstants.Ownseq
+			var className = (owningObjElement.Name.LocalName == SharedConstants.Ownseq || owningObjElement.Name.LocalName == SharedConstants.OwnseqAtomic || owningObjElement.Name.LocalName == SharedConstants.Refseq)
 								? owningObjElement.Attribute(SharedConstants.Class).Value
 								: owningObjElement.Name.LocalName;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
@@ -102,7 +106,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						continue;
 					guidToClassMapping.Remove(guid);
 					var ownedElement = classData[classOfOwnedObject][guid];
-					ownedElement.Attribute(SharedConstants.OwnerGuid).Remove();
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(isOwningSeqProp, ownedElement, exceptions, classData, guidToClassMapping);

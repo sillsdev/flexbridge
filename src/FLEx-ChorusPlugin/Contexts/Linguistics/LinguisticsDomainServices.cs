@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon;
@@ -17,7 +16,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	/// </summary>
 	internal static class LinguisticsDomainServices
 	{
-		internal static void WriteNestedDomainData(XmlReaderSettings readerSettings, string rootDir,
+		internal static void WriteNestedDomainData(string rootDir,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
@@ -27,19 +26,19 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
-			ReversalBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			LexiconBoundedContextService.NestContext(readerSettings, linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 
 			// TODO: Switch to proper location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
 			if (!Directory.Exists(multiFileDirRoot))
 				Directory.CreateDirectory(multiFileDirRoot);
 
-			TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
-			LinguisticsBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			WordformInventoryBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			PunctuationFormBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			LinguisticsBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping, skipWriteEmptyClassFiles);
 
 			/*
 			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
@@ -80,13 +79,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				return;
 
 			// Do in reverse order from nesting.
+			TextCorpusBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 
 			/* Currently handled by BaseDomainServices.
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			TextCorpusBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			DiscourseAnalysisBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			WordformInventoryBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
 			PunctuationFormBoundedContextService.RestoreOriginalFile(writer, readerSettings, multiFileDirRoot);
@@ -103,8 +102,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			// Order is less a concern here.
 			ReversalBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 			LexiconBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
+			TextCorpusBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 
-			//TextCorpusBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//WordformInventoryBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
 			//PunctuationFormBoundedContextService.ExtractBoundedContexts(readerSettings, multiFileDirRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);

@@ -18,7 +18,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	{
 		private const string DiscourseRootFolder = "Discourse";
 
-		internal static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
+		internal static void ExtractBoundedContexts(string multiFileDirRoot,
 			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
 			HashSet<string> skipWriteEmptyClassFiles)
@@ -43,12 +43,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				var dataEl = sortedInstanceData.Values.First();
 
 				// 1. Write out the DsDiscourseData instance in discourseBaseDir, but not the charts it owns.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, discourseBaseDir, readerSettings, multiClassOutput, guid, new HashSet<string> { "Charts" });
+				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, discourseBaseDir, multiClassOutput, guid, new HashSet<string> { "Charts" });
 
 				// 2. Each chart it owns needs to be written in its own subfolder of discourseBaseDir, a la texts.
 				ObjectFinderServices.WritePropertyInFolders(mdc,
 					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, discourseBaseDir,
+					discourseBaseDir,
 					dataEl,
 					"Charts", "Chart_", true);
 			}
