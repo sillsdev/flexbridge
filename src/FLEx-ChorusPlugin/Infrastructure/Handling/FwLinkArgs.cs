@@ -128,7 +128,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		public Guid TargetGuid
 		{
-			get { return new Guid(_guid); }
+			get { return _guid == null ? Guid.Empty : new Guid(_guid); }
 			protected set { _guid = value.ToString().ToLowerInvariant(); }
 		}
 
