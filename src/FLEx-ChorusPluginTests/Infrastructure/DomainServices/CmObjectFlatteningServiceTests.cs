@@ -7,6 +7,7 @@ using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 {
@@ -71,66 +72,50 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void NullSortedDataCacheThrows()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					null,
 					new XElement("junk"),
 					null));
-			}
-			finally
-			{
-				File.Delete(tempPath);
 			}
 		}
 
 		[Test]
 		public void NullXelementThrows()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					new SortedDictionary<string, XElement>(),
 					null,
 					null));
-			}
-			finally
-			{
-				File.Delete(tempPath);
 			}
 		}
 
 		[Test]
 		public void EmptyGuidStringThrows()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					new SortedDictionary<string, XElement>(),
 					new XElement("junk"),
 					string.Empty));
-			}
-			finally
-			{
-				File.Delete(tempPath);
 			}
 		}
 
 		[Test]
 		public void ElementRenamed()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
 				CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
 					null);
@@ -139,40 +124,30 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.IsNotNull(classAttr);
 				Assert.AreEqual("ReversalIndex", classAttr.Value);
 			}
-			finally
-			{
-				File.Delete(tempPath);
-			}
 		}
 
 		public void ReversalIndexOwnerRestored()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
 				CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
 					ReversalOwnerGuid);
 				Assert.IsTrue(_reversalIndexElement.Attribute(SharedConstants.OwnerGuid).Value == ReversalOwnerGuid);
-			}
-			finally
-			{
-				File.Delete(tempPath);
 			}
 		}
 
 		[Test]
 		public void AllElementsFlattened()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
 				CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
 					null);
@@ -182,21 +157,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList"));
 				Assert.AreEqual(2, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "PartOfSpeech"));
 			}
-			finally
-			{
-				File.Delete(tempPath);
-			}
 		}
 
 		[Test]
 		public void ObjSurElementsRestored()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
 				CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
 					null);
@@ -211,19 +181,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				owningProp = posList.Element("Possibilities");
 				CheckOwningProperty(owningProp, 2);
 			}
-			finally
-			{
-				File.Delete(tempPath);
-			}
 		}
 
 		[Test]
 		public void RefSeqElementsRestoredToObjsurElements()
 		{
-			var tempPath = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
-
 				var sortedData = new SortedDictionary<string, XElement>();
 				var segment = new XElement("Segment",
 									  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
@@ -233,16 +197,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 											new XElement(SharedConstants.Refseq,
 													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
 				CmObjectFlatteningService.FlattenObject(
-					tempPath,
+					tempFile.Path,
 					sortedData,
 					segment,
 					null);
 				var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
 				Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
-			}
-			finally
-			{
-				File.Delete(tempPath);
 			}
 		}
 
@@ -269,37 +229,38 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
   </Entries>
 </ReversalIndex>";
 
-			var reversalIndexElement = XElement.Parse(nestedReversal);
-			var tempPath = Path.GetTempFileName();
-			var notesPathname = tempPath + ".ChorusNotes";
-			try
+			using (var tempFile = new TempFile())
 			{
-				var sortedDict = new SortedDictionary<string, XElement>();
-				Assert.IsFalse(File.Exists(notesPathname));
-				CmObjectFlatteningService.FlattenObject(
-					tempPath,
-					sortedDict,
-					reversalIndexElement,
-					null);
-				Assert.IsTrue(File.Exists(notesPathname));
-				var doc = XDocument.Load(notesPathname);
-				var msgElement = doc.Root.Element("annotation").Element("message");
-				Assert.IsTrue(msgElement.LastNode.ToString().Contains("Chorus.merge.xml.generic.IncompatibleMoveConflict"));
-				Assert.AreEqual("FLExBridge", msgElement.Attribute("author").Value);
+				var notesPathname = tempFile.Path + ".ChorusNotes";
+				try
+				{
+					var reversalIndexElement = XElement.Parse(nestedReversal);
+					var sortedDict = new SortedDictionary<string, XElement>();
+					Assert.IsFalse(File.Exists(notesPathname));
+					CmObjectFlatteningService.FlattenObject(
+						tempFile.Path,
+						sortedDict,
+						reversalIndexElement,
+						null);
+					Assert.IsTrue(File.Exists(notesPathname));
+					var doc = XDocument.Load(notesPathname);
+					var msgElement = doc.Root.Element("annotation").Element("message");
+					Assert.IsTrue(msgElement.LastNode.ToString().Contains("Chorus.merge.xml.generic.IncompatibleMoveConflict"));
+					Assert.AreEqual("FLExBridge", msgElement.Attribute("author").Value);
 
-				// Make sure the duplicate guids were changed in both levels.
-				var ries = from rie in sortedDict.Values
-						   where rie.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"
-						   select rie;
-				Assert.AreEqual(5, ries.Count()); // The guids had to be changed, for there to be five of them.
-				Assert.IsTrue(sortedDict.ContainsKey("0039739a-7fcf-4838-8b75-566b8815a29f"));
-				Assert.IsTrue(sortedDict.ContainsKey("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"));
-				Assert.IsTrue(sortedDict.ContainsKey("c1ed6dc9-e382-11de-8a39-0800200c9a66"));
-			}
-			finally
-			{
-				File.Delete(tempPath);
-				File.Delete(notesPathname);
+					// Make sure the duplicate guids were changed in both levels.
+					var ries = from rie in sortedDict.Values
+							   where rie.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"
+							   select rie;
+					Assert.AreEqual(5, ries.Count()); // The guids had to be changed, for there to be five of them.
+					Assert.IsTrue(sortedDict.ContainsKey("0039739a-7fcf-4838-8b75-566b8815a29f"));
+					Assert.IsTrue(sortedDict.ContainsKey("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"));
+					Assert.IsTrue(sortedDict.ContainsKey("c1ed6dc9-e382-11de-8a39-0800200c9a66"));
+				}
+				finally
+				{
+					File.Delete(notesPathname);
+				}
 			}
 		}
 

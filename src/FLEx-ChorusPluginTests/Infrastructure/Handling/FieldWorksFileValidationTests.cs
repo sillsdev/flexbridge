@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using NUnit.Framework;
+using Palaso.IO;
 using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
@@ -14,14 +15,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	public class FieldWorksFileValidationTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
-		private string _goodXmlPathname;
-		private string _illformedXmlPathname;
-		private string _goodXmlButNotFwPathname;
-		private string _nonXmlPathname;
-		private string _tempfilePathname1;
-		private string _tempfilePathname2;
-		private string _tempfilePathname3;
-		private string _tempfilePathname4;
+		private TempFile _goodXmlTempFile;
+		private TempFile _illformedXmlTempFile;
+		private TempFile _goodXmlButNotFwTempFile;
+		private TempFile _nonXmlTempFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -29,21 +26,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 						 select handler).First();
-			_tempfilePathname1 = Path.GetTempFileName();
-			_goodXmlPathname = Path.ChangeExtension(_tempfilePathname1, ".ClassData");
-			File.WriteAllText(_goodXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
+			_goodXmlTempFile = TempFile.WithExtension(".ClassData");
+			File.WriteAllText(_goodXmlTempFile.Path, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata />");
 
-			_tempfilePathname2 = Path.GetTempFileName();
-			_illformedXmlPathname = Path.ChangeExtension(_tempfilePathname2, ".ClassData");
-			File.WriteAllText(_illformedXmlPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata>");
+			_illformedXmlTempFile = TempFile.WithExtension(".ClassData");
+			File.WriteAllText(_illformedXmlTempFile.Path, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<classdata>");
 
-			_tempfilePathname3 = Path.GetTempFileName();
-			_goodXmlButNotFwPathname = Path.ChangeExtension(_tempfilePathname3, ".ClassData");
-			File.WriteAllText(_goodXmlButNotFwPathname, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<nonfwstuff />");
+			_goodXmlButNotFwTempFile = TempFile.WithExtension(".ClassData");
+			File.WriteAllText(_goodXmlButNotFwTempFile.Path, "<?xml version='1.0' encoding='utf-8'?>" + Environment.NewLine + "<nonfwstuff />");
 
-			_tempfilePathname4 = Path.GetTempFileName();
-			_nonXmlPathname = Path.ChangeExtension(_tempfilePathname4, ".txt");
-			File.WriteAllText(_nonXmlPathname, "This is not an xml file." + Environment.NewLine);
+			_nonXmlTempFile = TempFile.WithExtension(".txt");
+			File.WriteAllText(_nonXmlTempFile.Path, "This is not an xml file." + Environment.NewLine);
 		}
 
 		[TestFixtureTearDown]
@@ -51,23 +44,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			_fileHandler = null;
 
-			if (File.Exists(_tempfilePathname1))
-				File.Delete(_tempfilePathname1);
-			if (File.Exists(_tempfilePathname2))
-				File.Delete(_tempfilePathname2);
-			if (File.Exists(_tempfilePathname3))
-				File.Delete(_tempfilePathname3);
-			if (File.Exists(_tempfilePathname4))
-				File.Delete(_tempfilePathname4);
-
-			if (File.Exists(_goodXmlPathname))
-				File.Delete(_goodXmlPathname);
-			if (File.Exists(_illformedXmlPathname))
-				File.Delete(_illformedXmlPathname);
-			if (File.Exists(_goodXmlButNotFwPathname))
-				File.Delete(_goodXmlButNotFwPathname);
-			if (File.Exists(_nonXmlPathname))
-				File.Delete(_nonXmlPathname);
+			_goodXmlTempFile.Dispose();
+			_goodXmlTempFile = null;
+			_illformedXmlTempFile.Dispose();
+			_illformedXmlTempFile = null;
+			_goodXmlButNotFwTempFile.Dispose();
+			_goodXmlButNotFwTempFile = null;
+			_nonXmlTempFile.Dispose();
+			_nonXmlTempFile = null;
 		}
 
 		[Test]
@@ -91,13 +75,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void Cannot_Validate_Nonxml_File()
 		{
-			Assert.IsFalse(_fileHandler.CanValidateFile(_nonXmlPathname));
+			Assert.IsFalse(_fileHandler.CanValidateFile(_nonXmlTempFile.Path));
 		}
 
 		[Test]
 		public void Can_Validate_Fw_Xml_File()
 		{
-			Assert.IsTrue(_fileHandler.CanValidateFile(_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanValidateFile(_goodXmlTempFile.Path));
 		}
 
 		[Test]
@@ -115,19 +99,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void ValidateFile_Returns_Null_For_Good_File()
 		{
-			Assert.IsNull(_fileHandler.ValidateFile(_goodXmlPathname, new NullProgress()));
+			Assert.IsNull(_fileHandler.ValidateFile(_goodXmlTempFile.Path, new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Crummy_Xml_File()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile(_illformedXmlPathname, new NullProgress()));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_illformedXmlTempFile.Path, new NullProgress()));
 		}
 
 		[Test]
 		public void ValidateFile_Returns_Message_For_Good_But_Not_Fw_Xml_File()
 		{
-			Assert.IsNotNull(_fileHandler.ValidateFile(_goodXmlButNotFwPathname, new NullProgress()));
+			Assert.IsNotNull(_fileHandler.ValidateFile(_goodXmlButNotFwTempFile.Path, new NullProgress()));
 		}
 	}
 }

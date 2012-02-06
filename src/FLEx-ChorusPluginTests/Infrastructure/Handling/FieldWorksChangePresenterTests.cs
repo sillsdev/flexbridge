@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Properties;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
@@ -20,8 +21,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	{
 		private IChorusFileTypeHandler _fileHandler;
 		private IChangePresenter _changePresenter;
-		private string _goodXmlPathname;
-		private string _tempfilePathname;
+		private TempFile _goodXmlTempFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -35,9 +35,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					null,
 					null,
 					null));
-			_tempfilePathname = Path.GetTempFileName();
-			_goodXmlPathname = Path.ChangeExtension(_tempfilePathname, ".ClassData");
-			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
+
+			_goodXmlTempFile = TempFile.WithExtension(".ClassData");
+			File.WriteAllText(_goodXmlTempFile.Path, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
 		}
 
 		[TestFixtureTearDown]
@@ -45,10 +45,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			_fileHandler = null;
 			_changePresenter = null;
-			if (File.Exists(_tempfilePathname))
-				File.Delete(_tempfilePathname);
-			if (File.Exists(_goodXmlPathname))
-				File.Delete(_goodXmlPathname);
+			_goodXmlTempFile.Dispose();
+			_goodXmlTempFile = null;
 		}
 
 		[Test]
@@ -78,7 +76,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void CanPresentGoodFwXmlFile()
 		{
-			Assert.IsTrue(_fileHandler.CanPresentFile(_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanPresentFile(_goodXmlTempFile.Path));
 		}
 
 		[Test]

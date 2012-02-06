@@ -176,5 +176,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			foreach (var directSubclass in _allDirectSubclass)
 				directSubclass.ResetCaches(classes);
 		}
+
+		public override string ToString()
+		{
+			return ClassName + ": " + IsAbstract;
+		}
 	}
 }

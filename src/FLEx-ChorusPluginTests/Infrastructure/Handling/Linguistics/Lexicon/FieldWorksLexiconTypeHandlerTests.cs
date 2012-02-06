@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -14,7 +15,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 	[TestFixture]
 	public class FieldWorksLexiconTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
-		private ListenerForUnitTests _eventListener;
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
@@ -22,14 +22,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		[SetUp]
 		public void TestSetup()
 		{
-			_eventListener = new ListenerForUnitTests();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.LexiconFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			_eventListener = null;
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -248,7 +246,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 </Lexicon>";
 
 			var ourContent = commonAncestor.Replace("the first paragraph", "MY first paragraph");
-			var theirContent = commonAncestor.Replace("the first paragraph", "THEIR first paragraph"); ;
+			var theirContent = commonAncestor.Replace("the first paragraph", "THEIR first paragraph");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -336,6 +334,176 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("My Dictionary"));
+		}
+
+		[Test]
+		public void ReferenceSequenceConfusedEditsHasConflictReport()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MainEntriesOrSenses>
+			<refseq		guid='c1ed94c6-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c7-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq		guid='c1ed94c6-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c8-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c9-e382-11de-8a39-0800200c9a66' t='r' />
+		</MainEntriesOrSenses>
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c6-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94ca-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94cc-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c7-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c9-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cd-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94ce-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c8-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			const string ourContent =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MainEntriesOrSenses>
+			<refseq		guid='c1ed94c6-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c9-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94ca-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq		guid='c1ed94c6-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c8-e382-11de-8a39-0800200c9a66' t='r' />
+		</MainEntriesOrSenses>
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c6-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94ca-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94cc-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c7-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c9-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cd-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94ce-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c8-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			const string theirContent =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MainEntriesOrSenses>
+			<refseq	guid='c1ed94cd-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c7-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c8-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq		guid='c1ed94c6-e382-11de-8a39-0800200c9a66' t='r' />
+			<refseq guid='c1ed94c9-e382-11de-8a39-0800200c9a66' t='r' />
+		</MainEntriesOrSenses>
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c6-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94ca-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94cc-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c7-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94c9-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94cd-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+
+	<LexEntry guid='c1ed94ce-e382-11de-8a39-0800200c9a66' >
+		<Senses>
+			<ownseq class='LexSense' guid='c1ed94c8-e382-11de-8a39-0800200c9a66' />
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='ourNew1']", @"classdata/rt/SubFolders/objsur[@guid='ourNew2']", @"classdata/rt/SubFolders/objsur[@guid='theirNew1']" },
+				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
+				2, new List<Type> { typeof(BothReorderedElementConflict), typeof(AmbiguousInsertReorderConflict) },
+				4, new List<Type> { typeof(XmlDeletionChangeReport), typeof(XmlDeletionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+
+			var doc = XDocument.Load(_ourFile.Path);
+			var affectedEntryMEorS = doc.Root.Elements("LexEntry").First(entry => entry.Attribute(SharedConstants.GuidStr).Value == "c1ed94c5-e382-11de-8a39-0800200c9a66");
+			var children = affectedEntryMEorS.Element("MainEntriesOrSenses").Elements().ToList();
+			Assert.AreEqual(5, children.Count);
+			var expectedGuidsInOrder = new List<string>
+										{
+											"c1ed94cd-e382-11de-8a39-0800200c9a66",
+											"c1ed94c6-e382-11de-8a39-0800200c9a66",
+											"c1ed94c9-e382-11de-8a39-0800200c9a66",
+											"c1ed94ca-e382-11de-8a39-0800200c9a66",
+											"c1ed94c8-e382-11de-8a39-0800200c9a66",
+										};
+			Assert.AreEqual(5, expectedGuidsInOrder.Count);
+
+			for (var idx = 0; idx < expectedGuidsInOrder.Count; ++idx)
+			{
+				Assert.AreEqual(
+					expectedGuidsInOrder[idx],
+					children[idx].Attribute(SharedConstants.GuidStr).Value);
+			}
 		}
 	}
 }

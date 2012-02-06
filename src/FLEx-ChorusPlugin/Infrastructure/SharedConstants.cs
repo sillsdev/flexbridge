@@ -17,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Class = "class";
 		internal const string Name = "name";
 		internal const string Ownseq = "ownseq";
-		internal const string OwnseqAtomic = "ownseqatomic";
+		internal const string OwnseqAtomic = "ownseqatomic"; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 		internal const string Refseq = "refseq";
 		internal const string Custom = "Custom";
 

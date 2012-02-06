@@ -2,6 +2,7 @@
 using System.IO;
 using FLEx_ChorusPlugin.Model;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Model
 {
@@ -32,53 +33,32 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void NonFwFileThrows()
 		{
-			var tempFile = Path.GetTempFileName();
-			try
+			using (var tempFile = new TempFile())
 			{
-				Assert.Throws<ArgumentException>(() => new LanguageProject(tempFile));
-			}
-			finally
-			{
-				File.Delete(tempFile);
+				Assert.Throws<ArgumentException>(() => new LanguageProject(tempFile.Path));
 			}
 		}
 
 		[Test]
 		public void FwFileHasFolderPath()
 		{
-			var temp = Path.GetTempFileName();
-			var tempFile = Path.ChangeExtension(temp, ".fwdata");
-			File.Move(temp, tempFile);
-			try
+			using (var tempFile = TempFile.WithExtension(".fwdata"))
 			{
-				var lp = new LanguageProject(tempFile);
-				Assert.AreEqual(Path.GetDirectoryName(tempFile), lp.DirectoryName);
-			}
-			finally
-			{
-				File.Delete(temp);
-				File.Delete(tempFile);
+				var lp = new LanguageProject(tempFile.Path);
+				Assert.AreEqual(Path.GetDirectoryName(tempFile.Path), lp.DirectoryName);
 			}
 		}
 
 		[Test]
 		public void ProjectHasCorrectName()
 		{
-			var temp = Path.GetTempFileName();
-			var tempFile = Path.ChangeExtension(temp, ".fwdata");
-			File.Move(temp, tempFile);
-			try
+			using (var tempFile = TempFile.WithExtension(".fwdata"))
 			{
-				var lp = new LanguageProject(tempFile);
-				Assert.AreEqual(Path.GetDirectoryName(tempFile), lp.DirectoryName);
+				var lp = new LanguageProject(tempFile.Path);
+				Assert.AreEqual(Path.GetDirectoryName(tempFile.Path), lp.DirectoryName);
 
-				var fileName = Path.GetFileNameWithoutExtension(tempFile);
+				var fileName = Path.GetFileNameWithoutExtension(tempFile.Path);
 				Assert.AreEqual(fileName, lp.Name);
-			}
-			finally
-			{
-				File.Delete(temp);
-				File.Delete(tempFile);
 			}
 		}
 
@@ -108,21 +88,13 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void NameIsSameAsToString()
 		{
-			var temp = Path.GetTempFileName();
-			var tempFile = Path.ChangeExtension(temp, ".fwdata");
-			File.Move(temp, tempFile);
-			try
+			using (var tempFile = TempFile.WithExtension(".fwdata"))
 			{
-				var lp = new LanguageProject(tempFile);
-				Assert.AreEqual(Path.GetFileNameWithoutExtension(tempFile), lp.ToString());
+				var lp = new LanguageProject(tempFile.Path);
+				Assert.AreEqual(Path.GetFileNameWithoutExtension(tempFile.Path), lp.ToString());
 
-				var fileName = Path.GetFileNameWithoutExtension(tempFile);
+				var fileName = Path.GetFileNameWithoutExtension(tempFile.Path);
 				Assert.AreEqual(fileName, lp.ToString());
-			}
-			finally
-			{
-				File.Delete(temp);
-				File.Delete(tempFile);
 			}
 		}
 	}

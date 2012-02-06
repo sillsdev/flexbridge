@@ -122,7 +122,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 													out string className)
 		{
 			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq ||
-							   element.Name.LocalName == SharedConstants.OwnseqAtomic;
+							   element.Name.LocalName == SharedConstants.OwnseqAtomic; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 			className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
 			classInfo = mdc.GetClassInfo(className);
 			return isOwnSeqNode;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -17,26 +16,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	/// Test the merge capabilities of the FieldWorksFileHandler implementation of the IChorusFileTypeHandler interface.
 	/// </summary>
 	[TestFixture]
-	public class FieldWorksFileMergeTests
+	public class FieldWorksFileMergeTests : BaseFieldWorksTypeHandlerTests
 	{
-		private IChorusFileTypeHandler _fileHandler;
 		private TempFile _ourFile;
 		private TempFile _theirFile;
 		private TempFile _commonFile;
-
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							where handler.GetType().Name == "FieldWorksCommonFileHandler"
-							   select handler).First();
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_fileHandler = null;
-		}
 
 		[SetUp]
 		public void TestSetup()
@@ -53,42 +37,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void CannotMergeNonexistantFile()
 		{
-			Assert.IsFalse(_fileHandler.CanMergeFile("bogusPathname"));
+			Assert.IsFalse(FileHandler.CanMergeFile("bogusPathname"));
 		}
 
 		[Test]
 		public void CannotMergeEmptyStringFile()
 		{
-			Assert.IsFalse(_fileHandler.CanMergeFile(String.Empty));
+			Assert.IsFalse(FileHandler.CanMergeFile(String.Empty));
 		}
 
 		[Test]
 		public void CanMergeGoodFwXmlFile()
 		{
-			var tempPathname = Path.GetTempFileName();
-			var goodXmlPathname = Path.ChangeExtension(tempPathname, ".ClassData");
-			try
+			using (var tempFile = TempFile.WithExtension(".ClassData"))
 			{
-				File.WriteAllText(goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
-				Assert.IsTrue(_fileHandler.CanMergeFile(goodXmlPathname));
-			}
-			finally
-			{
-				File.Delete(tempPathname);
-				File.Delete(goodXmlPathname);
+				File.WriteAllText(tempFile.Path, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
+				Assert.IsTrue(FileHandler.CanMergeFile(tempFile.Path));
 			}
 		}
 
 		[Test]
 		public void CannotMergeNullFile()
 		{
-			Assert.IsFalse(_fileHandler.CanMergeFile(null));
+			Assert.IsFalse(FileHandler.CanMergeFile(null));
 		}
 
 		[Test]
 		public void Do3WayMergeThrowsOnNullInput()
 		{
-			Assert.Throws<ArgumentNullException>(() => _fileHandler.Do3WayMerge(null));
+			Assert.Throws<ArgumentNullException>(() => FileHandler.Do3WayMerge(null));
 		}
 
 		[Test]
@@ -103,7 +80,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("</classdata>", "<rt class='LexEntry' guid='newbieTheirs'/></classdata>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -124,7 +101,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -145,7 +122,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("</classdata>", "<rt class='LexEntry' guid='newbieTheirs'/></classdata>");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -167,7 +144,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -190,7 +167,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("<rt class='LexEntry' guid='goner'/>", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -213,7 +190,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("<rt class='LexEntry' guid='goner'/>", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -236,7 +213,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("originalowner", "newowner");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -259,7 +236,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("originalOwner", "newLosingOwner");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -283,7 +260,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string theirContent = commonAncestor;
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -306,7 +283,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("originalowner", "newowner");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -329,7 +306,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("<rt class='LexEntry' guid='dirtball' ownerguid='originalOwner'/>", null);
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -352,7 +329,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var theirContent = commonAncestor.Replace("originalOwner", "newOwner");
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -402,7 +379,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -453,7 +430,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -516,7 +493,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -575,7 +552,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -630,7 +607,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -679,7 +656,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -725,7 +702,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			var result = FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -772,7 +749,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -817,7 +794,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -863,7 +840,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
@@ -910,7 +887,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 </classdata>";
 
 			FieldWorksTestServices.DoMerge(
-				_fileHandler,
+				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
