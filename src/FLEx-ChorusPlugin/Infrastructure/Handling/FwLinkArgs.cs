@@ -97,11 +97,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		#region Member variables
 		/// <summary></summary>
-		protected string m_toolName = string.Empty;
+		protected string _toolName = string.Empty;
 		/// <summary></summary>
-		protected string m_tag = string.Empty;
-		private readonly List<Property> m_propertyTableEntries = new List<Property>();
-		//private readonly List<Property> m_propertyTableEntries = new List<Property>();
+		protected string _tag = string.Empty;
+		private readonly List<Property> _propertyTableEntries = new List<Property>();
+
+		protected string _guid;
 		#endregion
 
 		#region Properties
@@ -114,9 +115,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				if (m_toolName == null)
+				if (_toolName == null)
 					return "";
-				return m_toolName;
+				return _toolName;
 			}
 		}
 
@@ -125,7 +126,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// The GUID of the object which is the target of this link.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Guid TargetGuid { get; protected set; }
+		public Guid TargetGuid
+		{
+			get { return new Guid(_guid); }
+			protected set { _guid = value.ToString().ToLowerInvariant(); }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -134,7 +139,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		internal List<Property> PropertyTableEntries
 		{
-			get { return m_propertyTableEntries; }
+			get { return _propertyTableEntries; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -148,16 +153,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_tag != null);
-				return m_tag;
+				Debug.Assert(_tag != null);
+				return _tag;
 			}
 		}
 		#endregion  Properties
 
 		#region Construction and Initialization
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
+		/// Initializes a new instance of the <see>
+		///                                     <cref>T:FwLinkArgs</cref>
+		///                                   </see> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected FwLinkArgs()
@@ -166,28 +174,34 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
+		/// Initializes a new instance of the <see>
+		///                                     <cref>T:FwLinkArgs</cref>
+		///                                   </see> class.
 		/// </summary>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwLinkArgs(string toolName, Guid targetGuid) : this(toolName, targetGuid, null)
+		public FwLinkArgs(string toolName, string targetGuid)
+			: this(toolName, targetGuid, null)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
+		/// Initializes a new instance of the <see>
+		///                                     <cref>T:FwLinkArgs</cref>
+		///                                   </see> class.
 		/// </summary>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// <param name="tag">The tag.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwLinkArgs(string toolName, Guid targetGuid, string tag) : this()
+		public FwLinkArgs(string toolName, string targetGuid, string tag)
+			: this()
 		{
-			m_toolName = toolName;
-			TargetGuid = targetGuid;
-			m_tag = tag ?? string.Empty;
+			_toolName = toolName;
+			_guid= targetGuid;
+			_tag = tag ?? string.Empty;
 		}
 
 		#endregion
@@ -252,7 +266,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public void AddProperty(string name, string val)
 		{
-			PropertyTableEntries.Add(new Property() {name=name, value=val});
+			PropertyTableEntries.Add(new Property {Name=name, Value=val});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -271,7 +285,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			AddProperties(query);
 
 			foreach (Property property in PropertyTableEntries)
-				query.AppendFormat("&{0}={1}", property.name, Encode(property.value));
+				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
 			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
@@ -373,16 +387,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		#endregion
 
 		#region Member variables
-		private string m_database = string.Empty;
-		private string m_server = string.Empty;
-		private string m_appName = string.Empty;
-		private string m_appAbbrev = string.Empty;
-		private string m_dbType = string.Empty;
-		private string m_locale = string.Empty;
-		private string m_configFile = string.Empty;
-		private string m_backupFile = string.Empty;
-		private string m_restoreOptions = string.Empty;
-		private string m_chooseProjectFile = string.Empty;
+		private string _database = string.Empty;
+		private string _server = string.Empty;
+		private string _appName = string.Empty;
+		private string _appAbbrev = string.Empty;
+		private string _dbType = string.Empty;
+		private string _locale = string.Empty;
+		private string _configFile = string.Empty;
+		private string _backupFile = string.Empty;
+		private string _restoreOptions = string.Empty;
+		private string _chooseProjectFile = string.Empty;
 		#endregion
 
 		#region Properties
@@ -396,8 +410,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_database != null);
-				return m_database;
+				Debug.Assert(_database != null);
+				return _database;
 			}
 		}
 
@@ -411,8 +425,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_server != null);
-				return m_server;
+				Debug.Assert(_server != null);
+				return _server;
 			}
 		}
 
@@ -425,8 +439,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_dbType != null);
-				return m_dbType;
+				Debug.Assert(_dbType != null);
+				return _dbType;
 			}
 		}
 
@@ -440,8 +454,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_appName != null);
-				return m_appName;
+				Debug.Assert(_appName != null);
+				return _appName;
 			}
 		}
 
@@ -454,8 +468,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_appAbbrev != null);
-				return m_appAbbrev;
+				Debug.Assert(_appAbbrev != null);
+				return _appAbbrev;
 			}
 		}
 
@@ -468,8 +482,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_locale != null);
-				return m_locale;
+				Debug.Assert(_locale != null);
+				return _locale;
 			}
 		}
 
@@ -503,8 +517,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_configFile != null);
-				return m_configFile;
+				Debug.Assert(_configFile != null);
+				return _configFile;
 			}
 		}
 
@@ -517,8 +531,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_backupFile != null);
-				return m_backupFile;
+				Debug.Assert(_backupFile != null);
+				return _backupFile;
 			}
 		}
 
@@ -532,8 +546,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			get
 			{
-				Debug.Assert(m_restoreOptions != null);
-				return m_restoreOptions;
+				Debug.Assert(_restoreOptions != null);
+				return _restoreOptions;
 			}
 		}
 
@@ -560,7 +574,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		public string ChooseProjectFile
 		{
-			get { return m_chooseProjectFile; }
+			get { return _chooseProjectFile; }
 		}
 		#endregion
 
@@ -571,7 +585,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
+		/// Initializes a new instance of the <see>
+		///                                     <cref>T:FwAppArgs</cref>
+		///                                   </see> class.
 		/// </summary>
 		/// <param name="applicationNameOrAbbrev">Name or abbreviation of the application.</param>
 		/// <param name="database">The name of the database.</param>
@@ -580,7 +596,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// ------------------------------------------------------------------------------------
 		public FwAppArgs(string applicationNameOrAbbrev, string database, string server,
-			string toolName, Guid targetGuid) : base(toolName, targetGuid)
+			string toolName, string targetGuid) : base(toolName, targetGuid)
 		{
 			ProcessArg(kApp, applicationNameOrAbbrev);
 			ProcessArg(kProject, database);
@@ -614,7 +630,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		public override bool EssentiallyEquals(FwLinkArgs lnk)
 		{
-			FwAppArgs appArgs = lnk as FwAppArgs;
+			var appArgs = lnk as FwAppArgs;
 			if (appArgs == null || !base.EssentiallyEquals(lnk))
 				return false;
 			return (appArgs.AppAbbrev == AppAbbrev && appArgs.Database == Database &&
@@ -623,6 +639,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		#endregion
 
 		#region Command-line Handling Methods
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Parse the command line, and return the results in a hashtable. The hash key is the
@@ -645,20 +662,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// the array as a single argument. One argument in this array can represent either a
 		/// key, a value, or both (since whitespace is not required between keys and values.
 		/// </param>
-		/// <exception cref="T:ArgumentException">Incorrectly formed command line. Caller should
+		/// <exception>Incorrectly formed command line. Caller should
 		/// alert user to correct command-line structure.
+		///   <cref>T:ArgumentException</cref>
 		/// </exception>
 		///	-----------------------------------------------------------------------------------
 		private static Dictionary<string, string> ParseCommandLine(string[] rgArgs)
 		{
-			Dictionary<string, string> dictArgs = new Dictionary<string, string>();
+			var dictArgs = new Dictionary<string, string>();
 			if (rgArgs == null || rgArgs.Length == 0)
 				return dictArgs;
 
-			string sKey = string.Empty;
-			string value = string.Empty;
+			var sKey = string.Empty;
+			var value = string.Empty;
 
-			foreach (string sArg in rgArgs)
+			foreach (var sArg in rgArgs)
 			{
 				if (string.IsNullOrEmpty(sArg))
 					continue;
@@ -801,9 +819,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		public void ClearLinkInformation()
 		{
-			m_tag = string.Empty;
-			m_toolName = string.Empty;
-			TargetGuid = Guid.Empty;
+			_tag = string.Empty;
+			_toolName = string.Empty;
+			_guid = Guid.Empty.ToString().ToLowerInvariant();
 		}
 		#endregion
 
@@ -822,22 +840,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			switch (name)
 			{
 				case kProject:
-				case kProjectUri: m_database = value; break;
+				case kProjectUri: _database = value; break;
 				case "c": // For historical purposes (even though it will probably never work)
 				case kServer:
-				case kServerUri: m_server = value; break;
+				case kServerUri: _server = value; break;
 				case kApp: SetAppNameAndAbbrev(value); break;
-				case kDbType: m_dbType = value; break;
-				case kLocale: m_locale = value; break;
+				case kDbType: _dbType = value; break;
+				case kLocale: _locale = value; break;
 				case kHelp: ShowHelp = true; break;
-				case kChooseProject: m_chooseProjectFile = value; break;
-				case kFlexConfigFile: m_configFile = value; break;
-				case kRestoreFile: m_backupFile = value; break;
-				case kRestoreOptions: m_restoreOptions = value; break;
+				case kChooseProject: _chooseProjectFile = value; break;
+				case kFlexConfigFile: _configFile = value; break;
+				case kRestoreFile: _backupFile = value; break;
+				case kRestoreOptions: _restoreOptions = value; break;
 				case kNoUserInterface: NoUserInterface = true; break;
 				case kAppServerMode: AppServerMode = true; break;
-				case kTag: m_tag = value; break;
-				case kTool: m_toolName = value; break;
+				case kTag: _tag = value; break;
+				case kTool: _toolName = value; break;
 				case kGuid:
 					if (value != "null")
 						TargetGuid = new Guid(value);
@@ -870,18 +888,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		private void SetAppNameAndAbbrev(string value)
 		{
-			string appNameOrAbbrev = value.ToLowerInvariant();
+			var appNameOrAbbrev = value.ToLowerInvariant();
 			if (appNameOrAbbrev == ksTeAppName.ToLowerInvariant() ||
 				appNameOrAbbrev == ksTeAbbrev.ToLowerInvariant())
 			{
-				m_appName = ksTeAppName.ToLowerInvariant();
-				m_appAbbrev = ksTeAbbrev.ToLowerInvariant();
+				_appName = ksTeAppName.ToLowerInvariant();
+				_appAbbrev = ksTeAbbrev.ToLowerInvariant();
 			}
 			else if (appNameOrAbbrev == ksFlexAppName.ToLowerInvariant() ||
 				appNameOrAbbrev == ksFlexAbbrev.ToLowerInvariant())
 			{
-				m_appName = ksFlexAppName.ToLowerInvariant();
-				m_appAbbrev = ksFlexAbbrev.ToLowerInvariant();
+				_appName = ksFlexAppName.ToLowerInvariant();
+				_appAbbrev = ksFlexAbbrev.ToLowerInvariant();
 			}
 			else
 				ShowHelp = true;
@@ -892,7 +910,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 	internal class Property
 	{
-		public string name = null;
-		public object value = null;
+		public string Name;
+		public object Value;
 	}
 }

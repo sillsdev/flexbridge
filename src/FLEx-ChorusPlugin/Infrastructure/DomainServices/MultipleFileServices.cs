@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class MultipleFileServices
 	{
-		internal static void PutHumptyTogetherAgain(string mainFilePathname, string projectName)
+		internal static void PutHumptyTogetherAgain(string mainFilePathname)
 		{
 			FileWriterService.CheckPathname(mainFilePathname);
 
@@ -52,7 +52,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					writer.WriteStartElement("languageproject");
 
 					// Write out version number from the ModelVersion file.
-					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"));
+					var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
 					var splitModelVersionData = modelVersionData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
 					var version = splitModelVersionData[1].Trim();
 					writer.WriteAttributeString("version", version);
@@ -62,7 +62,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 					// Write out optional custom property data to the fwdata file.
 					// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
-					var optionalCustomPropFile = Path.Combine(pathRoot, projectName + ".CustomProperties");
+					var optionalCustomPropFile = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
 					// Remove 'key' attribute from CustomField elements, before writing to main file.
 					var doc = XDocument.Load(optionalCustomPropFile);
 					var customFieldElements = doc.Root.Elements("CustomField").ToList();
@@ -95,12 +95,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static void PushHumptyOffTheWall(string mainFilePathname, string projectName)
+		internal static void PushHumptyOffTheWall(string mainFilePathname)
 		{
 			FileWriterService.CheckFilename(mainFilePathname);
 
-			DeleteOldFiles(Path.GetDirectoryName(mainFilePathname), projectName);
-			RestoreFiles(mainFilePathname, projectName);
+			DeleteOldFiles(Path.GetDirectoryName(mainFilePathname));
+			RestoreFiles(mainFilePathname);
 
 #if DEBUG
 			// Enable ONLY for testing a round trip.
@@ -108,7 +108,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 #endif
 		}
 
-		private static void RestoreFiles(string mainFilePathname, string projectName)
+		private static void RestoreFiles(string mainFilePathname)
 		{
 			var mdc = MetadataCache.MdCache; // Upgrade is done shortly.
 
@@ -119,7 +119,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
 				var version = reader.Value;
-				FileWriterService.WriteVersionNumberFile(pathRoot, projectName, version);
+				FileWriterService.WriteVersionNumberFile(pathRoot, version);
 				mdc.UpgradeToVersion(int.Parse(version));
 			}
 
@@ -138,7 +138,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					if (foundOptionalFirstElement)
 					{
 						// 2. Write custom properties file.
-						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, projectName, record);
+						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, record);
 						foundOptionalFirstElement = false;
 						haveWrittenCustomFile = true;
 					}
@@ -150,7 +150,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (!haveWrittenCustomFile)
 				{
 					// Write empty file.
-					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), null);
+					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), null);
 				}
 			}
 
@@ -163,14 +163,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static void DeleteOldFiles(string pathRoot, string projectName)
+		private static void DeleteOldFiles(string pathRoot)
 		{
 			// Wipe out custom props file, as it will be re-created, even if it only has the root element in it.
-			var customPropPathname = Path.Combine(pathRoot, projectName + ".CustomProperties");
+			var customPropPathname = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
 			if (File.Exists(customPropPathname))
 				File.Delete(customPropPathname);
 			// Delete ModelVersion file, but it gets rewritten soon.
-			var modelVersionPathname = Path.Combine(pathRoot, projectName + ".ModelVersion");
+			var modelVersionPathname = Path.Combine(pathRoot, SharedConstants.ModelVersionFilename);
 			if (File.Exists(modelVersionPathname))
 				File.Delete(modelVersionPathname);
 

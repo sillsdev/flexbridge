@@ -32,14 +32,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var label = className + ": " + guid;
 			// Todo JohnT: pass something like "default" for app name, since we can't readily
 			// figure out here which we need.
-			var fwAppArgs = new FwAppArgs("FLEx", "current", "", "default", new Guid(guid));
+			var fwAppArgs = new FwAppArgs("FLEx", "current", "", "default", guid);
 			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
 			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
 			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
 			// The FwUrl has all the query part encoded.
 			// Chorus needs it unencoded so it can extract the label.
 			var fwUrl = fwAppArgs.ToString();
-			var hostLength = fwUrl.IndexOf("?");
+			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
 			var host = fwUrl.Substring(0, hostLength);
 			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
 			var url = host + "?" + query;

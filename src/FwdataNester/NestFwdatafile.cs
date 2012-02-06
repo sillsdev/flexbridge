@@ -93,13 +93,12 @@ namespace FwdataTestApp
 				}
 				if (_cbRoundTripData.Checked)
 				{
-					var projectName = Path.GetFileNameWithoutExtension(srcFwdataPathname);
 					File.Copy(srcFwdataPathname, srcFwdataPathname + ".orig", true); // Keep it safe.
 					breakupTimer.Start();
-					MultipleFileServices.PushHumptyOffTheWall(srcFwdataPathname, projectName);
+					MultipleFileServices.PushHumptyOffTheWall(srcFwdataPathname);
 					breakupTimer.Stop();
 					restoreTimer.Start();
-					MultipleFileServices.PutHumptyTogetherAgain(srcFwdataPathname, projectName);
+					MultipleFileServices.PutHumptyTogetherAgain(srcFwdataPathname);
 					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)

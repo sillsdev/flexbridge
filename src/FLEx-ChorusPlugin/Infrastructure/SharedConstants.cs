@@ -27,10 +27,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// Model Version
 		internal const string ModelVersion = "ModelVersion";
+		internal const string ModelVersionFilename = "FLExProject." + ModelVersion;
 
 		// Custom Properties
 		internal const string AdditionalFieldsTag = "AdditionalFields";
 		internal const string CustomProperties = "CustomProperties";
+		internal const string CustomPropertiesFilename = "FLExProject." + CustomProperties;
 
 		// Common
 		internal const string List = "list";

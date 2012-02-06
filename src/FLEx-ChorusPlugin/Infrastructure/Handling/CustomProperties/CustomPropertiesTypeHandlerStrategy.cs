@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,6 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		public bool CanValidateFile(string pathToFile)
 		{
 			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
+				return false;
+			if (Path.GetFileName(pathToFile) != SharedConstants.CustomPropertiesFilename)
 				return false;
 
 			return ValidateFile(pathToFile) == null;

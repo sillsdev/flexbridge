@@ -24,13 +24,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithExtension(".ModelVersion", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ModelVersionFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -53,25 +53,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		[Test]
 		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
 		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.ModelVersion);
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, "<classdata />");
+			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
 		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
-			using (var tempModelVersionFile = new TempFile("{\"modelversion\": 7000037}"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.ModelVersion);
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsTrue(FileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
+			File.WriteAllText(_ourFile.Path, "{\"modelversion\": 7000037}");
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]

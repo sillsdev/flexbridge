@@ -54,9 +54,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static void WriteVersionNumberFile(string pathRoot, string projectName, string version)
+		internal static void WriteVersionNumberFile(string pathRoot, string version)
 		{
-			File.WriteAllText(Path.Combine(pathRoot, projectName + ".ModelVersion"), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
+			File.WriteAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename), Resources.kModelVersion + version + Resources.kCloseCurlyBrace);
 		}
 
 		internal static void RemoveEmptyFolders(string baseDataFolder, bool removeTopLevelFolder)
@@ -106,7 +106,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
 													 string pathRoot,
-													 string projectName,
 													 byte[] record)
 		{
 			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
@@ -131,7 +130,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 			if (hasCustomProperties)
 				mdc.ResetCaches();
-			WriteCustomPropertyFile(Path.Combine(pathRoot, projectName + ".CustomProperties"), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
+			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
 		}
 
 		internal static string AdjustedPropertyType(string className, string propName, string rawType)
