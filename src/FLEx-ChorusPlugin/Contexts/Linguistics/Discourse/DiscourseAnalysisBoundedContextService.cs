@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
@@ -16,65 +15,173 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	/// </summary>
 	internal static class DiscourseAnalysisBoundedContextService
 	{
-		private const string DiscourseRootFolder = "Discourse";
-
-		internal static void ExtractBoundedContexts(string multiFileDirRoot,
-			MetadataCache mdc,
-			IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
-			var discourseBaseDir = Path.Combine(multiFileDirRoot, DiscourseRootFolder);
-			if (Directory.Exists(discourseBaseDir))
-				Directory.Delete(discourseBaseDir, true);
+			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
+			if (!Directory.Exists(discourseDir))
+				Directory.CreateDirectory(discourseDir);
 
 			var sortedInstanceData = classData["DsDiscourseData"];
 			if (sortedInstanceData.Count == 0)
 				return;
 
-			// ConstChartTempl and ChartMarkers are two lists owned by DsDiscourseData.
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-			Directory.CreateDirectory(discourseBaseDir);
+			// 'discourseElement' is owned by LangProj in DsDiscourseData prop (OA).
+			var discourseElement = sortedInstanceData.Values.First();
 
-			var guid = sortedInstanceData.Keys.First();
-			var dataEl = sortedInstanceData.Values.First();
+			// Nest the entire object, and then pull out the owned stuff, and relocate them, as needed.
+			CmObjectNestingService.NestObject(
+				false,
+				discourseElement,
+				new Dictionary<string, HashSet<string>>(),
+				classData,
+				guidToClassMapping);
 
-			// 1. Write out the DsDiscourseData instance in discourseBaseDir, but not the charts it owns.
-			FileWriterService.WriteObject(mdc, classData, guidToClassMapping, discourseBaseDir, multiClassOutput, guid, new HashSet<string> { "Charts" });
-
-			// 2. Each chart it owns needs to be written in its own subfolder of discourseBaseDir, a la texts.
-			WritePropertyInFolders(mdc,
-				classData, guidToClassMapping, multiClassOutput,
-				discourseBaseDir,
-				dataEl,
-				"Charts", "Chart_", true);
-		}
-
-		internal static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
-		{
-			OldStyleDomainServices.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, DiscourseRootFolder)));
-		}
-
-		private static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
-		{
-			foreach (var guid in ObjectFinderServices.GetGuids(dataElement, propertyName))
+			var listElement = discourseElement.Element(SharedConstants.ConstChartTempl);
+			if (listElement != null)
 			{
-				multiClassOutput.Clear();
-
-				var currentElement = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															currentElement,
-															new HashSet<string>());
-
-				// Write out data in a separate folder.
-				var dirPath = Path.Combine(baseDir, dirPrefix);
-				if (appendGuid)
-					dirPath = Path.Combine(baseDir, dirPrefix + guid);
-				if (!Directory.Exists(dirPath))
-					Directory.CreateDirectory(dirPath);
-				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), kvp.Value);
+				// NB: Write list file, but only if discourseElement has the list.
+				FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.ConstChartTemplFilename), listElement);
+				listElement.RemoveNodes();
 			}
-			multiClassOutput.Clear();
+
+			listElement = discourseElement.Element(SharedConstants.ChartMarkers);
+			if (listElement != null)
+			{
+				// NB: Write list file, but only if discourseElement has the list.
+				FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.ChartMarkersFilename), listElement);
+				listElement.RemoveNodes();
+			}
+
+			// <owning num="2" id="Charts" card="col" sig="DsChart"> [Abstract. Owns nothing special, but is subclass of CmMajorObject.]
+			//		Disposition: Write in main discourse file as the repeating series of objects, BUT use the abstract class for the repeating element, since Gordon sees new subclasses of it coming along.
+
+			// NB: We will just let the normal nesting code work over discourseElement,
+			// which will put in the actual subclass name as the element tag.
+			// SO, we'll just intercept them out of the owning prop elemtent (if any exist), and patch them up here.
+			// NB: If there are no such charts, then do the usual of making one with the empty guid for its Id.
+			var root = new XElement(SharedConstants.DiscourseRootFolder);
+			var header = new XElement(SharedConstants.Header);
+			root.Add(header);
+			header.Add(discourseElement);
+			// Remove child objsur node from owning LangProg
+			var langProjElement = classData["LangProject"].Values.First();
+			langProjElement.Element("DiscourseData").RemoveNodes();
+
+			var chartElements = discourseElement.Element("Charts");
+			if (chartElements == null || !chartElements.HasElements)
+			{
+				// Add one 'dummy' using the one concrete DsConstChart class.
+				root.Add(new XElement(SharedConstants.DsChart,
+												new XAttribute(SharedConstants.Class, "DsConstChart"),
+												new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
+			}
+			else
+			{
+				foreach (var chartElement in chartElements.Elements())
+				{
+					ReplaceElementNameWithAndAddClassAttribute(SharedConstants.DsChart, chartElement);
+					// It is already nested.
+					root.Add(chartElement);
+				}
+				chartElements.RemoveNodes();
+			}
+
+			FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename), root);
+		}
+
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			string linguisticsBaseDir)
+		{
+			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
+			if (!Directory.Exists(discourseDir))
+				return;
+			var chartPathname = Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename);
+			if (!File.Exists(chartPathname))
+				return;
+
+			// The charts need to be sorted in guid order, before being added back into the owning prop element.
+			var doc = XDocument.Load(chartPathname);
+			var root = doc.Root;
+			var discourseElement = root.Element(SharedConstants.Header).Element("DsDiscourseData");
+			// Add lists back into discourseElement.
+			foreach (var listPathname in Directory.GetFiles(discourseDir, "*." + SharedConstants.List))
+			{
+				var listDoc = XDocument.Load(listPathname);
+				var listFilename = Path.GetFileName(listPathname);
+				var listElement = listDoc.Root.Element("CmPossibilityList");
+				switch (listFilename)
+				{
+					case SharedConstants.ChartMarkersFilename:
+						discourseElement.Element(SharedConstants.ChartMarkers).Add(listElement);
+						break;
+					case SharedConstants.ConstChartTemplFilename:
+						discourseElement.Element(SharedConstants.ConstChartTempl).Add(listElement);
+						break;
+				}
+			}
+			// Add the chart elements (except the possible dummy one) into discourseElement.
+			var sortedCharts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			foreach (var chartElement in root.Elements(SharedConstants.DsChart))
+			{
+				var chartGuid = chartElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				if (chartGuid == Guid.Empty.ToString().ToLowerInvariant())
+					break;
+
+				// No. Add it to discourseElement, BUT in sorted order, below, and then flatten discourseElement.
+				// Restore the right main element name from the class attribute.
+				var classAttr = chartElement.Attribute(SharedConstants.Class);
+				chartElement.Name = classAttr.Value;
+				classAttr.Remove();
+				sortedCharts.Add(chartGuid, chartElement);
+			}
+
+			if (sortedCharts.Count > 0)
+			{
+				var discourseElementOwningProp = discourseElement.Element("Charts");
+				foreach (var sortedChartElement in sortedCharts.Values)
+					discourseElementOwningProp.Add(sortedChartElement);
+			}
+			var langProjElement = highLevelData["LangProject"];
+			BaseDomainServices.RestoreElement(
+				chartPathname,
+				sortedData,
+				langProjElement,
+				"DiscourseData",
+				discourseElement);
+		}
+
+		internal static void RemoveBoundedContextData(string linguisticsBase)
+		{
+			var discourseDir = Path.Combine(linguisticsBase, SharedConstants.DiscourseRootFolder);
+			if (!Directory.Exists(discourseDir))
+				return;
+
+			var chartingPathname = Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename);
+			if (File.Exists(chartingPathname))
+				File.Delete(chartingPathname);
+
+			foreach (var listPathname in Directory.GetFiles(discourseDir, "*." + SharedConstants.List))
+			{
+				File.Delete(listPathname);
+			}
+
+			// Linguistics domain will call this.
+			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
+		}
+
+		private static void ReplaceElementNameWithAndAddClassAttribute(string replacementElementName, XElement elementToRename)
+		{
+			var oldElementName = elementToRename.Name.LocalName;
+			elementToRename.Name = replacementElementName;
+			var sortedAttrs = new SortedDictionary<string, XAttribute>(StringComparer.OrdinalIgnoreCase);
+			foreach (var attr in elementToRename.Attributes())
+				sortedAttrs.Add(attr.Name.LocalName, attr);
+			sortedAttrs.Add(SharedConstants.Class, new XAttribute(SharedConstants.Class, oldElementName));
+			elementToRename.Attributes().Remove();
+			foreach (var sortedAttr in sortedAttrs.Values)
+				elementToRename.Add(sortedAttr);
 		}
 	}
 }

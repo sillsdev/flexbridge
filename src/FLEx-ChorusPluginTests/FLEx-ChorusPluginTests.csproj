@@ -92,6 +92,7 @@
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\FieldWorksDiscourseAnalysisTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />

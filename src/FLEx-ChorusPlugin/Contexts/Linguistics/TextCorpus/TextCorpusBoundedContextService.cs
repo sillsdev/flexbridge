@@ -63,7 +63,24 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename), (XElement)randomElement.FirstNode);
 			}
 
+			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
+			randomElement = new XElement(SharedConstants.TranslationTags);
+			BaseDomainServices.NestList(classData,
+				guidToClassMapping,
+				classData["CmPossibilityList"],
+				randomElement,
+				langProjElement,
+				SharedConstants.TranslationTags);
+			if (randomElement.HasElements)
+			{
+				// NB: Write file, but only if LP has the markup list.
+				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename), (XElement)randomElement.FirstNode);
+			}
+
 			var texts = classData["Text"];
+			if (texts.Count == 0)
+				return; // No texts to process.
+
 			var textGuidsInLangProj = ObjectFinderServices.GetGuids(langProjElement, "Texts");
 			foreach (var textGuid in textGuidsInLangProj)
 			{
@@ -80,6 +97,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					Path.Combine(textCorpusBaseDir, "Test_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
 					rootElement);
 			}
+			// Remove child objsur nodes from owning LangProg
+			langProjElement.Element("Texts").RemoveNodes();
 		}
 
 		internal static void FlattenContext(
@@ -102,6 +121,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename);
 			doc = XDocument.Load(pathname);
 			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element("CmPossibilityList"));
+			// Put the translation tags list back in the right place.
+			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename);
+			doc = XDocument.Load(pathname);
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element("CmPossibilityList"));
 
 			// Put Texts back into LP.
 			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);

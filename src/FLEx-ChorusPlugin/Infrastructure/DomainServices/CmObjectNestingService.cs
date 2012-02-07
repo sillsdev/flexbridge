@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (guidToClassMapping == null) throw new ArgumentNullException("guidToClassMapping");
 
 			// 1. Rename element to that of the class, if isOwningSeqProp == false.
-			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant top be true.
+			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant to be true.
 			var className = RenameElement(isOwningSeqProp, obj);
 			// Remove 'ownerguid', if present.
 			var ownerGuidAttribute = obj.Attribute(SharedConstants.OwnerGuid);
