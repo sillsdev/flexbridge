@@ -24,6 +24,7 @@ src/FLEx-ChorusPluginTests/obj/*.*
 src/FwdataNester/bin/*.*
 src/FwdataNester/obj/Debug/*.*
 src/FwdataNester/obj/*.*
+Mercurial/*.*
 syntax: glob
 Perf test  results/*.app6results
 src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.ReSharper.user
