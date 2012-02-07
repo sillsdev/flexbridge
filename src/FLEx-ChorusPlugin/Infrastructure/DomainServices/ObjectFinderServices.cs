@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -79,39 +78,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements(SharedConstants.Objsur)
 																 select osEl.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()).ToList();
-		}
-
-		internal static void WritePropertyInFolders(MetadataCache mdc, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string baseDir, XElement dataElement, string propertyName, string dirPrefix, bool appendGuid)
-		{
-			foreach (var guid in GetGuids(dataElement, propertyName))
-			{
-				multiClassOutput.Clear();
-
-				var currentElement = RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-				CollectAllOwnedObjects(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					currentElement,
-					new HashSet<string>());
-
-				// Write out data in a separate folder.
-				var dirPath = Path.Combine(baseDir, dirPrefix);
-				if (appendGuid)
-					dirPath = Path.Combine(baseDir, dirPrefix + guid);
-				if (!Directory.Exists(dirPath))
-					Directory.CreateDirectory(dirPath);
-				foreach (var kvp in multiClassOutput)
-					FileWriterService.WriteSecondaryFile(Path.Combine(dirPath, kvp.Key + ".ClassData"), kvp.Value);
-			}
-			multiClassOutput.Clear();
-		}
-
-		internal static void ProcessLists(IDictionary<string, SortedDictionary<string, XElement>> classData, HashSet<string> skipWriteEmptyClassFiles, HashSet<string> classnames)
-		{
-			foreach (var classname in classnames)
-			{
-				skipWriteEmptyClassFiles.Add(classname);
-				classData.Remove(classname);
-			}
 		}
 	}
 }

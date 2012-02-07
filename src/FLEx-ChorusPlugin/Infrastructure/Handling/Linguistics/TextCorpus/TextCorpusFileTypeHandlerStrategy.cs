@@ -1,26 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 {
-	internal sealed class CustomPropertiesTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class TextCorpusFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
+		private const string TextInCorpus = "TextInCorpus"; // NB: Not the same as what is in SharedSharedConstants.
+
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.CustomPropertiesFilename)
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.TextInCorpus))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -32,8 +30,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.AdditionalFieldsTag || !root.Elements("CustomField").Any())
-					return "Not valid custom properties file";
+				if (root.Name.LocalName != TextInCorpus
+					|| root.Element("Text") == null)
+				{
+					return "Not valid text corpus file";
+				}
 
 				return null;
 			}
@@ -52,29 +53,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"CustomField", "key");
+				"Text", SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			// NB: Doesn't need the mdc updated with custom props.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
+
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
+				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"CustomField", "key", WritePreliminaryCustomPropertyInformation);
+				"Text", SharedConstants.GuidStr, WritePreliminaryTextCorpusInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.CustomProperties; }
+			get { return SharedConstants.TextInCorpus; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryTextCorpusInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.AdditionalFieldsTag);
+			writer.WriteStartElement(TextInCorpus);
 			reader.Read();
 		}
 	}

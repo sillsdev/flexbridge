@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Web;
 using System.Windows.Forms;
 using Chorus;
-using Chorus.UI.Review;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View

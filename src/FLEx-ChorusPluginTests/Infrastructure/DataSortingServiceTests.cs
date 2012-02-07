@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
+using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
@@ -237,31 +238,25 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			pl.Add("Collections", hs);
 			hs = new HashSet<string> { "Abbreviation" };
 			pl.Add("MultiAlt", hs);
-			var tempInputPathname = Path.GetTempFileName();
-			var tempOutputPathname = Path.GetTempFileName();
-			File.WriteAllText(tempInputPathname, rt);
-			try
+			using (var inputTempFile = new TempFile())
+			using (var outputTempFile = new TempFile())
 			{
-				using (var writer = XmlWriter.Create(tempOutputPathname))
+				File.WriteAllText(inputTempFile.Path, rt);
+				using (var writer = XmlWriter.Create(outputTempFile.Path))
 				{
 					writer.WriteStartElement("languageproject");
-					DataSortingService.SortEntireFile(writer, tempInputPathname);
+					DataSortingService.SortEntireFile(writer, inputTempFile.Path);
 					writer.WriteEndElement();
 					writer.Flush();
 					writer.Close();
 				}
-				var doc = XDocument.Load(tempOutputPathname);
+				var doc = XDocument.Load(outputTempFile.Path);
 				var rtElement = doc.Root;
 				Assert.AreEqual(3, rtElement.Elements().Count());
 				var sortedProp = rtElement.Elements().ElementAt(0);
 				Assert.AreEqual("LexEntry", sortedProp.Element("CustomField").Attribute(SharedConstants.Class).Value); // Make sure SortCustomPropertiesRecord was called.
 				sortedProp = rtElement.Elements().ElementAt(1);
 				Assert.AreEqual("c1ecf88c-e382-11de-8a39-0800200c9a66", sortedProp.Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement was called.
-			}
-			finally
-			{
-				File.Delete(tempInputPathname);
-				File.Delete(tempOutputPathname);
 			}
 		}
 	}

@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
-								MultipleFileServices.PutHumptyTogetherAgain(currentBaseFieldWorksBridgePath, langProjName);
+								MultipleFileServices.PutHumptyTogetherAgain(currentBaseFieldWorksBridgePath);
 								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
 								break;
 						}
@@ -70,7 +70,7 @@ namespace FLEx_ChorusPlugin.View
 								cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
 
 								string mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
-								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName, langProjName);
+								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName);
 								break;
 						}
 					}
@@ -86,7 +86,7 @@ namespace FLEx_ChorusPlugin.View
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
 								string mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName, langProjName);
+								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}

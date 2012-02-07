@@ -166,7 +166,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 				// Linguistics
 				SharedConstants.Reversal,
-				SharedConstants.Lexdb // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
+				SharedConstants.Lexdb, // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
+				SharedConstants.TextInCorpus, // Text corpus only added one new extension "textincorpus", as the list is already taken care of.
+				SharedConstants.Inventory, // inventory
+				SharedConstants.DiscourseExt // discourse
 			};
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 12;
+		internal const int ExpectedExtensionCount = 15;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
@@ -54,32 +55,20 @@ namespace FLEx_ChorusPluginTests
 
 		internal static string CreateTempFileWithName(string filename, int counter)
 		{
-			var tempPath = Path.GetTempFileName();
-			var dirName = Path.GetDirectoryName(tempPath);
-			var newDirName = dirName + counter;
-			if (Directory.Exists(newDirName))
-				Directory.Delete(newDirName, true);
-			Directory.CreateDirectory(dirName + counter);
-			var replacement = Path.Combine(dirName + counter, filename);
-			File.Move(tempPath, replacement);
+			var tempFileName = Path.GetTempFileName();
+			var tempPath = Path.GetTempPath();
+			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
+			Directory.CreateDirectory(newDirName);
+			var replacement = Path.Combine(newDirName, filename);
+			File.Move(tempFileName, replacement);
 			return replacement;
 		}
 
 		internal static void SetupTempFilesWithExtension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
-			ourFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
-			commonFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
-			theirFile = TempFile.TrackExisting(CreateTempFileWithExtension(extension));
-		}
-
-		internal static string CreateTempFileWithExtension(string extension)
-		{
-			var tempPath = Path.GetTempFileName();
-			var replacement = tempPath.Replace(Path.GetExtension(tempPath), extension);
-			if (File.Exists(replacement))
-				File.Delete(replacement);
-			File.Move(tempPath, replacement);
-			return replacement;
+			ourFile = TempFile.WithExtension(extension);
+			commonFile = TempFile.WithExtension(extension);
+			theirFile = TempFile.WithExtension(extension);
 		}
 
 		internal static string DoMerge(

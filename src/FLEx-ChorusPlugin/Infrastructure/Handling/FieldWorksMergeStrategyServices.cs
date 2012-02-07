@@ -67,8 +67,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
 
-			// Add element for "refseq"
-			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			// Add element for SharedConstants.Refseq
+			elementStrategy = ElementStrategy.CreateForKeyedElementInList(SharedConstants.GuidStr);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
 
@@ -77,7 +77,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
 
-			// Add element for "ownseqatomic"
+			// Add element for "ownseqatomic" // Atomic here means the whole elment is treated as effectively as if it were binary data.
 			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			elementStrategy.IsAtomic = true;

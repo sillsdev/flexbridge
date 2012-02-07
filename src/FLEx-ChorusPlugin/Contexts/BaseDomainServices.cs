@@ -19,19 +19,9 @@ namespace FLEx_ChorusPlugin.Contexts
 											 Dictionary<string, string> guidToClassMapping)
 		{
 			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
-			var skipwriteEmptyClassFiles = new HashSet<string>();
-
-			// Does both old and new for a while yet.
-			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			// Does only new.
-			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-			// Does only new.
-			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping, skipwriteEmptyClassFiles);
-
-			// Remove the data that may be in multiple bounded Contexts.
-			// Eventually, there ought not be an need for writing the leftovers in the base folder,
-			// but I'm not there yet.
-			//ObjectFinderServices.ProcessLists(classData, skipwriteEmptyClassFiles, new HashSet<string> { "N ote" });
+			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping); // Does both old and new for a while yet.
+			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping); // Does only new.
+			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping); // Does only new.
 
 			// TODO: Props to not store in nested LangProj:
 			// TODO:	These are all for LangProj
@@ -49,7 +39,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			 * "Positions"
 			*/
 			// Does 'leftover' stuff in old style.
-			OldStyleDomainServices.WriteData(pathRoot, mdc, classData, skipwriteEmptyClassFiles);
+			OldStyleDomainServices.WriteData(pathRoot, mdc, classData);
 		}
 
 		internal static void RestoreDomainData(XmlWriter writer, string pathRoot)

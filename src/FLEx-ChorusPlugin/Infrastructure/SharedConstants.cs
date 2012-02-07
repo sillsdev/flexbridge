@@ -17,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Class = "class";
 		internal const string Name = "name";
 		internal const string Ownseq = "ownseq";
-		internal const string OwnseqAtomic = "ownseqatomic";
+		internal const string OwnseqAtomic = "ownseqatomic"; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 		internal const string Refseq = "refseq";
 		internal const string Custom = "Custom";
 
@@ -27,10 +27,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// Model Version
 		internal const string ModelVersion = "ModelVersion";
+		internal const string ModelVersionFilename = "FLExProject." + ModelVersion;
 
 		// Custom Properties
 		internal const string AdditionalFieldsTag = "AdditionalFields";
 		internal const string CustomProperties = "CustomProperties";
+		internal const string CustomPropertiesFilename = "FLExProject." + CustomProperties;
 
 		// Common
 		internal const string List = "list";
@@ -49,6 +51,22 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";
 		internal const string GenreListFilename = GenreList + "." + List;
+		internal const string TextMarkupTags = "TextMarkupTags";
+		internal const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
+		internal const string TranslationTags = "TranslationTags";
+		internal const string TranslationTagsListFilename = TranslationTags + "." + List;
+		internal const string Inventory = "inventory";
+		internal const string WordformInventoryRootFolder = "Inventory";
+		internal const string WordformInventory = "WordformInventory";
+		internal const string WordformInventoryFilename = WordformInventory + "." + Inventory;
+		internal const string DiscourseRootFolder = "Discourse";
+		internal const string ConstChartTempl = "ConstChartTempl";
+		internal const string ConstChartTemplFilename = ConstChartTempl + "." + List;
+		internal const string ChartMarkers = "ChartMarkers";
+		internal const string ChartMarkersFilename = ChartMarkers + "." + List;
+		internal const string DsChart = "DsChart";
+		internal const string DiscourseExt = "discourse";
+		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";

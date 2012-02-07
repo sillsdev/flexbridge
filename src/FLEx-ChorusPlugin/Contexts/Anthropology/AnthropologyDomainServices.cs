@@ -13,14 +13,13 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	{
 		internal static void WriteNestedDomainData(string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
 			var anthropologyBaseDir = Path.Combine(rootDir, SharedConstants.Anthropology);
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
-			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, classData, guidToClassMapping, skipWriteEmptyClassFiles);
+			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(

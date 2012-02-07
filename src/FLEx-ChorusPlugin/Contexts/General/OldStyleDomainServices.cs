@@ -26,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			}
 		}
 
-		internal static void WriteData(string pathRoot, MetadataCache mdc, Dictionary<string, SortedDictionary<string, XElement>> classData, HashSet<string> skipwriteEmptyClassFiles)
+		internal static void WriteData(string pathRoot, MetadataCache mdc, Dictionary<string, SortedDictionary<string, XElement>> classData)
 		{
 			// TODO??: Maybe put everything that is left in "classData" in the 'General' context as: 1) series of regular 'rt' elements, or 2) nested objects, with the top elements being the unowned ones.
 			// TODO: Once everything is in the BCs, then there should be nothing left in the 'classData' dictionary,
@@ -37,18 +37,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
 				var classDataPathname = Path.Combine(multiFileDirRoot, className + ".ClassData");
-				SortedDictionary<string, XElement> sortedInstanceData;
-				if (classData.TryGetValue(className, out sortedInstanceData))
-				{
-					// Only write one file, since there are no more high volume instances here.
-					FileWriterService.WriteSecondaryFile(classDataPathname, sortedInstanceData);
-				}
-				else
-				{
-					// Write empty class file, unless it is empty by reason of it being emptied by a Bounded Context.
-					if (!skipwriteEmptyClassFiles.Contains(className))
-						FileWriterService.WriteSecondaryFile(classDataPathname, null);
-				}
+				SortedDictionary<string, XElement> sortedInstanceData = classData[className];
+				if (sortedInstanceData.Count == 0)
+					continue; // Skip all empties.
+				// Only write one file, since there are no more high volume instances here.
+				FileWriterService.WriteSecondaryFile(classDataPathname, sortedInstanceData);
 			}
 		}
 
@@ -91,9 +84,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 					switch (className)
 					{
 						case "LangProject":
-							highLevelData.Add(className, rtElement);
-							break;
-						case "LexDb":
 							highLevelData.Add(className, rtElement);
 							break;
 					}

@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement archivedDraftsProperty,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
 			if (archivedDraftsProperty == null)
 				return;
@@ -24,9 +23,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!drafts.Any())
 				return;
 
-			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
 			var root = new XElement(SharedConstants.ArchivedDrafts);
-			doc.Add(root);
 			foreach (var draftObjSur in drafts)
 			{
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
@@ -41,11 +38,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				root.Add(draft); // They should still be in the original sorted order, so just add them.
 			}
 			if (root.HasElements)
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), doc);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), root);
 
 			archivedDraftsProperty.RemoveNodes();
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "ScrDraft" });
 		}
 
 		internal static void FlattenContext(

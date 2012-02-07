@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement stylesProperty,
 			string baseDirectory,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping,
-			HashSet<string> skipWriteEmptyClassFiles)
+			Dictionary<string, string> guidToClassMapping)
 		{
 			if (stylesProperty == null)
 				return;
@@ -29,10 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				Directory.CreateDirectory(stylesDir);
 
 			// Use only one file for all of them.
-			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
 			var root = new XElement("Styles");
-			doc.Add(root);
-
 			foreach (var styleObjSur in styles)
 			{
 				var styleGuid = styleObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
@@ -46,12 +42,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				root.Add(style);
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(stylesDir, StyleFilename), doc);
+			FileWriterService.WriteNestedFile(Path.Combine(stylesDir, StyleFilename), root);
 
 			stylesProperty.RemoveNodes();
-
-			// Can't do anything for these, since the classes are also in the lexicon.
-			//ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "StStyle" });
 		}
 
 		internal static void FlattenContext(

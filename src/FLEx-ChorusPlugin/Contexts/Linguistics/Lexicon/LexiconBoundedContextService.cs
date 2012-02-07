@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 	{
 		private const string LexDb = "LexDb";
 
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, HashSet<string> skipWriteEmptyClassFiles)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
@@ -49,9 +49,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			// The LexDb object will go into the <header>, and will still nest these owning props: Appendixes, Introduction, and Resources (plus its basic props).
 			// All of the lexical entries will then go in as siblings of, but after, the <header> element.
 			// At this point LexDb is ready to go into the <header>.
-			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
 			var root = new XElement(SharedConstants.Lexicon);
-			doc.Add(root);
 			var header = new XElement(SharedConstants.Header);
 			root.Add(header);
 			header.Add(lexDb);
@@ -60,9 +58,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				classData,
 				guidToClassMapping);
 
-			SortedDictionary<string, XElement> sortedInstanceData;
-			classData.TryGetValue(SharedConstants.LexEntry, out sortedInstanceData);
-			if (sortedInstanceData == null || sortedInstanceData.Count == 0)
+			var sortedInstanceData = classData[SharedConstants.LexEntry];
+			if (sortedInstanceData.Count == 0)
 			{
 				// Add a dummy LexEntry, so fast xml splitter won't choke.
 				// Restore will remove it, if found.
@@ -81,14 +78,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				}
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(lexiconDir, SharedConstants.LexiconFilename), doc);
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { LexDb,
-				SharedConstants.LexEntry, "LexSense",
-				"LexEntryRef", "LexEtymology",
-				"LexExampleSentence", "LexEntryType",
-				"MoMorphType", "LexReference", "LexRefType", "LexAppendix",
-				"CmSemanticDomain", "CmDomainQ" });
+			FileWriterService.WriteNestedFile(Path.Combine(lexiconDir, SharedConstants.LexiconFilename), root);
 		}
 
 		internal static void FlattenContext(
@@ -183,10 +173,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				if (listPropElement == null || !listPropElement.HasElements)
 					continue;
 
-				var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
 				var root = new XElement(propName);
-				doc.Add(root);
-
 				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
 				CmObjectNestingService.NestObject(false,
 					listElement,
@@ -196,7 +183,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				listPropElement.RemoveNodes(); // Remove the single list objsur element.
 				root.Add(listElement);
 
-				FileWriterService.WriteNestedFile(Path.Combine(lexiconRootDir, propName + "." + SharedConstants.List), doc);
+				FileWriterService.WriteNestedFile(Path.Combine(lexiconRootDir, propName + "." + SharedConstants.List), root);
 			}
 		}
 	}

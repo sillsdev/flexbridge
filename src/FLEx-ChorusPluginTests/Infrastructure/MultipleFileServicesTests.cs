@@ -12,19 +12,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(""));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("Bogus.fwdata"));
 		}
 
 		[Test]
@@ -32,32 +32,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(tempFile.Path, "ZPI"));
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(tempFile.Path));
 			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("Bogus.fwdata"));
 		}
 
 		[Test]
 		public void NonExistantPathForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(Path.Combine(new TempFile().Path, "Itaintthere") , "ZPI"));
+			using (var tempFile = new TempFile())
+			{
+				Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(Path.Combine(tempFile.Path, "Itaintthere")));
+			}
 		}
 	}
 }

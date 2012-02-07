@@ -26,13 +26,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithExtension(".CustomProperties", out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.CustomPropertiesFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
 		[Test]
@@ -69,19 +69,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
-
-		// Now throws (NotSupportedException), which is tested in UnknownFileTypeHandlerTests
-		//[Test]
-		//public void ShouldNotBeAbleToValidateFile()
-		//{
-		//    using (var tempModelVersionFile = new TempFile("<classdata />"))
-		//    {
-		//        var newpath = Path.ChangeExtension(tempModelVersionFile.Path, "someext");
-		//        File.Copy(tempModelVersionFile.Path, newpath, true);
-		//        Assert.IsNotNull(_fileHandler.ValidateFile(newpath, null));
-		//        File.Delete(newpath);
-		//    }
-		//}
 
 		[Test]
 		public void ShouldBeAbleToValidateFile()

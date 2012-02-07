@@ -18,7 +18,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	public class FieldWorksFileDiffTests
 	{
 		private IChorusFileTypeHandler _fileHandler;
-		private string _goodXmlPathname;
+		private TempFile _goodXmlTempFile;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -26,16 +26,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							   select handler).First();
-			_goodXmlPathname = Path.ChangeExtension(Path.GetTempFileName(), ".ClassData");
-			File.WriteAllText(_goodXmlPathname, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
+			_goodXmlTempFile = TempFile.WithExtension(".ClassData");
+			File.WriteAllText(_goodXmlTempFile.Path, TestResources.kXmlHeading + Environment.NewLine + TestResources.kClassDataEmptyTag);
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown()
 		{
 			_fileHandler = null;
-			if (File.Exists(_goodXmlPathname))
-				File.Delete(_goodXmlPathname);
+			_goodXmlTempFile.Dispose();
+			_goodXmlTempFile = null;
 		}
 
 		[Test]
@@ -59,7 +59,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void CanDiffGoodFwXmlFile()
 		{
-			Assert.IsTrue(_fileHandler.CanDiffFile(_goodXmlPathname));
+			Assert.IsTrue(_fileHandler.CanDiffFile(_goodXmlTempFile.Path));
 		}
 
 		// This test is of a series that test:

@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (guidToClassMapping == null) throw new ArgumentNullException("guidToClassMapping");
 
 			// 1. Rename element to that of the class, if isOwningSeqProp == false.
-			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant top be true.
+			// Otherwise, rename it to "ownseq" and leave class attribute. This allows for a special ElementStrategy for "ownseq" that has isOrderRelevant to be true.
 			var className = RenameElement(isOwningSeqProp, obj);
 			// Remove 'ownerguid', if present.
 			var ownerGuidAttribute = obj.Attribute(SharedConstants.OwnerGuid);
@@ -34,7 +34,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// 2. Nest owned objects in 'obj'.
 			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
 
-			// 3. Reset ref seq prop nodes from "objsur" to "refseq", so they can use a special ElementStrategy for "refseq" that has isOrderRelevant top be true.
+			// 3. Reset ref seq prop nodes from "objsur" to SharedConstants.Refseq,
+			// so they can use a special ElementStrategy for SharedConstants.Refseq that has isOrderRelevant top be true.
 			RenameReferenceSequenceObjsurNodes(className, obj);
 
 			// 4. Remove 'obj' from lists.
@@ -69,9 +70,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
-			var className = (owningObjElement.Name.LocalName == SharedConstants.Ownseq || owningObjElement.Name.LocalName == SharedConstants.OwnseqAtomic || owningObjElement.Name.LocalName == SharedConstants.Refseq)
-								? owningObjElement.Attribute(SharedConstants.Class).Value
-								: owningObjElement.Name.LocalName;
+			var className = (owningObjElement.Name.LocalName == SharedConstants.Ownseq
+				|| owningObjElement.Name.LocalName == SharedConstants.OwnseqAtomic // Atomic here means the whole elment is treated as effectively as if it were binary data.
+				|| owningObjElement.Name.LocalName == SharedConstants.Refseq)
+					? owningObjElement.Attribute(SharedConstants.Class).Value
+					: owningObjElement.Name.LocalName;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
 			var owningProps = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			foreach (var propertyElement in owningObjElement.Elements())
@@ -119,7 +122,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (isOwningSeqProp)
 			{
 				var className = obj.Attribute(SharedConstants.Class).Value;
-				obj.Name = (className == "StTxtPara" || className == "ScrTxtPara") ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
+				obj.Name = (className == "StTxtPara" || className == "ScrTxtPara")
+					? SharedConstants.OwnseqAtomic // Atomic here means the whole elment is treated as effectively as if it were binary data.
+					: SharedConstants.Ownseq;
 			}
 			else
 			{
