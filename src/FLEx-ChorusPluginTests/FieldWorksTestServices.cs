@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
@@ -56,7 +57,7 @@ namespace FLEx_ChorusPluginTests
 		{
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
-			var newDirName = Path.Combine(tempPath, tempPath + counter);
+			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
 			Directory.CreateDirectory(newDirName);
 			var replacement = Path.Combine(newDirName, filename);
 			File.Move(tempFileName, replacement);

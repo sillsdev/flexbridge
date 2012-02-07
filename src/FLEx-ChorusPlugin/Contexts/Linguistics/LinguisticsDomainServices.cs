@@ -29,42 +29,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
 			// TODO: Switch to proper location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
 			if (!Directory.Exists(multiFileDirRoot))
 				Directory.CreateDirectory(multiFileDirRoot);
 
-			DiscourseAnalysisBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping);
 			LinguisticsBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping);
-
-			/*
-			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
-			// This goes into TextCorpus folder.
-			var translationTagsProp = languageProjectElement.Element("TranslationTags");
-			if (translationTagsProp != null)
-			{
-				var translationTagsObjSurElement = translationTagsProp.Element(SharedConstants.Objsur);
-				if (translationTagsObjSurElement != null)
-				{
-					var tranTagListGuid = translationTagsObjSurElement.Attribute(SharedConstants.GuidStr).Value;
-					var className = guidToClassMapping[tranTagListGuid];
-					var tranTagList = classData[className][tranTagListGuid];
-
-					CmObjectNestingService.NestObject(tranTagList,
-						new Dictionary<string, HashSet<string>>(),
-						classData,
-						interestingPropertiesCache,
-						guidToClassMapping);
-					// Remove 'ownerguid'.
-					tranTagList.Attribute(SharedConstants.OwnerGuid).Remove();
-					var listDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
-						new XElement("TranslationTags", tranTagList));
-					FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, "TranslationTags." + SharedConstants.List), readerSettings, listDoc);
-					languageProjectElement.Element("TranslationTags").RemoveNodes();
-				}
-			}
-			*/
 		}
 
 		internal static void FlattenDomain(
@@ -77,6 +49,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				return;
 
 			// Do in reverse order from nesting.
+			DiscourseAnalysisBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			WordformInventoryBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			TextCorpusBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
@@ -85,7 +58,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			/* Currently handled by BaseDomainServices.
 			// TODO: Switch to right location.
 			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			DiscourseAnalysisBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir)
 			LinguisticsBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir)
 			*/
 		}
@@ -101,8 +73,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			LexiconBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 			TextCorpusBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 			WordformInventoryBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
+			DiscourseAnalysisBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 
-			//DiscourseAnalysisBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 			//LinguisticsBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
 
 			FileWriterService.RemoveEmptyFolders(linguisticsBaseDir, true);

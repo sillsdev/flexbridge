@@ -53,10 +53,20 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string GenreListFilename = GenreList + "." + List;
 		internal const string TextMarkupTags = "TextMarkupTags";
 		internal const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
+		internal const string TranslationTags = "TranslationTags";
+		internal const string TranslationTagsListFilename = TranslationTags + "." + List;
 		internal const string Inventory = "inventory";
 		internal const string WordformInventoryRootFolder = "Inventory";
 		internal const string WordformInventory = "WordformInventory";
 		internal const string WordformInventoryFilename = WordformInventory + "." + Inventory;
+		internal const string DiscourseRootFolder = "Discourse";
+		internal const string ConstChartTempl = "ConstChartTempl";
+		internal const string ConstChartTemplFilename = ConstChartTempl + "." + List;
+		internal const string ChartMarkers = "ChartMarkers";
+		internal const string ChartMarkersFilename = ChartMarkers + "." + List;
+		internal const string DsChart = "DsChart";
+		internal const string DiscourseExt = "discourse";
+		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";
