@@ -183,5 +183,32 @@ namespace FLEx_ChorusPlugin.Properties {
 				return ResourceManager.GetString("kSelectClonedDataFolder", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Select the folder of the project that you want to obtain..
+		/// </summary>
+		internal static string ksFindProjectDirectory {
+			get {
+				return ResourceManager.GetString("ksFindProjectDirectory", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to You can not obtain a project that you already have..
+		/// </summary>
+		internal static string ksTargetDirectoryExistsContent {
+			get {
+				return ResourceManager.GetString("ksTargetDirectoryExistsContent", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Project folder already exists.
+		/// </summary>
+		internal static string ksTargetDirectoryExistsTitle {
+			get {
+				return ResourceManager.GetString("ksTargetDirectoryExistsTitle", resourceCulture);
+			}
+		}
 	}
 }

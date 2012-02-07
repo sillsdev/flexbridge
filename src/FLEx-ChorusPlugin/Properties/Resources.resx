@@ -160,4 +160,13 @@
 	<data name="kCloseCurlyBrace">
 		<value xml:space="preserve">}</value>
 	</data>
+	<data name="ksTargetDirectoryExistsContent">
+		<value xml:space="preserve">You can not obtain a project that you already have.</value>
+	</data>
+	<data name="ksTargetDirectoryExistsTitle">
+		<value xml:space="preserve">Project folder already exists</value>
+	</data>
+	<data name="ksFindProjectDirectory">
+		<value xml:space="preserve">Select the folder of the project that you want to obtain.</value>
+	</data>
 </root>
