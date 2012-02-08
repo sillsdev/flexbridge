@@ -10,6 +10,9 @@ namespace FLEx_ChorusPlugin.View
 	//internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
 	//internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);
 
+	/// <summary>
+	/// This class provides the view of the Conflicts that FLEx wants to see.
+	/// </summary>
 	internal sealed partial class FwBridgeConflictView : UserControl, IFwBridgeView
 	{
 		private IEnumerable<LanguageProject> _projects;
@@ -74,12 +77,14 @@ namespace FLEx_ChorusPlugin.View
 
 		void IFwBridgeView.EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
 		{
-			_sendReceiveButton.Enabled = enableSendReceiveBtn;
-			_warninglabel1.Visible = makeWarningsVisible;
-			_warninglabel2.Visible = makeWarningsVisible;
-			_pictureBox.Visible = makeWarningsVisible;
+			throw new NotImplementedException();
 		}
 
 		#endregion
+
+		private void _projectView_Load(object sender, EventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
