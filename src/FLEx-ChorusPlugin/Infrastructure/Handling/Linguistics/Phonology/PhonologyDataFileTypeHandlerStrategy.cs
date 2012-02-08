@@ -10,17 +10,17 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 {
-	internal sealed class WordformInventoryFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class PhonologyDataFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory))
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Phondata))
 				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.WordformInventoryFilename)
+			if (Path.GetFileName(pathToFile) != SharedConstants.PhonologicalDataFilename)
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -32,11 +32,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.WordformInventoryRootFolder // "Inventory"
-					|| (root.Element(SharedConstants.Header) != null && !root.Element(SharedConstants.Header).Elements("PunctuationForm").Any())
-					|| !root.Elements("WfiWordform").Any())
+				if (root.Name.LocalName != SharedConstants.PhonologicalData
+					|| (root.Element(SharedConstants.Header) != null)
+					|| root.Elements(SharedConstants.PhPhonData).Count() != 1)
 				{
-					return "Not valid inventory file";
+					return "Not valid phonology data file";
 				}
 
 				return null;
@@ -58,8 +58,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				repository,
 				parent,
 				child,
-				SharedConstants.Header,
-				"WfiWordform", SharedConstants.GuidStr);
+				null,
+				SharedConstants.PhPhonData, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -69,23 +69,23 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
-				SharedConstants.Header,
-				SharedConstants.LexEntry,
+				null,
+				SharedConstants.PhPhonData,
 				SharedConstants.GuidStr,
-				WritePreliminaryTextCorpusInformation);
+				WritePreliminaryPhonologyDataInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.Inventory; }
+			get { return SharedConstants.Phondata; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryTextCorpusInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryPhonologyDataInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.WordformInventoryRootFolder); // "Inventory", not SharedConstants.Inventory, which is the lc "inventory" extension. I gotta clean up thie confusion.
+			writer.WriteStartElement(SharedConstants.PhonologicalData);
 			reader.Read();
 		}
 	}

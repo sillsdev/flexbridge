@@ -47,6 +47,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/TextCorpus/*.textincorpus");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Inventory/WordformInventory.inventory");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Discourse/Charting.discourse");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.featsys");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/AnalyzingAgents.agents");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/MorphAndSynData.morphdata");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Phonology/PhonologicalData.phondata");
 			// TODO: Add others.
 
 			// Anthropology

@@ -144,7 +144,11 @@
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseAnalysisFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\AnalyzingAgentFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\MorphAndSynFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\PhonologyDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
