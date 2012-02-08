@@ -31,31 +31,38 @@ namespace FieldWorksBridge
 			}
 
 			var options = ParseCommandLineArgs(args);
-			options["-u"] = "King of France";
-			options["-p"] = "C:/FW-WW/DistFiles/Projects/benice/benice.fwdata";
-			options["-v"] = "start";
-			using (var controller = new FwBridgeController(options))
+			//options["-u"] = "King of France";
+			//options["-p"] = "C:/FW-WW/DistFiles/Projects/benice/benice.fwdata";
+			//options["-v"] = "start";
+			if(!options.ContainsKey("-v") || options["-v"] == null)
 			{
-				if(!options.ContainsKey("-v"))
+				using (var controller = new FwBridgeController(options))
 				{
 					Application.Run(controller.MainForm);
 				}
-				else if(options["-v"] != null)
+			}
+			else
+			{
+				switch (options["-v"])
 				{
-					switch (options["-v"])
-					{
-						case "obtain":
-						case "start":
-						case "send_receive":
+					case "obtain":
+					case "start":
+					case "send_receive":
+						using (var controller = new FwBridgeSynchronizeController(options))
+						{
 							var syncProj = new SynchronizeProject();
 							syncProj.SynchronizeFieldWorksProject(controller);
-							break;
-						case "view_notes": //view the conflict\notes report
-							break;
-						default:
-							//display options dialog
-							break;
-					}
+						}
+						break;
+					case "view_notes": //view the conflict\notes report
+						using (var controller = new FwBridgeConflictController(options))
+						{
+							Application.Run(controller.MainForm);
+						}
+						break;
+					default:
+						//display options dialog
+						break;
 				}
 			}
 

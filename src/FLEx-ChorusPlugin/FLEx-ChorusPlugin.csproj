@@ -136,6 +136,8 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
+	<Compile Include="Controller\FwBridgeConflictController.cs" />
+	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
 	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
@@ -232,6 +234,7 @@
 	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
+	<Compile Include="View\IFwBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IGetSharedProject.cs" />
 	<Compile Include="View\IProjectView.cs" />

@@ -8,7 +8,7 @@ using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	internal sealed class FwBridgeController : IFwBridgeController, IDisposable
+	internal sealed class FwBridgeSynchronizeController : IFwBridgeController, IDisposable
 	{
 		private readonly IFwBridgeView _fwBridgeView;
 		private readonly IProjectView _projectView;
@@ -24,18 +24,18 @@ namespace FLEx_ChorusPlugin.Controller
 		/// <summary>
 		/// Constructor that makes a standard controller.
 		/// </summary>
-		internal FwBridgeController()
+		internal FwBridgeSynchronizeController()
 			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
 		{ }
 
 		/// <summary>
 		/// Constructor that makes a conflict reporting/resolving controller.
 		/// </summary>
-		internal FwBridgeController(string userName, string project)
+		internal FwBridgeSynchronizeController(string userName, string project)
 			: this(new FieldWorksBridge(), new FwBridgeConflictView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
 		{ }
 
-		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
+		private FwBridgeSynchronizeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
 		{
 			_repository = new LanguageProjectRepository(locator);
 			_projectSynchronizer = projectSynchronizer;
@@ -65,11 +65,11 @@ namespace FLEx_ChorusPlugin.Controller
 		/// <summary>
 		/// For testing only.
 		/// </summary>
-		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
+		internal FwBridgeSynchronizeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
 			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
 		{ }
 
-		public FwBridgeController(Dictionary<string, string> options) : this()
+		public FwBridgeSynchronizeController(Dictionary<string, string> options) : this()
 		{
 			string user = "anonymous";
 			if (options.ContainsKey("-u"))
@@ -172,7 +172,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FwBridgeController()
+		~FwBridgeSynchronizeController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

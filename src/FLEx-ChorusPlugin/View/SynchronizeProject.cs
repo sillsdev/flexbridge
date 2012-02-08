@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 
@@ -54,7 +52,7 @@ namespace FLEx_ChorusPlugin.View
 
 		#endregion
 
-		public void SynchronizeFieldWorksProject(FwBridgeController controller)
+		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
 		{
 			SynchronizeFieldWorksProject(controller.MainForm, controller.ChorusSystem, controller.CurrentProject);
 		}
