@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -16,6 +17,7 @@ namespace FLEx_ChorusPlugin.Controller
 		private readonly LanguageProjectRepository _repository;
 		private readonly ISynchronizeProject _projectSynchronizer;
 		private readonly IGetSharedProject _getSharedProject;
+		private readonly string _userName;
 		private ChorusSystem _chorusSystem;
 		private LanguageProject _currentLanguageProject;
 
@@ -59,6 +61,21 @@ namespace FLEx_ChorusPlugin.Controller
 		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
 			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
 		{ }
+
+		public FwBridgeController(Dictionary<string, string> options) : this()
+		{
+			string user = "anonymous";
+			if (options.ContainsKey("-u"))
+			{
+				user = options["-u"];
+			}
+			if (options.ContainsKey("-p"))
+			{
+				_currentLanguageProject = new LanguageProject(options["-p"]);
+				_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
+				_existingSystemView.SetSystem(_chorusSystem, _currentLanguageProject);
+			}
+		}
 
 		internal Form MainForm { get; private set; }
 
@@ -156,6 +173,17 @@ namespace FLEx_ChorusPlugin.Controller
 		}
 
 		private bool IsDisposed { get; set; }
+
+		public ChorusSystem ChorusSystem
+		{
+			get { return _chorusSystem; }
+		}
+
+		public LanguageProject CurrentProject
+		{
+			get { return _currentLanguageProject; }
+		}
+
 		/// <summary>
 		/// Executes in two distinct scenarios.
 		///
