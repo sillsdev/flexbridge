@@ -33,10 +33,10 @@ namespace FieldWorksBridge
 			var options = ParseCommandLineArgs(args);
 			//options["-u"] = "King of France";
 			//options["-p"] = "C:/FW-WW/DistFiles/Projects/benice/benice.fwdata";
-			//options["-v"] = "start";
+			//options["-v"] = "obtain";
 			if(!options.ContainsKey("-v") || options["-v"] == null)
 			{
-				using (var controller = new FwBridgeController(options))
+				using (var controller = new FwBridgeController())
 				{
 					Application.Run(controller.MainForm);
 				}
@@ -46,6 +46,11 @@ namespace FieldWorksBridge
 				switch (options["-v"])
 				{
 					case "obtain":
+						using (var controller = new ObtainProjectController(options))
+						{
+							Application.Run(controller.MainForm);
+						}
+						break;
 					case "start":
 					case "send_receive":
 						using (var controller = new FwBridgeSynchronizeController(options))

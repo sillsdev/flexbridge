@@ -46,8 +46,6 @@ namespace FLEx_ChorusPlugin.Controller
 
 			_existingSystemView = _projectView.ExistingSystemView;
 
-			_startupNewView = _projectView.StartupNewView;
-
 			_fwBridgeView = fwBridgeView;
 
 			_fwBridgeView.ProjectSelected += FwBridgeViewProjectSelectedHandler;
@@ -64,7 +62,6 @@ namespace FLEx_ChorusPlugin.Controller
 			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer)
 		{ }
 
-			_userName = user;
 		private void SetSystem(ChorusSystem system)
 		{
 			if (_chorusSystem != null)
