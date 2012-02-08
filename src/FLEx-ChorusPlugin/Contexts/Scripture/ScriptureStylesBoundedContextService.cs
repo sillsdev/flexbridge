@@ -83,18 +83,5 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var sortedStyle in sortedStyles.Values)
 				stylesOwningProp.Add(sortedStyle);
 		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			var stylePathname = Path.Combine(scriptureBaseDir, StyleFilename);
-			if (File.Exists(stylePathname))
-				File.Delete(stylePathname);
-
-			// Scripture domain does it all.
-			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
-		}
 	}
 }

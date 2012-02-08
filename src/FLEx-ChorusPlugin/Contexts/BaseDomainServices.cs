@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,21 +24,12 @@ namespace FLEx_ChorusPlugin.Contexts
 			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping); // Does only new.
 			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping); // Does only new.
 
-			// TODO: Props to not store in nested LangProj:
-			// TODO:	These are all for LangProj
-			/*
-			 * "ResearchNotebook"
-			 * "AnthroList",
-			 * "ConfidenceLevels",
-			 * "Restrictions",
-			 * "Roles",
-			 * "Status",
-			 * "Locations",
-			 * "People",
-			 * "Education",
-			 * "TimeOfDay",
-			 * "Positions"
-			*/
+			// TODO: AnnotationDefs own prop of LP. Where does it go?
+			// TODO: LP Styles is used by everyone, but Scripture, so they go where LP ends up.
+			// TODO: User-defined lists (unowned) will go into a separate "UserDefinedLists" context and folder.
+			// TODO: LP Filters (OC) can go into one filters file where LP goes.
+			// TODO: LP Annotations (OC). Who still owns them? If all else fails, or they are used by several BCs, then store them in on file
+
 			// Does 'leftover' stuff in old style.
 			OldStyleDomainServices.WriteData(pathRoot, mdc, classData);
 		}
@@ -143,6 +135,20 @@ namespace FLEx_ChorusPlugin.Contexts
 						new XAttribute(SharedConstants.GuidStr, ownedGuid.ToLowerInvariant()),
 						new XAttribute("t", typeValue)
 					};
+		}
+
+		internal static void RemoveBoundedContextDataCore(string contextBaseDir)
+		{
+			if (!Directory.Exists(contextBaseDir))
+				return;
+
+			foreach (var pathname in Directory.GetFiles(contextBaseDir, "*.*", SearchOption.AllDirectories)
+				.Where(pathname => Path.GetExtension(pathname).ToLowerInvariant() != ".chorusnotes"))
+			{
+				File.Delete(pathname);
+			}
+
+			FileWriterService.RemoveEmptyFolders(contextBaseDir, true);
 		}
 	}
 }

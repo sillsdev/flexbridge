@@ -152,25 +152,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				discourseElement);
 		}
 
-		internal static void RemoveBoundedContextData(string linguisticsBase)
-		{
-			var discourseDir = Path.Combine(linguisticsBase, SharedConstants.DiscourseRootFolder);
-			if (!Directory.Exists(discourseDir))
-				return;
-
-			var chartingPathname = Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename);
-			if (File.Exists(chartingPathname))
-				File.Delete(chartingPathname);
-
-			foreach (var listPathname in Directory.GetFiles(discourseDir, "*." + SharedConstants.List))
-			{
-				File.Delete(listPathname);
-			}
-
-			// Linguistics domain will call this.
-			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
-		}
-
 		private static void ReplaceElementNameWithAndAddClassAttribute(string replacementElementName, XElement elementToRename)
 		{
 			var oldElementName = elementToRename.Name.LocalName;

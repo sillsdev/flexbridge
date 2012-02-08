@@ -67,6 +67,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string DsChart = "DsChart";
 		internal const string DiscourseExt = "discourse";
 		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
+		internal const string Phonology = "Phonology";
+		internal const string PhonRuleFeaturesFilename = "PhonRuleFeatures" + "." + List;
+		internal const string Phondata = "phondata";
+		internal const string PhonologicalDataFilename = "PhonologicalData." + Phondata;
+		internal const string PhonologyFeaturesFilename = "PhonologyFeatures." + Featsys;
+		internal const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
+		internal const string MorphologyAndSyntax = "MorphologyAndSyntax";
+		internal const string PartsOfSpeech = "PartsOfSpeech";
+		internal const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
+		internal const string Agents = "agents";
+		internal const string AnalyzingAgents = "AnalyzingAgents";
+		internal const string AnalyzingAgentsFilename = AnalyzingAgents + "." + Agents;
+		internal const string MorphAndSynFeaturesFilename = "MorphAndSynFeatureSystem." + Featsys;
+		internal const string Morphdata = "morphdata";
+		internal const string MorphAndSynDataFilename = "MorphAndSynData." + Morphdata;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";

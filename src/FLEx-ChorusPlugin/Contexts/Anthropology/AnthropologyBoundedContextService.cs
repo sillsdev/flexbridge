@@ -124,15 +124,5 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				}
 			}
 		}
-
-		internal static void RemoveBoundedContextData(string anthropologyBase)
-		{
-			var notebookPath = Path.Combine(anthropologyBase, SharedConstants.DataNotebookFilename);
-			if (File.Exists(notebookPath))
-				File.Delete(notebookPath);
-
-			// Let domain do it.
-			// FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
-		}
 	}
 }

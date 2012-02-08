@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -36,13 +37,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			var anthropologyBaseDir = Path.Combine(pathRoot, SharedConstants.Anthropology);
-			if (!Directory.Exists(anthropologyBaseDir))
-				return;
-
-			AnthropologyBoundedContextService.RemoveBoundedContextData(anthropologyBaseDir);
-
-			FileWriterService.RemoveEmptyFolders(anthropologyBaseDir, true);
+			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Anthropology));
 		}
 	}
 }

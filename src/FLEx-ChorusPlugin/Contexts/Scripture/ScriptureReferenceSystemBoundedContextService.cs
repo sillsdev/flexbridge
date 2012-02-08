@@ -53,18 +53,5 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
 				null); // Not owned.
 		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			var refSysPathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureReferenceSystemFilename);
-			if (File.Exists(refSysPathname))
-				File.Delete(refSysPathname);
-
-			// Scripture domain does it all.
-			//FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
-		}
 	}
 }
