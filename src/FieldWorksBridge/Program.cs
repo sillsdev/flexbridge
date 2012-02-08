@@ -28,7 +28,9 @@ namespace FieldWorksBridge
 				return;
 			}
 
-			using (var controller = new FwBridgeController())
+			string userName;
+			string project; // full path to project file
+			using (var controller = new FwBridgeController(userName, project))
 			{
 				Application.Run(controller.MainForm);
 			}
