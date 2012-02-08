@@ -18,6 +18,23 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			if (!Directory.Exists(morphAndSynDir))
 				Directory.CreateDirectory(morphAndSynDir);
 
+			var lexDb = classData["LexDb"].Values.FirstOrDefault();
+			if (lexDb != null)
+			{
+				// Write out LexDb's "MorphTypes" list, as per AndyB (7 Feb 2012).
+				var randomMorphTypeElement = new XElement(SharedConstants.MorphTypes);
+				BaseDomainServices.NestList(classData,
+					guidToClassMapping,
+					classData["CmPossibilityList"],
+					randomMorphTypeElement,
+					lexDb,
+					SharedConstants.MorphTypes);
+				if (randomMorphTypeElement.HasElements)
+				{
+					// NB: Write file, but only if LP has the POS list.
+					FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename), (XElement)randomMorphTypeElement.FirstNode);
+				}
+			}
 			var langProjElement = classData["LangProject"].Values.First();
 			// 1. Nest: LP's MorphologicalData(MoMorphData OA) (Also does MoMorphData's ProdRestrict(CmPossibilityList)
 			//		Remove objsur node from LP.
@@ -90,8 +107,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 
 			// B. Write: LP's MorphologicalData(MoMorphData OA) in a new extension (morphdata)
 			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement("MorphAndSynData", morphDataElement));
-
-			// TODO: MorphType list moved here from Lexicon. (Requires doing Lexicon after this, so it is still in classData.
 		}
 
 		internal static void FlattenContext(
@@ -104,9 +119,21 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				return;
 
 			var langProjElement = highLevelData["LangProject"];
+			var lexDb = highLevelData["LexDb"];
+			var currentPathname = Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename);
+			if (lexDb != null && File.Exists(currentPathname))
+			{
+				// Restore MorphTypes list to LexDb.
+				var morphTypesDoc = XDocument.Load(currentPathname);
+				BaseDomainServices.RestoreElement(
+					currentPathname,
+					sortedData,
+					lexDb, SharedConstants.MorphTypes,
+					morphTypesDoc.Root.Element("CmPossibilityList")); // Owned elment.
+			}
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 
-			var currentPathname = Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynFeaturesFilename);
+			currentPathname = Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynFeaturesFilename);
 			if (File.Exists(currentPathname))
 			{
 				var mAndSFeatSysDoc = XDocument.Load(currentPathname);

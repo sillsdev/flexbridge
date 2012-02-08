@@ -89,6 +89,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string MoMorphData = "MoMorphData";
 		internal const string MorphAndSynData = "MorphAndSynData";
 		internal const string MorphAndSynDataFilename = MorphAndSynData + "." + Morphdata;
+		internal const string MorphTypes = "MorphTypes";
+		internal const string MorphTypesListFilename = MorphTypes + "." + List;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";

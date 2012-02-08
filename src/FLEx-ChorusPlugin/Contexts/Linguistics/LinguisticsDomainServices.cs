@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon;
@@ -10,7 +9,6 @@ using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
 using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics
 {
@@ -29,12 +27,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				Directory.CreateDirectory(linguisticsBaseDir);
 
 			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);  // TODO: Move MorphType into Morph & Syn, as per AndyB. Needs to do Lexicon after MorphologyAndSyntaxBoundedContextService.
+			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			// Both ReversalBoundedContextService and MorphologyAndSyntaxBoundedContextService abscond with some stuff owned by LexDb. :-(
+			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			PhonologyBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(
@@ -47,12 +46,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				return;
 
 			// Do in reverse order from nesting.
-			MorphologyAndSyntaxBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			PhonologyBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			DiscourseAnalysisBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			WordformInventoryBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			TextCorpusBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);// TODO: Move before MorphologyAndSyntaxBoundedContextService, so it can restore MorphType tp LexDb.
+			// MorphologyAndSyntaxBoundedContextService and ReversalBoundedContextService, both *must* have LexiconBoundedContextService done before them,
+			// since they re-add stuff to LexDb that they removed
+			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
+			MorphologyAndSyntaxBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 		}
 

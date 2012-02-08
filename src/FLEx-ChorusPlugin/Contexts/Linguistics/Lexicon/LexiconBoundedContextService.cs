@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 							"SenseTypes",
 							"UsageTypes",
 							"DomainTypes",
-							"MorphTypes", // TODO: Move into Morph & Syn, as per AndyB.
+							// Moved to Morph & Syn, as per AndyB. "MorphTypes",
 							"References",
 							"VariantEntryTypes",
 							"ComplexEntryTypes",
@@ -90,8 +90,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			if (!Directory.Exists(lexiconDir))
 				return;
 
-			// No. Won't be there now, so fish it out of the file and put it in.
-			// var lexDb = highLevelData[LexDb];
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var lexDbPathname = Path.Combine(lexiconDir, SharedConstants.LexiconFilename);
@@ -99,7 +97,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			var rootLexDbDoc = lexDbDoc.Root;
 			var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
 			var lexDb = headerLexDbDoc.Element(LexDb);
-			highLevelData[LexDb] = lexDb;
+			highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
 			// Add LexDb <objsur> element to LP.
 			BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
 			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
