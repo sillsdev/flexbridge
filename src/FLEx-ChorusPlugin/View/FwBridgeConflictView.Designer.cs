@@ -115,7 +115,6 @@
 			this._projectView.Name = "_projectView";
 			this._projectView.Size = new System.Drawing.Size(852, 402);
 			this._projectView.TabIndex = 0;
-			this._projectView.Load += new System.EventHandler(this._projectView_Load);
 			//
 			// FwBridgeConflictView
 			//

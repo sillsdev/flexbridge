@@ -126,9 +126,8 @@
 	<Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
 	<Compile Include="BorrowedCode\ListenerForUnitTests.cs" />
 	<Compile Include="LoadHandlersTests.cs" />
-	<Compile Include="Mocks\MockedConflictProjectView.cs" />
-	<Compile Include="Mocks\MockedFwBridgeConflictView.cs">
-	  <SubType>UserControl</SubType>
+	<Compile Include="Mocks\MockedConflictView.cs">
+	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">

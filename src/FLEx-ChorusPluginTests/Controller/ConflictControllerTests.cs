@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Mocks;
@@ -16,35 +17,35 @@ namespace FLEx_ChorusPluginTests.Controller
 	public class ConflictControllerTests
 	{
 		private FwBridgeConflictController _realController;
-		private MockedProjectPathLocator _mockedProjectPathLocator;
-		private MockedFwBridgeConflictView _mockedFwBridgeView;
-		private MockedConflictProjectView _mockedProjectView;
 		private MockedExistingSystemView _mockedExistingSystemView;
-		//private MockedStartupNewView _mockedStartupNewView;
-		//private MockedSynchronizeProject _mockedSynchronizeProject;
 		private DummyFolderSystem _dummyFolderSystem;
 		private MockedGetSharedProject _mockedGetSharedProject;
+		private Form _mockedConflictView;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
-			_mockedProjectPathLocator = new MockedProjectPathLocator(new HashSet<string> {_dummyFolderSystem.BaseFolderPath});
 
-			//_mockedSynchronizeProject = new MockedSynchronizeProject();
 			_mockedGetSharedProject = new MockedGetSharedProject();
+			_mockedConflictView = new MockedConflictView();
 
-			_mockedFwBridgeView = new MockedFwBridgeConflictView();
-			_realController = new FwBridgeConflictController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedGetSharedProject);
+			_realController = new FwBridgeConflictController(_mockedConflictView);
+			_realController.InitController("Louis XIV", GetDummyFilePath());
 
-			_mockedProjectView = (MockedConflictProjectView)_mockedFwBridgeView.ProjectView;
-			_mockedExistingSystemView = (MockedExistingSystemView)_mockedProjectView.ExistingSystemView;
-			//_mockedStartupNewView = (MockedStartupNewView)_mockedProjectView.StartupNewView;
+		}
+
+		private string GetDummyFilePath()
+		{
+			var path = Path.Combine(_dummyFolderSystem.BaseFolderPath, "ZPI");
+			return Path.Combine(path, "ZPI.fwdata");
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTeardown()
 		{
+			_mockedConflictView.Dispose();
+			_mockedConflictView = null;
 			_dummyFolderSystem.Dispose();
 			_dummyFolderSystem = null;
 			_realController.Dispose();
@@ -57,41 +58,16 @@ namespace FLEx_ChorusPluginTests.Controller
 			Assert.IsNotNull(_realController.MainForm);
 		}
 
-		#region Ensure IFwBridgeView is handled by controller
-
 		[Test]
-		public void EnsureProjectViewIsAvailable()
+		public void EnsureLanguageProjectExists()
 		{
-			Assert.IsNotNull(_mockedFwBridgeView.ProjectView);
+			Assert.IsNotNull(_realController.CurrentProject);
 		}
 
 		[Test]
-		public void EnsureProjectsHasTwoSampleProjects()
+		public void EnsureChorusSystemExists()
 		{
-			//Note: The Obtain Project option gets added so we need to test for 3
-			//      when there are 2 samples
-			Assert.AreEqual(3, _mockedFwBridgeView.Projects.Count());
+			Assert.IsNotNull(_realController.ChorusSystem);
 		}
-
-		#endregion Ensure IFwBridgeView is handled by controller
-
-		#region Ensure IProjectView is handled by controller
-
-		// IProjectView_ActivateView is tested elsewhere.
-
-		[Test]
-		public void EnsureIProjectViewHasIExistingSystemView()
-		{
-			Assert.IsNotNull(_mockedProjectView.ExistingSystemView);
-		}
-
-		[Test]
-		[ExpectedException(typeof(NotImplementedException))]
-		public void EnsureIProjectViewHasIStartupNewView()
-		{
-			var dummy = _mockedProjectView.StartupNewView;
-		}
-
-		#endregion Ensure IProjectView is handled by controller
 	}
 }

@@ -25,13 +25,6 @@ namespace FLEx_ChorusPlugin.Controller
 			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
 		{ }
 
-		/// <summary>
-		/// Constructor that makes a conflict reporting/resolving controller.
-		/// </summary>
-		internal FwBridgeController(string userName, string project)
-			: this(new FieldWorksBridge(), new FwBridgeConflictView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
-		{ }
-
 		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
 		{
 			_repository = new LanguageProjectRepository(locator);
