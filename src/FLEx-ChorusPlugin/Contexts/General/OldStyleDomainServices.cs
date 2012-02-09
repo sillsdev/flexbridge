@@ -34,6 +34,9 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// Write data records in guid sorted order.
 			// Write class file for each concrete class, whether it has data or not.
 			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
+			if (!Directory.Exists(multiFileDirRoot))
+				Directory.CreateDirectory(multiFileDirRoot);
+
 			foreach (var className in mdc.AllConcreteClasses.Select(concClassInfo => concClassInfo.ClassName))
 			{
 				var classDataPathname = Path.Combine(multiFileDirRoot, className + ".ClassData");
@@ -47,15 +50,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 		internal static void RemoveDataFiles(string pathRoot)
 		{
-			var multiFileDirRoot = Path.Combine(pathRoot, "DataFiles");
-			if (!Directory.Exists(multiFileDirRoot))
-				return;
-
-			// Delete all data files at any folder depth.
-			foreach (var dataFilePathname in Directory.GetFiles(multiFileDirRoot, "*.ClassData", SearchOption.AllDirectories))
-				File.Delete(dataFilePathname);
-
-			FileWriterService.RemoveEmptyFolders(multiFileDirRoot, true);
+			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, "DataFiles"));
 		}
 
 		internal static void RestoreFiles(XmlWriter writer, XmlReaderSettings readerSettings, string baseDir)

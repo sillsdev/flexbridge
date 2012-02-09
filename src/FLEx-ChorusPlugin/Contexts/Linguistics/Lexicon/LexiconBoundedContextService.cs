@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 							"SenseTypes",
 							"UsageTypes",
 							"DomainTypes",
-							"MorphTypes",
+							"MorphTypes", // TODO: Move into Morph & Syn, as per AndyB.
 							"References",
 							"VariantEntryTypes",
 							"ComplexEntryTypes",
@@ -142,21 +142,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					entryElement,
 					null); // Entries are not owned.
 			}
-		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBaseDir)
-		{
-			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
-			if (!Directory.Exists(lexiconDir))
-				return;
-
-			if (File.Exists(Path.Combine(lexiconDir, SharedConstants.LexiconFilename)))
-				File.Delete(Path.Combine(lexiconDir, SharedConstants.LexiconFilename));
-			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
-				File.Delete(listPathname);
-
-			// Let domain do it.
-			// FileWriterService.RemoveEmptyFolders(lexiconDir, true);
 		}
 
 		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,

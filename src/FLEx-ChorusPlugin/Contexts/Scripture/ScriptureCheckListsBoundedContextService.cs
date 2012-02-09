@@ -71,17 +71,5 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var sortedList in sortedLists.Values)
 				checkListsProp.Add(sortedList);
 		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			foreach (var checkListPathname in Directory.GetFiles(scriptureBaseDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
-				File.Delete(checkListPathname);
-
-			// Scripture domain does it all.
-			//FileWriterService.RemoveEmptyFolders(clDir, true);
-		}
 	}
 }

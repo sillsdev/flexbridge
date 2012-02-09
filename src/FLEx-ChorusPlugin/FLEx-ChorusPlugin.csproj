@@ -132,6 +132,8 @@
   <ItemGroup>
 	<Compile Include="Contexts\BaseDomainServices.cs" />
 	<Compile Include="Contexts\General\OldStyleDomainServices.cs" />
+	<Compile Include="Contexts\Linguistics\MorphologyAndSyntax\MorphologyAndSyntaxBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\Phonology\PhonologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ArchivedDraftsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ImportSettingsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
@@ -146,7 +148,11 @@
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseAnalysisFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\AnalyzingAgentFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\MorphAndSynFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\PhonologyDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
@@ -183,7 +189,6 @@
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
 	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
 	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />
-	<Compile Include="Contexts\Linguistics\LinguisticsBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\LinguisticsDomainServices.cs" />
 	<Compile Include="Infrastructure\MetadataCache.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />

@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax;
+using FLEx_ChorusPlugin.Contexts.Linguistics.Phonology;
 using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
 using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
@@ -26,17 +29,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				Directory.CreateDirectory(linguisticsBaseDir);
 
 			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);  // TODO: Move MorphType into Morph & Syn, as per AndyB. Needs to do Lexicon after MorphologyAndSyntaxBoundedContextService.
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-
-			// TODO: Switch to proper location.
-			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			if (!Directory.Exists(multiFileDirRoot))
-				Directory.CreateDirectory(multiFileDirRoot);
-
-			LinguisticsBoundedContextService.ExtractBoundedContexts(multiFileDirRoot, mdc, classData, guidToClassMapping);
+			PhonologyBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(
@@ -49,35 +47,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				return;
 
 			// Do in reverse order from nesting.
+			MorphologyAndSyntaxBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
+			PhonologyBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			DiscourseAnalysisBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			WordformInventoryBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			TextCorpusBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
+			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);// TODO: Move before MorphologyAndSyntaxBoundedContextService, so it can restore MorphType tp LexDb.
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-
-			/* Currently handled by BaseDomainServices.
-			// TODO: Switch to right location.
-			var multiFileDirRoot = Path.Combine(rootDir, "DataFiles");
-			LinguisticsBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir)
-			*/
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			var linguisticsBaseDir = Path.Combine(pathRoot, SharedConstants.Linguistics);
-			if (!Directory.Exists(linguisticsBaseDir))
-				return;
-
-			// Order is less a concern here.
-			ReversalBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-			LexiconBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-			TextCorpusBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-			WordformInventoryBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-			DiscourseAnalysisBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-
-			//LinguisticsBoundedContextService.RemoveBoundedContextData(linguisticsBaseDir);
-
-			FileWriterService.RemoveEmptyFolders(linguisticsBaseDir, true);
+			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Linguistics));
 		}
 	}
 }

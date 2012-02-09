@@ -67,6 +67,28 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string DsChart = "DsChart";
 		internal const string DiscourseExt = "discourse";
 		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
+		internal const string Phonology = "Phonology";
+		internal const string PhonRuleFeaturesFilename = "PhonRuleFeatures" + "." + List;
+		internal const string Phondata = "phondata";
+		internal const string PhPhonData = "PhPhonData";
+		internal const string PhonologicalData = "PhonologicalData";
+		internal const string PhonologicalDataFilename = PhonologicalData + "." + Phondata;
+		internal const string PhonologyFeaturesFilename = "PhonologyFeatures." + Featsys;
+		internal const string FeatureSystem = "FeatureSystem";
+		internal const string FsFeatureSystem = "FsFeatureSystem";
+		internal const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
+		internal const string MorphologyAndSyntax = "MorphologyAndSyntax";
+		internal const string PartsOfSpeech = "PartsOfSpeech";
+		internal const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
+		internal const string Agents = "agents";
+		internal const string AnalyzingAgents = "AnalyzingAgents";
+		internal const string CmAgent = "CmAgent";
+		internal const string AnalyzingAgentsFilename = AnalyzingAgents + "." + Agents;
+		internal const string MorphAndSynFeaturesFilename = "MorphAndSynFeatureSystem." + Featsys;
+		internal const string Morphdata = "morphdata";
+		internal const string MoMorphData = "MoMorphData";
+		internal const string MorphAndSynData = "MorphAndSynData";
+		internal const string MorphAndSynDataFilename = MorphAndSynData + "." + Morphdata;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";

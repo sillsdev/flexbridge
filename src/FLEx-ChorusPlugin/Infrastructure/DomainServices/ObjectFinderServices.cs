@@ -72,9 +72,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return currentBytes;
 		}
 
-		internal static List<string> GetGuids(XContainer textElement, string propertyName)
+		internal static List<string> GetGuids(XContainer owningElement, string propertyName)
 		{
-			var propElement = textElement.Element(propertyName);
+			var propElement = owningElement.Element(propertyName);
 
 			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements(SharedConstants.Objsur)
 																 select osEl.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()).ToList();

@@ -119,18 +119,5 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			foreach (var sortedRev in sortedRevs.Values)
 				reversalsOwningProp.Add(sortedRev);
 		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBaseDir)
-		{
-			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
-			if (!Directory.Exists(reversalDir))
-				return;
-
-			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
-				File.Delete(reversalPathname);
-
-			// Linguistics domain will call this.
-			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
-		}
 	}
 }

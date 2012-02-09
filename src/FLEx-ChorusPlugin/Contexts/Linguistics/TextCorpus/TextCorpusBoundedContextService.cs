@@ -149,21 +149,5 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			foreach (var sortedTextObjSurElement in sortedTexts.Values)
 				langProjOwningProp.Add(sortedTextObjSurElement);
 		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBase)
-		{
-			var textCorpusDir = Path.Combine(linguisticsBase, SharedConstants.TextCorpus);
-			if (!Directory.Exists(textCorpusDir))
-				return;
-
-			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
-				File.Delete(textPathname);
-
-			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
-				File.Delete(textPathname);
-
-			// Linguistics domain will call this.
-			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
-		}
 	}
 }

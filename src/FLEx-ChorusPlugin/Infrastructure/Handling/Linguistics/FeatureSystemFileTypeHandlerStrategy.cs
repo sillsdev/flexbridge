@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -10,17 +9,15 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Palaso.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 {
-	internal sealed class WordformInventoryFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class FeatureSystemFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.WordformInventoryFilename)
+			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Featsys))
 				return false;
 
 			return ValidateFile(pathToFile) == null;
@@ -32,11 +29,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.WordformInventoryRootFolder // "Inventory"
-					|| (root.Element(SharedConstants.Header) != null && !root.Element(SharedConstants.Header).Elements("PunctuationForm").Any())
-					|| !root.Elements("WfiWordform").Any())
+				if (root.Name.LocalName != SharedConstants.FeatureSystem
+					|| (root.Element(SharedConstants.Header) != null)
+					|| root.Elements(SharedConstants.FsFeatureSystem).Count() != 1)
 				{
-					return "Not valid inventory file";
+					return "Not valid feature system file";
 				}
 
 				return null;
@@ -58,34 +55,34 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				repository,
 				parent,
 				child,
-				SharedConstants.Header,
-				"WfiWordform", SharedConstants.GuidStr);
+				null,
+				SharedConstants.FsFeatureSystem, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
-				SharedConstants.Header,
-				SharedConstants.LexEntry,
+				null,
+				SharedConstants.FsFeatureSystem,
 				SharedConstants.GuidStr,
-				WritePreliminaryTextCorpusInformation);
+				WritePreliminaryFeatureSystemInformation);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.Inventory; }
+			get { return SharedConstants.Featsys; }
 		}
 
 		#endregion
 
-		private static void WritePreliminaryTextCorpusInformation(XmlReader reader, XmlWriter writer)
+		private static void WritePreliminaryFeatureSystemInformation(XmlReader reader, XmlWriter writer)
 		{
 			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.WordformInventoryRootFolder); // "Inventory", not SharedConstants.Inventory, which is the lc "inventory" extension. I gotta clean up thie confusion.
+			writer.WriteStartElement(SharedConstants.FeatureSystem);
 			reader.Read();
 		}
 	}
