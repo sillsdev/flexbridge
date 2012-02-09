@@ -29,15 +29,15 @@
 		private void InitializeComponent()
 		{
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._warninglabel2 = new System.Windows.Forms.Label();
 			this._pictureBox = new System.Windows.Forms.PictureBox();
 			this._warninglabel1 = new System.Windows.Forms.Label();
 			this._label1 = new System.Windows.Forms.Label();
-			this._cbProjects = new System.Windows.Forms.ComboBox();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this._splitContainer.Panel1.SuspendLayout();
 			this._splitContainer.Panel2.SuspendLayout();
 			this._splitContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).BeginInit();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// _splitContainer
@@ -51,26 +51,15 @@
 			//
 			// _splitContainer.Panel1
 			//
-			this._splitContainer.Panel1.Controls.Add(this._warninglabel2);
 			this._splitContainer.Panel1.Controls.Add(this._pictureBox);
 			this._splitContainer.Panel1.Controls.Add(this._warninglabel1);
 			this._splitContainer.Panel1.Controls.Add(this._label1);
-			this._splitContainer.Panel1.Controls.Add(this._cbProjects);
 			//
 			// _splitContainer.Panel2
 			//
-			this._splitContainer.Panel2.Controls.Add(this._projectView);
-			this._splitContainer.Size = new System.Drawing.Size(852, 456);
+			this._splitContainer.Panel2.Controls.Add(this.splitContainer1);
+			this._splitContainer.Size = new System.Drawing.Size(836, 418);
 			this._splitContainer.TabIndex = 0;
-			//
-			// _warninglabel2
-			//
-			this._warninglabel2.AutoSize = true;
-			this._warninglabel2.Location = new System.Drawing.Point(382, 27);
-			this._warninglabel2.Name = "_warninglabel2";
-			this._warninglabel2.Size = new System.Drawing.Size(107, 13);
-			this._warninglabel2.TabIndex = 24;
-			this._warninglabel2.Text = "so cannot be shared.";
 			//
 			// _pictureBox
 			//
@@ -99,36 +88,29 @@
 			this._label1.TabIndex = 20;
 			this._label1.Text = "Project";
 			//
-			// _cbProjects
+			// splitContainer1
 			//
-			this._cbProjects.FormattingEnabled = true;
-			this._cbProjects.Location = new System.Drawing.Point(52, 14);
-			this._cbProjects.Name = "_cbProjects";
-			this._cbProjects.Size = new System.Drawing.Size(265, 21);
-			this._cbProjects.TabIndex = 19;
-			//
-			// _projectView
-			//
-			this._projectView.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this._projectView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._projectView.Location = new System.Drawing.Point(0, 0);
-			this._projectView.Name = "_projectView";
-			this._projectView.Size = new System.Drawing.Size(852, 402);
-			this._projectView.TabIndex = 0;
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Size = new System.Drawing.Size(836, 364);
+			this.splitContainer1.SplitterDistance = 417;
+			this.splitContainer1.TabIndex = 0;
 			//
 			// FwBridgeConflictView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+			this.ClientSize = new System.Drawing.Size(836, 418);
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FwBridgeConflictView";
-			this.Size = new System.Drawing.Size(852, 456);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel1.PerformLayout();
 			this._splitContainer.Panel2.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -137,11 +119,9 @@
 
 		private System.Windows.Forms.SplitContainer _splitContainer;
 		private System.Windows.Forms.Label _label1;
-		private System.Windows.Forms.ComboBox _cbProjects;
-		private ProjectView _projectView;
 		private System.Windows.Forms.Label _warninglabel1;
-		private System.Windows.Forms.Label _warninglabel2;
 		private System.Windows.Forms.PictureBox _pictureBox;
+		private System.Windows.Forms.SplitContainer splitContainer1;
 
 	}
 }

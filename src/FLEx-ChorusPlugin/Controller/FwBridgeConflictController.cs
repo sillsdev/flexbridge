@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.UI.Notes.Browser;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
+using Palaso.Progress.LogBox;
+using Chorus.UI.Notes;
 
 namespace FLEx_ChorusPlugin.Controller
 {
 	internal sealed class FwBridgeConflictController : IFwBridgeController, IDisposable
 	{
 		private string _userName;
+		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
 		private LanguageProject _currentLanguageProject;
+		private NotesInProjectViewModel _notesModel;
+		private MessageSelectedEvent messageSelectedEventHandler;
 
 		/// <summary>
 		/// for testing (but called by the main constructor)
@@ -38,13 +45,31 @@ namespace FLEx_ChorusPlugin.Controller
 
 		internal void InitController(string user, string filePath)
 		{
-			_userName = user;
-
-			if (!String.IsNullOrEmpty(filePath))
+			if (String.IsNullOrEmpty(filePath))
 			{
-				_currentLanguageProject = new LanguageProject(filePath);
-				_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
+				MessageBox.Show(Resources.ksNoFilePath, Resources.ksPathProblem,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
 			}
+			_userName = user;
+			_chorusUser = new ChorusUser(_userName);
+
+			_currentLanguageProject = new LanguageProject(filePath);
+			_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
+			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
+			SetViewControls(filePath);
+			//var openConflictIndex = new Chorus.notes.IndexOfAllOpenConflicts();
+			//openConflictIndex.Initialize(()=> { }, new NullProgress());
+			//var conflictList = openConflictIndex.GetAll();
+		}
+
+		private void SetViewControls(string filePath)
+		{
+			_notesModel = new NotesInProjectViewModel(_chorusUser,
+													  new[] {_chorusSystem.GetNotesRepository(filePath, new NullProgress())},
+													  messageSelectedEventHandler, new NullProgress());
+			var viewer = (MainForm as FwBridgeConflictView);
+			viewer.SetBrowseView(new NotesInProjectView(_notesModel));
 		}
 
 		#region IFwBridgeController implementation

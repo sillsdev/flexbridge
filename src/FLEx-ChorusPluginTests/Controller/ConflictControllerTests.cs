@@ -17,9 +17,7 @@ namespace FLEx_ChorusPluginTests.Controller
 	public class ConflictControllerTests
 	{
 		private FwBridgeConflictController _realController;
-		private MockedExistingSystemView _mockedExistingSystemView;
 		private DummyFolderSystem _dummyFolderSystem;
-		private MockedGetSharedProject _mockedGetSharedProject;
 		private Form _mockedConflictView;
 
 		[TestFixtureSetUp]
@@ -27,12 +25,10 @@ namespace FLEx_ChorusPluginTests.Controller
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
 
-			_mockedGetSharedProject = new MockedGetSharedProject();
 			_mockedConflictView = new MockedConflictView();
 
 			_realController = new FwBridgeConflictController(_mockedConflictView);
 			_realController.InitController("Louis XIV", GetDummyFilePath());
-
 		}
 
 		private string GetDummyFilePath()
