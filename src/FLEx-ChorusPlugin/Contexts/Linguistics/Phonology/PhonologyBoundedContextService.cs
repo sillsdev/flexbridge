@@ -97,7 +97,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 				currentPathname,
 				sortedData,
 				phonDataElement, "PhonRuleFeats",
-				phonRuleFeatsListDoc.Root.Element("CmPossibilityList")); // Owned elment.
+				phonRuleFeatsListDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
 		}
 	}
 }

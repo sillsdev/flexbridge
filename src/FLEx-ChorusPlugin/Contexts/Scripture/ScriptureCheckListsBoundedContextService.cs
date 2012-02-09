@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
 				var listDoc = XDocument.Load(listPathname);
-				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
+				var listElement = listDoc.Element("CheckList").Element(SharedConstants.CmPossibilityList);
 				CmObjectFlatteningService.FlattenObject(
 					listPathname,
 					sortedData,

@@ -130,7 +130,10 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="Contexts\BaseDomainServices.cs" />
-	<Compile Include="Contexts\General\OldStyleDomainServices.cs" />
+	<Compile Include="Contexts\General\GeneralDomainBoundedContext.cs" />
+	<Compile Include="Contexts\General\GeneralDomainOrphansBoundedContext.cs" />
+	<Compile Include="Contexts\General\GeneralDomainServices.cs" />
+	<Compile Include="Contexts\General\UserDefinedLists\UserDefinedListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\MorphologyAndSyntax\MorphologyAndSyntaxBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\Phonology\PhonologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ArchivedDraftsBoundedContextService.cs" />

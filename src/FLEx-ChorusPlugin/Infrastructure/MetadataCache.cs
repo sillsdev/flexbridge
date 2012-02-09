@@ -1713,6 +1713,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("DiscourseData", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("TextMarkupTags", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("PhFeatureSystem", DataType.OwningAtomic));
+			clsInfo.AddProperty(new FdoPropertyInfo("FilePathsInTsStrings", DataType.OwningAtomic));
 
 			clsInfo = new FdoClassInfo("VirtualOrdering", true, "CmObject");
 			_classes.Add("VirtualOrdering", clsInfo);

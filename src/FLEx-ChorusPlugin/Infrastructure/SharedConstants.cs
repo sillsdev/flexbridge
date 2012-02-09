@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -14,12 +15,29 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
 		internal const string OwnerGuid = "ownerguid";
+		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
 		internal const string Ownseq = "ownseq";
 		internal const string OwnseqAtomic = "ownseqatomic"; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 		internal const string Refseq = "refseq";
 		internal const string Custom = "Custom";
+		internal const string General = "General";
+		internal const string CmPossibilityList = "CmPossibilityList";
+		internal const string AnnotationDefs = "AnnotationDefs";
+		internal const string AnnotationDefsListFilename = AnnotationDefs + "." + List;
+		internal const string FLExStylesFilename = "FLExStyles." + Style;
+		internal const string Filter = "filter";
+		internal const string Filters = "Filters";
+		internal const string FLExFiltersFilename = "FLExFilters." + Filter;
+		internal const string Annotation = "annotation";
+		internal const string Annotations = "Annotations";
+		internal const string FLExAnnotationsFilename = "FLExAnnotations." + Annotation;
+		internal const string langproj = "langproj";
+		internal const string LanguageProject = "LanguageProject";
+		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
+		internal const string lint = "lint";
+		internal const string LintFilename = "FLExProject." + lint;
 
 		// Old style
 		internal const string RtTag = "rt";

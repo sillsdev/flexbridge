@@ -13,8 +13,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {
 	internal class ListFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		private const string CmPossibilityList = "CmPossibilityList";
-
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
@@ -31,7 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (!root.Elements(CmPossibilityList).Any())
+				if (!root.Elements(SharedConstants.CmPossibilityList).Any())
 					return "Not valid styles file";
 
 				return null;
@@ -51,7 +49,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				CmPossibilityList, SharedConstants.GuidStr);
+				SharedConstants.CmPossibilityList, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -61,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				CmPossibilityList, SharedConstants.GuidStr, WritePreliminaryListInformation);
+				SharedConstants.CmPossibilityList, SharedConstants.GuidStr, WritePreliminaryListInformation);
 		}
 
 		public string Extension

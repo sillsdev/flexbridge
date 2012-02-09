@@ -79,7 +79,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			{
 				foreach (var chartElement in chartElements.Elements())
 				{
-					ReplaceElementNameWithAndAddClassAttribute(SharedConstants.DsChart, chartElement);
+					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.DsChart, chartElement);
 					// It is already nested.
 					root.Add(chartElement);
 				}
@@ -110,7 +110,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			{
 				var listDoc = XDocument.Load(listPathname);
 				var listFilename = Path.GetFileName(listPathname);
-				var listElement = listDoc.Root.Element("CmPossibilityList");
+				var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
 				switch (listFilename)
 				{
 					case SharedConstants.ChartMarkersFilename:
@@ -150,19 +150,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				langProjElement,
 				"DiscourseData",
 				discourseElement);
-		}
-
-		private static void ReplaceElementNameWithAndAddClassAttribute(string replacementElementName, XElement elementToRename)
-		{
-			var oldElementName = elementToRename.Name.LocalName;
-			elementToRename.Name = replacementElementName;
-			var sortedAttrs = new SortedDictionary<string, XAttribute>(StringComparer.OrdinalIgnoreCase);
-			foreach (var attr in elementToRename.Attributes())
-				sortedAttrs.Add(attr.Name.LocalName, attr);
-			sortedAttrs.Add(SharedConstants.Class, new XAttribute(SharedConstants.Class, oldElementName));
-			elementToRename.Attributes().Remove();
-			foreach (var sortedAttr in sortedAttrs.Values)
-				elementToRename.Add(sortedAttr);
 		}
 	}
 }

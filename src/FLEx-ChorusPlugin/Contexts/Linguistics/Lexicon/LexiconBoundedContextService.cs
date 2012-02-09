@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
-			var lists = classData["CmPossibilityList"];
+			var lists = classData[SharedConstants.CmPossibilityList];
 			NestLists(classData, guidToClassMapping, lists, lexiconDir, lexDb,
 					  new List<string>
 						{
@@ -103,7 +103,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
 				var listDoc = XDocument.Load(listPathname);
-				var listElement = listDoc.Root.Element("CmPossibilityList");
+				var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
 				var listFilenameSansExtension = Path.GetFileNameWithoutExtension(listPathname);
 				switch (listFilenameSansExtension)
 				{

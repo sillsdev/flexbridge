@@ -25,7 +25,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				var randomMorphTypeElement = new XElement(SharedConstants.MorphTypes);
 				BaseDomainServices.NestList(classData,
 					guidToClassMapping,
-					classData["CmPossibilityList"],
+					classData[SharedConstants.CmPossibilityList],
 					randomMorphTypeElement,
 					lexDb,
 					SharedConstants.MorphTypes);
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var randomElement = new XElement(SharedConstants.PartsOfSpeech);
 			BaseDomainServices.NestList(classData,
 				guidToClassMapping,
-				classData["CmPossibilityList"],
+				classData[SharedConstants.CmPossibilityList],
 				randomElement,
 				langProjElement,
 				SharedConstants.PartsOfSpeech);
@@ -129,7 +129,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 					currentPathname,
 					sortedData,
 					lexDb, SharedConstants.MorphTypes,
-					morphTypesDoc.Root.Element("CmPossibilityList")); // Owned elment.
+					morphTypesDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
 			}
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 
@@ -152,7 +152,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 					currentPathname,
 					sortedData,
 					langProjElement, SharedConstants.PartsOfSpeech,
-					posDoc.Root.Element("CmPossibilityList")); // Owned elment.
+					posDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
 			}
 
 			currentPathname = Path.Combine(morphAndSynDir, SharedConstants.AnalyzingAgentsFilename);
@@ -193,7 +193,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				if (File.Exists(currentPathname))
 				{
 					var prodRestrictDoc = XDocument.Load(currentPathname);
-					var prodRestrictListElement = prodRestrictDoc.Root.Element("CmPossibilityList");
+					var prodRestrictListElement = prodRestrictDoc.Root.Element(SharedConstants.CmPossibilityList);
 					BaseDomainServices.RestoreElement(
 						currentPathname,
 						sortedData,

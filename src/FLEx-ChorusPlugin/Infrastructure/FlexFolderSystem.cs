@@ -21,9 +21,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 			projectFolderConfiguration.ExcludePatterns.Add("Shares/*.*"); // Presumed folder for future LIFT and PT-FLEx repos.
+			// Exclude these video extensions, for now at least.
+			// One can get a list of all sorts of extensions at: http://www.fileinfo.com/filetypes/video
+			projectFolderConfiguration.ExcludePatterns.Add("**.mpg");
+			projectFolderConfiguration.ExcludePatterns.Add("**.mov");
+			projectFolderConfiguration.ExcludePatterns.Add("**.wmv");
+			projectFolderConfiguration.ExcludePatterns.Add("**.rm");
+			projectFolderConfiguration.ExcludePatterns.Add("**.mp4");
+			projectFolderConfiguration.ExcludePatterns.Add("**.avi");
 
-			projectFolderConfiguration.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
-			projectFolderConfiguration.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
+			projectFolderConfiguration.IncludePatterns.Add("FLExProject.ModelVersion"); // Hope this forces the version file to be done first.
+			projectFolderConfiguration.IncludePatterns.Add("FLExProject.CustomProperties"); // Hope this forces the custom props to be done next.
 
 			// Overhead files.
 			projectFolderConfiguration.IncludePatterns.Add("do_not_share_project.txt");

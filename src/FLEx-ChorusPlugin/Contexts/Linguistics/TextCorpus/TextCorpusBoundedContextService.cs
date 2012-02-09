@@ -37,7 +37,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var randomElement = new XElement(SharedConstants.GenreList);
 			BaseDomainServices.NestList(classData,
 				guidToClassMapping,
-				classData["CmPossibilityList"],
+				classData[SharedConstants.CmPossibilityList],
 				randomElement,
 				langProjElement,
 				SharedConstants.GenreList);
@@ -53,7 +53,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			randomElement = new XElement(SharedConstants.TextMarkupTags);
 			BaseDomainServices.NestList(classData,
 				guidToClassMapping,
-				classData["CmPossibilityList"],
+				classData[SharedConstants.CmPossibilityList],
 				randomElement,
 				langProjElement,
 				SharedConstants.TextMarkupTags);
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			randomElement = new XElement(SharedConstants.TranslationTags);
 			BaseDomainServices.NestList(classData,
 				guidToClassMapping,
-				classData["CmPossibilityList"],
+				classData[SharedConstants.CmPossibilityList],
 				randomElement,
 				langProjElement,
 				SharedConstants.TranslationTags);
@@ -116,15 +116,15 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			// Put the Genre list back in the right place.
 			var pathname = Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename);
 			var doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element(SharedConstants.CmPossibilityList));
 			// Put the markup tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 			// Put the translation tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 
 			// Put Texts back into LP.
 			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
