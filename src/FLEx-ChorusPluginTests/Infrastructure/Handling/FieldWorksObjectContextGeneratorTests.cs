@@ -52,6 +52,61 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "01efa516-1749-4b60-b43d-00089269e7c5"));
 		}
 
+		[Test]
+		public void PossibilityListPartsFindName()
+		{
+			string source =
+				@"	<CmPossibilityList
+						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
+						<Abbreviation>
+							<AUni
+								ws='en'>EntTyp</AUni>
+						</Abbreviation>
+						<Depth
+							val='127' />
+						<ItemClsid
+							val='5118' />
+						<Name>
+							<AUni
+								ws='en'>Complex Form Types</AUni>
+						</Name>
+						<Possibilities>
+							<ownseq
+								class='LexEntryType'
+								guid='1f6ae209-141a-40db-983c-bee93af0ca3c'>
+								<Abbreviation>
+									<AUni
+										ws='en'>comp. of</AUni>
+								</Abbreviation>
+								<IsProtected
+									val='true' />
+								<Name>
+									<AUni
+										ws='en'>Compound</AUni>
+								</Name>
+								<ReverseAbbr>
+									<AUni
+										ws='en'>comp.</AUni>
+								</ReverseAbbr>
+							</ownseq>
+						</Possibilities>
+						<PreventDuplicates
+							val='true' />
+						<WsSelector
+							val='-3' />
+					</CmPossibilityList>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[0].ChildNodes[0];
+			var generator = new FieldWorkObjectContextGenerator();
+
+			// This is the focus of the test:
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+
+			Assert.That(descriptor.DataLabel, Is.EqualTo("List 'Complex Form Types'"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
+		}
+
 		XmlNode GetNode(string input)
 		{
 			XmlDocument doc = new XmlDocument();

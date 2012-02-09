@@ -79,6 +79,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				{
 					case "LexEntry":
 						return GetLabelForEntry(current);
+					case "CmPossibilityList":
+						return GetLabelForPossibilityList(current);
 				}
 				current = current.ParentNode;
 			}
@@ -88,6 +90,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		string EntryLabel
 		{
 			get { return "Entry"; } // Todo: internationalize
+		}
+
+		string ListLabel
+		{
+			get { return "List"; } // Todo: internationalize
 		}
 
 		private string GetLabelForEntry(XmlNode entry)
@@ -103,6 +110,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (form == null)
 				return EntryLabel;
 			return EntryLabel + " " + form.InnerText;
+		}
+
+		private string GetLabelForPossibilityList(XmlNode list)
+		{
+			var form = list.SelectSingleNode("Name/AUni");
+			if (form == null)
+				return EntryLabel;
+			return ListLabel + " '" + form.InnerText + "'";
 		}
 
 		XmlNode FirstChildNamed(XmlNode source, string name)
