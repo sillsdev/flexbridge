@@ -89,6 +89,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Controller\ConflictControllerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
@@ -125,6 +126,10 @@
 	<Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
 	<Compile Include="BorrowedCode\ListenerForUnitTests.cs" />
 	<Compile Include="LoadHandlersTests.cs" />
+	<Compile Include="Mocks\MockedConflictProjectView.cs" />
+	<Compile Include="Mocks\MockedFwBridgeConflictView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
