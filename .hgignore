@@ -24,7 +24,6 @@ src/FLEx-ChorusPluginTests/obj/*.*
 src/FwdataNester/bin/*.*
 src/FwdataNester/obj/Debug/*.*
 src/FwdataNester/obj/*.*
-Mercurial/*.*
 syntax: glob
 Perf test  results/*.app6results
 src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.ReSharper.user
@@ -35,5 +34,3 @@ src/FLEx-ChorusPlugin/FLEx-ChorusPlugin.csproj.DotSettings.user
 src/FLEx-ChorusPluginTests/FLEx-ChorusPluginTests.csproj.DotSettings.user
 src/FieldWorksBridge/FieldWorksBridge.csproj.DotSettings.user
 src/FwdataNester/FwdataTestApp.csproj.DotSettings.user
-src/FLEx-ChorusPluginTests/FLEx-ChorusPluginTests.csproj.user
-lib/net2.0/LibChorus.Tests.dll

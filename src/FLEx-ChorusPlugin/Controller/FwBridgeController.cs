@@ -12,12 +12,9 @@ namespace FLEx_ChorusPlugin.Controller
 	{
 		private readonly IFwBridgeView _fwBridgeView;
 		private readonly IProjectView _projectView;
-		private readonly IStartupNewView _startupNewView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly LanguageProjectRepository _repository;
 		private readonly ISynchronizeProject _projectSynchronizer;
-		private readonly IGetSharedProject _getSharedProject;
-		private readonly string _userName;
 		private ChorusSystem _chorusSystem;
 		private LanguageProject _currentLanguageProject;
 
@@ -25,21 +22,20 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Constructor that makes a standard controller.
 		/// </summary>
 		internal FwBridgeController()
-			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
+			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
 		{ }
 
 		/// <summary>
 		/// Constructor that makes a conflict reporting/resolving controller.
 		/// </summary>
 		internal FwBridgeController(string userName, string project)
-			: this(new FieldWorksBridge(), new FwBridgeConflictView(), new RegularUserProjectPathLocator(), new SynchronizeProject(), new GetSharedProject())
+			: this(new FieldWorksBridge(), new FwBridgeConflictView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
 		{ }
 
-		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer, IGetSharedProject getSharedProject)
+		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
 		{
 			_repository = new LanguageProjectRepository(locator);
 			_projectSynchronizer = projectSynchronizer;
-			_getSharedProject = getSharedProject;
 
 			MainForm = fieldWorksBridge;
 			var ctrl = (Control)fwBridgeView;
@@ -50,11 +46,8 @@ namespace FLEx_ChorusPlugin.Controller
 
 			_existingSystemView = _projectView.ExistingSystemView;
 
-			_startupNewView = _projectView.StartupNewView;
-
 			_fwBridgeView = fwBridgeView;
 
-			_startupNewView.Startup += StartupNewViewStartupHandler;
 			_fwBridgeView.ProjectSelected += FwBridgeViewProjectSelectedHandler;
 			_fwBridgeView.SynchronizeProject += FwBridgeViewSynchronizeProjectHandler;
 
@@ -66,24 +59,8 @@ namespace FLEx_ChorusPlugin.Controller
 		/// For testing only.
 		/// </summary>
 		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
-			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer, mockedGetSharedProject)
+			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer)
 		{ }
-
-		public FwBridgeController(Dictionary<string, string> options) : this()
-		{
-			string user = "anonymous";
-			if (options.ContainsKey("-u"))
-			{
-				user = options["-u"];
-			}
-			if (options.ContainsKey("-p"))
-			{
-				_currentLanguageProject = new LanguageProject(options["-p"]);
-				_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
-				_existingSystemView.SetSystem(_chorusSystem, _currentLanguageProject);
-			}
-			_userName = user;
-		}
 
 		private void SetSystem(ChorusSystem system)
 		{
@@ -120,14 +97,6 @@ namespace FLEx_ChorusPlugin.Controller
 		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)
 		{
 			_currentLanguageProject = e.Project;
-			// 1. If langProj is null, then show the revised 'fetch from afar' view, and return.
-			if (_currentLanguageProject == null || _currentLanguageProject.Name == LanguageProject.OBTAINPROJECT)
-			{
-				_fwBridgeView.EnableSendReceiveControls(false, false);
-				_projectView.ActivateView(_startupNewView);
-				SetSystem(null);
-				return;
-			}
 
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
@@ -137,7 +106,7 @@ namespace FLEx_ChorusPlugin.Controller
 			var enableSendReceiveBtn = true;
 			var makeWarningsVisible = false;
 
-			// 2: If FW project is in use, then disable the S/R btn and show a warning message.
+			// 1: If FW project is in use, then disable the S/R btn and show a warning message.
 			if (_currentLanguageProject.FieldWorkProjectInUse)
 			{
 				// This still allows the user to see the history,notes, etc, tab control.
@@ -145,26 +114,13 @@ namespace FLEx_ChorusPlugin.Controller
 				makeWarningsVisible = true;
 			}
 
-			// 3. Show correct view and enable/disable S/R btn and show (or not) the warnings.
+			// 2. Show correct view and enable/disable S/R btn and show (or not) the warnings.
 			_projectView.ActivateView(_existingSystemView);
 			_fwBridgeView.EnableSendReceiveControls(enableSendReceiveBtn, makeWarningsVisible);
 			SetSystem(chorusSystem);
 
 		}
 
-		private void StartupNewViewStartupHandler(object sender, StartupNewEventArgs e)
-		{
-			// This handler can't really work (yet) in an environment where the local system has an extant project,
-			// and the local user wants to collaborate with a remote user,
-			// where the FW language project is the 'same' on both computers.
-			// That is, we don't (yet) support merging the two, since they hav eno common ancestor.
-			// Odds are they each have crucial objects, such as LangProject or LexDb, that need to be singletons,
-			// but which have different guids.
-			// (Consider G & J Andersen's case, where each has an FW 6 system.
-			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
-
-			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder);
-		}
 
 		#region Implementation of IDisposable
 
@@ -223,7 +179,6 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				_fwBridgeView.ProjectSelected -= FwBridgeViewProjectSelectedHandler;
 				_fwBridgeView.SynchronizeProject -= FwBridgeViewSynchronizeProjectHandler;
-				_startupNewView.Startup -= StartupNewViewStartupHandler;
 
 				MainForm.Dispose();
 
