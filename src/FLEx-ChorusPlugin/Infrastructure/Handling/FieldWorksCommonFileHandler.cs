@@ -152,6 +152,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Style,
 				SharedConstants.List,
 
+				// General
+				SharedConstants.lint,
+				SharedConstants.langproj,
+				SharedConstants.Annotation,
+				SharedConstants.Filter,
+
 				// Old style
 				SharedConstants.ClassData,
 

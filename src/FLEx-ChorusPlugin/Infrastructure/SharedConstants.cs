@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -38,6 +37,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		internal const string lint = "lint";
 		internal const string LintFilename = "FLExProject." + lint;
+		internal const string LangProject = "LangProject";
 
 		// Old style
 		internal const string RtTag = "rt";

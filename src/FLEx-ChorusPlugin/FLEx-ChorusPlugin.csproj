@@ -141,6 +141,10 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
+	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\LangProjFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\LintFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
 	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />

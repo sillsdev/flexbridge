@@ -23,7 +23,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// I know of two types of data this method needs to handle:
 			//	1. Honestly unowned elements
 			//	2. Objects that claim to have an owner, and
-			//		A. May not be nesting correctly (bug in nesting code, or more likley the MDC), or
+			//		A. May not be nesting correctly (bug in nesting code, or more likely the MDC), or
 			//		B. The owner may not know it owns it (Lint).
 			TrimClassData(classData);
 
@@ -64,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// So, nest each, and add them into a new file (new ext: lint)
 			// Add some extra bits to make them all have the same main element name, and maybe a new attr that says 'unowned' vs 'lint'.
 			// The should be in the usual sorted order.
-			var root = new XElement("curiocities");
+			var root = new XElement("curiosities");
 			foreach (var curiosityElement in sortedData.Values)
 			{
 				CmObjectNestingService.NestObject(

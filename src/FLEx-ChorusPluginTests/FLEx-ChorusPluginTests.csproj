@@ -91,6 +91,9 @@
   <ItemGroup>
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
@@ -118,6 +121,7 @@
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksLintTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
