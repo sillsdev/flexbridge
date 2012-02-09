@@ -114,10 +114,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private string GetLabelForPossibilityList(XmlNode list)
 		{
-			var form = list.SelectSingleNode("Name/AUni");
-			if (form == null)
-				return EntryLabel;
-			return ListLabel + " '" + form.InnerText + "'";
+			// Try to get the "Name" node. If there ain't one, get the "Abbreviation" node:
+			var nameOrAbbreviationNode = list.SelectSingleNode("Name");
+			if (nameOrAbbreviationNode == null)
+			{
+				nameOrAbbreviationNode = list.SelectSingleNode("Abbreviation");
+				if (nameOrAbbreviationNode == null)
+					return EntryLabel;
+			}
+			// Get the first child node (which should be an "AStr" node) that contains proper data:
+			var rawLabel = FirstNonBlankChildsData(nameOrAbbreviationNode);
+			return ListLabel + " '" + rawLabel + "'";
+		}
+
+		internal string FirstNonBlankChildsData(XmlNode source)
+		{
+			foreach (var node in source.ChildNodes)
+			{
+				var result = node as XmlNode;
+				if (result == null)
+					continue;
+
+				if (!result.InnerText.All(t => char.IsWhiteSpace(t)))
+					return result.InnerText;
+			}
+			return null;
 		}
 
 		XmlNode FirstChildNamed(XmlNode source, string name)
