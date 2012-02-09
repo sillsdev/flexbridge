@@ -31,9 +31,6 @@ namespace FieldWorksBridge
 			}
 
 			var options = ParseCommandLineArgs(args);
-			//options["-u"] = "King of France";
-			//options["-p"] = "C:/FW-WW/DistFiles/Projects/benice/benice.fwdata";
-			//options["-v"] = "obtain";
 			if(!options.ContainsKey("-v") || options["-v"] == null)
 			{
 				using (var controller = new FwBridgeController())

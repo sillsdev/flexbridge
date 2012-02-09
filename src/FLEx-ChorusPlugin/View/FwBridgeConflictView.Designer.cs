@@ -29,14 +29,12 @@
 		private void InitializeComponent()
 		{
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._pictureBox = new System.Windows.Forms.PictureBox();
 			this._warninglabel1 = new System.Windows.Forms.Label();
 			this._label1 = new System.Windows.Forms.Label();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this._splitContainer.Panel1.SuspendLayout();
 			this._splitContainer.Panel2.SuspendLayout();
 			this._splitContainer.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).BeginInit();
 			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -51,7 +49,6 @@
 			//
 			// _splitContainer.Panel1
 			//
-			this._splitContainer.Panel1.Controls.Add(this._pictureBox);
 			this._splitContainer.Panel1.Controls.Add(this._warninglabel1);
 			this._splitContainer.Panel1.Controls.Add(this._label1);
 			//
@@ -60,15 +57,6 @@
 			this._splitContainer.Panel2.Controls.Add(this.splitContainer1);
 			this._splitContainer.Size = new System.Drawing.Size(836, 418);
 			this._splitContainer.TabIndex = 0;
-			//
-			// _pictureBox
-			//
-			this._pictureBox.Location = new System.Drawing.Point(342, 5);
-			this._pictureBox.Name = "_pictureBox";
-			this._pictureBox.Size = new System.Drawing.Size(32, 30);
-			this._pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this._pictureBox.TabIndex = 23;
-			this._pictureBox.TabStop = false;
 			//
 			// _warninglabel1
 			//
@@ -105,11 +93,11 @@
 			this.ClientSize = new System.Drawing.Size(836, 418);
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FwBridgeConflictView";
+			this.Text = "Conflict Viewer";
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel1.PerformLayout();
 			this._splitContainer.Panel2.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -120,7 +108,6 @@
 		private System.Windows.Forms.SplitContainer _splitContainer;
 		private System.Windows.Forms.Label _label1;
 		private System.Windows.Forms.Label _warninglabel1;
-		private System.Windows.Forms.PictureBox _pictureBox;
 		private System.Windows.Forms.SplitContainer splitContainer1;
 
 	}
