@@ -1,6 +1,8 @@
 ﻿using System.Windows.Forms;
+using Chorus;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
+using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.View
@@ -19,6 +21,11 @@ namespace FLEx_ChorusPlugin.View
 			_warninglabel1.Visible = false;
 			this.Icon = Resources.chorus;
 		}
+
+		//protected override void OnLoad(System.EventArgs e)
+		//{
+		//    base.OnLoad(e);
+		//}
 
 		public void EnableWarning()
 		{

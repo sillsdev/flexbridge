@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
@@ -63,21 +64,24 @@ namespace FLEx_ChorusPlugin.Controller
 		{
 			_chorusUser = new ChorusUser(user);
 			_currentLanguageProject = new LanguageProject(filePath);
-			_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, _chorusUser.Name);
-			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
+			_chorusSystem = new ChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
+			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
 		private void BuildNotesAndConflictViewerModels(string filePath)
 		{
 			_msgSelectedEvent = new MessageSelectedEvent();
 			_notesModel = new NotesInProjectViewModel(_chorusUser,
-													  new[] {_chorusSystem.GetNotesRepository(filePath, new NullProgress())},
+													  new[] {ChorusSystem.GetNotesRepository(filePath, new TextBoxProgress(new RichTextBox()))},
 													  _msgSelectedEvent, new NullProgress());
-			_notesModel.Initialize(new IndexOfAllOpenConflicts().GetAll, new NullProgress());
+			var index = new IndexOfAllOpenConflicts();
+			index.Initialize(index.GetAll, new TextBoxProgress(new RichTextBox()));
+			var list = index.GetAll().ToList();
+			_notesModel.Initialize(index.GetAll, new NullProgress());
 
 			_editorModel = new AnnotationEditorModel(_chorusUser, _msgSelectedEvent,
 				new StyleSheet(filePath), new EmbeddedMessageContentHandlerFactory(), new NavigateToRecordEvent(),
-				_chorusSystem.WritingSystems);
+				ChorusSystem.WritingSystems);
 		}
 
 		internal virtual void SetViewControls(string filePath)
