@@ -73,6 +73,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			var label = start.Name; // a default.
 			var current = start;
+			XmlNode previous = null;
+
 			while (current != null)
 			{
 				switch (current.Name)
@@ -81,10 +83,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						return GetLabelForEntry(current);
 					case "CmPossibilityList":
 						return GetLabelForPossibilityList(current);
+					case "Possibilities":
+						return GetLabelForPossibilityItem(previous);
 				}
+				previous = current;
 				current = current.ParentNode;
 			}
 			return label;
+		}
+
+		string UnidentifiableLabel
+		{
+			get { return "[unidentified]"; } // Todo: internationalize
 		}
 
 		string EntryLabel
@@ -95,6 +105,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		string ListLabel
 		{
 			get { return "List"; } // Todo: internationalize
+		}
+
+		string ListItemLabel
+		{
+			get { return "Item"; } // Todo: internationalize
 		}
 
 		private string GetLabelForEntry(XmlNode entry)
@@ -114,25 +129,62 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private string GetLabelForPossibilityList(XmlNode list)
 		{
-			// Try to get the "Name" node. If there ain't one, get the "Abbreviation" node:
-			var nameOrAbbreviationNode = list.SelectSingleNode("Name");
-			if (nameOrAbbreviationNode == null)
-			{
-				nameOrAbbreviationNode = list.SelectSingleNode("Abbreviation");
-				if (nameOrAbbreviationNode == null)
-					return EntryLabel;
-			}
-			// Get the first child node (which should be an "AStr" node) that contains proper data:
-			var rawLabel = FirstNonBlankChildsData(nameOrAbbreviationNode);
-			return ListLabel + " '" + rawLabel + "'";
+			var name = GetNameOrAbbreviation(list);
+			return ListLabel + " '" + name + "'";
 		}
 
+		/// <summary>
+		/// The specified parent XmlNode is expected to contain either a Name or an Abbreviation child node.
+		/// This method returns the best way of describing the parent, returning the first non-blank
+		/// Name or, failing that, the first non-blank Abbreviation.
+		/// This method returns UnidentifiableLabel if neither Name nor Abbreviation exist.
+		/// </summary>
+		/// <param name="parent">The XmlNode whose name is sought.</param>
+		/// <returns>Name or Abbreviation of parent node, or UnidentifiableLabel if none exists</returns>
+		private string GetNameOrAbbreviation(XmlNode parent)
+		{
+			// Try to get the "Name" node. If there ain't one, get the "Abbreviation" node:
+			var nameOrAbbreviationNode = parent.SelectSingleNode("Name");
+			if (nameOrAbbreviationNode == null)
+			{
+				nameOrAbbreviationNode = parent.SelectSingleNode("Abbreviation");
+				if (nameOrAbbreviationNode == null)
+					return UnidentifiableLabel;
+			}
+			return FirstNonBlankChildsData(nameOrAbbreviationNode);
+		}
+
+		private string GetLabelForPossibilityItem(XmlNode possibility)
+		{
+			var itemName = UnidentifiableLabel;
+			var listName = ListLabel + " " + UnidentifiableLabel;
+
+			if (possibility != null)
+			{
+				itemName = GetNameOrAbbreviation(possibility);
+
+				if (possibility.ParentNode != null)
+					listName = GetLabel(possibility.ParentNode.ParentNode);
+			}
+			return ListItemLabel + " '" + itemName + "' from " + listName;
+		}
+
+		/// <summary>
+		/// Iterates through child nodes of specified XmlNode, and returns the data value
+		/// (InnerText) of the first child that contains meaningful data (i.e. not blank
+		/// or white space only).
+		/// </summary>
+		/// <param name="source">The XmlNode whose children are to be examined</param>
+		/// <returns>Data value of the first child that has any.</returns>
 		internal string FirstNonBlankChildsData(XmlNode source)
 		{
 			foreach (var node in source.ChildNodes)
 			{
 				var result = node as XmlNode;
 				if (result == null)
+					continue;
+
+				if (string.IsNullOrEmpty(result.InnerText))
 					continue;
 
 				if (!result.InnerText.All(t => char.IsWhiteSpace(t)))
