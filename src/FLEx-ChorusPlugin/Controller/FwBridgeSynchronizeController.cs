@@ -121,7 +121,7 @@ namespace FLEx_ChorusPlugin.Controller
 		{
 			_currentLanguageProject = e.Project;
 			// 1. If langProj is null, then show the revised 'fetch from afar' view, and return.
-			if (_currentLanguageProject == null || _currentLanguageProject.Name == LanguageProject.OBTAINPROJECT)
+			if (_currentLanguageProject == null)
 			{
 				_fwBridgeView.EnableSendReceiveControls(false, false);
 				_projectView.ActivateView(_startupNewView);

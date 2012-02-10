@@ -16,7 +16,6 @@ namespace FLEx_ChorusPlugin.Model
 	/// </summary>
 	internal sealed class LanguageProject
 	{
-		public static string OBTAINPROJECT = "Obtain Project";
 		private readonly string _fwdataFile;
 
 		internal LanguageProject(string fwdataFile)
@@ -25,12 +24,11 @@ namespace FLEx_ChorusPlugin.Model
 			{
 				throw new ArgumentNullException("fwdataFile");
 			}
-			if (!File.Exists(fwdataFile) && fwdataFile != OBTAINPROJECT)
+			if (!File.Exists(fwdataFile))
 			{
 				throw new FileNotFoundException("Cannot find the file.", fwdataFile);
 			}
-			if ((!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata")
-				&& fwdataFile != OBTAINPROJECT)
+			if ((!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata"))
 			{
 				throw new ArgumentException(Resources.kNotAnFwXmlFile, "fwdataFile");
 			}

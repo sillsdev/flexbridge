@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
@@ -15,6 +14,7 @@ namespace FLEx_ChorusPlugin.Controller
 		private readonly IGetSharedProject _getSharedProject;
 		private readonly IStartupNewView _startupNewView;
 		private readonly string _userName;
+		private readonly string _pathToRepo;
 
 
 		public ObtainProjectController(Dictionary<string, string> options)
@@ -24,30 +24,37 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				user = options["-u"];
 			}
-			_startupNewView = new StartupNewView();
-			_startupNewView.Startup += StartupNewViewStartupHandler;
+			if (options.ContainsKey("-p"))
+			{
+				_pathToRepo = options["-p"];
+			}
+			_userName = user;
 			_getSharedProject = new GetSharedProject();
-			MainForm = new ObtainProjectView();
+			MainForm = new ObtainProjectView
+						{ Text = Resources.ObtainProjectView_DialogTitle, MaximizeBox = false, MinimizeBox = false, Icon = null};
+			_startupNewView = new StartupNewView();
+			_startupNewView.Startup += StartupHandler;
 			MainForm.Controls.Add((Control)_startupNewView);
 		}
 
-		private void StartupNewViewStartupHandler(object sender, StartupNewEventArgs e)
+		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
 			// This handler can't really work (yet) in an environment where the local system has an extant project,
 			// and the local user wants to collaborate with a remote user,
 			// where the FW language project is the 'same' on both computers.
-			// That is, we don't (yet) support merging the two, since they hav eno common ancestor.
+			// That is, we don't (yet) support merging the two, since they have no common ancestor.
 			// Odds are they each have crucial objects, such as LangProject or LexDb, that need to be singletons,
 			// but which have different guids.
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 
-			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder);
+			if(_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder))
+				MainForm.Close();
 		}
 
 		public void Dispose()
 		{
-			_startupNewView.Startup -= StartupNewViewStartupHandler;
+			_startupNewView.Startup -= StartupHandler;
 		}
 
 		public Form MainForm {

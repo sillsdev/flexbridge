@@ -210,5 +210,23 @@ namespace FLEx_ChorusPlugin.Properties {
 				return ResourceManager.GetString("ksTargetDirectoryExistsTitle", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		internal static string ObtainProjectController_ObtainProjectController_Receive_project {
+			get {
+				return ResourceManager.GetString("ObtainProjectController_ObtainProjectController_Receive_project", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		internal static string ObtainProjectView_DialogTitle {
+			get {
+				return ResourceManager.GetString("ObtainProjectView_DialogTitle", resourceCulture);
+			}
+		}
 	}
 }

@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// <summary>
 		/// For testing only.
 		/// </summary>
-		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer, IGetSharedProject mockedGetSharedProject)
+		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer)
 			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer)
 		{ }
 
