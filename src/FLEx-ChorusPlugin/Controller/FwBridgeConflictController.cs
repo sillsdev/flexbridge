@@ -16,12 +16,12 @@ namespace FLEx_ChorusPlugin.Controller
 {
 	internal class FwBridgeConflictController : IFwBridgeController, IDisposable
 	{
-		private string _userName;
 		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
-		private LanguageProject _currentLanguageProject;
-		private NotesInProjectViewModel _notesModel;
-		private AnnotationEditorModel _editorModel;
+		protected LanguageProject _currentLanguageProject;
+		protected NotesInProjectViewModel _notesModel;
+		protected AnnotationEditorModel _editorModel;
+		private MessageSelectedEvent _msgSelectedEvent;
 
 		/// <summary>
 		/// for testing (but called by the main constructor)
@@ -54,34 +54,41 @@ namespace FLEx_ChorusPlugin.Controller
 				return;
 			}
 
-			_userName = user;
-			_chorusUser = new ChorusUser(_userName);
+			SetupChorusAndLanguageProject(user, filePath);
+			BuildNotesAndConflictViewerModels(filePath);
+			SetViewControls(filePath);
+		}
 
+		private void SetupChorusAndLanguageProject(string user, string filePath)
+		{
+			_chorusUser = new ChorusUser(user);
 			_currentLanguageProject = new LanguageProject(filePath);
 			_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, _chorusUser.Name);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
-			SetViewControls(filePath);
-			var mainWindow = MainForm as FwBridgeConflictView;
-			if (_currentLanguageProject.FieldWorkProjectInUse)
-			{
-				mainWindow.EnableWarning();
-			}
-			mainWindow.SetProjectName(_currentLanguageProject.Name);
+		}
+
+		private void BuildNotesAndConflictViewerModels(string filePath)
+		{
+			_msgSelectedEvent = new MessageSelectedEvent();
+			_notesModel = new NotesInProjectViewModel(_chorusUser,
+													  new[] {_chorusSystem.GetNotesRepository(filePath, new NullProgress())},
+													  _msgSelectedEvent, new NullProgress());
+			_notesModel.Initialize(new IndexOfAllOpenConflicts().GetAll, new NullProgress());
+
+			_editorModel = new AnnotationEditorModel(_chorusUser, _msgSelectedEvent,
+				new StyleSheet(filePath), new EmbeddedMessageContentHandlerFactory(), new NavigateToRecordEvent(),
+				_chorusSystem.WritingSystems);
 		}
 
 		internal virtual void SetViewControls(string filePath)
 		{
-			var msgSelectedEvent = new MessageSelectedEvent();
-			_notesModel = new NotesInProjectViewModel(_chorusUser,
-													  new[] {_chorusSystem.GetNotesRepository(filePath, new NullProgress())},
-													  msgSelectedEvent, new NullProgress());
-			_notesModel.Initialize(new IndexOfAllOpenConflicts().GetAll, new NullProgress());
 			var viewer = (MainForm as FwBridgeConflictView);
 			viewer.SetBrowseView(new NotesInProjectView(_notesModel));
-			_editorModel = new AnnotationEditorModel(_chorusUser, msgSelectedEvent,
-				new StyleSheet(filePath), new EmbeddedMessageContentHandlerFactory(), new NavigateToRecordEvent(),
-				_chorusSystem.WritingSystems);
 			viewer.SetSingleConflictView(new AnnotationEditorView(_editorModel));
+
+			if (_currentLanguageProject.FieldWorkProjectInUse)
+				viewer.EnableWarning();
+			viewer.SetProjectName(_currentLanguageProject.Name);
 		}
 
 		#region IFwBridgeController implementation

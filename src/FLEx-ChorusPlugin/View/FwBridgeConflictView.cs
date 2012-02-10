@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -16,6 +17,7 @@ namespace FLEx_ChorusPlugin.View
 		{
 			InitializeComponent();
 			_warninglabel1.Visible = false;
+			this.Icon = Resources.chorus;
 		}
 
 		public void EnableWarning()
@@ -23,21 +25,21 @@ namespace FLEx_ChorusPlugin.View
 			_warninglabel1.Visible = true;
 		}
 
-		internal void SetBrowseView(NotesInProjectView browser)
+		public void SetProjectName(string projName)
+		{
+			_label1.Text = projName;
+		}
+
+		public void SetBrowseView(NotesInProjectView browser)
 		{
 			m_conflictBrowser = browser;
 			splitContainer1.Panel1.Controls.Add(m_conflictBrowser);
 		}
 
-		internal void SetSingleConflictView(AnnotationEditorView editor)
+		public void SetSingleConflictView(AnnotationEditorView editor)
 		{
 			m_conflictEditor = editor;
 			splitContainer1.Panel2.Controls.Add(m_conflictEditor);
-		}
-
-		internal void SetProjectName(string projName)
-		{
-			_label1.Text = projName;
 		}
 	}
 }

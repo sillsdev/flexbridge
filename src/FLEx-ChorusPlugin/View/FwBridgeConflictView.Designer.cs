@@ -55,7 +55,7 @@
 			// _splitContainer.Panel2
 			//
 			this._splitContainer.Panel2.Controls.Add(this.splitContainer1);
-			this._splitContainer.Size = new System.Drawing.Size(836, 418);
+			this._splitContainer.Size = new System.Drawing.Size(801, 500);
 			this._splitContainer.TabIndex = 0;
 			//
 			// _warninglabel1
@@ -78,11 +78,10 @@
 			//
 			// splitContainer1
 			//
-			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
 			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Size = new System.Drawing.Size(836, 364);
-			this.splitContainer1.SplitterDistance = 417;
+			this.splitContainer1.Size = new System.Drawing.Size(803, 443);
+			this.splitContainer1.SplitterDistance = 457;
 			this.splitContainer1.TabIndex = 0;
 			//
 			// FwBridgeConflictView
@@ -90,7 +89,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(836, 418);
+			this.ClientSize = new System.Drawing.Size(801, 500);
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FwBridgeConflictView";
 			this.Text = "Conflict Viewer";

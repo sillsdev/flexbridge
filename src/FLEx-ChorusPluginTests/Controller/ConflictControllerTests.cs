@@ -16,7 +16,7 @@ namespace FLEx_ChorusPluginTests.Controller
 	[TestFixture]
 	public class ConflictControllerTests
 	{
-		private FwBridgeConflictController _realController;
+		private FwBridgeConflictController _realController; // Well, 'real' minus references to Forms mostly.
 		private DummyFolderSystem _dummyFolderSystem;
 		private Form _mockedConflictView;
 
@@ -27,7 +27,7 @@ namespace FLEx_ChorusPluginTests.Controller
 
 			_mockedConflictView = new MockedConflictView();
 
-			_realController = new FwBridgeConflictController(_mockedConflictView);
+			_realController = new TestConflictController(_mockedConflictView);
 			_realController.InitController("Louis XIV", GetDummyFilePath());
 		}
 
