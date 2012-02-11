@@ -41,6 +41,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -50,6 +51,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -75,7 +77,7 @@
 	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
-	<PlatformTarget>AnyCPU</PlatformTarget>
+	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -103,7 +105,7 @@
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
-	<PlatformTarget>AnyCPU</PlatformTarget>
+	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -143,6 +145,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Model\CloneFromSharedNetworkFolder.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="View\ExistingSystem.cs">
@@ -150,6 +153,12 @@
 	</Compile>
 	<Compile Include="View\ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.Designer.cs">
+	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveView.cs" />
@@ -184,6 +193,9 @@
 	<EmbeddedResource Include="View\ExistingSystem.resx">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\GetCloneFromSharedNetworkFolderDialog.resx">
+	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\LiftBridgeDlg.resx">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
@@ -222,7 +234,12 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<None Include="Resources\error.wav" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\finished.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>copy $(SolutionDir)DistFiles\about.htm $(TargetDir)

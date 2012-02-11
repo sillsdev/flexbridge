@@ -123,18 +123,44 @@ namespace SIL.LiftBridge.Controller
 					Liftproject.RepositoryIdentifier = repo.Identifier;
 					break;
 				case SharedSystemType.Extant:
-					if (!_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject))
+					var results = _getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject);
+					// CloneResult.OkToCreate
+					// CloneResult.Cancel
+					// CloneResult.UseExisting
+					// CloneResult.Created
+					// CloneResult.NotCreated
+					/*
+		OK. Created, // Used by GetSharedProject
+		OK. NotCreated, // Used by GetSharedProject
+		OK. Cancel, // Used by GetSharedProject
+		OK-Not returned OkToCreate,
+		OK. UseExisting // Used by GetSharedProject
+					*/
+					switch (results)
 					{
-						// Clone not made for some reason.
-						MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
+						//case CloneResult.OkToCreate: Not going to be returned.
+						// 	break;
+						case CloneResult.NotCreated:
+							// Clone not made for some reason.
+							MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
 										MessageBoxIcon.Warning);
-						_liftBridgeView.Close();
-						return;
+							_liftBridgeView.Close();
+							return;
+						case CloneResult.Cancel:
+							MessageBox.Show(MainForm, "The user seems to have cancelled the sharing attempt.", "Sharing Attempt Cancelled", MessageBoxButtons.OK,
+										MessageBoxIcon.Information);
+							_liftBridgeView.Close();
+							return;
+						case CloneResult.Created:
+						case CloneResult.UseExisting:
+							// Proceed
+							break;
 					}
+
 					if (BasicLexiconImport != null)
 					{
 						var eventArgs = new LiftBridgeEventArgs(Liftproject.LiftPathname);
-						BasicLexiconImport((ILiftBridge)this, eventArgs);
+						BasicLexiconImport(this, eventArgs);
 						if (eventArgs.Cancel)
 						{
 							// Event handler could not complete the basic import.

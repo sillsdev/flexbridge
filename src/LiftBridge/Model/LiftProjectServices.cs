@@ -13,11 +13,11 @@ namespace SIL.LiftBridge.Model
 	/// </summary>
 	internal static class LiftProjectServices
 	{
-		private static readonly string MappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
-		private const string MappingsTag = "Mappings";
+		internal static readonly string MappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
+		internal const string MappingsRootTag = "Mappings";
 		private const string MappingTag = "Mapping";
 		private const string ProjectguidAttrTag = "projectguid";
-		private const string RepositoryidentifierAttrTag = "repositoryidentifier";
+		internal const string RepositoryidentifierAttrTag = "repositoryidentifier";
 
 		internal static string BasePath
 		{
@@ -87,6 +87,14 @@ namespace SIL.LiftBridge.Model
 			return file.IndexOf(".") == file.LastIndexOf(".");
 		}
 
+		internal static void ClearRepoIdentifier(Guid langProjId)
+		{
+			// If, sor some reason, the map file has the id, but the folder does not exist, then clear the id, so it can be reset.
+			if (langProjId == Guid.Empty)
+				return; // I don't think it can be, but....
+
+		}
+
 		internal static void StoreIdentifiers(Guid langProjId, string repositoryIdentifier)
 		{
 			if (langProjId == Guid.Empty)
@@ -95,13 +103,8 @@ namespace SIL.LiftBridge.Model
 			if (repositoryIdentifier != null)
 				repositoryIdentifier =  repositoryIdentifier.Trim();
 			var doc = GetMappingDoc();
-			var root = doc.Element(MappingsTag);
-			var childElements = root.Elements(MappingTag);
-			var mapForProject = (childElements.Count() == 0)
-				? null
-				: (from mapping in childElements
-				   where mapping.Attribute(ProjectguidAttrTag).Value == langProjId.ToString()
-				   select mapping).FirstOrDefault(); // Still will be null, if there is no matching LP id.
+			var root = doc.Element(MappingsRootTag);
+			var mapForProject = GetMapForProject(langProjId, root);
 			if (mapForProject == null)
 			{
 				mapForProject = new XElement(MappingTag,
@@ -149,14 +152,25 @@ namespace SIL.LiftBridge.Model
 			doc.Save(MappingPathname);
 		}
 
-		private static XDocument GetMappingDoc()
+		internal static XElement GetMapForProject(Guid langProjId, XContainer root)
+		{
+			var childElements = root.Elements(MappingTag);
+			var mapForProject = (!childElements.Any())
+									? null
+									: (from mapping in childElements
+									   where mapping.Attribute(ProjectguidAttrTag).Value == langProjId.ToString()
+									   select mapping).FirstOrDefault(); // Still will be null, if there is no matching LP id.
+			return mapForProject; // May be null, which is fine.
+		}
+
+		internal static XDocument GetMappingDoc()
 		{
 			XDocument doc;
 			if (!File.Exists(MappingPathname))
 			{
 				doc = new XDocument(
 					new XDeclaration("1.0", "utf-8", "yes"),
-					new XElement(MappingsTag));
+					new XElement(MappingsRootTag));
 				doc.Save(MappingPathname);
 			}
 			else
