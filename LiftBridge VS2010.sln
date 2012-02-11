@@ -14,16 +14,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{24FF10ED
 		build\LiftBridge.build.win.proj = build\LiftBridge.build.win.proj
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{9373AC08-99B7-41DA-B0DF-60128E9D9DF0}"
-	ProjectSection(SolutionItems) = preProject
-		src\Installer\Index.htm = src\Installer\Index.htm
-		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
-		src\Installer\Installer.wxs = src\Installer\Installer.wxs
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DistFiles", "DistFiles", "{C9834F5B-35BF-4ED2-8120-558EF69D200B}"
 	ProjectSection(SolutionItems) = preProject
 		DistFiles\about.htm = DistFiles\about.htm
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{C3F694E9-E10C-49D6-80CF-EF1E1C005A7F}"
+	ProjectSection(SolutionItems) = preProject
+		src\Installer\GeneratedDistFiles.wxs = src\Installer\GeneratedDistFiles.wxs
+		src\Installer\GeneratedMercurialExtensionsFiles.wxs = src\Installer\GeneratedMercurialExtensionsFiles.wxs
+		src\Installer\GeneratedMercurialFiles.wxs = src\Installer\GeneratedMercurialFiles.wxs
+		src\Installer\Index.htm = src\Installer\Index.htm
+		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
+		src\Installer\Installer.wxs = src\Installer\Installer.wxs
 	EndProjectSection
 EndProject
 Global
@@ -34,28 +37,28 @@ Global
 		ReleaseMono|Any CPU = ReleaseMono|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Debug|Any CPU.Build.0 = Debug|x86
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
-		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.ActiveCfg = Release|x86
+		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.Release|Any CPU.Build.0 = Release|x86
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
-		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Debug|Any CPU.Build.0 = Debug|x86
 		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
-		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.ActiveCfg = Release|x86
+		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.Release|Any CPU.Build.0 = Release|x86
 		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
-		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Debug|Any CPU.Build.0 = Debug|x86
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
-		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.ActiveCfg = Release|x86
+		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.Release|Any CPU.Build.0 = Release|x86
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 	EndGlobalSection

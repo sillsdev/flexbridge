@@ -2,9 +2,11 @@
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME  (in quotes)-->
 <!--The version number is replaced at build time by the msbuild 'package' target -->
-<?define Property_ProductVersion =       "1.3.6.0" ?>
+<?define Property_ProductVersion = ".*" ?>
 <!--Don't even think of EVER changing the Product Code, unless it becomes a new product. -->
+<!-- http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization for when to change Product or Package Guids (every installer build) or, Version number. -->
 <?define Property_ProductCode = "C1ED94CF-E382-11DE-8A39-0800200C9A66" ?>
+<!-- Cange Property_UpgradeCode when moving to a higher major version number. -->
 <?define Property_UpgradeCode = "C1ED94D0-E382-11DE-8A39-0800200C9A66" ?>
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
@@ -29,6 +31,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	</Property>
 
 	<UIRef Id="WixUI_Minimal"/>
+	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
 
 	<!-- # WixUIBannerBmp / Top banner / 493 × 58
 # WixUIDialogBmp / Background bitmap used on the welcome and completion dialogs / 493 × 312
@@ -38,7 +41,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<WixVariable Id='WixUIDialogBmp' Value='..\..\artwork\installerBackground.jpg' />
 -->
 
-	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
 
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
@@ -78,11 +80,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  </Directory>
 	</Directory>
 
-	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
+	<Feature Id="ProductFeature" Level="1" Title="LIFT Bridge $(var.Property_ProductVersion)" Description="Complete system.">
 	  <ComponentRef Id="ChorusPlus"/>
 	  <ComponentRef Id="ChorusMerge"/>
 	  <ComponentRef Id="LiftBridge"/>
-	  <!-- Generated components -->
+	  <!-- Generated (originally) components (originally, but stored in Mercurial). -->
 	  <ComponentGroupRef Id="DistFiles"/>
 	  <ComponentGroupRef Id="MercurialFiles"/>
 	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
@@ -93,6 +95,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<!-- what you see in add/remove programs control panel -->
 	<Property Id="ARPPRODUCTICON" Value="LIFT Bridge $(var.Property_ProductVersion)"/>
 
+	<!--
+		<Custom Action='AlreadyUpdated' After='FindRelatedProducts'>NEWVERSIONDETECTED</Custom>
+		<Custom Action='NoDowngrade' After='FindRelatedProducts'>OLDERVERSIONBEINGUPGRADED</Custom>
+		-->
 	<InstallExecuteSequence>
 	  <RemoveExistingProducts After="InstallInitialize"/>
 	</InstallExecuteSequence>
