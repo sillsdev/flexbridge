@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	/// This class deals with files with extension of "annotation".
 	/// There is only one of them with a fixed name.
 	/// </summary>
-	internal class AnnotationFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class AnnotationFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

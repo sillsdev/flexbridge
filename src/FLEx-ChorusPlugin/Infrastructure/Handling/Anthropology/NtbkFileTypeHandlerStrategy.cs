@@ -69,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
 				"RnGenericRec", SharedConstants.GuidStr, WritePreliminaryAnthropologyInformation);
 		}

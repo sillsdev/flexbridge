@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	/// This class deals with files with extension of "filter".
 	/// There is only one of them with a fixed name.
 	/// </summary>
-	internal class FilterFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class FilterFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

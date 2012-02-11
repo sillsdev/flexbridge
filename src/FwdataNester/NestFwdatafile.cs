@@ -60,8 +60,9 @@ namespace FwdataTestApp
 					csElement.Remove();
 			}
 
-			// 2. Sort <rt>
-			DataSortingService.SortMainElement(rtElement);
+			// Theory has it the FW data is sorted.
+			//// 2. Sort <rt>
+			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
 			SortedDictionary<string, XElement> recordData;

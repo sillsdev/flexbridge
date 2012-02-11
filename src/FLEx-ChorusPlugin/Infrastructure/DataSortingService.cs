@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -13,37 +12,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal static class DataSortingService
 	{
-		internal static void SortEntireFile(XmlWriter writer, string pathname)
-		{
-			var readerSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-
-			// Step 2: Sort and rewrite file.
-			using (var fastSplitter = new FastXmlElementSplitter(pathname))
-			{
-				var sortedObjects = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-				bool foundOptionalFirstElement;
-				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
-				{
-					if (foundOptionalFirstElement)
-					{
-						// Step 2A: Write out custom property declaration(s).
-						WriteElement(writer, readerSettings, SortCustomPropertiesRecord(record));
-						foundOptionalFirstElement = false;
-					}
-					else
-					{
-						// Step 2B: Sort main CmObject record.
-						var sortedMainObject = SortMainElement(record);
-						sortedObjects.Add(sortedMainObject.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), sortedMainObject.ToString());
-					}
-				}
-				foreach (var sortedObjectKvp in sortedObjects)
-				{
-					WriteElement(writer, readerSettings, sortedObjectKvp.Value);
-				}
-			}
-		}
-
 		internal static XElement SortCustomPropertiesRecord(string optionalFirstElement)
 		{
 			var customPropertiesElement = XElement.Parse(optionalFirstElement);
@@ -70,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			return customPropertiesElement;
 		}
 
-		internal static XElement SortMainElement(string rootData)
+		internal static XElement TestingSortMainElement(string rootData)
 		{
 			var sortedResult = XElement.Parse(rootData);
 
@@ -79,7 +47,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			return sortedResult;
 		}
 
-		internal static void SortMainElement(XElement rootData)
+		private static void SortMainElement(XElement rootData)
 		{
 			var className = rootData.Attribute(SharedConstants.Class).Value;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(className);

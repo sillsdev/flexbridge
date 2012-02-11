@@ -41,7 +41,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// Old style
 		internal const string RtTag = "rt";
-		internal const string ClassData = "ClassData";
 
 		// Model Version
 		internal const string ModelVersion = "ModelVersion";

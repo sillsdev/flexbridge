@@ -5,13 +5,13 @@ using System.Xml;
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	/// <summary>
-	/// Service class used by FieldWorksMergingStrategy and FieldWorksCommonMergeStrategy to make sure "DateModified", "DateResolved", and "RunDate" never conflict.
+	/// Service class used by FieldWorksCommonMergeStrategy to make sure "DateModified", "DateResolved", and "RunDate" never conflict.
 	///
 	/// The latest one will always win, no matter what.
 	/// </summary>
 	internal static class FieldWorksMergingServices
 	{
-		internal static void PreMergeTimestamps(bool isNewStyle, MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		internal static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
 		{
 			if (ourEntry == null || theirEntry == null)
 				return;
@@ -19,9 +19,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			const string xpath = "DateModified | DateResolved | RunDate";
 			var ourDateTimeNodes = ourEntry.SelectNodes(xpath);
 			var theirDateTimeNodes = theirEntry.SelectNodes(xpath);
-			if (!isNewStyle && ((ourDateTimeNodes == null || ourDateTimeNodes.Count == 0) &&
-				(theirDateTimeNodes == null || theirDateTimeNodes.Count == 0)))
-				return;
 
 			for (var i = 0; i < ourDateTimeNodes.Count; ++i)
 			{
@@ -39,8 +36,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				else
 					ourNode.Attributes["val"].Value = theirNode.Attributes["val"].Value;
 			}
-			if (!isNewStyle)
-				return;
 
 			// Drill down and do all owned objects
 			var classname = ourEntry.Name == SharedConstants.Ownseq ? ourEntry.Attributes["class"].Value : ourEntry.Name;
@@ -62,7 +57,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						.FirstOrDefault();
 					if (theirOwnedElement == null)
 						continue;
-					PreMergeTimestamps(true, mdc, ourOwnedElement, theirOwnedElement);
+					PreMergeTimestamps(mdc, ourOwnedElement, theirOwnedElement);
 				}
 			}
 		}

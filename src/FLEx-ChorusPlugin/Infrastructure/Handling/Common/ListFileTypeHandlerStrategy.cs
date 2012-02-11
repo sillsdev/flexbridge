@@ -11,7 +11,7 @@ using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {
-	internal class ListFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class ListFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

@@ -59,7 +59,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/AnalyzingAgents.agents");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/MorphAndSynData.morphdata");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Phonology/PhonologicalData.phondata");
-			// TODO: Add others.
 
 			// Anthropology
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
@@ -71,10 +70,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
 
 			// Leftovers
-			// TODO: Add whatever doesn't readily fit into the three main domains.
-
-			// Older style files, hopefully, soon to be obsolete.
-			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");
+			// Style file and user-defined lists ought to be covered, above.
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExFilters.filter");
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExAnnotations.annotation");
+			projectFolderConfiguration.IncludePatterns.Add("General/LanguageProject.langproj");
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExProject.lint");
 		}
 	}
 }

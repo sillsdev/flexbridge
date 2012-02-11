@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	/// This class deals with files with extension of "lint".
 	/// There is only one of them with a fixed name.
 	/// </summary>
-	internal class LintFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class LintFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	/// This class deals with files with extension of "langproj".
 	/// There is only one of them with a fixed name.
 	/// </summary>
-	internal class LangProjFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class LangProjFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

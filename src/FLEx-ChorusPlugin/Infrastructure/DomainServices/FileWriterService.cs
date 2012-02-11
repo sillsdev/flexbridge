@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -76,39 +75,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				Directory.Delete(baseDataFolder); // Empty now, so zap it.
 		}
 
-		internal static void WriteObject(MetadataCache mdc,
-										 IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping,
-										 string baseDir,
-										 Dictionary<string, SortedDictionary<string, XElement>> multiClassOutput, string guid,
-										 HashSet<string> omitProperties)
-		{
-			multiClassOutput.Clear();
-			var dataEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guid);
-			ObjectFinderServices.CollectAllOwnedObjects(mdc,
-														classData, guidToClassMapping, multiClassOutput,
-														dataEl,
-														omitProperties);
-			foreach (var kvp in multiClassOutput)
-				WriteSecondaryFile(Path.Combine(baseDir, kvp.Key + ".ClassData"), kvp.Value);
-			multiClassOutput.Clear();
-		}
-
-		internal static void WriteSecondaryFile(string newPathname, SortedDictionary<string, XElement> data)
-		{
-			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				writer.WriteStartElement("classdata");
-				foreach (var kvp in data)
-					WriteElement(writer, kvp.Value);
-				writer.WriteEndElement();
-			}
-		}
-
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
 													 string pathRoot,
 													 byte[] record)
 		{
-			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+			// Theory has it that the fwdata file is all sorted.
+			//var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+			var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			var hasCustomProperties = false;
 			foreach (var propElement in cpElement.Elements("CustomField"))

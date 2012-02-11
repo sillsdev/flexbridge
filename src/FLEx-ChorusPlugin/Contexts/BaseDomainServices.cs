@@ -179,5 +179,13 @@ namespace FLEx_ChorusPlugin.Contexts
 			foreach (var sortedAttr in sortedAttrs.Values)
 				elementToRename.Add(sortedAttr);
 		}
+
+		internal static List<string> GetGuids(XContainer owningElement, string propertyName)
+		{
+			var propElement = owningElement.Element(propertyName);
+
+			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements(SharedConstants.Objsur)
+																 select osEl.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()).ToList();
+		}
 	}
 }
