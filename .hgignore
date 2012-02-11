@@ -15,6 +15,9 @@ glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
 syntax: regexp
 _ReSharper.LiftBridge VS2010/*
 DistFiles/Mercurial/*
+DistFiles/Mercurial/MercurialExtensions/*
+Mercurial/*
+MercurialExtensions/*
 syntax: glob
 LiftBridge VS2010.userprefs
 src/LiftBridge/LiftBridge.pidb

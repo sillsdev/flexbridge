@@ -38,10 +38,16 @@
   </Target>
 
   <ItemGroup>
-	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+  </ItemGroup>
+  <ItemGroup>
+	<OutputDirectory Include="$(RootDir)\output\" />
   </ItemGroup>
   <Target Name="Clean">
+	<Message Text="Starting Clean"/>
 	<Delete Files="@(ExistingObjectFiles)"/>
+	<RemoveDir Directories="$(OutputDirectory)" />
+	<Message Text="End Clean"/>
   </Target>
 
   <Target Name="Compile" DependsOnTargets="CopyMercurialFolders">
@@ -49,8 +55,7 @@
   </Target>
 
   <Target Name="MergeAssemblies">
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/net2.0/Chorus.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/net2.0/ChorusMerge.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+	<Exec Command="$(RootDir)/build/BasicWinMerge.bat"/>
   </Target>
 
   <Target Name="CopyMercurialFolders" DependsOnTargets="UnzipMercurial">

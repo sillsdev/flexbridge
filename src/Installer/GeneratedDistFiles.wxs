@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
-		<DirectoryRef Id="INSTALLDIR">
-			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
+		<DirectoryRef Id="FW7INSTALLDIR">
+			<Component Id="about.htm" Guid="C1ECD187-E382-11DE-8A39-0800200C9A66">
 				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\DistFiles\about.htm" />
 			</Component>
-			<Component Id="license.rtf" Guid="61288324-9979-40DF-9F86-DE66B2FA1B41">
+			<Component Id="license.rtf" Guid="C1ECD188-E382-11DE-8A39-0800200C9A66">
 				<File Id="license.rtf" Name="license.rtf" Source="..\..\DistFiles\license.rtf" />
 			</Component>
-			<Component Id="LogoForAbout.png" Guid="C217AC6E-CDB7-4334-9D0F-BDD53F57EA21">
+			<Component Id="LogoForAbout.png" Guid="C1ECD189-E382-11DE-8A39-0800200C9A66">
 				<File Id="LogoForAbout.png" Name="LogoForAbout.png" Source="..\..\DistFiles\LogoForAbout.png" />
 			</Component>
 		</DirectoryRef>
