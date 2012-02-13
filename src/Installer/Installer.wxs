@@ -6,7 +6,7 @@
 <!--Don't even think of EVER changing the Product Code, unless it becomes a new product. -->
 <!-- http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization for when to change Product or Package Guids (every installer build) or, Version number. -->
 <?define Property_ProductCode = "C1ED94CF-E382-11DE-8A39-0800200C9A66" ?>
-<!-- Cange Property_UpgradeCode when moving to a higher major version number. -->
+<!-- Change Property_UpgradeCode when moving to a higher major version number. -->
 <?define Property_UpgradeCode = "C1ED94D0-E382-11DE-8A39-0800200C9A66" ?>
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
@@ -21,26 +21,29 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Package Id='*' Compressed="yes" InstallerVersion="200"/>
 
 	<Upgrade Id="$(var.Property_UpgradeCode)">
-	  <UpgradeVersion OnlyDetect="yes" Property="SELFFOUND"
-		Minimum="$(var.Property_ProductVersion)" IncludeMinimum='yes'
-		Maximum="$(var.Property_ProductVersion)" IncludeMinimum='yes' />
-	  <UpgradeVersion OnlyDetect='yes' Property='NEWERFOUND'
-		Minimum='$(var.Property_ProductVersion)' IncludeMinimum='no' />
+		<UpgradeVersion OnlyDetect="yes" Property="NEWPRODUCTFOUND"
+			Minimum="$(var.Property_ProductVersion)"
+			IncludeMinimum="no" />
+		<UpgradeVersion OnlyDetect="yes" Property="SELFFOUND"
+			Minimum="$(var.Property_ProductVersion)" IncludeMinimum='yes'
+			Maximum="$(var.Property_ProductVersion)" IncludeMaximum='yes' />
+		<UpgradeVersion OnlyDetect="no" Property='UPGRADEFOUND'
+			Minimum='1.4.1.0' IncludeMinimum='yes'
+			Maximum="$(var.Property_ProductVersion)"
+			IncludeMaximum="no" />
 	</Upgrade>
 
-	<CustomAction Id='AlreadyUpdated' Error='[ProductName] is already installed.' />
-	<CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' />
+	<CustomAction Id='AlreadyInstalled' Error='[ProductName] is already installed.' />
+	<CustomAction Id='PreventDowngrading' Error='A newer version of [ProductName] is already installed.' />
 
 	<Property Id="FW7INSTALLDIR">
-		<!-- Try to be nice to FW devs. -->
-	  <RegistrySearch Id="SearchForFW7Dev" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="FwExeDir" Type="raw"/>
 	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
 	</Property>
 
-	<Property Id="FieldWorksMinimumInstalledVersion">
+	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
 	<DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
 		<!-- 7.2.0.40926 was the actual released number,
-			but I understand one than needs to go one notch under that to find 7.2.0.40926 -->
+			but I understand one then needs to go one notch under that to find 7.2.0.40926 -->
 		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
 	</DirectorySearch>
 </Property>
@@ -64,7 +67,7 @@ rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.">
-	  Installed OR FieldWorksMinimumInstalledVersion
+	  Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION
 	</Condition>
 	<!-- FW woudl have it that high, so just knowing FW in installed ought to be enough. <PropertyRef Id="NETFRAMEWORK35"/>
 	<Condition Message="Before [ProductName] can install, you need to install Microsoft's free .NET Framework 3.5.">
@@ -109,8 +112,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<!-- what you see in add/remove programs control panel -->
 	<Property Id="ARPPRODUCTICON" Value="LIFT Bridge $(var.Property_ProductVersion)"/>
 	<InstallExecuteSequence>
-	  <Custom Action='AlreadyUpdated' After='FindRelatedProducts'>SELFFOUND</Custom>
-	  <Custom Action='NoDowngrade' After='FindRelatedProducts'>NEWERFOUND</Custom>
+	  <RemoveExistingProducts After="InstallInitialize"/>
+	  <Custom Action='AlreadyInstalled' After='FindRelatedProducts'>SELFFOUND</Custom>
+	  <Custom Action='PreventDowngrading' After='FindRelatedProducts'>NEWERFOUND</Custom>
 	</InstallExecuteSequence>
   </Product>
 </Wix>
