@@ -51,6 +51,16 @@ namespace SIL.LiftBridge.Model
 					pathToProj = directory;
 					break;
 				}
+				//foreach (var directory in Directory.GetDirectories(BasePath))
+				//{
+				//	if (!Directory.Exists(Path.Combine(directory, ".hg")))
+				//		continue;
+				//	var repo = new HgRepository(directory, new NullProgress());
+				//	if (repo.Identifier != repoId)
+				//		continue;
+				//	pathToProj = directory;
+				//	break;
+				//}
 			}
 
 			if (!Directory.Exists(pathToProj))
