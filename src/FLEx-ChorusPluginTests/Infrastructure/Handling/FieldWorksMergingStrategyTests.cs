@@ -21,23 +21,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		private FieldWorksCommonMergeStrategy _fwCommonMergeStrategy;
 		private MetadataCache _mdc;
 
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			_mdc = MetadataCache.MdCache;
-			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
-			_mdc.ResetCaches();
-		}
-
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
-		{
-			_mdc = null;
-		}
-
 		[SetUp]
 		public void TestSetup()
 		{
+			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			_mdc.ResetCaches();
 			_eventListener = new ListenerForUnitTests();
 			_fwCommonMergeStrategy = new FieldWorksCommonMergeStrategy(new NullMergeSituation(), _mdc);
 		}
@@ -45,6 +34,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[TearDown]
 		public void TestTeardown()
 		{
+			_mdc = null;
 			_eventListener = null;
 			_fwCommonMergeStrategy = null;
 		}
