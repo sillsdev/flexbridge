@@ -206,11 +206,8 @@ namespace SIL.LiftBridge.View
 							mapDoc.Save(LiftProjectServices.MappingPathname);
 						}
 					}
-					else
-					{
-						// A3. Go ahead and create a new one, but it may not actually end up in proposedRootDataDir.
-						cloneResult = CloneResult.OkToCreate;
-					}
+					// A3. Go ahead and create a new one, but it may not actually end up in proposedRootDataDir.
+					cloneResult = CloneResult.OkToCreate;
 				}
 			}
 

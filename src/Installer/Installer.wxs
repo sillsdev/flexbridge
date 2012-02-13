@@ -13,7 +13,7 @@
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
 
-  <Product Id="$(var.Property_ProductCode)" Name="LIFT Bridge" Language="1033"
+  <Product Id="$(var.Property_ProductCode)" Name="LIFT Bridge $(var.Property_ProductVersion)" Language="1033"
 			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
 			 UpgradeCode="$(var.Property_UpgradeCode)">
 
@@ -21,14 +21,29 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Package Id='*' Compressed="yes" InstallerVersion="200"/>
 
 	<Upgrade Id="$(var.Property_UpgradeCode)">
-	  <UpgradeVersion Minimum="$(var.Property_ProductVersion)" OnlyDetect="yes" Property="NEWVERSIONDETECTED"/>
-	  <UpgradeVersion Minimum="0.0.0" IncludeMinimum="yes" Maximum="$(var.Property_ProductVersion)" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED"/>
+	  <UpgradeVersion OnlyDetect="yes" Property="SELFFOUND"
+		Minimum="$(var.Property_ProductVersion)" IncludeMinimum='yes'
+		Maximum="$(var.Property_ProductVersion)" IncludeMinimum='yes' />
+	  <UpgradeVersion OnlyDetect='yes' Property='NEWERFOUND'
+		Minimum='$(var.Property_ProductVersion)' IncludeMinimum='no' />
 	</Upgrade>
 
+	<CustomAction Id='AlreadyUpdated' Error='[ProductName] is already installed.' />
+	<CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' />
+
 	<Property Id="FW7INSTALLDIR">
-		<!-- Should it be FwExeDir, instead, so devs can also install it? -->
+		<!-- Try to be nice to FW devs. -->
+	  <RegistrySearch Id="SearchForFW7Dev" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="FwExeDir" Type="raw"/>
 	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
 	</Property>
+
+	<Property Id="FieldWorksMinimumInstalledVersion">
+	<DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
+		<!-- 7.2.0.40926 was the actual released number,
+			but I understand one than needs to go one notch under that to find 7.2.0.40926 -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
+	</DirectorySearch>
+</Property>
 
 	<UIRef Id="WixUI_Minimal"/>
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
@@ -48,13 +63,13 @@ users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 
-	<Condition Message="Before LIFT Bridge can install, you need to install SIL's FieldWorks 7.">
-	  Installed OR FW7INSTALLDIR
+	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.">
+	  Installed OR FieldWorksMinimumInstalledVersion
 	</Condition>
-	<PropertyRef Id="NETFRAMEWORK35"/>
-	<Condition Message="Before LIFT Bridge can install, you need to install Microsoft's free .NET Framework 3.5.">
+	<!-- FW woudl have it that high, so just knowing FW in installed ought to be enough. <PropertyRef Id="NETFRAMEWORK35"/>
+	<Condition Message="Before [ProductName] can install, you need to install Microsoft's free .NET Framework 3.5.">
 	  Installed OR NETFRAMEWORK35
-	</Condition>
+	</Condition>-->
 
 	<!--because of bug, this needs to be 1 -->
 	<Property Id="ALLUSERS">1</Property>
@@ -80,27 +95,22 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  </Directory>
 	</Directory>
 
-	<Feature Id="ProductFeature" Level="1" Title="LIFT Bridge $(var.Property_ProductVersion)" Description="Complete system.">
+	<Feature Id="ProductFeature" Level="1" Title="LIFT Bridge" Description="Complete system.">
 	  <ComponentRef Id="ChorusPlus"/>
 	  <ComponentRef Id="ChorusMerge"/>
 	  <ComponentRef Id="LiftBridge"/>
-	  <!-- Generated (originally) components (originally, but stored in Mercurial). -->
+	  <!-- Generated components (originally, but now stored in Mercurial). -->
 	  <ComponentGroupRef Id="DistFiles"/>
 	  <ComponentGroupRef Id="MercurialFiles"/>
 	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
-
 	</Feature>
 
 	<Media Id="1" Cabinet="LiftBridge.cab" EmbedCab="yes"/>
 	<!-- what you see in add/remove programs control panel -->
 	<Property Id="ARPPRODUCTICON" Value="LIFT Bridge $(var.Property_ProductVersion)"/>
-
-	<!--
-		<Custom Action='AlreadyUpdated' After='FindRelatedProducts'>NEWVERSIONDETECTED</Custom>
-		<Custom Action='NoDowngrade' After='FindRelatedProducts'>OLDERVERSIONBEINGUPGRADED</Custom>
-		-->
 	<InstallExecuteSequence>
-	  <RemoveExistingProducts After="InstallInitialize"/>
+	  <Custom Action='AlreadyUpdated' After='FindRelatedProducts'>SELFFOUND</Custom>
+	  <Custom Action='NoDowngrade' After='FindRelatedProducts'>NEWERFOUND</Custom>
 	</InstallExecuteSequence>
   </Product>
 </Wix>
