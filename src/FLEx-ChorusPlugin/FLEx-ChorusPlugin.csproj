@@ -149,7 +149,6 @@
 	<Compile Include="Infrastructure\Handling\General\LangProjFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\LintFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
-	<Compile Include="Infrastructure\Handling\ClassDataFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
@@ -166,7 +165,6 @@
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategy.cs" />
 	<Compile Include="Controller\FwBridgeController.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
@@ -200,7 +198,6 @@
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
 	<Compile Include="Infrastructure\DomainServices\MultipleFileServices.cs" />
-	<Compile Include="Infrastructure\DomainServices\ObjectFinderServices.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />

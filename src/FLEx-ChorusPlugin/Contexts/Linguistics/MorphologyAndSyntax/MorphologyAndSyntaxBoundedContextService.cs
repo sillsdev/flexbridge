@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			//		Remove objsur node(s) from LP.
 			var agents = classData["CmAgent"];
 			var rootElement = new XElement(SharedConstants.AnalyzingAgents);
-			foreach (var agentGuid in ObjectFinderServices.GetGuids(langProjElement, SharedConstants.AnalyzingAgents))
+			foreach (var agentGuid in BaseDomainServices.GetGuids(langProjElement, SharedConstants.AnalyzingAgents))
 			{
 				var agentElement = agents[agentGuid];
 				rootElement.Add(agentElement);

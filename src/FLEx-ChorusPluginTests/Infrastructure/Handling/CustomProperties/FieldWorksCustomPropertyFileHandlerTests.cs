@@ -100,8 +100,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 </AdditionalFields>";
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile("fwtest.CustomProperties", parent);
-				repositorySetup.ChangeFileAndCommit("fwtest.CustomProperties", child, "change it");
+				repositorySetup.AddAndCheckinFile(SharedConstants.CustomPropertiesFilename, parent);
+				repositorySetup.ChangeFileAndCommit(SharedConstants.CustomPropertiesFilename, child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber

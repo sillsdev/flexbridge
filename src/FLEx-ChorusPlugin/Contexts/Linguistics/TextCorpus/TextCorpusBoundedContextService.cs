@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (texts.Count == 0)
 				return; // No texts to process.
 
-			var textGuidsInLangProj = ObjectFinderServices.GetGuids(langProjElement, "Texts");
+			var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
 			foreach (var textGuid in textGuidsInLangProj)
 			{
 				var rootElement = new XElement("TextInCorpus");

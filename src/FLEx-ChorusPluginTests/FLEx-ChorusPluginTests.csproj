@@ -105,10 +105,7 @@
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenterTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileDiffTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileMergeTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileValidationTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />

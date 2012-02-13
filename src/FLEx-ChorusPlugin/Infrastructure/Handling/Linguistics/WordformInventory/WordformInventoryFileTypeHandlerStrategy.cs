@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
 				SharedConstants.LexEntry,
 				SharedConstants.GuidStr,

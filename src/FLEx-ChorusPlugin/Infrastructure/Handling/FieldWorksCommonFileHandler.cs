@@ -158,9 +158,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Annotation,
 				SharedConstants.Filter,
 
-				// Old style
-				SharedConstants.ClassData,
-
 				// Scripture
 				SharedConstants.ArchivedDraft,
 				SharedConstants.ImportSetting,

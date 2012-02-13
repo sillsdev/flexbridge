@@ -12,13 +12,13 @@ using NUnit.Framework;
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
 	/// <summary>
-	/// Test the merge override capabilities of the FieldWorksMergingStrategy implementation of the IMergeStrategy interface.
+	/// Test the merge override capabilities of the FieldWorksCommonMergeStrategy implementation of the IMergeStrategy interface.
 	/// </summary>
 	[TestFixture]
 	public class FieldWorksMergingStrategyTests
 	{
 		private ListenerForUnitTests _eventListener;
-		private FieldWorksMergingStrategy _fwMergeStrategy;
+		private FieldWorksCommonMergeStrategy _fwCommonMergeStrategy;
 		private MetadataCache _mdc;
 
 		[TestFixtureSetUp]
@@ -39,14 +39,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
-			_fwMergeStrategy = new FieldWorksMergingStrategy(new NullMergeSituation(), _mdc);
+			_fwCommonMergeStrategy = new FieldWorksCommonMergeStrategy(new NullMergeSituation(), _mdc);
 		}
 
 		[TearDown]
 		public void TestTeardown()
 		{
 			_eventListener = null;
-			_fwMergeStrategy = null;
+			_fwCommonMergeStrategy = null;
 		}
 
 		[Test]
@@ -54,64 +54,68 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='qaa-x-ezpi'>
-			<Run
-				ws='qaa-x-ezpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
 			const string sue =
 @"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='qaa-x-ezpi'>
-			<Run
-				ws='qaa-x-ezpi'>saglo, yzaglo, rzaglo, wzaglo, nzaglo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saglo, yzaglo, rzaglo, wzaglo, nzaglo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
 			const string randy =
 @"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='zpi'>
-			<Run
-				ws='zpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='zpi'>
+						<Run
+							ws='zpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
 
 			XmlNode sueNode;
 			XmlNode ancestorNode;
 			var randyNode = FieldWorksTestServices.CreateNodes(commonAncestor, randy, sue, out sueNode, out ancestorNode);
 
-			var result = _fwMergeStrategy.MakeMergedEntry(_eventListener, randyNode, sueNode, ancestorNode);
-			var resElement = XElement.Parse(result);
-			Assert.IsTrue(resElement.Elements(SharedConstants.Custom).Count() == 1);
-			var aStrNodes = resElement.Element(SharedConstants.Custom).Elements("AStr");
+			var result = _fwCommonMergeStrategy.MakeMergedEntry(_eventListener, randyNode, sueNode, ancestorNode);
+			var entryElement = XElement.Parse(result);
+			var ownseqElement = entryElement.Element("Senses").Element(SharedConstants.Ownseq);
+			Assert.IsTrue(ownseqElement.Elements(SharedConstants.Custom).Count() == 1);
+			var aStrNodes = ownseqElement.Element(SharedConstants.Custom).Elements("AStr");
 			Assert.IsTrue(aStrNodes.Count() == 2);
 			var aStrNode = aStrNodes.ElementAt(0);
 			Assert.IsTrue(aStrNode.Attribute("ws").Value == "qaa-x-ezpi");
