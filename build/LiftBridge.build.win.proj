@@ -62,12 +62,21 @@
 	  <MyMercurialFiles Include="$(RootDir)\output\common\Mercurial\**\*.*"/>
 	  <MyMercurialExtensionFiles Include="$(RootDir)\output\common\MercurialExtensions\**\*.*"/>
 	</ItemGroup>
+
+	<!-- This isn't making Team City happy on tests.
 	<Copy
 	  SourceFiles="@(MyMercurialFiles)"
 	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
 	<Copy
 	  SourceFiles="@(MyMercurialExtensionFiles)"
-	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
+	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" /> -->
+
+	<Copy
+	  SourceFiles="@(MyMercurialFiles)"
+	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy
+	  SourceFiles="@(MyMercurialExtensionFiles)"
+	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
