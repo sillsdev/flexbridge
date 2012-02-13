@@ -76,17 +76,5 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var sortedimportSettings in sortedImportSettings.Values)
 				importSettingsOwningProp.Add(sortedimportSettings);
 		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ImportSettingsFilename);
-			if (File.Exists(pathname))
-				File.Delete(pathname);
-
-			// Scripture domain does it all.
-			//FileWriterService.RemoveEmptyFolders(importSettingsDir, true);
-		}
 	}
 }

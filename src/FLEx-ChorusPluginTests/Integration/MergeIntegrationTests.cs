@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 
@@ -8,65 +9,78 @@ namespace FLEx_ChorusPluginTests.Integration
 {
 	/// <summary>
 	/// This class tests a complete series of operations over several units including:
-	/// merging and syncing, Some tests may also include conflicts and the respective ChorusNotes file.
+	///		merging and syncing,
+	///		Some tests may also include conflicts and the respective ChorusNotes file.
 	/// </summary>
 	[TestFixture]
 	public class MergeIntegrationTests
 	{
-		[Test]
+		[Test, Ignore("Update to new nested system.")]
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =
-				@"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='qaa-x-ezpi'>
-			<Run
-				ws='qaa-x-ezpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='2d23f428-83a9-44ba-90f1-9e3264b5b982' />
+	</header>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Lexicon>";
 			const string sue =
-				@"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='qaa-x-ezpi'>
-			<Run
-				ws='qaa-x-ezpi'>saglo, yzaglo, rzaglo, wzaglo, nzaglo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='2d23f428-83a9-44ba-90f1-9e3264b5b982' />
+	</header>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saglo, yzaglo, rzaglo, wzaglo, nzaglo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
 			const string randy =
-				@"<?xml version='1.0' encoding='utf-8'?>
-<classdata>
-<rt
-	class='LexSense'
-	guid='a99e8509-a0eb-49fe-bd4b-ae337951e423'
-	ownerguid='a17a7cff-59c8-4fdf-bb5c-3ec12b1f7b11'>
-	<Custom
-		name='Paradigm'>
-		<AStr
-			ws='zpi'>
-			<Run
-				ws='zpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
-		</AStr>
-	</Custom>
-</rt>
-</classdata>";
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='2d23f428-83a9-44ba-90f1-9e3264b5b982' />
+	</header>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='zpi'>
+						<Run
+							ws='zpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Lexicon>";
 
 			const string customPropData =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -91,15 +105,15 @@ namespace FLEx_ChorusPluginTests.Integration
 		type='Boolean' />
 </AdditionalFields>";
 
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", "LexSense.ClassData", commonAncestor))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.LexiconFilename, commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.
-				var modelVersionPathname = Path.Combine(sueProjPath, "ZPI.ModelVersion");
+				var modelVersionPathname = Path.Combine(sueProjPath, SharedConstants.ModelVersionFilename);
 				File.WriteAllText(modelVersionPathname, AnnotationImages.kModelVersion);
 				sueRepo.Repository.TestOnlyAddSansCommit(modelVersionPathname);
 				// Add custom property data file.
-				var customPropsPathname = Path.Combine(sueProjPath, "ZPI.CustomProperties");
+				var customPropsPathname = Path.Combine(sueProjPath, SharedConstants.CustomPropertiesFilename);
 				File.WriteAllText(customPropsPathname, customPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
 				sueRepo.AddAndCheckIn();
@@ -124,13 +138,6 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
 					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
 					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));
-
-					// Take care a a problem in Palaso where it creates the "unnamedTestFolder",
-					// but then swaps out the path to somthing else (and creates it, along with "unnamedTestFolder",
-					// but then leaves "unnamedTestFolder", when Dispose is done.
-					var unnamedTestFolder = Path.Combine(Path.GetTempPath(), "unnamedTestFolder");
-					if (Directory.Exists(unnamedTestFolder))
-						Directory.Delete(unnamedTestFolder, true);
 				}
 			}
 		}

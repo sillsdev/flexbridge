@@ -56,19 +56,5 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);
 		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			// baseDirectory is root/Scripture.
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			const string transScripPathname = SharedConstants.ScriptureTransFilename;
-			if (File.Exists(transScripPathname))
-				File.Delete(transScripPathname);
-
-			// Scripture domain does it all.
-			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
-		}
 	}
 }

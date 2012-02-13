@@ -24,14 +24,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
-			var lists = classData["CmPossibilityList"];
+			var lists = classData[SharedConstants.CmPossibilityList];
 			NestLists(classData, guidToClassMapping, lists, lexiconDir, lexDb,
 					  new List<string>
 						{
 							"SenseTypes",
 							"UsageTypes",
 							"DomainTypes",
-							"MorphTypes",
+							// Moved to Morph & Syn, as per AndyB. "MorphTypes",
 							"References",
 							"VariantEntryTypes",
 							"ComplexEntryTypes",
@@ -90,8 +90,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			if (!Directory.Exists(lexiconDir))
 				return;
 
-			// No. Won't be there now, so fish it out of the file and put it in.
-			// var lexDb = highLevelData[LexDb];
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var lexDbPathname = Path.Combine(lexiconDir, SharedConstants.LexiconFilename);
@@ -99,13 +97,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			var rootLexDbDoc = lexDbDoc.Root;
 			var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
 			var lexDb = headerLexDbDoc.Element(LexDb);
-			highLevelData[LexDb] = lexDb;
+			highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
 			// Add LexDb <objsur> element to LP.
 			BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
 			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
 				var listDoc = XDocument.Load(listPathname);
-				var listElement = listDoc.Root.Element("CmPossibilityList");
+				var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
 				var listFilenameSansExtension = Path.GetFileNameWithoutExtension(listPathname);
 				switch (listFilenameSansExtension)
 				{
@@ -142,21 +140,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					entryElement,
 					null); // Entries are not owned.
 			}
-		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBaseDir)
-		{
-			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
-			if (!Directory.Exists(lexiconDir))
-				return;
-
-			if (File.Exists(Path.Combine(lexiconDir, SharedConstants.LexiconFilename)))
-				File.Delete(Path.Combine(lexiconDir, SharedConstants.LexiconFilename));
-			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
-				File.Delete(listPathname);
-
-			// Let domain do it.
-			// FileWriterService.RemoveEmptyFolders(lexiconDir, true);
 		}
 
 		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,

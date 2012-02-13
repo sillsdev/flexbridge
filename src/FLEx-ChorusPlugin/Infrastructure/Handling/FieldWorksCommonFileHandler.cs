@@ -152,8 +152,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Style,
 				SharedConstants.List,
 
-				// Old style
-				SharedConstants.ClassData,
+				// General
+				SharedConstants.lint,
+				SharedConstants.langproj,
+				SharedConstants.Annotation,
+				SharedConstants.Filter,
 
 				// Scripture
 				SharedConstants.ArchivedDraft,
@@ -169,7 +172,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Lexdb, // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
 				SharedConstants.TextInCorpus, // Text corpus only added one new extension "textincorpus", as the list is already taken care of.
 				SharedConstants.Inventory, // inventory
-				SharedConstants.DiscourseExt // discourse
+				SharedConstants.DiscourseExt, // discourse
+				SharedConstants.Featsys, // Feature structure systems (Phon and Morph & Syn)
+				SharedConstants.Phondata,
+				SharedConstants.Morphdata,
+				SharedConstants.Agents
 			};
 		}
 

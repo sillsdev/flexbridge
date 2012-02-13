@@ -74,8 +74,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			using (var tempFile = new TempFile())
 			{
+				var tempPath = tempFile.Path;
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
-					tempFile.Path,
+					tempPath,
 					null,
 					new XElement("junk"),
 					null));
@@ -87,8 +88,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			using (var tempFile = new TempFile())
 			{
+				var tempPath = tempFile.Path;
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
-					tempFile.Path,
+					tempPath,
 					new SortedDictionary<string, XElement>(),
 					null,
 					null));
@@ -100,8 +102,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			using (var tempFile = new TempFile())
 			{
+				var tempPath = tempFile.Path;
 				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenObject(
-					tempFile.Path,
+					tempPath,
 					new SortedDictionary<string, XElement>(),
 					new XElement("junk"),
 					string.Empty));
@@ -113,9 +116,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			using (var tempFile = new TempFile())
 			{
+				var tempPath = tempFile.Path;
 				var sortedData = new SortedDictionary<string, XElement>();
 				CmObjectFlatteningService.FlattenObject(
-					tempFile.Path,
+					tempPath,
 					sortedData,
 					_reversalIndexElement,
 					null);
@@ -154,7 +158,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.AreEqual(7, sortedData.Count());
 				Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex"));
 				Assert.AreEqual(3, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"));
-				Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList"));
+				Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == SharedConstants.CmPossibilityList));
 				Assert.AreEqual(2, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "PartOfSpeech"));
 			}
 		}
@@ -177,7 +181,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CheckOwningProperty(owningProp, 1);
 				owningProp = revIdx.Element("PartsOfSpeech");
 				CheckOwningProperty(owningProp, 1);
-				var posList = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == "CmPossibilityList");
+				var posList = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == SharedConstants.CmPossibilityList);
 				owningProp = posList.Element("Possibilities");
 				CheckOwningProperty(owningProp, 2);
 			}

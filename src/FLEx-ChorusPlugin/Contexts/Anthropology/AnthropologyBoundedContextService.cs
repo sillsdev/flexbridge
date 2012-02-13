@@ -64,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
 			BaseDomainServices.NestLists(classData,
 				guidToClassMapping,
-				classData["CmPossibilityList"],
+				classData[SharedConstants.CmPossibilityList],
 				headerElement,
 				langProj,
 				new List<string>
@@ -119,20 +119,10 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					case "TimeOfDay":
 						BaseDomainServices.RestoreElement(dnPathname, sortedData,
 							langProjElement, headerChildElement.Name.LocalName,
-							headerChildElement.Element("CmPossibilityList"));
+							headerChildElement.Element(SharedConstants.CmPossibilityList));
 						break;
 				}
 			}
-		}
-
-		internal static void RemoveBoundedContextData(string anthropologyBase)
-		{
-			var notebookPath = Path.Combine(anthropologyBase, SharedConstants.DataNotebookFilename);
-			if (File.Exists(notebookPath))
-				File.Delete(notebookPath);
-
-			// Let domain do it.
-			// FileWriterService.RemoveEmptyFolders(anthropologyBase, true);
 		}
 	}
 }

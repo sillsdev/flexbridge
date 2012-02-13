@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
-using Palaso.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
@@ -161,7 +158,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void SortMainElement()
 		{
-
 			// Possibilities is an owning seq prop of CmPossibilityList.
 			const string rt =
 @"<rt ownerguid='fe832a87-4846-4895-9c7e-98c5da0c84ba' class='CmPossibilityList' guid='fb5e83e5-6576-455d-aba0-0b7a722b9b5d'>
@@ -183,18 +179,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			hs = new HashSet<string> { "Abbreviation" };
 			pl.Add("MultiAlt", hs);
 
-			//var tempInputPathname = Path.GetTempFileName();
-			//var tempOutputPathname = Path.GetTempFileName();
-			//File.WriteAllText(tempInputPathname, rt);
-			//try
-			//{
-			//	using (var writer = XmlWriter.Create(tempOutputPathname))
-			//	{
-			var rtElement = DataSortingService.SortMainElement(rt);
-			//		writer.Flush();
-			//		writer.Close();
-			//	}
-			//	var doc = XDocument.Load(tempOutputPathname);
+			var rtElement = DataSortingService.TestingSortMainElement(rt);
 			Assert.AreEqual(SharedConstants.Class, rtElement.Attributes().ElementAt(0).Name.LocalName);
 			Assert.AreEqual(SharedConstants.GuidStr, rtElement.Attributes().ElementAt(1).Name.LocalName);
 			Assert.AreEqual(SharedConstants.OwnerGuid, rtElement.Attributes().ElementAt(2).Name.LocalName);
@@ -208,56 +193,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			sortedProp = rtElement.Elements().ElementAt(3);
 			//Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement called coll sorter.
 			Assert.AreEqual("Possibilities", sortedProp.Name.LocalName);
-			//}
-			//finally
-			//{
-			//	//File.Delete(tempInputPathname);
-			//	File.Delete(tempOutputPathname);
-			//}
-		}
-
-		/// <summary>
-		/// Check that the whole file is sorted.
-		/// </summary>
-		[Test]
-		public void SortEntireFile()
-		{
-			const string rt =
-@"<?xml version='1.0' encoding='utf-8'?>
-<languageproject version='7000037'>
-<AdditionalFields>
-<CustomField class='WfiWordform' name='Certified' type='Boolean' />
-<CustomField class='LexEntry' destclass='7' listRoot='53241fd4-72ae-4082-af55-6b659657083c' name='Tone' type='RC' />
-</AdditionalFields>
-<rt guid='c1ecf88d-e382-11de-8a39-0800200c9a66' class='WfiWordform' />
-<rt guid='c1ecf88c-e382-11de-8a39-0800200c9a66' class='LexEntry' />
-</languageproject>";
-
-			var pl = new Dictionary<string, HashSet<string>>();
-			var hs = new HashSet<string> { "Possibilities" };
-			pl.Add("Collections", hs);
-			hs = new HashSet<string> { "Abbreviation" };
-			pl.Add("MultiAlt", hs);
-			using (var inputTempFile = new TempFile())
-			using (var outputTempFile = new TempFile())
-			{
-				File.WriteAllText(inputTempFile.Path, rt);
-				using (var writer = XmlWriter.Create(outputTempFile.Path))
-				{
-					writer.WriteStartElement("languageproject");
-					DataSortingService.SortEntireFile(writer, inputTempFile.Path);
-					writer.WriteEndElement();
-					writer.Flush();
-					writer.Close();
-				}
-				var doc = XDocument.Load(outputTempFile.Path);
-				var rtElement = doc.Root;
-				Assert.AreEqual(3, rtElement.Elements().Count());
-				var sortedProp = rtElement.Elements().ElementAt(0);
-				Assert.AreEqual("LexEntry", sortedProp.Element("CustomField").Attribute(SharedConstants.Class).Value); // Make sure SortCustomPropertiesRecord was called.
-				sortedProp = rtElement.Elements().ElementAt(1);
-				Assert.AreEqual("c1ecf88c-e382-11de-8a39-0800200c9a66", sortedProp.Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement was called.
-			}
 		}
 	}
 }

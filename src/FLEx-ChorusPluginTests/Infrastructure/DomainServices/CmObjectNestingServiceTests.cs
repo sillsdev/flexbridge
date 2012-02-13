@@ -105,12 +105,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				_classData,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
-			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
-			Assert.AreEqual(2, entriesElements.Count());
-			entriesElements = _rt.Element("PartsOfSpeech").Elements("CmPossibilityList");
-			Assert.AreEqual(1, entriesElements.Count());
-			entriesElements = entriesElements.ToList()[0].Element("Possibilities").Elements(SharedConstants.Ownseq);
-			Assert.AreEqual(2, entriesElements.Count());
+			var entriesElements = entriesElement.Elements("ReversalIndexEntry").ToList();
+			Assert.AreEqual(2, entriesElements.Count);
+			entriesElements = _rt.Element("PartsOfSpeech").Elements(SharedConstants.CmPossibilityList).ToList();
+			Assert.AreEqual(1, entriesElements.Count);
+			entriesElements = entriesElements.ToList()[0].Element("Possibilities").Elements(SharedConstants.Ownseq).ToList();
+			Assert.AreEqual(2, entriesElements.Count);
 			var pos = entriesElements.ToList()[0];
 			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc6-e382-11de-8a39-0800200c9a66");
 			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
@@ -134,7 +134,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var entriesElement = _rt.Element("Entries");
 			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
 			Assert.AreEqual(2, entriesElements.Count());
-			Assert.AreEqual(0, _rt.Element("PartsOfSpeech").Elements("CmPossibilityList").Count());
+			Assert.AreEqual(0, _rt.Element("PartsOfSpeech").Elements(SharedConstants.CmPossibilityList).Count());
 			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements(SharedConstants.Objsur).Count());
 		}
 
@@ -211,7 +211,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			// Add the POS list, with two possibilities (own-seq prop).
 			const string posListGuid = "fb5e83e5-6576-455d-aba0-0b7a722b9b5d";
 			var posList = new XElement(SharedConstants.RtTag,
-									  new XAttribute(SharedConstants.Class, "CmPossibilityList"),
+									  new XAttribute(SharedConstants.Class, SharedConstants.CmPossibilityList),
 									  new XAttribute(SharedConstants.GuidStr, posListGuid),
 									  new XAttribute(SharedConstants.OwnerGuid, rtGuid));
 			var pos1 = new XElement(SharedConstants.RtTag,
@@ -239,12 +239,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 
 			entriesElement = new XElement("PartsOfSpeech",
 											BaseDomainServices.CreateObjSurElement(posListGuid));
-			_guidToClassMapping.Add(posListGuid, "CmPossibilityList");
+			_guidToClassMapping.Add(posListGuid, SharedConstants.CmPossibilityList);
 			data = new SortedDictionary<string, XElement>
 					{
 						{posListGuid, posList}
 					};
-			_classData.Add("CmPossibilityList", data);
+			_classData.Add(SharedConstants.CmPossibilityList, data);
 			_rt.Add(entriesElement);
 		}
 	}

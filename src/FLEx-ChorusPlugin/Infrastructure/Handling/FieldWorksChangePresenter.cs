@@ -115,6 +115,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					}
 					break;
 				case "XmlChangedRecordReport":
+					// TODO: run the diff again at lower levels to get the place(s) that actually changed.
 					var changedRecordReport = (XmlChangedRecordReport)_report;
 					switch (style.ToLower())
 					{
@@ -144,7 +145,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string GetTypeLabel()
 		{
-			return "FieldWorks data object";
+			return "FLEx data object";
 		}
 
 		public string GetIconName()

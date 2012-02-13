@@ -25,7 +25,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_eventListener = null;
 		}
 
-		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
+		[Test, Ignore("Update to new nested system.")]
 		public void WinnerAndLoserEachAddedNewOwnedItemToEmptyOwningSequenceProperty()
 		{
 			const string commonAncestor =
@@ -42,7 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(MetadataCache.MdCache, ourNode, theirNode);
 
 			// oldie should have two new child elements in ours and theirs, and in the right order.
 			Assert.IsTrue(ourNode.HasChildNodes);
@@ -91,7 +91,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
@@ -127,14 +127,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMergeTimestamps(true, MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(MetadataCache.MdCache, ourNode, theirNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			_eventListener.AssertExpectedConflictCount(0);
 		}
 
-		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
+		[Test, Ignore("Update to new nested system.")]
 		public void EnsureReferenceCollectionDoesNotConflictOnMerge()
 		{
 			const string commonAncestor =
@@ -184,7 +184,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 
@@ -247,7 +247,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							  select target).FirstOrDefault());
 		}
 
-		[Test, Ignore("FieldWorksMergingServices only does timestamps now.")]
+		[Test, Ignore("Update to new nested system.")]
 		public void EnsureReferenceCollectionDoesNotConflictOnMergeWhenBothMadeTheSameChanges()
 		{
 			const string commonAncestor =
@@ -297,7 +297,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMergeTimestamps(false, MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMergeTimestamps(MetadataCache.MdCache, ourNode, theirNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,28 +19,10 @@ namespace FLEx_ChorusPlugin.Contexts
 											 Dictionary<string, SortedDictionary<string, XElement>> classData,
 											 Dictionary<string, string> guidToClassMapping)
 		{
-			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
-			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping); // Does both old and new for a while yet.
-			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping); // Does only new.
-			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping); // Does only new.
-
-			// TODO: Props to not store in nested LangProj:
-			// TODO:	These are all for LangProj
-			/*
-			 * "ResearchNotebook"
-			 * "AnthroList",
-			 * "ConfidenceLevels",
-			 * "Restrictions",
-			 * "Roles",
-			 * "Status",
-			 * "Locations",
-			 * "People",
-			 * "Education",
-			 * "TimeOfDay",
-			 * "Positions"
-			*/
-			// Does 'leftover' stuff in old style.
-			OldStyleDomainServices.WriteData(pathRoot, mdc, classData);
+			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
 		}
 
 		internal static void RestoreDomainData(XmlWriter writer, string pathRoot)
@@ -47,9 +30,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
-			// TODO: There will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
-			OldStyleDomainServices.RestoreOldStyleData(sortedData, highLevelData, pathRoot);
-
+			GeneralDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
 			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
 			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
 			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
@@ -60,14 +41,13 @@ namespace FLEx_ChorusPlugin.Contexts
 
 		internal static void RemoveDomainData(string pathRoot)
 		{
-			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot); // TODO: Does all new, but no old.
-			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
-			ScriptureDomainServices.RemoveBoundedContextData(pathRoot); // Does all.
-
-			// TODO: Leave OldStyleDomainServices.RemoveDataFiles in until Linguistics does it all.
-			// TODO: Even then, there will be some 'leftover' domain that holds stuff like Lang Proj and any other 'clutter', and it needs to be added in this method somewhere.
-			OldStyleDomainServices.RemoveDataFiles(pathRoot);
+			LinguisticsDomainServices.RemoveBoundedContextData(pathRoot);
+			AnthropologyDomainServices.RemoveBoundedContextData(pathRoot);
+			ScriptureDomainServices.RemoveBoundedContextData(pathRoot);
+			GeneralDomainServices.RemoveBoundedContextData(pathRoot);
 		}
+
+		/************************ Basic operatios above here. ****************/
 
 		internal static void RestoreElement(
 			string pathname,
@@ -143,6 +123,69 @@ namespace FLEx_ChorusPlugin.Contexts
 						new XAttribute(SharedConstants.GuidStr, ownedGuid.ToLowerInvariant()),
 						new XAttribute("t", typeValue)
 					};
+		}
+
+		internal static void RemoveBoundedContextDataCore(string contextBaseDir)
+		{
+			if (!Directory.Exists(contextBaseDir))
+				return;
+
+			foreach (var pathname in Directory.GetFiles(contextBaseDir, "*.*", SearchOption.AllDirectories)
+				.Where(pathname => Path.GetExtension(pathname).ToLowerInvariant() != ".chorusnotes"))
+			{
+				File.Delete(pathname);
+			}
+
+			FileWriterService.RemoveEmptyFolders(contextBaseDir, true);
+		}
+
+		internal static void NestStylesPropertyElement(
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			XElement stylesProperty,
+			string outputPathname)
+		{
+			if (stylesProperty == null)
+				return;
+			var styleObjSurElements = stylesProperty.Elements().ToList();
+			if (!styleObjSurElements.Any())
+				return;
+
+			// Use only one file for all of them.
+			var root = new XElement(SharedConstants.Styles);
+			foreach (var styleObjSurElement in styleObjSurElements)
+			{
+				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				var className = guidToClassMapping[styleGuid];
+				var style = classData[className][styleGuid];
+				CmObjectNestingService.NestObject(false, style, new Dictionary<string, HashSet<string>>(), classData, guidToClassMapping);
+				root.Add(style);
+			}
+
+			FileWriterService.WriteNestedFile(outputPathname, root);
+
+			stylesProperty.RemoveNodes();
+		}
+
+		internal static void ReplaceElementNameWithAndAddClassAttribute(string replacementElementName, XElement elementToRename)
+		{
+			var oldElementName = elementToRename.Name.LocalName;
+			elementToRename.Name = replacementElementName;
+			var sortedAttrs = new SortedDictionary<string, XAttribute>(StringComparer.OrdinalIgnoreCase);
+			foreach (var attr in elementToRename.Attributes())
+				sortedAttrs.Add(attr.Name.LocalName, attr);
+			sortedAttrs.Add(SharedConstants.Class, new XAttribute(SharedConstants.Class, oldElementName));
+			elementToRename.Attributes().Remove();
+			foreach (var sortedAttr in sortedAttrs.Values)
+				elementToRename.Add(sortedAttr);
+		}
+
+		internal static List<string> GetGuids(XContainer owningElement, string propertyName)
+		{
+			var propElement = owningElement.Element(propertyName);
+
+			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements(SharedConstants.Objsur)
+																 select osEl.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()).ToList();
 		}
 	}
 }

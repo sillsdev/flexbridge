@@ -233,21 +233,23 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return SharedConstants.Linguistics;
 			if (currentPathname.Contains(SharedConstants.Anthropology))
 				return SharedConstants.Anthropology;
-			if (currentPathname.Contains(SharedConstants.ClassData))
-				return SharedConstants.ClassData;
 			return currentPathname; // Must be a test.
 		}
 
 		internal void AddCustomPropInfo(string mainCustomPropPathname, string altCustomPropPathname, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
 		{
-			var customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
-			if (customFiles.Count == 0)
-				customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
-
-			if (customFiles.Count == 0)
+			var dirPath = GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
+			var customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			//var customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "FLExProject.CustomProperties").ToList();
+			if (!File.Exists(customPropPathname))
+			{
+				dirPath = GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
+				customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			}
+			if (!File.Exists(customPropPathname))
 				return;
 
-			var doc = XDocument.Load(customFiles[0]);
+			var doc = XDocument.Load(customPropPathname);
 			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
 			{
 				FdoClassInfo classInfo;
@@ -1713,6 +1715,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("DiscourseData", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("TextMarkupTags", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("PhFeatureSystem", DataType.OwningAtomic));
+			clsInfo.AddProperty(new FdoPropertyInfo("FilePathsInTsStrings", DataType.OwningAtomic));
 
 			clsInfo = new FdoClassInfo("VirtualOrdering", true, "CmObject");
 			_classes.Add("VirtualOrdering", clsInfo);
