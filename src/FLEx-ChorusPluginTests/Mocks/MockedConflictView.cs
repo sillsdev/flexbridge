@@ -9,7 +9,6 @@ namespace FLEx_ChorusPluginTests.Mocks
 	{
 		private string m_projName;
 		private string m_nipView;
-		private string m_annEdView;
 
 		public void EnableWarning()
 		{
