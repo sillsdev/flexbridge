@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPluginTests.BorrowedCode;
 using NUnit.Framework;
 using Palaso.IO;
@@ -38,8 +41,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		[Test]
 		public void DescribeInitialContentsShouldHaveAddedForLabel()
 		{
-			var initialContents = FileHandler.DescribeInitialContents(null, null);
-			Assert.AreEqual(1, initialContents.Count());
+			var initialContents = FileHandler.DescribeInitialContents(null, null).ToList();
+			Assert.AreEqual(1, initialContents.Count);
 			var onlyOne = initialContents.First();
 			Assert.AreEqual("Added", onlyOne.ActionLabel);
 		}
@@ -476,6 +479,30 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				null,
 				1, new List<Type> { typeof(RemovedVsEditedElementConflict) },
 				0, new List<Type>());
+		}
+
+		[Test]
+		public void CustomFileHasKeyAttributeForEachCustomProperty()
+		{
+			const string originalCustomData =
+@"<AdditionalFields>
+	<CustomField class='LexEntry' destclass='7' listRoot='53241fd4-72ae-4082-af55-6b659657083c' name='Tone' type='RC' />
+	<CustomField class='LexSense' name='Paradigm' type='String' wsSelector='-2' />
+	<CustomField class='WfiWordform' name='Certified' type='Boolean' />
+</AdditionalFields>";
+
+			var tempPathname = Path.Combine(Path.GetTempPath(), SharedConstants.CustomPropertiesFilename);
+			FileWriterService.WriteCustomPropertyFile(MetadataCache.TestOnlyNewCache, Path.GetTempPath(), Encoding.UTF8.GetBytes(originalCustomData));
+			using (var tempFile = TempFile.TrackExisting(tempPathname))
+			{
+				var doc = XDocument.Load(tempFile.Path);
+				Assert.IsTrue(doc.Root.Name.LocalName == "AdditionalFields");
+				Assert.AreEqual(3, doc.Root.Elements().Count());
+				foreach (var customPropertyDeclaration in doc.Root.Elements())
+				{
+					Assert.IsNotNull(customPropertyDeclaration.Attribute("key"));
+				}
+			}
 		}
 	}
 }

@@ -17,18 +17,9 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			var langProjElement = classData["LangProject"].Values.First();
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
-			var randomElement = new XElement("randomElement");
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				randomElement,
-				langProjElement,
-				SharedConstants.AnnotationDefs);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the AnnotationDefs list.
-				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.AnnotationDefsListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.AnnotationDefs,
+										  Path.Combine(generalBaseDir, SharedConstants.AnnotationDefsListFilename));
 
 			// LP Styles (OC-StStyle) is used by everyone, but Scripture, so they go here.
 			BaseDomainServices.NestStylesPropertyElement(

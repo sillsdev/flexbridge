@@ -47,7 +47,21 @@ namespace FLEx_ChorusPlugin.Contexts
 			GeneralDomainServices.RemoveBoundedContextData(pathRoot);
 		}
 
-		/************************ Basic operatios above here. ****************/
+		internal static void RemoveBoundedContextDataCore(string contextBaseDir)
+		{
+			if (!Directory.Exists(contextBaseDir))
+				return;
+
+			foreach (var pathname in Directory.GetFiles(contextBaseDir, "*.*", SearchOption.AllDirectories)
+				.Where(pathname => Path.GetExtension(pathname).ToLowerInvariant() != ".chorusnotes"))
+			{
+				File.Delete(pathname);
+			}
+
+			FileWriterService.RemoveEmptyFolders(contextBaseDir, true);
+		}
+
+		/************************ Basic operations above here. ****************/
 
 		internal static void RestoreElement(
 			string pathname,
@@ -61,34 +75,6 @@ namespace FLEx_ChorusPlugin.Contexts
 				sortedData,
 				ownedElement,
 				owningElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to ownedElement.
-		}
-
-		internal static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
-									   Dictionary<string, string> guidToClassMapping,
-									   IDictionary<string, XElement> posLists,
-									   XContainer nestedListParentElement,
-									   XContainer listOwningElement,
-									   IEnumerable<string> propNames)
-		{
-			foreach (var propName in propNames)
-				NestList(classData, guidToClassMapping, posLists, nestedListParentElement, listOwningElement, propName);
-		}
-
-		internal static void NestList(IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping, IDictionary<string, XElement> posLists,
-									  XContainer nestedListParentElement, XContainer listOwningElement, string propName)
-		{
-			var listPropElement = listOwningElement.Element(propName);
-			if (listPropElement == null || !listPropElement.HasElements)
-				return;
-
-			var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
-			CmObjectNestingService.NestObject(false,
-											  listElement,
-											  new Dictionary<string, HashSet<string>>(),
-											  classData,
-											  guidToClassMapping);
-			listPropElement.RemoveNodes(); // Remove the single list objsur element.
-			nestedListParentElement.Add(new XElement(propName, listElement));
 		}
 
 		internal static void RestoreObjsurElement(XElement owningPropertyElement, XElement ownedElement)
@@ -123,20 +109,6 @@ namespace FLEx_ChorusPlugin.Contexts
 						new XAttribute(SharedConstants.GuidStr, ownedGuid.ToLowerInvariant()),
 						new XAttribute("t", typeValue)
 					};
-		}
-
-		internal static void RemoveBoundedContextDataCore(string contextBaseDir)
-		{
-			if (!Directory.Exists(contextBaseDir))
-				return;
-
-			foreach (var pathname in Directory.GetFiles(contextBaseDir, "*.*", SearchOption.AllDirectories)
-				.Where(pathname => Path.GetExtension(pathname).ToLowerInvariant() != ".chorusnotes"))
-			{
-				File.Delete(pathname);
-			}
-
-			FileWriterService.RemoveEmptyFolders(contextBaseDir, true);
 		}
 
 		internal static void NestStylesPropertyElement(

@@ -160,38 +160,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			strategy.ContextDescriptorGenerator = ContextGen;
 			strategiesForMerger.SetStrategy(SharedConstants.Header, strategy);
 
-			// Add all anthro pos list elements.
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("AnthroList", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("ConfidenceLevels", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Education", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Locations", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("People", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Positions", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Restrictions", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Roles", strategy);
-			strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("Status", strategy);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy("TimeOfDay", strategy);
-
-			// As of 26 Jan 2012, no other context has non-class wrapper elements.
+			// As of 26 Jan 2012, no context has non-class wrapper elements in the header.
 		}
 	}
 }
