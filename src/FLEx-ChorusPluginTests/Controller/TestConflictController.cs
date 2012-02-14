@@ -14,15 +14,11 @@ namespace FLEx_ChorusPluginTests.Controller
 		internal override void SetViewControls(string filePath)
 		{
 			var viewer = (MainForm as MockedConflictView);
-			viewer.SetBrowseView("NotesInProjectView(_notesModel)");
-			viewer.SetSingleConflictView("AnnotationEditorView(_editorModel)");
+			viewer.SetBrowseView("Chorus.WinForms.CreateNotesBrowser()");
 
 			if (_currentLanguageProject.FieldWorkProjectInUse)
-			{
 				viewer.EnableWarning();
-			}
 			viewer.SetProjectName(_currentLanguageProject.Name);
-
 		}
 	}
 }

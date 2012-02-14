@@ -25,10 +25,5 @@ namespace FLEx_ChorusPluginTests.Mocks
 		{
 			m_nipView = browser;
 		}
-
-		public void SetSingleConflictView(string editor)
-		{
-			m_annEdView = editor;
-		}
 	}
 }

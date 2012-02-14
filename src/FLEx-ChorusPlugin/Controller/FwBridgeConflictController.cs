@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
-using Chorus.UI.Notes.Html;
-using Chorus.UI.Review;
-using Chorus.notes;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
-using Palaso.Progress.LogBox;
 using Chorus.UI.Notes;
 
 namespace FLEx_ChorusPlugin.Controller
@@ -22,7 +17,7 @@ namespace FLEx_ChorusPlugin.Controller
 		protected LanguageProject _currentLanguageProject;
 		protected NotesInProjectViewModel _notesModel;
 		protected AnnotationEditorModel _editorModel;
-		private MessageSelectedEvent _msgSelectedEvent;
+		protected NotesBrowserPage _notesBrowser;
 
 		/// <summary>
 		/// for testing (but called by the main constructor)
@@ -56,7 +51,6 @@ namespace FLEx_ChorusPlugin.Controller
 			}
 
 			SetupChorusAndLanguageProject(user, filePath);
-			BuildNotesAndConflictViewerModels(filePath);
 			SetViewControls(filePath);
 		}
 
@@ -70,25 +64,13 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private void BuildNotesAndConflictViewerModels(string filePath)
 		{
-			_msgSelectedEvent = new MessageSelectedEvent();
-			_notesModel = new NotesInProjectViewModel(_chorusUser,
-													  new[] {ChorusSystem.GetNotesRepository(filePath, new TextBoxProgress(new RichTextBox()))},
-													  _msgSelectedEvent, new NullProgress());
-			var index = new IndexOfAllOpenConflicts();
-			index.Initialize(index.GetAll, new TextBoxProgress(new RichTextBox()));
-			var list = index.GetAll().ToList();
-			_notesModel.Initialize(index.GetAll, new NullProgress());
-
-			_editorModel = new AnnotationEditorModel(_chorusUser, _msgSelectedEvent,
-				new StyleSheet(filePath), new EmbeddedMessageContentHandlerFactory(), new NavigateToRecordEvent(),
-				ChorusSystem.WritingSystems);
 		}
 
 		internal virtual void SetViewControls(string filePath)
 		{
+			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
 			var viewer = (MainForm as FwBridgeConflictView);
-			viewer.SetBrowseView(new NotesInProjectView(_notesModel));
-			viewer.SetSingleConflictView(new AnnotationEditorView(_editorModel));
+			viewer.SetBrowseView(_notesBrowser);
 
 			if (_currentLanguageProject.FieldWorkProjectInUse)
 				viewer.EnableWarning();
