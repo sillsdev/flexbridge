@@ -34,8 +34,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				_projects.Add(new LanguageProject(fwdataFiles[0]));
 			}
-			//Add the special Obtain Project option to the drop down project list.
-			_projects.Add(new LanguageProject(LanguageProject.OBTAINPROJECT));
 		}
 
 		/// <summary>
