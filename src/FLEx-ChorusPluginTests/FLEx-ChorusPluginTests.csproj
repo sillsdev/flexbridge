@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
