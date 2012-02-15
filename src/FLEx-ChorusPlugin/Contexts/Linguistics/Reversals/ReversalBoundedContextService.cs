@@ -14,9 +14,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 	/// The Reversal Index instances, including all they own, need to then be removed from 'classData',
 	/// as that stuff will be stored elsewhere.
 	///
-	/// Each ReversalIndex instance will be in its own file, along with everything it owns (nested ownership as well).
+	/// Each ReversalIndex instance will be in its own file, along with everything it owns (nested ownership, except the pos list it owns, which goes into its own file).
 	/// The pattern is:
-	/// Linguistics\Reversals\foo.reversal, where foo.reversal is the Reversal Index file and 'foo' is the WritingSystem property of the ReversalIndex.
+	/// Linguistics\Reversals\foo\foo.reversal, where foo.reversal is the Reversal Index file and 'foo' is the WritingSystem property of the ReversalIndex.
+	/// Linguistics\Reversals\foo\foo-PartsOfSpeech.list
 	///
 	/// The output file for each will be:
 	/// <reversal>
@@ -55,19 +56,28 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndex = reversalIndexKvp.Value;
+				var revIndexElement = reversalIndexKvp.Value;
+				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
+				var revIndexDir = Path.Combine(reversalDir, ws);
+				if (!Directory.Exists(revIndexDir))
+					Directory.CreateDirectory(revIndexDir);
 
-				var ws = revIndex.Element("WritingSystem").Element("Uni").Value;
 				var reversalFilename = ws + ".reversal";
 
-				CmObjectNestingService.NestObject(false, revIndex,
+				// Break out ReversalIndex's PartsOfSpeech(CmPossibilityList OA) and write in its own .list file.
+				FileWriterService.WriteNestedListFileIfItExists(
+					classData, guidToClassMapping,
+					revIndexElement, SharedConstants.PartsOfSpeech,
+					Path.Combine(revIndexDir, ws + "-" + SharedConstants.PartsOfSpeechFilename));
+
+				CmObjectNestingService.NestObject(false, revIndexElement,
 					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 
-				var entriesElement = revIndex.Element("Entries");
+				var entriesElement = revIndexElement.Element("Entries");
 				var root = new XElement("Reversal",
-					new XElement(SharedConstants.Header, revIndex));
+					new XElement(SharedConstants.Header, revIndexElement));
 				if (entriesElement == null || !entriesElement.Elements().Any())
 				{
 					// Add dummy entry, so FastXmlSplitter will have something to work with.
@@ -80,7 +90,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					entriesElement.RemoveNodes();
 				}
 
-				FileWriterService.WriteNestedFile(Path.Combine(reversalDir, reversalFilename), root);
+				FileWriterService.WriteNestedFile(Path.Combine(revIndexDir, reversalFilename), root);
 			}
 		}
 
@@ -95,20 +105,52 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 
 			var lexDb = highLevelData["LexDb"];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var reversalPathname in Directory.GetFiles(reversalDir, "*.reversal", SearchOption.TopDirectoryOnly))
+			foreach (var revIndexDirectoryName in Directory.GetDirectories(reversalDir))
 			{
+				var dirInfo = new DirectoryInfo(revIndexDirectoryName);
+				var ws = dirInfo.Name;
+				var reversalPathname = Path.Combine(revIndexDirectoryName, ws + "." + SharedConstants.Reversal);
 				var reversalDoc = XDocument.Load(reversalPathname);
+
 				// Put entries back into index's Entries element.
 				var root = reversalDoc.Element("Reversal");
 				var header = root.Element(SharedConstants.Header);
-				var revIdx = header.Element("ReversalIndex");
+				var revIdxElement = header.Element("ReversalIndex");
+
+				// Restore POS list, if it exists.
+				var catPathname = Path.Combine(revIndexDirectoryName, ws + "-" + SharedConstants.PartsOfSpeechFilename);
+				if (File.Exists(catPathname))
+				{
+					var catListDoc = XDocument.Load(catPathname);
+					BaseDomainServices.RestoreElement(
+						catPathname,
+						sortedData,
+						revIdxElement, SharedConstants.PartsOfSpeech,
+						catListDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
+				}
+
 				// Put all records back in ReversalIndex, before sort and restore.
 				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
-				var records = root.Elements("ReversalIndexEntry").ToList();
-				if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
-					revIdx.Element("Entries").Add(records); // NB: These full objects will be turned into regular objsur elements in the flattening process.
-				CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdx, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
-				var revIdxGuid = revIdx.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+				foreach (var recordElement in root.Elements("ReversalIndexEntry").ToList())
+				{
+					var recordGuid = recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+					if (recordGuid == Guid.Empty.ToString().ToLowerInvariant())
+						break; // Only has dummy element.
+
+					// Add it to Records property of revIdxElement, BUT in sorted order, below, and then flatten dnMainElement.
+					sortedRecords.Add(recordGuid, recordElement);
+				}
+
+				if (sortedRecords.Count > 0)
+				{
+					var recordsElementOwningProp = revIdxElement.Element("Entries");
+					foreach (var sortedChartElement in sortedRecords.Values)
+						recordsElementOwningProp.Add(sortedChartElement);
+				}
+				CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdxElement, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
+
+				var revIdxGuid = revIdxElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
 			}
 

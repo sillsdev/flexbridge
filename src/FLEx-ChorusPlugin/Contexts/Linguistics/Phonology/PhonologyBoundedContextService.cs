@@ -42,12 +42,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 				guidToClassMapping);
 
 			// A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If is exists.)
-			var phonRuleFeatsPropElement = phonDataElement.Element("PhonRuleFeats");
-			if (phonRuleFeatsPropElement != null)
-			{
-				FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonRuleFeaturesFilename), phonRuleFeatsPropElement);
-				phonRuleFeatsPropElement.RemoveNodes();
-			}
+			FileWriterService.WriteNestedListFileIfItExists(
+				classData, guidToClassMapping,
+				phonDataElement, "PhonRuleFeats",
+				Path.Combine(phonologyDir, SharedConstants.PhonRuleFeaturesFilename));
 			// B. Write: LP's PhonologicalData(PhPhonData) (Sans its PhonRuleFeats(CmPossibilityList) in a new extension (phondata).
 			FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonologicalDataFilename), new XElement("PhonologicalData", phonDataElement));
 			// C. Write: LP's PhFeatureSystem(FsFeatureSystem) in its own file with a new (shared extension of featsys).

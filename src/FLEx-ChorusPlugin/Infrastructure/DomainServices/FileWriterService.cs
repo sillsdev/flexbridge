@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 

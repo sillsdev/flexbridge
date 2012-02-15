@@ -136,9 +136,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var recordElement in root.Elements("RnGenericRec").ToList())
 			{
-				if (recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
-					break;
-
 				var recordGuid = recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				if (recordGuid == Guid.Empty.ToString().ToLowerInvariant())
 					break; // Only has dummy element.
