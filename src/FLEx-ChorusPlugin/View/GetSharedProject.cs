@@ -27,7 +27,7 @@ namespace FLEx_ChorusPlugin.View
 		{
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = flexProjectFolder;
-			string langProjName = "NOT YET IMPEMENTED FOR THIS SOURCE";
+			string langProjName = "NOT YET IMPLEMENTED FOR THIS SOURCE";
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:

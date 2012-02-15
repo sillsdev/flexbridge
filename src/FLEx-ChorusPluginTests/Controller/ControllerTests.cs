@@ -19,10 +19,8 @@ namespace FLEx_ChorusPluginTests.Controller
 		private MockedFwBridgeView _mockedFwBridgeView;
 		private MockedProjectView _mockedProjectView;
 		private MockedExistingSystemView _mockedExistingSystemView;
-		private MockedStartupNewView _mockedStartupNewView;
 		private MockedSynchronizeProject _mockedSynchronizeProject;
 		private DummyFolderSystem _dummyFolderSystem;
-		private MockedGetSharedProject _mockedGetSharedProject;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -31,14 +29,12 @@ namespace FLEx_ChorusPluginTests.Controller
 			_mockedProjectPathLocator = new MockedProjectPathLocator(new HashSet<string> {_dummyFolderSystem.BaseFolderPath});
 
 			_mockedSynchronizeProject = new MockedSynchronizeProject();
-			_mockedGetSharedProject = new MockedGetSharedProject();
 
 			_mockedFwBridgeView = new MockedFwBridgeView();
-			_realController = new FwBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject, _mockedGetSharedProject);
+			_realController = new FwBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject);
 
 			_mockedProjectView = (MockedProjectView)_mockedFwBridgeView.ProjectView;
 			_mockedExistingSystemView = (MockedExistingSystemView)_mockedProjectView.ExistingSystemView;
-			_mockedStartupNewView = (MockedStartupNewView)_mockedProjectView.StartupNewView;
 		}
 
 		[TestFixtureTearDown]

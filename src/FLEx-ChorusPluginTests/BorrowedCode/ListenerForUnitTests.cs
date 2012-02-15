@@ -17,6 +17,12 @@ namespace FLEx_ChorusPluginTests.BorrowedCode
 
 		#region Implementation of IMergeEventListener
 
+		public void RecordContextInConflict(IConflict conflict)
+		{
+			// do nothing...not sure why, but historically before we extracted this from ConflictOccurred
+			// it did not do any context recording in the conflict.
+		}
+
 		void IMergeEventListener.ConflictOccurred(IConflict conflict)
 		{
 			Conflicts.Add(conflict);

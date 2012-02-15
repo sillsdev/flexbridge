@@ -194,6 +194,24 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to No file path provided. This is a program error..
+		/// </summary>
+		internal static string ksNoFilePath {
+			get {
+				return ResourceManager.GetString("ksNoFilePath", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Path Problem.
+		/// </summary>
+		internal static string ksPathProblem {
+			get {
+				return ResourceManager.GetString("ksPathProblem", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to You can not obtain a project that you already have..
 		/// </summary>
 		internal static string ksTargetDirectoryExistsContent {
@@ -208,6 +226,24 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string ksTargetDirectoryExistsTitle {
 			get {
 				return ResourceManager.GetString("ksTargetDirectoryExistsTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		internal static string ObtainProjectController_ObtainProjectController_Receive_project {
+			get {
+				return ResourceManager.GetString("ObtainProjectController_ObtainProjectController_Receive_project", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		internal static string ObtainProjectView_DialogTitle {
+			get {
+				return ResourceManager.GetString("ObtainProjectView_DialogTitle", resourceCulture);
 			}
 		}
 	}
