@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using FieldWorksBridge.Properties;
@@ -70,7 +71,18 @@ namespace FieldWorksBridge
 						break;
 				}
 			}
-
+			try
+			{
+				ChannelFactory<IFLExBridgeService> pipeFactory =
+					new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
+						new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
+				var channel = pipeFactory.CreateChannel();
+				channel.BridgeWorkComplete(true);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+			}
 			Settings.Default.Save();
 		}
 
@@ -106,6 +118,13 @@ namespace FieldWorksBridge
 				}
 			}
 			return options;
+		}
+
+		[ServiceContract]
+		private interface IFLExBridgeService
+		{
+			[OperationContract]
+			void BridgeWorkComplete(bool changesReceived);
 		}
 	}
 }
