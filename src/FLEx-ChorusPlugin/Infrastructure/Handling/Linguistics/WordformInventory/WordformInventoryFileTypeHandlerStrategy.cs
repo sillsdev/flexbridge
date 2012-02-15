@@ -64,11 +64,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
+			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
 				SharedConstants.LexEntry,
 				SharedConstants.GuidStr,

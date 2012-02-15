@@ -1,90 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using FLEx_ChorusPlugin.Model;
+﻿using System.Windows.Forms;
+using Chorus.UI.Notes;
+using Chorus.UI.Notes.Browser;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.View
 {
-	// Already declared in FwBridgeView.cs
-	//internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
-	//internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);
-
 	/// <summary>
 	/// This class provides the view of the Conflicts that FLEx wants to see.
 	/// </summary>
-	internal sealed partial class FwBridgeConflictView : UserControl, IFwBridgeView
+	internal partial class FwBridgeConflictView : Form
 	{
-		private IEnumerable<LanguageProject> _projects;
+		private NotesBrowserPage m_notesBrowser;
 
 		internal FwBridgeConflictView()
 		{
 			InitializeComponent();
+			_warninglabel1.Visible = false;
+			this.Icon = Resources.chorus;
 		}
 
-		private LanguageProject SelectedProject
+		public void EnableWarning()
 		{
-			get { return (LanguageProject)_cbProjects.SelectedItem; }
+			_warninglabel1.Visible = true;
 		}
 
-		//private void ProjectsSelectedIndexChanged(object sender, EventArgs e)
-		//{
-		//    if (ProjectSelected != null)
-		//        ProjectSelected(this, new ProjectEventArgs(SelectedProject));
-		//}
-
-		//private void SendReceiveButtonClick(object sender, EventArgs e)
-		//{
-		//    Cursor = Cursors.WaitCursor;
-		//    try
-		//    {
-		//        if (SynchronizeProject != null)
-		//            SynchronizeProject(this, new EventArgs());
-		//    }
-		//    finally
-		//    {
-		//        Cursor = Cursors.Default;
-		//    }
-		//}
-
-		#region Implementation of IFwBridgeView
-
-		public event ProjectSelectedEventHandler ProjectSelected;
-		public event SynchronizeProjectEventHandler SynchronizeProject;
-
-		IEnumerable<LanguageProject> IFwBridgeView.Projects
+		public void SetProjectName(string projName)
 		{
-			set
-			{
-				_projects = value;
-
-				_cbProjects.SuspendLayout();
-
-				_cbProjects.Items.Clear();
-				foreach (var project in _projects)
-					_cbProjects.Items.Add(project);
-				if (_projects.Any())
-					_cbProjects.SelectedIndex = 0;
-
-				_cbProjects.ResumeLayout();
-			}
+			_label1.Text = projName;
 		}
 
-		IProjectView IFwBridgeView.ProjectView
+		public void SetBrowseView(NotesBrowserPage browser)
 		{
-			get { return _projectView; }
-		}
-
-		void IFwBridgeView.EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
-
-		private void _projectView_Load(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
+			m_notesBrowser = browser;
+			_splitContainer.Panel2.Controls.Add(m_notesBrowser);
+			m_notesBrowser.Dock = DockStyle.Fill;
 		}
 	}
 }

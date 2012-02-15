@@ -29,15 +29,11 @@
 		private void InitializeComponent()
 		{
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._warninglabel2 = new System.Windows.Forms.Label();
-			this._pictureBox = new System.Windows.Forms.PictureBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this._warninglabel1 = new System.Windows.Forms.Label();
 			this._label1 = new System.Windows.Forms.Label();
-			this._cbProjects = new System.Windows.Forms.ComboBox();
 			this._splitContainer.Panel1.SuspendLayout();
-			this._splitContainer.Panel2.SuspendLayout();
 			this._splitContainer.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).BeginInit();
 			this.SuspendLayout();
 			//
 			// _splitContainer
@@ -51,35 +47,21 @@
 			//
 			// _splitContainer.Panel1
 			//
-			this._splitContainer.Panel1.Controls.Add(this._warninglabel2);
-			this._splitContainer.Panel1.Controls.Add(this._pictureBox);
+			this._splitContainer.Panel1.Controls.Add(this.label1);
 			this._splitContainer.Panel1.Controls.Add(this._warninglabel1);
 			this._splitContainer.Panel1.Controls.Add(this._label1);
-			this._splitContainer.Panel1.Controls.Add(this._cbProjects);
-			//
-			// _splitContainer.Panel2
-			//
-			this._splitContainer.Panel2.Controls.Add(this._projectView);
-			this._splitContainer.Size = new System.Drawing.Size(852, 456);
+			this._splitContainer.Size = new System.Drawing.Size(904, 510);
 			this._splitContainer.TabIndex = 0;
 			//
-			// _warninglabel2
+			// label1
 			//
-			this._warninglabel2.AutoSize = true;
-			this._warninglabel2.Location = new System.Drawing.Point(382, 27);
-			this._warninglabel2.Name = "_warninglabel2";
-			this._warninglabel2.Size = new System.Drawing.Size(107, 13);
-			this._warninglabel2.TabIndex = 24;
-			this._warninglabel2.Text = "so cannot be shared.";
-			//
-			// _pictureBox
-			//
-			this._pictureBox.Location = new System.Drawing.Point(342, 5);
-			this._pictureBox.Name = "_pictureBox";
-			this._pictureBox.Size = new System.Drawing.Size(32, 30);
-			this._pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this._pictureBox.TabIndex = 23;
-			this._pictureBox.TabStop = false;
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Location = new System.Drawing.Point(11, 19);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(64, 17);
+			this.label1.TabIndex = 23;
+			this.label1.Text = "Project:";
 			//
 			// _warninglabel1
 			//
@@ -93,43 +75,25 @@
 			// _label1
 			//
 			this._label1.AutoSize = true;
-			this._label1.Location = new System.Drawing.Point(7, 18);
+			this._label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._label1.Location = new System.Drawing.Point(81, 19);
 			this._label1.Name = "_label1";
-			this._label1.Size = new System.Drawing.Size(40, 13);
+			this._label1.Size = new System.Drawing.Size(58, 20);
 			this._label1.TabIndex = 20;
 			this._label1.Text = "Project";
-			//
-			// _cbProjects
-			//
-			this._cbProjects.FormattingEnabled = true;
-			this._cbProjects.Location = new System.Drawing.Point(52, 14);
-			this._cbProjects.Name = "_cbProjects";
-			this._cbProjects.Size = new System.Drawing.Size(265, 21);
-			this._cbProjects.TabIndex = 19;
-			//
-			// _projectView
-			//
-			this._projectView.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this._projectView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._projectView.Location = new System.Drawing.Point(0, 0);
-			this._projectView.Name = "_projectView";
-			this._projectView.Size = new System.Drawing.Size(852, 402);
-			this._projectView.TabIndex = 0;
-			this._projectView.Load += new System.EventHandler(this._projectView_Load);
 			//
 			// FwBridgeConflictView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+			this.ClientSize = new System.Drawing.Size(904, 510);
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FwBridgeConflictView";
-			this.Size = new System.Drawing.Size(852, 456);
+			this.Text = "Conflict Viewer";
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel1.PerformLayout();
-			this._splitContainer.Panel2.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this._pictureBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -138,11 +102,8 @@
 
 		private System.Windows.Forms.SplitContainer _splitContainer;
 		private System.Windows.Forms.Label _label1;
-		private System.Windows.Forms.ComboBox _cbProjects;
-		private ProjectView _projectView;
 		private System.Windows.Forms.Label _warninglabel1;
-		private System.Windows.Forms.Label _warninglabel2;
-		private System.Windows.Forms.PictureBox _pictureBox;
+		private System.Windows.Forms.Label label1;
 
 	}
 }

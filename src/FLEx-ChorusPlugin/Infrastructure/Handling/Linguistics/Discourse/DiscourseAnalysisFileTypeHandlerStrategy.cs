@@ -65,7 +65,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
 				SharedConstants.DsChart, SharedConstants.GuidStr, WritePreliminaryDiscourseAnalysisInformation);
 		}

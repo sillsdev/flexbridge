@@ -89,19 +89,26 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Controller\ConflictControllerTests.cs" />
+	<Compile Include="Controller\TestConflictController.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\FieldWorksDiscourseAnalysisTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\FieldWorksFeatureSystemTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenterTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileDiffTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksFileMergeTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksFileValidationTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
@@ -114,6 +121,7 @@
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\FieldWorksLintTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
@@ -125,6 +133,9 @@
 	<Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
 	<Compile Include="BorrowedCode\ListenerForUnitTests.cs" />
 	<Compile Include="LoadHandlersTests.cs" />
+	<Compile Include="Mocks\MockedConflictView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>

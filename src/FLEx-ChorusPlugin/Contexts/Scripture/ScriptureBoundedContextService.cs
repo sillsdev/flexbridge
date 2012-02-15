@@ -17,6 +17,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// baseDirectory is root/Scripture and has already been created by caller.
 			var scriptureBaseDir = baseDirectory;
 
+			// Split out the optional NoteCategories list.
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  scriptureElement, SharedConstants.NoteCategories,
+										  Path.Combine(scriptureBaseDir, SharedConstants.NoteCategoriesListFilename));
+
 			CmObjectNestingService.NestObject(false, scriptureElement,
 				new Dictionary<string, HashSet<string>>(),
 				classData,
@@ -44,8 +49,16 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(pathname);
 			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
 
+			// Put the NoteCategories list back in the right place.
+			pathname = Path.Combine(scriptureBaseDir, SharedConstants.NoteCategoriesListFilename);
+			if (File.Exists(pathname))
+			{
+				doc = XDocument.Load(pathname);
+				BaseDomainServices.RestoreElement(pathname, sortedData, scrElement, SharedConstants.NoteCategories, doc.Root.Element(SharedConstants.CmPossibilityList));
+			}
+
 			// Owned by LangProj in TranslatedScripture prop.
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			BaseDomainServices.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
 			CmObjectFlatteningService.FlattenObject(
@@ -55,20 +68,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
 
 			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);
-		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			// baseDirectory is root/Scripture.
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			const string transScripPathname = SharedConstants.ScriptureTransFilename;
-			if (File.Exists(transScripPathname))
-				File.Delete(transScripPathname);
-
-			// Scripture domain does it all.
-			// FileWriterService.RemoveEmptyFolders(scriptureBaseDir, true);
 		}
 	}
 }

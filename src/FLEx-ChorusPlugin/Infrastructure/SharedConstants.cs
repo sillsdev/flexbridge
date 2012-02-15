@@ -14,16 +14,33 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
 		internal const string OwnerGuid = "ownerguid";
+		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
 		internal const string Ownseq = "ownseq";
 		internal const string OwnseqAtomic = "ownseqatomic"; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 		internal const string Refseq = "refseq";
 		internal const string Custom = "Custom";
+		internal const string General = "General";
+		internal const string CmPossibilityList = "CmPossibilityList";
+		internal const string AnnotationDefs = "AnnotationDefs";
+		internal const string AnnotationDefsListFilename = AnnotationDefs + "." + List;
+		internal const string FLExStylesFilename = "FLExStyles." + Style;
+		internal const string Filter = "filter";
+		internal const string Filters = "Filters";
+		internal const string FLExFiltersFilename = "FLExFilters." + Filter;
+		internal const string Annotation = "annotation";
+		internal const string Annotations = "Annotations";
+		internal const string FLExAnnotationsFilename = "FLExAnnotations." + Annotation;
+		internal const string langproj = "langproj";
+		internal const string LanguageProject = "LanguageProject";
+		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
+		internal const string lint = "lint";
+		internal const string LintFilename = "FLExProject." + lint;
+		internal const string LangProject = "LangProject";
 
 		// Old style
 		internal const string RtTag = "rt";
-		internal const string ClassData = "ClassData";
 
 		// Model Version
 		internal const string ModelVersion = "ModelVersion";
@@ -67,6 +84,30 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string DsChart = "DsChart";
 		internal const string DiscourseExt = "discourse";
 		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
+		internal const string Phonology = "Phonology";
+		internal const string PhonRuleFeaturesFilename = "PhonRuleFeatures" + "." + List;
+		internal const string Phondata = "phondata";
+		internal const string PhPhonData = "PhPhonData";
+		internal const string PhonologicalData = "PhonologicalData";
+		internal const string PhonologicalDataFilename = PhonologicalData + "." + Phondata;
+		internal const string PhonologyFeaturesFilename = "PhonologyFeatures." + Featsys;
+		internal const string FeatureSystem = "FeatureSystem";
+		internal const string FsFeatureSystem = "FsFeatureSystem";
+		internal const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
+		internal const string MorphologyAndSyntax = "MorphologyAndSyntax";
+		internal const string PartsOfSpeech = "PartsOfSpeech";
+		internal const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
+		internal const string Agents = "agents";
+		internal const string AnalyzingAgents = "AnalyzingAgents";
+		internal const string CmAgent = "CmAgent";
+		internal const string AnalyzingAgentsFilename = AnalyzingAgents + "." + Agents;
+		internal const string MorphAndSynFeaturesFilename = "MorphAndSynFeatureSystem." + Featsys;
+		internal const string Morphdata = "morphdata";
+		internal const string MoMorphData = "MoMorphData";
+		internal const string MorphAndSynData = "MorphAndSynData";
+		internal const string MorphAndSynDataFilename = MorphAndSynData + "." + Morphdata;
+		internal const string MorphTypes = "MorphTypes";
+		internal const string MorphTypesListFilename = MorphTypes + "." + List;
 
 		// Anthropology
 		internal const string DataNotebook = "DataNotebook";
@@ -88,6 +129,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
 		internal const string ScriptureTranslation = "ScriptureTranslation";
 		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
+		internal const string NoteCategories = "NoteCategories";
+		internal const string NoteCategoriesListFilename = NoteCategories + "." + List;
 
 		/***** Relocate ones that get added below here. *****/
 	}

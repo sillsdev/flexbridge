@@ -60,8 +60,9 @@ namespace FwdataTestApp
 					csElement.Remove();
 			}
 
-			// 2. Sort <rt>
-			DataSortingService.SortMainElement(rtElement);
+			// Theory has it the FW data is sorted.
+			//// 2. Sort <rt>
+			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
 			SortedDictionary<string, XElement> recordData;
@@ -83,6 +84,8 @@ namespace FwdataTestApp
 			var breakupTimer = new Stopwatch();
 			var restoreTimer = new Stopwatch();
 			var verifyTimer = new Stopwatch();
+			var checkOwnObjsurTimer = new Stopwatch();
+			var ownObjsurFound = false;
 			try
 			{
 				if (_cbNestFile.Checked)
@@ -233,23 +236,34 @@ namespace FwdataTestApp
 						verifyTimer.Stop();
 					}
 				}
+				if (_cbNestFile.Checked && _cbCheckOwnObjsur.Checked)
+				{
+					checkOwnObjsurTimer.Start();
+					ownObjsurFound = File.ReadAllText(srcFwdataPathname + ".nested").Contains("t=\"o\"");
+					checkOwnObjsurTimer.Stop();
+				}
 			}
 			catch (Exception err)
 			{
-				File.Delete(srcFwdataPathname);
-				File.Move(srcFwdataPathname + ".orig", srcFwdataPathname); // Restore it.
 				File.WriteAllText(Path.Combine(workingDir, "StackTrace.log"), err.GetType().Name + Environment.NewLine +  err.StackTrace);
+				if (File.Exists(srcFwdataPathname + ".orig"))
+				{
+					File.Delete(srcFwdataPathname);
+					File.Move(srcFwdataPathname + ".orig", srcFwdataPathname); // Restore it.
+				}
 			}
 			finally
 			{
 				var compTxt = String.Format(
-					"Time to nest file: {0}{5}Time to breakup file: {1}.{5}Time to restore file: {2}.{5}Time to verify restoration: {3}{5}{5}{4}",
+					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}{0}{0}{7}",
+					Environment.NewLine,
 					_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbCheckOwnObjsur.Checked ? checkOwnObjsurTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbCheckOwnObjsur.Checked ? (ownObjsurFound ? "********* YES FIX BUG *********" : "No") : "Not run",
 					_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					sb,
-					Environment.NewLine);
+					sb);
 				File.WriteAllText(Path.Combine(workingDir, "Comparison.log"), compTxt);
 				Cursor = Cursors.Default;
 				Close();

@@ -154,7 +154,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				}
 			}
 
-			// 3. Write all data files, here and there. [NB: The CmObject data in the XElements of 'classData' has all been sorted by this point.]
+			// 3. Write all data files, here and there.
 			BaseDomainServices.WriteDomainData(mdc, pathRoot, classData, guidToClassMapping);
 		}
 
@@ -199,8 +199,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					csElement.Remove();
 			}
 
-			// 2. Sort <rt>
-			DataSortingService.SortMainElement(rtElement);
+			// Theory has it the FW data is sorted.
+			//// 2. Sort <rt>
+			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
 			classData[className].Add(guid, rtElement);

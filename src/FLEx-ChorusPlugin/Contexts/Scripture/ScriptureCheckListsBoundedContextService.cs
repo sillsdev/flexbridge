@@ -53,8 +53,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
+				if (listPathname.EndsWith(SharedConstants.NoteCategoriesListFilename))
+					continue; // Wrong list.
+
 				var listDoc = XDocument.Load(listPathname);
-				var listElement = listDoc.Element("CheckList").Element("CmPossibilityList");
+				var listElement = listDoc.Element("CheckList").Element(SharedConstants.CmPossibilityList);
 				CmObjectFlatteningService.FlattenObject(
 					listPathname,
 					sortedData,
@@ -70,18 +73,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var checkListsProp = langProjElement.Element(CheckLists);
 			foreach (var sortedList in sortedLists.Values)
 				checkListsProp.Add(sortedList);
-		}
-
-		internal static void RemoveBoundedContextData(string scriptureBaseDir)
-		{
-			if (!Directory.Exists(scriptureBaseDir))
-				return;
-
-			foreach (var checkListPathname in Directory.GetFiles(scriptureBaseDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
-				File.Delete(checkListPathname);
-
-			// Scripture domain does it all.
-			//FileWriterService.RemoveEmptyFolders(clDir, true);
 		}
 	}
 }

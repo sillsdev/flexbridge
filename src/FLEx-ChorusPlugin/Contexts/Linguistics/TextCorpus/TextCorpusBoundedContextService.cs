@@ -32,56 +32,25 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var langProjElement = classData["LangProject"].Values.First();
 
 			// Write Genre list (owning atomic CmPossibilityList)
-			// "randomElement" makes this list be two levels down in <GenreList><GenreList></GenreList></GenreList>.
-			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
-			var randomElement = new XElement(SharedConstants.GenreList);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData["CmPossibilityList"],
-				randomElement,
-				langProjElement,
-				SharedConstants.GenreList);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the genre list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.GenreList,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename));
 
 			// Write text markup tags list (owning atomic CmPossibilityList)
-			// "randomElement" makes this list be two levels down in <TextMarkupTags><TextMarkupTags></TextMarkupTags></TextMarkupTags>.
-			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
-			randomElement = new XElement(SharedConstants.TextMarkupTags);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData["CmPossibilityList"],
-				randomElement,
-				langProjElement,
-				SharedConstants.TextMarkupTags);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the markup list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.TextMarkupTags,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename));
 
 			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
-			randomElement = new XElement(SharedConstants.TranslationTags);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData["CmPossibilityList"],
-				randomElement,
-				langProjElement,
-				SharedConstants.TranslationTags);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the markup list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.TranslationTags,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
 				return; // No texts to process.
 
-			var textGuidsInLangProj = ObjectFinderServices.GetGuids(langProjElement, "Texts");
+			var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
 			foreach (var textGuid in textGuidsInLangProj)
 			{
 				var rootElement = new XElement("TextInCorpus");
@@ -116,15 +85,15 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			// Put the Genre list back in the right place.
 			var pathname = Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename);
 			var doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.GenreList, doc.Root.Element(SharedConstants.CmPossibilityList));
 			// Put the markup tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TextMarkupTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 			// Put the translation tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element("CmPossibilityList"));
+			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 
 			// Put Texts back into LP.
 			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
@@ -148,22 +117,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var langProjOwningProp = langProjElement.Element("Texts");
 			foreach (var sortedTextObjSurElement in sortedTexts.Values)
 				langProjOwningProp.Add(sortedTextObjSurElement);
-		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBase)
-		{
-			var textCorpusDir = Path.Combine(linguisticsBase, SharedConstants.TextCorpus);
-			if (!Directory.Exists(textCorpusDir))
-				return;
-
-			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
-				File.Delete(textPathname);
-
-			foreach (var textPathname in Directory.GetFiles(textCorpusDir, "*." + SharedConstants.List, SearchOption.TopDirectoryOnly))
-				File.Delete(textPathname);
-
-			// Linguistics domain will call this.
-			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 	}
 }

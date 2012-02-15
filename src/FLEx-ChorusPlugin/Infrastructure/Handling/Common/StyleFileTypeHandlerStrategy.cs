@@ -15,7 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 	/// This class deals with files with extension of "style".
 	/// The files may be located in various contexts.
 	/// </summary>
-	internal class StyleFileTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class StyleFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 

@@ -85,7 +85,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			// Each WfiWordform (unowned) will then be a child of root.
 			var doc = XDocument.Load(inventoryPathname);
 			var unownedElements = new List<XElement>();
-			unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
+			var optionalHeaderElement = doc.Root.Element(SharedConstants.Header);
+			if (optionalHeaderElement != null)
+				unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
 			unownedElements.AddRange(doc.Root.Elements("WfiWordform"));
 			var emptyGuid = Guid.Empty.ToString().ToLowerInvariant();
 			// Query skips the dummy WfiWordform, if it is present.
@@ -97,20 +99,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					unownedElement,
 					null); // Not owned.
 			}
-		}
-
-		internal static void RemoveBoundedContextData(string linguisticsBase)
-		{
-			var inventoryDir = Path.Combine(linguisticsBase, SharedConstants.WordformInventoryRootFolder);
-			if (!Directory.Exists(inventoryDir))
-				return;
-
-			var inventoryPathname = Path.Combine(inventoryDir, SharedConstants.WordformInventoryFilename);
-			if (File.Exists(inventoryPathname))
-				File.Delete(inventoryPathname);
-
-			// Linguistics domain will call this.
-			// FileWriterService.RemoveEmptyFolders(reversalDir, true);
 		}
 	}
 }

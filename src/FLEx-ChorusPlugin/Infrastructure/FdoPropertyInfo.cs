@@ -55,5 +55,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			: this(propertyName, (DataType)Enum.Parse(typeof(DataType), dataType), false)
 		{
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}: {1}: {2}", PropertyName, DataType, IsCustomProperty);
+		}
 	}
 }

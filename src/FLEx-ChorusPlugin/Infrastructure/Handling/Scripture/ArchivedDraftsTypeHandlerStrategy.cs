@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksScrDraftStrategy(),
 				null,
 				ScrDraft, SharedConstants.GuidStr, WritePreliminaryArchivedDraftInformation);
 		}

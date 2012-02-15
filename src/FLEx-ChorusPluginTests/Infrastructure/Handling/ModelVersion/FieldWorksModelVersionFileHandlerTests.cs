@@ -203,8 +203,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 			const string child = "{\"modelversion\": 7000002}";
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile("fwtest.ModelVersion", parent);
-				repositorySetup.ChangeFileAndCommit("fwtest.ModelVersion", child, "change it");
+				repositorySetup.AddAndCheckinFile("FLExProject.ModelVersion", parent);
+				repositorySetup.ChangeFileAndCommit("FLExProject.ModelVersion", child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber

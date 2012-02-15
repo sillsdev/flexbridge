@@ -21,9 +21,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("WritingSystemStore/WritingSystemsToIgnore.xml.ChorusNotes");
 			projectFolderConfiguration.ExcludePatterns.Add("Shares/*.*"); // Presumed folder for future LIFT and PT-FLEx repos.
+			// Exclude these video extensions, for now at least.
+			// One can get a list of all sorts of extensions at: http://www.fileinfo.com/filetypes/video
+			projectFolderConfiguration.ExcludePatterns.Add("**.mpg");
+			projectFolderConfiguration.ExcludePatterns.Add("**.mov");
+			projectFolderConfiguration.ExcludePatterns.Add("**.wmv");
+			projectFolderConfiguration.ExcludePatterns.Add("**.rm");
+			projectFolderConfiguration.ExcludePatterns.Add("**.mp4");
+			projectFolderConfiguration.ExcludePatterns.Add("**.avi");
 
-			projectFolderConfiguration.IncludePatterns.Add("*.ModelVersion"); // Hope this forces the version file to be done first.
-			projectFolderConfiguration.IncludePatterns.Add("*.CustomProperties"); // Hope this forces the custom props to be done next.
+			projectFolderConfiguration.IncludePatterns.Add("FLExProject.ModelVersion"); // Hope this forces the version file to be done first.
+			projectFolderConfiguration.IncludePatterns.Add("FLExProject.CustomProperties"); // Hope this forces the custom props to be done next.
 
 			// Overhead files.
 			projectFolderConfiguration.IncludePatterns.Add("do_not_share_project.txt");
@@ -47,7 +55,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/TextCorpus/*.textincorpus");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Inventory/WordformInventory.inventory");
 			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Discourse/Charting.discourse");
-			// TODO: Add others.
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/**.featsys");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/AnalyzingAgents.agents");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/MorphologyAndSyntax/MorphAndSynData.morphdata");
+			projectFolderConfiguration.IncludePatterns.Add("Linguistics/Phonology/PhonologicalData.phondata");
 
 			// Anthropology
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
@@ -59,10 +70,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
 
 			// Leftovers
-			// TODO: Add whatever doesn't readily fit into the three main domains.
-
-			// Older style files, hopefully, soon to be obsolete.
-			projectFolderConfiguration.IncludePatterns.Add("DataFiles/**.ClassData");
+			// Style file and user-defined lists ought to be covered, above.
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExFilters.filter");
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExAnnotations.annotation");
+			projectFolderConfiguration.IncludePatterns.Add("General/LanguageProject.langproj");
+			projectFolderConfiguration.IncludePatterns.Add("General/FLExProject.lint");
 		}
 	}
 }
