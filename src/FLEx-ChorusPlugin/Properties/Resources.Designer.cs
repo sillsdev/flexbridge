@@ -194,24 +194,6 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to No file path provided. This is a program error..
-		/// </summary>
-		internal static string ksNoFilePath {
-			get {
-				return ResourceManager.GetString("ksNoFilePath", resourceCulture);
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized string similar to Path Problem.
-		/// </summary>
-		internal static string ksPathProblem {
-			get {
-				return ResourceManager.GetString("ksPathProblem", resourceCulture);
-			}
-		}
-
-		/// <summary>
 		///   Looks up a localized string similar to You can not obtain a project that you already have..
 		/// </summary>
 		internal static string ksTargetDirectoryExistsContent {
