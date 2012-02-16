@@ -25,7 +25,6 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				_pathToRepo = options["-p"];
 			}
-			_userName = user;
 			_getSharedProject = new GetSharedProject();
 			MainForm = new ObtainProjectView
 						{ Text = Resources.ObtainProjectView_DialogTitle, MaximizeBox = false, MinimizeBox = false, Icon = null};

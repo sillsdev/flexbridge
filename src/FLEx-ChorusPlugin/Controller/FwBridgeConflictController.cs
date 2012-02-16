@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;

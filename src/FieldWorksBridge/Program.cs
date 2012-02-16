@@ -53,8 +53,7 @@ namespace FieldWorksBridge
 					case "send_receive":
 						using (var controller = new FwBridgeSynchronizeController(options))
 						{
-							var syncProj = new SynchronizeProject();
-							syncProj.SynchronizeFieldWorksProject(controller);
+							controller.SyncronizeProjects();
 						}
 						break;
 					case "view_notes": //view the conflict\notes report

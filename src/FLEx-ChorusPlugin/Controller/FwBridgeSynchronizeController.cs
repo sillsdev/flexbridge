@@ -32,7 +32,6 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				_currentLanguageProject = new LanguageProject(options["-p"]);
 				_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
-				FlexFolderSystem.ConfigureChorusProjectFolder(_chorusSystem.ProjectFolderConfiguration);
 			}
 			else
 			{
@@ -61,39 +60,6 @@ namespace FLEx_ChorusPlugin.Controller
 		}
 
 		#endregion
-
-			var chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
-			var enableSendReceiveBtn = true;
-			var makeWarningsVisible = false;
-
-			// 2: If FW project is in use, then disable the S/R btn and show a warning message.
-			if (_currentLanguageProject.FieldWorkProjectInUse)
-			{
-				// This still allows the user to see the history,notes, etc, tab control.
-				enableSendReceiveBtn = false;
-				makeWarningsVisible = true;
-			}
-
-			// 3. Show correct view and enable/disable S/R btn and show (or not) the warnings.
-			_projectView.ActivateView(_existingSystemView);
-			_fwBridgeView.EnableSendReceiveControls(enableSendReceiveBtn, makeWarningsVisible);
-			SetSystem(chorusSystem);
-
-		}
-
-		private void StartupNewViewStartupHandler(object sender, StartupNewEventArgs e)
-		{
-			// This handler can't really work (yet) in an environment where the local system has an extant project,
-			// and the local user wants to collaborate with a remote user,
-			// where the FW language project is the 'same' on both computers.
-			// That is, we don't (yet) support merging the two, since they hav eno common ancestor.
-			// Odds are they each have crucial objects, such as LangProject or LexDb, that need to be singletons,
-			// but which have different guids.
-			// (Consider G & J Andersen's case, where each has an FW 6 system.
-			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
-
-			_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder);
-		}
 
 		#region Implementation of IDisposable
 
@@ -152,7 +118,7 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				MainForm.Dispose();
 
-				if (_chorusSystem  != null)
+				if (_chorusSystem != null)
 					_chorusSystem.Dispose();
 			}
 			MainForm = null;
