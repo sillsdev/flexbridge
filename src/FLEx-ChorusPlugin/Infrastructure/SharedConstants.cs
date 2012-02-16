@@ -129,6 +129,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
 		internal const string ScriptureTranslation = "ScriptureTranslation";
 		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
+		internal const string NoteCategories = "NoteCategories";
+		internal const string NoteCategoriesListFilename = NoteCategories + "." + List;
 
 		/***** Relocate ones that get added below here. *****/
 	}

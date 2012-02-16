@@ -11,14 +11,15 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	/// <summary>
 	/// Read/Write/Delete the Anthropology bounded context.
 	///
-	/// There is only one file for the anthropology context, which is named:
+	/// There is one file for the main anthropology context, which is named:
 	/// Root\Anthropology\DataNotebook.ntbk.
+	/// There are several "list" files, besides the main data file. These lists
+	/// are owned by LangProj, each list is in its own file and the root element is the matching owning prop element name.
 	///
 	/// File format:
 	/// Notebook (root)
 	///	singleton - header
-	///		High-level RnResearchNbk element, with its Records element remaining, but emptied of content.
-	///		Series of lists owned by LangProj, each list wrapped in matching owning prop element name.
+	///		Main RnResearchNbk element, with its Records property element remaining, but emptied of content.
 	///	series (col prop) of RnGenericRec elements, nested, as needed.
 	/// </summary>
 	internal static class AnthropologyBoundedContextService
@@ -43,6 +44,17 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					classData,
 					guidToClassMapping);
 
+				// Pull out the RecTypes OA pos list prop from RnResearchNbk and write as its own list file.
+				// It is nested by now, if it exists at all.
+				var recTypesOwningPropElement = notebookElement.Element("RecTypes");
+				if (recTypesOwningPropElement != null && recTypesOwningPropElement.HasElements)
+				{
+					FileWriterService.WriteNestedFile(
+						Path.Combine(anthropologyDir, "RecTypes." + SharedConstants.List),
+						new XElement("RecTypes", recTypesOwningPropElement.Element(SharedConstants.CmPossibilityList)));
+					recTypesOwningPropElement.RemoveNodes();
+				}
+
 				var recordsElement = notebookElement.Element("Records");
 				if (recordsElement != null && recordsElement.HasElements)
 				{
@@ -61,27 +73,52 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				langProj.Element("ResearchNotebook").RemoveNodes();
 			}
 
-			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
-			BaseDomainServices.NestLists(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				headerElement,
-				langProj,
-				new List<string>
-								{
-									"AnthroList",
-									"ConfidenceLevels",
-									"Education",
-									"Locations",
-									"People",
-									"Positions",
-									"Restrictions",
-									"Roles",
-									"Status",
-									"TimeOfDay"
-								});
-
 			FileWriterService.WriteNestedFile(Path.Combine(anthropologyDir, SharedConstants.DataNotebookFilename), rootElement);
+
+			// LangProj props to write. (List props will remain in lang proj, but the list obsur will be removed.)
+			// Write each of several lists into individual files.
+			/* Anthro-related lists owned by LangProj.
+					case "AnthroList":
+					case "ConfidenceLevels":
+					case "Education":
+					case "Locations":
+					case "People":
+					case "Positions":
+					case "Restrictions":
+					case "Roles":
+					case "Status":
+					case "TimeOfDay":
+			*/
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "AnthroList",
+										  Path.Combine(anthropologyDir, "AnthroList." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "ConfidenceLevels",
+										  Path.Combine(anthropologyDir, "ConfidenceLevels." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Education",
+										  Path.Combine(anthropologyDir, "Education." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Locations",
+										  Path.Combine(anthropologyDir, "Locations." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "People",
+										  Path.Combine(anthropologyDir, "People." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Positions",
+										  Path.Combine(anthropologyDir, "Positions." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Restrictions",
+										  Path.Combine(anthropologyDir, "Restrictions." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Roles",
+										  Path.Combine(anthropologyDir, "Roles." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "Status",
+										  Path.Combine(anthropologyDir, "Status." + SharedConstants.List));
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProj, "TimeOfDay",
+										  Path.Combine(anthropologyDir, "TimeOfDay." + SharedConstants.List));
 		}
 
 		internal static void FlattenContext(
@@ -90,38 +127,44 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			string anthropologyBaseDir)
 		{
 			var langProjElement = highLevelData["LangProject"];
-			var dnPathname = Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename);
-			var doc = XDocument.Load(dnPathname);
+			var currentPathname = Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename);
+			var doc = XDocument.Load(currentPathname);
 			var root = doc.Root;
-			foreach (var headerChildElement in root.Element(SharedConstants.Header).Elements())
+			var dnMainElement = root.Element(SharedConstants.Header).Element("RnResearchNbk");
+
+			// Add the chart elements (except the possible dummy one) into discourseElement.
+			var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			foreach (var recordElement in root.Elements("RnGenericRec").ToList())
 			{
-				switch (headerChildElement.Name.LocalName)
-				{
-					case "RnResearchNbk":
-						// Put all records back in RnResearchNbk, before sort and restore.
-						// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
-						var records = root.Elements("RnGenericRec").ToList();
-						if (records.Count > 1 || records[0].Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant())
-							headerChildElement.Element("Records").Add(records);
-						BaseDomainServices.RestoreElement(dnPathname, sortedData,
-							langProjElement, "ResearchNotebook",
-							headerChildElement);
-						break;
-					case "AnthroList": // Fall through
-					case "ConfidenceLevels": // Fall through
-					case "Education": // Fall through
-					case "Locations": // Fall through
-					case "People": // Fall through
-					case "Positions": // Fall through
-					case "Restrictions": // Fall through
-					case "Roles": // Fall through
-					case "Status": // Fall through
-					case "TimeOfDay":
-						BaseDomainServices.RestoreElement(dnPathname, sortedData,
-							langProjElement, headerChildElement.Name.LocalName,
-							headerChildElement.Element(SharedConstants.CmPossibilityList));
-						break;
-				}
+				var recordGuid = recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+				if (recordGuid == Guid.Empty.ToString().ToLowerInvariant())
+					break; // Only has dummy element.
+
+				// Add it to Records property of dnMainElement, BUT in sorted order, below, and then flatten dnMainElement.
+				sortedRecords.Add(recordGuid, recordElement);
+			}
+
+			if (sortedRecords.Count > 0)
+			{
+				var recordsElementOwningProp = dnMainElement.Element("Records");
+				foreach (var sortedChartElement in sortedRecords.Values)
+					recordsElementOwningProp.Add(sortedChartElement);
+			}
+			BaseDomainServices.RestoreElement(currentPathname, sortedData,
+				langProjElement, "ResearchNotebook",
+				dnMainElement);
+
+			// Put the lists back where they belong in LangProj.
+			foreach (var listPathname in Directory.GetFiles(anthropologyBaseDir, "*." + SharedConstants.List))
+			{
+				var listDoc = XDocument.Load(listPathname);
+				var listRoot = listDoc.Root;
+				var listRootName = listRoot.Name.LocalName;
+				BaseDomainServices.RestoreElement(currentPathname,
+					sortedData,
+					listRootName == "RecTypes" ? dnMainElement : langProjElement,
+					listRootName,
+					listRoot.Element(SharedConstants.CmPossibilityList));
 			}
 		}
 	}

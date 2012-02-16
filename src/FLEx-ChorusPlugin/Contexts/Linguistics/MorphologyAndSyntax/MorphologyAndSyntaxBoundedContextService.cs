@@ -22,18 +22,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			if (lexDb != null)
 			{
 				// Write out LexDb's "MorphTypes" list, as per AndyB (7 Feb 2012).
-				var randomMorphTypeElement = new XElement(SharedConstants.MorphTypes);
-				BaseDomainServices.NestList(classData,
-					guidToClassMapping,
-					classData[SharedConstants.CmPossibilityList],
-					randomMorphTypeElement,
-					lexDb,
-					SharedConstants.MorphTypes);
-				if (randomMorphTypeElement.HasElements)
-				{
-					// NB: Write file, but only if LP has the POS list.
-					FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename), (XElement)randomMorphTypeElement.FirstNode);
-				}
+				FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+											  lexDb, SharedConstants.MorphTypes,
+											  Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename));
 			}
 			var langProjElement = classData["LangProject"].Values.First();
 			// 1. Nest: LP's MorphologicalData(MoMorphData OA) (Also does MoMorphData's ProdRestrict(CmPossibilityList)
@@ -64,18 +55,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 
 			// 3. Nest: LP's PartsOfSpeech(CmPossibilityList OA)
 			//		Remove objsur node from LP.
-			var randomElement = new XElement(SharedConstants.PartsOfSpeech);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				randomElement,
-				langProjElement,
-				SharedConstants.PartsOfSpeech);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the POS list.
-				FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.PartsOfSpeechFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.PartsOfSpeech,
+										  Path.Combine(morphAndSynDir, SharedConstants.PartsOfSpeechFilename));
 
 			// 4. Nest: LP's AnalyzingAgents(CmAgent OC) (use some new extension and a fixed name)
 			//		Remove objsur node(s) from LP.

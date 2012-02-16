@@ -32,50 +32,19 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			var langProjElement = classData["LangProject"].Values.First();
 
 			// Write Genre list (owning atomic CmPossibilityList)
-			// "randomElement" makes this list be two levels down in <GenreList><GenreList></GenreList></GenreList>.
-			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
-			var randomElement = new XElement(SharedConstants.GenreList);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				randomElement,
-				langProjElement,
-				SharedConstants.GenreList);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the genre list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.GenreList,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.GenreListFilename));
 
 			// Write text markup tags list (owning atomic CmPossibilityList)
-			// "randomElement" makes this list be two levels down in <TextMarkupTags><TextMarkupTags></TextMarkupTags></TextMarkupTags>.
-			// So, since we need to provide a node to NestList, just use randomElement's first kid in the doc.
-			randomElement = new XElement(SharedConstants.TextMarkupTags);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				randomElement,
-				langProjElement,
-				SharedConstants.TextMarkupTags);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the markup list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.TextMarkupTags,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.TextMarkupTagsListFilename));
 
 			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
-			randomElement = new XElement(SharedConstants.TranslationTags);
-			BaseDomainServices.NestList(classData,
-				guidToClassMapping,
-				classData[SharedConstants.CmPossibilityList],
-				randomElement,
-				langProjElement,
-				SharedConstants.TranslationTags);
-			if (randomElement.HasElements)
-			{
-				// NB: Write file, but only if LP has the markup list.
-				FileWriterService.WriteNestedFile(Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename), (XElement)randomElement.FirstNode);
-			}
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  langProjElement, SharedConstants.TranslationTags,
+										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)

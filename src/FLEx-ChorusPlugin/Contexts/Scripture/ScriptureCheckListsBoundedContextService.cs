@@ -53,6 +53,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
 			{
+				if (listPathname.EndsWith(SharedConstants.NoteCategoriesListFilename))
+					continue; // Wrong list.
+
 				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element(SharedConstants.CmPossibilityList);
 				CmObjectFlatteningService.FlattenObject(

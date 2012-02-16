@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
@@ -16,8 +18,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			get { return ReaderSettings; }
 		}
 
-		internal static void WriteNestedFile(string newPathname,
-			XElement root)
+		internal static void WriteNestedFile(string newPathname, XElement root)
 		{
 			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), root);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -80,8 +81,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 													 byte[] record)
 		{
 			// Theory has it that the fwdata file is all sorted.
-			//var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
-			var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
+			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+			// Not this one, since it leaves out the temporary "key' attr. var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			var hasCustomProperties = false;
 			foreach (var propElement in cpElement.Elements("CustomField"))
@@ -172,6 +173,25 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					: (extension.Length == 1
 						? extension
 						: extension.Substring(1));
+		}
+
+		internal static void WriteNestedListFileIfItExists(IDictionary<string, SortedDictionary<string, XElement>> classData,
+														   Dictionary<string, string> guidToClassMapping,
+														   XElement listOwningElement, string listOwningPropertyName,
+														   string listPathname)
+		{
+			var listPropElement = listOwningElement.Element(listOwningPropertyName);
+			if (listPropElement == null || !listPropElement.HasElements)
+				return;
+
+			var listElement = classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
+			CmObjectNestingService.NestObject(false,
+											  listElement,
+											  new Dictionary<string, HashSet<string>>(),
+											  classData,
+											  guidToClassMapping);
+			listPropElement.RemoveNodes(); // Remove the single list objsur element.
+			WriteNestedFile(listPathname, new XElement(listOwningPropertyName, listElement));
 		}
 	}
 }
