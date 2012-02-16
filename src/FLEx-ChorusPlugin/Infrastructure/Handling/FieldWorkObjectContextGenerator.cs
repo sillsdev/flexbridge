@@ -85,6 +85,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				{
 					case "LexEntry":
 						return GetLabelForEntry(current);
+					case "WfiWordform":
+						return GetLabelForWordform(current);
 					case "CmPossibilityList":
 						return GetLabelForPossibilityList(current);
 					case "Possibilities":
@@ -104,6 +106,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		string EntryLabel
 		{
 			get { return "Entry"; } // Todo: internationalize
+		}
+
+		string WordformLabel
+		{
+			get { return "Wordform"; } // Todo: internationalize
 		}
 
 		string ListLabel
@@ -129,6 +136,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (form == null)
 				return EntryLabel;
 			return EntryLabel + " " + form.InnerText;
+		}
+
+		private string GetLabelForWordform(XmlNode wordform)
+		{
+			var form = wordform.SelectSingleNode("Form/AUni");
+			if (form == null)
+				return WordformLabel;
+			return WordformLabel + " " + form.InnerText;
 		}
 
 		private string GetLabelForPossibilityList(XmlNode list)

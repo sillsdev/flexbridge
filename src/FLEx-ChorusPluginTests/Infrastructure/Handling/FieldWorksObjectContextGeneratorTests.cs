@@ -53,6 +53,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
+		public void WfiWordformPartsFindForm()
+		{
+			string source =
+				@"<WfiWordform
+					guid='2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653'>
+					<Form>
+						<AUni
+							ws='jit'>jitWord</AUni>
+					</Form>
+					<SpellingStatus
+						val='0' />
+				</WfiWordform>";
+			var root = GetNode(source);
+			var input = root; // WfiWordform
+			var generator = new FieldWorkObjectContextGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
+
+			// Try a child node that isn't a part of the word form
+			input = root.ChildNodes[1]; //SpellingStatus
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
+		}
+
+		[Test]
 		public void PossibilityListPartsFindName()
 		{
 			string source =
