@@ -153,6 +153,7 @@
 	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
 	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\LexEntryContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseAnalysisFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\AnalyzingAgentFileTypeHandlerStrategy.cs" />
@@ -161,6 +162,8 @@
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\PossibilityContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\PossibilityListContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />

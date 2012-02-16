@@ -38,18 +38,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			CreateSharedElementStrategies(sharedElementStrategies);
 
 			var strategiesForMerger = merger.MergeStrategies;
+			ContextGen.MergeStrategies = strategiesForMerger;
 
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
 			BootstrapHeaderElementNonClassStrategies(strategiesForMerger);
 
-			var classStrat = new ElementStrategy(false)
-			{
-				MergePartnerFinder = GuidKey,
-				ContextDescriptorGenerator = ContextGen,
-				IsAtomic = false
-			};
+			var classStrat = MakeClassStrategy(ContextGen);
 
 			// There are two abstract class names used: CmAnnotation and DsChart.
 			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
@@ -80,7 +76,38 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// So, use a new ownseatomic element tag.
 				// classStrat.IsAtomic = classInfo.ClassName == "StTxtPara" || classInfo.ClassName == "ScrTxtPara";
 
-				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
+				switch (classInfo.ClassName)
+				{
+					case "LexEntry":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new LexEntryContextGenerator()));
+						break;
+					case "CmPossibilityList":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityListContextGenerator()));
+						break;
+						// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
+						// OTOH, if we ever want special handling for any of them, we can easily add a special generator.
+						// Note that these will not usually be found as strategies, since they are owned in owning sequences
+						// and ownseq has its own item. However, they can be found by the default object context generator code,
+						// which has a special case for ownseq.
+					case "MoMorphType":
+					case "PartOfSpeech":
+					case "ChkTerm":
+					case "PhPhonRuleFeat":
+					case "CmCustomItem":
+					case "CmLocation":
+					case "CmAnnotationDefn":
+					case "CmPerson":
+					case "CmAnthroItem":
+					case "CmSemanticDomain":
+					case "LexEntryType":
+					case "LexRefType":
+					case "CmPossibility":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityContextGenerator()));
+						break;
+					default:
+						strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
+						break;
+				}
 				foreach (var propertyInfo in classInfo.AllProperties)
 				{
 					var isCustom = propertyInfo.IsCustomProperty;
@@ -94,6 +121,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
 			}
+		}
+
+		private static ElementStrategy MakeClassStrategy(IGenerateContextDescriptor descriptor)
+		{
+			var classStrat = new ElementStrategy(false)
+								{
+									MergePartnerFinder = GuidKey,
+									ContextDescriptorGenerator = descriptor,
+									IsAtomic = false
+								};
+			if (ContextGen != null && descriptor is FieldWorkObjectContextGenerator)
+				((FieldWorkObjectContextGenerator) descriptor).MergeStrategies = ContextGen.MergeStrategies;
+			return classStrat;
 		}
 
 		private static ElementStrategy CreateSingletonElementStrategy()

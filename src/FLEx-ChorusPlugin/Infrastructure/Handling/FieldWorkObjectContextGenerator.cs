@@ -11,11 +11,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	/// <summary>
 	/// Class that creates a descriptor that can be used later to find the element again, as when reviewing conflict.
+	/// Also responsible for generating (and including as a label in the descriptor) a human-readable description of the context element,
+	/// and (through the HtmlDetails method) an HTML representation of a conflicting node that can be diff'd to show the differences.
+	///
+	/// Subclasses should be created (and registered in the appropriate strategies, in FieldWorksMergeStrategyServices.BootstrapSystem)
+	/// for elements which have non-standard behavior.
 	/// </summary>
-	internal sealed class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
+	internal class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
 		private const string kownseq = "ownseq";
 		private const string kpathSep = " ";
+
+		/// <summary>
+		/// Strategies may provide alternate context descriptors for parent elements.
+		/// </summary>
+		internal MergeStrategies MergeStrategies { get; set; }
 
 		public ContextDescriptor GenerateContextDescriptor(XmlNode rtElement, string filePath)
 		{
@@ -73,7 +83,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return null; // Guid.Empty.ToString()? throw?
 		}
 
-		private string GetLabel(XmlNode start)
+		protected virtual string GetLabel(XmlNode start)
 		{
 			var label = start.Name; // a default.
 			XmlNode previous = null;
@@ -83,20 +93,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			while (current != null)
 			{
-				switch (current.Name)
+				if (MergeStrategies != null)
 				{
-					case "LexEntry":
-						return GetLabelForEntry(current) + GetPathAppend(current, target);
-					case "CmPossibilityList":
-						return GetLabelForPossibilityList(current) + GetPathAppend(current, target);
-					case "Possibilities":
-						return GetLabelForPossibilityItem(previous) + GetPathAppend(previous, target);
+					ElementStrategy strategy;
+					if (current.Name == SharedConstants.Ownseq)
+						strategy = GetOwnSeqStrategy(current);
+					else
+						strategy = MergeStrategies.GetElementStrategy(current);
+					if (strategy != null
+						&& strategy.ContextDescriptorGenerator is FieldWorkObjectContextGenerator
+							&& strategy.ContextDescriptorGenerator != this)
+					{
+						var result = ((FieldWorkObjectContextGenerator) strategy.ContextDescriptorGenerator).GetLabel(current);
+						return result + GetPathAppend(current, target);
+					}
 				}
-				previous = current;
 				current = current.ParentNode;
 			}
 			return label;
 		}
+
+		private ElementStrategy GetOwnSeqStrategy(XmlNode current)
+		{
+			var attribute = current.Attributes[SharedConstants.Class];
+			if (attribute == null)
+				return null; // paranoia
+			ElementStrategy result;
+			MergeStrategies.ElementStrategies.TryGetValue(attribute.Value, out result);
+			return result;
+		}
+
+		internal const string ListLabel = "List";  // Todo: internationalize
 
 		/// <summary>
 		/// Get the node that we will basically generate the contents of for the given start node
@@ -147,46 +174,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return path;
 		}
 
-		string UnidentifiableLabel
-		{
-			get { return "[unidentified]"; } // Todo: internationalize
-		}
+		internal const string UnidentifiableLabel = "[unidentified]"; // Todo: internationalize
 
-		string EntryLabel
-		{
-			get { return "Entry"; } // Todo: internationalize
-		}
-
-		string ListLabel
-		{
-			get { return "List"; } // Todo: internationalize
-		}
-
-		string ListItemLabel
-		{
-			get { return "Item"; } // Todo: internationalize
-		}
-
-		private string GetLabelForEntry(XmlNode entry)
-		{
-			// Enhance: would something like this be enough faster to be worth it?
-			//var lf = FirstChildNamed(entry, "LexemeForm");
-			//if (lf == null)
-			//    return EntryLabel;
-			//var form = FirstChildNamed(lf, "MoStemAllomorph");
-			//if (form == null)
-			//    return EntryLabel;
-			var form = entry.SelectSingleNode("LexemeForm/MoStemAllomorph/Form/AUni");
-			if (form == null)
-				return EntryLabel;
-			return EntryLabel + " " + form.InnerText;
-		}
-
-		private string GetLabelForPossibilityList(XmlNode list)
-		{
-			var name = GetNameOrAbbreviation(list);
-			return ListLabel + " '" + name + "'";
-		}
 
 		/// <summary>
 		/// The specified parent XmlNode is expected to contain either a Name or an Abbreviation child node.
@@ -196,7 +185,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		/// <param name="parent">The XmlNode whose name is sought.</param>
 		/// <returns>Name or Abbreviation of parent node, or UnidentifiableLabel if none exists</returns>
-		private string GetNameOrAbbreviation(XmlNode parent)
+		protected string GetNameOrAbbreviation(XmlNode parent)
 		{
 			// Try to get the "Name" node. If there ain't one, get the "Abbreviation" node:
 			var nameOrAbbreviationNode = parent.SelectSingleNode("Name");
@@ -207,21 +196,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					return UnidentifiableLabel;
 			}
 			return FirstNonBlankChildsData(nameOrAbbreviationNode);
-		}
-
-		private string GetLabelForPossibilityItem(XmlNode possibility)
-		{
-			var itemName = UnidentifiableLabel;
-			var listName = ListLabel + " " + UnidentifiableLabel;
-
-			if (possibility != null)
-			{
-				itemName = GetNameOrAbbreviation(possibility);
-
-				if (possibility.ParentNode != null)
-					listName = GetLabel(possibility.ParentNode.ParentNode);
-			}
-			return ListItemLabel + " '" + itemName + "' from " + listName;
 		}
 
 		/// <summary>

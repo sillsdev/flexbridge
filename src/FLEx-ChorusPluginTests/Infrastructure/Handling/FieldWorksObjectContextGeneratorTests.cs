@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
 using NUnit.Framework;
 
@@ -38,7 +40,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				</LexEntry>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0];
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label="+ descriptor.DataLabel));
@@ -64,6 +66,32 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm Form"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+		}
+
+		private static FieldWorkObjectContextGenerator MakeGenerator()
+		{
+			var result = new FieldWorkObjectContextGenerator();
+			var strategies = new MergeStrategies();
+			result.MergeStrategies = strategies;
+			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			return result;
+		}
+
+		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
+
+		private static ElementStrategy MakeClassStrategy(FieldWorkObjectContextGenerator descriptor, MergeStrategies strategies)
+		{
+			var classStrat = new ElementStrategy(false)
+			{
+				MergePartnerFinder = GuidKey,
+				ContextDescriptorGenerator = descriptor,
+				IsAtomic = false
+			};
+			descriptor.MergeStrategies = strategies;
+			return classStrat;
 		}
 
 		[Test]
@@ -111,7 +139,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</CmPossibilityList>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0];
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
@@ -155,7 +183,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				</LexEntry>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry Outer Target"));
 		}
@@ -193,7 +221,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				</LexEntry>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[1].ChildNodes[0]; // the Target element (in the second objseq).
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry SeqProp 2 Target"));
 		}
@@ -261,7 +289,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</CmPossibilityList>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[2];
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
@@ -316,7 +344,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</CmPossibilityList>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[4].ChildNodes[0].ChildNodes[3]; // <ReverseAbbr>
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = MakeGenerator();
 
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
