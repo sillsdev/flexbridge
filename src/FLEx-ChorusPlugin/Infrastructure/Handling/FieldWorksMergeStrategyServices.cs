@@ -51,6 +51,27 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				IsAtomic = false
 			};
 
+			// There are two abstract class names used: CmAnnotation and DsChart.
+			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
+			// So, add two keyed strategies for each of them.
+			var keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
+			strategiesForMerger.SetStrategy("CmAnnotation", keyedStrat);
+
+			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
+			strategiesForMerger.SetStrategy("DsChart", keyedStrat);
+
+			// The lint file has a collection of odd stuff.
+			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
+			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
+			keyedStrat.AttributesToIgnoreForMerging.Add("curiositytype");
+			keyedStrat.AttributesToIgnoreForMerging.Add("tempownerguid");
+			strategiesForMerger.SetStrategy("curiosity", keyedStrat);
+
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
 				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
