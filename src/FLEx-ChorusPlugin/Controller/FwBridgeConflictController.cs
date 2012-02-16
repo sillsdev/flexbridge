@@ -58,12 +58,8 @@ namespace FLEx_ChorusPlugin.Controller
 		{
 			_chorusUser = new ChorusUser(user);
 			_currentLanguageProject = new LanguageProject(filePath);
-			_chorusSystem = new ChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
+			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
-		}
-
-		private void BuildNotesAndConflictViewerModels(string filePath)
-		{
 		}
 
 		internal virtual void SetViewControls(string filePath)
