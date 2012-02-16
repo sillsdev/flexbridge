@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
@@ -11,8 +12,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// <summary>
 	/// Class that creates a descriptor that can be used later to find the element again, as when reviewing conflict.
 	/// </summary>
-	internal sealed class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode
+	internal sealed class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
+		private const string kownseq = "ownseq";
+		private const string kpathSep = " ";
+
 		public ContextDescriptor GenerateContextDescriptor(XmlNode rtElement, string filePath)
 		{
 			string className;
@@ -215,5 +219,99 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			throw new NotImplementedException();
 		}
+
+		/// <summary>
+		/// Generate a nice HTML representation of the data that is contained in the mergeElement.
+		/// Three versions of the results of this method are compared, and the conflict details report
+		/// shows two diffs (ancestor -> ours, ancestor -> theirs). Eventually we hope to be able to
+		/// highlight the conflicting changes more boldly.
+		/// The results may well display more than just the mergeElement, especially when GenerateContextDescriptor
+		/// uses a parent element as the basis for finding the label of what changed. (The same element is passed
+		/// to that method as to this for the "ours" case.) One option is to display a complete representation of
+		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
+		/// to give answers as helpful as possible when we don't have a really pretty one created.
+		/// </summary>
+		/// <param name="mergeElement"></param>
+		/// <returns></returns>
+		public string HtmlContext(XmlNode mergeElement)
+		{
+			// I expect the following code will eventually just be a default, if we can't match something better.
+			if (IsMultiString(mergeElement))
+				return HtmlForMultiString(mergeElement);
+			if (IsMultiStringChild(mergeElement))
+				return HtmlForMultiString(mergeElement.ParentNode);
+			// last resort
+			return XmlUtilities.GetXmlForShowingInHtml(mergeElement.OuterXml);
+		}
+
+		private bool IsMultiStringChild(XmlNode mergeElement)
+		{
+			return mergeElement.Name.ToLowerInvariant() == "auni" || mergeElement.Name.ToLowerInvariant() == "astr";
+		}
+
+		private string HtmlForMultiString(XmlNode mergeElement)
+		{
+			// Include at least the mergeElement name; don't include the root element (unless pathologically it is the mergeElement).
+			string path = mergeElement.Name;
+			for (var ancestor = mergeElement.ParentNode;
+				ancestor != null && ancestor.ParentNode != ancestor.OwnerDocument;
+				ancestor = ancestor.ParentNode)
+			{
+				if (ancestor.Name.ToLowerInvariant() == kownseq)
+				{
+					// Instead of inserting the 'ownseq' literally, insert its index.
+					path = GetOwnSeqIndex(ancestor) + kpathSep + path;
+					continue;
+				}
+				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;
+				// a path consisting of mainly attribute names is most helpful.
+				if (ancestor.Attributes["guid"] != null)
+					continue;
+
+				path = ancestor.Name + kpathSep + path;
+			}
+			var sb = new StringBuilder(path);
+			foreach (var node in mergeElement.ChildNodes)
+			{
+				var elt = node as XmlNode;
+				if (elt == null)
+					continue;
+				if (elt.Name.ToLowerInvariant() != "auni" && elt.Name.ToLowerInvariant()!= "astr")
+					continue;
+				var ws = XmlUtilities.GetOptionalAttributeString(elt, "ws");
+				sb.Append("<div>");
+				sb.Append(ws);
+				sb.Append(": ");
+				sb.Append(elt.InnerText); // enhance JohnT: possibly indicate WS and style if AStr and relevant?
+				sb.Append("</div>");
+			}
+			return sb.ToString();
+		}
+
+		private string GetOwnSeqIndex(XmlNode node)
+		{
+			var parent = node.ParentNode;
+			if (parent == null)
+				return ""; // throw? this is weird.
+			int count = 1; // consider it item 1 if it has no predecessors
+			foreach (var child in parent.ChildNodes)
+			{
+				if (child == node)
+					return count.ToString();
+				if (child is XmlNode && ((XmlNode)child).Name.ToLowerInvariant() == kownseq)
+					count++;
+			}
+			return "***ownseq messup***"; // not worth crashing?, but this is totally bizarre
+		}
+
+		private bool IsMultiString(XmlNode mergeElement)
+		{
+			if (mergeElement.SelectSingleNode("AUni") != null)
+				return true;
+			if (mergeElement.SelectSingleNode("AStr") != null)
+				return true;
+			return false;
+		}
+
 	}
 }

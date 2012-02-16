@@ -141,6 +141,9 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
+	<Compile Include="Controller\FwBridgeConflictController.cs" />
+	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
+	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksScrDraftStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
@@ -228,6 +231,12 @@
 	<Compile Include="View\FieldWorksBridge.Designer.cs">
 	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\FwBridgeConflictView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\FwBridgeConflictView.Designer.cs">
+	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
+	</Compile>
 	<Compile Include="View\FwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -237,11 +246,18 @@
 	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
+	<Compile Include="View\IFwBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IGetSharedProject.cs" />
 	<Compile Include="View\IProjectView.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="View\ISynchronizeProject.cs" />
+	<Compile Include="View\ObtainProjectView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\ObtainProjectView.Designer.cs">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</Compile>
 	<Compile Include="View\ProjectEventArgs.cs" />
 	<Compile Include="View\ProjectView.cs">
 	  <SubType>UserControl</SubType>
@@ -267,6 +283,9 @@
 	<EmbeddedResource Include="View\FieldWorksBridge.resx">
 	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
 	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\FwBridgeConflictView.resx">
+	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\FwBridgeView.resx">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>

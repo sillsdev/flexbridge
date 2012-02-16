@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -12,7 +11,7 @@ namespace FLEx_ChorusPlugin.View
 	{
 		#region Implementation of ISynchronizeProject
 
-		void ISynchronizeProject.SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		public void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");
@@ -52,5 +51,10 @@ namespace FLEx_ChorusPlugin.View
 		}
 
 		#endregion
+
+		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
+		{
+			SynchronizeFieldWorksProject(controller.MainForm, controller.ChorusSystem, controller.CurrentProject);
+		}
 	}
 }

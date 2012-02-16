@@ -6,7 +6,7 @@ namespace FLEx_ChorusPlugin.Model
 {
 	/// <summary>
 	/// LanguageProject represents a FieldWorks language project
-	/// (but is not the same class as is used in FielwdWorks).
+	/// (but is not the same class as is used in FieldWorks).
 	///
 	/// A LanguageProject may, or may not, be enabled for remote collaboration use.
 	/// If it is not ready for such use, it can be made ready.

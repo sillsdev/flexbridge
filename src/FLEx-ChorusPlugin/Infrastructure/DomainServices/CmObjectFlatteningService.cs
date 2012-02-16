@@ -49,6 +49,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					// Adding the conflict to the listener, will result in the ChorusNotes file being updated (created if need be.)
 					var conflict = new IncompatibleMoveConflict(className, GetXmlNode(element)) {Situation = new NullMergeSituation()};
+					listener.RecordContextInConflict(conflict);
 					listener.ConflictOccurred(conflict);
 				}
 			}
