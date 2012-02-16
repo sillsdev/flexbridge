@@ -7,19 +7,18 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
-using Palaso.Progress.LogBox;
 using Chorus.UI.Notes;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	internal sealed class FwBridgeConflictController : IFwBridgeController, IDisposable
+	internal class FwBridgeConflictController : IFwBridgeController, IDisposable
 	{
-		private string _userName;
 		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
-		private LanguageProject _currentLanguageProject;
-		private NotesInProjectViewModel _notesModel;
-		private MessageSelectedEvent messageSelectedEventHandler;
+		protected LanguageProject _currentLanguageProject;
+		protected NotesInProjectViewModel _notesModel;
+		protected AnnotationEditorModel _editorModel;
+		protected NotesBrowserPage _notesBrowser;
 
 		/// <summary>
 		/// for testing (but called by the main constructor)
@@ -51,25 +50,28 @@ namespace FLEx_ChorusPlugin.Controller
 								MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
-			_userName = user;
-			_chorusUser = new ChorusUser(_userName);
 
-			_currentLanguageProject = new LanguageProject(filePath);
-			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
-			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
+			SetupChorusAndLanguageProject(user, filePath);
 			SetViewControls(filePath);
-			//var openConflictIndex = new Chorus.notes.IndexOfAllOpenConflicts();
-			//openConflictIndex.Initialize(()=> { }, new NullProgress());
-			//var conflictList = openConflictIndex.GetAll();
 		}
 
-		private void SetViewControls(string filePath)
+		private void SetupChorusAndLanguageProject(string user, string filePath)
 		{
-			_notesModel = new NotesInProjectViewModel(_chorusUser,
-													  new[] {_chorusSystem.GetNotesRepository(filePath, new NullProgress())},
-													  messageSelectedEventHandler, new NullProgress());
+			_chorusUser = new ChorusUser(user);
+			_currentLanguageProject = new LanguageProject(filePath);
+			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
+			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
+		}
+
+		internal virtual void SetViewControls(string filePath)
+		{
+			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
 			var viewer = (MainForm as FwBridgeConflictView);
-			viewer.SetBrowseView(new NotesInProjectView(_notesModel));
+			viewer.SetBrowseView(_notesBrowser);
+
+			if (_currentLanguageProject.FieldWorkProjectInUse)
+				viewer.EnableWarning();
+			viewer.SetProjectName(_currentLanguageProject.Name);
 		}
 
 		#region IFwBridgeController implementation

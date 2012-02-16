@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using FieldWorksBridge.Properties;
@@ -31,9 +32,6 @@ namespace FieldWorksBridge
 			}
 
 			var options = ParseCommandLineArgs(args);
-			//options["-u"] = "King of France";
-			//options["-p"] = "C:/FW-WW/DistFiles/Projects/benice/benice.fwdata";
-			//options["-v"] = "obtain";
 			if(!options.ContainsKey("-v") || options["-v"] == null)
 			{
 				using (var controller = new FwBridgeController())
@@ -55,8 +53,7 @@ namespace FieldWorksBridge
 					case "send_receive":
 						using (var controller = new FwBridgeSynchronizeController(options))
 						{
-							var syncProj = new SynchronizeProject();
-							syncProj.SynchronizeFieldWorksProject(controller);
+							controller.SyncronizeProjects();
 						}
 						break;
 					case "view_notes": //view the conflict\notes report
@@ -70,7 +67,18 @@ namespace FieldWorksBridge
 						break;
 				}
 			}
-
+			try
+			{
+				ChannelFactory<IFLExBridgeService> pipeFactory =
+					new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
+						new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
+				var channel = pipeFactory.CreateChannel();
+				channel.BridgeWorkComplete(true);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+			}
 			Settings.Default.Save();
 		}
 
@@ -106,6 +114,13 @@ namespace FieldWorksBridge
 				}
 			}
 			return options;
+		}
+
+		[ServiceContract]
+		private interface IFLExBridgeService
+		{
+			[OperationContract]
+			void BridgeWorkComplete(bool changesReceived);
 		}
 	}
 }

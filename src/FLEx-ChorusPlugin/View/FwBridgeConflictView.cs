@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
-using FLEx_ChorusPlugin.Controller;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -14,24 +10,30 @@ namespace FLEx_ChorusPlugin.View
 	/// </summary>
 	internal partial class FwBridgeConflictView : Form
 	{
-		private NotesInProjectView m_conflictBrowser;
-		private AnnotationInspector m_conflictInspector;
+		private NotesBrowserPage m_notesBrowser;
 
 		internal FwBridgeConflictView()
 		{
 			InitializeComponent();
+			_warninglabel1.Visible = false;
+			this.Icon = Resources.chorus;
 		}
 
-		internal void SetBrowseView(NotesInProjectView browser)
+		public void EnableWarning()
 		{
-			m_conflictBrowser = browser;
-			splitContainer1.Panel1.Controls.Add(m_conflictBrowser);
+			_warninglabel1.Visible = true;
 		}
 
-		internal void SetSingleConflictView(AnnotationInspector inspector)
+		public void SetProjectName(string projName)
 		{
-			m_conflictInspector = inspector;
-			splitContainer1.Panel2.Controls.Add(m_conflictInspector);
+			_label1.Text = projName;
+		}
+
+		public void SetBrowseView(NotesBrowserPage browser)
+		{
+			m_notesBrowser = browser;
+			_splitContainer.Panel2.Controls.Add(m_notesBrowser);
+			m_notesBrowser.Dock = DockStyle.Fill;
 		}
 	}
 }
