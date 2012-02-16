@@ -273,6 +273,13 @@
 	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\SynchronizeProject.cs" />
+	<EmbeddedResource Include="View\ObtainProjectView.resx">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\StartupNewView.resx">
+	  <DependentUpon>StartupNewView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -293,10 +300,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\ProjectView.resx">
 	  <DependentUpon>ProjectView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\StartupNewView.resx">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
