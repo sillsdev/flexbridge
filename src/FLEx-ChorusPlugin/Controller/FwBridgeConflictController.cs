@@ -55,7 +55,7 @@ namespace FLEx_ChorusPlugin.Controller
 			_chorusUser = new ChorusUser(_userName);
 
 			_currentLanguageProject = new LanguageProject(filePath);
-			_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
+			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
 			SetViewControls(filePath);
 			//var openConflictIndex = new Chorus.notes.IndexOfAllOpenConflicts();

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Model;
@@ -14,16 +12,13 @@ namespace FLEx_ChorusPlugin.Controller
 		private readonly ChorusSystem _chorusSystem;
 		private readonly IGetSharedProject _getSharedProject;
 		private readonly IStartupNewView _startupNewView;
-		private readonly string _userName;
 
-
+		/// <summary>
+		/// Constructs the ObtainProjectController with the given options.
+		/// </summary>
+		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
 		public ObtainProjectController(Dictionary<string, string> options)
 		{
-			string user = "anonymous";
-			if (options.ContainsKey("-u"))
-			{
-				user = options["-u"];
-			}
 			_startupNewView = new StartupNewView();
 			_startupNewView.Startup += StartupNewViewStartupHandler;
 			_getSharedProject = new GetSharedProject();

@@ -72,7 +72,7 @@ namespace FLEx_ChorusPlugin.Controller
 			if (options.ContainsKey("-p"))
 			{
 				_currentLanguageProject = new LanguageProject(options["-p"]);
-				_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
+				_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
 				_existingSystemView.SetSystem(_chorusSystem, _currentLanguageProject);
 			}
 			_userName = user;
@@ -125,8 +125,7 @@ namespace FLEx_ChorusPlugin.Controller
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
-			var chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
-			FlexFolderSystem.ConfigureChorusProjectFolder(chorusSystem.ProjectFolderConfiguration);
+			var chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
 			var enableSendReceiveBtn = true;
 			var makeWarningsVisible = false;
 

@@ -1,10 +1,11 @@
-﻿using Chorus.sync;
+﻿using Chorus;
+using Chorus.sync;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal static class FlexFolderSystem
 	{
-		internal static void ConfigureChorusProjectFolder(ProjectFolderConfiguration projectFolderConfiguration)
+		private static void ConfigureChorusProjectFolder(ProjectFolderConfiguration projectFolderConfiguration)
 		{
 			// Exclude has precedence, but these are redundant as long as we're using the policy
 			// that we explicitly include all the files we understand.  At least someday, when these
@@ -75,6 +76,19 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("General/FLExAnnotations.annotation");
 			projectFolderConfiguration.IncludePatterns.Add("General/LanguageProject.langproj");
 			projectFolderConfiguration.IncludePatterns.Add("General/FLExProject.lint");
+		}
+
+		/// <summary>
+		/// Creates and initializes the ChorusSystem for use in FLExBridge
+		/// </summary>
+		/// <param name="directoryName"></param>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public static ChorusSystem InitializeChorusSystem(string directoryName, string user)
+		{
+			var system = new ChorusSystem(directoryName, user);
+			ConfigureChorusProjectFolder(system.ProjectFolderConfiguration);
+			return system;
 		}
 	}
 }
