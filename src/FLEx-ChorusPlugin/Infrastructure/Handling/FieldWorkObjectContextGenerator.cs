@@ -76,24 +76,75 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetLabel(XmlNode start)
 		{
 			var label = start.Name; // a default.
-			var current = start;
 			XmlNode previous = null;
+
+			var target = GetTargetNode(start);
+			var current = target;
 
 			while (current != null)
 			{
 				switch (current.Name)
 				{
 					case "LexEntry":
-						return GetLabelForEntry(current);
+						return GetLabelForEntry(current) + GetPathAppend(current, target);
 					case "CmPossibilityList":
-						return GetLabelForPossibilityList(current);
+						return GetLabelForPossibilityList(current) + GetPathAppend(current, target);
 					case "Possibilities":
-						return GetLabelForPossibilityItem(previous);
+						return GetLabelForPossibilityItem(previous) + GetPathAppend(previous, target);
 				}
 				previous = current;
 				current = current.ParentNode;
 			}
 			return label;
+		}
+
+		/// <summary>
+		/// Get the node that we will basically generate the contents of for the given start node
+		/// (The one we want a path to.)
+		/// </summary>
+		/// <param name="start"></param>
+		/// <returns></returns>
+		private XmlNode GetTargetNode(XmlNode start)
+		{
+			if (IsMultiStringChild(start))
+				return start.ParentNode;
+			return start; // Enhance JohnT: may eventually be other exceptions.
+		}
+
+		// If the start node is a child of current, generate a path from current to start, with a leading space.
+		private string GetPathAppend(XmlNode current, XmlNode start)
+		{
+			if (current == start)
+				return "";
+			var path = PathToChild(current, start);
+			if (string.IsNullOrEmpty(path))
+				return "";
+			return " " + path;
+		}
+
+		private string PathToChild(XmlNode parent, XmlNode mergeElement)
+		{
+			string path = "";
+			for (var ancestor = mergeElement;
+				ancestor != null && ancestor.ParentNode != ancestor.OwnerDocument && ancestor != parent ;
+				ancestor = ancestor.ParentNode)
+			{
+				if (ancestor.Name.ToLowerInvariant() == kownseq)
+				{
+					// Instead of inserting the 'ownseq' literally, insert its index.
+					path = GetOwnSeqIndex(ancestor) + kpathSep + path;
+					continue;
+				}
+				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;
+				// a path consisting of mainly attribute names is most helpful.
+				if (ancestor.Attributes["guid"] != null)
+					continue;
+				if (path == "")
+					path = ancestor.Name;
+				else
+					path = ancestor.Name + kpathSep + path;
+			}
+			return path;
 		}
 
 		string UnidentifiableLabel
@@ -249,28 +300,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return mergeElement.Name.ToLowerInvariant() == "auni" || mergeElement.Name.ToLowerInvariant() == "astr";
 		}
 
+		// Count how many child nodes are alternative.
+		bool HasMultipleAlternatives(XmlNode input)
+		{
+			int count = 0;
+			foreach (var node in input.ChildNodes)
+			{
+				var elt = node as XmlNode;
+				if (elt == null)
+					continue;
+				if (elt.Name.ToLowerInvariant() != "auni" && elt.Name.ToLowerInvariant() != "astr")
+					continue;
+				count++;
+				if (count > 1)
+					return true;
+			}
+			return false;
+		}
+
 		private string HtmlForMultiString(XmlNode mergeElement)
 		{
 			// Include at least the mergeElement name; don't include the root element (unless pathologically it is the mergeElement).
-			string path = mergeElement.Name;
-			for (var ancestor = mergeElement.ParentNode;
-				ancestor != null && ancestor.ParentNode != ancestor.OwnerDocument;
-				ancestor = ancestor.ParentNode)
-			{
-				if (ancestor.Name.ToLowerInvariant() == kownseq)
-				{
-					// Instead of inserting the 'ownseq' literally, insert its index.
-					path = GetOwnSeqIndex(ancestor) + kpathSep + path;
-					continue;
-				}
-				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;
-				// a path consisting of mainly attribute names is most helpful.
-				if (ancestor.Attributes["guid"] != null)
-					continue;
-
-				path = ancestor.Name + kpathSep + path;
-			}
-			var sb = new StringBuilder(path);
+			var sb = new StringBuilder();
+			var multiple = HasMultipleAlternatives(mergeElement);
 			foreach (var node in mergeElement.ChildNodes)
 			{
 				var elt = node as XmlNode;
@@ -279,11 +331,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (elt.Name.ToLowerInvariant() != "auni" && elt.Name.ToLowerInvariant()!= "astr")
 					continue;
 				var ws = XmlUtilities.GetOptionalAttributeString(elt, "ws");
-				sb.Append("<div>");
+				if (multiple)
+					sb.Append("<div>");
 				sb.Append(ws);
 				sb.Append(": ");
 				sb.Append(elt.InnerText); // enhance JohnT: possibly indicate WS and style if AStr and relevant?
-				sb.Append("</div>");
+				if (multiple)
+					sb.Append("</div>");
 			}
 			return sb.ToString();
 		}

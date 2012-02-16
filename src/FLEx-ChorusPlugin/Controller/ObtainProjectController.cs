@@ -13,22 +13,18 @@ namespace FLEx_ChorusPlugin.Controller
 		private readonly ChorusSystem _chorusSystem;
 		private readonly IGetSharedProject _getSharedProject;
 		private readonly IStartupNewView _startupNewView;
-		private readonly string _userName;
 		private readonly string _pathToRepo;
 
-
+		/// <summary>
+		/// Constructs the ObtainProjectController with the given options.
+		/// </summary>
+		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
 		public ObtainProjectController(Dictionary<string, string> options)
 		{
-			string user = "anonymous";
-			if (options.ContainsKey("-u"))
-			{
-				user = options["-u"];
-			}
 			if (options.ContainsKey("-p"))
 			{
 				_pathToRepo = options["-p"];
 			}
-			_userName = user;
 			_getSharedProject = new GetSharedProject();
 			MainForm = new ObtainProjectView
 						{ Text = Resources.ObtainProjectView_DialogTitle, MaximizeBox = false, MinimizeBox = false, Icon = null};

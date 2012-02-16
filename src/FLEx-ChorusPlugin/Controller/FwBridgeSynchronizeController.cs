@@ -31,8 +31,7 @@ namespace FLEx_ChorusPlugin.Controller
 			if (options.ContainsKey("-p"))
 			{
 				_currentLanguageProject = new LanguageProject(options["-p"]);
-				_chorusSystem = new ChorusSystem(_currentLanguageProject.DirectoryName, user);
-				FlexFolderSystem.ConfigureChorusProjectFolder(_chorusSystem.ProjectFolderConfiguration);
+				_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
 			}
 			else
 			{

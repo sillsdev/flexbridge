@@ -85,8 +85,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				{
 					var isCustom = propertyInfo.IsCustomProperty;
 					var propStrategy = isCustom
-										? ElementStrategy.CreateForKeyedElement(SharedConstants.Name, false)
-										: ElementStrategy.CreateSingletonElement();
+										? CreateStrategyForKeyedElement(SharedConstants.Name, false)
+										: CreateSingletonElementStrategy();
 					if (propertyInfo.DataType == DataType.Time)
 					{
 						propStrategy.IsImmutable = true; // Immutable, because we have pre-merged them to be so.
@@ -94,6 +94,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
 			}
+		}
+
+		private static ElementStrategy CreateSingletonElementStrategy()
+		{
+			var result = ElementStrategy.CreateSingletonElement();
+			result.ContextDescriptorGenerator = ContextGen;
+			return result;
 		}
 
 		private static void AddSharedImmutableSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant)
@@ -114,7 +121,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
 								MergePartnerFinder = SameName,
-								//ContextDescriptorGenerator = _contextGen
+								ContextDescriptorGenerator = ContextGen
 							};
 			return strategy;
 		}
@@ -138,25 +145,39 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
 
 			// Add element for SharedConstants.Refseq
-			elementStrategy = ElementStrategy.CreateForKeyedElementInList(SharedConstants.GuidStr);
+			elementStrategy = CreateStrategyForElementKeyedByGuidInList();
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
 
 			// Add element for "ownseq"
-			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
 
 			// Add element for "ownseqatomic" // Atomic here means the whole elment is treated as effectively as if it were binary data.
-			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			elementStrategy.IsAtomic = true;
 			sharedElementStrategies.Add(SharedConstants.OwnseqAtomic, elementStrategy);
 
 			// Add element for "objsur".
-			elementStrategy = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, "t" });
 			sharedElementStrategies.Add(SharedConstants.Objsur, elementStrategy);
+		}
+
+		private static ElementStrategy CreateStrategyForElementKeyedByGuidInList()
+		{
+			var result = ElementStrategy.CreateForKeyedElementInList(SharedConstants.GuidStr);
+			result.ContextDescriptorGenerator = ContextGen;
+			return result;
+		}
+
+		private static ElementStrategy CreateStrategyForKeyedElement(string guid, bool orderIsRelevant)
+		{
+			var result = ElementStrategy.CreateForKeyedElement(guid, orderIsRelevant);
+			result.ContextDescriptorGenerator = ContextGen;
+			return result;
 		}
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
@@ -169,9 +190,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
 								MergePartnerFinder = findBykeyAttribute,
+								ContextDescriptorGenerator = ContextGen,
 								IsAtomic = isAtomic
 							};
-			//strategy.ContextDescriptorGenerator
 			sharedElementStrategies.Add(elementName, strategy);
 		}
 
