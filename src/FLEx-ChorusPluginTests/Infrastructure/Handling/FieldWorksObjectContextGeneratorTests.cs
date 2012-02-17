@@ -37,7 +37,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</LexemeForm>
 				</LexEntry>";
 			var root = GetNode(source);
-			var input = root.ChildNodes[1].ChildNodes[0];
+			var input = root.ChildNodes[1].ChildNodes[0]; // MoStemAllomorph
 			var generator = new FieldWorkObjectContextGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk"));
@@ -125,7 +125,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							val='-3' />
 					</CmPossibilityList>";
 			var root = GetNode(source);
-			var input = root.ChildNodes[0].ChildNodes[0];
+			var input = root.ChildNodes[0].ChildNodes[0]; //<Abbreviation><AUni>
 			var generator = new FieldWorkObjectContextGenerator();
 
 			// This is the focus of the test:
@@ -198,7 +198,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							val='-3' />
 					</CmPossibilityList>";
 			var root = GetNode(source);
-			var input = root.ChildNodes[2];
+			var input = root.ChildNodes[2]; // ItemClsid
 			var generator = new FieldWorkObjectContextGenerator();
 
 			// This is the focus of the test:
@@ -253,7 +253,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							val='-3' />
 					</CmPossibilityList>";
 			var root = GetNode(source);
-			var input = root.ChildNodes[4].ChildNodes[0].ChildNodes[3];
+			var input = root.ChildNodes[4].ChildNodes[0].ChildNodes[3]; // <Possibilities><ownseq><ReverseAbbr>
 			var generator = new FieldWorkObjectContextGenerator();
 
 			// This is the focus of the test:
@@ -261,7 +261,82 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'Compound' from List 'Complex Form Types'"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
+		}
+
+		[Test]
+		public void SubPossibilityFindName()
+		{
+			string source =
+				@"<CmPossibilityList
+					guid='b0a1eb98-ea5e-11de-888e-0013722f8dec'>
+					<Abbreviation>
+					  <AUni
+							ws='en'>AcDom</AUni>
+					</Abbreviation>
+					<IsSorted
+							val='true' />
+					<Name>
+					  <AUni
+							ws='en'>Academic Domains</AUni>
+					</Name>
+					<Possibilities>
+						<ownseq
+							class='CmPossibility'
+							guid='b0add746-ea5e-11de-8c5c-0013722f8dec'>
+							<Abbreviation>
+							  <AUni
+									ws='en'>Anat</AUni>
+							</Abbreviation>
+							<Name>
+							  <AUni
+									ws='en'>anatomy</AUni>
+							</Name>
+							<UnderColor
+									val='-1073741824' />
+						  </ownseq>
+						  <ownseq
+								class='CmPossibility'
+								guid='b0b9c2fe-ea5e-11de-8fed-0013722f8dec'>
+							<Abbreviation>
+							  <AUni
+									ws='en'>Anthro</AUni>
+							</Abbreviation>
+							<Name>
+							  <AUni
+									ws='en'>anthropology</AUni>
+							</Name>
+							<SubPossibilities>
+							  <ownseq
+									class='CmPossibility'
+									guid='b0c5aeac-ea5e-11de-9463-0013722f8dec'>
+									<Abbreviation>
+									  <AUni
+											ws='en'>Cult anthro</AUni>
+									</Abbreviation>
+									<Name>
+									  <AUni
+											ws='en'>cultural anthropology</AUni>
+									</Name>
+								<UnderColor
+										val='-1073741824' />
+							  </ownseq>
+							</SubPossibilities>
+							<UnderColor
+									val='-1073741824' />
+					  </ownseq>
+					</Possibilities>
+				</CmPossibilityList>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[3].ChildNodes[1].ChildNodes[2].ChildNodes[0].ChildNodes[2]; // Possibilities><ownseq>[1]<SubPossibilities><ownseq><UnderColor>
+			var generator = new FieldWorkObjectContextGenerator();
+
+			// This is the focus of the test:
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'cultural anthropology' from List 'Academic Domains'"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0c5aeac-ea5e-11de-9463-0013722f8dec"));
 		}
 
 		XmlNode GetNode(string input)
