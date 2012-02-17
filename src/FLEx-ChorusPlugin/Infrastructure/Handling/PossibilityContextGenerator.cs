@@ -29,7 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				itemName = GetNameOrAbbreviation(possibility);
 
 				if (possibility.ParentNode != null)
-					listName = base.GetLabel(possibility.ParentNode.ParentNode);
+					listName = base.GetLabel(possibility.SelectSingleNode("ancestor::CmPossibilityList"));
 			}
 			return ListItemLabel + " '" + itemName + "' from " + listName;
 		}
