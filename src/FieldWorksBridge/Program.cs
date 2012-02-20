@@ -19,67 +19,59 @@ namespace FieldWorksBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
-			ExceptionHandler.Init();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			using (var flexCommHelper = new FLExConnectionHelper())
+			{
+				ExceptionHandler.Init();
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
 
-			// Is mercurial set up?
-			var s = HgRepository.GetEnvironmentReadinessMessage("en");
-			if (!string.IsNullOrEmpty(s))
-			{
-				MessageBox.Show(s, Resources.kFieldWorksBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-				return;
-			}
+				// Is mercurial set up?
+				var s = HgRepository.GetEnvironmentReadinessMessage("en");
+				if (!string.IsNullOrEmpty(s))
+				{
+					MessageBox.Show(s, Resources.kFieldWorksBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+					return;
+				}
 
-			var options = ParseCommandLineArgs(args);
-			if(!options.ContainsKey("-v") || options["-v"] == null)
-			{
-				using (var controller = new FwBridgeController())
+				var options = ParseCommandLineArgs(args);
+				if (!options.ContainsKey("-v") || options["-v"] == null)
 				{
-					Application.Run(controller.MainForm);
+					using (var controller = new FwBridgeController())
+					{
+						Application.Run(controller.MainForm);
+					}
 				}
-			}
-			else
-			{
-				switch (options["-v"])
+				else
 				{
-					case "obtain":
-						using (var controller = new ObtainProjectController(options))
-						{
-							Application.Run(controller.MainForm);
-						}
-						break;
-					case "start":
-					case "send_receive":
-						using (var controller = new FwBridgeSynchronizeController(options))
-						{
-							controller.SyncronizeProjects();
-						}
-						break;
-					case "view_notes": //view the conflict\notes report
-						using (var controller = new FwBridgeConflictController(options))
-						{
-							Application.Run(controller.MainForm);
-						}
-						break;
-					default:
-						//display options dialog
-						break;
+					switch (options["-v"])
+					{
+						case "obtain":
+							using (var controller = new ObtainProjectController(options))
+							{
+								Application.Run(controller.MainForm);
+							}
+							break;
+						case "start":
+						case "send_receive":
+							using (var controller = new FwBridgeSynchronizeController(options))
+							{
+								controller.SyncronizeProjects();
+							}
+							break;
+						case "view_notes": //view the conflict\notes report
+							using (var controller = new FwBridgeConflictController(options))
+							{
+								Application.Run(controller.MainForm);
+							}
+							break;
+						default:
+							//display options dialog
+							break;
+					}
 				}
+				flexCommHelper.SignalBridgeWorkComplete();
+				Settings.Default.Save();
 			}
-			try
-			{
-				ChannelFactory<IFLExBridgeService> pipeFactory =
-					new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
-						new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
-				var channel = pipeFactory.CreateChannel();
-				channel.BridgeWorkComplete(true);
-			}
-			catch (Exception)
-			{
-				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
-			}
-			Settings.Default.Save();
 		}
 
 		static Dictionary<string, string> ParseCommandLineArgs(string[] args)
@@ -114,13 +106,6 @@ namespace FieldWorksBridge
 				}
 			}
 			return options;
-		}
-
-		[ServiceContract]
-		private interface IFLExBridgeService
-		{
-			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived);
 		}
 	}
 }
