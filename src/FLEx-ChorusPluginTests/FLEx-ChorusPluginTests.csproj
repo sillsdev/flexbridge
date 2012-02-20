@@ -91,6 +91,7 @@
   <ItemGroup>
 	<Compile Include="Controller\ConflictControllerTests.cs" />
 	<Compile Include="Controller\TestConflictController.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />

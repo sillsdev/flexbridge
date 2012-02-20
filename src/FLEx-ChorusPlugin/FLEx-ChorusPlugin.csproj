@@ -146,6 +146,7 @@
 	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksScrDraftStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FwGenericHtmlGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\LangProjFileTypeHandlerStrategy.cs" />
