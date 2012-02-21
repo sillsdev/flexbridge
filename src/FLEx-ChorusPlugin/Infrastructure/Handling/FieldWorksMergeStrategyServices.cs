@@ -107,6 +107,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "CmPossibility":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityContextGenerator()));
 						break;
+					case "PhEnvironment":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new EnvironmentContextGenerator()));
+						break;
+					case "DsConstChart":
+					case "ConstChartRow":
+					case "ConstChartWordGroup":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new DiscourseChartContextGenerator()));
+						break;
 					default:
 						strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 						break;

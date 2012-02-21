@@ -144,6 +144,8 @@
 	<Compile Include="Controller\FwBridgeConflictController.cs" />
 	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\Handling\DiscourseChartContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\EnvironmentContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksScrDraftStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />

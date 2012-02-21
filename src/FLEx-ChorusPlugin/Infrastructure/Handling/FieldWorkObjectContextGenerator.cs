@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetGuid(XmlNode rtElement)
 		{
 			var elt = rtElement;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(elt.Name) == null)
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(elt.Name) == null && elt.Name != SharedConstants.Ownseq)
 				elt = elt.ParentNode;
 			if (elt != null)
 				return elt.Attributes[SharedConstants.GuidStr].Value;
@@ -86,8 +86,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		protected virtual string GetLabel(XmlNode start)
 		{
 			var label = start.Name; // a default.
-			XmlNode previous = null;
-
 			var target = GetTargetNode(start);
 			var current = target;
 
