@@ -163,6 +163,30 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
+		public void RefColPropertiesAreChangedToRefseq()
+		{
+			var rt = new XElement(SharedConstants.RtTag,
+								  new XAttribute(SharedConstants.Class, "CmPossibility"),
+								  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+								  new XElement("Restrictions",
+									  BaseDomainServices.CreateObjSurElement("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
+									  BaseDomainServices.CreateObjSurElement("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")));
+			var classData = new Dictionary<string, SortedDictionary<string, XElement>>();
+			var data = new SortedDictionary<string, XElement>
+						{
+							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", rt}
+						};
+			classData.Add("CmPossibility", data);
+			var guidToClassMapping = new Dictionary<string, string> { { "c1ed6dc8-e382-11de-8a39-0800200c9a66", "CmPossibility" } };
+			CmObjectNestingService.NestObject(false, rt,
+				new Dictionary<string, HashSet<string>>(),
+				classData,
+				guidToClassMapping);
+			var result = rt.ToString();
+			Assert.IsTrue(result.Contains(SharedConstants.Refcol));
+		}
+
+		[Test]
 		public void EnsureOwnerGuidAttributesAreRemoved()
 		{
 			AddOwnedObjects();

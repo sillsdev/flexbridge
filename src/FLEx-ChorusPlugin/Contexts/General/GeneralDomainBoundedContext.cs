@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 					var className = guidToClassMapping[annotationGuid];
 					var annotationElement = classData[className][annotationGuid];
 					CmObjectNestingService.NestObject(false, annotationElement, new Dictionary<string, HashSet<string>>(), classData, guidToClassMapping);
-					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute("CmAnnotation", annotationElement);
+					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
 				}
 				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.FLExAnnotationsFilename), root);
@@ -160,7 +160,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 			sortedElements = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			doc = XDocument.Load(currentPathname);
-			foreach (var annotationElement in doc.Root.Elements("CmAnnotation"))
+			foreach (var annotationElement in doc.Root.Elements(SharedConstants.CmAnnotation))
 			{
 				// Put CmAnnotation back into LP's Annotations element.
 				var classAttr = annotationElement.Attribute(SharedConstants.Class);

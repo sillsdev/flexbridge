@@ -35,13 +35,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
 
 			// 3. Reset ref seq prop nodes from "objsur" to SharedConstants.Refseq,
-			// so they can use a special ElementStrategy for SharedConstants.Refseq that has isOrderRelevant top be true.
+			// so they can use a special ElementStrategy for SharedConstants.Refseq that has isOrderRelevant to be true.
 			RenameReferenceSequenceObjsurNodes(className, obj);
 
-			// 4. Remove 'obj' from lists.
+			// 4. Rename ref col prop nodes from "objsur" to SharedConstants.Refcol,
+			// so they can use a special ElementStrategy for SharedConstants.Refcol that has isOrderRelevant to be false.
+			RenameReferenceCollectionObjsurNodes(className, obj);
+
+			// 5. Remove 'obj' from lists.
 			var guid = obj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			classData[className].Remove(guid);
 			guidToClassMapping.Remove(guid);
+		}
+
+		private static void RenameReferenceCollectionObjsurNodes(string className, XElement obj)
+		{
+			var refColProps = MetadataCache.MdCache.GetClassInfo(className).AllReferenceCollectionProperties.ToList();
+			if (refColProps.Count == 0)
+				return;
+			foreach (var refColProp in refColProps)
+			{
+				var propNode = obj.Element(refColProp.PropertyName);
+				if (propNode == null)
+					continue;
+				var objsurNodes = propNode.Elements(SharedConstants.Objsur).ToList();
+				if (!objsurNodes.Any())
+					continue;
+				foreach (var objsurNode in objsurNodes)
+				{
+					objsurNode.Name = SharedConstants.Refcol;
+				}
+			}
 		}
 
 		private static void RenameReferenceSequenceObjsurNodes(string className, XElement obj)

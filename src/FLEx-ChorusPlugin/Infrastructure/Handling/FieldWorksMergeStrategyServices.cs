@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private const string AUni = "AUni";
 		private const string Ws = "ws";
 		private const string Binary = "Binary";
-		private const string Prop = "Prop";
+		private const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
 
 		/// <summary>
 		/// Bootstrap a merger for the new-styled (nested) files.
@@ -34,6 +34,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </remarks>
 		internal static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
 		{
+			merger.MergeStrategies.KeyFinder = new FieldWorksKeyFinder();
+
 			var sharedElementStrategies = new Dictionary<string, ElementStrategy>();
 			CreateSharedElementStrategies(sharedElementStrategies);
 
@@ -53,12 +55,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
-			strategiesForMerger.SetStrategy("CmAnnotation", keyedStrat);
+			strategiesForMerger.SetStrategy(SharedConstants.CmAnnotation, keyedStrat);
 
 			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
-			strategiesForMerger.SetStrategy("DsChart", keyedStrat);
+			strategiesForMerger.SetStrategy(SharedConstants.DsChart, keyedStrat);
 
 			// The lint file has a collection of odd stuff.
 			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
@@ -66,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
 			keyedStrat.AttributesToIgnoreForMerging.Add("curiositytype");
 			keyedStrat.AttributesToIgnoreForMerging.Add("tempownerguid");
-			strategiesForMerger.SetStrategy("curiosity", keyedStrat);
+			strategiesForMerger.SetStrategy(SharedConstants.curiosity, keyedStrat);
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
@@ -177,20 +179,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			AddSharedImmutableSingletonElementType(sharedElementStrategies, ImmutableSingleton, false);
 
 			AddSharedSingletonElementType(sharedElementStrategies, MutableSingleton, false);
-			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Str, false);
-			elementStrategy.IsAtomic = true;
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Binary, false);
-			elementStrategy.IsAtomic = true;
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Prop, false);
-			elementStrategy.IsAtomic = true;
-			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false);
 
-			// Add element for SharedConstants.Refseq
-			elementStrategy = CreateStrategyForElementKeyedByGuidInList();
-			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
-			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
+			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Str, false);
+			elementStrategy.IsAtomic = true; // TsStrings are atomic
+
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Binary, false);
+			elementStrategy.IsAtomic = true; // Binary properties are atomic
+
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Prop, false);
+			elementStrategy.IsAtomic = true; // TsStrings are atomic
+
+			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
+			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true); // final parm is for IsAtomic, which in this case is atomic.
+			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false); // final parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
 			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
@@ -203,10 +204,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.IsAtomic = true;
 			sharedElementStrategies.Add(SharedConstants.OwnseqAtomic, elementStrategy);
 
-			// Add element for "objsur".
+			// Add element for SharedConstants.Objsur.
+			// This is only good now for ref atomic.
+			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Objsur, false);
+			elementStrategy.AttributesToIgnoreForMerging.Add("t"); // What moron put this in there: SharedConstants.GuidStr? Must have been RBR. :-( It can easily change to some other referenced object.
+
+			// Add element for SharedConstants.Refseq
+			elementStrategy = CreateStrategyForElementKeyedByGuidInList(); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.
+			elementStrategy.AttributesToIgnoreForMerging.Add("t");
+			sharedElementStrategies.Add(SharedConstants.Refseq, elementStrategy);
+
+			// Add element for SharedConstants.Refcol
+			// Order is not important in any kind of collection property, since they are mathematical sets with no ordering and no repeats.
 			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
-			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, "t" });
-			sharedElementStrategies.Add(SharedConstants.Objsur, elementStrategy);
+			elementStrategy.AttributesToIgnoreForMerging.Add("t");
+			sharedElementStrategies.Add(SharedConstants.Refcol, elementStrategy);
 		}
 
 		private static ElementStrategy CreateStrategyForElementKeyedByGuidInList()

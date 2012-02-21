@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Annotations
 					|| root.Element(SharedConstants.Header) != null
-					|| !root.Elements("CmAnnotation").Any())
+					|| !root.Elements(SharedConstants.CmAnnotation).Any())
 				{
 					return "Not a valid annotations file.";
 				}
@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"CmAnnotation", SharedConstants.GuidStr);
+				SharedConstants.CmAnnotation, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -70,7 +70,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"CmAnnotation", SharedConstants.GuidStr, WritePreliminaryAnnotationsInformation);
+				SharedConstants.CmAnnotation, SharedConstants.GuidStr, WritePreliminaryAnnotationsInformation);
 		}
 
 		public string Extension

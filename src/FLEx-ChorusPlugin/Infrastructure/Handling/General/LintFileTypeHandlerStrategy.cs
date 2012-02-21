@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 				var root = doc.Root;
 				if (root.Name.LocalName != "curiosities"
 					|| root.Element(SharedConstants.Header) != null
-					|| !root.Elements("curiosity").Any())
+					|| !root.Elements(SharedConstants.curiosity).Any())
 				{
 					return "Not a valid odd ducks file.";
 				}
@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"curiosity", SharedConstants.GuidStr);
+				SharedConstants.curiosity, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -70,7 +70,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"curiosity", SharedConstants.GuidStr, WritePreliminaryLintInformation);
+				SharedConstants.curiosity, SharedConstants.GuidStr, WritePreliminaryLintInformation);
 		}
 
 		public string Extension

@@ -20,6 +20,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Ownseq = "ownseq";
 		internal const string OwnseqAtomic = "ownseqatomic"; // Atomic here means the whole elment is treated as effectively as if it were binary data.
 		internal const string Refseq = "refseq";
+		internal const string Refcol = "refcol";
 		internal const string Custom = "Custom";
 		internal const string General = "General";
 		internal const string CmPossibilityList = "CmPossibilityList";
@@ -38,6 +39,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string lint = "lint";
 		internal const string LintFilename = "FLExProject." + lint;
 		internal const string LangProject = "LangProject";
+		internal const string curiosity = "curiosity";
 
 		// Old style
 		internal const string RtTag = "rt";
@@ -81,6 +83,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ConstChartTemplFilename = ConstChartTempl + "." + List;
 		internal const string ChartMarkers = "ChartMarkers";
 		internal const string ChartMarkersFilename = ChartMarkers + "." + List;
+		internal const string CmAnnotation = "CmAnnotation";
 		internal const string DsChart = "DsChart";
 		internal const string DiscourseExt = "discourse";
 		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;

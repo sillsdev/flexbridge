@@ -74,7 +74,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 					classData,
 					guidToClassMapping);
 				// Fix up name.
-				BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute("curiosity", curiosityElement);
+				BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.curiosity, curiosityElement);
 				root.Add(curiosityElement);
 
 				// Write file.
@@ -99,7 +99,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				return;
 
 			var doc = XDocument.Load(lintPathname);
-			foreach (var curiosityElement in doc.Root.Elements("curiosity"))
+			foreach (var curiosityElement in doc.Root.Elements(SharedConstants.curiosity))
 			{
 				// Remove "curiositytype" attr.
 				curiosityElement.Attribute("curiositytype").Remove();

@@ -22,6 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private readonly List<FdoPropertyInfo> _allOwningSequenceProperties = new List<FdoPropertyInfo>();
 		private readonly List<FdoClassInfo> _allDirectSubclass = new List<FdoClassInfo>();
 		private readonly List<FdoPropertyInfo> _allCollectionProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allReferenceCollectionProperties = new List<FdoPropertyInfo>();
 		private readonly List<FdoPropertyInfo> _allMultiAltProperties = new List<FdoPropertyInfo>();
 		private readonly List<FdoPropertyInfo> _allOwningProperties = new List<FdoPropertyInfo>();
 
@@ -114,6 +115,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllReferenceCollectionProperties
+		{
+			get
+			{
+				return _allReferenceCollectionProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
 		internal IEnumerable<FdoPropertyInfo> AllMultiAltProperties
 		{
 			get
@@ -138,6 +150,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			_allProperties.Clear();
 			_allDirectSubclass.Clear();
 			_allCollectionProperties.Clear();
+			_allReferenceCollectionProperties.Clear();
 			_allMultiAltProperties.Clear();
 			_allOwningProperties.Clear();
 			_allReferenceSequenceProperties.Clear();
@@ -161,6 +174,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				_allCollectionProperties.AddRange(from prop in _allProperties
 												  where prop.DataType == DataType.OwningCollection || prop.DataType == DataType.ReferenceCollection
 												  select prop);
+				_allReferenceCollectionProperties.AddRange(from prop in _allCollectionProperties
+														   where prop.DataType == DataType.ReferenceCollection
+														   select prop);
 				_allMultiAltProperties.AddRange(from prop in _allProperties
 												where prop.DataType == DataType.MultiString || prop.DataType == DataType.MultiUnicode
 												select prop);

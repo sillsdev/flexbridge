@@ -211,6 +211,29 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
+		public void RefColElementsRestoredToObjsurElements()
+		{
+			using (var tempFile = new TempFile())
+			{
+				var sortedData = new SortedDictionary<string, XElement>();
+				var possibilityElement = new XElement("CmPossibility",
+									  new XAttribute(SharedConstants.GuidStr, "c1ed6dc8-e382-11de-8a39-0800200c9a66"),
+									  new XElement("Restrictions",
+										  new XElement(SharedConstants.Refcol,
+													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
+											new XElement(SharedConstants.Refcol,
+													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
+				CmObjectFlatteningService.FlattenObject(
+					tempFile.Path,
+					sortedData,
+					possibilityElement,
+					null);
+				var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
+				Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
+			}
+		}
+
+		[Test]
 		public void EnsureDuplicateGuidsAreChangedAndChorusNotesFileContainsConflictReport()
 		{
 			const string nestedReversal =

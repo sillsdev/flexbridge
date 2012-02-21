@@ -72,7 +72,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// Restore any ref seq props to have 'objsur' elements.
 			var refSeqPropNames = (from referenceSequenceProperty in classInfo.AllReferenceSequenceProperties
-								  select referenceSequenceProperty.PropertyName).ToList();
+								   select referenceSequenceProperty.PropertyName).ToList();
+			// Restore any ref col props to have 'objsur' elements.
+			var refColPropNames = (from referenceCollectionProperty in classInfo.AllReferenceCollectionProperties
+								   select referenceCollectionProperty.PropertyName).ToList();
 
 			var owningPropsForClass = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
 			if (owningPropsForClass.Count == 0 && refSeqPropNames.Count == 0)
@@ -89,6 +92,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						foreach (var refSeqNode in propertyElement.Elements(SharedConstants.Refseq))
 						{
 							refSeqNode.Name = SharedConstants.Objsur;
+						}
+					}
+					else if (refColPropNames.Contains(propName))
+					{
+						foreach (var refColNode in propertyElement.Elements(SharedConstants.Refcol))
+						{
+							refColNode.Name = SharedConstants.Objsur;
 						}
 					}
 					continue;
