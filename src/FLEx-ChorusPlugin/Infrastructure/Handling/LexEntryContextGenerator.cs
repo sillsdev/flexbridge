@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -12,7 +8,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// </summary>
 	class LexEntryContextGenerator : FieldWorkObjectContextGenerator
 	{
-		protected override string GetLabel(System.Xml.XmlNode start)
+		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForEntry(start);
 		}
