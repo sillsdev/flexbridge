@@ -113,6 +113,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Entry.
+		/// </summary>
+		internal static string kLexEntryClassLabel {
+			get {
+				return ResourceManager.GetString("kLexEntryClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Locate FieldWorks XML Data File.
 		/// </summary>
 		internal static string kLocateFwDataFile {
@@ -176,6 +185,24 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Item.
+		/// </summary>
+		internal static string kPossibilityItemLabel {
+			get {
+				return ResourceManager.GetString("kPossibilityItemLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to List.
+		/// </summary>
+		internal static string kPossibilityListClassLabel {
+			get {
+				return ResourceManager.GetString("kPossibilityListClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {
@@ -226,6 +253,24 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string ksTargetDirectoryExistsTitle {
 			get {
 				return ResourceManager.GetString("ksTargetDirectoryExistsTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Text.
+		/// </summary>
+		internal static string kTextClassLabel {
+			get {
+				return ResourceManager.GetString("kTextClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Wordform.
+		/// </summary>
+		internal static string kWfiWordFormClassLabel {
+			get {
+				return ResourceManager.GetString("kWfiWordFormClassLabel", resourceCulture);
 			}
 		}
 
