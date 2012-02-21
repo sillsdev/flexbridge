@@ -9,7 +9,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	/// <summary>
 	/// Test all expected reports (change and conflict) for the TextPropBinary data type.
 	/// </summary>
-	[TestFixture]
+	[TestFixture, Ignore("Add tests.")]
 	public class TextPropBinaryDataTypeReportTests
 	{
 	}
