@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	class PossibilityContextGenerator : FieldWorkObjectContextGenerator
 	{
-		protected override string GetLabel(System.Xml.XmlNode start)
+		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForPossibilityItem(start);
 		}
