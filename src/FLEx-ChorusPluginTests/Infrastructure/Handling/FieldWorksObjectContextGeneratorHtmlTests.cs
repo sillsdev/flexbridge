@@ -97,14 +97,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
-		public void LastResortIsHtmlOfXml()
+		public void LastResortIsGenericHtmlGenerator()
 		{
 			string source =
 			@"<RootClass>
 					<Outer>
 						<Mid>
 							<Target>
-								<Rubbish/>
+								some rubbish
 							</Target>
 						</Mid>
 					</Outer>
@@ -113,7 +113,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the Target element.
 			var generator = new FieldWorkObjectContextGenerator();
 			var html = generator.HtmlContext(input);
-			Assert.That(html, Is.EqualTo(XmlUtilities.GetXmlForShowingInHtml(input.OuterXml)));
+			Assert.That(html, Is.EqualTo(new FwGenericHtmlGenerator().MakeHtml(input)));
 		}
 
 		XmlNode GetNode(string input)
