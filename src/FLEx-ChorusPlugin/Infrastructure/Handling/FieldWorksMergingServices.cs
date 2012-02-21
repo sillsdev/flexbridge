@@ -65,13 +65,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// <summary>
 		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
+		/// Q (RBR: Why does it need the MDC?
 		/// </summary>
-		/// <param name="rtElement"></param>
+		/// <param name="element"></param>
 		/// <returns></returns>
-		internal static string GetClassName(XmlNode rtElement)
+		internal static string GetClassName(XmlNode element)
 		{
-			return (rtElement.Name == SharedConstants.Ownseq ||
-					rtElement.Name == SharedConstants.OwnseqAtomic) ? rtElement.Attributes[SharedConstants.Class].Value : rtElement.Name;
+			// Owning collections do nothing special for the main element name;
+			return (element.Name == SharedConstants.Ownseq || element.Name == SharedConstants.OwnseqAtomic)
+				? element.Attributes[SharedConstants.Class].Value
+				: element.Name;
 		}
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)

@@ -1,10 +1,10 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml;
-using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
@@ -19,32 +19,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// </summary>
 	internal class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
-		private const string kownseq = "ownseq";
-		private const string kpathSep = " ";
+		private const string PathSep = " ";
 
 		/// <summary>
 		/// Strategies may provide alternate context descriptors for parent elements.
 		/// </summary>
 		internal MergeStrategies MergeStrategies { get; set; }
 
-		public ContextDescriptor GenerateContextDescriptor(XmlNode rtElement, string filePath)
+		public ContextDescriptor GenerateContextDescriptor(XmlNode element, string filePath)
 		{
-			string className;
-			var name = rtElement.Name;
+			var name = element.Name;
 			string label;
 			string guid;
 			switch (name)
 			{
 				case SharedConstants.Header:
 					return new ContextDescriptor( "header for context", "");
-				case SharedConstants.RtTag:
-					className = rtElement.Attributes[SharedConstants.Class].Value;
-					label = className;
-					guid = rtElement.Attributes[SharedConstants.GuidStr].Value;
-					break;
+				// Nobody has <rt> element names these days.
+				//case SharedConstants.RtTag:
+				//    var className = element.Attributes[SharedConstants.Class].Value;
+				//    label = className;
+				//    guid = element.Attributes[SharedConstants.GuidStr].Value;
+				//    break;
 				default:
-					guid = GetGuid(rtElement);
-					label = GetLabel(rtElement);
+					guid = GetGuid(element);
+					label = GetLabel(element);
 					break;
 			}
 			// This seems to be the best we can do for now in regard to determining which application to launch.
@@ -73,21 +72,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return new ContextDescriptor(label, url);
 		}
 
-		private string GetGuid(XmlNode rtElement)
+		private static string GetGuid(XmlNode element)
 		{
-			var elt = rtElement;
+			var elt = element;
 			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null)
 				elt = elt.ParentNode;
-			if (elt != null)
-				return elt.Attributes[SharedConstants.GuidStr].Value;
-			return null; // Guid.Empty.ToString()? throw?
+			return elt.Attributes[SharedConstants.GuidStr] == null
+				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
+				: elt.Attributes[SharedConstants.GuidStr].Value;
 		}
 
 		protected virtual string GetLabel(XmlNode start)
 		{
 			var label = start.Name; // a default.
-			XmlNode previous = null;
-
 			var target = GetTargetNode(start);
 			var current = target;
 
@@ -95,11 +92,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				if (MergeStrategies != null)
 				{
-					ElementStrategy strategy;
-					if (current.Name == SharedConstants.Ownseq)
-						strategy = GetOwnSeqStrategy(current);
-					else
-						strategy = MergeStrategies.GetElementStrategy(current);
+					var strategy = current.Name == SharedConstants.Ownseq
+						? GetOwnSeqStrategy(current)
+						: MergeStrategies.GetElementStrategy(current);
 					if (strategy != null
 						&& strategy.ContextDescriptorGenerator is FieldWorkObjectContextGenerator
 							&& strategy.ContextDescriptorGenerator != this)
@@ -151,15 +146,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private string PathToChild(XmlNode parent, XmlNode mergeElement)
 		{
-			string path = "";
+			var path = "";
 			for (var ancestor = mergeElement;
 				ancestor != null && ancestor.ParentNode != ancestor.OwnerDocument && ancestor != parent ;
 				ancestor = ancestor.ParentNode)
 			{
-				if (ancestor.Name.ToLowerInvariant() == kownseq)
+				if (ancestor.Name.ToLowerInvariant() == SharedConstants.Ownseq)
 				{
 					// Instead of inserting the 'ownseq' literally, insert its index.
-					path = GetOwnSeqIndex(ancestor) + kpathSep + path;
+					path = GetOwnSeqIndex(ancestor) + PathSep + path;
 					continue;
 				}
 				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;
@@ -169,7 +164,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (path == "")
 					path = ancestor.Name;
 				else
-					path = ancestor.Name + kpathSep + path;
+					path = ancestor.Name + PathSep + path;
 			}
 			return path;
 		}
@@ -216,19 +211,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (string.IsNullOrEmpty(result.InnerText))
 					continue;
 
-				if (!result.InnerText.All(t => char.IsWhiteSpace(t)))
+				if (!result.InnerText.All(char.IsWhiteSpace))
 					return result.InnerText;
-			}
-			return null;
-		}
-
-		XmlNode FirstChildNamed(XmlNode source, string name)
-		{
-			foreach (var node in source.ChildNodes)
-			{
-				var result = node as XmlNode;
-				if (result != null && result.Name == name)
-					return result;
 			}
 			return null;
 		}
@@ -269,20 +253,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
 		}
 
-		public string HtmlContextStyles(XmlNode mergeElement)
-		{
-			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
-		}
+		// Not used.
+		//public string HtmlContextStyles(XmlNode mergeElement)
+		//{
+		//    return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
+		//}
 
-		private bool IsMultiStringChild(XmlNode mergeElement)
+		private static bool IsMultiStringChild(XmlNode mergeElement)
 		{
 			return mergeElement.Name.ToLowerInvariant() == "auni" || mergeElement.Name.ToLowerInvariant() == "astr";
 		}
 
 		// Count how many child nodes are alternative.
-		bool HasMultipleAlternatives(XmlNode input)
+		private static bool HasMultipleAlternatives(XmlNode input)
 		{
-			int count = 0;
+			var count = 0;
 			foreach (var node in input.ChildNodes)
 			{
 				var elt = node as XmlNode;
@@ -297,7 +282,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return false;
 		}
 
-		private string HtmlForMultiString(XmlNode mergeElement)
+		private static string HtmlForMultiString(XmlNode mergeElement)
 		{
 			// Include at least the mergeElement name; don't include the root element (unless pathologically it is the mergeElement).
 			var sb = new StringBuilder();
@@ -321,23 +306,23 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return sb.ToString();
 		}
 
-		private string GetOwnSeqIndex(XmlNode node)
+		private static string GetOwnSeqIndex(XmlNode node)
 		{
 			var parent = node.ParentNode;
 			if (parent == null)
 				return ""; // throw? this is weird.
-			int count = 1; // consider it item 1 if it has no predecessors
+			var count = 1; // consider it item 1 if it has no predecessors
 			foreach (var child in parent.ChildNodes)
 			{
 				if (child == node)
-					return count.ToString();
-				if (child is XmlNode && ((XmlNode)child).Name.ToLowerInvariant() == kownseq)
+					return count.ToString(CultureInfo.InvariantCulture);
+				if (child is XmlNode && ((XmlNode)child).Name.ToLowerInvariant() == SharedConstants.Ownseq)
 					count++;
 			}
 			return "***ownseq messup***"; // not worth crashing?, but this is totally bizarre
 		}
 
-		private bool IsMultiString(XmlNode mergeElement)
+		private static bool IsMultiString(XmlNode mergeElement)
 		{
 			if (mergeElement.SelectSingleNode("AUni") != null)
 				return true;

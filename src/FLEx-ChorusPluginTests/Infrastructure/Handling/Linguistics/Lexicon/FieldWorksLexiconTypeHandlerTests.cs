@@ -505,5 +505,42 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 					children[idx].Attribute(SharedConstants.GuidStr).Value);
 			}
 		}
+
+		[Test]
+		public void MoStemMsaHasMergeConflictOnPOSChanged()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>
+			<MoStemMsa
+				guid='2d6a109e-1178-4b31-bf5b-8dca5e843675' >
+				<PartOfSpeech>
+					<objsur
+						guid='24e351c1-6dcb-420b-a65a-c412c3af0192'
+						t='r' />
+				</PartOfSpeech>
+			</MoStemMsa>
+		</MorphoSyntaxAnalyses>
+	</LexEntry>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("24e351c1-6dcb-420b-a65a-c412c3af0192", "c1ed94d4-e382-11de-8a39-0800200c9a66");
+			var theirContent = commonAncestor.Replace("24e351c1-6dcb-420b-a65a-c412c3af0192", "c1ed94d5-e382-11de-8a39-0800200c9a66");
+
+			var result =FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d4-e382-11de-8a39-0800200c9a66']" },
+				new List<string>(),
+				1, new List<Type> { typeof(BothEditedAttributeConflict) },
+				0, new List<Type>());
+		}
 	}
 }
