@@ -75,6 +75,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			result.MergeStrategies = strategies;
 			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
 			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
+			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
@@ -122,6 +123,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord SpellingStatus"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
+		}
+
+		[Test]
+		public void TextFindName()
+		{
+			string source =
+				@"<Text
+					guid='e43b93a7-604e-4704-8118-d48999b330e3'>
+					<Contents />
+					<IsTranslated val='False' />
+					<Name>
+						<AUni ws='en'>myEngName</AUni>
+						<AUni ws='fr'>monNom</AUni>
+					</Name>
+				</Text>";
+			var root = GetNode(source);
+			var input = root; // Text (CmMajorObject)
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Text myEngName monNom"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e43b93a7-604e-4704-8118-d48999b330e3"));
+
+			// Try a child node that isn't a part of the Text's name
+			input = root.ChildNodes[1]; //IsTranslated
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Text myEngName monNom IsTranslated"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e43b93a7-604e-4704-8118-d48999b330e3"));
 		}
 
 		[Test]

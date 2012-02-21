@@ -6,6 +6,7 @@ using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -123,7 +124,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return result;
 		}
 
-		internal const string ListLabel = "List";  // Todo: internationalize
+		internal string ListLabel
+		{
+			get { return Resources.kPossibilityListClassLabel; }
+		}
 
 		/// <summary>
 		/// Get the node that we will basically generate the contents of for the given start node
