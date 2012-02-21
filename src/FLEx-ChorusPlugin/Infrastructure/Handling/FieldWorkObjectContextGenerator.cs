@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetGuid(XmlNode rtElement)
 		{
 			var elt = rtElement;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(elt.Name) == null)
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null)
 				elt = elt.ParentNode;
 			if (elt != null)
 				return elt.Attributes[SharedConstants.GuidStr].Value;

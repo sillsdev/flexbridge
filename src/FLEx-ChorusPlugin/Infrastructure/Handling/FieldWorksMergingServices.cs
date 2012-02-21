@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			}
 
 			// Drill down and do all owned objects
-			var classname = ourEntry.Name == SharedConstants.Ownseq ? ourEntry.Attributes["class"].Value : ourEntry.Name;
+			var classname = GetClassName(ourEntry);
 			var classInfo = mdc.GetClassInfo(classname);
 			foreach (var owningPropInfo in classInfo.AllOwningProperties)
 			{
@@ -60,6 +60,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					PreMergeTimestamps(mdc, ourOwnedElement, theirOwnedElement);
 				}
 			}
+		}
+
+
+		/// <summary>
+		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
+		/// </summary>
+		/// <param name="rtElement"></param>
+		/// <returns></returns>
+		internal static string GetClassName(XmlNode rtElement)
+		{
+			return (rtElement.Name == SharedConstants.Ownseq ||
+					rtElement.Name == SharedConstants.OwnseqAtomic) ? rtElement.Attributes[SharedConstants.Class].Value : rtElement.Name;
 		}
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)

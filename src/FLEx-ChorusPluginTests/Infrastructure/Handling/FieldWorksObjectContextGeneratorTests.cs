@@ -381,8 +381,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'Compound' from List 'Complex Form Types' ReverseAbbr"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			// why does this not result in guid=1f6ae209-141a-40db-983c-bee93af0ca3c instead?
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
 		}
 
 		XmlNode GetNode(string input)
@@ -390,6 +389,81 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(input);
 			return doc.DocumentElement;
+		}
+
+		/// <summary>
+		/// Make sure that GenerateContextDescriptor/PathToUserUnderstandableElement returns the guid of its parent,
+		/// even if it is under and Ownseq node.
+		/// </summary>
+		[Test]
+		public void FindGuidOfParentOwnseq()
+		{
+			string source =
+				@"	<CmPossibilityList
+						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
+						<Name>
+							<AUni
+								ws='en'>Complex Form Types</AUni>
+						</Name>
+						<Possibilities>
+							<ownseq
+								class='LexEntryType'
+								guid='1f6ae209-141a-40db-983c-bee93af0ca3c'>
+								<Name>
+									<AUni
+										ws='en'>Compound</AUni>
+								</Name>
+								<ReverseAbbr>
+									<AUni
+										ws='en'>comp.</AUni>
+								</ReverseAbbr>
+							</ownseq>
+						</Possibilities>
+					</CmPossibilityList>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[1]; // <Possibilities><ownseq><ReverseAbbr>
+			var generator = MakeGenerator();
+
+			// This is the focus of the test:
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'Compound' from List 'Complex Form Types' ReverseAbbr"));
+		}
+
+		/// <summary>
+		/// Make sure that GenerateContextDescriptor/PathToUserUnderstandableElement returns the guid of its parent,
+		/// even if it is under and ownseqatomic node.
+		/// </summary>
+		[Test]
+		public void FindGuidOfParentOwnseqatomic()
+		{
+			const string source =
+				 @"<StText
+						guid='b314f2f8-ea5e-11de-86b7-0013722f8dec'>
+						<Paragraphs>
+							<ownseqatomic
+								class='StTxtPara'
+								guid='b31e7c56-ea5e-11de-85d3-0013722f8dec'>
+								<Contents>
+									<Str>
+										<Run
+											ws='en'>Example (English)</Run>
+									</Str>
+								</Contents>
+								<ParseIsCurrent
+									val='False' />
+							</ownseqatomic>
+						</Paragraphs>
+					</StText>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // <Paragraphs><ownseqatomic><Contents>
+			var generator = MakeGenerator();
+
+			// This is the focus of the test:
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b31e7c56-ea5e-11de-85d3-0013722f8dec"));
 		}
 
 		[Test]
@@ -464,8 +538,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'cultural anthropology' from List 'Academic Domains' UnderColor"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			// why does this not result in guid=b0c5aeac-ea5e-11de-9463-0013722f8dec instead?
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0a1eb98-ea5e-11de-888e-0013722f8dec"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0c5aeac-ea5e-11de-9463-0013722f8dec"));
 		}
 	}
 }
