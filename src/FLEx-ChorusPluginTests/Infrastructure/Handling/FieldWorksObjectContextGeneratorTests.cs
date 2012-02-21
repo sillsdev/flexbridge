@@ -78,6 +78,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
+			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
 			return result;
 		}
 
@@ -183,7 +188,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		/// Given something like a LexEntry containing a LexemeForm containing an MoStemAllomorph containing a Form
 		/// which is one or more AUnis, we want to see something like LexemeForm Form.
 		/// That is, the MoStemAllomorph level can just be left out.
-		/// More generally, all object levels can ust be left out, that is, the ones that have guid attributes.
+		/// More generally, all object levels can just be left out, that is, the ones that have guid attributes.
 		/// We don't use the standard names here because we may eventually implement a nicer case for all of LexEntry.
 		/// </summary>
 		[Test]
@@ -540,5 +545,447 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0c5aeac-ea5e-11de-9463-0013722f8dec"));
 		}
+
+		[Test]
+		public void EnvironmentsPartsFindEnvironment()
+		{
+			string source =
+@"<PhonologicalData>
+	<PhPhonData
+		guid='86980496-9fe8-428d-bd53-fa2e623fe1c0'>
+		<Environments>
+			<ownseq
+				class='PhEnvironment'
+				guid='02132942-0ff7-45e8-8f09-f4918535a31e'>
+				<Description>
+					<AStr
+						ws='en'>
+						<Run
+							ws='en'>used for e&gt;i change on vext</Run>
+					</AStr>
+				</Description>
+				<Name>
+					<AUni
+						ws='en'>mid vowel in previous syllable</AUni>
+				</Name>
+				<StringRepresentation>
+					<Str>
+						<Run
+							ws='en'>/[</Run>
+						<Run
+							ws='en'>V+mid] ([preNas]) [C-nas] ([Mod]) _</Run>
+					</Str>
+				</StringRepresentation>
+			</ownseq>
+			<ownseq
+				class='PhEnvironment'
+				guid='1ae6eb4a-84a0-4134-b684-5b446ad83708'>
+				<StringRepresentation>
+					<Str>
+						<Run
+							ws='en'>/ [C] _</Run>
+					</Str>
+				</StringRepresentation>
+			</ownseq>
+			<ownseq
+				class='PhEnvironment'
+				guid='e5e81505-6f2b-42df-88dc-a76c2dfcad87'>
+				<StringRepresentation>
+					<Str>
+						<Run
+							ws='en'>/ _ [-Lab-Lat-Nas</Run>
+						<Run
+							ws='en'>]</Run>
+					</Str>
+				</StringRepresentation>
+			</ownseq>
+		</Environments>
+	</PhPhonData>
+</PhonologicalData>";
+			var root = GetNode(source); // PhonologicalData
+			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // 1st ownseq
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
+
+			// Try a node that has no name, only a representation.
+			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 2nd ownseq
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / [C] _"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ae6eb4a-84a0-4134-b684-5b446ad83708"));
+
+			// Try the Description to see we still get the name
+			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the <Description>
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable Description"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
+
+			// See that the runs are merged
+			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // 3rd ownseq
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas]"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
+
+			// See that the first run is prepended to the last one
+			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2].ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 3rd ownseq, 2nd Run
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas] StringRepresentation Str Run"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
+		}
+		[Test]
+		public void DiscoursePartsFindChart()
+		{
+			string source =
+@"<Discourse>
+	<header>
+		<DsDiscourseData
+			guid='aae5a99c-2333-4d6f-934e-d2c059de249a'>
+			<ChartMarkers />
+			<Charts />
+			<ConstChartTempl />
+		</DsDiscourseData>
+	</header>
+	<DsChart
+		class='DsConstChart'
+		guid='78a7df6d-4e58-47ac-8714-52aeeca8b66c'>
+		<BasedOn>
+			<objsur
+				guid='95663db0-64d9-41f8-ab11-e388ce54e3f2'
+				t='r' />
+		</BasedOn>
+		<DateCreated
+			val='2009-4-9 16:43:0.290' />
+		<DateModified
+			val='2009-4-23 20:21:42.447' />
+		<Rows>
+			<ownseq
+				class='ConstChartRow'
+				guid='367829ee-3b53-493a-a057-1eccde2c45e4'>
+				<Cells>
+					<ownseq
+						class='ConstChartWordGroup'
+						guid='991d2812-1b2c-46ac-bb74-12819e45ce9a'>
+						<BeginAnalysisIndex
+							val='0' />
+						<BeginSegment>
+							<objsur
+								guid='efa04f83-2d6d-4dd7-90df-d057b4aefe05'
+								t='r' />
+						</BeginSegment>
+						<Column>
+							<objsur
+								guid='f6468942-5e24-4dcb-9d54-c8a634b07a5a'
+								t='r' />
+						</Column>
+						<EndAnalysisIndex
+							val='1' />
+						<EndSegment>
+							<objsur
+								guid='efa04f83-2d6d-4dd7-90df-d057b4aefe05'
+								t='r' />
+						</EndSegment>
+						<MergesAfter
+							val='False' />
+						<MergesBefore
+							val='False' />
+					</ownseq>
+					<ownseq
+						class='ConstChartWordGroup'
+						guid='870c0faf-1eb7-4a52-9172-9bb9d338017c'>
+						<BeginAnalysisIndex
+							val='3' />
+						<BeginSegment>
+							<objsur
+								guid='efa04f83-2d6d-4dd7-90df-d057b4aefe05'
+								t='r' />
+						</BeginSegment>
+						<Column>
+							<objsur
+								guid='664b434a-e7b1-4c02-8970-d89c09d43c54'
+								t='r' />
+						</Column>
+						<EndAnalysisIndex
+							val='4' />
+						<EndSegment>
+							<objsur
+								guid='efa04f83-2d6d-4dd7-90df-d057b4aefe05'
+								t='r' />
+						</EndSegment>
+						<MergesAfter
+							val='False' />
+						<MergesBefore
+							val='False' />
+					</ownseq>
+				</Cells>
+				<ClauseType
+					val='0' />
+				<EndDependentClauseGroup
+					val='False' />
+				<EndParagraph
+					val='False' />
+				<EndSentence
+					val='True' />
+				<Label>
+					<Str>
+						<Run
+							ws='en'>1</Run>
+					</Str>
+				</Label>
+				<StartDependentClauseGroup
+					val='False' />
+			</ownseq>
+			<ownseq
+				class='ConstChartRow'
+				guid='449ab63e-33b1-43e8-a7bb-b1fe517b0e7e'>
+				<Cells>
+					<ownseq
+						class='ConstChartWordGroup'
+						guid='1d3102c9-7f9d-499f-a85c-22d3c3b1af04'>
+						<BeginAnalysisIndex
+							val='0' />
+						<BeginSegment>
+							<objsur
+								guid='83360f37-ff92-4910-8ceb-360d51c342c2'
+								t='r' />
+						</BeginSegment>
+						<Column>
+							<objsur
+								guid='39775c44-e64a-4fb1-b4ca-d5da3d7dbb24'
+								t='r' />
+						</Column>
+						<EndAnalysisIndex
+							val='0' />
+						<EndSegment>
+							<objsur
+								guid='83360f37-ff92-4910-8ceb-360d51c342c2'
+								t='r' />
+						</EndSegment>
+						<MergesAfter
+							val='False' />
+						<MergesBefore
+							val='False' />
+					</ownseq>
+					<ownseq
+						class='ConstChartWordGroup'
+						guid='3f371913-8108-4e06-8d7d-a5f0fe69c413'>
+						<BeginAnalysisIndex
+							val='1' />
+						<BeginSegment>
+							<objsur
+								guid='83360f37-ff92-4910-8ceb-360d51c342c2'
+								t='r' />
+						</BeginSegment>
+						<Column>
+							<objsur
+								guid='7e958a20-1512-4af9-863a-d92f7175a68c'
+								t='r' />
+						</Column>
+						<EndAnalysisIndex
+							val='1' />
+						<EndSegment>
+							<objsur
+								guid='83360f37-ff92-4910-8ceb-360d51c342c2'
+								t='r' />
+						</EndSegment>
+						<MergesAfter
+							val='False' />
+						<MergesBefore
+							val='False' />
+					</ownseq>
+				</Cells>
+				<ClauseType
+					val='0' />
+				<EndDependentClauseGroup
+					val='False' />
+				<EndParagraph
+					val='False' />
+				<EndSentence
+					val='False' />
+				<Label>
+					<Str>
+						<Run
+							ws='en'>2a</Run>
+					</Str>
+				</Label>
+				<StartDependentClauseGroup
+					val='False' />
+			</ownseq>
+		</Rows>
+		<Template>
+			<objsur
+				guid='cb178bdb-97b8-49e2-9436-2f188a2b8589'
+				t='r' />
+		</Template>
+	</DsChart>
+	<DsChart
+		class='DsConstChart'
+		guid='88482f27-8a9f-4d25-b375-2c8720aa2b62'>
+		<BasedOn>
+			<objsur
+				guid='40b3e88f-ae59-48d0-a2ba-e498a27cc9b3'
+				t='r' />
+		</BasedOn>
+		<DateCreated
+			val='2008-4-8 21:34:30.653' />
+		<DateModified
+			val='2008-4-8 21:34:30.653' />
+		<Template>
+			<objsur
+				guid='cb178bdb-97b8-49e2-9436-2f188a2b8589'
+				t='r' />
+		</Template>
+	</DsChart>
+</Discourse>";
+			var root = GetNode(source); // Discourse
+			var generator = MakeGenerator();
+
+			// 2nd DsChart
+			var input = root.ChildNodes[2];
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 2"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "88482f27-8a9f-4d25-b375-2c8720aa2b62"));
+
+			// 1st DsChart BasedOn
+			input = root.ChildNodes[1].ChildNodes[0];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 BasedOn"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "78a7df6d-4e58-47ac-8714-52aeeca8b66c"));
+
+			// 2nd DsChart DateCreated
+			input = root.ChildNodes[2].ChildNodes[1];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 2 DateCreated"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "88482f27-8a9f-4d25-b375-2c8720aa2b62"));
+
+			// 2nd DsChart DateModified
+			input = root.ChildNodes[2].ChildNodes[2];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 2 DateModified"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "88482f27-8a9f-4d25-b375-2c8720aa2b62"));
+
+			// 1st DsChart Template
+			input = root.ChildNodes[1].ChildNodes[4];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Template"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "78a7df6d-4e58-47ac-8714-52aeeca8b66c"));
+
+			// 1st DsChart Rows
+			input = root.ChildNodes[1].ChildNodes[3];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Rows"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "78a7df6d-4e58-47ac-8714-52aeeca8b66c"));
+
+			// 1st DsChart Row 2 Cells
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Cells"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
+
+			// 1st DsChart Row 1 Column 2
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[2];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			// Discourse Chart 1 Row 1 Column 2 Column <== should be a way to suppreee FieldWorkObjectContextGenerator.GetLabel()/GetPathAppend()
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 Column"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
+
+			// 1st DsChart Row 1 Column 2 BeginSegment
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[1];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 BeginSegment"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
+
+			// 1st DsChart Row 2 Column 2 EndSegment
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[1].ChildNodes[4];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 2 EndSegment"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "3f371913-8108-4e06-8d7d-a5f0fe69c413"));
+
+			// 1st DsChart Row 2 Column 1 BeginAnalysisIndex
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 1 BeginAnalysisIndex"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1d3102c9-7f9d-499f-a85c-22d3c3b1af04"));
+
+			// 1st DsChart Row 1 Column 1 EndAnalysisIndex
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[3];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 1 EndAnalysisIndex"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "991d2812-1b2c-46ac-bb74-12819e45ce9a"));
+
+			// 1st DsChart Row 2 Column 2 MergesBefore
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[1].ChildNodes[6];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 2 MergesBefore"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "3f371913-8108-4e06-8d7d-a5f0fe69c413"));
+
+			// 1st DsChart Row 1 Column 2 MergesAfter
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[5];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 MergesAfter"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
+
+			// 1st DsChart Row 1 ClauseType
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[1];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 ClauseType"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
+
+			// 1st DsChart Row 2 EndDependentClauseGroup
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[2];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 EndDependentClauseGroup"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
+
+			// 1st DsChart Row 2 EndParagraph
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[3];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 EndParagraph"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
+
+			// 1st DsChart Row 1 EndSentence
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[4];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 EndSentence"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
+
+			// 1st DsChart Row 1 Label
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[5];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Label"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
+
+			// 1st DsChart Row 2 StartDependentClauseGroup
+			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[6];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 StartDependentClauseGroup"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
+		}
+
 	}
 }
