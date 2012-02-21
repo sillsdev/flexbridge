@@ -16,18 +16,28 @@ namespace FieldWorksBridge
 		/// </summary>
 		internal FLExConnectionHelper()
 		{
-			host = new ServiceHost(typeof(FLExService),
-								   new[] { new Uri("net.pipe://localhost/FLExEndpoint") });
-			//open host ready for business
-			host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
-			host.Open();
-
+			bool hostOpened = true;
+			try
+			{
+				host = new ServiceHost(typeof(FLExService),
+									   new[] { new Uri("net.pipe://localhost/FLExEndpoint") });
+				//open host ready for business
+				host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
+				host.Open();
+			}
+			catch (Exception)
+			{
+				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
+				hostOpened = false;
+			}
 			ChannelFactory<IFLExBridgeService> pipeFactory =
 				new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
 			pipe = pipeFactory.CreateChannel();
 			try
 			{
+				//Notify FLEx that we are ready to receive requests.
+				//(if we failed to create the host we still want to do this so FLEx can wake up)
 				pipe.BridgeReady();
 			}
 			catch(Exception)
@@ -35,11 +45,15 @@ namespace FieldWorksBridge
 				Console.WriteLine("FLEx isn't listening.");
 				pipe = null; //FLEx isn't listening.
 			}
+			if(!hostOpened)
+			{
+				throw new ApplicationException("FLExBridge already running.");
+			}
 		}
 
 		/// <summary>
 		/// Signals FLEx through 2 means that the bridge work has been completed.
-		/// A direct message to FLEx if it is listening, and by allowing the
+		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
 		internal void SignalBridgeWorkComplete()
 		{
