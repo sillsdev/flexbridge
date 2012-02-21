@@ -148,7 +148,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private bool WantChecksum(XmlNode input)
 		{
-			return input.Name == "refseq";
+			return input.Name == SharedConstants.Refseq || input.Name == SharedConstants.Objsur;
 		}
 
 		private void AddChecksumData(Stream s, XmlNode input)
