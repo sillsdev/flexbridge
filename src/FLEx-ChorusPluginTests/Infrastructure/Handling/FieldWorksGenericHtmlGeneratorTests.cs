@@ -76,6 +76,49 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
+		public void RefColElementsContributeToChecksum()
+		{
+			string input = @"<Root>
+				<Child>SomeText</Child>
+				<SomeSeq>
+					 <refcol guid='6325799e-8f47-4009-a43c-14b5bc641feb' t='r' />
+					 <refcol guid='e8b411be-87a3-4638-ae3e-91a65b378195' t='r' />
+					 <refcol guid='c9b63575-11b8-439b-93ac-b2929770f24e' t='r' />
+					 <refcol guid='000d8025-63e1-4278-8445-5bb20ab23175' t='r' />
+					 <refcol guid='4aea8c74-cd4b-4fd3-9b32-c4a27b527503' t='r' />
+				</SomeSeq>
+			</Root>";
+			var root = GetNode(input);
+			string result = "<body>" + new FwGenericHtmlGenerator().MakeHtml(root) + "</body>";
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"body/div[@class='property']/div[@class='property' and text()='Child: SomeText']");
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"body/div[text()='Root: ']");
+			XmlTestHelper.AssertXPathIsNull(result, @"//div[text()[contains(., 'SomeSeq')]]");
+			var resultNode = GetNode(result);
+			var checksum = resultNode.SelectSingleNode("div[@class='checksum']");
+			Assert.That(checksum, Is.Not.Null);
+			var checksumText = checksum.InnerText;
+			Assert.That(checksumText, Is.StringContaining("Checksum"));
+
+			// With a different set of guids we should get a different result.
+			input = @"<Root>
+				<Child>SomeText</Child>
+				<SomeSeq>
+					 <refcol guid='6325799e-8f47-4009-a43c-14b5bc641feb' t='r' />
+					 <refcol guid='c9b63575-11b8-439b-93ac-b2929770f24e' t='r' />
+					 <refcol guid='000d8025-63e1-4278-8445-5bb20ab23175' t='r' />
+					 <refcol guid='4aea8c74-cd4b-4fd3-9b32-c4a27b527503' t='r' />
+				</SomeSeq>
+			</Root>";
+			root = GetNode(input);
+			result = "<body>" + new FwGenericHtmlGenerator().MakeHtml(root) + "</body>";
+			resultNode = GetNode(result);
+			checksum = resultNode.SelectSingleNode("div[@class='checksum']");
+			Assert.That(checksum, Is.Not.Null);
+			var checksumText2 = checksum.InnerText;
+			Assert.That(checksumText2, Is.Not.EqualTo(checksumText));
+		}
+
+		[Test]
 		public void ObjSurElementsContributeToChecksum()
 		{
 			string input = @"<Root>
