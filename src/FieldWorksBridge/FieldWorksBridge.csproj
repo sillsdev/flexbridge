@@ -96,6 +96,7 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="FLExConnectionHelper.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<None Include="app.config" />
