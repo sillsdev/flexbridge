@@ -194,7 +194,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		  <DateModified val='2011-2-2 19:39:28.829' />
 		  <Paragraphs>
 			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
-			  <ParseIsCurrent val='False' />
+			  <ParseIsCurrent val='True' />
 			</ownseq>
 		  </Paragraphs>
 		</StText>
@@ -204,7 +204,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 <LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
 </Lexicon>";
 
-			var ourContent = commonAncestor.Replace("False", "True");
+			var ourContent = commonAncestor.Replace("True", "False");
 			const string theirContent = commonAncestor;
 
 			var results = FieldWorksTestServices.DoMerge(
@@ -214,8 +214,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				1, new List<Type> {typeof(XmlAttributeChangedReport)});
-			Assert.IsTrue(results.Contains("True"));
+				0, new List<Type>());
+			Assert.IsFalse(results.Contains("True"));
+			Assert.IsTrue(results.Contains("False"));
 		}
 
 		[Test]
