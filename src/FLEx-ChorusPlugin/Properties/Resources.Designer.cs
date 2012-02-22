@@ -203,6 +203,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Data Notebook Record.
+		/// </summary>
+		internal static string kRnGenericRecLabel {
+			get {
+				return ResourceManager.GetString("kRnGenericRecLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {

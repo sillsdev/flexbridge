@@ -76,6 +76,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
 			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
 			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
+			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
@@ -152,6 +153,73 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Text myEngName monNom IsTranslated"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e43b93a7-604e-4704-8118-d48999b330e3"));
+		}
+
+		[Test]
+		public void DataNotebookGenRecFindName()
+		{
+			const string source =
+				@"<RnGenericRec guid='175a2230-0302-4307-8bf4-f3dad9c19710'>
+					<Conclusions>
+						<objsur guid='9459613a-ab07-454d-9e07-98088aff50b8' t='o' />
+					</Conclusions>
+					<DateCreated val='2007-5-25 18:44:50.767' />
+					<DateModified val='2007-5-25 18:46:0.0' />
+					<Discussion>
+						<objsur guid='015a3ff3-c5d7-4d24-9d11-fbcac1f9d912' t='o' />
+					</Discussion>
+					<ExternalMaterials>
+						<objsur guid='28fcfe8c-4d12-452f-9528-ce75f127f19e' t='o' />
+					</ExternalMaterials>
+					<FurtherQuestions>
+						<objsur guid='b464f6fc-5ff0-4c70-b97c-548a9c52337f' t='o' />
+					</FurtherQuestions>
+					<Hypothesis>
+						<objsur guid='c873db8c-7c22-402b-b02d-4e9c366d66a4' t='o' />
+					</Hypothesis>
+					<Researchers>
+						<objsur guid='5d543e4f-50d7-41fe-93a7-cf851c1d229e' t='r' />
+					</Researchers>
+					<ResearchPlan>
+						<objsur guid='7b542b7c-75be-479f-a09a-b7d54f41766c' t='o' />
+					</ResearchPlan>
+					<Title>
+						<Str>
+							<Run ws='en'>Generic record title</Run>
+						</Str>
+					</Title>
+					<Type />
+				</RnGenericRec>";
+			const string predictedLabel = "Data Notebook Record Generic record title";
+			const string recordGuid = "175a2230-0302-4307-8bf4-f3dad9c19710";
+			var root = GetNode(source);
+			var input = root; // RnGenericRec
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+
+			// Try a child node that isn't a part of the record's Title
+			input = root.ChildNodes[0]; // Conclusions
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+
+			// Try the Title node
+			input = root.ChildNodes[9]; // Title
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+
+			// Try a bit deeper
+			input = input.ChildNodes[0]; // Str node
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
 		}
 
 		[Test]

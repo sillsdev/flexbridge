@@ -196,4 +196,7 @@
   <data name="kWfiWordFormClassLabel" xml:space="preserve">
 	<value>Wordform</value>
   </data>
+  <data name="kRnGenericRecLabel" xml:space="preserve">
+	<value>Data Notebook Record</value>
+  </data>
 </root>

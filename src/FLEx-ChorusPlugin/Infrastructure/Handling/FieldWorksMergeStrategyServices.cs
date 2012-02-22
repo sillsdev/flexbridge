@@ -89,6 +89,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "Text":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new TextContextGenerator()));
 						break;
+					case "RnGenericRec":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new RnGenericRecContextGenerator()));
+						break;
 					case "CmPossibilityList":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityListContextGenerator()));
 						break;

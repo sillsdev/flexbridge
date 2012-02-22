@@ -17,7 +17,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return GetLabelForText(start);
 		}
 
-
 		string EntryLabel
 		{
 			get { return Resources.kTextClassLabel; }
