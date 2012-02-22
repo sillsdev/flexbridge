@@ -76,7 +76,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static string GetGuid(XmlNode element)
 		{
 			var elt = element;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null)
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
+				   && elt.Name != SharedConstants.Ownseq)
 				elt = elt.ParentNode;
 			return elt.Attributes[SharedConstants.GuidStr] == null
 				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
