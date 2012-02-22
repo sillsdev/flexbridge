@@ -231,11 +231,11 @@
 	<Compile Include="View\ExistingSystemView.designer.cs">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\FieldWorksBridge.cs">
+	<Compile Include="View\FLExBridge.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="View\FieldWorksBridge.Designer.cs">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
+	<Compile Include="View\FLExBridge.Designer.cs">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\FwBridgeConflictView.cs">
 	  <SubType>Form</SubType>
@@ -293,8 +293,8 @@
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="View\FieldWorksBridge.resx">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
+	<EmbeddedResource Include="View\FLExBridge.resx">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\FwBridgeConflictView.resx">

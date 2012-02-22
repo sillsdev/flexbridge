@@ -1,6 +1,6 @@
 ﻿namespace FLEx_ChorusPlugin.View
 {
-	partial class FieldWorksBridge
+	partial class FLExBridge
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,10 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FieldWorksBridge));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FLExBridge));
 			this.SuspendLayout();
 			//
-			// FieldWorksBridge
+			// FLExBridge
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -39,8 +39,8 @@
 			this.ClientSize = new System.Drawing.Size(856, 520);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(525, 490);
-			this.Name = "FieldWorksBridge";
-			this.Text = "FieldWorks Bridge";
+			this.Name = "FLExBridge";
+			this.Text = "FLEx Bridge";
 			this.ResumeLayout(false);
 
 		}

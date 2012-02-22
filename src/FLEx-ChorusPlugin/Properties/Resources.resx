@@ -118,7 +118,7 @@
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="kFieldWorksBridge" xml:space="preserve">
-	<value>FieldWorks Bridge</value>
+	<value>FLEx Bridge</value>
   </data>
   <data name="kChorusEnabledFwProject" xml:space="preserve">
 	<value>Select a Chorus-enabled FieldWorks project to open:</value>
@@ -168,6 +168,12 @@
 	</data>
 	<data name="ksFindProjectDirectory">
 		<value xml:space="preserve">Select the folder of the project that you want to obtain.</value>
+	</data>
+	<data name="ksNoFilePath" xml:space="preserve">
+		<value>No file path provided. This is a program error.</value>
+	</data>
+	<data name="ksPathProblem" xml:space="preserve">
+		<value>Path Problem</value>
 	</data>
 	<data name="ObtainProjectController_ObtainProjectController_Receive_project">
 		<value xml:space="preserve">Receive project</value>

@@ -95,7 +95,7 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to FieldWorks Bridge.
+		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
 		internal static string kFieldWorksBridge {
 			get {
