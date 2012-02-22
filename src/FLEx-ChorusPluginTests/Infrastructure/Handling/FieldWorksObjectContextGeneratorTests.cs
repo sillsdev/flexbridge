@@ -78,6 +78,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("PhNCSegments", MakeClassStrategy(new NaturalClassesContextGenerator(), strategies));
 			return result;
 		}
 
@@ -177,6 +178,50 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("List 'Complex Form Types' Abbreviation"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
+		}
+
+		[Test]
+		public void NaturalClassesPartsFindName()
+		{
+			string source =
+				@"	<ownseq
+					class='PhNCSegments'
+					guid='085e32ec-eb5b-4eed-9dab-e55854ce88fb'>
+					<Abbreviation>
+						<AUni
+							ws='en'>V+back</AUni>
+						<AUni
+							ws='pt'>V+back</AUni>
+					</Abbreviation>
+					<Name>
+						<AUni
+							ws='en'>back vowels</AUni>
+					</Name>
+					<Segments>
+						<objsur
+							guid='14bd1795-d041-4c59-91ae-1d5506c63402'
+							t='r' />
+						<objsur
+							guid='70286ab3-04b7-43ab-afb3-76e978e24142'
+							t='r' />
+					</Segments>
+				</ownseq>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[0].ChildNodes[0]; //<Abbreviation><AUni>
+			var generator = MakeGenerator();
+
+			// This is the focus of the test:
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class 'back vowels' Abbreviation"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "085e32ec-eb5b-4eed-9dab-e55854ce88fb"));
+
+			input = root.ChildNodes[1].ChildNodes[0]; //<Name><AUni>
+			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class 'back vowels' Name"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "085e32ec-eb5b-4eed-9dab-e55854ce88fb"));
 		}
 
 		/// <summary>
