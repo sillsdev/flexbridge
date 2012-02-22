@@ -5,13 +5,19 @@ using System.Xml;
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	/// <summary>
-	/// Service class used by FieldWorksCommonMergeStrategy to make sure "DateModified", "DateResolved", and "RunDate" never conflict.
+	/// Service class used by FieldWorksCommonMergeStrategy to make sure several properties never conflict.
 	///
 	/// The latest one will always win, no matter what.
 	/// </summary>
 	internal static class FieldWorksMergingServices
 	{
-		internal static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		internal static void PreMerge(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		{
+			PreMergeTimestamps(mdc, ourEntry, theirEntry);
+			PreMergeStTxtParaParseIsCurrent(mdc, ourEntry, theirEntry);
+		}
+
+		private static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
 		{
 			if (ourEntry == null || theirEntry == null)
 				return;
@@ -62,6 +68,59 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			}
 		}
 
+		/// <summary>
+		/// Set any StTxtPara.ParseIsCurrent to false if either party in the merge changed the text.
+		/// </summary>
+		private static void PreMergeStTxtParaParseIsCurrent(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		{
+			// We are only interested in StTxtPara and ScrTxtPara instances, since they have the ParseIsCurrent property.
+			// We can quit for a given set on inputs, if we do find the prop, since they do not nest paras inside of paras.
+			if (ourEntry == null || theirEntry == null)
+				return; // Nothing to do.
+
+			const string xpath = "ParseIsCurrent";
+			var ourParseIsCurrentNode = ourEntry.SelectSingleNode(xpath);
+			var theirParseIsCurrentNode = theirEntry.SelectSingleNode(xpath);
+
+			if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
+			{
+				// Only need to pre-merge them if they both exist,
+				var ourValue = bool.Parse(ourParseIsCurrentNode.Attributes["val"].Value);
+				var theirValue = bool.Parse(theirParseIsCurrentNode.Attributes["val"].Value);
+				if (ourValue != theirValue)
+				{
+					// and, they are different.
+					// Set both to False.
+					ourParseIsCurrentNode.Attributes["val"].Value = "False";
+					theirParseIsCurrentNode.Attributes["val"].Value = "False";
+				}
+				return;
+			}
+
+			// Drill down on other owned stuff.
+			var classname = GetClassName(ourEntry);
+			var classInfo = mdc.GetClassInfo(classname);
+			foreach (var owningPropInfo in classInfo.AllOwningProperties)
+			{
+				var propName = owningPropInfo.PropertyName;
+				var isCustomProperty = owningPropInfo.IsCustomProperty;
+				var ourOwningPropElement = GetOwningPropertyElement(ourEntry, propName, isCustomProperty);
+				if (ourOwningPropElement == null || !ourOwningPropElement.HasChildNodes)
+					continue;
+				var theirOwningPropElement = GetOwningPropertyElement(theirEntry, propName, isCustomProperty);
+				if (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
+					continue;
+				foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+				{
+					var theirOwnedElement = (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
+						.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+						.FirstOrDefault();
+					if (theirOwnedElement == null)
+						continue;
+					PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement);
+				}
+			}
+		}
 
 		/// <summary>
 		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml

@@ -32,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			FieldWorksMergingServices.PreMergeTimestamps(_mdc, ourEntry, theirEntry);
+			FieldWorksMergingServices.PreMerge(_mdc, ourEntry, theirEntry);
 
 			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
 		}
