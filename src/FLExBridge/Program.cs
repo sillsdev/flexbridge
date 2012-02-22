@@ -29,7 +29,7 @@ namespace FLExBridge
 				var s = HgRepository.GetEnvironmentReadinessMessage("en");
 				if (!string.IsNullOrEmpty(s))
 				{
-					MessageBox.Show(s, Resources.kFieldWorksBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+					MessageBox.Show(s, Resources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 					return;
 				}
 
