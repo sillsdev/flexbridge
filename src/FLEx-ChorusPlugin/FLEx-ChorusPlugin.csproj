@@ -169,6 +169,7 @@
 	<Compile Include="Infrastructure\Handling\PossibilityContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\PossibilityListContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\RnGenericRecContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\ScrBookContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />

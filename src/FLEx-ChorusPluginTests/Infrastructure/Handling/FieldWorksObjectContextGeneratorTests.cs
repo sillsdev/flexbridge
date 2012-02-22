@@ -13,6 +13,41 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	[TestFixture]
 	public class FieldWorksObjectContextGeneratorTests
 	{
+
+		private static FieldWorkObjectContextGenerator MakeGenerator()
+		{
+			var result = new FieldWorkObjectContextGenerator();
+			var strategies = new MergeStrategies();
+			result.MergeStrategies = strategies;
+			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
+			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
+			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
+			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
+			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
+			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			return result;
+		}
+
+		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
+
+		private static ElementStrategy MakeClassStrategy(FieldWorkObjectContextGenerator descriptor, MergeStrategies strategies)
+		{
+			var classStrat = new ElementStrategy(false)
+			{
+				MergePartnerFinder = GuidKey,
+				ContextDescriptorGenerator = descriptor,
+				IsAtomic = false
+			};
+			descriptor.MergeStrategies = strategies;
+			return classStrat;
+		}
 		[Test]
 		public void LexEntryPartsFindLexemeForm()
 		{
@@ -43,7 +78,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm"));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label="+ descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 
 			// Try a node that is not part of the LexemeForm.
@@ -66,40 +101,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm Form"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
-		}
-
-		private static FieldWorkObjectContextGenerator MakeGenerator()
-		{
-			var result = new FieldWorkObjectContextGenerator();
-			var strategies = new MergeStrategies();
-			result.MergeStrategies = strategies;
-			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
-			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
-			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
-			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
-			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			return result;
-		}
-
-		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
-
-		private static ElementStrategy MakeClassStrategy(FieldWorkObjectContextGenerator descriptor, MergeStrategies strategies)
-		{
-			var classStrat = new ElementStrategy(false)
-			{
-				MergePartnerFinder = GuidKey,
-				ContextDescriptorGenerator = descriptor,
-				IsAtomic = false
-			};
-			descriptor.MergeStrategies = strategies;
-			return classStrat;
 		}
 
 		[Test]
@@ -250,6 +251,83 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
+		}
+
+		[Test]
+		public void ScrBookFindName()
+		{
+			string source =
+				@"<ScrBook guid='0e876238-341a-4e56-9db5-ed73b05cb8f5'>
+					<Abbrev>
+						<AUni ws='en'>Luk</AUni>
+						<AUni ws='es'>Lc</AUni>
+					</Abbrev>
+					<BookId>
+						<objsur guid='4fbe9226-30ab-44a1-9643-a7072d11f9ff' t='r' />
+					</BookId>
+					<CanonicalNum val='42' />
+					<Footnotes>
+						<objsur guid='8a9898e6-f53b-4404-8f13-3233b02f15ca' t='o' />
+						<objsur guid='59911878-11c5-420c-bd6a-e9168d6ac56d' t='o' />
+						<objsur guid='dda493b5-5fd2-4017-a8e4-d018e80baddc' t='o' />
+						<objsur guid='b5543bf1-674e-4f0f-875b-5aa172705fb4' t='o' />
+					</Footnotes>
+					<IdText>
+						<Uni>Commence avec l'histoire de Noel</Uni>
+					</IdText>
+					<Name>
+						<AUni ws='en'>Luke</AUni>
+						<AUni ws='es'>Lucas</AUni>
+					</Name>
+					<Sections>
+						<objsur guid='6393a69e-145e-4bd9-aaef-276b7ecfdc15' t='o' />
+						<objsur guid='a0c368e1-6e6a-4d38-8512-84a72a091db8' t='o' />
+						<objsur guid='ec791a5b-f2a8-476c-b796-fd4eb55cc1b5' t='o' />
+						<objsur guid='27ccb121-143a-44ae-9874-61fa88d16c81' t='o' />
+						<objsur guid='99167d56-ae10-43fb-a5da-429d0b17c1b9' t='o' />
+						<objsur guid='28e6cd4e-5bb1-48d9-9b5a-e150a55d9650' t='o' />
+					</Sections>
+					<Title>
+						<objsur guid='4e9da30b-041c-4ce8-81ee-f5a5705794bb' t='o' />
+					</Title>
+				</ScrBook>";
+			const string predictedLabel = "Scripture Book Luke";
+			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
+			var root = GetNode(source);
+			var input = root; // ScrBook
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a child node that isn't a part of the ScrBook's name
+			input = root.ChildNodes[2]; // CanonicalNum
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " CanonicalNum"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a child node that owns the StText
+			input = root.ChildNodes[7]; // Title
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try the Name child node
+			input = root.ChildNodes[0]; // Abbreviation
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Abbrev"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try deeper down
+			input = root.ChildNodes[0].ChildNodes[0]; // don't want to display AUni
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Abbrev"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
 		}
 
 		[Test]

@@ -199,4 +199,10 @@
   <data name="kRnGenericRecLabel" xml:space="preserve">
 	<value>Data Notebook Record</value>
   </data>
+  <data name="kScrBookClassLabel" xml:space="preserve">
+	<value>Scripture Book</value>
+  </data>
+  <data name="kUnidentifiedLabel" xml:space="preserve">
+	<value>[unidentified]</value>
+  </data>
 </root>

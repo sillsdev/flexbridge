@@ -212,6 +212,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Scripture Book.
+		/// </summary>
+		internal static string kScrBookClassLabel {
+			get {
+				return ResourceManager.GetString("kScrBookClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {
@@ -271,6 +280,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string kTextClassLabel {
 			get {
 				return ResourceManager.GetString("kTextClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to [unidentified].
+		/// </summary>
+		internal static string kUnidentifiedLabel {
+			get {
+				return ResourceManager.GetString("kUnidentifiedLabel", resourceCulture);
 			}
 		}
 

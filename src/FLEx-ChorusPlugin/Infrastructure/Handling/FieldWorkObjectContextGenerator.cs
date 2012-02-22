@@ -179,7 +179,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return path;
 		}
 
-		internal const string UnidentifiableLabel = "[unidentified]"; // Todo: internationalize
+		internal string UnidentifiableLabel = Resources.kUnidentifiedLabel;
 
 
 		/// <summary>
