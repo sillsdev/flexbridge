@@ -132,9 +132,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <returns></returns>
 		private XmlNode GetTargetNode(XmlNode start)
 		{
-			if (IsMultiStringChild(start))
+			if (IsMultiStringChild(start) || IsMultiRunStringChild(start))
 				return start.ParentNode;
 			return start; // Enhance JohnT: may eventually be other exceptions.
+		}
+
+		private static bool IsMultiRunStringChild(XmlNode start)
+		{
+			return start.Name.ToLowerInvariant() == "str";
 		}
 
 		// If the start node is a child of current, generate a path from current to start, with a leading space.

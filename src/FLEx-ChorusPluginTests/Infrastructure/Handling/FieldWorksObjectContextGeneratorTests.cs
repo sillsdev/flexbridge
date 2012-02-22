@@ -132,27 +132,52 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			string source =
 				@"<Text
 					guid='e43b93a7-604e-4704-8118-d48999b330e3'>
-					<Contents />
+					<Contents>
+						<objsur guid='f4e503f4-1365-4fd1-866c-216acc7ef941' t='o' />
+					</Contents>
 					<IsTranslated val='False' />
 					<Name>
 						<AUni ws='en'>myEngName</AUni>
 						<AUni ws='fr'>monNom</AUni>
 					</Name>
 				</Text>";
+			const string predictedLabel = "Text myEngName monNom";
+			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
 			var root = GetNode(source);
 			var input = root; // Text (CmMajorObject)
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Text myEngName monNom"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e43b93a7-604e-4704-8118-d48999b330e3"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
 
 			// Try a child node that isn't a part of the Text's name
-			input = root.ChildNodes[1]; //IsTranslated
+			input = root.ChildNodes[1]; // IsTranslated
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Text myEngName monNom IsTranslated"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " IsTranslated"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e43b93a7-604e-4704-8118-d48999b330e3"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try a child node that owns the StText
+			input = root.ChildNodes[0]; // Contents
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Contents"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try the Name child node
+			input = root.ChildNodes[2]; // Name
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Name"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try deeper down
+			input = root.ChildNodes[2].ChildNodes[0]; // don't want to display AUni
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Name"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
 		}
 
 		[Test]
@@ -185,41 +210,41 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</ResearchPlan>
 					<Title>
 						<Str>
-							<Run ws='en'>Generic record title</Run>
+							<Run ws='en'>Some name</Run>
 						</Str>
 					</Title>
 					<Type />
 				</RnGenericRec>";
-			const string predictedLabel = "Data Notebook Record Generic record title";
-			const string recordGuid = "175a2230-0302-4307-8bf4-f3dad9c19710";
+			const string predictedLabel = "Data Notebook Record Some name";
+			const string recordGuid = "guid=175a2230-0302-4307-8bf4-f3dad9c19710";
 			var root = GetNode(source);
 			var input = root; // RnGenericRec
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
 
 			// Try a child node that isn't a part of the record's Title
 			input = root.ChildNodes[0]; // Conclusions
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Conclusions"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
 
 			// Try the Title node
 			input = root.ChildNodes[9]; // Title
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
 
 			// Try a bit deeper
-			input = input.ChildNodes[0]; // Str node
+			input = input.ChildNodes[0]; // Don't want Str node to show in label
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + recordGuid));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
 		}
 
 		[Test]
