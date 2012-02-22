@@ -117,6 +117,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "ConstChartWordGroup":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new DiscourseChartContextGenerator()));
 						break;
+					case "PhNCSegments":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new NaturalClassesContextGenerator()));
+						break;
 					default:
 						strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 						break;
