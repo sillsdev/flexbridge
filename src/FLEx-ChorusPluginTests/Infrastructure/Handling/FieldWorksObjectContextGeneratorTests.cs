@@ -24,6 +24,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
 			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
 			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
+			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
@@ -139,7 +140,21 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				@"<Text
 					guid='e43b93a7-604e-4704-8118-d48999b330e3'>
 					<Contents>
-						<objsur guid='f4e503f4-1365-4fd1-866c-216acc7ef941' t='o' />
+						<StText	guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
+							<DateModified val='2011-2-3 19:24:58.556' />
+							<Paragraphs>
+								<ownseqatomic>
+									<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
+										<Contents>
+											<Str>
+												<Run ws='en'>Some random paragraph text.</Run>
+											</Str>
+										</Contents>
+										<ParseIsCurrent val='False' />
+									<StTxtPara />
+								</ownseqatomic>
+							</Paragraphs>
+						</StText>
 					</Contents>
 					<IsTranslated val='False' />
 					<Name>
@@ -149,6 +164,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				</Text>";
 			const string predictedLabel = "Text myEngName monNom";
 			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
+			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
 			var input = root; // Text (CmMajorObject)
 			var generator = MakeGenerator();
@@ -171,6 +187,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
 
+			// Try deeper down in the StText
+			input = input.ChildNodes[0].ChildNodes[0]; // Date Modified
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Contents DateModified"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(stTextGuid)); // I hope this is right!
+
 			// Try the Name child node
 			input = root.ChildNodes[2]; // Name
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -192,27 +215,36 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string source =
 				@"<RnGenericRec guid='175a2230-0302-4307-8bf4-f3dad9c19710'>
 					<Conclusions>
-						<objsur guid='9459613a-ab07-454d-9e07-98088aff50b8' t='o' />
+						<StText>
+							guid='c5df83ed-1037-438a-a23a-d095cc4bd9c9'>
+							<DateModified val='2011-2-3 19:24:58.556' />
+							<Paragraphs>
+								<ownseqatomic>
+									<StTxtPara guid='ef6c8862-5895-4068-a2ab-f9d42022cf82' />
+										<Contents>
+											<Str>
+												<Run ws='en'>Some random conclusion.</Run>
+											</Str>
+										</Contents>
+										<ParseIsCurrent val='False' />
+									<StTxtPara />
+								</ownseqatomic>
+							</Paragraphs>
+						</StText>
 					</Conclusions>
 					<DateCreated val='2007-5-25 18:44:50.767' />
 					<DateModified val='2007-5-25 18:46:0.0' />
 					<Discussion>
-						<objsur guid='015a3ff3-c5d7-4d24-9d11-fbcac1f9d912' t='o' />
 					</Discussion>
 					<ExternalMaterials>
-						<objsur guid='28fcfe8c-4d12-452f-9528-ce75f127f19e' t='o' />
 					</ExternalMaterials>
 					<FurtherQuestions>
-						<objsur guid='b464f6fc-5ff0-4c70-b97c-548a9c52337f' t='o' />
 					</FurtherQuestions>
 					<Hypothesis>
-						<objsur guid='c873db8c-7c22-402b-b02d-4e9c366d66a4' t='o' />
 					</Hypothesis>
 					<Researchers>
-						<objsur guid='5d543e4f-50d7-41fe-93a7-cf851c1d229e' t='r' />
 					</Researchers>
 					<ResearchPlan>
-						<objsur guid='7b542b7c-75be-479f-a09a-b7d54f41766c' t='o' />
 					</ResearchPlan>
 					<Title>
 						<Str>
@@ -253,10 +285,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
 		}
 
-		[Test]
-		public void ScrBookFindName()
+		private static string GetScrBookXml()
 		{
-			string source =
+			const string xmlString =
 				@"<ScrBook guid='0e876238-341a-4e56-9db5-ed73b05cb8f5'>
 					<Abbrev>
 						<AUni ws='en'>Luk</AUni>
@@ -267,10 +298,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</BookId>
 					<CanonicalNum val='42' />
 					<Footnotes>
-						<objsur guid='8a9898e6-f53b-4404-8f13-3233b02f15ca' t='o' />
-						<objsur guid='59911878-11c5-420c-bd6a-e9168d6ac56d' t='o' />
-						<objsur guid='dda493b5-5fd2-4017-a8e4-d018e80baddc' t='o' />
-						<objsur guid='b5543bf1-674e-4f0f-875b-5aa172705fb4' t='o' />
+						<ownseq>
+							<ScrFootnote guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
+								<DateModified val='2011-2-3 19:24:58.556' />
+								<Paragraphs>
+									<ownseqatomic>
+										<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
+											<Contents>
+												<Str>
+													<Run ws='en'>Some random footnote.</Run>
+												</Str>
+											</Contents>
+											<ParseIsCurrent val='False' />
+										<StTxtPara />
+									</ownseqatomic>
+								</Paragraphs>
+								<FootnoteMarker>
+									<Str>
+										<Run namedStyle='Note Marker' ws='en'>a</Run>
+									</Str>
+								</FootnoteMarker>
+							</ScrFootnote>
+							<ScrFootnote />
+							<ScrFootnote />
+							<ScrFootnote />
+						</ownseq>
 					</Footnotes>
 					<IdText>
 						<Uni>Commence avec l'histoire de Noel</Uni>
@@ -280,17 +332,74 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<AUni ws='es'>Lucas</AUni>
 					</Name>
 					<Sections>
-						<objsur guid='6393a69e-145e-4bd9-aaef-276b7ecfdc15' t='o' />
-						<objsur guid='a0c368e1-6e6a-4d38-8512-84a72a091db8' t='o' />
-						<objsur guid='ec791a5b-f2a8-476c-b796-fd4eb55cc1b5' t='o' />
-						<objsur guid='27ccb121-143a-44ae-9874-61fa88d16c81' t='o' />
-						<objsur guid='99167d56-ae10-43fb-a5da-429d0b17c1b9' t='o' />
-						<objsur guid='28e6cd4e-5bb1-48d9-9b5a-e150a55d9650' t='o' />
+						<ownseq>
+							<ScrSection guid='3713db10-ba05-4a42-9685-9fe4dbc2693d'>
+								<Content>
+									<StText guid='9e0d0f62-1c3a-4dd5-a488-fdf93471137a'>
+										<DateModified val='2011-2-3 19:24:58.556' />
+										<Paragraphs>
+											<ownseqatomic>
+												<StTxtPara guid='43a529b9-6fed-430b-b571-26df25dff03c' />
+													<Contents>
+														<Str>
+															<Run ws='en'>Some random scripture.</Run>
+														</Str>
+													</Contents>
+													<ParseIsCurrent val='False' />
+												<StTxtPara />
+											</ownseqatomic>
+										</Paragraphs>
+										<RightToLeft val='False' />
+										<Tags />
+									</StText>
+								</Content>
+								<Heading>
+								</Heading>
+								<VerseRefEnd val='41003020' />
+								<VerseRefMax val='41003020' />
+								<VerseRefMin val='41003001' />
+								<VerseRefStart val='41003001' />
+							</ScrSection>
+							<ScrSection guid='3770c19f-ae61-4364-be08-5e4bf62d861a'>
+								<Content>
+								</Content>
+								<Heading>
+									<StText guid='e0eec438-8a60-4586-a73e-6dfd5089becc'>
+										<DateModified val='2011-2-3 19:24:58.556' />
+										<Paragraphs>
+											<ownseqatomic>
+												<StTxtPara guid='c83379ed-1043-4bd4-b9c1-b159c47025cf' />
+													<Contents>
+														<Str>
+															<Run ws='en'>Some random scripture heading.</Run>
+														</Str>
+													</Contents>
+													<ParseIsCurrent val='False' />
+												<StTxtPara />
+											</ownseqatomic>
+										</Paragraphs>
+										<RightToLeft val='False' />
+										<Tags />
+									</StText>
+								</Heading>
+								<VerseRefEnd val='41004005' />
+								<VerseRefMax val='41004005' />
+								<VerseRefMin val='41003022' />
+								<VerseRefStart val='41003022' />
+							</ScrSection>
+							<ScrSection />
+							<ScrSection />
+						</ownseq>
 					</Sections>
-					<Title>
-						<objsur guid='4e9da30b-041c-4ce8-81ee-f5a5705794bb' t='o' />
-					</Title>
+					<Title />
 				</ScrBook>";
+			return xmlString;
+		}
+
+		[Test]
+		public void ScrBookFindName()
+		{
+			string source = GetScrBookXml();
 			const string predictedLabel = "Scripture Book Luke";
 			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
 			var root = GetNode(source);
@@ -328,6 +437,51 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Abbrev"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a footnote
+			input = root.ChildNodes[3].ChildNodes[0].ChildNodes[0]; // 1st footnote?
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Footnotes 1"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+		}
+
+		[Test]
+		public void ScrSectionFindName()
+		{
+			string source = GetScrBookXml();
+			const string predictedLabel = "Scripture Section Luke ";
+			const string sectionOneGuid = "guid=3713db10-ba05-4a42-9685-9fe4dbc2693d";
+			const string sectionTwoGuid = "guid=3770c19f-ae61-4364-be08-5e4bf62d861a";
+			const string sectionOneStTextGuid = "guid=9e0d0f62-1c3a-4dd5-a488-fdf93471137a";
+			var root = GetNode(source).ChildNodes[6].ChildNodes[0]; // <ownseq> of ScrSections
+			var input = root.ChildNodes[0]; // first ScrSection
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneGuid));
+
+			// Try a child node inside the ScrSection's Contents StText
+			input = input.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // Content's RightToLeft
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20 Content RightToLeft"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneStTextGuid));
+
+			// Try the second ScrSection
+			input = root.ChildNodes[1]; // 2nd one
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
+
+			// Try the Heading node in the second section
+			input = input.ChildNodes[1]; // Heading of 2nd section
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5 Heading"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 		}
 
 		[Test]

@@ -205,4 +205,17 @@
   <data name="kUnidentifiedLabel" xml:space="preserve">
 	<value>[unidentified]</value>
   </data>
+  <data name="kScrSectionClassLabel" xml:space="preserve">
+	<value>Scripture Section</value>
+  </data>
+  <data name="kScrSectionMultiChapter" xml:space="preserve">
+	<value>{0} {1}:{2}-{3}:{4}</value>
+	<comment>{1} is begin Chapter, {2} is begin Verse
+{3} is end Chapter, {4} is end Verse.</comment>
+  </data>
+  <data name="kScrSectionOneChapter" xml:space="preserve">
+	<value>{0} {1}:{2}-{3}</value>
+	<comment>{0} should be a ScrBook Name/Abbreviation
+{1} is Chapter and {2} is begin Verse, {3} is end Verse.</comment>
+  </data>
 </root>

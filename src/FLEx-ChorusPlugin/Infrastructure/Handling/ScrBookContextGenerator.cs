@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Globalization;
+using System.Xml;
 using System.Text;
 using FLEx_ChorusPlugin.Properties;
 

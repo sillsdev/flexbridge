@@ -200,6 +200,7 @@
 	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\ScrSectionContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\TextContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\WfiWordformContextGenerator.cs" />

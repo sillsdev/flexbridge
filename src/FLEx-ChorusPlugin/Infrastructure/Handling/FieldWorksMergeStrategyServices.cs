@@ -95,6 +95,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "ScrBook":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrBookContextGenerator()));
 						break;
+					case "ScrSection":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrSectionContextGenerator()));
+						break;
 					case "CmPossibilityList":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityListContextGenerator()));
 						break;

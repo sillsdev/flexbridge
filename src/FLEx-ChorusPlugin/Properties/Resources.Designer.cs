@@ -221,6 +221,33 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Scripture Section.
+		/// </summary>
+		internal static string kScrSectionClassLabel {
+			get {
+				return ResourceManager.GetString("kScrSectionClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {0} {1}:{2}-{3}:{4}.
+		/// </summary>
+		internal static string kScrSectionMultiChapter {
+			get {
+				return ResourceManager.GetString("kScrSectionMultiChapter", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {0} {1}:{2}-{3}.
+		/// </summary>
+		internal static string kScrSectionOneChapter {
+			get {
+				return ResourceManager.GetString("kScrSectionOneChapter", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {
