@@ -164,7 +164,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ancestor.Name.ToLowerInvariant() == SharedConstants.Ownseq)
 				{
 					// Instead of inserting the 'ownseq' literally, insert its index.
-					path = GetOwnSeqIndex(ancestor) + PathSep + path;
+					if (path == "")
+						path = GetOwnSeqIndex(ancestor);
+					else
+						path = GetOwnSeqIndex(ancestor) + PathSep + path;
 					continue;
 				}
 				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;

@@ -402,6 +402,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			string source = GetScrBookXml();
 			const string predictedLabel = "Scripture Book Luke";
 			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
+			const string footnoteGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
 			var input = root; // ScrBook
 			var generator = MakeGenerator();
@@ -443,7 +444,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Footnotes 1"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(footnoteGuid));
 		}
 
 		[Test]
