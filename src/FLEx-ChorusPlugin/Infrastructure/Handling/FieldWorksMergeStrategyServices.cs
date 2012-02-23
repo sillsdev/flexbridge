@@ -118,7 +118,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new DiscourseChartContextGenerator()));
 						break;
 					case "PhNCSegments":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new NaturalClassesContextGenerator()));
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation")));
+						break;
+					case "FsClosedFeature":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation")));
 						break;
 					default:
 						strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);

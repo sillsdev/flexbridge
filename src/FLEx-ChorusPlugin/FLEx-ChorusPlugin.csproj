@@ -144,6 +144,7 @@
 	<Compile Include="Controller\FwBridgeConflictController.cs" />
 	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\EnvironmentContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
@@ -166,7 +167,6 @@
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\NaturalClassesContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\PossibilityContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\PossibilityListContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
