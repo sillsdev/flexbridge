@@ -12,7 +12,7 @@
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
 
-  <Product Id="$(var.Property_ProductCode)" Name="FieldWorks Bridge" Language="1033"
+  <Product Id="$(var.Property_ProductCode)" Name="FLEx Bridge" Language="1033"
 			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
 			 UpgradeCode="$(var.Property_UpgradeCode)">
 
@@ -74,13 +74,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id="SILDIR" Name="SIL">
 		  <Directory Id="INSTALLDIR" Name="FieldWorks Bridge">
 
-		  <Component Id="FieldWorksBridge.exe" Guid="{3d9bf2df-4a25-11df-9879-0800200c9a66}">
-			<RegistryKey Id="keyFieldWorksBridge.exe" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\SIL\FieldWorksBridge\Components\FieldWorksBridge.exe">
+		  <Component Id="FLExBridge.exe" Guid="{3d9bf2df-4a25-11df-9879-0800200c9a66}">
+			<RegistryKey Id="keyFLExBridge.exe" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\SIL\FieldWorksBridge\Components\FLExBridge.exe">
 			  <RegistryValue Type ="string" Value =""  Action ="write" KeyPath ="yes"/>
 			</RegistryKey>
-			<File Id="FieldWorksBridge.exe" Name="FieldWorksBridge.exe"  Source="..\..\output\Release\FieldWorksBridge.exe" />
-			  <Shortcut Id="startmenuShortcut"  Directory="FieldWorksBridgeShortcutDir" Name="FieldWorks Bridge"
-			  WorkingDirectory="INSTALLDIR" Target="[!FieldWorksBridge.exe]"  Icon ="FieldWorksBridge.exe" />
+			<File Id="FLExBridge.exe" Name="FLExBridge.exe"  Source="..\..\output\Release\FLExBridge.exe" />
+			  <Shortcut Id="startmenuShortcut"  Directory="FLExBridgeShortcutDir" Name="FLEx Bridge"
+			  WorkingDirectory="INSTALLDIR" Target="[!FLExBridge.exe]"  Icon ="FLExBridge.exe" />
 		  </Component>
 
 			<Component Id="FLExChorusPlugin.dll" Guid="{c1ed6db1-e382-11de-8a39-0800200c9a66}">
@@ -122,7 +122,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
 
-	  <ComponentRef Id ="FieldWorksBridge.exe"/>
+	  <ComponentRef Id ="FLExBridge.exe"/>
 	  <ComponentRef Id ="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id ="removeShortcutDir"/>
 	  <ComponentRef Id ="Autofac.dll"/>
@@ -140,9 +140,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	</Feature>
 
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
-	<Icon Id="FieldWorksBridge.exe" SourceFile ="..\..\output\Release\FieldWorksBridge.exe" />
+	<Icon Id="FLExBridge.exe" SourceFile ="..\..\output\Release\FLExBridge.exe" />
 	<!-- what you see in add/remove programs control panel -->
-	<Property Id="ARPPRODUCTICON" Value="FieldWorks Bridge" />
+	<Property Id="ARPPRODUCTICON" Value="FLEx Bridge" />
 
 	<InstallExecuteSequence>
 	  <RemoveExistingProducts After="InstallInitialize" />

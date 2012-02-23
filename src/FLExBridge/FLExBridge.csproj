@@ -8,8 +8,8 @@
 	<ProjectGuid>{A40E1224-6159-4FE6-B78E-4094BD05DAF6}</ProjectGuid>
 	<OutputType>WinExe</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FieldWorksBridge</RootNamespace>
-	<AssemblyName>FieldWorksBridge</AssemblyName>
+	<RootNamespace>FLExBridge</RootNamespace>
+	<AssemblyName>FLExBridge</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<ApplicationIcon>chorus.ico</ApplicationIcon>
