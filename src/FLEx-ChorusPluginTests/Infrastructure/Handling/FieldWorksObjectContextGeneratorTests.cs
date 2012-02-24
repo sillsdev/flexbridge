@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
@@ -13,7 +9,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	[TestFixture]
 	public class FieldWorksObjectContextGeneratorTests
 	{
-
 		private static FieldWorkObjectContextGenerator MakeGenerator()
 		{
 			var result = new FieldWorkObjectContextGenerator();
@@ -21,10 +16,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			result.MergeStrategies = strategies;
 			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
 			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
-			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
-			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
-			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
-			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
 			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
@@ -33,6 +24,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
 			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
 			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("PhNCSegments", MakeClassStrategy(new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation"), strategies));
+			strategies.SetStrategy("FsClosedFeature", MakeClassStrategy(new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation"), strategies));
+			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
+			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
+			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
+			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
 			return result;
 		}
 
@@ -49,11 +46,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			descriptor.MergeStrategies = strategies;
 			return classStrat;
 		}
+
+		static XmlNode GetNode(string input)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(input);
+			return doc.DocumentElement;
+		}
+
 		[Test]
 		public void LexEntryPartsFindLexemeForm()
 		{
-			string source =
-				@"<LexEntry
+			const string source = @"<LexEntry
 					guid='01efa516-1749-4b60-b43d-00089269e7c5'>
 					<HomographNumber
 						val='0' />
@@ -104,46 +108,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 		}
 
-		private static FieldWorkObjectContextGenerator MakeGenerator()
-		{
-			var result = new FieldWorkObjectContextGenerator();
-			var strategies = new MergeStrategies();
-			result.MergeStrategies = strategies;
-			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
-			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
-			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("PhNCSegments", MakeClassStrategy(new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation"), strategies));
-			strategies.SetStrategy("FsClosedFeature", MakeClassStrategy(new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation"), strategies));
-
-			return result;
-		}
-
-		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
-
-		private static ElementStrategy MakeClassStrategy(FieldWorkObjectContextGenerator descriptor, MergeStrategies strategies)
-		{
-			var classStrat = new ElementStrategy(false)
-			{
-				MergePartnerFinder = GuidKey,
-				ContextDescriptorGenerator = descriptor,
-				IsAtomic = false
-			};
-			descriptor.MergeStrategies = strategies;
-			return classStrat;
-		}
-
 		[Test]
 		public void WfiWordformPartsFindForm()
 		{
-			string source =
-				@"<WfiWordform
+			const string source = @"<WfiWordform
 					guid='2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653'>
 					<Form>
 						<AUni
@@ -171,8 +139,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void TextFindName()
 		{
-			string source =
-				@"<Text
+			const string source = @"<Text
 					guid='e43b93a7-604e-4704-8118-d48999b330e3'>
 					<Contents>
 						<StText	guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
@@ -523,8 +490,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void PossibilityListPartsFindName()
 		{
-			string source =
-				@"	<CmPossibilityList
+			const string source = @"	<CmPossibilityList
 						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
 						<Abbreviation>
 							<AUni
@@ -578,8 +544,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void NaturalClassesPartsFindName()
 		{
-			string source =
-				@"	<ownseq
+			const string source = @"	<ownseq
 					class='PhNCSegments'
 					guid='085e32ec-eb5b-4eed-9dab-e55854ce88fb'>
 					<Abbreviation>
@@ -622,8 +587,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void PhonologicalFeaturesFindName()
 		{
-			string source =
-				@"	  <FsClosedFeature
+			const string source = @"	  <FsClosedFeature
 							guid='c70257a9-750b-4fc6-b68b-7194752c77cc'>
 				<Abbreviation>
 				  <AUni
@@ -728,8 +692,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void UnknownMultiStringPathOmitsObjectLevels()
 		{
-			string source =
-				@"<LexEntry
+			const string source = @"<LexEntry
 					guid='01efa516-1749-4b60-b43d-00089269e7c5'>
 					<HomographNumber
 						val='0' />
@@ -765,8 +728,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void UnknownMultiStringHandlesOwnSeq()
 		{
-			string source =
-				@"<LexEntry	guid='01efa516-1749-4b60-b43d-00089269e7c5'>
+			const string source = @"<LexEntry	guid='01efa516-1749-4b60-b43d-00089269e7c5'>
 					<HomographNumber
 						val='0' />
 					<SeqProp>
@@ -798,8 +760,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void TestFirstNonBlankChildsData()
 		{
-			string source =
-				@"	<ArbitraryLabel
+			const string source = @"	<ArbitraryLabel
 						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
 						<Name>
 							<AUni ws='fr'></AUni>
@@ -818,8 +779,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void PossibilityListPartsFindAbbreviationIfNoName()
 		{
-			string source =
-				@"	<CmPossibilityList
+			const string source = @"	<CmPossibilityList
 						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
 						<Abbreviation>
 							<AUni ws='fr'></AUni>
@@ -871,8 +831,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void PossibilityFindName()
 		{
-			string source =
-				@"	<CmPossibilityList
+			const string source = @"	<CmPossibilityList
 						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
 						<Abbreviation>
 							<AUni
@@ -923,13 +882,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
 		}
 
-		XmlNode GetNode(string input)
-		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(input);
-			return doc.DocumentElement;
-		}
-
 		/// <summary>
 		/// Make sure that GenerateContextDescriptor/PathToUserUnderstandableElement returns the guid of its parent,
 		/// even if it is under and Ownseq node.
@@ -937,8 +889,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void FindGuidOfParentOwnseq()
 		{
-			string source =
-				@"	<CmPossibilityList
+			const string source = @"	<CmPossibilityList
 						guid='1ee09905-63dd-4c7a-a9bd-1d496743ccd6'>
 						<Name>
 							<AUni
@@ -1008,8 +959,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void SubPossibilityFindName()
 		{
-			string source =
-				@"<CmPossibilityList
+			const string source = @"<CmPossibilityList
 					guid='b0a1eb98-ea5e-11de-888e-0013722f8dec'>
 					<Abbreviation>
 					  <AUni
@@ -1083,8 +1033,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void EnvironmentsPartsFindEnvironment()
 		{
-			string source =
-@"<PhonologicalData>
+			const string source = @"<PhonologicalData>
 	<PhPhonData
 		guid='86980496-9fe8-428d-bd53-fa2e623fe1c0'>
 		<Environments>
@@ -1175,8 +1124,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void DiscoursePartsFindChart()
 		{
-			string source =
-@"<Discourse>
+			const string source = @"<Discourse>
 	<header>
 		<DsDiscourseData
 			guid='aae5a99c-2333-4d6f-934e-d2c059de249a'>
@@ -1520,6 +1468,5 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
 		}
-
 	}
 }
