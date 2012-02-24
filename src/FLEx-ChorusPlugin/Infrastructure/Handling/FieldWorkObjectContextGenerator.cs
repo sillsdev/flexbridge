@@ -266,11 +266,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
 		}
 
-		// Not used.
-		//public string HtmlContextStyles(XmlNode mergeElement)
-		//{
-		//    return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
-		//}
+		public string HtmlContextStyles(XmlNode mergeElement)
+		{
+			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
+		}
 
 		private static bool IsMultiStringChild(XmlNode mergeElement)
 		{

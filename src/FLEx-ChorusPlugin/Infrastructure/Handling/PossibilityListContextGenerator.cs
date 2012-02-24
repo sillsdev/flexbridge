@@ -15,10 +15,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var name = GetNameOrAbbreviation(list);
 			return ListLabel + " '" + name + "'";
 		}
-
-		string ListLabel
-		{
-			get { return Resources.kPossibilityListClassLabel; }
-		}
 	}
 }
