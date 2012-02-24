@@ -4,7 +4,7 @@
 	<ProductVersion>3.0</ProductVersion>
 	<ProjectGuid>{3d9bf2dd-4a25-11df-9879-0800200c9a66}</ProjectGuid>
 	<SchemaVersion>2.0</SchemaVersion>
-	<OutputName>FieldWorksBridgeInstaller</OutputName>
+	<OutputName>FLExBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
 	<WixToolPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3.5\bin\</WixToolPath>
 	<WixToolPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3.5\bin\</WixToolPath>

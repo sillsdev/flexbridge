@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -16,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		string EntryLabel
 		{
-			get { return "Entry"; } // Todo: internationalize
+			get { return Resources.kLexEntryClassLabel; }
 		}
 
 		private string GetLabelForEntry(XmlNode entry)

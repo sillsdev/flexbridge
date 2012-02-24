@@ -21,7 +21,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Constructor that makes a standard controller.
 		/// </summary>
 		internal FwBridgeController()
-			: this(new FieldWorksBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
+			: this(new FLExBridge(), new FwBridgeView(), new RegularUserProjectPathLocator(), new SynchronizeProject())
 		{ }
 
 		private FwBridgeController(Form fieldWorksBridge, IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
@@ -51,7 +51,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// For testing only.
 		/// </summary>
 		internal FwBridgeController(IFwBridgeView mockedTestView, IProjectPathLocator mockedLocator, ISynchronizeProject mockedProjectSynchronizer)
-			: this(new FieldWorksBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer)
+			: this(new FLExBridge(), mockedTestView, mockedLocator, mockedProjectSynchronizer)
 		{ }
 
 		private void SetSystem(ChorusSystem system)

@@ -86,6 +86,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "WfiWordform":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new WfiWordformContextGenerator()));
 						break;
+					case "Text":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new TextContextGenerator()));
+						break;
+					case "RnGenericRec":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new RnGenericRecContextGenerator()));
+						break;
+					case "ScrBook":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrBookContextGenerator()));
+						break;
+					case "ScrSection":
+						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrSectionContextGenerator()));
+						break;
 					case "CmPossibilityList":
 						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityListContextGenerator()));
 						break;

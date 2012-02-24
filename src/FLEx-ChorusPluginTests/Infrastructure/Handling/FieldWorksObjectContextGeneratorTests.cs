@@ -13,6 +13,42 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	[TestFixture]
 	public class FieldWorksObjectContextGeneratorTests
 	{
+
+		private static FieldWorkObjectContextGenerator MakeGenerator()
+		{
+			var result = new FieldWorkObjectContextGenerator();
+			var strategies = new MergeStrategies();
+			result.MergeStrategies = strategies;
+			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
+			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
+			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
+			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
+			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
+			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
+			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
+			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
+			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
+			return result;
+		}
+
+		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
+
+		private static ElementStrategy MakeClassStrategy(FieldWorkObjectContextGenerator descriptor, MergeStrategies strategies)
+		{
+			var classStrat = new ElementStrategy(false)
+			{
+				MergePartnerFinder = GuidKey,
+				ContextDescriptorGenerator = descriptor,
+				IsAtomic = false
+			};
+			descriptor.MergeStrategies = strategies;
+			return classStrat;
+		}
 		[Test]
 		public void LexEntryPartsFindLexemeForm()
 		{
@@ -43,7 +79,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm"));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label="+ descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 
 			// Try a node that is not part of the LexemeForm.
@@ -130,6 +166,358 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord SpellingStatus"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
+		}
+
+		[Test]
+		public void TextFindName()
+		{
+			string source =
+				@"<Text
+					guid='e43b93a7-604e-4704-8118-d48999b330e3'>
+					<Contents>
+						<StText	guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
+							<DateModified val='2011-2-3 19:24:58.556' />
+							<Paragraphs>
+								<ownseqatomic>
+									<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
+										<Contents>
+											<Str>
+												<Run ws='en'>Some random paragraph text.</Run>
+											</Str>
+										</Contents>
+										<ParseIsCurrent val='False' />
+									<StTxtPara />
+								</ownseqatomic>
+							</Paragraphs>
+						</StText>
+					</Contents>
+					<IsTranslated val='False' />
+					<Name>
+						<AUni ws='en'>myEngName</AUni>
+						<AUni ws='fr'>monNom</AUni>
+					</Name>
+				</Text>";
+			const string predictedLabel = "Text myEngName monNom";
+			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
+			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
+			var root = GetNode(source);
+			var input = root; // Text (CmMajorObject)
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try a child node that isn't a part of the Text's name
+			input = root.ChildNodes[1]; // IsTranslated
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " IsTranslated"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try a child node that owns the StText
+			input = root.ChildNodes[0]; // Contents
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Contents"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try deeper down in the StText
+			input = input.ChildNodes[0].ChildNodes[0]; // Date Modified
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Contents DateModified"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(stTextGuid)); // I hope this is right!
+
+			// Try the Name child node
+			input = root.ChildNodes[2]; // Name
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Name"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+
+			// Try deeper down
+			input = root.ChildNodes[2].ChildNodes[0]; // don't want to display AUni
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Name"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(textGuid));
+		}
+
+		[Test]
+		public void DataNotebookGenRecFindName()
+		{
+			const string source =
+				@"<RnGenericRec guid='175a2230-0302-4307-8bf4-f3dad9c19710'>
+					<Conclusions>
+						<StText>
+							guid='c5df83ed-1037-438a-a23a-d095cc4bd9c9'>
+							<DateModified val='2011-2-3 19:24:58.556' />
+							<Paragraphs>
+								<ownseqatomic>
+									<StTxtPara guid='ef6c8862-5895-4068-a2ab-f9d42022cf82' />
+										<Contents>
+											<Str>
+												<Run ws='en'>Some random conclusion.</Run>
+											</Str>
+										</Contents>
+										<ParseIsCurrent val='False' />
+									<StTxtPara />
+								</ownseqatomic>
+							</Paragraphs>
+						</StText>
+					</Conclusions>
+					<DateCreated val='2007-5-25 18:44:50.767' />
+					<DateModified val='2007-5-25 18:46:0.0' />
+					<Discussion>
+					</Discussion>
+					<ExternalMaterials>
+					</ExternalMaterials>
+					<FurtherQuestions>
+					</FurtherQuestions>
+					<Hypothesis>
+					</Hypothesis>
+					<Researchers>
+					</Researchers>
+					<ResearchPlan>
+					</ResearchPlan>
+					<Title>
+						<Str>
+							<Run ws='en'>Some name</Run>
+						</Str>
+					</Title>
+					<Type />
+				</RnGenericRec>";
+			const string predictedLabel = "Data Notebook Record Some name";
+			const string recordGuid = "guid=175a2230-0302-4307-8bf4-f3dad9c19710";
+			var root = GetNode(source);
+			var input = root; // RnGenericRec
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
+
+			// Try a child node that isn't a part of the record's Title
+			input = root.ChildNodes[0]; // Conclusions
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Conclusions"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
+
+			// Try the Title node
+			input = root.ChildNodes[9]; // Title
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
+
+			// Try a bit deeper
+			input = input.ChildNodes[0]; // Don't want Str node to show in label
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(recordGuid));
+		}
+
+		private static string GetScrBookXml()
+		{
+			const string xmlString =
+				@"<ScrBook guid='0e876238-341a-4e56-9db5-ed73b05cb8f5'>
+					<Abbrev>
+						<AUni ws='en'>Luk</AUni>
+						<AUni ws='es'>Lc</AUni>
+					</Abbrev>
+					<BookId>
+						<objsur guid='4fbe9226-30ab-44a1-9643-a7072d11f9ff' t='r' />
+					</BookId>
+					<CanonicalNum val='42' />
+					<Footnotes>
+						<ownseq>
+							<ScrFootnote guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
+								<DateModified val='2011-2-3 19:24:58.556' />
+								<Paragraphs>
+									<ownseqatomic>
+										<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
+											<Contents>
+												<Str>
+													<Run ws='en'>Some random footnote.</Run>
+												</Str>
+											</Contents>
+											<ParseIsCurrent val='False' />
+										<StTxtPara />
+									</ownseqatomic>
+								</Paragraphs>
+								<FootnoteMarker>
+									<Str>
+										<Run namedStyle='Note Marker' ws='en'>a</Run>
+									</Str>
+								</FootnoteMarker>
+							</ScrFootnote>
+							<ScrFootnote />
+							<ScrFootnote />
+							<ScrFootnote />
+						</ownseq>
+					</Footnotes>
+					<IdText>
+						<Uni>Commence avec l'histoire de Noel</Uni>
+					</IdText>
+					<Name>
+						<AUni ws='en'>Luke</AUni>
+						<AUni ws='es'>Lucas</AUni>
+					</Name>
+					<Sections>
+						<ownseq>
+							<ScrSection guid='3713db10-ba05-4a42-9685-9fe4dbc2693d'>
+								<Content>
+									<StText guid='9e0d0f62-1c3a-4dd5-a488-fdf93471137a'>
+										<DateModified val='2011-2-3 19:24:58.556' />
+										<Paragraphs>
+											<ownseqatomic>
+												<StTxtPara guid='43a529b9-6fed-430b-b571-26df25dff03c' />
+													<Contents>
+														<Str>
+															<Run ws='en'>Some random scripture.</Run>
+														</Str>
+													</Contents>
+													<ParseIsCurrent val='False' />
+												<StTxtPara />
+											</ownseqatomic>
+										</Paragraphs>
+										<RightToLeft val='False' />
+										<Tags />
+									</StText>
+								</Content>
+								<Heading>
+								</Heading>
+								<VerseRefEnd val='41003020' />
+								<VerseRefMax val='41003020' />
+								<VerseRefMin val='41003001' />
+								<VerseRefStart val='41003001' />
+							</ScrSection>
+							<ScrSection guid='3770c19f-ae61-4364-be08-5e4bf62d861a'>
+								<Content>
+								</Content>
+								<Heading>
+									<StText guid='e0eec438-8a60-4586-a73e-6dfd5089becc'>
+										<DateModified val='2011-2-3 19:24:58.556' />
+										<Paragraphs>
+											<ownseqatomic>
+												<StTxtPara guid='c83379ed-1043-4bd4-b9c1-b159c47025cf' />
+													<Contents>
+														<Str>
+															<Run ws='en'>Some random scripture heading.</Run>
+														</Str>
+													</Contents>
+													<ParseIsCurrent val='False' />
+												<StTxtPara />
+											</ownseqatomic>
+										</Paragraphs>
+										<RightToLeft val='False' />
+										<Tags />
+									</StText>
+								</Heading>
+								<VerseRefEnd val='41004005' />
+								<VerseRefMax val='41004005' />
+								<VerseRefMin val='41003022' />
+								<VerseRefStart val='41003022' />
+							</ScrSection>
+							<ScrSection />
+							<ScrSection />
+						</ownseq>
+					</Sections>
+					<Title />
+				</ScrBook>";
+			return xmlString;
+		}
+
+		[Test]
+		public void ScrBookFindName()
+		{
+			string source = GetScrBookXml();
+			const string predictedLabel = "Scripture Book Luke";
+			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
+			const string footnoteGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
+			var root = GetNode(source);
+			var input = root; // ScrBook
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a child node that isn't a part of the ScrBook's name
+			input = root.ChildNodes[2]; // CanonicalNum
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " CanonicalNum"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a child node that owns the StText
+			input = root.ChildNodes[7]; // Title
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Title"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try the Name child node
+			input = root.ChildNodes[0]; // Abbreviation
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Abbrev"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try deeper down
+			input = root.ChildNodes[0].ChildNodes[0]; // don't want to display AUni
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Abbrev"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(bookGuid));
+
+			// Try a footnote
+			input = root.ChildNodes[3].ChildNodes[0].ChildNodes[0]; // 1st footnote?
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + " Footnotes 1"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(footnoteGuid));
+		}
+
+		[Test]
+		public void ScrSectionFindName()
+		{
+			string source = GetScrBookXml();
+			const string predictedLabel = "Scripture Section Luke ";
+			const string sectionOneGuid = "guid=3713db10-ba05-4a42-9685-9fe4dbc2693d";
+			const string sectionTwoGuid = "guid=3770c19f-ae61-4364-be08-5e4bf62d861a";
+			const string sectionOneStTextGuid = "guid=9e0d0f62-1c3a-4dd5-a488-fdf93471137a";
+			var root = GetNode(source).ChildNodes[6].ChildNodes[0]; // <ownseq> of ScrSections
+			var input = root.ChildNodes[0]; // first ScrSection
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneGuid));
+
+			// Try a child node inside the ScrSection's Contents StText
+			input = input.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // Content's RightToLeft
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20 Content RightToLeft"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneStTextGuid));
+
+			// Try the second ScrSection
+			input = root.ChildNodes[1]; // 2nd one
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
+
+			// Try the Heading node in the second section
+			input = input.ChildNodes[1]; // Heading of 2nd section
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5 Heading"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 		}
 
 		[Test]

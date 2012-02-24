@@ -169,6 +169,8 @@
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\PossibilityContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\PossibilityListContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\RnGenericRecContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\ScrBookContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
@@ -199,6 +201,8 @@
 	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\ScrSectionContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\TextContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\WfiWordformContextGenerator.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
@@ -234,11 +238,11 @@
 	<Compile Include="View\ExistingSystemView.designer.cs">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\FieldWorksBridge.cs">
+	<Compile Include="View\FLExBridge.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="View\FieldWorksBridge.Designer.cs">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
+	<Compile Include="View\FLExBridge.Designer.cs">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\FwBridgeConflictView.cs">
 	  <SubType>Form</SubType>
@@ -296,8 +300,8 @@
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="View\FieldWorksBridge.resx">
-	  <DependentUpon>FieldWorksBridge.cs</DependentUpon>
+	<EmbeddedResource Include="View\FLExBridge.resx">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\FwBridgeConflictView.resx">
