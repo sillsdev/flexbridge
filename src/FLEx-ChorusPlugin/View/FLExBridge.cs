@@ -2,9 +2,9 @@
 
 namespace FLEx_ChorusPlugin.View
 {
-	internal sealed partial class FieldWorksBridge : Form
+	internal sealed partial class FLExBridge : Form
 	{
-		internal FieldWorksBridge()
+		internal FLExBridge()
 		{
 			InitializeComponent();
 		}

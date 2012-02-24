@@ -95,11 +95,11 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to FieldWorks Bridge.
+		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
-		internal static string kFieldWorksBridge {
+		internal static string kFLExBridge {
 			get {
-				return ResourceManager.GetString("kFieldWorksBridge", resourceCulture);
+				return ResourceManager.GetString("kFLExBridge", resourceCulture);
 			}
 		}
 
@@ -109,6 +109,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string kFwDataFileFilter {
 			get {
 				return ResourceManager.GetString("kFwDataFileFilter", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Entry.
+		/// </summary>
+		internal static string kLexEntryClassLabel {
+			get {
+				return ResourceManager.GetString("kLexEntryClassLabel", resourceCulture);
 			}
 		}
 
@@ -176,6 +185,69 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Item.
+		/// </summary>
+		internal static string kPossibilityItemLabel {
+			get {
+				return ResourceManager.GetString("kPossibilityItemLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to List.
+		/// </summary>
+		internal static string kPossibilityListClassLabel {
+			get {
+				return ResourceManager.GetString("kPossibilityListClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Data Notebook Record.
+		/// </summary>
+		internal static string kRnGenericRecLabel {
+			get {
+				return ResourceManager.GetString("kRnGenericRecLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Scripture Book.
+		/// </summary>
+		internal static string kScrBookClassLabel {
+			get {
+				return ResourceManager.GetString("kScrBookClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Scripture Section.
+		/// </summary>
+		internal static string kScrSectionClassLabel {
+			get {
+				return ResourceManager.GetString("kScrSectionClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {0} {1}:{2}-{3}:{4}.
+		/// </summary>
+		internal static string kScrSectionMultiChapter {
+			get {
+				return ResourceManager.GetString("kScrSectionMultiChapter", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {0} {1}:{2}-{3}.
+		/// </summary>
+		internal static string kScrSectionOneChapter {
+			get {
+				return ResourceManager.GetString("kScrSectionOneChapter", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {
@@ -226,6 +298,33 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string ksTargetDirectoryExistsTitle {
 			get {
 				return ResourceManager.GetString("ksTargetDirectoryExistsTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Text.
+		/// </summary>
+		internal static string kTextClassLabel {
+			get {
+				return ResourceManager.GetString("kTextClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to [unidentified].
+		/// </summary>
+		internal static string kUnidentifiedLabel {
+			get {
+				return ResourceManager.GetString("kUnidentifiedLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Wordform.
+		/// </summary>
+		internal static string kWfiWordFormClassLabel {
+			get {
+				return ResourceManager.GetString("kWfiWordFormClassLabel", resourceCulture);
 			}
 		}
 

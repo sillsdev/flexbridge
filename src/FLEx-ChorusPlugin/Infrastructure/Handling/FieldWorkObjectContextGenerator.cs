@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -75,7 +76,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static string GetGuid(XmlNode element)
 		{
 			var elt = element;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null)
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
+				   && elt.Name != SharedConstants.Ownseq)
 				elt = elt.ParentNode;
 			return elt.Attributes[SharedConstants.GuidStr] == null
 				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
@@ -118,7 +120,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return result;
 		}
 
-		internal const string ListLabel = "List";  // Todo: internationalize
+		internal string ListLabel
+		{
+			get { return Resources.kPossibilityListClassLabel; }
+		}
 
 		/// <summary>
 		/// Get the node that we will basically generate the contents of for the given start node
@@ -128,9 +133,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <returns></returns>
 		private XmlNode GetTargetNode(XmlNode start)
 		{
-			if (IsMultiStringChild(start))
+			if (IsMultiStringChild(start) || IsMultiRunStringChild(start))
 				return start.ParentNode;
 			return start; // Enhance JohnT: may eventually be other exceptions.
+		}
+
+		private static bool IsMultiRunStringChild(XmlNode start)
+		{
+			return start.Name.ToLowerInvariant() == "str";
 		}
 
 		// If the start node is a child of current, generate a path from current to start, with a leading space.
@@ -154,7 +164,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (ancestor.Name.ToLowerInvariant() == SharedConstants.Ownseq)
 				{
 					// Instead of inserting the 'ownseq' literally, insert its index.
-					path = GetOwnSeqIndex(ancestor) + PathSep + path;
+					if (path == "")
+						path = GetOwnSeqIndex(ancestor);
+					else
+						path = GetOwnSeqIndex(ancestor) + PathSep + path;
 					continue;
 				}
 				// Ancestors with guids correspond to CmObjects. The user tends to be unaware of this level;
@@ -169,7 +182,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return path;
 		}
 
-		internal const string UnidentifiableLabel = "[unidentified]"; // Todo: internationalize
+		internal string UnidentifiableLabel = Resources.kUnidentifiedLabel;
 
 
 		/// <summary>

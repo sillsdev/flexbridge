@@ -35,6 +35,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: InternalsVisibleTo("FieldWorksBridge")]
+[assembly: InternalsVisibleTo("FLExBridge")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("FwdataTestApp")]

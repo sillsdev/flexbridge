@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using System.Threading;
 
-namespace FieldWorksBridge
+namespace FLExBridge
 {
 	/// <summary>
 	/// This class encapsulates the code related to service communication with FLEx.
