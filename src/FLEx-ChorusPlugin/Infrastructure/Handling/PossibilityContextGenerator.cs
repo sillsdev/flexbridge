@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		string ListItemLabel
 		{
-			get { return "Item"; } // Todo: internationalize
+			get { return Resources.kPossibilityItemLabel; }
 		}
 
 		private string GetLabelForPossibilityItem(XmlNode possibility)

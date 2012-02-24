@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -20,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		string WordformLabel
 		{
-			get { return "Wordform"; } // Todo: internationalize
+			get { return Resources.kWfiWordFormClassLabel; }
 		}
 
 		private string GetLabelForWordform(XmlNode wordform)

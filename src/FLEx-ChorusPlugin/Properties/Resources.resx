@@ -169,16 +169,53 @@
   <data name="ksFindProjectDirectory" xml:space="preserve">
 	<value>Select the folder of the project that you want to obtain.</value>
   </data>
+  <data name="ObtainProjectController_ObtainProjectController_Receive_project" xml:space="preserve">
+	<value>Receive project</value>
+  </data>
+  <data name="ObtainProjectView_DialogTitle" xml:space="preserve">
+	<value>Receive project</value>
+  </data>
+  <data name="kLexEntryClassLabel" xml:space="preserve">
+	<value>Entry</value>
+  </data>
+  <data name="kPossibilityItemLabel" xml:space="preserve">
+	<value>Item</value>
+  </data>
+  <data name="kPossibilityListClassLabel" xml:space="preserve">
+	<value>List</value>
+  </data>
   <data name="ksNoFilePath" xml:space="preserve">
 	<value>No file path provided. This is a program error.</value>
   </data>
   <data name="ksPathProblem" xml:space="preserve">
 	<value>Path Problem</value>
   </data>
-  <data name="ObtainProjectController_ObtainProjectController_Receive_project" xml:space="preserve">
-	<value>Receive project</value>
+  <data name="kTextClassLabel" xml:space="preserve">
+	<value>Text</value>
   </data>
-  <data name="ObtainProjectView_DialogTitle" xml:space="preserve">
-	<value>Receive project</value>
+  <data name="kWfiWordFormClassLabel" xml:space="preserve">
+	<value>Wordform</value>
+  </data>
+  <data name="kRnGenericRecLabel" xml:space="preserve">
+	<value>Data Notebook Record</value>
+  </data>
+  <data name="kScrBookClassLabel" xml:space="preserve">
+	<value>Scripture Book</value>
+  </data>
+  <data name="kUnidentifiedLabel" xml:space="preserve">
+	<value>[unidentified]</value>
+  </data>
+  <data name="kScrSectionClassLabel" xml:space="preserve">
+	<value>Scripture Section</value>
+  </data>
+  <data name="kScrSectionMultiChapter" xml:space="preserve">
+	<value>{0} {1}:{2}-{3}:{4}</value>
+	<comment>{1} is begin Chapter, {2} is begin Verse
+{3} is end Chapter, {4} is end Verse.</comment>
+  </data>
+  <data name="kScrSectionOneChapter" xml:space="preserve">
+	<value>{0} {1}:{2}-{3}</value>
+	<comment>{0} should be a ScrBook Name/Abbreviation
+{1} is Chapter and {2} is begin Verse, {3} is end Verse.</comment>
   </data>
 </root>

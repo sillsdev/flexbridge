@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -13,11 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			var name = GetNameOrAbbreviation(list);
 			return ListLabel + " '" + name + "'";
-		}
-
-		string ListLabel
-		{
-			get { return "List"; } // Todo: internationalize
 		}
 	}
 }
