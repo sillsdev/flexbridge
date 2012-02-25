@@ -58,6 +58,8 @@ namespace FLEx_ChorusPluginTests
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
 			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
+			if (Directory.Exists(newDirName))
+				Directory.Delete(newDirName,true);
 			Directory.CreateDirectory(newDirName);
 			var replacement = Path.Combine(newDirName, filename);
 			File.Move(tempFileName, replacement);
