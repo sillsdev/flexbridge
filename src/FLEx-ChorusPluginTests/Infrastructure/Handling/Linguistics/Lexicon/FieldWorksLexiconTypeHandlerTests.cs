@@ -660,5 +660,186 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport1()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'/>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport2()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OldStuff</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']", @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OldStuff']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport3()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'></Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
 	}
 }
