@@ -234,7 +234,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// This is only good now for ref atomic.
 			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
 			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Objsur, false);
-			elementStrategy.AttributesToIgnoreForMerging.Add("t"); // What moron put this in there: SharedConstants.GuidStr? Must have been RBR. :-( It can easily change to some other referenced object.
+			elementStrategy.IsAtomic = true; // Testing to see if atomic here, or at the prop level is better, as per https://www.pivotaltracker.com/story/show/25402673
 
 			// Add element for SharedConstants.Refseq
 			elementStrategy = CreateStrategyForElementKeyedByGuidInList(); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.
