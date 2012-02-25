@@ -47,12 +47,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					label = GetLabel(element);
 					break;
 			}
+
 			// This seems to be the best we can do for now in regard to determining which application to launch.
 			// Eventually FieldWorks may be made smarter about determining it based on the object and its owners.
 			// However, that is difficult to do because various things (like putting up the splash screen)
 			// are done based on the indicated app before we even create a cache. It's helpful to do the best
 			// we can here even if FieldWorks ends up opening something else.
-			string appId = "FLEx";
+			var appId = "FLEx";
 			var directory = Path.GetDirectoryName(filePath);
 			var lastDirectory = Path.GetFileName(directory);
 			if (lastDirectory == "Scripture")
@@ -129,9 +130,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// Get the node that we will basically generate the contents of for the given start node
 		/// (The one we want a path to.)
 		/// </summary>
-		/// <param name="start"></param>
-		/// <returns></returns>
-		private XmlNode GetTargetNode(XmlNode start)
+		private static XmlNode GetTargetNode(XmlNode start)
 		{
 			if (IsMultiStringChild(start) || IsMultiRunStringChild(start))
 				return start.ParentNode;
@@ -233,9 +232,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// We have to implement IGenerateContextDescriptor, since that is the definining interface for a ContextGenerator.
 		/// However, since we also implement IGenerateContextDescriptorFromNode, this method should never be called.
 		/// </summary>
-		/// <param name="mergeElement"></param>
-		/// <param name="filePath"></param>
-		/// <returns></returns>
 		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			throw new NotImplementedException();
@@ -252,8 +248,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		/// <param name="mergeElement"></param>
-		/// <returns></returns>
 		public string HtmlContext(XmlNode mergeElement)
 		{
 			// I expect the following code will eventually just be a default, if we can't match something better.
