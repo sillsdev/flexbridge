@@ -67,22 +67,19 @@
   </PropertyGroup>
   <ItemGroup>
 	<Compile Include="Installer.wxs" />
-	<Compile Include="..\..\output\Installer\GeneratedDistFiles.wxs" />
-	<Compile Include="..\..\output\Installer\GeneratedMercurialFiles.wxs" />
-	<Compile Include="..\..\output\Installer\GeneratedMercurialExtensionsFiles.wxs" />
+	<Compile Include="GeneratedDistFiles.wxs" />
+	<Compile Include="GeneratedMercurialFiles.wxs" />
+	<Compile Include="GeneratedMercurialExtensionsFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
 	<WixExtension Include="WixUtilExtension">
-	  <HintPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3\bin\WixUtilExtension.dll</HintPath>
-	  <HintPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3\bin\WixUtilExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixUtilExtension.dll</HintPath>
 	</WixExtension>
 	<WixExtension Include="WixUIExtension">
-	  <HintPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3\bin\WixUIExtension.dll</HintPath>
-	  <HintPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3\bin\WixUIExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixUIExtension.dll</HintPath>
 	</WixExtension>
 	<WixExtension Include="WixNetFxExtension">
-	  <HintPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3\bin\WixNetFxExtension.dll</HintPath>
-	  <HintPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3\bin\WixNetFxExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixNetFxExtension.dll</HintPath>
 	</WixExtension>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets" />
