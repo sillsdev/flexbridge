@@ -2,7 +2,7 @@
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Integration

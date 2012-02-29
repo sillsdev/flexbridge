@@ -6,8 +6,8 @@ using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
-using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Properties;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 

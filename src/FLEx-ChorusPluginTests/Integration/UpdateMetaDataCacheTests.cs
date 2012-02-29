@@ -2,7 +2,7 @@
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using FLEx_ChorusPlugin.Infrastructure;

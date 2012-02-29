@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
