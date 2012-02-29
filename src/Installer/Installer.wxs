@@ -63,7 +63,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<Directory Id="SILDIR" Name="SIL">
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
-			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66}">
+			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
 			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7\InstallationDir\">
 				<RegistryValue Type="string" Value="[INSTALLDIR]" Action="write" KeyPath="yes"/>
 			  </RegistryKey>
