@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
@@ -24,6 +25,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private const string Binary = "Binary";
 		private const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
 
+		internal static XmlMerger CreateXmlMergerForFieldWorksData(MergeSituation mergeSituation, MetadataCache mdc)
+		{
+			var merger = new XmlMerger(mergeSituation);
+			BootstrapSystem(mdc, merger);
+			return merger;
+		}
+
 		/// <summary>
 		/// Bootstrap a merger for the new-styled (nested) files.
 		/// </summary>
@@ -32,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// 2. All classes  will be included.
 		/// 3. Merge strategies for class properties (regular or custom) will have keys of "classname+propname" to make them unique, system-wide.
 		/// </remarks>
-		internal static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
+		private static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
 		{
 			merger.MergeStrategies.KeyFinder = new FieldWorksKeyFinder();
 
@@ -145,9 +153,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var propStrategy = isCustom
 										? CreateStrategyForKeyedElement(SharedConstants.Name, false)
 										: CreateSingletonElementStrategy();
-					if (propertyInfo.DataType == DataType.Time)
+					switch (propertyInfo.DataType)
 					{
-						propStrategy.IsImmutable = true; // Immutable, because we have pre-merged them to be so.
+						//default:
+						//	break;
+						// Not for DataType.TextPropBinary (yet anyway), becasue its contained <Prop> element is atomic.
+						case DataType.Binary:
+							propStrategy.IsAtomic = true;
+							break;
+						case DataType.Time:
+							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
+							break;
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}

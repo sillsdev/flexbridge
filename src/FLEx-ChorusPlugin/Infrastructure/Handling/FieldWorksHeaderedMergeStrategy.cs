@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		internal FieldWorksHeaderedMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
-			_merger = new XmlMerger(mergeSituation);
-			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeSituation, mdc);
 		}
 
 		#region Implementation of IMergeStrategy
