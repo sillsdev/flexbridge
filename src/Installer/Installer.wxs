@@ -64,11 +64,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id="SILDIR" Name="SIL">
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
 			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
-			  <RegistryValue Id="RegInstallationDir" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]\7\" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
 			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Release\FLExBridge.exe"/>
 			  <Shortcut Id="desktopFLExBridgeShortcut" Directory="DesktopFolder" Name="FLEx Bridge" WorkingDirectory="INSTALLDIR" Target="[!FLExBridge.exe]" Icon="FLExBridge.ico"/>
 			  <RemoveFolder Id="DesktopFolder" On="uninstall"/>
 			  <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
+			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7">
+				<RegistryValue Id="FLExBridgeInstallationDir" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
+			  </RegistryKey>
 			</Component>
 			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExBridge.pdb" Name="FLEx-FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
@@ -131,6 +135,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
 	  <ComponentRef Id="ApplicationShortcut"/>
+	  <ComponentRef Id="RegInstallationDir"/>
 	  <ComponentRef Id="Autofac.dll"/>
 	  <ComponentRef Id="LibChorus.dll"/>
 	  <ComponentRef Id="LibChorus.pdb"/>
