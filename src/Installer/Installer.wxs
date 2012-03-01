@@ -64,12 +64,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id="SILDIR" Name="SIL">
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
 			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
-			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7\InstallationDir\">
-				<RegistryValue Type="string" Value="[INSTALLDIR]" Action="write" KeyPath="yes"/>
+			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7\InstallationDir">
+				<RegistryValue Type="string" Value="[INSTALLDIR]" Action="write"/>
 			  </RegistryKey>
 			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Release\FLExBridge.exe"/>
 			  <Shortcut Id="desktopFLExBridgeShortcut" Directory="DesktopFolder" Name="FLEx Bridge"
-				WorkingDirectory='INSTALLDIR' Target="[!FLExBridge.exe]" Icon="FLExBridge.exe" />
+				WorkingDirectory='INSTALLDIR' Target="[!FLExBridge.exe]" Icon="FLExBridge.ico"/>
+				<RemoveFolder Id="DesktopFolder" On="uninstall"/>
+				<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 			</Component>
 			<Component Id="FLExChorusPlugin.dll" Guid="C1ED6DB1-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
@@ -100,12 +102,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  </Directory>
 
 	  <Directory Id="ProgramMenuFolder" Name="Programs">
+		<Directory Id="DesktopFolder"  SourceName="Desktop"/>
 		<Directory Id="FLExBridgeShortcutDir" Name="FLEx Bridge">
-		  Name="[ProductName]" Description="Stand-alone access to [ProductName]."
 		  <Component Id="ApplicationShortcut" Guid="3D9BF2DE-4A25-11DF-9879-0800200C9A66">
-			<Shortcut Id="startmenuShortcut" Name="[ProductName]" Target="[!FLExBridge.exe]" WorkingDirectory="INSTALLDIR" Icon="FLExBridge.exe" />
+			<Shortcut Id="startmenuShortcut" Name="[ProductName]" Target="[!FLExBridge.exe]" WorkingDirectory="INSTALLDIR" Icon="FLExBridge.ico" />
 			<RemoveFolder Id="FLExBridgeShortcutDir" On="uninstall"/>
-			<RegistryValue Root="HKLM" Key="Software\[Manufacturer]\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 		  </Component>
 		</Directory>
 	  </Directory>
@@ -114,7 +116,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
 	  <ComponentRef Id="FLExBridge.exe"/>
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
-	  <ComponentRef Id="removeShortcutDir"/>
+	  <ComponentRef Id="ApplicationShortcut"/>
 	  <ComponentRef Id="Autofac.dll"/>
 	  <ComponentRef Id="LibChorus.dll"/>
 	  <ComponentRef Id="Chorus.exe"/>
