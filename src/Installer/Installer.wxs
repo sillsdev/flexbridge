@@ -73,8 +73,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 				<RemoveFolder Id="DesktopFolder" On="uninstall"/>
 				<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 			</Component>
+			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
+			  <File Id="FLExBridge.pdb" Name="FLEx-FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
+			</Component>
 			<Component Id="FLExChorusPlugin.dll" Guid="C1ED6DB1-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
+			</Component>
+			<Component Id="FLExChorusPlugin.pdb" Guid="C1EDBBD3-E382-11DE-8A39-0800200C9A66">
+			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="Autofac.dll" Guid="3D9BF2E0-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
@@ -82,11 +88,20 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="Chorus.exe" Guid="3D9BF2E3-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Release\Chorus.exe"/>
 			</Component>
+			<Component Id="Chorus.pdb" Guid="C1EDBBD4-E382-11DE-8A39-0800200C9A66">
+			  <File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
+			</Component>
 			<Component Id="ChorusMerge.exe" Guid="3D9BF2E1-4A25-11DF-9879-0800200C9A66">
 			  <File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe"/>
 			</Component>
+			<Component Id="ChorusMerge.pdb" Guid="C1EDBBD5-E382-11DE-8A39-0800200C9A66">
+			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
+			</Component>
 			<Component Id="LibChorus.dll" Guid="3D9BF2E2-4A25-11DF-9879-0800200C9A66">
 			  <File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Release\LibChorus.dll"/>
+			</Component>
+			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
+			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
 			<Component Id="Palaso.dll" Guid="3D9BF2E4-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.dll"/>
