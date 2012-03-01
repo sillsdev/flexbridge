@@ -60,6 +60,8 @@
 	  TargetDirectory="$(RootDir)\output\Common"/>
 	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip"
 	  TargetDirectory="$(RootDir)\output\$(Configuration)"/>
+	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip"
+	  TargetDirectory="$(RootDir)"/>
 
 	<Unzip ZipFileName="$(RootDir)\lib\net2.0\MercurialExtensions.zip"
 	  TargetDirectory="$(RootDir)\output\Common"/>
