@@ -105,7 +105,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id="DesktopFolder"  SourceName="Desktop"/>
 		<Directory Id="FLExBridgeShortcutDir" Name="FLEx Bridge">
 		  <Component Id="ApplicationShortcut" Guid="3D9BF2DE-4A25-11DF-9879-0800200C9A66">
-			<Shortcut Id="startmenuShortcut" Name="[ProductName]" Target="[!FLExBridge.exe]" WorkingDirectory="INSTALLDIR" Icon="FLExBridge.ico" />
+			<Shortcut Id="startmenuShortcut" Name="FLEx Bridge" Target="[!FLExBridge.exe]" WorkingDirectory="INSTALLDIR" Icon="FLExBridge.ico" />
 			<RemoveFolder Id="FLExBridgeShortcutDir" On="uninstall"/>
 			<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 		  </Component>
