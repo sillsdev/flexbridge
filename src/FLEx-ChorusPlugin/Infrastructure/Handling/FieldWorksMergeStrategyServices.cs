@@ -158,6 +158,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						//default:
 						//	break;
 						// Not for DataType.TextPropBinary (yet anyway), becasue its contained <Prop> element is atomic.
+							case DataType.GenDate:
+							if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+								propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+							break;
 						case DataType.Binary:
 							propStrategy.IsAtomic = true;
 							break;

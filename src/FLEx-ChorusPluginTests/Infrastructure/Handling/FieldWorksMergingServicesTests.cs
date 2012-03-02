@@ -42,7 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 
 			// oldie should have two new child elements in ours and theirs, and in the right order.
 			Assert.IsTrue(ourNode.HasChildNodes);
@@ -91,7 +91,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
@@ -127,7 +127,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 
 			Assert.IsTrue(ourNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("2002-1-1 23:59:59.000"));
@@ -159,7 +159,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 			Assert.IsTrue(ancestorNode.InnerXml.Contains("True"));
 			Assert.IsTrue(ourNode.InnerXml.Contains("False"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("False"));
@@ -190,7 +190,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 			Assert.IsTrue(ancestorNode.InnerXml.Contains("True"));
 			Assert.IsTrue(ourNode.InnerXml.Contains("False"));
 			Assert.IsTrue(theirNode.InnerXml.Contains("False"));
@@ -246,7 +246,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 
@@ -359,7 +359,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			XmlNode ancestorNode;
 			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
 
-			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode);
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
 
 			_eventListener.AssertExpectedConflictCount(0);
 
