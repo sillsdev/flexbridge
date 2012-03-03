@@ -3,7 +3,7 @@
 <!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME  (in quotes)-->
 <!--The version number is replaced at build time by the msbuild 'package' target -->
 <?define Property_ProductVersion = ".*" ?>
-<!-- http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization for when to change Product or Package Guids (every installer build) or, Version number. -->
+<!-- Use major upgrade approach, so make new product code every time. -->
 <?define Property_ProductCode = "*" ?>
 <!--Don't even think of EVER changing the Property_UpgradeCode. -->
 <?define Property_UpgradeCode = "{5A4A5F1B-C24F-43BF-A157-73CC50471B3F}" ?>

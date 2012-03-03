@@ -4,7 +4,7 @@
 	<ProductVersion>3.0</ProductVersion>
 	<ProjectGuid>C1ECD18A-E382-11DE-8A39-0800200C9A66</ProjectGuid>
 	<SchemaVersion>2.0</SchemaVersion>
-	<OutputName>LIFTBridge</OutputName>
+	<OutputName>LIFTBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
 	<WixToolPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3.5\bin\</WixToolPath>
 	<WixToolPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3.5\bin\</WixToolPath>
