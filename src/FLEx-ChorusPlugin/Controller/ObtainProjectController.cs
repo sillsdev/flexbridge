@@ -8,7 +8,7 @@ using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	class ObtainProjectController : IFwBridgeController, IDisposable
+	internal class ObtainProjectController : IFwBridgeController, IDisposable
 	{
 		private readonly ChorusSystem _chorusSystem;
 		private readonly IGetSharedProject _getSharedProject;
@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Constructs the ObtainProjectController with the given options.
 		/// </summary>
 		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
-		public ObtainProjectController(Dictionary<string, string> options)
+		public ObtainProjectController(IDictionary<string, string> options)
 		{
 			if (options.ContainsKey("-p"))
 			{
@@ -27,7 +27,12 @@ namespace FLEx_ChorusPlugin.Controller
 			}
 			_getSharedProject = new GetSharedProject();
 			MainForm = new ObtainProjectView
-						{ Text = Resources.ObtainProjectView_DialogTitle, MaximizeBox = false, MinimizeBox = false, Icon = null};
+						{
+							Text = Resources.ObtainProjectView_DialogTitle,
+							MaximizeBox = false,
+							MinimizeBox = false,
+							Icon = null
+						};
 			_startupNewView = new StartupNewView();
 			_startupNewView.Startup += StartupHandler;
 			MainForm.Controls.Add((Control)_startupNewView);
@@ -53,7 +58,8 @@ namespace FLEx_ChorusPlugin.Controller
 			_startupNewView.Startup -= StartupHandler;
 		}
 
-		public Form MainForm {
+		public Form MainForm
+		{
 			get;
 			set;
 		}
