@@ -86,6 +86,11 @@ namespace SIL.LiftBridge.View
 				case ExtantRepoSource.Usb:
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(LiftProjectServices.BasePath))
 					{
+						usbCloneDlg.Model.ProjectFilter = path =>
+							{
+								var hgDataFolder = Path.Combine(Path.Combine(path, "store"), "data");
+								return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Length > 0;
+							};
 						var dlgResult = usbCloneDlg.ShowDialog(parent);
 						switch (dlgResult)
 						{
