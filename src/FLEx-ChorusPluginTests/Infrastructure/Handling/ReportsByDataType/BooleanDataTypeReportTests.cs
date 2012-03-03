@@ -14,7 +14,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	/// <summary>
 	/// Test all expected reports (change and conflict) for the Boolean data type.
 	///
-	/// Booleans can't really have a merge conflict, it the parnet property node was present
+	/// Booleans can't really have a merge conflict, it the parent property node was present
 	/// </summary>
 	[TestFixture]
 	public class BooleanDataTypeReportTests : BaseFieldWorksTypeHandlerTests
@@ -47,7 +47,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		}
 
 		[Test]
-		public void EnsureAllTextPropBinaryPropertiesAreSetUpCorrectly()
+		public void EnsureAllBooleanPropertiesAreSetUpCorrectly()
 		{
 			foreach (var classInfo in _mdc.AllConcreteClasses)
 			{
@@ -56,7 +56,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					.Where(pi => pi.DataType == DataType.Boolean)
 					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
 				{
+					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
+					Assert.IsFalse(elementStrategy.IsImmutable);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}

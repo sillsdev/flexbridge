@@ -114,6 +114,7 @@
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\GenDateDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\GuidDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\IntegerDataTypeReportTests.cs" />
+	<Compile Include="Infrastructure\Handling\ReportsByDataType\OtherElementStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\MultiStringDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\MultiUnicodeDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\OwningAtomicDataTypeReportTests.cs" />

@@ -33,7 +33,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		}
 
 		[Test]
-		public void EnsureAllTextPropBinaryPropertiesAreSetUpCorrectly()
+		public void EnsureAllGenDatePropertiesAreSetUpCorrectly()
 		{
 			foreach (var classInfo in _mdc.AllConcreteClasses)
 			{
@@ -42,11 +42,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					.Where(pi => pi.DataType == DataType.GenDate)
 					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
 				{
+					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 					if (classInfo.ClassName != "CmPerson" && classInfo.ClassName != "RnGenericRec")
+					{
+						Assert.IsFalse(elementStrategy.IsImmutable);
 						continue;
+					}
 					Assert.IsTrue(elementStrategy.IsImmutable);
 				}
 			}

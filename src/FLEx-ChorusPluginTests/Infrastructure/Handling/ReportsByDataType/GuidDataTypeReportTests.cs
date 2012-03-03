@@ -32,17 +32,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		}
 
 		[Test]
-		public void EnsureAllTextPropBinaryPropertiesAreSetUpCorrectly()
+		public void EnsureAllGuidPropertiesAreSetUpCorrectly()
 		{
-			foreach (var elementStrategy in _mdc.AllConcreteClasses
-				.SelectMany(classInfo => classInfo.AllProperties, (classInfo, propertyInfo) => new { classInfo, propertyInfo })
-				.Where(@t => @t.propertyInfo.DataType == DataType.Guid)
-				.Select(@t => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", @t.propertyInfo.IsCustomProperty ? "Custom_" : "", @t.classInfo.ClassName, @t.propertyInfo.PropertyName)]))
+			foreach (var classInfo in _mdc.AllConcreteClasses)
 			{
-				// Not at this point. Assert.IsTrue(elementStrategy.IsAtomic);
-				Assert.IsFalse(elementStrategy.OrderIsRelevant);
-				Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
-				Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
+				var clsInfo = classInfo;
+				foreach (var elementStrategy in classInfo.AllProperties
+					.Where(pi => pi.DataType == DataType.Guid)
+					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
+				{
+					Assert.IsFalse(elementStrategy.IsAtomic);
+					Assert.IsFalse(elementStrategy.OrderIsRelevant);
+					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
+					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
+					if (classInfo.ClassName != "CmFilter" && classInfo.ClassName != "CmResource")
+					{
+						Assert.IsFalse(elementStrategy.IsImmutable);
+						continue;
+					}
+					Assert.IsTrue(elementStrategy.IsImmutable);
+				}
 			}
 		}
 	}

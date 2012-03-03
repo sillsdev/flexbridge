@@ -37,7 +37,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				.Select(@t => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", @t.propertyInfo.IsCustomProperty ? "Custom_" : "", @t.classInfo.ClassName, @t.propertyInfo.PropertyName)]))
 			{
 				// Not at this point. Assert.IsTrue(elementStrategy.IsAtomic);
+				Assert.IsFalse(elementStrategy.IsAtomic);
 				Assert.IsFalse(elementStrategy.OrderIsRelevant);
+				Assert.IsFalse(elementStrategy.IsImmutable);
 				Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 				Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 			}
@@ -46,7 +48,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		[Test]
 		public void EnsurePropElementInTextPropBinaryPropertyIsAtomic()
 		{
-			Assert.IsTrue(_merger.MergeStrategies.ElementStrategies["Prop"].IsAtomic);
+			var elementStrategy = _merger.MergeStrategies.ElementStrategies[SharedConstants.Prop];
+			Assert.IsTrue(elementStrategy.IsAtomic);
+			Assert.IsFalse(elementStrategy.OrderIsRelevant);
+			Assert.IsFalse(elementStrategy.IsImmutable);
 		}
 	}
 }
