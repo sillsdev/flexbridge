@@ -10,7 +10,7 @@
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="1.4.$(BuildCounter).0">
+	<CreateProperty Value="1.4.$(BuildCounter)">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
@@ -18,7 +18,7 @@
   </Target>
 
   <ItemGroup>
-	<AssemblyInfoFiles Include="$(RootDir)/**/assemblyinfo.cs"/>
+	<AssemblyInfoFiles Include="$(RootDir)/src/**/assemblyinfo.cs"/>
   </ItemGroup>
 
   <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">

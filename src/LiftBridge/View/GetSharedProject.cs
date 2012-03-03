@@ -86,6 +86,11 @@ namespace SIL.LiftBridge.View
 				case ExtantRepoSource.Usb:
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(LiftProjectServices.BasePath))
 					{
+						usbCloneDlg.Model.ProjectFilter = path =>
+							{
+								var hgDataFolder = Path.Combine(Path.Combine(path, "store"), "data");
+								return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Length > 0;
+							};
 						var dlgResult = usbCloneDlg.ShowDialog(parent);
 						switch (dlgResult)
 						{
@@ -206,11 +211,8 @@ namespace SIL.LiftBridge.View
 							mapDoc.Save(LiftProjectServices.MappingPathname);
 						}
 					}
-					else
-					{
-						// A3. Go ahead and create a new one, but it may not actually end up in proposedRootDataDir.
-						cloneResult = CloneResult.OkToCreate;
-					}
+					// A3. Go ahead and create a new one, but it may not actually end up in proposedRootDataDir.
+					cloneResult = CloneResult.OkToCreate;
 				}
 			}
 

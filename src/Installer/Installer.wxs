@@ -3,17 +3,16 @@
 <!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME  (in quotes)-->
 <!--The version number is replaced at build time by the msbuild 'package' target -->
 <?define Property_ProductVersion = ".*" ?>
-<!--Don't even think of EVER changing the Product Code, unless it becomes a new product. -->
-<!-- http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization for when to change Product or Package Guids (every installer build) or, Version number. -->
-<?define Property_ProductCode = "C1ED94CF-E382-11DE-8A39-0800200C9A66" ?>
-<!-- Cange Property_UpgradeCode when moving to a higher major version number. -->
-<?define Property_UpgradeCode = "C1ED94D0-E382-11DE-8A39-0800200C9A66" ?>
+<!-- Use major upgrade approach, so make new product code every time. -->
+<?define Property_ProductCode = "*" ?>
+<!--Don't even think of EVER changing the Property_UpgradeCode. -->
+<?define Property_UpgradeCode = "{5A4A5F1B-C24F-43BF-A157-73CC50471B3F}" ?>
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
 
-  <Product Id="$(var.Property_ProductCode)" Name="LIFT Bridge" Language="1033"
+  <Product Id="$(var.Property_ProductCode)" Name="LIFT Bridge $(var.Property_ProductVersion)" Language="1033"
 			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
 			 UpgradeCode="$(var.Property_UpgradeCode)">
 
@@ -21,53 +20,55 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Package Id='*' Compressed="yes" InstallerVersion="200"/>
 
 	<Upgrade Id="$(var.Property_UpgradeCode)">
-	  <UpgradeVersion Minimum="$(var.Property_ProductVersion)" OnlyDetect="yes" Property="NEWVERSIONDETECTED"/>
-	  <UpgradeVersion Minimum="0.0.0" IncludeMinimum="yes" Maximum="$(var.Property_ProductVersion)" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED"/>
+	  <UpgradeVersion Minimum ="$(var.Property_ProductVersion)" OnlyDetect ="yes" Property ="NEWVERSIONDETECTED" />
+	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
 	</Upgrade>
-
-	<Property Id="FW7INSTALLDIR">
-		<!-- Should it be FwExeDir, instead, so devs can also install it? -->
-	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
-	</Property>
 
 	<UIRef Id="WixUI_Minimal"/>
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
 
-	<!-- # WixUIBannerBmp / Top banner / 493 × 58
-# WixUIDialogBmp / Background bitmap used on the welcome and completion dialogs / 493 × 312
+	<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit."/>
 
-	<WixVariable Id='WixUIBannerBmp' Value='..\..\artwork\installerBanner.bmp' />
-	<WixVariable Id='WixUIBannerBmp' Value='..\..\artwork\topOfInstaller.jpg' />
-	<WixVariable Id='WixUIDialogBmp' Value='..\..\artwork\installerBackground.jpg' />
--->
+	<Property Id="FW7INSTALLDIR">
+	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
+	</Property>
 
+	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
+	<DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
+		<!-- 7.2.0.40926 was the actual released number,
+			but I understand one then needs to go one notch under that to find 7.2.0.40926 -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
+	</DirectorySearch>
+</Property>
 
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
 users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
-
-	<Condition Message="Before LIFT Bridge can install, you need to install SIL's FieldWorks 7.">
-	  Installed OR FW7INSTALLDIR
+	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.2, or higher.">
+	  <![CDATA[Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION]]>
 	</Condition>
+
 	<PropertyRef Id="NETFRAMEWORK35"/>
-	<Condition Message="Before LIFT Bridge can install, you need to install Microsoft's free .NET Framework 3.5.">
-	  Installed OR NETFRAMEWORK35
+	<Condition Message="Before [ProductName] can install, you need to install Microsoft's free .NET Framework 3.5.">
+	  <![CDATA[Installed OR NETFRAMEWORK35]]>
 	</Condition>
 
 	<!--because of bug, this needs to be 1 -->
 	<Property Id="ALLUSERS">1</Property>
 
+	<Media Id='1' Cabinet='LiftBridge.cab' EmbedCab='yes' />
+
 	<Directory Id="TARGETDIR" Name="SourceDir">
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<!-- Name="." overrides the parent folder -->
 		<Directory Id="FW7INSTALLDIR" Name=".">
-		  <Component Id="ChorusPlus" Guid="C1ED94D1-E382-11DE-8A39-0800200C9A66">
+		  <Component Id="ChorusPlus" Guid="8DA714F4-D718-4484-8C91-CB071A7EC3FA">
 			<File Id="ChorusPlus.dll" Name="ChorusPlus.dll" KeyPath="yes" Source="..\..\output\Common\ChorusPlus.dll"/>
 		  </Component>
-		  <Component Id="ChorusMerge" Guid="C1ED94D2-E382-11DE-8A39-0800200C9A66">
-			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe"/>
+		  <Component Id="ChorusMerge" Guid="01F96F23-2859-49D2-9A86-B3AD1CBC26F4">
+			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe" />
 		  </Component>
 		  <Component Id="LiftBridge" Guid="C1ED94D3-E382-11DE-8A39-0800200C9A66">
 			<File Id="LiftBridge.dll" Name="LiftBridge.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge.dll"/>
@@ -75,32 +76,27 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
 		  <Directory Id="MercurialDir" Name="Mercurial"/>
 		  <Directory Id="MercurialExtensionsDir" Name="MercurialExtensions"/>
-
 		</Directory>
 	  </Directory>
 	</Directory>
 
-	<Feature Id="ProductFeature" Level="1" Title="LIFT Bridge $(var.Property_ProductVersion)" Description="Complete system.">
+	<Feature Id="ProductFeature" Level="1" Title="[ProductName]" Description="Complete system.">
 	  <ComponentRef Id="ChorusPlus"/>
 	  <ComponentRef Id="ChorusMerge"/>
 	  <ComponentRef Id="LiftBridge"/>
-	  <!-- Generated (originally) components (originally, but stored in Mercurial). -->
+	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
 	  <ComponentGroupRef Id="MercurialFiles"/>
 	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
-
 	</Feature>
 
-	<Media Id="1" Cabinet="LiftBridge.cab" EmbedCab="yes"/>
 	<!-- what you see in add/remove programs control panel -->
-	<Property Id="ARPPRODUCTICON" Value="LIFT Bridge $(var.Property_ProductVersion)"/>
+	<Icon Id="LiftBridge.ico" SourceFile="..\..\artwork\chorus.ico" />
+	<Property Id="ARPPRODUCTICON" Value="LiftBridge.ico"/>
 
-	<!--
-		<Custom Action='AlreadyUpdated' After='FindRelatedProducts'>NEWVERSIONDETECTED</Custom>
-		<Custom Action='NoDowngrade' After='FindRelatedProducts'>OLDERVERSIONBEINGUPGRADED</Custom>
-		-->
 	<InstallExecuteSequence>
-	  <RemoveExistingProducts After="InstallInitialize"/>
+		<!-- RemoveExistingProducts conflicts with MajorUpgrade, above -->
+	  <!--<RemoveExistingProducts After="InstallInitialize" />-->
 	</InstallExecuteSequence>
   </Product>
 </Wix>
