@@ -15,11 +15,9 @@
 	<DefineConstants>Debug</DefineConstants>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
 	<AllowIdenticalRows>False</AllowIdenticalRows>
-	<CabinetCachePath>
-	</CabinetCachePath>
+	<CabinetCachePath> </CabinetCachePath>
 	<CabinetCreationThreadCount>-1</CabinetCreationThreadCount>
-	<Cultures>
-	</Cultures>
+	<Cultures> </Cultures>
 	<LeaveTemporaryFiles>False</LeaveTemporaryFiles>
 	<LinkerPedantic>False</LinkerPedantic>
 	<ReuseCabinetCache>False</ReuseCabinetCache>
@@ -32,26 +30,21 @@
 	<SuppressDroppingUnrealTables>False</SuppressDroppingUnrealTables>
 	<SuppressFileHashAndInfo>False</SuppressFileHashAndInfo>
 	<SuppressFiles>False</SuppressFiles>
-	<SuppressIces>
-	</SuppressIces>
+	<SuppressIces> </SuppressIces>
 	<LinkerSuppressIntermediateFileVersionMatching>False</LinkerSuppressIntermediateFileVersionMatching>
 	<SuppressLayout>False</SuppressLayout>
 	<SuppressMsiAssemblyTableProcessing>False</SuppressMsiAssemblyTableProcessing>
 	<LinkerSuppressSchemaValidation>False</LinkerSuppressSchemaValidation>
-	<LinkerSuppressSpecificWarnings>
-	</LinkerSuppressSpecificWarnings>
+	<LinkerSuppressSpecificWarnings> </LinkerSuppressSpecificWarnings>
 	<SuppressValidation>False</SuppressValidation>
 	<LinkerTreatWarningsAsErrors>False</LinkerTreatWarningsAsErrors>
 	<LinkerVerboseOutput>False</LinkerVerboseOutput>
-	<WixVariables>
-	</WixVariables>
-	<IncludeSearchPaths>
-	</IncludeSearchPaths>
+	<WixVariables> </WixVariables>
+	<IncludeSearchPaths> </IncludeSearchPaths>
 	<Pedantic>False</Pedantic>
 	<ShowSourceTrace>False</ShowSourceTrace>
 	<SuppressSchemaValidation>False</SuppressSchemaValidation>
-	<SuppressSpecificWarnings>
-	</SuppressSpecificWarnings>
+	<SuppressSpecificWarnings> </SuppressSpecificWarnings>
 	<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
 	<VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
@@ -65,10 +58,10 @@
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
-	<Compile Include="Installer.wxs" />
-	<Compile Include="GeneratedDistFiles.wxs" />
-	<Compile Include="GeneratedMercurialFiles.wxs" />
-	<Compile Include="GeneratedMercurialExtensionsFiles.wxs" />
+	<Compile Include="Installer.wxs"/>
+	<Compile Include="GeneratedDistFiles.wxs"/>
+	<Compile Include="GeneratedMercurialFiles.wxs"/>
+	<Compile Include="GeneratedMercurialExtensionsFiles.wxs"/>
   </ItemGroup>
   <ItemGroup>
 	<WixExtension Include="WixUtilExtension">
@@ -81,5 +74,5 @@
 	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixNetFxExtension.dll</HintPath>
 	</WixExtension>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets"/>
 </Project>
