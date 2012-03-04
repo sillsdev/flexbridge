@@ -32,6 +32,7 @@
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="MergeAssemblies"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -115,9 +116,9 @@
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
-	<Message Text="Attempting rsync of LIFTBridge.msi" Importance="high"/>
+	<Message Text="Attempting rsync of LIFTBridgeInstaller.msi" Importance="high"/>
 
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridge.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridge.msi"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller.msi"/>
 
 	<CallTarget Targets="MakeIndex"/>
   </Target>
