@@ -150,6 +150,18 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				foreach (var sortedChartElement in sortedRecords.Values)
 					recordsElementOwningProp.Add(sortedChartElement);
 			}
+
+			// Put the RecTypes list back into place in dnMainElement, before dnMainElement is restored.
+			// But only as an <objsur> element.
+			var recTypesPathname = Path.Combine(anthropologyBaseDir, "RecTypes." + SharedConstants.List);
+			if (File.Exists(recTypesPathname))
+			{
+				var listDoc = XDocument.Load(recTypesPathname);
+				BaseDomainServices.RestoreElement(recTypesPathname, sortedData,
+					dnMainElement, "RecTypes",
+					listDoc.Root.Element(SharedConstants.CmPossibilityList));
+			}
+
 			BaseDomainServices.RestoreElement(currentPathname, sortedData,
 				langProjElement, "ResearchNotebook",
 				dnMainElement);
@@ -160,9 +172,11 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				var listDoc = XDocument.Load(listPathname);
 				var listRoot = listDoc.Root;
 				var listRootName = listRoot.Name.LocalName;
-				BaseDomainServices.RestoreElement(currentPathname,
+				if (listRootName == "RecTypes")
+					continue;
+				BaseDomainServices.RestoreElement(listPathname,
 					sortedData,
-					listRootName == "RecTypes" ? dnMainElement : langProjElement,
+					langProjElement,
 					listRootName,
 					listRoot.Element(SharedConstants.CmPossibilityList));
 			}

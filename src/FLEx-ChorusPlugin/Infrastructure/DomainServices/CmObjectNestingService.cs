@@ -55,7 +55,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return;
 			foreach (var refColProp in refColProps)
 			{
-				var propNode = obj.Element(refColProp.PropertyName);
+				var propNode = refColProp.IsCustomProperty
+					? obj.Elements("Custom").FirstOrDefault(pi => pi.Attribute(SharedConstants.Name).Value == refColProp.PropertyName)
+					: obj.Element(refColProp.PropertyName);
 				if (propNode == null)
 					continue;
 				var objsurNodes = propNode.Elements(SharedConstants.Objsur).ToList();
@@ -75,7 +77,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return;
 			foreach (var refSeqProp in refSeqProps)
 			{
-				var propNode = obj.Element(refSeqProp.PropertyName);
+				var propNode = refSeqProp.IsCustomProperty
+					? obj.Elements("Custom").FirstOrDefault(pi => pi.Attribute(SharedConstants.Name).Value == refSeqProp.PropertyName)
+					: obj.Element(refSeqProp.PropertyName);
 				if (propNode == null)
 					continue;
 				var objsurNodes = propNode.Elements(SharedConstants.Objsur).ToList();
