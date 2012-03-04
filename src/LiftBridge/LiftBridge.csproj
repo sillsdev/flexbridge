@@ -130,8 +130,23 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="ChorusPlus">
-	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
+	<Reference Include="Chorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	  <ExecutableExtension>.exe</ExecutableExtension>
+	</Reference>
+	<Reference Include="ChorusMerge, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\net2.0\ChorusMerge.exe</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	  <ExecutableExtension>.exe</ExecutableExtension>
+	</Reference>
+	<Reference Include="LibChorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\net2.0\LibChorus.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
@@ -243,9 +258,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)DistFiles\about.htm $(TargetDir)
-copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)
-copy $(SolutionDir)output\common\ChorusMerge.exe $(TargetDir)</PostBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

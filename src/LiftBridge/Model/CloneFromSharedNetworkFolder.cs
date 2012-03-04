@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.IO;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Properties;
 

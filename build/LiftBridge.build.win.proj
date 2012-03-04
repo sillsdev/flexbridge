@@ -31,7 +31,6 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="MergeAssemblies"/>
 	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
@@ -52,10 +51,6 @@
 
   <Target Name="Compile" DependsOnTargets="CopyMercurialFolders">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
-  </Target>
-
-  <Target Name="MergeAssemblies">
-	<Exec Command="$(RootDir)/build/BasicWinMerge.bat"/>
   </Target>
 
   <Target Name="CopyMercurialFolders" DependsOnTargets="UnzipMercurial">

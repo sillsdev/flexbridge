@@ -6,7 +6,7 @@
 <!-- Use major upgrade approach, so make new product code every time. -->
 <?define Property_ProductCode = "*" ?>
 <!--Don't even think of EVER changing the Property_UpgradeCode. -->
-<?define Property_UpgradeCode = "{5A4A5F1B-C24F-43BF-A157-73CC50471B3F}" ?>
+<?define Property_UpgradeCode = "5A4A5F1B-C24F-43BF-A157-73CC50471B3F" ?>
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
@@ -64,15 +64,42 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<!-- Name="." overrides the parent folder -->
 		<Directory Id="FW7INSTALLDIR" Name=".">
-		  <Component Id="ChorusPlus" Guid="8DA714F4-D718-4484-8C91-CB071A7EC3FA">
-			<File Id="ChorusPlus.dll" Name="ChorusPlus.dll" KeyPath="yes" Source="..\..\output\Common\ChorusPlus.dll"/>
-		  </Component>
-		  <Component Id="ChorusMerge" Guid="01F96F23-2859-49D2-9A86-B3AD1CBC26F4">
-			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Common\ChorusMerge.exe"/>
-		  </Component>
-		  <Component Id="LiftBridge" Guid="C1ED94D3-E382-11DE-8A39-0800200C9A66">
+
+		  <Component Id="LiftBridgedll" Guid="7935D1C8-1A08-49AC-A5FD-3F810CD3E52B">
 			<File Id="LiftBridge.dll" Name="LiftBridge.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge.dll"/>
 		  </Component>
+		  <Component Id="LiftBridgepdb" Guid="BDDC2DBE-F660-4500-A74C-C5B185079FA8">
+			<File Id="LiftBridge.pdb" Name="LiftBridge.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge.pdb"/>
+		  </Component>
+
+		  <Component Id="Chorusexe" Guid="F7478099-2687-49EE-8103-1F082397EAB8">
+			<File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Release\Chorus.exe"/>
+		  </Component>
+		  <Component Id="Choruspdb" Guid="D02EA721-2F0C-4117-AB48-5CD24D08E198">
+			<File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
+		  </Component>
+
+		  <Component Id="ChorusMergeexe" Guid="6A7E9360-050B-4CC6-B726-841013A1B33A">
+			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe"/>
+		  </Component>
+		  <Component Id="ChorusMergepdb" Guid="051706AF-C292-43E4-9D43-6FEBB958CE2C">
+			<File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
+		  </Component>
+
+		  <Component Id="LibChorusdll" Guid="B48F4ADC-825D-4185-8D01-EDBE2212B029">
+			<File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Release\LibChorus.dll"/>
+		  </Component>
+		  <Component Id="LibChoruspdb" Guid="33EBFAF5-D605-43A6-B10E-F7D23692A094">
+			<File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
+		  </Component>
+
+		  <Component Id="Autofacdll" Guid="C1EDBBDC-E382-11DE-8A39-0800200C9A66">
+			<File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
+		  </Component>
+
+		  <!-- LiftBridgeCore.dll is also required, but we'll use the one FW uses. -->
+		  <!-- Palaso.dll is also required, but we'll use the one FW uses. -->
+
 		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
 		  <Directory Id="MercurialDir" Name="Mercurial"/>
 		  <Directory Id="MercurialExtensionsDir" Name="MercurialExtensions"/>
@@ -81,9 +108,20 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	</Directory>
 
 	<Feature Id="ProductFeature" Level="1" Title="[ProductName]" Description="Complete system.">
-	  <ComponentRef Id="ChorusPlus"/>
-	  <ComponentRef Id="ChorusMerge"/>
-	  <ComponentRef Id="LiftBridge"/>
+	  <ComponentRef Id="LiftBridgedll"/>
+	  <ComponentRef Id="LiftBridgepdb"/>
+
+	  <ComponentRef Id="Chorusexe"/>
+	  <ComponentRef Id="Choruspdb"/>
+
+	  <ComponentRef Id="ChorusMergeexe"/>
+	  <ComponentRef Id="ChorusMergepdb"/>
+
+	  <ComponentRef Id="LibChorusdll"/>
+	  <ComponentRef Id="LibChoruspdb"/>
+
+	  <ComponentRef Id="Autofacdll"/>
+
 	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
 	  <ComponentGroupRef Id="MercurialFiles"/>
@@ -95,8 +133,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Property Id="ARPPRODUCTICON" Value="LiftBridge.ico"/>
 
 	<InstallExecuteSequence>
-	  <!-- RemoveExistingProducts conflicts with MajorUpgrade, above -->
-	  <!--<RemoveExistingProducts After="InstallInitialize" />-->
-	</InstallExecuteSequence>
+	  <!-- RemoveExistingProducts conflicts with MajorUpgrade, above
+	  <RemoveExistingProducts After="InstallInitialize" />--> </InstallExecuteSequence>
   </Product>
 </Wix>
