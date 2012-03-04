@@ -16,8 +16,8 @@ syntax: regexp
 _ReSharper.LiftBridge VS2010/*
 DistFiles/Mercurial/*
 DistFiles/Mercurial/MercurialExtensions/*
-Mercurial/*
-MercurialExtensions/*
+relre:^Mercurial/
+relre:^MercurialExtensions/
 syntax: glob
 LiftBridge VS2010.userprefs
 src/LiftBridge/LiftBridge.pidb
