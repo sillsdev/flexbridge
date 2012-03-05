@@ -12,7 +12,7 @@
   <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll" />
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"/>
 
   <!-- ***************** Main build ***************** -->
 
@@ -41,7 +41,7 @@
   </Target>
 
   <Target Name="Compile">
-	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)\$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <ItemGroup>
@@ -49,12 +49,8 @@
 	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
   </ItemGroup>
   <Target Name="CopyMercurialFolders">
-	<Copy
-	  SourceFiles="@(MyMercurialFiles)"
-	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
-	<Copy
-	  SourceFiles="@(MyMercurialExtensionFiles)"
-	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy SourceFiles="@(MyMercurialFiles)" DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')"/>
+	<Copy SourceFiles="@(MyMercurialExtensionFiles)" DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
