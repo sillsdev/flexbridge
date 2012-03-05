@@ -65,7 +65,7 @@ namespace LiftBridgeTests.ModelTests
 		{
 			var liftProject = CreateNewbieProject();
 			var liftPathname = Path.Combine(_pathToProject, "Newbie.lift");
-			File.WriteAllText(liftPathname, "");
+			File.WriteAllText(liftPathname, "content");
 			Assert.AreEqual(liftPathname, liftProject.LiftPathname);
 		}
 
@@ -74,9 +74,9 @@ namespace LiftBridgeTests.ModelTests
 		{
 			var liftProject = CreateNewbieProject();
 			var badLiftPathname = Path.Combine(_pathToProject, "Newbie.0.12.lift");
-			File.WriteAllText(badLiftPathname, "");
+			File.WriteAllText(badLiftPathname, "content");
 			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
-			File.WriteAllText(goodLiftPathname, "");
+			File.WriteAllText(goodLiftPathname, "content");
 			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
 		}
 
