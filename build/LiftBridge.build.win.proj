@@ -30,6 +30,7 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -51,13 +52,11 @@
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
+  <ItemGroup>
+	<MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
+	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
+  </ItemGroup>
   <Target Name="CopyMercurialFolders">
-	<ItemGroup>
-	  <MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
-	  <MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
-	</ItemGroup>
-
-	<!-- This isn't enough to make Team City happy on tests. -->
 	<Copy
 	  SourceFiles="@(MyMercurialFiles)"
 	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
