@@ -58,6 +58,6 @@
 	<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
-	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity;UnknownMonoIssue" NUnitVersion="NUnit-2.5.5"/>
   </Target>
 </Project>
