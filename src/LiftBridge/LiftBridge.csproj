@@ -125,7 +125,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=MSIL">
-	  <HintPath>..\..\lib\n$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
