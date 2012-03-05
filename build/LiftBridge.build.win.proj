@@ -50,14 +50,14 @@
 	<Message Text="End Clean"/>
   </Target>
 
-  <Target Name="Compile" DependsOnTargets="CopyMercurialFolders">
+  <Target Name="Compile">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
-  <Target Name="CopyMercurialFolders" DependsOnTargets="UnzipMercurial">
+  <Target Name="CopyMercurialFolders">
 	<ItemGroup>
-	  <MyMercurialFiles Include="$(RootDir)\output\common\Mercurial\**\*.*"/>
-	  <MyMercurialExtensionFiles Include="$(RootDir)\output\common\MercurialExtensions\**\*.*"/>
+	  <MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
+	  <MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
 	</ItemGroup>
 
 	<!-- This isn't enough to make Team City happy on tests. -->
@@ -67,19 +67,6 @@
 	<Copy
 	  SourceFiles="@(MyMercurialExtensionFiles)"
 	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-	<!-- This isn't enough to make Team City happy on tests either. -->
-	<Copy
-	  SourceFiles="@(MyMercurialFiles)"
-	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
-	<Copy
-	  SourceFiles="@(MyMercurialExtensionFiles)"
-	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
-  </Target>
-
-  <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
-	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
-	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\MercurialExtensions.zip" TargetDirectory="$(RootDir)\output\common"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
