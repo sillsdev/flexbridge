@@ -78,8 +78,8 @@
   </Target>
 
   <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\MercurialExtensions.zip" TargetDirectory="$(RootDir)\output\common"/>
+	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
+	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\MercurialExtensions.zip" TargetDirectory="$(RootDir)\output\common"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
@@ -159,14 +159,14 @@
 	  The preferred root is:
 	  RootDirectory="$(RootDir)\output\common\Mercurial"
 	-->
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\"/>
+	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)\"/>
 	<MakeWixForDirTree DirectoryReferenceId="MercurialDir" ComponentGroupId="MercurialFiles" RootDirectory="$(RootDir)\Mercurial" OutputFilePath="$(RootDir)\output\Installer\GeneratedMercurialFiles.wxs" MatchRegExPattern=".*">
 	  <!--what does this do? -->
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
 	<Delete Files="$(RootDir)\Mercurial" TreatErrorsAsWarnings="false"/>
 
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\MercurialExtensions.zip" TargetDirectory="$(RootDir)\"/>
+	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\MercurialExtensions.zip" TargetDirectory="$(RootDir)\"/>
 	<MakeWixForDirTree DirectoryReferenceId="MercurialExtensionsDir" ComponentGroupId="MercurialExtensionsFiles" RootDirectory="$(RootDir)\MercurialExtensions" OutputFilePath="$(RootDir)\output\Installer\GeneratedMercurialExtensionsFiles.wxs" MatchRegExPattern=".*">
 	  <!--what does this do? -->
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
