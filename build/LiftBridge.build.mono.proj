@@ -51,12 +51,11 @@
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
-  <Target Name="CopyMercurialFolders">
 	<ItemGroup>
 	  <MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
 	  <MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
 	</ItemGroup>
-
+  <Target Name="CopyMercurialFolders">
 	<!-- This isn't enough to make Team City happy on tests. -->
 	<Copy
 	  SourceFiles="@(MyMercurialFiles)"
