@@ -55,7 +55,7 @@
 
   <!-- ***************** Testing ***************** -->
   <Target Name="Test" DependsOnTargets="Build">
-	<CreateItem Include="$(RootDir)/output/$(Configuration)/*.Tests.dll">
+	<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
 	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
