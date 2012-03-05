@@ -51,16 +51,6 @@ namespace SIL.LiftBridge.Model
 					pathToProj = directory;
 					break;
 				}
-				//foreach (var directory in Directory.GetDirectories(BasePath))
-				//{
-				//	if (!Directory.Exists(Path.Combine(directory, ".hg")))
-				//		continue;
-				//	var repo = new HgRepository(directory, new NullProgress());
-				//	if (repo.Identifier != repoId)
-				//		continue;
-				//	pathToProj = directory;
-				//	break;
-				//}
 			}
 
 			if (!Directory.Exists(pathToProj))
@@ -85,8 +75,11 @@ namespace SIL.LiftBridge.Model
 			return Path.Combine(PathToProject(project), ".hg");
 		}
 
-		private static string GetMainLiftFile(IEnumerable<string> liftFiles)
+		private static string GetMainLiftFile(List<string> liftFiles)
 		{
+			foreach (var pathname in liftFiles)
+				Console.WriteLine(String.Format("Found: '{0}'", pathname));
+
 			return (from file in liftFiles
 						where HasOnlyOneDot(file)
 						select file).FirstOrDefault();
@@ -196,7 +189,7 @@ namespace SIL.LiftBridge.Model
 				return null;
 
 			var doc = GetMappingDoc();
-			var mapForProject = (from mapping in doc.Root.Elements()
+			var mapForProject = (from mapping in doc.Root.Elements(MappingTag)
 								 where mapping.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() == languageProjectId.ToString().ToLowerInvariant()
 								 select mapping).FirstOrDefault();
 			if (mapForProject == null)
