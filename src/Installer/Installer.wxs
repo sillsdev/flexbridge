@@ -130,4 +130,5 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<!-- what you see in add/remove programs control panel -->
 	<Icon Id="LiftBridge.ico" SourceFile="..\..\artwork\chorus.ico"/>
 	<Property Id="ARPPRODUCTICON" Value="LiftBridge.ico"/>
+  </Product>
 </Wix>
