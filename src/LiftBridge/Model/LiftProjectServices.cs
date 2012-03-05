@@ -189,7 +189,7 @@ namespace SIL.LiftBridge.Model
 				return null;
 
 			var doc = GetMappingDoc();
-			var mapForProject = (from mapping in doc.Root.Elements()
+			var mapForProject = (from mapping in doc.Root.Elements(MappingTag)
 								 where mapping.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() == languageProjectId.ToString().ToLowerInvariant()
 								 select mapping).FirstOrDefault();
 			if (mapForProject == null)
