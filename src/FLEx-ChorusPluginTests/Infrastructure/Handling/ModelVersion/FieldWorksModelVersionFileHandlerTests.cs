@@ -73,6 +73,22 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		}
 
 		[Test]
+		public void ShouldNotBeAbleToValidateFileWithVersionNumberTooLow()
+		{
+			const string ourData = "{\"modelversion\": 6999999}";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNonIntegerVersionNumber()
+		{
+			const string ourData = "{\"modelversion\": cat}";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
 		public void ShouldBeAbleToValidateFile()
 		{
 			const string ourData = "{\"modelversion\": 7000037}";
