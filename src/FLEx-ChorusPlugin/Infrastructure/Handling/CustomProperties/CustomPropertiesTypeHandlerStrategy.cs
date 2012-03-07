@@ -30,10 +30,56 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			try
 			{
+/*
+customPropertyDeclarations.Add(new XElement("CustomField",
+	new XAttribute("name", customFieldInfo.m_fieldname),
+	new XAttribute("class", customFieldInfo.m_classname),
+	new XAttribute("type", GetFlidTypeAsString(customFieldInfo.m_fieldType)),
+	(customFieldInfo.m_destinationClass != 0) ? new XAttribute("destclass", customFieldInfo.m_destinationClass.ToString()) : null,
+	(customFieldInfo.m_fieldWs != 0) ? new XAttribute("wsSelector", customFieldInfo.m_fieldWs.ToString()) : null,
+	(!String.IsNullOrEmpty(customFieldInfo.m_fieldHelp)) ? new XAttribute("helpString", customFieldInfo.m_fieldHelp) : null,
+	(customFieldInfo.m_fieldListRoot != Guid.Empty) ? new XAttribute("listRoot", customFieldInfo.m_fieldListRoot.ToString()) : null,
+	(customFieldInfo.Label != customFieldInfo.m_fieldname) ? new XAttribute("label", customFieldInfo.Label) : null));
+*/
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.AdditionalFieldsTag || !root.Elements("CustomField").Any())
+				if (root.Name.LocalName != SharedConstants.AdditionalFieldsTag)
 					return "Not valid custom properties file";
+				if (!root.HasElements)
+					return null; // CustomFields are optional.
+
+				var requiredAttrs = new HashSet<string>
+										{
+											"name",
+											"class",
+											"type",
+											"key" // Special attr added so fast xml splitter can find each one.
+										};
+				var optionalAttrs = new HashSet<string>
+										{
+											"destclass",
+											"wsSelector",
+											"helpString",
+											"listRoot",
+											"label"
+										};
+				foreach (var customFieldElement in root.Elements("CustomField"))
+				{
+					if (requiredAttrs
+						.Any(requiredAttr => customFieldElement.Attribute(requiredAttr) == null))
+					{
+						return "Missing required custom property attribute";
+					}
+					if (customFieldElement.Attributes()
+						.Any(attribute => !requiredAttrs.Contains(attribute.Name.LocalName)
+							&& !optionalAttrs.Contains(attribute.Name.LocalName)))
+					{
+						return "Contains unrecognized attribute";
+					}
+					// Make sure 'key' attr is class+name.
+					if (customFieldElement.Attribute("class").Value + customFieldElement.Attribute("name").Value != customFieldElement.Attribute("key").Value)
+						return "Mis-matched 'key' attribute with property class+name atributes";
+				}
 
 				return null;
 			}

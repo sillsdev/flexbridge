@@ -137,7 +137,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					if (foundOptionalFirstElement)
 					{
-						// 2. Write custom properties file.
+						// 2. Write custom properties file with custom properties.
 						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, record);
 						foundOptionalFirstElement = false;
 						haveWrittenCustomFile = true;
@@ -149,7 +149,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				}
 				if (!haveWrittenCustomFile)
 				{
-					// Write empty file.
+					// Write empty custom properties file.
 					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), null);
 				}
 			}
