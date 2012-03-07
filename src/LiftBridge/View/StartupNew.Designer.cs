@@ -38,6 +38,7 @@
 			this._rbInternet = new System.Windows.Forms.RadioButton();
 			this._rbUsb = new System.Windows.Forms.RadioButton();
 			this.btnClose = new System.Windows.Forms.Button();
+			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -99,6 +100,7 @@
 			//
 			// groupBox1
 			//
+			this.groupBox1.Controls.Add(this.textBox1);
 			this.groupBox1.Controls.Add(this._rbLocalNetwork);
 			this.groupBox1.Controls.Add(this._rbInternet);
 			this.groupBox1.Controls.Add(this._rbUsb);
@@ -161,11 +163,23 @@
 			this.btnClose.UseVisualStyleBackColor = true;
 			this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
 			//
+			// textBox1
+			//
+			this.textBox1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+			this.textBox1.Enabled = false;
+			this.textBox1.Location = new System.Drawing.Point(132, 15);
+			this.textBox1.Multiline = true;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(183, 70);
+			this.textBox1.TabIndex = 3;
+			this.textBox1.Text = "NB: This operation does *not* create a new FLEX language project. It imports the " +
+	"data into the current one.";
+			//
 			// StartupNew
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+			this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
 			this.Controls.Add(this.btnClose);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._btnContinue);
@@ -196,5 +210,6 @@
 		private System.Windows.Forms.RadioButton _rbInternet;
 		private System.Windows.Forms.RadioButton _rbUsb;
 		private System.Windows.Forms.Button btnClose;
+		private System.Windows.Forms.TextBox textBox1;
 	}
 }
