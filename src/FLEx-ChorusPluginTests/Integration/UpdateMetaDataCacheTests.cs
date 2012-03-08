@@ -86,6 +86,33 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000051: No actual model change.
 			CheckUpgrade(mdc, fileHandler, 7000051);
+
+			// 7000052: No actual model change.
+			CheckUpgrade(mdc, fileHandler, 7000052);
+
+			// 7000053:
+			// Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+			// 1. PhSegmentRule
+			//		Add: basic "Disabled"								{Boolean]
+			// 2. MoCompoundRule
+			//		Add: basic "Disabled"								{Boolean]
+			// 3. MoAdhocProhib
+			//		Add: basic "Disabled"								{Boolean]
+			// 4. MoInflAffixTemplate
+			//		Add: basic "Disabled"								{Boolean]
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "PhSegmentRule", "Disabled");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoCompoundRule", "Disabled");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoAdhocProhib", "Disabled");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "Disabled");
+			DoMerge(fileHandler, 7000053);
+			classInfo = mdc.GetClassInfo("PhSegmentRule");
+			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
+			classInfo = mdc.GetClassInfo("MoCompoundRule");
+			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
+			classInfo = mdc.GetClassInfo("MoAdhocProhib");
+			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
+			classInfo = mdc.GetClassInfo("MoInflAffixTemplate");
+			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
