@@ -113,6 +113,22 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
 			classInfo = mdc.GetClassInfo("MoInflAffixTemplate");
 			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
+
+			// 7000054
+			// 1. MoStemMsa
+			//		Add: Slots ref col
+			// 2. MoInflAffixTemplate
+			//		Add: ProcliticSlots ref seq
+			//		Add: EncliticSlots ref seq
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoStemMsa", "Slots");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "ProcliticSlots");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "EncliticSlots");
+			DoMerge(fileHandler, 7000054);
+			classInfo = mdc.GetClassInfo("MoStemMsa");
+			CheckNewPropertyAfterUpgrade(classInfo, "Slots", DataType.ReferenceCollection);
+			classInfo = mdc.GetClassInfo("MoInflAffixTemplate");
+			CheckNewPropertyAfterUpgrade(classInfo, "ProcliticSlots", DataType.ReferenceSequence);
+			CheckNewPropertyAfterUpgrade(classInfo, "EncliticSlots", DataType.ReferenceSequence);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)

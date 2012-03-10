@@ -148,6 +148,16 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						//		Add: basic "Disabled"								{Boolean]
 						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
 						break;
+					case 7000054:
+						// 1. MoStemMsa
+						//		Add: Slots ref col
+						GetClassInfo("MoStemMsa").AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						// 2. MoInflAffixTemplate
+						//		Add: ProcliticSlots ref seq
+						//		Add: EncliticSlots ref seq
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("ProcliticSlots", DataType.ReferenceSequence));
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("EncliticSlots", DataType.ReferenceSequence));
+						break;
 				}
 			}
 
