@@ -1,0 +1,334 @@
+using System;
+using System.Xml.Linq;
+using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using NUnit.Framework;
+
+namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
+{
+	[TestFixture]
+	public class CmObjectValidatorTests
+	{
+		private MetadataCache _mdc;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			_mdc = MetadataCache.MdCache;
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown()
+		{
+			_mdc = null;
+		}
+
+		[Test]
+		public void EnsureNullMetadataCacheThrows()
+		{
+			Assert.Throws<ArgumentNullException>(() => CmObjectValidator.ValidateObject(null, new XElement("test")));
+		}
+
+		[Test]
+		public void EnsureNullObjectThrows()
+		{
+			Assert.Throws<ArgumentNullException>(() => CmObjectValidator.ValidateObject(_mdc, null));
+		}
+
+		[Test]
+		public void EnsureValidObjectReturnsNull()
+		{
+			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()))));
+		}
+
+		[Test]
+		public void NonModelObjectReturnsMessage()
+		{
+			var obj = new XElement("randomelement");
+			var result = CmObjectValidator.ValidateObject(_mdc, obj);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("No guid attribute", result);
+			obj.Add(new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			result = CmObjectValidator.ValidateObject(_mdc, obj);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("No recognized class", result);
+		}
+
+		[Test]
+		public void NoGuidReturnsMessage()
+		{
+			Assert.IsNotNull(CmObjectValidator.ValidateObject(_mdc, new XElement("PartOfSpeech")));
+		}
+
+		[Test]
+		public void NotGuidStringReturnsMessage()
+		{
+			Assert.IsNotNull(CmObjectValidator.ValidateObject(_mdc, new XElement("PartOfSpeech")));
+		}
+
+		[Test]
+		public void EnsureObjectWithownerguidAttributeReturnsNotNull()
+		{
+			Assert.IsNotNull(CmObjectValidator.ValidateObject(_mdc, new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XAttribute(SharedConstants.OwnerGuid, Guid.NewGuid()))));
+		}
+
+		[Test]
+		public void EnsureCuriosityHasCorrectAttributes()
+		{
+			var curiosityElement = new XElement(SharedConstants.curiosity, new XAttribute(SharedConstants.Class, "PartOfSpeech"), new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has no curiositytype attribute.", result);
+			var ctAttr = new XAttribute("curiositytype", "notrecognized");
+			curiosityElement.Add(ctAttr);
+			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized curiositytype attribute value.", result);
+			ctAttr.Value = "lint";
+			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
+			Assert.IsNull(result);
+			ctAttr.Value = "unowned";
+			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void EnsureOwnseqHasClassAttribute()
+		{
+			var ownSeqElement = new XElement(SharedConstants.Ownseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has no class attribute.", result);
+			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
+			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void EnsureOwnseqAtomicHasClassAttribute()
+		{
+			var ownSeqElement = new XElement(SharedConstants.OwnseqAtomic, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has no class attribute.", result);
+			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
+			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void AbstractClassIsMostlyNotValid()
+		{
+			var obj = new XElement("CmObject", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var result = CmObjectValidator.ValidateObject(_mdc, obj);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Abstract class", result);
+			obj.Name = SharedConstants.DsChart;
+			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
+			obj.Name = SharedConstants.CmAnnotation;
+			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
+		}
+
+		[Test]
+		public void NonPropertyChildHasMessage()
+		{
+			var element = new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("bogusProp"));
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Not a property element child", result);
+		}
+
+		[Test]
+		public void GuidPropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("ListVersion");
+			var attr = new XAttribute("val", "badvalue");
+			prop.Add(attr);
+			element.Add(prop);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			attr.Value = Guid.NewGuid().ToString();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void TimePropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("DateCreated");
+			var attr = new XAttribute("val", "badvalue");
+			prop.Add(attr);
+			element.Add(prop);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			attr.Value = DateTime.Now.ToString();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void BooleanPropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("IsProtected");
+			var attr = new XAttribute("val", "badvalue");
+			prop.Add(attr);
+			element.Add(prop);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			attr.Value = "True";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void IntegerPropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("ForeColor");
+			var attr = new XAttribute("val", "badvalue");
+			prop.Add(attr);
+			element.Add(prop);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			attr.Value = "25";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void UnicodePropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmFilter", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Name");
+			var attr = new XAttribute("val", "badvalue");
+			prop.Add(attr);
+			element.Add(prop);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			prop.Attribute("val").Remove();
+
+			prop.Add(new XElement("badchild"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has non-text child element", result);
+		}
+
+		[Test]
+		public void TsStringHasCorrectRepsonses()
+		{
+			const string str = @"<ownseqatomic
+						class='StTxtPara'
+						guid='cf379f73-9ee5-4e45-b2e2-4b169666d83e'>
+						<Contents>
+							<Str>
+								<Run
+									ws='en'>Hi there.</Run>
+							</Str>
+						</Contents>
+						</ownseqatomic>";
+			var element = XElement.Parse(str);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+			// TODO: Test TsString contents.
+
+			element.Element("Contents").Add(new XAttribute("bogusAttr", "badvalue"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			element.Element("Contents").Attributes().Remove();
+
+			element.Element("Contents").Add(new XElement("extraChild"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has too many child elements.", result);
+		}
+
+		[Test]
+		public void MultiStringHasCorrectRepsonses()
+		{
+			const string str = @"<CmPossibilityList
+						guid='cf379f73-9ee5-4e45-b2e2-4b169666d83e'>
+		<Description>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>English multi-string description.</Run>
+			</AStr>
+			<AStr
+				ws='es'>
+				<Run
+					ws='es'>Spanish multi-string description.</Run>
+			</AStr>
+		</Description>
+						</CmPossibilityList>";
+			var element = XElement.Parse(str);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+			// TODO: Test multi-TsString alternatives.
+
+			element.Element("Description").Add(new XAttribute("bogusAttr", "badvalue"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			element.Element("Description").Attributes().Remove();
+
+			element.Element("Description").Add(new XElement("extraChild"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has non-AStr child element.", result);
+		}
+
+		[Test]
+		public void MultiUnicodeHasCorrectRepsonses()
+		{
+			const string str = @"<CmPossibilityList
+						guid='cf379f73-9ee5-4e45-b2e2-4b169666d83e'>
+		<Name>
+			<AUni
+				ws='en'>Genres</AUni>
+			<AUni
+				ws='es'>Géneros</AUni>
+		</Name>
+						</CmPossibilityList>";
+			var element = XElement.Parse(str);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+			// TODO: Test multi-TsString alternatives.
+
+			element.Element("Name").Add(new XAttribute("bogusAttr", "badvalue"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			element.Element("Name").Attributes().Remove();
+
+			element.Element("Name").Add(new XElement("extraChild"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has non-AUni child element.", result);
+			element.Element("Name").Element("extraChild").Remove();
+
+			element.Element("Name").Element("AUni").Add(new XAttribute("bogusAttr", "badValue"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has too many attributes.", result);
+			var wsAttr = element.Element("Name").Element("AUni").Attribute("ws");
+			wsAttr.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Does not have required 'ws' attribute.", result);
+			element.Element("Name").Element("AUni").Attribute("bogusAttr").Remove();
+			element.Element("Name").Element("AUni").Add(wsAttr);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			element.Element("Name").Element("AUni").Add(new XElement("extraChild"));
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has non-text child element.", result);
+		}
+	}
+}

@@ -144,6 +144,7 @@
 	<Compile Include="Controller\FwBridgeConflictController.cs" />
 	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\EnvironmentContextGenerator.cs" />

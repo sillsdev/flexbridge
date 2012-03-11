@@ -231,7 +231,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.IsAtomic = true; // Binary properties are atomic
 
 			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Prop, false);
-			elementStrategy.IsAtomic = true; // TsStrings are atomic
+			elementStrategy.IsAtomic = true; // Prop is atomic
 
 			AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Uni, false);
 			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AStr, false, true); // final parm is for IsAtomic, which in this case is atomic.
