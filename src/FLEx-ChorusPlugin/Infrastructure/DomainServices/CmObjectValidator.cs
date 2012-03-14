@@ -84,8 +84,47 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					switch (currentPropertyinfo.DataType)
 					{
 						case DataType.OwningCollection:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							if (!element.HasElements)
+								continue; // No children.
+							foreach (var ownedElement in element.Elements())
+							{
+								result = ValidateObject(mdc, ownedElement);
+								if (result != null)
+									return result;
+							}
 							break;
 						case DataType.OwningSequence:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							if (!element.HasElements)
+								continue; // No children.
+							// ownseq XOR ownseqatomic
+							var ownseqChildElements =
+								element.Elements().Where(childElement =>
+									childElement.Name.LocalName == SharedConstants.Ownseq ||
+									childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
+							if (ownseqChildElements.Count != element.Elements().Count())
+								return "Contains unrecognized child elements.";
+
+							if (ownseqChildElements.Count > 1)
+							{
+								// Make sure they are all have the same element name.
+								var name = ownseqChildElements[0].Name.LocalName;
+								var otherName = (name == SharedConstants.Ownseq) ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
+								var otherOwnSeqElements = element.Elements().Where(childElement =>
+																			 childElement.Name.LocalName == otherName).ToList();
+								if (otherOwnSeqElements.Count > 0)
+									return "Mixed owning sequence element names.";
+							}
+
+							foreach (var ownseqChildElement in ownseqChildElements)
+							{
+								result = ValidateObject(mdc, ownseqChildElement);
+								if (result != null)
+									return result;
+							}
 							break;
 						case DataType.OwningAtomic:
 							if (element.HasAttributes)

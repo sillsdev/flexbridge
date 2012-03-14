@@ -486,5 +486,67 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 		}
+
+		[Test]
+		public void OwningSequencePropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("SubPossibilities");
+			element.Add(prop);
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			extraAttr.Remove();
+
+			// No children is fine.
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			var extraChild = new XElement("BogusChild");
+			prop.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Contains unrecognized child elements.", result);
+			extraChild.Remove();
+
+			var osElement = new XElement(SharedConstants.Ownseq);
+			var osaElement = new XElement(SharedConstants.OwnseqAtomic);
+			prop.Add(osElement);
+			prop.Add(osaElement);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Mixed owning sequence element names.", result);
+		}
+
+		[Test]
+		public void OwningCollectionPropertyHasCorrectResponses()
+		{
+			var element = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Tags");
+			element.Add(prop);
+
+			// Owns col of TextTag
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			extraAttr.Remove();
+
+			// No children is fine.
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			var ttElement1 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var ttElement2 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			prop.Add(ttElement1);
+			prop.Add(ttElement2);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
 	}
 }
