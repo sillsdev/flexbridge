@@ -68,6 +68,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data = @"<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
 </Anthropology>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -77,6 +83,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		public void ShouldBeAbleToDoAllCanOperations()
 		{
 			const string data = @"<Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
 </Anthropology>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -100,6 +112,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Anthropology>
+<header>
+<RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+</RnResearchNbk>
+</header>
+<RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+</RnGenericRec>
 </Anthropology>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
