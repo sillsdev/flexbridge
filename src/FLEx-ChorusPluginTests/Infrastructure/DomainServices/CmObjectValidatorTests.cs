@@ -455,5 +455,36 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 		}
+
+		[Test]
+		public void OwningAtomicPropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Discussion");
+			element.Add(prop);
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			extraAttr.Remove();
+
+			var stText1 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			prop.Add(stText1);
+			var stText2 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			prop.Add(stText2);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has too many child elements.", result);
+			stText2.Remove();
+
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			stText1.Attribute(SharedConstants.GuidStr).Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+		}
 	}
 }

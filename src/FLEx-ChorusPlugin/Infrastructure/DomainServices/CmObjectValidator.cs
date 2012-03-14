@@ -88,6 +88,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						case DataType.OwningSequence:
 							break;
 						case DataType.OwningAtomic:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							var children = element.Elements().ToList();
+							if (children.Count > 1)
+								return "Has too many child elements.";
+							if (children.Count == 0)
+								continue;
+							result = ValidateObject(mdc, children[0]);
+							if (result != null)
+								return result;
 							break;
 
 						case DataType.ReferenceCollection:
