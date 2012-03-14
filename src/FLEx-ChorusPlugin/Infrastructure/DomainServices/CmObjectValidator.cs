@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -96,6 +95,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						case DataType.ReferenceSequence:
 							break;
 						case DataType.ReferenceAtomic:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							if (element.Elements().Count() > 1)
+								return "Has too many child elements.";
+							var objsur = element.Element(SharedConstants.Objsur);
+							if (objsur == null)
+								continue;
+							if (objsur.Elements().Any())
+								return "'objsur' element has child element(s).";
+							var objsurAttrs = objsur.Attributes().ToList();
+							if (objsurAttrs.Count > 2)
+								return "Has too many attributes.";
+							new Guid(objsurAttrs.Single(attr => attr.Name.LocalName == SharedConstants.GuidStr).Value);
+							var typeAttrValue = objsurAttrs.Single(attr => attr.Name.LocalName == "t").Value;
+							if (typeAttrValue != "r")
+								return "Has incorrect attribute value for reference property.";
 							break;
 
 						case DataType.MultiUnicode:

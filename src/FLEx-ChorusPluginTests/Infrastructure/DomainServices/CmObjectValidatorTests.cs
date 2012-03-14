@@ -330,5 +330,68 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Has non-text child element.", result);
 		}
+
+		[Test]
+		public void AtomicReferencePropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Confidence");
+			element.Add(prop);
+			var objsurElement = new XElement(SharedConstants.Objsur);
+			prop.Add(objsurElement);
+			var guidValue = Guid.NewGuid().ToString();
+			var guidAttr = new XAttribute(SharedConstants.GuidStr, guidValue);
+			var typeAttr = new XAttribute("t", "r");
+			objsurElement.Add(guidAttr);
+			objsurElement.Add(typeAttr);
+
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+
+			extraAttr.Remove();
+			objsurElement.Add(extraAttr);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has too many attributes.", result);
+			extraAttr.Remove();
+
+			var extraChild = new XElement("BogusChild");
+			objsurElement.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("'objsur' element has child element(s).", result);
+			extraChild.Remove();
+
+			prop.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has too many child elements.", result);
+			extraChild.Remove();
+
+			guidAttr.Value = "badValue";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			guidAttr.Value = guidValue;
+
+			guidAttr.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			objsurElement.Add(guidAttr);
+
+			typeAttr.Value = "o";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			typeAttr.Value = "r";
+
+			typeAttr.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+		}
 	}
 }
