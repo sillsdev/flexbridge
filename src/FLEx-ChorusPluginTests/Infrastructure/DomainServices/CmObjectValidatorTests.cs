@@ -332,7 +332,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
-		public void AtomicReferencePropertyHasCorrectResponses()
+		public void ReferenceAtomicPropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("Confidence");
@@ -392,6 +392,37 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			typeAttr.Remove();
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
+		}
+
+		[Test]
+		public void ReferenceSequencePropertyHasCorrectResponses()
+		{
+			var element = new XElement("Segment", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Analyses");
+			element.Add(prop);
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			extraAttr.Remove();
+
+			var extraChild = new XElement("BogusChild");
+			prop.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Contains child elements that are not 'refseq'.", result);
+			extraChild.Remove();
+
+			var refseq1 = new XElement(SharedConstants.Refseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
+									   new XAttribute("t", "r"));
+			var refseq2 = new XElement(SharedConstants.Refseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
+									   new XAttribute("t", "r"));
+			prop.Add(refseq1);
+			prop.Add(refseq2);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
 		}
 	}
 }

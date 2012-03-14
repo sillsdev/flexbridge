@@ -93,6 +93,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						case DataType.ReferenceCollection:
 							break;
 						case DataType.ReferenceSequence:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							var otherchildElements = element.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
+							if (otherchildElements.Any())
+								return "Contains child elements that are not 'refseq'.";
+							if (element.Elements(SharedConstants.Refseq).Any(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
+								return result;
 							break;
 						case DataType.ReferenceAtomic:
 							if (element.HasAttributes)
@@ -107,10 +114,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							var objsurAttrs = objsur.Attributes().ToList();
 							if (objsurAttrs.Count > 2)
 								return "Has too many attributes.";
-							new Guid(objsurAttrs.Single(attr => attr.Name.LocalName == SharedConstants.GuidStr).Value);
-							var typeAttrValue = objsurAttrs.Single(attr => attr.Name.LocalName == "t").Value;
-							if (typeAttrValue != "r")
-								return "Has incorrect attribute value for reference property.";
+							if (ReferencePropertyIsInvalid(objsurAttrs, out result))
+								return result;
+							result = null;
 							break;
 
 						case DataType.MultiUnicode:
@@ -214,6 +220,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 
 			return result;
+		}
+
+		private static bool ReferencePropertyIsInvalid(List<XAttribute> objsurAttrs, out string result)
+		{
+			new Guid(objsurAttrs.Single(attr => attr.Name.LocalName == SharedConstants.GuidStr).Value);
+			var typeAttrValue = objsurAttrs.Single(attr => attr.Name.LocalName == "t").Value;
+			if (typeAttrValue != "r")
+			{
+				result = "Has incorrect attribute value for reference property.";
+				return true;
+			}
+			result = null;
+			return false;
 		}
 
 		private static bool BasicValueTypeAttributeCheck(XElement element, out string value)
