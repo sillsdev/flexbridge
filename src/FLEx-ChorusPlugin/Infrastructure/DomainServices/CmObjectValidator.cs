@@ -91,6 +91,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							break;
 
 						case DataType.ReferenceCollection:
+							if (element.HasAttributes)
+								return "Has unrecognized attributes.";
+							var otherElements = element.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
+							if (otherElements.Any())
+								return "Contains child elements that are not 'refcol'.";
+							if (element.Elements(SharedConstants.Refcol).Any(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
+								return result;
 							break;
 						case DataType.ReferenceSequence:
 							if (element.HasAttributes)

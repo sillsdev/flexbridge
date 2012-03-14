@@ -424,5 +424,36 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 		}
+
+		[Test]
+		public void ReferenceCollectionPropertyHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var prop = new XElement("Restrictions");
+			element.Add(prop);
+
+			var extraAttr = new XAttribute("bogus", "badvalue");
+			prop.Add(extraAttr);
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has unrecognized attributes.", result);
+			extraAttr.Remove();
+
+			var extraChild = new XElement("BogusChild");
+			prop.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Contains child elements that are not 'refcol'.", result);
+			extraChild.Remove();
+
+			var refcol1 = new XElement(SharedConstants.Refcol, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
+									   new XAttribute("t", "r"));
+			var refcol2 = new XElement(SharedConstants.Refcol, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
+									   new XAttribute("t", "r"));
+			prop.Add(refcol1);
+			prop.Add(refcol2);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
 	}
 }
