@@ -45,6 +45,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					default:
 						className = obj.Name.LocalName;
 						break;
+					case SharedConstants.DsChart:
+					case SharedConstants.CmAnnotation:
+						// Abstract class elements, so get real class from 'class' attribute.
+						className = obj.Attribute(SharedConstants.Class).Value;
+						break;
 					case SharedConstants.curiosity:
 						attribute = obj.Attribute(SharedConstants.Class);
 						if (attribute == null)
@@ -68,7 +73,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var classInfo = mdc.GetClassInfo(className);
 				if (classInfo == null)
 					return "No recognized class";
-				if (classInfo.IsAbstract && classInfo.ClassName != SharedConstants.DsChart && classInfo.ClassName != SharedConstants.CmAnnotation)
+				if (classInfo.IsAbstract)
 					return "Abstract class";
 
 				// Check each property

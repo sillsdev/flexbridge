@@ -107,8 +107,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<curiosities>
-<curiosity guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-<curiosity guid='fff03918-9674-4401-8bb1-efe6502985a8' />
+<curiosity guid='fff03918-9674-4401-8bb1-efe6502985a7' class='StText' curiositytype='unowned' />
+<curiosity guid='fff03918-9674-4401-8bb1-efe6502985a8' class='StText' curiositytype='unowned' />
 </curiosities>";
 
 			File.WriteAllText(_ourFile.Path, data);

@@ -124,8 +124,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Abstract class", result);
 			obj.Name = SharedConstants.DsChart;
+			var classAttr = new XAttribute(SharedConstants.Class, "DsConstChart");
+			obj.Add(classAttr);
 			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
 			obj.Name = SharedConstants.CmAnnotation;
+			classAttr.Value = "CmBaseAnnotation";
 			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
 		}
 

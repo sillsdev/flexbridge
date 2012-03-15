@@ -26,10 +26,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				return false;
 			var doc = XDocument.Load(pathToFile);
 			var root = doc.Root;
-			if (root.Name.LocalName != SharedConstants.Styles || !root.Elements(SharedConstants.StStyle).Any())
-				return false;
-
-			return true;
+			return root.Name.LocalName == SharedConstants.Styles && root.Elements(SharedConstants.StStyle).Any();
 		}
 
 		public string ValidateFile(string pathToFile)
