@@ -56,15 +56,23 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
+		public void ShouldBeAbleToValidateIncorrectFormatFile()
+		{
+			const string data = "<classdata />";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
+		}
+
+		[Test]
 		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormattedFile()
+		public void ShouldBeAbleToValidateImproperlyFormattedFile()
 		{
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' type='Boolean' />

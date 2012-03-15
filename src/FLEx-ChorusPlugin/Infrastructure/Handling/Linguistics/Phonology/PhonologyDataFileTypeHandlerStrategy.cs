@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
@@ -18,12 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Phondata))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.PhonologicalDataFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Phondata) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.PhonologicalDataFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -39,7 +36,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 					return "Not valid phonology data file";
 				}
 
-				return null;
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.PhPhonData));
 			}
 			catch (Exception e)
 			{

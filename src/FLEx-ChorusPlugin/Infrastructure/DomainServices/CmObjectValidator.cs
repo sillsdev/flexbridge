@@ -76,24 +76,32 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (classInfo.IsAbstract)
 					return "Abstract class";
 
+				if (!obj.Elements().Any())
+					return null;
+
 				// Check each property
 				var allProperties = classInfo.AllProperties.ToList();
 				var allPropertyNames = new HashSet<string>(from prop in allProperties select prop.PropertyName);
-				foreach (var element in obj.Elements())
-				{
-					if (!allPropertyNames.Contains(element.Name.LocalName))
-						return "Not a property element child";
 
-					var currentPropertyinfo = (allProperties.Where(pi => pi.PropertyName == element.Name.LocalName)).First();
+				foreach (var propertyElement in obj.Elements())
+				{
+					// Deal with custom properties.
+					var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
+					var propertyName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
+
+					if (!allPropertyNames.Contains(propertyName))
+						return propertyName + " is not a property element child";
+
+					var currentPropertyinfo = (allProperties.Where(pi => pi.PropertyName == propertyName)).First();
 
 					switch (currentPropertyinfo.DataType)
 					{
 						case DataType.OwningCollection:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (!element.HasElements)
+							if (!propertyElement.HasElements)
 								continue; // No children.
-							foreach (var ownedElement in element.Elements())
+							foreach (var ownedElement in propertyElement.Elements())
 							{
 								result = ValidateObject(mdc, ownedElement);
 								if (result != null)
@@ -101,16 +109,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							break;
 						case DataType.OwningSequence:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (!element.HasElements)
+							if (!propertyElement.HasElements)
 								continue; // No children.
 							// ownseq XOR ownseqatomic
 							var ownseqChildElements =
-								element.Elements().Where(childElement =>
+								propertyElement.Elements().Where(childElement =>
 									childElement.Name.LocalName == SharedConstants.Ownseq ||
 									childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
-							if (ownseqChildElements.Count != element.Elements().Count())
+							if (ownseqChildElements.Count != propertyElement.Elements().Count())
 								return "Contains unrecognized child elements.";
 
 							if (ownseqChildElements.Count > 1)
@@ -118,7 +126,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 								// Make sure they are all have the same element name.
 								var name = ownseqChildElements[0].Name.LocalName;
 								var otherName = (name == SharedConstants.Ownseq) ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
-								var otherOwnSeqElements = element.Elements().Where(childElement =>
+								var otherOwnSeqElements = propertyElement.Elements().Where(childElement =>
 																			 childElement.Name.LocalName == otherName).ToList();
 								if (otherOwnSeqElements.Count > 0)
 									return "Mixed owning sequence element names.";
@@ -132,9 +140,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							break;
 						case DataType.OwningAtomic:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							var children = element.Elements().ToList();
+							var children = propertyElement.Elements().ToList();
 							if (children.Count > 1)
 								return "Has too many child elements.";
 							if (children.Count == 0)
@@ -145,29 +153,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							break;
 
 						case DataType.ReferenceCollection:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							var otherElements = element.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
+							var otherElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
 							if (otherElements.Any())
 								return "Contains child elements that are not 'refcol'.";
-							if (element.Elements(SharedConstants.Refcol).Any(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
+							if (propertyElement.Elements(SharedConstants.Refcol).Any(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
 								return result;
 							break;
 						case DataType.ReferenceSequence:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							var otherchildElements = element.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
+							var otherchildElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
 							if (otherchildElements.Any())
 								return "Contains child elements that are not 'refseq'.";
-							if (element.Elements(SharedConstants.Refseq).Any(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
+							if (propertyElement.Elements(SharedConstants.Refseq).Any(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
 								return result;
 							break;
 						case DataType.ReferenceAtomic:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Count() > 1)
+							if (propertyElement.Elements().Count() > 1)
 								return "Has too many child elements.";
-							var objsur = element.Element(SharedConstants.Objsur);
+							var objsur = propertyElement.Element(SharedConstants.Objsur);
 							if (objsur == null)
 								continue;
 							if (objsur.Elements().Any())
@@ -181,12 +189,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							break;
 
 						case DataType.MultiUnicode:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
+							if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
 								return "Has non-AUni child element.";
 
-							foreach (var uniAlt in element.Elements(SharedConstants.AUni))
+							foreach (var uniAlt in propertyElement.Elements(SharedConstants.AUni))
 							{
 								if (uniAlt.Attributes().Count() > 1)
 									return "Has too many attributes.";
@@ -198,67 +206,67 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							break;
 						case DataType.MultiString:
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
+							if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
 								return "Has non-AStr child element.";
 							// TODO: Deal with AStr content.
 							break;
 						case DataType.Unicode:
 							// Ordinary C# string. May, or may not, have content.
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
+							if (propertyElement.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
 								return "Has non-text child element";
 							break;
 						case DataType.String:
 							// TsString.
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Count() > 1)
+							if (propertyElement.Elements().Count() > 1)
 								return "Has too many child elements.";
-							var strElement = element.Element(SharedConstants.Str);
+							var strElement = propertyElement.Element(SharedConstants.Str);
 							// TODO: Deal with TsStringContents.
 							break;
 						case DataType.Binary:
 							// contains array of bytes.
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Count() > 1)
+							if (propertyElement.Elements().Count() > 1)
 								return "Has too many child elements.";
 							break;
 						case DataType.TextPropBinary:
 							// Has one Prop element
-							if (element.HasAttributes)
+							if (!isCustomProperty && propertyElement.HasAttributes)
 								return "Has unrecognized attributes.";
-							if (element.Elements().Count() > 1)
+							if (propertyElement.Elements().Count() > 1)
 								return "Has too many child elements.";
-							var propElement = element.Element(SharedConstants.Prop);
+							var propElement = propertyElement.Element(SharedConstants.Prop);
 							break;
 
 						case DataType.Integer:
-							if (BasicValueTypeAttributeCheck(element, out result))
+							if (BasicValueTypeAttributeCheck(propertyElement, out result))
 							{
 								var intAttrVal = Int32.Parse(result);
 								result = null;
 							}
 							break;
 						case DataType.Boolean:
-							if (BasicValueTypeAttributeCheck(element, out result))
+							if (BasicValueTypeAttributeCheck(propertyElement, out result))
 							{
 								var boolAttrVal = bool.Parse(result);
 								result = null;
 							}
 							break;
 						case DataType.Time:
-							if (BasicValueTypeAttributeCheck(element, out result))
+							if (BasicValueTypeAttributeCheck(propertyElement, out result))
 							{
 								var dateTimeAttrVal = DateTime.Parse(result);
 								result = null;
 							}
 							break;
 						case DataType.GenDate:
-							if (BasicValueTypeAttributeCheck(element, out result))
+							if (BasicValueTypeAttributeCheck(propertyElement, out result))
 							{
 								// What is a GenDate?
 								//var dateTimeAttrVal = DateTime.Parse(element.Attribute("val").Value);
@@ -266,7 +274,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							break;
 						case DataType.Guid:
-							if (BasicValueTypeAttributeCheck(element, out result))
+							if (BasicValueTypeAttributeCheck(propertyElement, out result))
 							{
 								var guidAttrVal = new Guid(result);
 								result = null;

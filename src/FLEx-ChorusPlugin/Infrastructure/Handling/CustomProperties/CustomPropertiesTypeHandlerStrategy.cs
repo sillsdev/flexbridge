@@ -18,12 +18,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.CustomPropertiesFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.CustomPropertiesFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -80,6 +76,8 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 					if (customFieldElement.Attribute("class").Value + customFieldElement.Attribute("name").Value != customFieldElement.Attribute("key").Value)
 						return "Mis-matched 'key' attribute with property class+name atributes";
 				}
+
+				MetadataCache.MdCache.AddCustomPropInfo(pathToFile);
 
 				return null;
 			}

@@ -18,12 +18,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.DataNotebookFilename)
-				return false;
-
-			return true;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.DataNotebookFilename;
 		}
 
 		public string ValidateFile(string pathToFile)

@@ -51,10 +51,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
+		public void ShouldBeAbleToValidateIncorrectFormatFile()
 		{
 			File.WriteAllText(_ourFile.Path, "<classdata />");
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]

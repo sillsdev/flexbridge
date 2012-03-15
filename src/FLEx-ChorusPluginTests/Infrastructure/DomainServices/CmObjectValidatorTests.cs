@@ -138,7 +138,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var element = new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("bogusProp"));
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Not a property element child", result);
+			Assert.IsTrue(result.EndsWith(" is not a property element child"));
 		}
 
 		[Test]
