@@ -220,21 +220,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// Handle 'Prop' element.
 			var propElement = propertyElement.Element(SharedConstants.Prop);
-			var attrs = new HashSet<string>
-							{
-								"align", "backcolor", "bold", "borderBottom", "borderColor", "borderLeading", "borderTop", "borderTrailing",
-								"bulNumScheme", "bulNumStartAt", "bulNumTxtAft", "bulNumTxtBef", "charStyle", "contextString", "embedded",
-								"externalLink", "firstIndent", "fontFamily", "fontsize", "fontsizeUnit", "fontVariations", "forecolor", "italic",
-								"keepTogether", "keepWithNext", "leadingIndent", "lineHeight", "lineHeightType", "lineHeightUnit", "link", "marginBottom",
-								"marginLeading", "marginTop", "marginTrailing", "moveableObj", "namedStyle", "offset", "offsetUnit", "ownlink", "padBottom",
-								"padLeading", "padTop", "padTrailing", "paracolor", "paraStyle", "rightToLeft", "spaceAfter", "spaceBefore", "spellcheck",
-								"superscript", "tabDef", "tabList", "tags", "trailingIndent", "type", "undercolor", "underline", "widowOrphan", "ws",
-								"wsBase", "wsStyle", "space"
-							};
-			if (propElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
-			{
-				return "Invalid attribute for <Prop> element.";
-			}
+			HashSet<string> attrs;
+			var result = CheckTextPropertyAttributes(propElement, out attrs);
+			if (result != null)
+				return result;
 			foreach (var childElement in propertyElement.Elements())
 			{
 				switch (childElement.Name.LocalName)
@@ -264,6 +253,79 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return null;
 		}
 
+		private static string CheckTextPropertyAttributes(XElement propElement, out HashSet<string> attrs)
+		{
+			attrs = new HashSet<string>
+						{
+							"align",
+							"backcolor",
+							"bold",
+							"borderBottom",
+							"borderColor",
+							"borderLeading",
+							"borderTop",
+							"borderTrailing",
+							"bulNumScheme",
+							"bulNumStartAt",
+							"bulNumTxtAft",
+							"bulNumTxtBef",
+							"charStyle",
+							"contextString",
+							"embedded",
+							"externalLink",
+							"firstIndent",
+							"fontFamily",
+							"fontsize",
+							"fontsizeUnit",
+							"fontVariations",
+							"forecolor",
+							"italic",
+							"keepTogether",
+							"keepWithNext",
+							"leadingIndent",
+							"lineHeight",
+							"lineHeightType",
+							"lineHeightUnit",
+							"link",
+							"marginBottom",
+							"marginLeading",
+							"marginTop",
+							"marginTrailing",
+							"moveableObj",
+							"namedStyle",
+							"offset",
+							"offsetUnit",
+							"ownlink",
+							"padBottom",
+							"padLeading",
+							"padTop",
+							"padTrailing",
+							"paracolor",
+							"paraStyle",
+							"rightToLeft",
+							"spaceAfter",
+							"spaceBefore",
+							"spellcheck",
+							"superscript",
+							"tabDef",
+							"tabList",
+							"tags",
+							"trailingIndent",
+							"type",
+							"undercolor",
+							"underline",
+							"widowOrphan",
+							"ws",
+							"wsBase",
+							"wsStyle",
+							"space"
+						};
+			var set = attrs;
+			return propElement.Attributes().Any(attr => !set.Contains(attr.Name.LocalName))
+				? "Invalid attribute for <Prop> element."
+				: null;
+		}
+
 		private static string ValidateBinaryProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
 		{
 			// contains array of bytes.
@@ -281,9 +343,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return "Has unrecognized attributes.";
 			if (propertyElement.Elements().Count() > 1)
 				return "Has too many child elements.";
-			var strElement = propertyElement.Element(SharedConstants.Str);
-			// TODO: Deal with TsString contents.
-			return null;
+			return ValidateComplexTsString(propertyElement.Element(SharedConstants.Str));
 		}
 
 		private static string ValidateUnicodeProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
@@ -300,9 +360,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			if (!isCustomProperty && propertyElement.HasAttributes)
 				return "Has unrecognized attributes.";
+
 			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
 				return "Has non-AStr child element.";
-			// TODO: Deal with AStr content.
+
+			var extantAlts = new HashSet<string>();
+			foreach (var astrElement in propertyElement.Elements(SharedConstants.AStr))
+			{
+				var result = ValidateComplexTsString(astrElement);
+				if (result != null)
+					return result;
+				var currentWs = astrElement.Attribute(SharedConstants.Ws).Value;
+				if (extantAlts.Contains(currentWs))
+					return "Duplicate alternative for ws: " + currentWs;
+				extantAlts.Add(currentWs);
+			}
+			return null;
+		}
+
+		private static string ValidateComplexTsString(XContainer complexTsStringElement)
+		{
+			var runs = complexTsStringElement.Elements("Run").ToList();
+			if (!runs.Any())
+				return "No <Run> elements.";
+
+			foreach (var runElement in runs)
+			{
+				HashSet<string> attrs;
+				var result = CheckTextPropertyAttributes(runElement, out attrs);
+				if (result != null)
+					return result;
+			}
 			return null;
 		}
 
@@ -313,6 +401,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
 				return "Has non-AUni child element.";
 
+			var extantAlts = new HashSet<string>();
 			foreach (var uniAlt in propertyElement.Elements(SharedConstants.AUni))
 			{
 				if (uniAlt.Attributes().Count() > 1)
@@ -322,6 +411,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					return "Does not have required 'ws' attribute.";
 				if (uniAlt.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
 					return "Has non-text child element.";
+				if (string.IsNullOrEmpty(uniAlt.Value))
+					return "Has no text data.";
+				var currentWs = wsAttr.Value;
+				if (extantAlts.Contains(currentWs))
+					return "Duplicate alternative for ws: " + currentWs;
+				extantAlts.Add(currentWs);
 			}
 			return null;
 		}

@@ -98,7 +98,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		class='LexSense'
 		key='LexSenseParadigm'
 		name='Paradigm'
-		type='String'
+		type='MultiString'
 		wsSelector='-2' />
 	<CustomField
 		class='WfiWordform'
