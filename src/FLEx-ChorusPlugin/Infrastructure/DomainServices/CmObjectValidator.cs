@@ -48,7 +48,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					case SharedConstants.DsChart:
 					case SharedConstants.CmAnnotation:
 						// Abstract class elements, so get real class from 'class' attribute.
-						className = obj.Attribute(SharedConstants.Class).Value;
+						attribute = obj.Attribute(SharedConstants.Class);
+						if (attribute == null)
+							return "Has no class attribute.";
+						className = attribute.Value;
 						break;
 					case SharedConstants.curiosity:
 						attribute = obj.Attribute(SharedConstants.Class);
@@ -97,151 +100,66 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					switch (currentPropertyinfo.DataType)
 					{
 						case DataType.OwningCollection:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (!propertyElement.HasElements)
-								continue; // No children.
-							foreach (var ownedElement in propertyElement.Elements())
-							{
-								result = ValidateObject(mdc, ownedElement);
-								if (result != null)
-									return result;
-							}
+							result = ValidateOwningCollectionProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.OwningSequence:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (!propertyElement.HasElements)
-								continue; // No children.
-							// ownseq XOR ownseqatomic
-							var ownseqChildElements =
-								propertyElement.Elements().Where(childElement =>
-									childElement.Name.LocalName == SharedConstants.Ownseq ||
-									childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
-							if (ownseqChildElements.Count != propertyElement.Elements().Count())
-								return "Contains unrecognized child elements.";
-
-							if (ownseqChildElements.Count > 1)
-							{
-								// Make sure they are all have the same element name.
-								var name = ownseqChildElements[0].Name.LocalName;
-								var otherName = (name == SharedConstants.Ownseq) ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
-								var otherOwnSeqElements = propertyElement.Elements().Where(childElement =>
-																			 childElement.Name.LocalName == otherName).ToList();
-								if (otherOwnSeqElements.Count > 0)
-									return "Mixed owning sequence element names.";
-							}
-
-							foreach (var ownseqChildElement in ownseqChildElements)
-							{
-								result = ValidateObject(mdc, ownseqChildElement);
-								if (result != null)
-									return result;
-							}
+							result = ValidateOwningSequenceProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.OwningAtomic:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							var children = propertyElement.Elements().ToList();
-							if (children.Count > 1)
-								return "Has too many child elements.";
-							if (children.Count == 0)
-								continue;
-							result = ValidateObject(mdc, children[0]);
+							result = ValidateOwningAtomicProperty(mdc, isCustomProperty, propertyElement);
 							if (result != null)
 								return result;
 							break;
 
 						case DataType.ReferenceCollection:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							var otherElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
-							if (otherElements.Any())
-								return "Contains child elements that are not 'refcol'.";
-							if (propertyElement.Elements(SharedConstants.Refcol).Any(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
+							result = ValidateReferenceCollectionProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
 								return result;
 							break;
 						case DataType.ReferenceSequence:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							var otherchildElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
-							if (otherchildElements.Any())
-								return "Contains child elements that are not 'refseq'.";
-							if (propertyElement.Elements(SharedConstants.Refseq).Any(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
+							result = ValidateReferenceSequenceProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
 								return result;
 							break;
 						case DataType.ReferenceAtomic:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Count() > 1)
-								return "Has too many child elements.";
-							var objsur = propertyElement.Element(SharedConstants.Objsur);
-							if (objsur == null)
-								continue;
-							if (objsur.Elements().Any())
-								return "'objsur' element has child element(s).";
-							var objsurAttrs = objsur.Attributes().ToList();
-							if (objsurAttrs.Count > 2)
-								return "Has too many attributes.";
-							if (ReferencePropertyIsInvalid(objsurAttrs, out result))
+							result = ValidateReferenceAtomicProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
 								return result;
-							result = null;
 							break;
 
 						case DataType.MultiUnicode:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
-								return "Has non-AUni child element.";
-
-							foreach (var uniAlt in propertyElement.Elements(SharedConstants.AUni))
-							{
-								if (uniAlt.Attributes().Count() > 1)
-									return "Has too many attributes.";
-								var wsAttr = uniAlt.Attribute(SharedConstants.Ws);
-								if (wsAttr == null)
-									return "Does not have required 'ws' attribute.";
-								if (uniAlt.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
-									return "Has non-text child element.";
-							}
+							result = ValidateMultiUnicodeProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.MultiString:
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
-								return "Has non-AStr child element.";
-							// TODO: Deal with AStr content.
+							result = ValidateMultiStringProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.Unicode:
-							// Ordinary C# string. May, or may not, have content.
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
-								return "Has non-text child element";
+							result = ValidateUnicodeProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.String:
-							// TsString.
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Count() > 1)
-								return "Has too many child elements.";
-							var strElement = propertyElement.Element(SharedConstants.Str);
-							// TODO: Deal with TsStringContents.
+							result = ValidateStringProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.Binary:
-							// contains array of bytes.
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Count() > 1)
-								return "Has too many child elements.";
+							result = ValidateBinaryProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 						case DataType.TextPropBinary:
-							// Has one Prop element
-							if (!isCustomProperty && propertyElement.HasAttributes)
-								return "Has unrecognized attributes.";
-							if (propertyElement.Elements().Count() > 1)
-								return "Has too many child elements.";
-							var propElement = propertyElement.Element(SharedConstants.Prop);
+							result = ValidateTextPropBinaryProperty(mdc, isCustomProperty, propertyElement);
+							if (result != null)
+								return result;
 							break;
 
 						case DataType.Integer:
@@ -270,6 +188,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							{
 								// What is a GenDate?
 								//var dateTimeAttrVal = DateTime.Parse(element.Attribute("val").Value);
+								// TODO: Check internals of the GenDate.
 								result = null;
 							}
 							break;
@@ -289,6 +208,229 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 
 			return result;
+		}
+
+		private static string ValidateTextPropBinaryProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			// Has one Prop element
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Count() > 1)
+				return "Has too many child elements.";
+
+			// Handle 'Prop' element.
+			var propElement = propertyElement.Element(SharedConstants.Prop);
+			var attrs = new HashSet<string>
+							{
+								"align", "backcolor", "bold", "borderBottom", "borderColor", "borderLeading", "borderTop", "borderTrailing",
+								"bulNumScheme", "bulNumStartAt", "bulNumTxtAft", "bulNumTxtBef", "charStyle", "contextString", "embedded",
+								"externalLink", "firstIndent", "fontFamily", "fontsize", "fontsizeUnit", "fontVariations", "forecolor", "italic",
+								"keepTogether", "keepWithNext", "leadingIndent", "lineHeight", "lineHeightType", "lineHeightUnit", "link", "marginBottom",
+								"marginLeading", "marginTop", "marginTrailing", "moveableObj", "namedStyle", "offset", "offsetUnit", "ownlink", "padBottom",
+								"padLeading", "padTop", "padTrailing", "paracolor", "paraStyle", "rightToLeft", "spaceAfter", "spaceBefore", "spellcheck",
+								"superscript", "tabDef", "tabList", "tags", "trailingIndent", "type", "undercolor", "underline", "widowOrphan", "ws",
+								"wsBase", "wsStyle", "space"
+							};
+			if (propElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
+			{
+				return "Invalid attribute for <Prop> element.";
+			}
+			foreach (var childElement in propertyElement.Elements())
+			{
+				switch (childElement.Name.LocalName)
+				{
+					case "BulNumFontInfo":
+						if (childElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
+						{
+							return "Invalid attribute for <BulNumFontInfo> element.";
+						}
+						break;
+					case "WsStyles9999":
+						foreach (var grandchildElement in childElement.Elements())
+						{
+							if (grandchildElement.Name.LocalName != "WsProp")
+								return "Invalid nested element in <WsStyle9999> element: " + grandchildElement.Name.LocalName;
+							var wsAttr = grandchildElement.Attribute("ws");
+							if (wsAttr == null)
+								return "WsProp must contain a 'ws' attribute.";
+							if (grandchildElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
+								return "Invalid attribute for <WsProp> element.";
+						}
+						break;
+					default:
+						return "Illegal element in <Prop> element: " + childElement.Name.LocalName;
+				}
+			}
+			return null;
+		}
+
+		private static string ValidateBinaryProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			// contains array of bytes.
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Count() > 1)
+				return "Has too many child elements.";
+			return null;
+		}
+
+		private static string ValidateStringProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			// TsString.
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Count() > 1)
+				return "Has too many child elements.";
+			var strElement = propertyElement.Element(SharedConstants.Str);
+			// TODO: Deal with TsString contents.
+			return null;
+		}
+
+		private static string ValidateUnicodeProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			// Ordinary C# string. May, or may not, have content.
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
+				return "Has non-text child element";
+			return null;
+		}
+
+		private static string ValidateMultiStringProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
+				return "Has non-AStr child element.";
+			// TODO: Deal with AStr content.
+			return null;
+		}
+
+		private static string ValidateMultiUnicodeProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
+				return "Has non-AUni child element.";
+
+			foreach (var uniAlt in propertyElement.Elements(SharedConstants.AUni))
+			{
+				if (uniAlt.Attributes().Count() > 1)
+					return "Has too many attributes.";
+				var wsAttr = uniAlt.Attribute(SharedConstants.Ws);
+				if (wsAttr == null)
+					return "Does not have required 'ws' attribute.";
+				if (uniAlt.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
+					return "Has non-text child element.";
+			}
+			return null;
+		}
+
+		private static string ValidateReferenceAtomicProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (propertyElement.Elements().Count() > 1)
+				return "Has too many child elements.";
+			var objsur = propertyElement.Element(SharedConstants.Objsur);
+			if (objsur == null)
+				return null;
+			if (objsur.Elements().Any())
+				return "'objsur' element has child element(s).";
+			var objsurAttrs = objsur.Attributes().ToList();
+			if (objsurAttrs.Count > 2)
+				return "Has too many attributes.";
+			string result;
+			ReferencePropertyIsInvalid(objsurAttrs, out result);
+			return result;
+		}
+
+		private static string ValidateReferenceSequenceProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			string result = null;
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			var otherchildElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
+			if (otherchildElements.Any())
+				return "Contains child elements that are not 'refseq'.";
+			foreach (var refseqElement in propertyElement.Elements(SharedConstants.Refseq).Where(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
+				break;
+			return result;
+		}
+
+		private static string ValidateReferenceCollectionProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			string result = null;
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			var otherElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
+			if (otherElements.Any())
+				return "Contains child elements that are not 'refcol'.";
+			foreach (var refcolElement in propertyElement.Elements(SharedConstants.Refcol).Where(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
+				break;
+			return result;
+		}
+
+		private static string ValidateOwningAtomicProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			var children = propertyElement.Elements().ToList();
+			return (children.Count > 1)
+					? "Has too many child elements."
+					: ((children.Count == 0)
+						? null
+						: ValidateObject(mdc, children[0]));
+		}
+
+		private static string ValidateOwningSequenceProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (!propertyElement.HasElements)
+				return null; // No children.
+			// ownseq XOR ownseqatomic
+			var ownseqChildElements =
+				propertyElement.Elements().Where(childElement =>
+					childElement.Name.LocalName == SharedConstants.Ownseq ||
+					childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
+			if (ownseqChildElements.Count != propertyElement.Elements().Count())
+				return "Contains unrecognized child elements.";
+
+			if (ownseqChildElements.Count > 1)
+			{
+				// Make sure they are all have the same element name.
+				var name = ownseqChildElements[0].Name.LocalName;
+				var otherName = (name == SharedConstants.Ownseq) ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
+				var otherOwnSeqElements = propertyElement.Elements().Where(childElement =>
+															 childElement.Name.LocalName == otherName).ToList();
+				if (otherOwnSeqElements.Count > 0)
+					return "Mixed owning sequence element names.";
+			}
+
+			foreach (var ownseqChildElement in ownseqChildElements)
+			{
+				var result = ValidateObject(mdc, ownseqChildElement);
+				if (result != null)
+					return result;
+			}
+			return null;
+		}
+
+		private static string ValidateOwningCollectionProperty(MetadataCache mdc, bool isCustomProperty,
+															   XElement propertyElement)
+		{
+			if (!isCustomProperty && propertyElement.HasAttributes)
+				return "Has unrecognized attributes.";
+			if (!propertyElement.HasElements)
+				return null;
+			foreach (var ownedElement in propertyElement.Elements())
+			{
+				var result = ValidateObject(mdc, ownedElement);
+				if (result != null)
+					return result;
+			}
+			return null;
 		}
 
 		private static bool ReferencePropertyIsInvalid(List<XAttribute> objsurAttrs, out string result)
