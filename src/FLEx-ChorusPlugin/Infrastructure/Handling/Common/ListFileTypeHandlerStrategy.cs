@@ -7,6 +7,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
@@ -20,7 +21,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.List))
 				return false;
 
-			return ValidateFile(pathToFile) == null;
+			var doc = XDocument.Load(pathToFile);
+			var root = doc.Root;
+			return root.Elements(SharedConstants.CmPossibilityList).Any();
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -29,10 +32,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (!root.Elements(SharedConstants.CmPossibilityList).Any())
-					return "Not valid styles file";
-
-				return null;
+				return !root.Elements(SharedConstants.CmPossibilityList).Any()
+					? "Not valid list file."
+					: CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.CmPossibilityList));
 			}
 			catch (Exception e)
 			{

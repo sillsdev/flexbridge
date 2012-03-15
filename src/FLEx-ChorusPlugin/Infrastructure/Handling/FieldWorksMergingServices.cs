@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -186,16 +187,32 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// <summary>
 		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
-		/// Q (RBR: Why does it need the MDC?
+		/// Q (RBR: Why does it need the MDC?)
 		/// </summary>
 		/// <param name="element"></param>
 		/// <returns></returns>
 		internal static string GetClassName(XmlNode element)
 		{
 			// Owning collections do nothing special for the main element name;
-			return (element.Name == SharedConstants.Ownseq || element.Name == SharedConstants.OwnseqAtomic)
+			var name = element.Name;
+			return (name == SharedConstants.Ownseq || name == SharedConstants.OwnseqAtomic || name == SharedConstants.curiosity)
 				? element.Attributes[SharedConstants.Class].Value
-				: element.Name;
+				: name;
+		}
+
+		/// <summary>
+		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
+		/// Q (RBR: Why does it need the MDC?)
+		/// </summary>
+		/// <param name="element"></param>
+		/// <returns></returns>
+		internal static string GetClassName(XElement element)
+		{
+			// Owning collections do nothing special for the main element name;
+			var name = element.Name.LocalName;
+			return (name == SharedConstants.Ownseq || name == SharedConstants.OwnseqAtomic || name == SharedConstants.curiosity)
+				? element.Attribute(SharedConstants.Class).Value
+				: name;
 		}
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)

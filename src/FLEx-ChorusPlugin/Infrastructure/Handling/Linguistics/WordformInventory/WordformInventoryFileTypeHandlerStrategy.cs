@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory
@@ -18,12 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.WordformInventoryFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.WordformInventoryFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -39,12 +36,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 					return "Not valid inventory file";
 				}
 
-				return null;
+				// Header is optional, but if present it must have at least one PunctuationForm.
+				var header = root.Element(SharedConstants.Header);
+				if (header != null)
+				{
+					foreach (var punctResult in header.Elements("PunctuationForm").Select(punctForm => CmObjectValidator.ValidateObject(MetadataCache.MdCache, punctForm)).Where(punctResult => punctResult != null))
+					{
+						return punctResult;
+					}
+				}
+				foreach (var record in root.Elements("WfiWordform"))
+				{
+					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
+						return null;
+					var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					if (result != null)
+						return result;
+				}
 			}
 			catch (Exception e)
 			{
 				return e.Message;
 			}
+			return null;
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)

@@ -238,12 +238,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
 			{
 				default:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					break;
-				case MergeOrder.ConflictHandlingModeChoices.TheyWin:
 					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
 					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					break;
+				case MergeOrder.ConflictHandlingModeChoices.WeWin:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
 					break;
 			}
 			AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, GetMetaDataCacheOffsetFolder(mergeOrder), 1);
@@ -274,6 +274,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (!File.Exists(customPropPathname))
 				return;
 
+			AddCustomPropInfo(customPropPathname);
+		}
+
+		internal void AddCustomPropInfo(string customPropPathname)
+		{
 			var doc = XDocument.Load(customPropPathname);
 			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
 			{

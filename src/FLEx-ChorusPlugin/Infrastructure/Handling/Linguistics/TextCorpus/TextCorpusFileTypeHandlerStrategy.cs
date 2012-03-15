@@ -6,6 +6,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
@@ -18,10 +19,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.TextInCorpus))
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.TextInCorpus);
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -35,8 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 				{
 					return "Not valid text corpus file";
 				}
-
-				return null;
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element("Text"));
 			}
 			catch (Exception e)
 			{

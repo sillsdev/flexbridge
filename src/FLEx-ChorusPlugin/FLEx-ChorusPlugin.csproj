@@ -144,12 +144,13 @@
 	<Compile Include="Controller\FwBridgeConflictController.cs" />
 	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\EnvironmentContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksKeyFinder.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksScrDraftStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrDraftStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FwGenericHtmlGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />

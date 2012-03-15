@@ -1,7 +1,7 @@
 using System.Xml;
 using Chorus.merge.xml.generic;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	internal sealed class FieldWorksScrDraftStrategy : IMergeStrategy
 	{

@@ -7,6 +7,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
@@ -20,10 +21,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraft))
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraft);
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -35,12 +33,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 				if (root.Name.LocalName != ArchivedDrafts || !root.Elements(ScrDraft).Any())
 					return "Not valid archived draft file.";
 
-				return null;
+				foreach (var result in root.Elements(ScrDraft).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(ScrDraft))).Where(result => result != null))
+				{
+					return result;
+				}
 			}
 			catch (Exception e)
 			{
 				return e.Message;
 			}
+			return null;
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)

@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
@@ -22,12 +23,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Annotation))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.FLExAnnotationsFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Annotation) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.FLExAnnotationsFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -43,7 +40,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 					return "Not a valid annotations file.";
 				}
 
-				return null;
+				return root.Elements(SharedConstants.CmAnnotation)
+					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
 			{

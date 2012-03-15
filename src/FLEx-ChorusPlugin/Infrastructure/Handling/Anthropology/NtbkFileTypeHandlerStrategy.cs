@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
@@ -16,33 +18,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.DataNotebookFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.DataNotebookFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
 		{
 			try
 			{
-				var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
-				using (var reader = XmlReader.Create(pathToFile, settings))
+				var doc = XDocument.Load(pathToFile);
+				var root = doc.Root;
+				if (root.Name.LocalName != SharedConstants.Anthropology)
+					return "Not a FieldWorks data notebook file.";
+				var header = root.Element(SharedConstants.Header);
+				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("RnResearchNbk"));
+				if (result != null)
+					return result;
+				foreach (var record in root.Elements("RnGenericRec"))
 				{
-					reader.MoveToContent();
-					if (reader.LocalName == SharedConstants.Anthropology)
-					{
-						// It would be nice, if it could really validate it.
-						while (reader.Read())
-						{
-						}
-					}
-					else
-					{
-						throw new InvalidOperationException("Not a FieldWorks data notebook file.");
-					}
+					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
+						return null;
+					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					if (result != null)
+						return result;
 				}
 			}
 			catch (Exception e)

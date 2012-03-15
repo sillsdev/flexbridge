@@ -49,18 +49,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
-		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
-		}
-
-		[Test]
 		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data =

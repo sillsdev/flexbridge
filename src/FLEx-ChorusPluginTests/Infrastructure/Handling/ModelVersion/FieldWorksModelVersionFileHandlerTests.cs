@@ -51,10 +51,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
+		public void ShouldBeAbleToValidateIncorrectFormatFile()
 		{
 			File.WriteAllText(_ourFile.Path, "<classdata />");
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -68,6 +68,22 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		public void ShouldNotBeAbleToValidateFile()
 		{
 			const string ourData = "<classdata />";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithVersionNumberTooLow()
+		{
+			const string ourData = "{\"modelversion\": 6999999}";
+			File.WriteAllText(_ourFile.Path, ourData);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNonIntegerVersionNumber()
+		{
+			const string ourData = "{\"modelversion\": cat}";
 			File.WriteAllText(_ourFile.Path, ourData);
 			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}

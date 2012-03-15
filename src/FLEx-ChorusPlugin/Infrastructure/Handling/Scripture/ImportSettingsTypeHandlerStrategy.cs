@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
@@ -20,12 +21,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ImportSetting))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.ImportSettingsFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.ImportSetting) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.ImportSettingsFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -37,12 +34,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 				if (root.Name.LocalName != SharedConstants.ImportSettings || !root.Elements(ScrImportSet).Any())
 					return "Not valid Scripture import settings file.";
 
-				return null;
+				foreach (var result in root.Elements(ScrImportSet).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(ScrImportSet))).Where(result => result != null))
+				{
+					return result;
+				}
 			}
 			catch (Exception e)
 			{
 				return e.Message;
 			}
+			return null;
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
