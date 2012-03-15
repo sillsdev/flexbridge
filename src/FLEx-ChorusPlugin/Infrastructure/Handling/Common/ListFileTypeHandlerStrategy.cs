@@ -18,12 +18,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.List))
-				return false;
-
-			var doc = XDocument.Load(pathToFile);
-			var root = doc.Root;
-			return root.Elements(SharedConstants.CmPossibilityList).Any();
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.List);
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -32,9 +27,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				return !root.Elements(SharedConstants.CmPossibilityList).Any()
-					? "Not valid list file."
-					: CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.CmPossibilityList));
+				return root.Elements(SharedConstants.CmPossibilityList).Any()
+					? CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.CmPossibilityList))
+					: "Not valid list file.";
 			}
 			catch (Exception e)
 			{

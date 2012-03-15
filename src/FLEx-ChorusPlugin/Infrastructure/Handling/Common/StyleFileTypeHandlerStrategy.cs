@@ -22,11 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Style))
-				return false;
-			var doc = XDocument.Load(pathToFile);
-			var root = doc.Root;
-			return root.Name.LocalName == SharedConstants.Styles && root.Elements(SharedConstants.StStyle).Any();
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Style);
 		}
 
 		public string ValidateFile(string pathToFile)

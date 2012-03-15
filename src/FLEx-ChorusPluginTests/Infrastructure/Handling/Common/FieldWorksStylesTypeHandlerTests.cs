@@ -49,13 +49,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
+		public void ShouldBeAbleToValidateIncorrectFormatFileIfFilenameIsRight()
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Style);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
