@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Controller
 		public FwBridgeConflictController(Dictionary<string, string> options)
 			:this(new FwBridgeConflictView())
 		{
-			string user = "anonymous";
+			var user = Environment.UserName;
 			if (options.ContainsKey("-u"))
 				user = options["-u"];
 

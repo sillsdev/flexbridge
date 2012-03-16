@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
@@ -18,12 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Agents))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.AnalyzingAgentsFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Agents) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.AnalyzingAgentsFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -39,7 +36,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 					return "Not valid analyzing agent file";
 				}
 
-				return null;
+				return root.Elements(SharedConstants.CmAgent)
+					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(res => res != null);
 			}
 			catch (Exception e)
 			{

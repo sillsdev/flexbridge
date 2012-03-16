@@ -6,7 +6,7 @@ using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -53,13 +53,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
+		public void ShouldBeAbleToValidateIncorrectFormatFileIfFilenameIsCorrect()
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}
@@ -99,6 +99,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Reversal>
+<header>
+<ReversalIndex guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+</ReversalIndex>
+</header>
+<ReversalIndexEntry guid='c1ed46b9-e382-11de-8a39-0800200c9a66'>
+</ReversalIndexEntry>
 </Reversal>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

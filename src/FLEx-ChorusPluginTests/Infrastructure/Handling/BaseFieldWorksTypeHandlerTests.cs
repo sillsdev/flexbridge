@@ -9,7 +9,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		protected IChorusFileTypeHandler FileHandler;
 
 		[TestFixtureSetUp]
-		public void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
 			FileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 						   where handler.GetType().Name == "FieldWorksCommonFileHandler"
@@ -17,7 +17,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[TestFixtureTearDown]
-		public void FixtureTearDown()
+		public virtual void FixtureTearDown()
 		{
 			FileHandler = null;
 		}

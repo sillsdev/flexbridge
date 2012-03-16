@@ -7,6 +7,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
@@ -17,10 +18,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Featsys))
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Featsys);
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -36,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 					return "Not valid feature system file";
 				}
 
-				return null;
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.FsFeatureSystem));
 			}
 			catch (Exception e)
 			{

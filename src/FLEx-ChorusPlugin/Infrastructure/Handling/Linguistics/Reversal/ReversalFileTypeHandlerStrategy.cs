@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
@@ -15,31 +17,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Reversal))
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Reversal);
 		}
 
 		public string ValidateFile(string pathToFile)
 		{
 			try
 			{
-				var settings = new XmlReaderSettings { ValidationType = ValidationType.None };
-				using (var reader = XmlReader.Create(pathToFile, settings))
+				var doc = XDocument.Load(pathToFile);
+				var root = doc.Root;
+				if (root.Name.LocalName != "Reversal")
+					return "Not a FieldWorks reversal file.";
+				var header = root.Element(SharedConstants.Header);
+				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("ReversalIndex"));
+				if (result != null)
+					return result;
+				foreach (var record in root.Elements("ReversalIndexEntry"))
 				{
-					reader.MoveToContent();
-					if (reader.LocalName == "Reversal")
-					{
-						// It would be nice, if it could really validate it.
-						while (reader.Read())
-						{
-						}
-					}
-					else
-					{
-						throw new InvalidOperationException("Not a FieldWorks reversal file.");
-					}
+					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
+						return null;
+					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					if (result != null)
+						return result;
 				}
 			}
 			catch (Exception e)

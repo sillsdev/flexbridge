@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -70,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 </Lexicon>";
 
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -84,7 +84,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 </Lexicon>";
 
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 </Lexicon>";
 
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
@@ -194,7 +194,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		  <DateModified val='2011-2-2 19:39:28.829' />
 		  <Paragraphs>
 			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
-			  <ParseIsCurrent val='False' />
+			  <ParseIsCurrent val='True' />
 			</ownseq>
 		  </Paragraphs>
 		</StText>
@@ -204,7 +204,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 <LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
 </Lexicon>";
 
-			var ourContent = commonAncestor.Replace("False", "True");
+			var ourContent = commonAncestor.Replace("True", "False");
 			const string theirContent = commonAncestor;
 
 			var results = FieldWorksTestServices.DoMerge(
@@ -214,8 +214,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				1, new List<Type> {typeof(XmlAttributeChangedReport)});
-			Assert.IsTrue(results.Contains("True"));
+				0, new List<Type>());
+			Assert.IsFalse(results.Contains("True"));
+			Assert.IsTrue(results.Contains("False"));
 		}
 
 		[Test]
@@ -504,6 +505,341 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 					expectedGuidsInOrder[idx],
 					children[idx].Attribute(SharedConstants.GuidStr).Value);
 			}
+		}
+
+		[Test]
+		public void MoStemMsaHasMergeConflictOnPartOfSpeechChanged()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>
+			<MoStemMsa
+				guid='2d6a109e-1178-4b31-bf5b-8dca5e843675' >
+				<PartOfSpeech>
+					<objsur
+						guid='24e351c1-6dcb-420b-a65a-c412c3af0192'
+						t='r' />
+				</PartOfSpeech>
+			</MoStemMsa>
+		</MorphoSyntaxAnalyses>
+	</LexEntry>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("24e351c1-6dcb-420b-a65a-c412c3af0192", "c1ed94d4-e382-11de-8a39-0800200c9a66");
+			var theirContent = commonAncestor.Replace("24e351c1-6dcb-420b-a65a-c412c3af0192", "c1ed94d5-e382-11de-8a39-0800200c9a66");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d4-e382-11de-8a39-0800200c9a66']" },
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d5-e382-11de-8a39-0800200c9a66']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void MoStemMsaHasMergeConflictOnPartOfSpeechAddedByBoth()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>
+			<MoStemMsa guid='2d6a109e-1178-4b31-bf5b-8dca5e843675' />
+		</MorphoSyntaxAnalyses>
+	</LexEntry>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("<MoStemMsa guid='2d6a109e-1178-4b31-bf5b-8dca5e843675' />", "<MoStemMsa guid='2d6a109e-1178-4b31-bf5b-8dca5e843675'><PartOfSpeech><objsur guid='c1ed94d4-e382-11de-8a39-0800200c9a66' t='r' /></PartOfSpeech></MoStemMsa>");
+			var theirContent = commonAncestor.Replace("<MoStemMsa guid='2d6a109e-1178-4b31-bf5b-8dca5e843675' />", "<MoStemMsa guid='2d6a109e-1178-4b31-bf5b-8dca5e843675'><PartOfSpeech><objsur guid='c1ed94d5-e382-11de-8a39-0800200c9a66' t='r' /></PartOfSpeech></MoStemMsa>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d4-e382-11de-8a39-0800200c9a66']" },
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d5-e382-11de-8a39-0800200c9a66']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyImportResidueHasConflictReport1()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<ImportResidue>
+			<Str>
+				<Run
+					ws='en'></Run>
+			</Str>
+		</ImportResidue>
+	</LexEntry>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("></Run>", ">OurAddition</Run>");
+			var theirContent = commonAncestor.Replace("></Run>", ">TheirAddition</Run>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyImportResidueHasConflictReport2()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<ImportResidue />
+	</LexEntry>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("<ImportResidue />", "<ImportResidue><Str><Run ws='en'>OurAddition</Run></Str></ImportResidue>");
+			var theirContent = commonAncestor.Replace("<ImportResidue />", "<ImportResidue><Str><Run ws='en'>TheirAddition</Run></Str></ImportResidue>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string>{ @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyImportResidueHasConflictReport3()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'/>
+</Lexicon>";
+
+			var ourContent = commonAncestor.Replace("<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'/>", "<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'><ImportResidue><Str><Run ws='en'>OurAddition</Run></Str></ImportResidue></LexEntry>");
+			var theirContent = commonAncestor.Replace("<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'/>", "<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'><ImportResidue><Str><Run ws='en'>TheirAddition</Run></Str></ImportResidue></LexEntry>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport1()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'/>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport2()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OldStuff</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']", @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OldStuff']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedEmptyCommentHasConflictReport3()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'></Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>OurAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>TheirAddition</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='OurAddition']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				0, new List<Type>());
 		}
 	}
 }

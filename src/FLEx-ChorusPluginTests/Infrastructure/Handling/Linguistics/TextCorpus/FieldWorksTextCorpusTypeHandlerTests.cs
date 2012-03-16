@@ -50,7 +50,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.TextInCorpus);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}

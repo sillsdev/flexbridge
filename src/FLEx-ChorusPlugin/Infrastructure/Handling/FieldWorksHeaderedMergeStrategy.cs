@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		internal FieldWorksHeaderedMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
-			_merger = new XmlMerger(mergeSituation);
-			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeSituation, mdc);
 		}
 
 		#region Implementation of IMergeStrategy
@@ -39,11 +38,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						// Not a class, as what is found in the Anthro file. Go another level deeper to the class data.
 						// This node only has one child, and it is class data.
 						var dataCarryingChild = headerChild.FirstChild;
-						FieldWorksMergingServices.PreMergeTimestamps(_mdc, dataCarryingChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild);
+						FieldWorksMergingServices.PreMerge(_mdc,
+							dataCarryingChild,
+							theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name).FirstChild,
+							commonEntry == null ? null : commonEntry.SelectSingleNode(headerChild.Name).FirstChild);
 					}
 					else
 					{
-						FieldWorksMergingServices.PreMergeTimestamps(_mdc, headerChild, theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name));
+						FieldWorksMergingServices.PreMerge(_mdc,
+							headerChild,
+							theirEntry == null ? null : theirEntry.SelectSingleNode(headerChild.Name),
+							commonEntry == null ? null : commonEntry.SelectSingleNode(headerChild.Name));
 					}
 				}
 			}

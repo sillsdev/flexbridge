@@ -16,12 +16,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.ModelVersion))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.ModelVersionFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.ModelVersion) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.ModelVersionFilename;
 		}
 
 		public string ValidateFile(string pathToFile)

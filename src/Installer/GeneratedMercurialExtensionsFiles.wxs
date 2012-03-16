@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<DirectoryRef Id="MercurialExtensionsDir">
+			<Directory Id="MercurialExtensionsDir.fixutf8" Name="fixutf8">
+				<Component Id="_.hgignore" Guid="851DDAF2-E50D-45EA-9272-7D28775E2553">
+					<File Id="_.hgignore" Name=".hgignore" KeyPath="yes" Source="..\..\MercurialExtensions\fixutf8\.hgignore" />
+				</Component>
+				<Component Id="_.hg_archival.txt" Guid="90DE4EB7-5FB8-43CC-A83C-ED1BF0FEEDA0">
+					<File Id="_.hg_archival.txt" Name=".hg_archival.txt" Source="..\..\MercurialExtensions\fixutf8\.hg_archival.txt" />
+				</Component>
+				<Component Id="buildcpmap.py" Guid="35E88DF1-96B3-49C7-9803-AC0A69CAB566">
+					<File Id="buildcpmap.py" Name="buildcpmap.py" Source="..\..\MercurialExtensions\fixutf8\buildcpmap.py" />
+				</Component>
+				<Component Id="cpmap.py" Guid="BCC20EE1-3765-48B9-A05B-6BBC8919F18E">
+					<File Id="cpmap.py" Name="cpmap.py" Source="..\..\MercurialExtensions\fixutf8\cpmap.py" />
+				</Component>
+				<Component Id="cpmap.pyc" Guid="0FD1E8EF-3BC6-4587-83D1-2ACD56F2FE76">
+					<File Id="cpmap.pyc" Name="cpmap.pyc" Source="..\..\MercurialExtensions\fixutf8\cpmap.pyc" />
+				</Component>
+				<Component Id="cpmap.pyo" Guid="910694C0-956A-47C6-AB1D-D144E21C5257">
+					<File Id="cpmap.pyo" Name="cpmap.pyo" Source="..\..\MercurialExtensions\fixutf8\cpmap.pyo" />
+				</Component>
+				<Component Id="fixutf8.py" Guid="8EED2757-4E8E-4CE9-ABEC-C9F8FB30691F">
+					<File Id="fixutf8.py" Name="fixutf8.py" Source="..\..\MercurialExtensions\fixutf8\fixutf8.py" />
+				</Component>
+				<Component Id="fixutf8.pyc" Guid="27991925-4DBE-4907-B59F-D3B1B2128A37">
+					<File Id="fixutf8.pyc" Name="fixutf8.pyc" Source="..\..\MercurialExtensions\fixutf8\fixutf8.pyc" />
+				</Component>
+				<Component Id="fixutf8.pyo" Guid="C63D85F9-86E9-457B-B81A-04447560EC91">
+					<File Id="fixutf8.pyo" Name="fixutf8.pyo" Source="..\..\MercurialExtensions\fixutf8\fixutf8.pyo" />
+				</Component>
+				<Component Id="osutil.py" Guid="BF4D3CFF-C5BC-4ADB-A56C-2A587BFC5473">
+					<File Id="osutil.py" Name="osutil.py" Source="..\..\MercurialExtensions\fixutf8\osutil.py" />
+				</Component>
+				<Component Id="osutil.pyc" Guid="E77BE2E7-EC98-4435-A942-B9B1AFFD907A">
+					<File Id="osutil.pyc" Name="osutil.pyc" Source="..\..\MercurialExtensions\fixutf8\osutil.pyc" />
+				</Component>
+				<Component Id="osutil.pyo" Guid="6791D8E0-C405-47B7-951A-7AEE3238A8A0">
+					<File Id="osutil.pyo" Name="osutil.pyo" Source="..\..\MercurialExtensions\fixutf8\osutil.pyo" />
+				</Component>
+				<Component Id="README" Guid="0C34C070-D633-4A27-B060-453E95A8CA23">
+					<File Id="README" Name="README" Source="..\..\MercurialExtensions\fixutf8\README" />
+				</Component>
+				<Component Id="win32helper.py" Guid="2733C26C-A4F7-46BB-A952-410D91077020">
+					<File Id="win32helper.py" Name="win32helper.py" Source="..\..\MercurialExtensions\fixutf8\win32helper.py" />
+				</Component>
+				<Component Id="win32helper.pyc" Guid="0089053E-A584-4679-B19F-33B58DE136D5">
+					<File Id="win32helper.pyc" Name="win32helper.pyc" Source="..\..\MercurialExtensions\fixutf8\win32helper.pyc" />
+				</Component>
+				<Component Id="win32helper.pyo" Guid="5C88C3CD-0032-4E72-B7AE-24A48B6EEEDF">
+					<File Id="win32helper.pyo" Name="win32helper.pyo" Source="..\..\MercurialExtensions\fixutf8\win32helper.pyo" />
+				</Component>
+			</Directory>
+		</DirectoryRef>
+		<ComponentGroup Id="MercurialExtensionsFiles">
+			<ComponentRef Id="_.hgignore" />
+			<ComponentRef Id="_.hg_archival.txt" />
+			<ComponentRef Id="buildcpmap.py" />
+			<ComponentRef Id="cpmap.py" />
+			<ComponentRef Id="cpmap.pyc" />
+			<ComponentRef Id="cpmap.pyo" />
+			<ComponentRef Id="fixutf8.py" />
+			<ComponentRef Id="fixutf8.pyc" />
+			<ComponentRef Id="fixutf8.pyo" />
+			<ComponentRef Id="osutil.py" />
+			<ComponentRef Id="osutil.pyc" />
+			<ComponentRef Id="osutil.pyo" />
+			<ComponentRef Id="README" />
+			<ComponentRef Id="win32helper.py" />
+			<ComponentRef Id="win32helper.pyc" />
+			<ComponentRef Id="win32helper.pyo" />
+		</ComponentGroup>
+	</Fragment>
+</Wix>

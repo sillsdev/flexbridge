@@ -7,6 +7,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
@@ -19,12 +20,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Srs))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.ScriptureReferenceSystemFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Srs) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.ScriptureReferenceSystemFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -36,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 				if (root.Name.LocalName != SharedConstants.ScriptureReferenceSystem || root.Element(ScrRefSystem) == null)
 					return "Not valid Scripture reference system file.";
 
-				return null;
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(ScrRefSystem));
 			}
 			catch (Exception e)
 			{

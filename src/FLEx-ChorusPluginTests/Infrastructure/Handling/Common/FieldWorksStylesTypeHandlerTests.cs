@@ -5,7 +5,7 @@ using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -49,13 +49,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
+		public void ShouldBeAbleToValidateIncorrectFormatFileIfFilenameIsRight()
 		{
 			using (var tempModelVersionFile = new TempFile("<classdata />"))
 			{
 				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Style);
 				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
+				Assert.IsTrue(FileHandler.CanValidateFile(newpath));
 				File.Delete(newpath);
 			}
 		}

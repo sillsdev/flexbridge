@@ -144,11 +144,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
+			return _knownHandlers.Values.Select(handlerStrategy => handlerStrategy.Extension);
+			/*
 			return new List<string>
 			{
+				// 22 total extensions
+				// Validations Done:	 2
+				// Validations To Do:	20
 				// Common
-				SharedConstants.ModelVersion,
-				SharedConstants.CustomProperties,
+				SharedConstants.ModelVersion,		// Better validation done.
+				SharedConstants.CustomProperties,	// Better validation done.
 				SharedConstants.Style,
 				SharedConstants.List,
 
@@ -177,7 +182,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				SharedConstants.Phondata,
 				SharedConstants.Morphdata,
 				SharedConstants.Agents
-			};
+			};*/
 		}
 
 		public uint MaximumFileSize

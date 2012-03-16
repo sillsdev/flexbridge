@@ -19,6 +19,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 										{
 											SharedConstants.Refcol,
 											SharedConstants.Ownseq,
+											// There is no need for an OwnCol, since order in irrelevant for them.
 											SharedConstants.OwnseqAtomic,
 											SharedConstants.Refseq,
 											SharedConstants.CmAnnotation,
@@ -29,10 +30,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			switch (key)
 			{
 				default:
-					// This really does stink, but I'm (RBR) not sure how to avoid it today!
-					// This came in Chorus' 776 (6b202d27705c) but is FW stuff.
-					if (keysList.Contains(key) || element.ParentNode == null)
+					// Some class names are the same as a property name (e.g., LexDb),
+					// so we need to see if 'element' has a guid or not, to know how to fish out the correct key.
+					// Property elements never have a guid, and class elements always have one.
+					if (element.Attributes[SharedConstants.GuidStr] != null && (keysList.Contains(key)) || element.ParentNode == null)
 						return key;
+
+					// Not a class, so go for one of the other kludges.
 					// Combine parent name + element name as key (for new styled FW properties).
 					var combinedKey = oddElementNames.Contains(element.ParentNode.Name)
 						? element.ParentNode.Attributes["class"].Value + "_" + key
@@ -40,7 +44,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					if (keysList.Contains(combinedKey))
 						return combinedKey;
 					break;
-				// Another special FW situation.
+				// Custom properties.
 				case "Custom":
 					var customPropName = element.Attributes["name"].Value;
 					var className = element.ParentNode.Name;

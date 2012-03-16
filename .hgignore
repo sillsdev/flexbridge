@@ -1,12 +1,5 @@
-relre:src/FieldWorksBridge/bin/*.*
-relre:src/FieldWorksBridge/obj/*.*
 relre:mercurial/*.*
-relre:_ReSharper.FieldWorksBridge VS2008/*
-relre:src/FieldWorksBridge/_ReSharper.FieldWorksBridge/*
 relre:output/*
-relre:src/FieldWorksBridgeTests/obj/*
-glob:FieldWorksBridge VS2008.sln.cache
-relre:_ReSharper.FieldWorksBridge VS2010/*
 syntax: regexp
 Perf test  results/*.*
 DistFiles/Mercurial/*.*
@@ -17,9 +10,12 @@ src/FLEx-ChorusPluginTests/obj/*.*
 src/FwdataNester/bin/*.*
 src/FwdataNester/obj/Debug/*.*
 src/FwdataNester/obj/*.*
+_ReSharper.FLExBridge VS2010/*.*
+src/FLExBridge/obj/*.*
 syntax: glob
 Perf test  results/*.app6results
 Mercurial/
 MercurialExtensions/
 *.user
 *.suo
+DistFiles/.guidsForInstaller.xml

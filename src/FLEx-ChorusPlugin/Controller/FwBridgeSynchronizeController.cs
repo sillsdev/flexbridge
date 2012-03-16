@@ -11,15 +11,14 @@ namespace FLEx_ChorusPlugin.Controller
 	internal sealed class FwBridgeSynchronizeController : IFwBridgeController, IDisposable
 	{
 		private readonly SynchronizeProject _projectSynchronizer;
-		private ChorusSystem _chorusSystem;
-		private LanguageProject _currentLanguageProject;
+		private readonly LanguageProject _currentLanguageProject;
 
-		public FwBridgeSynchronizeController(Dictionary<string, string> options)
+		public FwBridgeSynchronizeController(IDictionary<string, string> options)
 		{
 			IProjectPathLocator locator = new RegularUserProjectPathLocator();
 			_projectSynchronizer = new SynchronizeProject();
 
-			var user = Environment.UserName;
+			string user;
 			if (options.ContainsKey("-u"))
 			{
 				user = options["-u"];
@@ -31,7 +30,7 @@ namespace FLEx_ChorusPlugin.Controller
 			if (options.ContainsKey("-p"))
 			{
 				_currentLanguageProject = new LanguageProject(options["-p"]);
-				_chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
+				ChorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
 			}
 			else
 			{
@@ -42,17 +41,14 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void SyncronizeProjects()
 		{
-			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, _chorusSystem, _currentLanguageProject);
+			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, ChorusSystem, _currentLanguageProject);
 		}
 
 		#region IFwBridgeController implementation
 
 		public Form MainForm { get; private set; }
 
-		public ChorusSystem ChorusSystem
-		{
-			get { return _chorusSystem; }
-		}
+		public ChorusSystem ChorusSystem { get; private set; }
 
 		public LanguageProject CurrentProject
 		{
@@ -118,11 +114,11 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				MainForm.Dispose();
 
-				if (_chorusSystem != null)
-					_chorusSystem.Dispose();
+				if (ChorusSystem != null)
+					ChorusSystem.Dispose();
 			}
 			MainForm = null;
-			_chorusSystem = null;
+			ChorusSystem = null;
 
 			IsDisposed = true;
 		}
