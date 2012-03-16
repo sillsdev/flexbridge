@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -11,10 +12,72 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// </summary>
 	internal static class FieldWorksMergingServices
 	{
-		internal static void PreMerge(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		internal static void PreMerge(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			PreMergeTimestamps(mdc, ourEntry, theirEntry);
 			PreMergeStTxtParaParseIsCurrent(mdc, ourEntry, theirEntry);
+			PreMergeBooleans(mdc, ourEntry, theirEntry, commonEntry);
+		}
+
+		private static void PreMergeBooleans(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
+		{
+			if (ourEntry == null || theirEntry == null)
+				return;
+
+			var classInfo = mdc.GetClassInfo(GetClassName(ourEntry));
+			foreach (var boolPropInfo in classInfo.AllProperties.Where(pi => pi.DataType == DataType.Boolean))
+			{
+				if (boolPropInfo.PropertyName == "ParseIsCurrent")
+					continue; // Handled elsewhere.
+
+				var ourBoolPropElement = ourEntry.SelectSingleNode(boolPropInfo.PropertyName);
+				var ourBoolPropAttr = ourBoolPropElement == null ? null : ourBoolPropElement.Attributes["val"];
+				var ourBoolPropValue = ourBoolPropAttr != null && bool.Parse(ourBoolPropAttr.Value);
+				var theirBoolPropElement = theirEntry.SelectSingleNode(boolPropInfo.PropertyName);
+				var theirBoolPropAttr = theirBoolPropElement == null ? null : theirBoolPropElement.Attributes["val"];
+				var theirBoolPropValue = theirBoolPropAttr != null && bool.Parse(theirBoolPropAttr.Value);
+				if (ourBoolPropValue == theirBoolPropValue)
+					continue;
+
+				var commonBoolPropElement = commonEntry == null ? null : commonEntry.SelectSingleNode(boolPropInfo.PropertyName);
+				if (commonBoolPropElement != null)
+					continue;
+
+				// They are different, and the default value is false, and thus no real change from the null of common.
+				// So, make sure they are both true.
+				if (!ourBoolPropValue)
+					ourBoolPropAttr.Value = "True";
+				else
+					theirBoolPropAttr.Value = "True";
+			}
+
+			// Move on down ownership structure.
+			foreach (var owningPropInfo in classInfo.AllOwningProperties)
+			{
+				var propName = owningPropInfo.PropertyName;
+				var isCustomProperty = owningPropInfo.IsCustomProperty;
+				var ourOwningPropElement = GetOwningPropertyElement(ourEntry, propName, isCustomProperty);
+				if (ourOwningPropElement == null || !ourOwningPropElement.HasChildNodes)
+					continue;
+				var theirOwningPropElement = GetOwningPropertyElement(theirEntry, propName, isCustomProperty);
+				if (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
+					continue;
+				foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+				{
+					var theirOwnedElement = (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
+						.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+						.FirstOrDefault();
+					if (theirOwnedElement == null)
+						continue;
+					var commonOwningPropElement = commonEntry == null
+													? null
+													: GetOwningPropertyElement(commonEntry, propName, isCustomProperty);
+					var commonOwnedElement = commonOwningPropElement == null ? null : (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
+						.Where(commonChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+						.FirstOrDefault();
+					PreMergeBooleans(mdc, ourOwnedElement, theirOwnedElement, commonOwnedElement);
+				}
+			}
 		}
 
 		private static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
@@ -124,16 +187,32 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// <summary>
 		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
-		/// Q (RBR: Why does it need the MDC?
+		/// Q (RBR: Why does it need the MDC?)
 		/// </summary>
 		/// <param name="element"></param>
 		/// <returns></returns>
 		internal static string GetClassName(XmlNode element)
 		{
 			// Owning collections do nothing special for the main element name;
-			return (element.Name == SharedConstants.Ownseq || element.Name == SharedConstants.OwnseqAtomic)
+			var name = element.Name;
+			return (name == SharedConstants.Ownseq || name == SharedConstants.OwnseqAtomic || name == SharedConstants.curiosity)
 				? element.Attributes[SharedConstants.Class].Value
-				: element.Name;
+				: name;
+		}
+
+		/// <summary>
+		/// NOTE: Consider moving this to a services class that provides Metadatacache type data for fwdata xml
+		/// Q (RBR: Why does it need the MDC?)
+		/// </summary>
+		/// <param name="element"></param>
+		/// <returns></returns>
+		internal static string GetClassName(XElement element)
+		{
+			// Owning collections do nothing special for the main element name;
+			var name = element.Name.LocalName;
+			return (name == SharedConstants.Ownseq || name == SharedConstants.OwnseqAtomic || name == SharedConstants.curiosity)
+				? element.Attribute(SharedConstants.Class).Value
+				: name;
 		}
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)

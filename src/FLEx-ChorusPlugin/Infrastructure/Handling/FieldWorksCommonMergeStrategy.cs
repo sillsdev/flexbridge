@@ -15,8 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		internal FieldWorksCommonMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
 		{
 			_mdc = mdc;
-			_merger = new XmlMerger(mergeSituation);
-			FieldWorksMergeStrategyServices.BootstrapSystem(_mdc, _merger);
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeSituation, mdc);
 		}
 
 		/// <summary>
@@ -32,7 +31,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			FieldWorksMergingServices.PreMerge(_mdc, ourEntry, theirEntry);
+			FieldWorksMergingServices.PreMerge(_mdc, ourEntry, theirEntry, commonEntry);
 
 			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
 		}

@@ -120,7 +120,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<Annotations>
-<CmAnnotation guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<CmAnnotation guid='fff03918-9674-4401-8bb1-efe6502985a7' class='CmBaseAnnotation' />
 </Annotations>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

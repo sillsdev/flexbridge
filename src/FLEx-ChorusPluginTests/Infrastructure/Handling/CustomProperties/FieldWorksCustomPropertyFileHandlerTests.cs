@@ -9,7 +9,7 @@ using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -56,31 +56,109 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 		}
 
 		[Test]
+		public void ShouldBeAbleToValidateIncorrectFormatFile()
+		{
+			const string data = "<classdata />";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
+		}
+
+		[Test]
 		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsFalse(FileHandler.CanValidateFile(_ourFile.Path));
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateInProperlyFormattedFile()
+		public void ShouldBeAbleToValidateImproperlyFormattedFile()
 		{
 			const string data = @"<AdditionalFields>
-<CustomField name='Certified' class='WfiWordform' type='Boolean' />
+<CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' type='Boolean' />
 </AdditionalFields>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
 
 		[Test]
-		public void ShouldBeAbleToValidateFile()
+		public void ShouldBeAbleToValidateFileWithOnlyRequiredAttributes()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' type='Boolean' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldBeAbleToValidateFileWithAllPossibleAttributes()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' type='Boolean' destclass='LexSense' wsSelector='0' helpString='WhatHelp' listRoot='mylist' label='MyLabel' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithUnknownAttribute()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' type='Boolean' unknown='mystery' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNonameAttribute()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField class='WfiWordform' key='WfiWordformCertified' type='Boolean' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNoClassAttribute()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' key='WfiWordformCertified' type='Boolean' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNoKeyAttribute()
 		{
 			const string data = @"<AdditionalFields>
 <CustomField name='Certified' class='WfiWordform' type='Boolean' />
 </AdditionalFields>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithNoTypeAttribute()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' class='WfiWordform' key='WfiWordformCertified' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldNotBeAbleToValidateFileWithKeyAttrMisMatch()
+		{
+			const string data = @"<AdditionalFields>
+<CustomField name='Certified' class='WfiWordform' key='LexEntryCertified' type='Boolean' />
+</AdditionalFields>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]

@@ -1,18 +1,16 @@
-﻿using System.Globalization;
-using System.Xml;
-using System.Text;
+﻿using System.Xml;
 using FLEx_ChorusPlugin.Properties;
 using System;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	/// <summary>
 	/// Context generator for ScrBook elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class ScrSectionContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class ScrSectionContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string _space = " ";
+		private const string Space = " ";
 		private int _begRef;
 		private int _endRef;
 		private string _bookName;
@@ -35,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (string.IsNullOrEmpty(_bookName))
 				return EntryLabel;
 			GetBeginAndEndVerseRefs(section);
-			return EntryLabel + _space + GetRefFromBookAndIntegers();
+			return EntryLabel + Space + GetRefFromBookAndIntegers();
 		}
 
 		private void GetBeginAndEndVerseRefs(XmlNode section)

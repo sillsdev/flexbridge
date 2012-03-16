@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -58,6 +58,8 @@ namespace FLEx_ChorusPluginTests
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
 			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
+			if (Directory.Exists(newDirName))
+				Directory.Delete(newDirName,true);
 			Directory.CreateDirectory(newDirName);
 			var replacement = Path.Combine(newDirName, filename);
 			File.Move(tempFileName, replacement);

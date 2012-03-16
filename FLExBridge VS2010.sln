@@ -4,8 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
 	ProjectSection(SolutionItems) = preProject
 		DistFiles\about.htm = DistFiles\about.htm
-		build\build.proj = build\build.proj
+		build\build.common.proj = build\build.common.proj
 		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
+		build\FLExBridge.build.win.proj = build\FLExBridge.build.win.proj
 		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
 		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat

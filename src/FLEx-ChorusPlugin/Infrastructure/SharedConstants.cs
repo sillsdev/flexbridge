@@ -7,6 +7,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 
 		// General
+		internal const string Str = "Str";
+		internal const string AStr = "AStr";
+		internal const string Uni = "Uni";
+		internal const string AUni = "AUni";
+		internal const string Ws = "ws";
+		internal const string Binary = "Binary";
+		internal const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
 		internal const string Collections = "Collections";
 		internal const string MultiAlt = "MultiAlt";
 		internal const string Owning = "Owning";

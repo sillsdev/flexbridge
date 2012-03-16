@@ -1,9 +1,9 @@
 ﻿using System.Xml;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {
-	class PossibilityContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class PossibilityContextGenerator : FieldWorkObjectContextGenerator
 	{
 		protected override string GetLabel(XmlNode start)
 		{

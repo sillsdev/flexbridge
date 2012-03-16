@@ -1,16 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using Chorus.merge;
+using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.Handling;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 {
 	/// <summary>
 	/// Test all expected reports (change and conflict) for the TextPropBinary data type.
+	///
+	/// As of DM 7000052, TextPropBinary is used in:
+	///
+	/// StPara	- StyleRules
+	/// StStyle	- Rules
 	/// </summary>
-	[TestFixture, Ignore("Add tests.")]
+	[TestFixture]
 	public class TextPropBinaryDataTypeReportTests
 	{
+		private MetadataCache _mdc;
+		private XmlMerger _merger;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			_mdc = MetadataCache.TestOnlyNewCache;
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
+		}
+
+		[Test]
+		public void EnsureAllTextPropBinaryPropertiesAreSetUpCorrectly()
+		{
+			foreach (var elementStrategy in _mdc.AllConcreteClasses
+				.SelectMany(classInfo => classInfo.AllProperties, (classInfo, propertyInfo) => new { classInfo, propertyInfo })
+				.Where(@t => @t.propertyInfo.DataType == DataType.TextPropBinary)
+				.Select(@t => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", @t.propertyInfo.IsCustomProperty ? "Custom_" : "", @t.classInfo.ClassName, @t.propertyInfo.PropertyName)]))
+			{
+				// Not at this point. Assert.IsTrue(elementStrategy.IsAtomic);
+				Assert.IsFalse(elementStrategy.IsAtomic);
+				Assert.IsFalse(elementStrategy.OrderIsRelevant);
+				Assert.IsFalse(elementStrategy.IsImmutable);
+				Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
+				Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
+			}
+		}
+
+		[Test]
+		public void EnsurePropElementInTextPropBinaryPropertyIsAtomic()
+		{
+			var elementStrategy = _merger.MergeStrategies.ElementStrategies[SharedConstants.Prop];
+			Assert.IsTrue(elementStrategy.IsAtomic);
+			Assert.IsFalse(elementStrategy.OrderIsRelevant);
+			Assert.IsFalse(elementStrategy.IsImmutable);
+		}
 	}
 }

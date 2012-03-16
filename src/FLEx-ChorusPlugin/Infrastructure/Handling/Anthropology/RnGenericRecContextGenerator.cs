@@ -1,16 +1,15 @@
 ﻿using System.Xml;
-using System.Text;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 {
 	/// <summary>
 	/// Context generator for RnGenericRec elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain. This also handles about 9 different StText possibilities.
 	/// </summary>
-	class RnGenericRecContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class RnGenericRecContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string _space = " ";
+		private const string Space = " ";
 
 		protected override string GetLabel(XmlNode start)
 		{
@@ -25,9 +24,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetLabelForRnGenericRec(XmlNode text)
 		{
 			var form = text.SelectSingleNode("Title/Str");
-			if (form == null)
-				return EntryLabel;
-			return EntryLabel + _space + form.InnerText;
+			return form == null
+				? EntryLabel
+				: EntryLabel + Space + form.InnerText;
 		}
 	}
 }

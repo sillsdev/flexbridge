@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Integration
@@ -15,7 +17,7 @@ namespace FLEx_ChorusPluginTests.Integration
 	[TestFixture]
 	public class MergeIntegrationTests
 	{
-		[Test, Ignore("Update to new nested system.")]
+		[Test]
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =
@@ -59,7 +61,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			</ownseq>
 		</Senses>
 	</LexEntry>
-</Root>";
+</Lexicon>";
 			const string randy =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Lexicon>
@@ -96,7 +98,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		class='LexSense'
 		key='LexSenseParadigm'
 		name='Paradigm'
-		type='String'
+		type='MultiString'
 		wsSelector='-2' />
 	<CustomField
 		class='WfiWordform'
@@ -138,6 +140,18 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
 					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
 					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));
+
+					// Make sure merged file has both alts.
+					var doc = XDocument.Load(randyRepo.UserFile.Path);
+					var customParadigmElement = doc.Root.Element("LexEntry").Element("Senses").Element("ownseq").Element("Custom");
+					var aStrElements = customParadigmElement.Elements("AStr").ToList();
+					Assert.AreEqual(2, aStrElements.Count);
+					var aStrZpi = aStrElements.FirstOrDefault(el => el.Attribute("ws").Value == "zpi");
+					Assert.IsNotNull(aStrZpi);
+					Assert.IsTrue(aStrZpi.Element("Run").Value == "saklo, yzaklo, rzaklo, wzaklo, nzaklo, -");
+					var aStrEzpi = aStrElements.FirstOrDefault(el => el.Attribute("ws").Value == "qaa-x-ezpi");
+					Assert.IsNotNull(aStrEzpi);
+					Assert.IsTrue(aStrEzpi.Element("Run").Value == "saglo, yzaglo, rzaglo, wzaglo, nzaglo, -");
 				}
 			}
 		}

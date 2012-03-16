@@ -133,6 +133,31 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000052:
 						// 7000052: No actual model change.
 						break;
+					case 7000053:
+						// Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+						// 1. PhSegmentRule
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("PhSegmentRule").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 2. MoCompoundRule
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoCompoundRule").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 3. MoAdhocProhib
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoAdhocProhib").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 4. MoInflAffixTemplate
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						break;
+					case 7000054:
+						// 1. MoStemMsa
+						//		Add: Slots ref col
+						GetClassInfo("MoStemMsa").AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						// 2. MoInflAffixTemplate
+						//		Add: ProcliticSlots ref seq
+						//		Add: EncliticSlots ref seq
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("ProcliticSlots", DataType.ReferenceSequence));
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("EncliticSlots", DataType.ReferenceSequence));
+						break;
 				}
 			}
 
@@ -213,12 +238,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
 			{
 				default:
-					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
-					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
-					break;
-				case MergeOrder.ConflictHandlingModeChoices.TheyWin:
 					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
 					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					break;
+				case MergeOrder.ConflictHandlingModeChoices.WeWin:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
 					break;
 			}
 			AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, GetMetaDataCacheOffsetFolder(mergeOrder), 1);
@@ -249,6 +274,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (!File.Exists(customPropPathname))
 				return;
 
+			AddCustomPropInfo(customPropPathname);
+		}
+
+		internal void AddCustomPropInfo(string customPropPathname)
+		{
 			var doc = XDocument.Load(customPropPathname);
 			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
 			{

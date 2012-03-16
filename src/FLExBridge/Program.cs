@@ -33,6 +33,11 @@ namespace FLExBridge
 					return;
 				}
 
+				// args are:
+				// -u username
+				// -p pathname to fwdata file.
+				// -v kind of S/R operation: obtain, start, send_receive, view_notes
+				// No args at all: Use regular UI. FW app must not be running on S/R project.
 				var options = ParseCommandLineArgs(args);
 				if (!options.ContainsKey("-v") || options["-v"] == null)
 				{

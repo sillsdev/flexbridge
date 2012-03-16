@@ -18,3 +18,4 @@ Mercurial/
 MercurialExtensions/
 *.user
 *.suo
+DistFiles/.guidsForInstaller.xml

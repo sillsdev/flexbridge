@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
@@ -18,12 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.Lexdb))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.LexiconFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Lexdb) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.LexiconFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -40,6 +37,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 					return "Not valid lexicon file";
 				}
 
+				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.Header).Element("LexDb"));
+				if (result != null)
+					return result;
+
+				foreach (XElement filterElement in root.Elements(SharedConstants.LexEntry))
+				{
+					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement);
+					if (result != null)
+						return result;
+				}
 				return null;
 			}
 			catch (Exception e)

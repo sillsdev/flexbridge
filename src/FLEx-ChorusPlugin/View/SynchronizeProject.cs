@@ -15,15 +15,16 @@ namespace FLEx_ChorusPlugin.View
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");
-			File.WriteAllText(lockPathname, "");
 
-			var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
-			// Break up into smaller files.
-			MultipleFileServices.PushHumptyOffTheWall(origPathname);
-
-			// Do the Chorus business.
 			try
 			{
+				File.WriteAllText(lockPathname, "");
+
+				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
+				// Break up into smaller files.
+				MultipleFileServices.PushHumptyOffTheWall(origPathname);
+
+				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
 					// Chorus does it in ths order:

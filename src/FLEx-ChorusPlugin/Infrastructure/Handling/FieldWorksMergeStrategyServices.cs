@@ -1,6 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -10,19 +19,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// </summary>
 	internal static class FieldWorksMergeStrategyServices
 	{
-		private static readonly FindByKeyAttribute WsKey = new FindByKeyAttribute(Ws);
+		private static readonly FindByKeyAttribute WsKey = new FindByKeyAttribute(SharedConstants.Ws);
 		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
 		private static readonly FindFirstElementWithSameName SameName = new FindFirstElementWithSameName();
 		private static readonly FieldWorkObjectContextGenerator ContextGen = new FieldWorkObjectContextGenerator();
 		private const string MutableSingleton = "MutableSingleton";
 		private const string ImmutableSingleton = "ImmutableSingleton";
-		private const string Str = "Str";
-		private const string AStr = "AStr";
-		private const string Uni = "Uni";
-		private const string AUni = "AUni";
-		private const string Ws = "ws";
-		private const string Binary = "Binary";
-		private const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
+
+		internal static XmlMerger CreateXmlMergerForFieldWorksData(MergeSituation mergeSituation, MetadataCache mdc)
+		{
+			var merger = new XmlMerger(mergeSituation);
+			BootstrapSystem(mdc, merger);
+			return merger;
+		}
 
 		/// <summary>
 		/// Bootstrap a merger for the new-styled (nested) files.
@@ -32,7 +41,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// 2. All classes  will be included.
 		/// 3. Merge strategies for class properties (regular or custom) will have keys of "classname+propname" to make them unique, system-wide.
 		/// </remarks>
-		internal static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
+		private static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
 		{
 			merger.MergeStrategies.KeyFinder = new FieldWorksKeyFinder();
 
@@ -45,9 +54,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
-			BootstrapHeaderElementNonClassStrategies(strategiesForMerger);
-
-			var classStrat = MakeClassStrategy(ContextGen);
+			var headerStrategy = CreateSingletonElementType(false);
+			headerStrategy.ContextDescriptorGenerator = ContextGen;
+			strategiesForMerger.SetStrategy(SharedConstants.Header, headerStrategy);
 
 			// There are two abstract class names used: CmAnnotation and DsChart.
 			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
@@ -72,6 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
+				var classStrat = MakeClassStrategy(ContextGen);
 				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
 				classStrat.IsImmutable = classInfo.ClassName == "ScrDraft";
 				// Didn't work, since the paras are actually in an 'ownseq' element.
@@ -145,9 +155,25 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var propStrategy = isCustom
 										? CreateStrategyForKeyedElement(SharedConstants.Name, false)
 										: CreateSingletonElementStrategy();
-					if (propertyInfo.DataType == DataType.Time)
+					switch (propertyInfo.DataType)
 					{
-						propStrategy.IsImmutable = true; // Immutable, because we have pre-merged them to be so.
+						//default:
+						//	break;
+						// Not for DataType.TextPropBinary (yet anyway), becasue its contained <Prop> element is atomic.
+						case DataType.GenDate:
+							if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+								propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+							break;
+						case DataType.Guid:
+							if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
+								propStrategy.IsImmutable = true;
+							break;
+						case DataType.Binary:
+							propStrategy.IsAtomic = true;
+							break;
+						case DataType.Time:
+							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
+							break;
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
@@ -206,18 +232,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			AddSharedSingletonElementType(sharedElementStrategies, MutableSingleton, false);
 
-			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Str, false);
+			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Str, false);
 			elementStrategy.IsAtomic = true; // TsStrings are atomic
 
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Binary, false);
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Binary, false);
 			elementStrategy.IsAtomic = true; // Binary properties are atomic
 
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, Prop, false);
-			elementStrategy.IsAtomic = true; // TsStrings are atomic
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Prop, false);
+			elementStrategy.IsAtomic = true; // Prop is atomic
 
-			AddSharedSingletonElementType(sharedElementStrategies, Uni, false);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AStr, false, true); // final parm is for IsAtomic, which in this case is atomic.
-			AddSharedKeyedByWsElementType(sharedElementStrategies, AUni, true, false); // final parm is for IsAtomic, which in this case is not atomic.
+			AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Uni, false);
+			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AStr, false, true); // final parm is for IsAtomic, which in this case is atomic.
+			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AUni, false, false); // final parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
 			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
@@ -234,7 +260,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// This is only good now for ref atomic.
 			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
 			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Objsur, false);
-			elementStrategy.AttributesToIgnoreForMerging.Add("t"); // What moron put this in there: SharedConstants.GuidStr? Must have been RBR. :-( It can easily change to some other referenced object.
+			elementStrategy.IsAtomic = true; // Testing to see if atomic here, or at the prop level is better, as per https://www.pivotaltracker.com/story/show/25402673
 
 			// Add element for SharedConstants.Refseq
 			elementStrategy = CreateStrategyForElementKeyedByGuidInList(); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.
@@ -276,15 +302,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								IsAtomic = isAtomic
 							};
 			sharedElementStrategies.Add(elementName, strategy);
-		}
-
-		private static void BootstrapHeaderElementNonClassStrategies(MergeStrategies strategiesForMerger)
-		{
-			var strategy = CreateSingletonElementType(true);
-			strategy.ContextDescriptorGenerator = ContextGen;
-			strategiesForMerger.SetStrategy(SharedConstants.Header, strategy);
-
-			// As of 26 Jan 2012, no context has non-class wrapper elements in the header.
 		}
 	}
 }

@@ -9,43 +9,42 @@ namespace FLExBridge
 	/// </summary>
 	class FLExConnectionHelper : IDisposable
 	{
-		private ServiceHost host;
-		private IFLExBridgeService pipe;
+		private readonly ServiceHost _host;
+		private readonly IFLExBridgeService _pipe;
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
 		internal FLExConnectionHelper()
 		{
-			bool hostOpened = true;
+			var hostOpened = true;
 			try
 			{
-				host = new ServiceHost(typeof(FLExService),
+				_host = new ServiceHost(typeof(FLExService),
 									   new[] { new Uri("net.pipe://localhost/FLExEndpoint") });
 				//open host ready for business
-				host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
-				host.Open();
+				_host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
+				_host.Open();
 			}
 			catch (Exception)
 			{
 				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
 				hostOpened = false;
 			}
-			ChannelFactory<IFLExBridgeService> pipeFactory =
-				new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
+			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
-			pipe = pipeFactory.CreateChannel();
+			_pipe = pipeFactory.CreateChannel();
 			try
 			{
 				//Notify FLEx that we are ready to receive requests.
 				//(if we failed to create the host we still want to do this so FLEx can wake up)
-				pipe.BridgeReady();
+				_pipe.BridgeReady();
 			}
 			catch(Exception)
 			{
 				Console.WriteLine("FLEx isn't listening.");
-				pipe = null; //FLEx isn't listening.
+				_pipe = null; //FLEx isn't listening.
 			}
-			if(!hostOpened)
+			if (!hostOpened)
 			{
 				throw new ApplicationException("FLExBridge already running.");
 			}
@@ -59,14 +58,14 @@ namespace FLExBridge
 		{
 			//wake up the BridgeWorkOngoing message and let it return to FLEx.
 			//This is unnecessary except to avoid an exception on the FLEx side, just trying to be nice.
-			Monitor.Enter(FLExService.waitObject);
-			Monitor.PulseAll(FLExService.waitObject);
-			Monitor.Exit(FLExService.waitObject);
+			Monitor.Enter(FLExService.WaitObject);
+			Monitor.PulseAll(FLExService.WaitObject);
+			Monitor.Exit(FLExService.WaitObject);
 			//open a channel to flex and send the message.
 			try
 			{
-				if(pipe != null)
-					pipe.BridgeWorkComplete(true);
+				if(_pipe != null)
+					_pipe.BridgeWorkComplete(true);
 			}
 			catch (Exception)
 			{
@@ -92,17 +91,17 @@ namespace FLExBridge
 		[ServiceBehavior(UseSynchronizationContext = false)] //Create new threads for the services, don't tie them into the main UI thread.
 		private class FLExService : IFLExService
 		{
-			static internal object waitObject = new object();
-			static internal bool workComplete;
+			internal static readonly object WaitObject = new object();
+			private static bool _workComplete;
 			public void BridgeWorkOngoing()
 			{
-				Monitor.Enter(waitObject);
-				while(!workComplete)
+				Monitor.Enter(WaitObject);
+				while(!_workComplete)
 				{
 					try
 					{
-						Monitor.Wait(waitObject);
-						workComplete = true;
+						Monitor.Wait(WaitObject);
+						_workComplete = true;
 					}
 					catch (ThreadInterruptedException)
 					{
@@ -112,10 +111,10 @@ namespace FLExBridge
 					catch(Exception)
 					{
 						//all other exceptions we are considering an end of normal operation
-						workComplete = true;
+						_workComplete = true;
 					}
 				}
-				Monitor.Exit(waitObject);
+				Monitor.Exit(WaitObject);
 			}
 
 		}
@@ -129,7 +128,7 @@ namespace FLExBridge
 
 		public void Dispose()
 		{
-			host.Close();
+			_host.Close();
 		}
 	}
 }

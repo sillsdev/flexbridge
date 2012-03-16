@@ -5,7 +5,7 @@ using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.BorrowedCode;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -46,18 +46,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
 			Assert.IsTrue(extensions.Contains(SharedConstants.Srs));
-		}
-
-		[Test]
-		public void ShouldNotBeAbleToValidateIncorrectFormatFile()
-		{
-			using (var tempModelVersionFile = new TempFile("<classdata />"))
-			{
-				var newpath = Path.ChangeExtension(tempModelVersionFile.Path, SharedConstants.Reversal);
-				File.Copy(tempModelVersionFile.Path, newpath, true);
-				Assert.IsFalse(FileHandler.CanValidateFile(newpath));
-				File.Delete(newpath);
-			}
 		}
 
 		[Test]

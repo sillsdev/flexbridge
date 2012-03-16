@@ -8,6 +8,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
@@ -18,12 +19,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			if (!FileUtils.CheckValidPathname(pathToFile, SharedConstants.DiscourseExt))
-				return false;
-			if (Path.GetFileName(pathToFile) != SharedConstants.DiscourseChartFilename)
-				return false;
-
-			return ValidateFile(pathToFile) == null;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.DiscourseExt) &&
+				   Path.GetFileName(pathToFile) == SharedConstants.DiscourseChartFilename;
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -40,7 +37,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 					return "Not valid discourse file.";
 				}
 
-				return null;
+				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.Header).Element("DsDiscourseData"));
+				if (result != null)
+					return result;
+
+				return root.Elements(SharedConstants.DsChart)
+					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(res => res != null);
 			}
 			catch (Exception e)
 			{

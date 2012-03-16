@@ -1,13 +1,13 @@
 ﻿using System.Xml;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory
 {
 	/// <summary>
 	/// Context generator for LexEntry elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class WfiWordformContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class WfiWordformContextGenerator : FieldWorkObjectContextGenerator
 	{
 		protected override string GetLabel(System.Xml.XmlNode start)
 		{
@@ -23,9 +23,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetLabelForWordform(XmlNode wordform)
 		{
 			var form = wordform.SelectSingleNode("Form/AUni");
-			if (form == null)
-				return WordformLabel;
-			return WordformLabel + " " + form.InnerText;
+			return form == null
+				? WordformLabel
+				: WordformLabel + " " + form.InnerText;
 		}
 	}
 }

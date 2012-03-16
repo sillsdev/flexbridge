@@ -2,15 +2,15 @@
 using System.Text;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 {
 	/// <summary>
 	/// Context generator for Text elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class TextContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class TextContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string _space = " ";
+		private const string Space = " ";
 
 		protected override string GetLabel(XmlNode start)
 		{
@@ -29,7 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return EntryLabel;
 			var sbLabel = new StringBuilder(EntryLabel);
 			foreach (XmlNode wsVariation in form)
-				sbLabel.Append(_space + wsVariation.InnerText);
+				sbLabel.Append(Space + wsVariation.InnerText);
 			return sbLabel.ToString();
 		}
 	}
