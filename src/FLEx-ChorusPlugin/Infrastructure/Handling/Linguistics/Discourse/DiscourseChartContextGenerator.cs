@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 {
@@ -16,18 +17,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 
 		string ChartName
 		{
-			get { return "Discourse Chart"; } // Todo: internationalize
+			get { return Resources.ksDiscourseChart; }
 		}
 
 		private string GetLabelForChart(XmlNode entry)
-		{   // get chart number, row number and column number if possible
+		{
+			// get chart number, row number and column number if possible
+			// NB: 'chart number' won't be very helpful with not idea which text it goes with.
 			var chartNumber = 0;
 			var rowNumber = 0;
 			var colNumber = 0;
 			var thisChart = entry.SelectSingleNode("ancestor-or-self::DsChart");
 			if (thisChart != null)
 				chartNumber = thisChart.SelectNodes("preceding-sibling::DsChart").Count + 1;
-			var image = ChartName + " " + chartNumber;
+			var image = ChartName + Space + chartNumber;
 
 			var thisSequence = entry.SelectSingleNode("ancestor-or-self::ownseq[1]");
 			if (thisSequence != null)
@@ -43,10 +46,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 				if (seqParent.Name == "Rows")
 					rowNumber = thisSequence.SelectNodes("preceding-sibling::ownseq").Count + 1;
 			}
-			if (rowNumber != 0)
-				image += " Row " + rowNumber;
-			if (colNumber != 0)
-				image += " Column " + colNumber;
+			var ffoundRow = rowNumber != 0;
+			var ffoundColumn = colNumber != 0;
+			if (ffoundRow || ffoundColumn)
+			{
+				var coordinates = (ffoundRow ? "Row " + rowNumber : string.Empty) +
+					(ffoundColumn ? " Column " + colNumber : string.Empty);
+				image += string.Format(" ({0})", coordinates);
+			}
 			return image;
 		}
 	}

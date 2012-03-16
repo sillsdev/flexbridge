@@ -221,4 +221,7 @@
   <data name="ksEnvironment" xml:space="preserve">
 	<value>Environment</value>
   </data>
+  <data name="ksDiscourseChart" xml:space="preserve">
+	<value>Discourse Chart</value>
+  </data>
 </root>

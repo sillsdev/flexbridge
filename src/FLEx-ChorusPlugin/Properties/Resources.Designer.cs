@@ -248,6 +248,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Discourse Chart.
+		/// </summary>
+		internal static string ksDiscourseChart {
+			get {
+				return ResourceManager.GetString("ksDiscourseChart", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select the new folder where the shared data goes..
 		/// </summary>
 		internal static string kSelectClonedDataFolder {
