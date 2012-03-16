@@ -10,7 +10,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 	/// </summary>
 	internal sealed class ScrSectionContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string Space = " ";
 		private int _begRef;
 		private int _endRef;
 		private string _bookName;
@@ -33,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			if (string.IsNullOrEmpty(_bookName))
 				return EntryLabel;
 			GetBeginAndEndVerseRefs(section);
-			return EntryLabel + Space + GetRefFromBookAndIntegers();
+			return EntryLabel + Space + Quote + GetRefFromBookAndIntegers() + Quote;
 		}
 
 		private void GetBeginAndEndVerseRefs(XmlNode section)

@@ -132,14 +132,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root; // WfiWordform
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform \"jitWord\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
 
 			// Try a child node that isn't a part of the word form
 			input = root.ChildNodes[1]; //SpellingStatus
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord SpellingStatus"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform \"jitWord\" SpellingStatus"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
 		}
@@ -172,7 +172,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<AUni ws='fr'>monNom</AUni>
 					</Name>
 				</Text>";
-			const string predictedLabel = "Text \"myEngName\" \"monNom\"";
+			const string predictedLabel = "Text \"myEngName\", \"monNom\"";
 			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
 			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
@@ -263,7 +263,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</Title>
 					<Type />
 				</RnGenericRec>";
-			const string predictedLabel = "Data Notebook Record Some name";
+			const string predictedLabel = "Data Notebook Record \"Some name\"";
 			const string recordGuid = "guid=175a2230-0302-4307-8bf4-f3dad9c19710";
 			var root = GetNode(source);
 			var input = root; // RnGenericRec
@@ -410,7 +410,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void ScrBookFindName()
 		{
 			string source = GetScrBookXml();
-			const string predictedLabel = "Scripture Book Luke";
+			const string predictedLabel = "Scripture Book \"Luke\"";
 			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
 			const string footnoteGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
@@ -461,7 +461,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void ScrSectionFindName()
 		{
 			string source = GetScrBookXml();
-			const string predictedLabel = "Scripture Section Luke ";
+			const string predictedLabel = "Scripture Section \"Luke ";
 			const string sectionOneGuid = "guid=3713db10-ba05-4a42-9685-9fe4dbc2693d";
 			const string sectionTwoGuid = "guid=3770c19f-ae61-4364-be08-5e4bf62d861a";
 			const string sectionOneStTextGuid = "guid=9e0d0f62-1c3a-4dd5-a488-fdf93471137a";
@@ -469,28 +469,28 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[0]; // first ScrSection
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneGuid));
 
 			// Try a child node inside the ScrSection's Contents StText
 			input = input.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // Content's RightToLeft
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20 Content RightToLeft"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20\" Content RightToLeft"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneStTextGuid));
 
 			// Try the second ScrSection
 			input = root.ChildNodes[1]; // 2nd one
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 
 			// Try the Heading node in the second section
 			input = input.ChildNodes[1]; // Heading of 2nd section
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5 Heading"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5\" Heading"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 		}
@@ -1097,35 +1097,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // 1st ownseq
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"mid vowel in previous syllable\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
 
 			// Try a node that has no name, only a representation.
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 2nd ownseq
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / [C] _"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ [C] _\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ae6eb4a-84a0-4134-b684-5b446ad83708"));
 
 			// Try the Description to see we still get the name
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the <Description>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable Description"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"mid vowel in previous syllable\" Description"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
 
 			// See that the runs are merged
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // 3rd ownseq
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas]"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ _ [-Lab-Lat-Nas]\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
 
 			// See that the first run is prepended to the last one
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2].ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 3rd ownseq, 2nd Run
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas] StringRepresentation Str Run"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ _ [-Lab-Lat-Nas]\" StringRepresentation Str Run"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
 		}

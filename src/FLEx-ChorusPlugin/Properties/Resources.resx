@@ -218,4 +218,7 @@
 	<comment>{0} should be a ScrBook Name/Abbreviation
 {1} is Chapter and {2} is begin Verse, {3} is end Verse.</comment>
   </data>
+  <data name="ksEnvironment" xml:space="preserve">
+	<value>Environment</value>
+  </data>
 </root>
