@@ -172,7 +172,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<AUni ws='fr'>monNom</AUni>
 					</Name>
 				</Text>";
-			const string predictedLabel = "Text myEngName monNom";
+			const string predictedLabel = "Text \"myEngName\" \"monNom\"";
 			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
 			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);

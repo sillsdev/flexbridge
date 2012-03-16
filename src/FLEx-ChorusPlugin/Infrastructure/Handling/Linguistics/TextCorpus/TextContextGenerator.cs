@@ -11,6 +11,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 	internal sealed class TextContextGenerator : FieldWorkObjectContextGenerator
 	{
 		private const string Space = " ";
+		private const string Quote = "\"";
 
 		protected override string GetLabel(XmlNode start)
 		{
@@ -29,7 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 				return EntryLabel;
 			var sbLabel = new StringBuilder(EntryLabel);
 			foreach (XmlNode wsVariation in form)
-				sbLabel.Append(Space + wsVariation.InnerText);
+				sbLabel.Append(Space + Quote + wsVariation.InnerText + Quote);
 			return sbLabel.ToString();
 		}
 	}
