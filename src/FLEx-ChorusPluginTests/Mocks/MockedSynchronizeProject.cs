@@ -13,11 +13,12 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		#region Implementation of ISynchronizeProject
 
-		public void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		public bool SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
 		{
 			HasForm = (parent != null);
 			HasChorusSystem = (chorusSystem != null);
 			HasLanguageProject = (langProject != null);
+			return false;
 		}
 
 		#endregion
