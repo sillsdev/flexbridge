@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {

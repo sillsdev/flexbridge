@@ -2,6 +2,14 @@
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling

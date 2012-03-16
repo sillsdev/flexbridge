@@ -1,7 +1,7 @@
 ﻿using System.Xml;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 {
 	/// <summary>
 	/// Context generator for LexEntry elements. These are a root element, so we generate a label directly,
@@ -30,9 +30,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			//if (form == null)
 			//    return EntryLabel;
 			var form = entry.SelectSingleNode("LexemeForm/MoStemAllomorph/Form/AUni");
-			if (form == null)
-				return EntryLabel;
-			return EntryLabel + " " + form.InnerText;
+			return form == null
+				? EntryLabel
+				: EntryLabel + " " + form.InnerText;
 		}
 	}
 }

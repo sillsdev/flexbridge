@@ -1,17 +1,15 @@
-﻿using System.Globalization;
-using System.Xml;
-using System.Text;
+﻿using System.Xml;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	/// <summary>
 	/// Context generator for ScrBook elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class ScrBookContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class ScrBookContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string _space = " ";
+		private const string Space = " ";
 
 		protected override string GetLabel(XmlNode start)
 		{
@@ -26,9 +24,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private string GetLabelForScrBook(XmlNode book)
 		{
 			var form = GetNameOrAbbreviation(book);
-			if (string.IsNullOrEmpty(form))
-				return EntryLabel;
-			return EntryLabel + _space + form;
+			return string.IsNullOrEmpty(form)
+				? EntryLabel
+				: EntryLabel + Space + form;
 		}
 	}
 }
