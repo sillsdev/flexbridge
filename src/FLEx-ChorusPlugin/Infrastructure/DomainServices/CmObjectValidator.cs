@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -137,12 +136,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 								return result;
 							break;
 						case DataType.MultiString:
-							result = ValidateMultiStringProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateMultiStringProperty(isCustomProperty, propertyElement);
 							if (result != null)
 								return result;
 							break;
 						case DataType.Unicode:
-							result = ValidateUnicodeProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateUnicodeProperty(isCustomProperty, propertyElement);
 							if (result != null)
 								return result;
 							break;
@@ -322,7 +321,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						};
 			var set = attrs;
 			return propElement.Attributes().Any(attr => !set.Contains(attr.Name.LocalName))
-				? "Invalid attribute for <Prop> element."
+				? string.Format("Invalid attribute for <{0}> element.", propElement.Name.LocalName)
 				: null;
 		}
 
@@ -346,17 +345,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return ValidateComplexTsString(propertyElement.Element(SharedConstants.Str));
 		}
 
-		private static string ValidateUnicodeProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateUnicodeProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			// Ordinary C# string. May, or may not, have content.
-			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
-			if (propertyElement.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
-				return "Has non-text child element";
-			return null;
+			return !isCustomProperty && propertyElement.HasAttributes
+					? "Has unrecognized attributes."
+					: (propertyElement.HasElements
+						? "Has non-text child element."
+						: null);
 		}
 
-		private static string ValidateMultiStringProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateMultiStringProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			if (!isCustomProperty && propertyElement.HasAttributes)
 				return "Has unrecognized attributes.";
@@ -390,6 +389,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var result = CheckTextPropertyAttributes(runElement, out attrs);
 				if (result != null)
 					return result;
+				if (runElement.HasElements)
+					return "Has non-text child element.";
 			}
 			return null;
 		}
@@ -409,7 +410,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var wsAttr = uniAlt.Attribute(SharedConstants.Ws);
 				if (wsAttr == null)
 					return "Does not have required 'ws' attribute.";
-				if (uniAlt.Elements().Any(childElement => childElement.NodeType != XmlNodeType.Text))
+				if (uniAlt.HasElements)
 					return "Has non-text child element.";
 				if (string.IsNullOrEmpty(uniAlt.Value))
 					return "Has no text data.";

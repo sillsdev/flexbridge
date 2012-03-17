@@ -217,7 +217,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(new XElement("badchild"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-text child element", result);
+			Assert.AreEqual("Has non-text child element.", result);
 		}
 
 		[Test]
@@ -236,7 +236,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var element = XElement.Parse(str);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
-			// TODO: Test TsString contents.
 
 			element.Element("Contents").Add(new XAttribute("bogusAttr", "badvalue"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -271,18 +270,34 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var element = XElement.Parse(str);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
-			// TODO: Test multi-TsString alternatives.
 
-			element.Element("Description").Add(new XAttribute("bogusAttr", "badvalue"));
+			var badAttr = new XAttribute("bogusAttr", "badvalue");
+			element.Element("Description").Add(badAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Has unrecognized attributes.", result);
-			element.Element("Description").Attributes().Remove();
+			badAttr.Remove();
 
-			element.Element("Description").Add(new XElement("extraChild"));
+			var extraChild = new XElement("extraChild");
+			element.Element("Description").Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Has non-AStr child element.", result);
+			extraChild.Remove();
+
+			// Test the <Run> element.
+			var runElement = element.Element("Description").Element("AStr").Element("Run");
+			runElement.Add(extraChild);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Has non-text child element.", result);
+			extraChild.Remove();
+
+			runElement.Add(badAttr);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Invalid attribute for <Run> element.", result);
+			badAttr.Remove();
 		}
 
 		[Test]
@@ -292,15 +307,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 						guid='cf379f73-9ee5-4e45-b2e2-4b169666d83e'>
 		<Name>
 			<AUni
-				ws='en'>Genres</AUni>
+				ws='en'>Genres &amp;</AUni>
 			<AUni
-				ws='es'>Géneros</AUni>
+				ws='es'>Géneros &amp;</AUni>
 		</Name>
 						</CmPossibilityList>";
 			var element = XElement.Parse(str);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
-			// TODO: Test multi-TsString alternatives.
 
 			element.Element("Name").Add(new XAttribute("bogusAttr", "badvalue"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -328,10 +342,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 
-			element.Element("Name").Element("AUni").Add(new XElement("extraChild"));
+			var extraChild = new XElement("extraChild");
+			element.Element("Name").Element("AUni").Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Has non-text child element.", result);
+			extraChild.Remove();
+
+			// Comment doesn't count, as trouble.
+			var comment = new XComment("Some comment.");
+			element.Element("Name").Element("AUni").Add(comment);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+			comment.Remove();
 		}
 
 		[Test]
