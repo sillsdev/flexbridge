@@ -22,6 +22,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	{
 		private const string PathSep = " ";
 
+		// These two constants are for use in generating labels in subclasses
+		protected const string Space = " ";
+		protected const string Quote = "\"";
+
 		/// <summary>
 		/// Strategies may provide alternate context descriptors for parent elements.
 		/// </summary>

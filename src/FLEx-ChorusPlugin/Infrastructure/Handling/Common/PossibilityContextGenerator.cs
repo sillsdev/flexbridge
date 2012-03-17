@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				if (possibility.ParentNode != null)
 					listName = base.GetLabel(possibility.SelectSingleNode("ancestor::CmPossibilityList"));
 			}
-			return ListItemLabel + " '" + itemName + "' from " + listName;
+			return ListItemLabel + Space + Quote + itemName + Quote + " from " + listName;
 		}
 	}
 }

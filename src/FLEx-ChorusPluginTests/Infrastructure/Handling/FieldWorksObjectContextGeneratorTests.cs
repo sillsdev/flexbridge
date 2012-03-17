@@ -90,28 +90,28 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[1].ChildNodes[0]; // MoStemAllomorph
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 
 			// Try a node that is not part of the LexemeForm.
 			input = root.ChildNodes[0];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk HomographNumber"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" HomographNumber"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "01efa516-1749-4b60-b43d-00089269e7c5"));
 
 			// Try a bit deeper
 			input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the <Form>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm Form"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 
 			// Don't want the AUni level.
 			input = input.ChildNodes[0]; // the <AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry abcdefghijk LexemeForm Form"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
 		}
@@ -132,14 +132,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root; // WfiWordform
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform \"jitWord\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
 
 			// Try a child node that isn't a part of the word form
 			input = root.ChildNodes[1]; //SpellingStatus
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform jitWord SpellingStatus"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Wordform \"jitWord\" SpellingStatus"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653"));
 		}
@@ -172,7 +172,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<AUni ws='fr'>monNom</AUni>
 					</Name>
 				</Text>";
-			const string predictedLabel = "Text myEngName monNom";
+			const string predictedLabel = "Text \"myEngName\", \"monNom\"";
 			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
 			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
@@ -263,7 +263,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					</Title>
 					<Type />
 				</RnGenericRec>";
-			const string predictedLabel = "Data Notebook Record Some name";
+			const string predictedLabel = "Data Notebook Record \"Some name\"";
 			const string recordGuid = "guid=175a2230-0302-4307-8bf4-f3dad9c19710";
 			var root = GetNode(source);
 			var input = root; // RnGenericRec
@@ -410,7 +410,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void ScrBookFindName()
 		{
 			string source = GetScrBookXml();
-			const string predictedLabel = "Scripture Book Luke";
+			const string predictedLabel = "Scripture Book \"Luke\"";
 			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
 			const string footnoteGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
 			var root = GetNode(source);
@@ -461,7 +461,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public void ScrSectionFindName()
 		{
 			string source = GetScrBookXml();
-			const string predictedLabel = "Scripture Section Luke ";
+			const string predictedLabel = "Scripture Section \"Luke ";
 			const string sectionOneGuid = "guid=3713db10-ba05-4a42-9685-9fe4dbc2693d";
 			const string sectionTwoGuid = "guid=3770c19f-ae61-4364-be08-5e4bf62d861a";
 			const string sectionOneStTextGuid = "guid=9e0d0f62-1c3a-4dd5-a488-fdf93471137a";
@@ -469,28 +469,28 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[0]; // first ScrSection
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneGuid));
 
 			// Try a child node inside the ScrSection's Contents StText
 			input = input.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // Content's RightToLeft
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20 Content RightToLeft"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:1-20\" Content RightToLeft"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionOneStTextGuid));
 
 			// Try the second ScrSection
 			input = root.ChildNodes[1]; // 2nd one
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 
 			// Try the Heading node in the second section
 			input = input.ChildNodes[1]; // Heading of 2nd section
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5 Heading"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo(predictedLabel + "3:22-4:5\" Heading"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring(sectionTwoGuid));
 		}
@@ -544,7 +544,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("List 'Complex Form Types' Abbreviation"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("List \"Complex Form Types\" Abbreviation"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
 		}
@@ -831,7 +831,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("List 'Some Random Value' ItemClsid"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("List \"Some Random Value\" ItemClsid"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ee09905-63dd-4c7a-a9bd-1d496743ccd6"));
 		}
@@ -885,7 +885,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'Compound' from List 'Complex Form Types' ReverseAbbr"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item \"Compound\" from List \"Complex Form Types\" ReverseAbbr"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
 		}
@@ -926,7 +926,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1f6ae209-141a-40db-983c-bee93af0ca3c"));
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'Compound' from List 'Complex Form Types' ReverseAbbr"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item \"Compound\" from List \"Complex Form Types\" ReverseAbbr"));
 		}
 
 		/// <summary>
@@ -1097,35 +1097,35 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // 1st ownseq
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"mid vowel in previous syllable\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
 
 			// Try a node that has no name, only a representation.
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 2nd ownseq
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / [C] _"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ [C] _\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1ae6eb4a-84a0-4134-b684-5b446ad83708"));
 
 			// Try the Description to see we still get the name
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the <Description>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment mid vowel in previous syllable Description"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"mid vowel in previous syllable\" Description"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "02132942-0ff7-45e8-8f09-f4918535a31e"));
 
 			// See that the runs are merged
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2]; // 3rd ownseq
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas]"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ _ [-Lab-Lat-Nas]\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
 
 			// See that the first run is prepended to the last one
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[2].ChildNodes[0].ChildNodes[0].ChildNodes[1]; // 3rd ownseq, 2nd Run
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment / _ [-Lab-Lat-Nas] StringRepresentation Str Run"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Environment \"/ _ [-Lab-Lat-Nas]\" StringRepresentation Str Run"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "e5e81505-6f2b-42df-88dc-a76c2dfcad87"));
 		}
@@ -1380,7 +1380,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// 1st DsChart Row 2 Cells
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Cells"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2) Cells"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
 
@@ -1388,91 +1388,91 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[2];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			// Discourse Chart 1 Row 1 Column 2 Column <== should be a way to suppreee FieldWorkObjectContextGenerator.GetLabel()/GetPathAppend()
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 Column"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1 Column 2) Column"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
 
 			// 1st DsChart Row 1 Column 2 BeginSegment
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[1];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 BeginSegment"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1 Column 2) BeginSegment"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
 
 			// 1st DsChart Row 2 Column 2 EndSegment
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[1].ChildNodes[4];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 2 EndSegment"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2 Column 2) EndSegment"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "3f371913-8108-4e06-8d7d-a5f0fe69c413"));
 
 			// 1st DsChart Row 2 Column 1 BeginAnalysisIndex
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 1 BeginAnalysisIndex"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2 Column 1) BeginAnalysisIndex"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "1d3102c9-7f9d-499f-a85c-22d3c3b1af04"));
 
 			// 1st DsChart Row 1 Column 1 EndAnalysisIndex
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[3];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 1 EndAnalysisIndex"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1 Column 1) EndAnalysisIndex"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "991d2812-1b2c-46ac-bb74-12819e45ce9a"));
 
 			// 1st DsChart Row 2 Column 2 MergesBefore
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[0].ChildNodes[1].ChildNodes[6];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 Column 2 MergesBefore"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2 Column 2) MergesBefore"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "3f371913-8108-4e06-8d7d-a5f0fe69c413"));
 
 			// 1st DsChart Row 1 Column 2 MergesAfter
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[0].ChildNodes[1].ChildNodes[5];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Column 2 MergesAfter"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1 Column 2) MergesAfter"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "870c0faf-1eb7-4a52-9172-9bb9d338017c"));
 
 			// 1st DsChart Row 1 ClauseType
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[1];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 ClauseType"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1) ClauseType"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
 
 			// 1st DsChart Row 2 EndDependentClauseGroup
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[2];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 EndDependentClauseGroup"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2) EndDependentClauseGroup"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
 
 			// 1st DsChart Row 2 EndParagraph
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[3];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 EndParagraph"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2) EndParagraph"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
 
 			// 1st DsChart Row 1 EndSentence
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[4];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 EndSentence"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1) EndSentence"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
 
 			// 1st DsChart Row 1 Label
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[0].ChildNodes[5];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 1 Label"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 1) Label"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "367829ee-3b53-493a-a057-1eccde2c45e4"));
 
 			// 1st DsChart Row 2 StartDependentClauseGroup
 			input = root.ChildNodes[1].ChildNodes[3].ChildNodes[1].ChildNodes[6];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 Row 2 StartDependentClauseGroup"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2) StartDependentClauseGroup"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
 		}

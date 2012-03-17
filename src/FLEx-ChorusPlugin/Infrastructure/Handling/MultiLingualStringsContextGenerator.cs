@@ -39,7 +39,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		protected string GetNameOrAbbreviationOrOther(XmlNode parent)
 		{
 			var dataToReturn = "";
-			var index = 0;
+			//var index = 0;
 			foreach (var nodeName in m_valuesToCheckFor)
 			{
 				var nodeToCheck = parent.SelectSingleNode(nodeName);

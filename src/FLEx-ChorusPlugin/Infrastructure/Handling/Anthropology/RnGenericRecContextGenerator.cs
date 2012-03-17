@@ -9,8 +9,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 	/// </summary>
 	internal sealed class RnGenericRecContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string Space = " ";
-
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForRnGenericRec(start);
@@ -26,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 			var form = text.SelectSingleNode("Title/Str");
 			return form == null
 				? EntryLabel
-				: EntryLabel + Space + form.InnerText;
+				: EntryLabel + Space + Quote + form.InnerText + Quote;
 		}
 	}
 }

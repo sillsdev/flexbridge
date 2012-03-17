@@ -90,7 +90,7 @@
 			this.ClientSize = new System.Drawing.Size(904, 510);
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FwBridgeConflictView";
-			this.Text = "Conflict Viewer";
+			this.Text = "Conflict Report";
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel1.PerformLayout();
 			this._splitContainer.ResumeLayout(false);
