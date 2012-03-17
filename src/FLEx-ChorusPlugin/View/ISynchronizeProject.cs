@@ -6,6 +6,6 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal interface ISynchronizeProject
 	{
-		void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject);
+		bool SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject);
 	}
 }
