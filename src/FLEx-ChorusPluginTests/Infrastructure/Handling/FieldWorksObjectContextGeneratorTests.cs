@@ -1033,7 +1033,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'cultural anthropology' from List 'Academic Domains' UnderColor"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item \"cultural anthropology\" from List \"Academic Domains\" UnderColor"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0c5aeac-ea5e-11de-9463-0013722f8dec"));
 		}
