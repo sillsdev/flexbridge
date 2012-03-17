@@ -42,10 +42,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			const string endName = "VerseRefEnd";
 			var startRef = section.SelectSingleNode(startName);
 			if (startRef != null)
-				_begRef = Convert.ToInt32(startRef.Attributes["val"].Value);
+				_begRef = Convert.ToInt32(startRef.Attributes[SharedConstants.Val].Value);
 			var endRef = section.SelectSingleNode(endName);
 			if (endRef != null)
-				_endRef = Convert.ToInt32(endRef.Attributes["val"].Value);
+				_endRef = Convert.ToInt32(endRef.Attributes[SharedConstants.Val].Value);
 		}
 
 		private string GetRefFromBookAndIntegers()

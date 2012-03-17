@@ -24,62 +24,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (obj == null)
 				throw new ArgumentNullException("obj");
 
-			string result = null;
-
-			var attribute = obj.Attribute(SharedConstants.GuidStr);
-			if (attribute == null)
-				return "No guid attribute";
+			string result;
 			try
 			{
-				new Guid(attribute.Value); // Will throw if not a guid.
+				var attribute = obj.Attribute(SharedConstants.GuidStr);
+
+				var className = GetClassName(obj, out result);
+				if (attribute == null)
+					return GetFormattedResult("No guid attribute", null, className ?? "", null);
+				var guid = new Guid(attribute.Value); // Will throw if not a guid.
+				if (result != null)
+					return GetFormattedResult(result, null, className ?? "", guid);
+				var classInfo = mdc.GetClassInfo(className);
+				if (classInfo == null)
+					return GetFormattedResult("No recognized class", null, className, guid);
+				if (classInfo.IsAbstract)
+					return GetFormattedResult("Abstract class", null, className, guid);
 
 				attribute = obj.Attribute(SharedConstants.OwnerGuid);
 				if (attribute != null)
-					return "Has 'ownerguid' attribute";
-
-				string className;
-				// Check odd cases to make sure they each have the right attributes.
-				switch (obj.Name.LocalName)
-				{
-					default:
-						className = obj.Name.LocalName;
-						break;
-					case SharedConstants.DsChart:
-					case SharedConstants.CmAnnotation:
-						// Abstract class elements, so get real class from 'class' attribute.
-						attribute = obj.Attribute(SharedConstants.Class);
-						if (attribute == null)
-							return "Has no class attribute.";
-						className = attribute.Value;
-						break;
-					case SharedConstants.curiosity:
-						attribute = obj.Attribute(SharedConstants.Class);
-						if (attribute == null)
-							return "Has no class attribute.";
-						className = attribute.Value;
-						attribute = obj.Attribute("curiositytype");
-						if (attribute == null)
-							return "Has no curiositytype attribute.";
-						var legalValues = new HashSet<string> {"unowned", "lint"};
-						if (!legalValues.Contains(attribute.Value))
-							return "Has unrecognized curiositytype attribute value.";
-						break;
-					case SharedConstants.OwnseqAtomic: // Fall through.
-					case SharedConstants.Ownseq:
-						attribute = obj.Attribute(SharedConstants.Class);
-						if (attribute == null)
-							return "Has no class attribute.";
-						className = attribute.Value;
-						break;
-				}
-				var classInfo = mdc.GetClassInfo(className);
-				if (classInfo == null)
-					return "No recognized class";
-				if (classInfo.IsAbstract)
-					return "Abstract class";
+					return GetFormattedResult("Has 'ownerguid' attribute", null, className, guid);
 
 				if (!obj.Elements().Any())
-					return null;
+					return null; // No property nodes at all, which is fine.
 
 				// Check each property
 				var allProperties = classInfo.AllProperties.ToList();
@@ -92,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var propertyName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 
 					if (!allPropertyNames.Contains(propertyName))
-						return propertyName + " is not a property element child";
+						return GetFormattedResult("Not a property element child", propertyName, className, guid);
 
 					var currentPropertyinfo = (allProperties.Where(pi => pi.PropertyName == propertyName)).First();
 
@@ -101,101 +68,121 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						case DataType.OwningCollection:
 							result = ValidateOwningCollectionProperty(mdc, isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.OwningSequence:
 							result = ValidateOwningSequenceProperty(mdc, isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.OwningAtomic:
 							result = ValidateOwningAtomicProperty(mdc, isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 
 						case DataType.ReferenceCollection:
-							result = ValidateReferenceCollectionProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateReferenceCollectionProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.ReferenceSequence:
-							result = ValidateReferenceSequenceProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateReferenceSequenceProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.ReferenceAtomic:
-							result = ValidateReferenceAtomicProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateReferenceAtomicProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 
 						case DataType.MultiUnicode:
-							result = ValidateMultiUnicodeProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateMultiUnicodeProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.MultiString:
 							result = ValidateMultiStringProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.Unicode:
 							result = ValidateUnicodeProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.String:
-							result = ValidateStringProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateStringProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.Binary:
-							result = ValidateBinaryProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateBinaryProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 						case DataType.TextPropBinary:
-							result = ValidateTextPropBinaryProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateTextPropBinaryProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return result;
+								return GetFormattedResult(result, propertyName, className, guid);
 							break;
 
 						case DataType.Integer:
-							if (BasicValueTypeAttributeCheck(propertyElement, out result))
+							if (BasicValueTypeAttributeCheckIsValid(propertyElement, out result))
 							{
-								var intAttrVal = Int32.Parse(result);
+								Int32.Parse(result);
 								result = null;
+							}
+							else
+							{
+								return GetFormattedResult("Invalid Integer property", propertyName, className, guid);
 							}
 							break;
 						case DataType.Boolean:
-							if (BasicValueTypeAttributeCheck(propertyElement, out result))
+							if (BasicValueTypeAttributeCheckIsValid(propertyElement, out result))
 							{
-								var boolAttrVal = bool.Parse(result);
+								bool.Parse(result);
 								result = null;
+							}
+							else
+							{
+								return GetFormattedResult("Invalid Boolean property", propertyName, className, guid);
 							}
 							break;
 						case DataType.Time:
-							if (BasicValueTypeAttributeCheck(propertyElement, out result))
+							if (BasicValueTypeAttributeCheckIsValid(propertyElement, out result))
 							{
-								var dateTimeAttrVal = DateTime.Parse(result);
+								DateTime.Parse(result);
 								result = null;
+							}
+							else
+							{
+								return GetFormattedResult("Invalid Time (DateTime) property", propertyName, className, guid);
 							}
 							break;
 						case DataType.GenDate:
-							if (BasicValueTypeAttributeCheck(propertyElement, out result))
+							if (BasicValueTypeAttributeCheckIsValid(propertyElement, out result))
 							{
 								// What is a GenDate?
-								//var dateTimeAttrVal = DateTime.Parse(element.Attribute("val").Value);
+								//var dateTimeAttrVal = DateTime.Parse(element.Attribute(SharedConstants.Val).Value);
 								// TODO: Check internals of the GenDate.
 								result = null;
 							}
+							else
+							{
+								return GetFormattedResult("Invalid GenDate property", propertyName, className, guid);
+							}
 							break;
 						case DataType.Guid:
-							if (BasicValueTypeAttributeCheck(propertyElement, out result))
+							if (BasicValueTypeAttributeCheckIsValid(propertyElement, out result))
 							{
-								var guidAttrVal = new Guid(result);
+								new Guid(result);
 								result = null;
+							}
+							else
+							{
+								return GetFormattedResult("Invalid Guid property", propertyName, className, guid);
 							}
 							break;
 					}
@@ -209,7 +196,79 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return result;
 		}
 
-		private static string ValidateTextPropBinaryProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string GetFormattedResult(string baseText, string propertyName, string className, Guid guid)
+		{
+			return GetFormattedResult(baseText, propertyName, className, guid.ToString());
+		}
+
+		private static string GetFormattedResult(string baseText, string propertyName, string className, string guid)
+		{
+			return string.Format("{0}: {1} {2} {3}",
+				baseText,
+				string.IsNullOrEmpty(propertyName) ? "" : string.Format("{0} of class: ", propertyName),
+				className ?? "",
+				string.IsNullOrEmpty(guid) ? "" : string.Format("'{0}'", guid));
+		}
+
+		private static string GetClassName(XElement obj, out string result)
+		{
+			result = null;
+			string className;
+			XAttribute attribute;
+			// Check odd cases to make sure they each have the right attributes.
+			switch (obj.Name.LocalName)
+			{
+				default:
+					className = obj.Name.LocalName;
+					break;
+				case SharedConstants.DsChart:
+				case SharedConstants.CmAnnotation:
+					// Abstract class elements, so get real class from 'class' attribute.
+					attribute = obj.Attribute(SharedConstants.Class);
+					if (attribute == null)
+					{
+						result = "Has no class attribute";
+						return null;
+					}
+					className = attribute.Value;
+					break;
+				case SharedConstants.curiosity:
+					attribute = obj.Attribute(SharedConstants.Class);
+					if (attribute == null)
+					{
+						result = "Has no class attribute";
+						return null;
+					}
+					className = attribute.Value;
+					attribute = obj.Attribute("curiositytype");
+					if (attribute == null)
+					{
+						result = "Has no curiositytype attribute";
+						return className;
+					}
+					var legalValues = new HashSet<string> { "unowned", "lint" };
+					if (!legalValues.Contains(attribute.Value))
+					{
+						result = "Has unrecognized curiositytype attribute value";
+						return className;
+					}
+					break;
+				case SharedConstants.OwnseqAtomic: // Fall through.
+				case SharedConstants.Ownseq:
+					attribute = obj.Attribute(SharedConstants.Class);
+					if (attribute == null)
+					{
+						result = "Has no class attribute";
+						return null;
+					}
+					className = attribute.Value;
+					break;
+			}
+
+			return className;
+		}
+
+		private static string ValidateTextPropBinaryProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			// Has one Prop element
 			if (!isCustomProperty && propertyElement.HasAttributes)
@@ -325,7 +384,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				: null;
 		}
 
-		private static string ValidateBinaryProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateBinaryProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			// contains array of bytes.
 			if (!isCustomProperty && propertyElement.HasAttributes)
@@ -335,7 +394,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return null;
 		}
 
-		private static string ValidateStringProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateStringProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			// TsString.
 			if (!isCustomProperty && propertyElement.HasAttributes)
@@ -395,7 +454,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return null;
 		}
 
-		private static string ValidateMultiUnicodeProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateMultiUnicodeProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			if (!isCustomProperty && propertyElement.HasAttributes)
 				return "Has unrecognized attributes.";
@@ -422,7 +481,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return null;
 		}
 
-		private static string ValidateReferenceAtomicProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateReferenceAtomicProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			if (!isCustomProperty && propertyElement.HasAttributes)
 				return "Has unrecognized attributes.";
@@ -441,7 +500,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return result;
 		}
 
-		private static string ValidateReferenceSequenceProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateReferenceSequenceProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			string result = null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
@@ -454,7 +513,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return result;
 		}
 
-		private static string ValidateReferenceCollectionProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateReferenceCollectionProperty(bool isCustomProperty, XElement propertyElement)
 		{
 			string result = null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
@@ -504,13 +563,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					return "Mixed owning sequence element names.";
 			}
 
-			foreach (var ownseqChildElement in ownseqChildElements)
-			{
-				var result = ValidateObject(mdc, ownseqChildElement);
-				if (result != null)
-					return result;
-			}
-			return null;
+			return ownseqChildElements.Select(ownseqChildElement => ValidateObject(mdc, ownseqChildElement)).FirstOrDefault(result => result != null);
 		}
 
 		private static string ValidateOwningCollectionProperty(MetadataCache mdc, bool isCustomProperty,
@@ -520,13 +573,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return "Has unrecognized attributes.";
 			if (!propertyElement.HasElements)
 				return null;
-			foreach (var ownedElement in propertyElement.Elements())
-			{
-				var result = ValidateObject(mdc, ownedElement);
-				if (result != null)
-					return result;
-			}
-			return null;
+			return propertyElement.Elements().Select(ownedElement => ValidateObject(mdc, ownedElement)).FirstOrDefault(result => result != null);
 		}
 
 		private static bool ReferencePropertyIsInvalid(List<XAttribute> objsurAttrs, out string result)
@@ -542,14 +589,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return false;
 		}
 
-		private static bool BasicValueTypeAttributeCheck(XElement element, out string value)
+		private static bool BasicValueTypeAttributeCheckIsValid(XElement element, out string value)
 		{
 			if (element.Attributes().Count() != 1)
 			{
 				value = "Wrong number of attributes.";
 				return false;
 			}
-			value = element.Attribute("val").Value;
+			value = element.Attribute(SharedConstants.Val).Value;
 			return true;
 		}
 	}

@@ -47,11 +47,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var obj = new XElement("randomelement");
 			var result = CmObjectValidator.ValidateObject(_mdc, obj);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("No guid attribute", result);
+			Assert.IsTrue(result.StartsWith("No guid attribute"));
 			obj.Add(new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			result = CmObjectValidator.ValidateObject(_mdc, obj);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("No recognized class", result);
+			Assert.IsTrue(result.StartsWith("No recognized class"));
 		}
 
 		[Test]
@@ -78,12 +78,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var curiosityElement = new XElement(SharedConstants.curiosity, new XAttribute(SharedConstants.Class, "PartOfSpeech"), new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has no curiositytype attribute.", result);
+			Assert.IsTrue(result.StartsWith("Has no curiositytype attribute"));
 			var ctAttr = new XAttribute("curiositytype", "notrecognized");
 			curiosityElement.Add(ctAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized curiositytype attribute value.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized curiositytype attribute value"));
 			ctAttr.Value = "lint";
 			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
 			Assert.IsNull(result);
@@ -98,7 +98,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var ownSeqElement = new XElement(SharedConstants.Ownseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has no class attribute.", result);
+			Assert.IsTrue(result.StartsWith("Has no class attribute"));
 			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
 			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNull(result);
@@ -110,7 +110,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var ownSeqElement = new XElement(SharedConstants.OwnseqAtomic, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has no class attribute.", result);
+			Assert.IsTrue(result.StartsWith("Has no class attribute"));
 			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
 			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNull(result);
@@ -122,7 +122,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var obj = new XElement("CmObject", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var result = CmObjectValidator.ValidateObject(_mdc, obj);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Abstract class", result);
+			Assert.IsTrue(result.StartsWith("Abstract class"));
 			obj.Name = SharedConstants.DsChart;
 			var classAttr = new XAttribute(SharedConstants.Class, "DsConstChart");
 			obj.Add(classAttr);
@@ -138,7 +138,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var element = new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("bogusProp"));
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.IsTrue(result.EndsWith(" is not a property element child"));
+			Assert.IsTrue(result.StartsWith("Not a property element child"));
 		}
 
 		[Test]
@@ -146,7 +146,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("ListVersion");
-			var attr = new XAttribute("val", "badvalue");
+			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
 			element.Add(prop);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -161,7 +161,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("DateCreated");
-			var attr = new XAttribute("val", "badvalue");
+			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
 			element.Add(prop);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -176,7 +176,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("IsProtected");
-			var attr = new XAttribute("val", "badvalue");
+			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
 			element.Add(prop);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -191,7 +191,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("ForeColor");
-			var attr = new XAttribute("val", "badvalue");
+			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
 			element.Add(prop);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -206,22 +206,22 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			var element = new XElement("CmFilter", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
 			var prop = new XElement("Name");
-			var attr = new XAttribute("val", "badvalue");
+			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
 			element.Add(prop);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
-			prop.Attribute("val").Remove();
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
+			prop.Attribute(SharedConstants.Val).Remove();
 
 			prop.Add(new XElement("badchild"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-text child element.", result);
+			Assert.IsTrue(result.StartsWith("Has non-text child element"));
 		}
 
 		[Test]
-		public void TsStringHasCorrectRepsonses()
+		public void TsStringHasCorrectResponses()
 		{
 			const string str = @"<ownseqatomic
 						class='StTxtPara'
@@ -240,13 +240,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			element.Element("Contents").Add(new XAttribute("bogusAttr", "badvalue"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			element.Element("Contents").Attributes().Remove();
 
 			element.Element("Contents").Add(new XElement("extraChild"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has too many child elements.", result);
+			Assert.IsTrue(result.StartsWith("Has too many child elements"));
 		}
 
 		[Test]
@@ -275,14 +275,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			element.Element("Description").Add(badAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			badAttr.Remove();
 
 			var extraChild = new XElement("extraChild");
 			element.Element("Description").Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-AStr child element.", result);
+			Assert.IsTrue(result.StartsWith("Has non-AStr child element"));
 			extraChild.Remove();
 
 			// Test the <Run> element.
@@ -290,13 +290,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			runElement.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-text child element.", result);
+			Assert.IsTrue(result.StartsWith("Has non-text child element"));
 			extraChild.Remove();
 
 			runElement.Add(badAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Invalid attribute for <Run> element.", result);
+			Assert.IsTrue(result.StartsWith("Invalid attribute for <Run> element"));
 			badAttr.Remove();
 		}
 
@@ -319,24 +319,24 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			element.Element("Name").Add(new XAttribute("bogusAttr", "badvalue"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			element.Element("Name").Attributes().Remove();
 
 			element.Element("Name").Add(new XElement("extraChild"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-AUni child element.", result);
+			Assert.IsTrue(result.StartsWith("Has non-AUni child element"));
 			element.Element("Name").Element("extraChild").Remove();
 
 			element.Element("Name").Element("AUni").Add(new XAttribute("bogusAttr", "badValue"));
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has too many attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has too many attributes"));
 			var wsAttr = element.Element("Name").Element("AUni").Attribute("ws");
 			wsAttr.Remove();
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Does not have required 'ws' attribute.", result);
+			Assert.IsTrue(result.StartsWith("Does not have required 'ws' attribute"));
 			element.Element("Name").Element("AUni").Attribute("bogusAttr").Remove();
 			element.Element("Name").Element("AUni").Add(wsAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -346,7 +346,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			element.Element("Name").Element("AUni").Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has non-text child element.", result);
+			Assert.IsTrue(result.StartsWith("Has non-text child element"));
 			extraChild.Remove();
 
 			// Comment doesn't count, as trouble.
@@ -378,26 +378,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 
 			extraAttr.Remove();
 			objsurElement.Add(extraAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has too many attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has too many attributes"));
 			extraAttr.Remove();
 
 			var extraChild = new XElement("BogusChild");
 			objsurElement.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("'objsur' element has child element(s).", result);
+			Assert.IsTrue(result.StartsWith("'objsur' element has child element(s)"));
 			extraChild.Remove();
 
 			prop.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has too many child elements.", result);
+			Assert.IsTrue(result.StartsWith("Has too many child elements"));
 			extraChild.Remove();
 
 			guidAttr.Value = "badValue";
@@ -431,14 +431,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			extraAttr.Remove();
 
 			var extraChild = new XElement("BogusChild");
 			prop.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Contains child elements that are not 'refseq'.", result);
+			Assert.IsTrue(result.StartsWith("Contains child elements that are not 'refseq'"));
 			extraChild.Remove();
 
 			var refseq1 = new XElement(SharedConstants.Refseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
@@ -462,14 +462,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			extraAttr.Remove();
 
 			var extraChild = new XElement("BogusChild");
 			prop.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Contains child elements that are not 'refcol'.", result);
+			Assert.IsTrue(result.StartsWith("Contains child elements that are not 'refcol'"));
 			extraChild.Remove();
 
 			var refcol1 = new XElement(SharedConstants.Refcol, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid().ToString()),
@@ -493,7 +493,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			extraAttr.Remove();
 
 			var stText1 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
@@ -502,7 +502,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(stText2);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has too many child elements.", result);
+			Assert.IsTrue(result.StartsWith("Has too many child elements"));
 			stText2.Remove();
 
 			result = CmObjectValidator.ValidateObject(_mdc, element);
@@ -524,7 +524,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			extraAttr.Remove();
 
 			// No children is fine.
@@ -535,7 +535,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraChild);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Contains unrecognized child elements.", result);
+			Assert.IsTrue(result.StartsWith("Contains unrecognized child elements"));
 			extraChild.Remove();
 
 			var osElement = new XElement(SharedConstants.Ownseq);
@@ -544,7 +544,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(osaElement);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Mixed owning sequence element names.", result);
+			Assert.IsTrue(result.StartsWith("Mixed owning sequence element names"));
 		}
 
 		[Test]
@@ -560,7 +560,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			prop.Add(extraAttr);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.AreEqual("Has unrecognized attributes.", result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
 			extraAttr.Remove();
 
 			// No children is fine.

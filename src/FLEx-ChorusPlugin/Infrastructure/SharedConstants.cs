@@ -17,6 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Collections = "Collections";
 		internal const string MultiAlt = "MultiAlt";
 		internal const string Owning = "Owning";
+		internal const string Val = "val";
 		internal const string Objsur = "objsur";
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
