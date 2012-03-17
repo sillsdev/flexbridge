@@ -109,7 +109,6 @@ namespace FLEx_ChorusPlugin.Controller
 			_projectView.ActivateView(_existingSystemView);
 			_fwBridgeView.EnableSendReceiveControls(enableSendReceiveBtn, makeWarningsVisible);
 			SetSystem(chorusSystem);
-
 		}
 
 
