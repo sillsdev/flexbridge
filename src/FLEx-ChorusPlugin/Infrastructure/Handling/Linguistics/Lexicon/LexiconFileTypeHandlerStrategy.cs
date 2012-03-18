@@ -37,13 +37,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 					return "Not valid lexicon file";
 				}
 
-				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.Header).Element("LexDb"));
+				var mdc = MetadataCache.MdCache;
+				var result = CmObjectValidator.ValidateObject(mdc, root.Element(SharedConstants.Header).Element("LexDb"));
 				if (result != null)
 					return result;
 
-				foreach (XElement filterElement in root.Elements(SharedConstants.LexEntry))
+				foreach (XElement entryElement in root.Elements(SharedConstants.LexEntry))
 				{
-					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement);
+					result = CmObjectValidator.ValidateObject(mdc, entryElement);
 					if (result != null)
 						return result;
 				}

@@ -212,12 +212,42 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
-			prop.Attribute(SharedConstants.Val).Remove();
+			attr.Remove();
 
-			prop.Add(new XElement("badchild"));
+			var extraElement = new XElement("badchild");
+			prop.Add(extraElement);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.StartsWith("Unexpected child element"));
+			extraElement.Remove();
+
+			var uniElement = new XElement(SharedConstants.Uni);
+			prop.Add(uniElement);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			uniElement.Value = "SomeText.";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			uniElement.Add(attr);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.StartsWith("Has unrecognized attributes"));
+			attr.Remove();
+
+			uniElement.Add(extraElement);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.StartsWith("Has non-text child element"));
+			extraElement.Remove();
+
+			var extraUniElement = new XElement(SharedConstants.Uni);
+			prop.Add(extraUniElement);
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.StartsWith("Too many child elements"));
+			extraUniElement.Remove();
 		}
 
 		[Test]

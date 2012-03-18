@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Chorus.FileTypeHanders;
 using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Palaso.Progress.LogBox;
 using Palaso.Xml;
 
 namespace FwdataTestApp
@@ -80,11 +83,13 @@ namespace FwdataTestApp
 			var workingDir = Path.GetDirectoryName(srcFwdataPathname);
 			Cursor = Cursors.WaitCursor;
 			var sb = new StringBuilder();
+			var sbValidation = new StringBuilder();
 			var nestTimer = new Stopwatch();
 			var breakupTimer = new Stopwatch();
 			var restoreTimer = new Stopwatch();
 			var verifyTimer = new Stopwatch();
 			var checkOwnObjsurTimer = new Stopwatch();
+			var validateTimer = new Stopwatch();
 			var ownObjsurFound = false;
 			try
 			{
@@ -235,6 +240,79 @@ namespace FwdataTestApp
 						}
 						verifyTimer.Stop();
 					}
+					if (_cbValidate.Checked)
+					{
+						// Validate all files.
+						validateTimer.Start();
+						var fbHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+									   where handler.GetType().Name == "FieldWorksCommonFileHandler"
+									   select handler).First();
+						// Custom properties file.
+						var currentPathname = Path.Combine(workingDir, SharedConstants.CustomPropertiesFilename);
+						var validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
+						if (validationError != null)
+						{
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sb.AppendLine();
+						}
+						// Model version file.
+						currentPathname = Path.Combine(workingDir, SharedConstants.ModelVersionFilename);
+						validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
+						if (validationError != null)
+						{
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sb.AppendLine();
+						}
+						// General
+						foreach (var generalPathname in Directory.GetFiles(Path.Combine(workingDir, "General"), "*.*", SearchOption.AllDirectories))
+						{
+							validationError = fbHandler.ValidateFile(generalPathname, new NullProgress());
+							if (validationError == null)
+								continue;
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", generalPathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", generalPathname, validationError);
+							sb.AppendLine();
+						}
+						// Anthropology
+						foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories))
+						{
+							validationError = fbHandler.ValidateFile(anthropologyPathname, new NullProgress());
+							if (validationError == null)
+								continue;
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", anthropologyPathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", anthropologyPathname, validationError);
+							sb.AppendLine();
+						}
+						// Scripture
+						foreach (var scripturePathname in Directory.GetFiles(Path.Combine(workingDir, "Scripture"), "*.*", SearchOption.AllDirectories))
+						{
+							validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
+							if (validationError == null)
+								continue;
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", scripturePathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", scripturePathname, validationError);
+							sb.AppendLine();
+						}
+						// Linguistics
+						foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories))
+						{
+							validationError = fbHandler.ValidateFile(linguisticsPathname, new NullProgress());
+							if (validationError == null)
+								continue;
+							sbValidation.AppendFormat("File '{0}' reported an error: {1}", linguisticsPathname, validationError);
+							sbValidation.AppendLine();
+							sb.AppendFormat("File '{0}' reported an error: {1}", linguisticsPathname, validationError);
+							sb.AppendLine();
+						}
+						validateTimer.Stop();
+					}
 				}
 				if (_cbNestFile.Checked && _cbCheckOwnObjsur.Checked)
 				{
@@ -255,7 +333,7 @@ namespace FwdataTestApp
 			finally
 			{
 				var compTxt = String.Format(
-					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}{0}{0}{7}",
+					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}{0}{8}",
 					Environment.NewLine,
 					_cbNestFile.Checked ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					_cbCheckOwnObjsur.Checked ? checkOwnObjsurTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
@@ -263,8 +341,12 @@ namespace FwdataTestApp
 					_cbRoundTripData.Checked ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					_cbRoundTripData.Checked ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					_cbVerify.Checked ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					_cbValidate.Checked ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					sb);
 				File.WriteAllText(Path.Combine(workingDir, "Comparison.log"), compTxt);
+				var validationErrors = sbValidation.ToString();
+				if (validationErrors.Length > 0)
+					File.WriteAllText(Path.Combine(workingDir, "Validation.log"), validationErrors);
 				Cursor = Cursors.Default;
 				Close();
 			}

@@ -38,6 +38,7 @@
 			this._cbRoundTripData = new System.Windows.Forms.CheckBox();
 			this._cbVerify = new System.Windows.Forms.CheckBox();
 			this._cbCheckOwnObjsur = new System.Windows.Forms.CheckBox();
+			this._cbValidate = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			//
 			// _openFileDialog
@@ -127,12 +128,25 @@
 			this._cbCheckOwnObjsur.Text = "Check t=\"o\"";
 			this._cbCheckOwnObjsur.UseVisualStyleBackColor = true;
 			//
+			// _cbValidate
+			//
+			this._cbValidate.AutoSize = true;
+			this._cbValidate.Checked = true;
+			this._cbValidate.CheckState = System.Windows.Forms.CheckState.Checked;
+			this._cbValidate.Location = new System.Drawing.Point(222, 66);
+			this._cbValidate.Name = "_cbValidate";
+			this._cbValidate.Size = new System.Drawing.Size(88, 17);
+			this._cbValidate.TabIndex = 16;
+			this._cbValidate.Text = "Validate Files";
+			this._cbValidate.UseVisualStyleBackColor = true;
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.ClientSize = new System.Drawing.Size(554, 123);
+			this.Controls.Add(this._cbValidate);
 			this.Controls.Add(this._cbCheckOwnObjsur);
 			this.Controls.Add(this._cbVerify);
 			this.Controls.Add(this._cbRoundTripData);
@@ -160,5 +174,6 @@
 		private System.Windows.Forms.CheckBox _cbRoundTripData;
 		private System.Windows.Forms.CheckBox _cbVerify;
 		private System.Windows.Forms.CheckBox _cbCheckOwnObjsur;
+		private System.Windows.Forms.CheckBox _cbValidate;
 	}
 }

@@ -126,7 +126,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return "File has no extension.";
 
 			var handler = GetHandlerfromExtension(extension.Substring(1));
-			return handler.ValidateFile(pathToFile);
+			var results = handler.ValidateFile(pathToFile);
+			if (results != null)
+			{
+				progress.WriteError("File '{0}' is not valid with message: {1}", pathToFile, results);
+				progress.WriteWarning("It may also have other problems in addition to the one that was reported.");
+			}
+			return results;
 		}
 
 		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
