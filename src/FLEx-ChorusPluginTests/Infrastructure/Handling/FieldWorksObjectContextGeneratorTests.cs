@@ -581,13 +581,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class 'back vowels' Abbreviation"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class \"back vowels\" Abbreviation"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "085e32ec-eb5b-4eed-9dab-e55854ce88fb"));
 
 			input = root.ChildNodes[1].ChildNodes[0]; //<Name><AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class 'back vowels' Name"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Natural Class \"back vowels\" Name"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "085e32ec-eb5b-4eed-9dab-e55854ce88fb"));
 		}
@@ -661,31 +661,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features 'cons' Abbreviation"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features \"cons\" Abbreviation"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "c70257a9-750b-4fc6-b68b-7194752c77cc"));
 
 			input = root.ChildNodes[2].ChildNodes[0]; //<Description><AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features 'cons' Description"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features \"cons\" Description"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "c70257a9-750b-4fc6-b68b-7194752c77cc"));
 
 			input = root.ChildNodes[4].ChildNodes[0]; //<Name><AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features 'cons' Name"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features \"cons\" Name"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "c70257a9-750b-4fc6-b68b-7194752c77cc"));
 
 			input = root.ChildNodes[6].ChildNodes[1].ChildNodes[0].ChildNodes[0]; //<Values><FsSymFeatVal><Abbreviation><AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features 'cons' Values Abbreviation"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features \"cons\" Values Abbreviation"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b6901feb-c1d7-43d4-836f-f123ef30e3d2"));
 
 			input = root.ChildNodes[6].ChildNodes[1].ChildNodes[2].ChildNodes[0]; //<Values><FsSymFeatVal><Name><AUni>
 			descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features 'cons' Values Name"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Phonological Features \"cons\" Values Name"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b6901feb-c1d7-43d4-836f-f123ef30e3d2"));
 		}
@@ -1033,7 +1033,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			// This is the focus of the test:
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
 
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Item 'cultural anthropology' from List 'Academic Domains' UnderColor"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Item \"cultural anthropology\" from List \"Academic Domains\" UnderColor"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "b0c5aeac-ea5e-11de-9463-0013722f8dec"));
 		}

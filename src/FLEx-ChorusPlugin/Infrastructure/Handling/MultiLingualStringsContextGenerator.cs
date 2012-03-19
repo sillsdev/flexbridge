@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				objectNameOrAbbr = GetNameOrAbbreviationOrOther(startNode);
 			}
-			return m_objectNameForLabel + " '" + objectNameOrAbbr + "'";
+			return m_objectNameForLabel + Space + Quote + objectNameOrAbbr + Quote;
 		}
 
 		protected string GetNameOrAbbreviationOrOther(XmlNode parent)
