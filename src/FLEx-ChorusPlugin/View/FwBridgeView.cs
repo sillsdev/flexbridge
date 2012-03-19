@@ -25,8 +25,23 @@ namespace FLEx_ChorusPlugin.View
 
 		private void ProjectsSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (ProjectSelected != null)
-				ProjectSelected(this, new ProjectEventArgs(SelectedProject));
+			var projectIsInUse = SelectedProject.FieldWorkProjectInUse;
+			((IFwBridgeView)this).EnableSendReceiveControls(!projectIsInUse, projectIsInUse);
+
+			if (SelectedProject.IsRemoteCollaborationEnabled)
+			{
+				_projectView.Enabled = true;
+				_projectView.Visible = true;
+				if (ProjectSelected != null)
+					ProjectSelected(this, new ProjectEventArgs(SelectedProject));
+				(((IProjectView) _projectView).ExistingSystemView as Control).Enabled = true;
+			}
+			else
+			{
+				_projectView.Enabled = false;
+				_projectView.Visible = false;
+				(((IProjectView)_projectView).ExistingSystemView as Control).Enabled = false;
+			}
 		}
 
 		private void SendReceiveButtonClick(object sender, EventArgs e)
@@ -34,6 +49,10 @@ namespace FLEx_ChorusPlugin.View
 			Cursor = Cursors.WaitCursor;
 			try
 			{
+				// Delay creation of repo, until S/R btn is clicked.
+				// The ProjectSelected call was in a selection event handler of the combo, but has been moved here.
+				if (ProjectSelected != null)
+					ProjectSelected(this, new ProjectEventArgs(SelectedProject));
 				if (SynchronizeProject != null)
 					SynchronizeProject(this, new EventArgs());
 			}
@@ -57,9 +76,10 @@ namespace FLEx_ChorusPlugin.View
 				_cbProjects.SuspendLayout();
 
 				_cbProjects.Items.Clear();
-				foreach (var project in _projects)
+				var projectsCopy = _projects.ToList();
+				foreach (var project in projectsCopy)
 					_cbProjects.Items.Add(project);
-				if (_projects.Any())
+				if (projectsCopy.Any())
 					_cbProjects.SelectedIndex = 0;
 
 				_cbProjects.ResumeLayout();

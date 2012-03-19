@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -39,7 +37,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			if (SpecialHandling(sb, input))
 				return;
-			StringBuilder sb2 = new StringBuilder();
+			var sb2 = new StringBuilder();
 			foreach (var child in input.ChildNodes)
 			{
 				var xmlText = child as XmlText;
@@ -55,7 +53,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var inner = sb2.ToString();
 			if (string.IsNullOrEmpty(inner))
 				return;
-			bool wantLevel = !SkipNodeLevel(input);
+			var wantLevel = !SkipNodeLevel(input);
 			if (wantLevel)
 			{
 				AppendElementlabelDiv(sb, input);
@@ -68,8 +66,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <summary>
 		/// Append the appropriate div header for displaying a property.
 		/// </summary>
-		/// <param name="sb"></param>
-		/// <param name="input"></param>
 		private static void AppendElementlabelDiv(StringBuilder sb, XmlNode input)
 		{
 			sb.Append("<div class='property'>");
@@ -81,17 +77,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// Return true (after appending anything desired to builder) if this node requires special handling.
 		/// Eventually may make this virtual to allow customization
 		/// </summary>
-		/// <param name="sb"></param>
-		/// <param name="input"></param>
-		/// <returns></returns>
 		private bool SpecialHandling(StringBuilder sb, XmlNode input)
 		{
 			switch (input.Name)
 			{
-				case "AUni":
-				case "AStr":
+				case SharedConstants.AUni:
+				case SharedConstants.AStr:
 					sb.Append("<div class='ws'>");
-					var ws = XmlUtilities.GetOptionalAttributeString(input, "ws");
+					var ws = XmlUtilities.GetOptionalAttributeString(input, SharedConstants.Ws);
 					if (!string.IsNullOrEmpty(ws))
 					{
 						sb.Append(ws);
@@ -100,7 +93,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					sb.Append(input.InnerText);
 					sb.Append("</div>");
 					return true;
-				case "Str":
+				case SharedConstants.Str:
 					sb.Append(input.InnerText); // for now ignore all markup
 					return true;
 				case "BeginOffset":
@@ -108,7 +101,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					// Various cases of properties that are not relevant to the end user, so leave them out.
 					return true;
 				default:
-					var val = XmlUtilities.GetOptionalAttributeString(input, "val");
+					var val = XmlUtilities.GetOptionalAttributeString(input, SharedConstants.Val);
 					if (!string.IsNullOrEmpty(val))
 					{
 						AppendElementlabelDiv(sb, input);
@@ -129,7 +122,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <returns></returns>
 		bool SkipNodeLevel(XmlNode node)
 		{
-			if (node.Attributes["guid"] != null)
+			if (node.Attributes[SharedConstants.GuidStr] != null)
 				return true;
 			return false;
 		}

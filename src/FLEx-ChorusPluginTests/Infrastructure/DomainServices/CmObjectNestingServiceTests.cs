@@ -242,12 +242,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
 									new XAttribute(SharedConstants.GuidStr, "c1ed6dc6-e382-11de-8a39-0800200c9a66"),
 									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
-									new XElement("DateCreated", new XAttribute("val", "created")));
+									new XElement("DateCreated", new XAttribute(SharedConstants.Val, "created")));
 			var pos2 = new XElement(SharedConstants.RtTag,
 									new XAttribute(SharedConstants.Class, "PartOfSpeech"),
 									new XAttribute(SharedConstants.GuidStr, "c1ed6dc7-e382-11de-8a39-0800200c9a66"),
 									new XAttribute(SharedConstants.OwnerGuid, posListGuid),
-									new XElement("DateCreated", new XAttribute("val", "created")));
+									new XElement("DateCreated", new XAttribute(SharedConstants.Val, "created")));
 			entriesElement = new XElement("Possibilities",
 											BaseDomainServices.CreateObjSurElement("c1ed6dc6-e382-11de-8a39-0800200c9a66"),
 											BaseDomainServices.CreateObjSurElement("c1ed6dc7-e382-11de-8a39-0800200c9a66"));

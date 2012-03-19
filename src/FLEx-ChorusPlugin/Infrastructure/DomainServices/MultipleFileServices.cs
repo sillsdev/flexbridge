@@ -192,11 +192,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")
 			{
-				// Always remove it, and force re-parse.
-				// NB: If this is ever removed, then some sort of pre-merge will need to be reinstated for the property.
+				// Always set it to zero (0), and force re-parse.
 				var csElement = rtElement.Element("Checksum");
 				if (csElement != null)
-					csElement.Remove();
+					csElement.Attribute(SharedConstants.Val).Value = "0";
 			}
 
 			// Theory has it the FW data is sorted.

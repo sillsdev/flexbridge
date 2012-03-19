@@ -158,6 +158,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("ProcliticSlots", DataType.ReferenceSequence));
 						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("EncliticSlots", DataType.ReferenceSequence));
 						break;
+					case 7000055:
+						// 1. WfiMorphBundle
+						//		Add: InflType ref atomic
+						GetClassInfo("WfiMorphBundle").AddProperty(new FdoPropertyInfo("InflType", DataType.ReferenceAtomic));
+						// 2. Add LexEntryType::LexEntryInflType (concrete)
+						newClass = CreateNewClass(GetClassInfo("LexEntryType"), "LexEntryInflType", false);
+						//		Add: GlossPrepend multi-uni
+						//		Add: GlossAppend multi-uni
+						//		Add: InflFeats own atomic
+						//		Add: Slots rel col
+						newClass.AddProperty(new FdoPropertyInfo("GlossPrepend", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("GlossAppend", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("InflFeats", DataType.OwningAtomic));
+						newClass.AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						break;
 				}
 			}
 

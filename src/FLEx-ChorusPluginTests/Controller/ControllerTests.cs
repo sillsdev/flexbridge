@@ -156,12 +156,6 @@ namespace FLEx_ChorusPluginTests.Controller
 			Assert.IsNotNull(_mockedProjectView.ExistingSystemView);
 		}
 
-		[Test]
-		public void EnsureIProjectViewHasIStartupNewView()
-		{
-			Assert.IsNotNull(_mockedProjectView.StartupNewView);
-		}
-
 		#endregion Ensure IProjectView is handled by controller
 	}
 }

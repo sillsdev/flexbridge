@@ -52,12 +52,12 @@ namespace FwdataTestApp
 			}
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 
-			// 1. Remove 'Checksum' from wordforms.
+			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
 				var csElement = rtElement.Element("Checksum");
 				if (csElement != null)
-					csElement.Remove();
+					csElement.Attribute(SharedConstants.Val).Value = "0";
 			}
 
 			// Theory has it the FW data is sorted.

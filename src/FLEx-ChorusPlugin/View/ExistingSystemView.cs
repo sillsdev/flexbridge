@@ -11,37 +11,12 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed partial class ExistingSystemView : UserControl, IExistingSystemView
 	{
+		private LanguageProject _project;
+
 		internal ExistingSystemView()
 		{
 			InitializeComponent();
 		}
-
-		internal ChorusSystem ChorusSys
-		{
-			set
-			{
-				_tcMain.SuspendLayout();
-
-				if (value == null)
-				{
-					ClearPage(_tcMain.TabPages[0]);
-					ClearPage(_tcMain.TabPages[1]);
-					// About page: ClearPage(_tcMain.TabPages[2]);
-				}
-				else
-				{
-					_tcMain.Enabled = true;
-					ResetPage(0, value.WinForms.CreateNotesBrowser());
-					ResetPage(1, value.WinForms.CreateHistoryPage());
-					//ResetTabPage(2, TODO: Figure out what to do on About page.);
-				}
-
-				_tcMain.ResumeLayout(true);
-				_tcMain.Enabled = (value != null);
-			}
-		}
-
-		private LanguageProject _project;
 
 		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem, LanguageProject project)
 		{
@@ -56,6 +31,10 @@ namespace FLEx_ChorusPlugin.View
 			}
 			else
 			{
+				Parent.Enabled = true;
+				Parent.Visible = true;
+				Enabled = true;
+				Visible = true;
 				_tcMain.Enabled = true;
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());

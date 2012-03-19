@@ -31,10 +31,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					continue; // Handled elsewhere.
 
 				var ourBoolPropElement = ourEntry.SelectSingleNode(boolPropInfo.PropertyName);
-				var ourBoolPropAttr = ourBoolPropElement == null ? null : ourBoolPropElement.Attributes["val"];
+				var ourBoolPropAttr = ourBoolPropElement == null ? null : ourBoolPropElement.Attributes[SharedConstants.Val];
 				var ourBoolPropValue = ourBoolPropAttr != null && bool.Parse(ourBoolPropAttr.Value);
 				var theirBoolPropElement = theirEntry.SelectSingleNode(boolPropInfo.PropertyName);
-				var theirBoolPropAttr = theirBoolPropElement == null ? null : theirBoolPropElement.Attributes["val"];
+				var theirBoolPropAttr = theirBoolPropElement == null ? null : theirBoolPropElement.Attributes[SharedConstants.Val];
 				var theirBoolPropValue = theirBoolPropAttr != null && bool.Parse(theirBoolPropAttr.Value);
 				if (ourBoolPropValue == theirBoolPropValue)
 					continue;
@@ -101,9 +101,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					return;
 
 				if (asUtcOurs > asUtcTheirs)
-					theirNode.Attributes["val"].Value = ourNode.Attributes["val"].Value;
+					theirNode.Attributes[SharedConstants.Val].Value = ourNode.Attributes[SharedConstants.Val].Value;
 				else
-					ourNode.Attributes["val"].Value = theirNode.Attributes["val"].Value;
+					ourNode.Attributes[SharedConstants.Val].Value = theirNode.Attributes[SharedConstants.Val].Value;
 			}
 
 			// Drill down and do all owned objects
@@ -148,14 +148,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
 			{
 				// Only need to pre-merge them if they both exist,
-				var ourValue = bool.Parse(ourParseIsCurrentNode.Attributes["val"].Value);
-				var theirValue = bool.Parse(theirParseIsCurrentNode.Attributes["val"].Value);
+				var ourValue = bool.Parse(ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value);
+				var theirValue = bool.Parse(theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value);
 				if (ourValue != theirValue)
 				{
 					// and, they are different.
 					// Set both to False.
-					ourParseIsCurrentNode.Attributes["val"].Value = "False";
-					theirParseIsCurrentNode.Attributes["val"].Value = "False";
+					ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+					theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
 				}
 				return;
 			}
@@ -225,7 +225,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private static DateTime GetTimestamp(XmlNode node)
 		{
-			var timestamp = node.Attributes["val"].Value;
+			var timestamp = node.Attributes[SharedConstants.Val].Value;
 			var dateParts = timestamp.Split(new[] { '-', ' ', ':', '.' });
 			return new DateTime(
 				Int32.Parse(dateParts[0]),

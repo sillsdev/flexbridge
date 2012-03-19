@@ -129,6 +129,26 @@ namespace FLEx_ChorusPluginTests.Integration
 			classInfo = mdc.GetClassInfo("MoInflAffixTemplate");
 			CheckNewPropertyAfterUpgrade(classInfo, "ProcliticSlots", DataType.ReferenceSequence);
 			CheckNewPropertyAfterUpgrade(classInfo, "EncliticSlots", DataType.ReferenceSequence);
+
+			// 7000055
+			// 1. WfiMorphBundle
+			//		Add: InflType ref atomic
+			// 2. Add LexEntryType::LexEntryInflType (concrete)
+			//		Add: GlossPrepend multi-uni
+			//		Add: GlossAppend multi-uni
+			//		Add: InflFeats own atomic
+			//		Add: Slots rel col
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "WfiMorphBundle", "InflType");
+			CheckClassDoesNotExistBeforeUpGrade(mdc, "LexEntryInflType");
+			DoMerge(fileHandler, 7000055);
+			classInfo = mdc.GetClassInfo("WfiMorphBundle");
+			CheckNewPropertyAfterUpgrade(classInfo, "InflType", DataType.ReferenceAtomic);
+			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("LexEntryType"), "LexEntryInflType");
+			classInfo = mdc.GetClassInfo("LexEntryInflType");
+			CheckNewPropertyAfterUpgrade(classInfo, "GlossPrepend", DataType.MultiUnicode);
+			CheckNewPropertyAfterUpgrade(classInfo, "GlossAppend", DataType.MultiUnicode);
+			CheckNewPropertyAfterUpgrade(classInfo, "InflFeats", DataType.OwningAtomic);
+			CheckNewPropertyAfterUpgrade(classInfo, "Slots", DataType.ReferenceCollection);
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
