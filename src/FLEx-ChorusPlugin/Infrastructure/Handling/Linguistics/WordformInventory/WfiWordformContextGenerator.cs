@@ -25,7 +25,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 			var form = wordform.SelectSingleNode("Form/AUni");
 			return form == null
 				? WordformLabel
-				: WordformLabel + " " + form.InnerText;
+				: WordformLabel + Space + Quote + form.InnerText + Quote;
 		}
 	}
 }
