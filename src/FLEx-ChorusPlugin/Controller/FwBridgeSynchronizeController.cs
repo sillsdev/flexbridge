@@ -12,6 +12,9 @@ namespace FLEx_ChorusPlugin.Controller
 	{
 		private readonly SynchronizeProject _projectSynchronizer;
 		private readonly LanguageProject _currentLanguageProject;
+		private bool _changesReceived;
+
+		public bool ChangesReceived { get { return _changesReceived; } }
 
 		public FwBridgeSynchronizeController(IDictionary<string, string> options)
 		{

@@ -11,10 +11,18 @@ namespace FLEx_ChorusPlugin.View
 	{
 		#region Implementation of ISynchronizeProject
 
-		public void SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		/// <summary>
+		/// This will trigger the synchronizing of the fieldworks project with the provided system and project
+		/// </summary>
+		/// <param name="parent">Window to be the parent for the synchronize dialog</param>
+		/// <param name="chorusSystem">The ChorusSystem to use</param>
+		/// <param name="langProject">The LanguageProject to use</param>
+		/// <returns>true if changes from others were made, false otherwise</returns>
+		public bool SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");
+			var othersChanges = false;
 
 			try
 			{
@@ -41,6 +49,7 @@ namespace FLEx_ChorusPlugin.View
 					{
 						// Put Humpty together again.
 						MultipleFileServices.PutHumptyTogetherAgain(origPathname);
+						othersChanges = true;
 					}
 				}
 			}
@@ -49,6 +58,7 @@ namespace FLEx_ChorusPlugin.View
 				if (File.Exists(lockPathname))
 					File.Delete(lockPathname);
 			}
+			return othersChanges;
 		}
 
 		#endregion
