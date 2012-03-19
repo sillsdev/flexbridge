@@ -129,7 +129,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var results = handler.ValidateFile(pathToFile);
 			if (results != null)
 			{
-				progress.WriteError("File '{0}' is not valid with message: {1}", pathToFile, results);
+				progress.WriteError("File '{0}' is not valid with message:{1}\t{2}", pathToFile, Environment.NewLine, results);
 				progress.WriteWarning("It may also have other problems in addition to the one that was reported.");
 			}
 			return results;

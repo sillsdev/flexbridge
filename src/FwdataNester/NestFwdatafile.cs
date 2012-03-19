@@ -252,9 +252,9 @@ namespace FwdataTestApp
 						var validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
 						if (validationError != null)
 						{
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
 							sb.AppendLine();
 						}
 						// Model version file.
@@ -262,53 +262,57 @@ namespace FwdataTestApp
 						validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
 						if (validationError != null)
 						{
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", currentPathname, validationError);
+							sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
 							sb.AppendLine();
 						}
+
 						// General
 						foreach (var generalPathname in Directory.GetFiles(Path.Combine(workingDir, "General"), "*.*", SearchOption.AllDirectories))
 						{
 							validationError = fbHandler.ValidateFile(generalPathname, new NullProgress());
 							if (validationError == null)
 								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", generalPathname, validationError);
+							sbValidation.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", generalPathname, validationError);
+							sb.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
 							sb.AppendLine();
 						}
+
 						// Anthropology
 						foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories))
 						{
 							validationError = fbHandler.ValidateFile(anthropologyPathname, new NullProgress());
 							if (validationError == null)
 								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", anthropologyPathname, validationError);
+							sbValidation.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", anthropologyPathname, validationError);
+							sb.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
 							sb.AppendLine();
 						}
+
 						// Scripture
 						foreach (var scripturePathname in Directory.GetFiles(Path.Combine(workingDir, "Scripture"), "*.*", SearchOption.AllDirectories))
 						{
 							validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
 							if (validationError == null)
 								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", scripturePathname, validationError);
+							sbValidation.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", scripturePathname, validationError);
+							sb.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
 							sb.AppendLine();
 						}
+
 						// Linguistics
 						foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories))
 						{
 							validationError = fbHandler.ValidateFile(linguisticsPathname, new NullProgress());
 							if (validationError == null)
 								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error: {1}", linguisticsPathname, validationError);
+							sbValidation.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
 							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error: {1}", linguisticsPathname, validationError);
+							sb.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
 							sb.AppendLine();
 						}
 						validateTimer.Stop();
