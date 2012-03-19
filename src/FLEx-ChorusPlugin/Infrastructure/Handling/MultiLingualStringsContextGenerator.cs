@@ -33,13 +33,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			{
 				objectNameOrAbbr = GetNameOrAbbreviationOrOther(startNode);
 			}
-			return m_objectNameForLabel + " '" + objectNameOrAbbr + "'";
+			return m_objectNameForLabel + Space + Quote + objectNameOrAbbr + Quote;
 		}
 
 		protected string GetNameOrAbbreviationOrOther(XmlNode parent)
 		{
 			var dataToReturn = "";
-			var index = 0;
+			//var index = 0;
 			foreach (var nodeName in m_valuesToCheckFor)
 			{
 				var nodeToCheck = parent.SelectSingleNode(nodeName);

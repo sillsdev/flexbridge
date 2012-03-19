@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		private string GetLabelForPossibilityList(XmlNode list)
 		{
 			var name = GetNameOrAbbreviation(list);
-			return ListLabel + " '" + name + "'";
+			return ListLabel + Space + Quote + name + Quote;
 		}
 	}
 }
