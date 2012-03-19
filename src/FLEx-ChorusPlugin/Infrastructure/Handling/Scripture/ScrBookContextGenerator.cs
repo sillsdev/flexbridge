@@ -9,8 +9,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 	/// </summary>
 	internal sealed class ScrBookContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string Space = " ";
-
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForScrBook(start);
@@ -26,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			var form = GetNameOrAbbreviation(book);
 			return string.IsNullOrEmpty(form)
 				? EntryLabel
-				: EntryLabel + Space + form;
+				: EntryLabel + Space + Quote + form + Quote;
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 	/// </summary>
 	internal sealed class TextContextGenerator : FieldWorkObjectContextGenerator
 	{
-		private const string Space = " ";
+		private const string Comma = ",";
 
 		protected override string GetLabel(XmlNode start)
 		{
@@ -28,8 +28,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 			if (form == null || form.Count == 0)
 				return EntryLabel;
 			var sbLabel = new StringBuilder(EntryLabel);
-			foreach (XmlNode wsVariation in form)
-				sbLabel.Append(Space + wsVariation.InnerText);
+			for (var i = 0; i < form.Count; i++ )
+			{
+				XmlNode wsVariation = form[i];
+				sbLabel.Append((i > 0 ? Comma : string.Empty) + Space + Quote + wsVariation.InnerText + Quote);
+			}
 			return sbLabel.ToString();
 		}
 	}
