@@ -44,7 +44,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void SyncronizeProjects()
 		{
-			_projectSynchronizer.SynchronizeFieldWorksProject(MainForm, ChorusSystem, _currentLanguageProject);
+			_changesReceived = _projectSynchronizer.SynchronizeFieldWorksProject(MainForm, ChorusSystem, _currentLanguageProject);
 		}
 
 		#region IFwBridgeController implementation
