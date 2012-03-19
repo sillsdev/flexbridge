@@ -24,6 +24,7 @@ namespace FLExBridge
 				ExceptionHandler.Init();
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
+				bool changesReceived = false;
 
 				// Is mercurial set up?
 				var s = HgRepository.GetEnvironmentReadinessMessage("en");
@@ -54,6 +55,7 @@ namespace FLExBridge
 							using (var controller = new ObtainProjectController(options))
 							{
 								Application.Run(controller.MainForm);
+								changesReceived = false;
 							}
 							break;
 						case "start":
@@ -61,12 +63,14 @@ namespace FLExBridge
 							using (var controller = new FwBridgeSynchronizeController(options))
 							{
 								controller.SyncronizeProjects();
+								changesReceived = controller.ChangesReceived;
 							}
 							break;
 						case "view_notes": //view the conflict\notes report
 							using (var controller = new FwBridgeConflictController(options))
 							{
 								Application.Run(controller.MainForm);
+								changesReceived = false;
 							}
 							break;
 						default:
@@ -74,7 +78,7 @@ namespace FLExBridge
 							break;
 					}
 				}
-				flexCommHelper.SignalBridgeWorkComplete();
+				flexCommHelper.SignalBridgeWorkComplete(changesReceived);
 				Settings.Default.Save();
 			}
 		}
