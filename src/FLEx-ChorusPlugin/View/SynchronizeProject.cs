@@ -4,6 +4,7 @@ using Chorus;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -43,6 +44,7 @@ namespace FLEx_ChorusPlugin.View
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
 					syncDlg.SyncOptions.DoSendToOthers = true;
+					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
 					syncDlg.ShowDialog(parent);
 
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
