@@ -224,4 +224,7 @@
   <data name="ksDiscourseChart" xml:space="preserve">
 	<value>Discourse Chart</value>
   </data>
+  <data name="SendReceiveView_DialogTitle" xml:space="preserve">
+	<value>Send/Receive Project</value>
+  </data>
 </root>

@@ -363,5 +363,14 @@ namespace FLEx_ChorusPlugin.Properties {
 				return ResourceManager.GetString("ObtainProjectView_DialogTitle", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Send/Receive Project.
+		/// </summary>
+		internal static string SendReceiveView_DialogTitle {
+			get {
+				return ResourceManager.GetString("SendReceiveView_DialogTitle", resourceCulture);
+			}
+		}
 	}
 }
