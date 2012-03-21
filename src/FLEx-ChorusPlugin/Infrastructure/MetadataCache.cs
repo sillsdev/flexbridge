@@ -1762,7 +1762,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("PhFeatureSystem", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("FilePathsInTsStrings", DataType.OwningAtomic));
 
-			clsInfo = new FdoClassInfo("VirtualOrdering", true, "CmObject");
+			clsInfo = new FdoClassInfo("VirtualOrdering", false, "CmObject");
 			_classes.Add("VirtualOrdering", clsInfo);
 			clsInfo.AddProperty(new FdoPropertyInfo("Source", DataType.ReferenceAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("Field", DataType.Unicode));

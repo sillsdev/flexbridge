@@ -48,9 +48,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
-				return; // No texts to process.
+				return; // No texts to process, regardless of owner. (Some can be owned by RnGenericRec.)
 
 			var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
+			if (textGuidsInLangProj.Count == 0)
+				return; //  None owned by lang project. (Some can be owned by RnGenericRec.)
+
 			foreach (var textGuid in textGuidsInLangProj)
 			{
 				var rootElement = new XElement("TextInCorpus");
