@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
@@ -56,6 +57,9 @@ namespace FLExBridge
 							{
 								Application.Run(controller.MainForm);
 								changesReceived = false;
+								string fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
+								// get the whole path with .fwdata on the end!!!
+								flexCommHelper.SetFwProjectName(fwProjectName);
 							}
 							break;
 						case "start":

@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus.clone;
 using Chorus.UI.Clone;
 using FLEx_ChorusPlugin.Properties;
+using FLEx_ChorusPlugin.Model;
 using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -11,13 +13,23 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed class GetSharedProject : IGetSharedProject
 	{
-		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
-		{
-			if (newProjPath != currentRootDataPath)
-				Directory.Move(newProjPath, currentRootDataPath);
-		}
+		private LanguageProject _currentProject;
 
 		#region Implementation of IGetSharedProject
+
+		public LanguageProject CurrentProject
+		{
+			get
+			{
+				if (_currentProject == null)
+					throw new System.FieldAccessException("Call GetSharedProjectUsing() first.");
+				return _currentProject;
+			}
+			set
+			{
+				_currentProject = value;
+			}
+		}
 
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.
@@ -26,7 +38,8 @@ namespace FLEx_ChorusPlugin.View
 		{
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = flexProjectFolder;
-			string langProjName = "NOT YET IMPLEMENTED FOR THIS SOURCE";
+			const string noProject = "NOT YET IMPLEMENTED FOR THIS SOURCE";
+			string langProjName = noProject;
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
@@ -93,18 +106,31 @@ namespace FLEx_ChorusPlugin.View
 							case DialogResult.OK:
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
-								string mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName);
+								string fwFullPath = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
+								MultipleFileServices.PutHumptyTogetherAgain(fwFullPath);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
 					}
 					break;
 			}
+			if (langProjName != noProject)
+			{
+				string currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
+				string fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
+				CurrentProject = new LanguageProject(fwProjectPath);
+			}
 
 			return true;
 		}
 
 		#endregion
+
+		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
+		{
+			if (newProjPath != currentRootDataPath)
+				Directory.Move(newProjPath, currentRootDataPath);
+		}
+
 	}
 }
