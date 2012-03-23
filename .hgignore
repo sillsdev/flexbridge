@@ -1,8 +1,6 @@
-relre:mercurial/*.*
 relre:output/*
 syntax: regexp
 Perf test  results/*.*
-DistFiles/Mercurial/*.*
 src/FLEx-ChorusPlugin/bin/*.*
 src/FLEx-ChorusPlugin/obj/*.*
 src/FLEx-ChorusPluginTests/bin/*.*
@@ -12,10 +10,10 @@ src/FwdataNester/obj/Debug/*.*
 src/FwdataNester/obj/*.*
 _ReSharper.FLExBridge VS2010/*.*
 src/FLExBridge/obj/*.*
+src/Installer/output/*.*
 syntax: glob
 Perf test  results/*.app6results
-Mercurial/
-MercurialExtensions/
 *.user
 *.suo
 DistFiles/.guidsForInstaller.xml
+Mercurial/mercurial.ini
