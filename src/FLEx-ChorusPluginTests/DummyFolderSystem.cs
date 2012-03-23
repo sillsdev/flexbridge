@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace FLEx_ChorusPluginTests.BorrowedCode
+namespace FLEx_ChorusPluginTests
 {
 	/// <summary>
 	/// Class used to create/delete test folders and files.

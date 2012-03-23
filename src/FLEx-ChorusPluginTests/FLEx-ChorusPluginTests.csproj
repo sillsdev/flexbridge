@@ -106,7 +106,7 @@
 	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
-	<Compile Include="BorrowedCode\DummyFolderSystem.cs" />
+	<Compile Include="DummyFolderSystem.cs" />
 	<Compile Include="FieldWorksTestServices.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningServiceTests.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectNestingServiceTests.cs" />
@@ -153,12 +153,7 @@
 	  <Name>FLEx-ChorusPlugin</Name>
 	</ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-	<Folder Include="Contexts\Anthropology\" />
-	<Folder Include="Contexts\General\" />
-	<Folder Include="Contexts\Linguistics\Reversals\" />
-	<Folder Include="Contexts\Scripture\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
 	<EmbeddedResource Include="Properties\TestResources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
