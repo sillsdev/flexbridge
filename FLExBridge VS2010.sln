@@ -6,6 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{
 		DistFiles\about.htm = DistFiles\about.htm
 		build\build.common.proj = build\build.common.proj
 		src\Installer\DownloadPointers.htm = src\Installer\DownloadPointers.htm
+		build\FLExBridge.build.mono.proj = build\FLExBridge.build.mono.proj
 		build\FLExBridge.build.win.proj = build\FLExBridge.build.win.proj
 		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
