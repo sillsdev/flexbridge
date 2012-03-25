@@ -24,7 +24,7 @@ namespace FLExBridge
 				ExceptionHandler.Init();
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				bool changesReceived = false;
+				var changesReceived = false;
 
 				// Is mercurial set up?
 				var s = HgRepository.GetEnvironmentReadinessMessage("en");
@@ -55,7 +55,7 @@ namespace FLExBridge
 							using (var controller = new ObtainProjectController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//changesReceived = false;
 							}
 							break;
 						case "start":
@@ -70,11 +70,11 @@ namespace FLExBridge
 							using (var controller = new FwBridgeConflictController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//changesReceived = false;
 							}
 							break;
 						default:
-							//display options dialog
+							// TODO: display options dialog
 							break;
 					}
 				}
@@ -83,10 +83,10 @@ namespace FLExBridge
 			}
 		}
 
-		static Dictionary<string, string> ParseCommandLineArgs(string[] args)
+		static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
 		{
-			Dictionary<string, string> options = new Dictionary<string, string>();
-			if(args != null && args.Length > 0)
+			var options = new Dictionary<string, string>();
+			if(args != null && args.Count > 0)
 			{
 				string currentKey = null;
 				foreach (string arg in args)

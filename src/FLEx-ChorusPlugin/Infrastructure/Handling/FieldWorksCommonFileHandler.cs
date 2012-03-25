@@ -15,11 +15,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	internal sealed class FieldWorksCommonFileHandler : IChorusFileTypeHandler
 	{
 		private readonly IFieldWorksFileHandler _unknownFileTypeHandler;
-		private readonly Dictionary<string, IFieldWorksFileHandler> _knownHandlers;
+		private readonly IEnumerable<IFieldWorksFileHandler> _handlers;
 
 		internal FieldWorksCommonFileHandler()
 		{
-			_knownHandlers = new Dictionary<string, IFieldWorksFileHandler>();
+			var handlers = new List<IFieldWorksFileHandler>();
 			var fbAssembly = Assembly.GetExecutingAssembly();
 			var fileHandlerTypes = (fbAssembly.GetTypes().Where(typeof(IFieldWorksFileHandler).IsAssignableFrom)).ToList();
 			foreach (var fileHandlerType in fileHandlerTypes)
@@ -33,15 +33,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (fileHandlerType.Name == "UnknownFileTypeHandlerStrategy")
 					_unknownFileTypeHandler = instance;
 				else
-					_knownHandlers.Add(instance.Extension, instance);
+					handlers.Add(instance);
 			}
+			_handlers = handlers;
 		}
 
 		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
 		{
-			IFieldWorksFileHandler handler;
-			_knownHandlers.TryGetValue(extension, out handler);
-			return handler ?? _unknownFileTypeHandler;
+			return _handlers.FirstOrDefault(handlerCandidate => handlerCandidate.Extension == extension) ?? _unknownFileTypeHandler;
 		}
 
 		#region Implementation of IChorusFileTypeHandler
@@ -150,45 +149,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
 		{
-			return _knownHandlers.Values.Select(handlerStrategy => handlerStrategy.Extension);
-			/*
-			return new List<string>
-			{
-				// 22 total extensions
-				// Validations Done:	 2
-				// Validations To Do:	20
-				// Common
-				SharedConstants.ModelVersion,		// Better validation done.
-				SharedConstants.CustomProperties,	// Better validation done.
-				SharedConstants.Style,
-				SharedConstants.List,
-
-				// General
-				SharedConstants.lint,
-				SharedConstants.langproj,
-				SharedConstants.Annotation,
-				SharedConstants.Filter,
-
-				// Scripture
-				SharedConstants.ArchivedDraft,
-				SharedConstants.ImportSetting,
-				SharedConstants.Srs,
-				SharedConstants.Trans,
-
-				// Anthropology
-				SharedConstants.Ntbk,
-
-				// Linguistics
-				SharedConstants.Reversal,
-				SharedConstants.Lexdb, // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
-				SharedConstants.TextInCorpus, // Text corpus only added one new extension "textincorpus", as the list is already taken care of.
-				SharedConstants.Inventory, // inventory
-				SharedConstants.DiscourseExt, // discourse
-				SharedConstants.Featsys, // Feature structure systems (Phon and Morph & Syn)
-				SharedConstants.Phondata,
-				SharedConstants.Morphdata,
-				SharedConstants.Agents
-			};*/
+			return _handlers.Select(handlerStrategy => handlerStrategy.Extension);
 		}
 
 		public uint MaximumFileSize
