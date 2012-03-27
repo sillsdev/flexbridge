@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
 using FLEx_ChorusPlugin.Properties;
 
