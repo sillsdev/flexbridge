@@ -35,8 +35,7 @@ namespace FLEx_ChorusPlugin.View
 				MultipleFileServices.PushHumptyOffTheWall(origPathname);
 
 				// Do the Chorus business.
-				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(
-							SyncUIDialogBehaviors.AlternateStartModel, SyncUIFeatures.NormalRecommended))
+				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
 					// Chorus does it in ths order:
 					// local Commit
