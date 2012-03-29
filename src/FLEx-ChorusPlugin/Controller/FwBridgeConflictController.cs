@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Web;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
@@ -56,12 +53,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 			SetupChorusAndLanguageProject(user, filePath);
 			SetViewControls(filePath);
-			ChangesReceived = false;
 		}
-
-		public Boolean ChangesReceived { get; set; }
-
-		public string JumpUrl { get; set; }
 
 		private void SetupChorusAndLanguageProject(string user, string filePath)
 		{
@@ -69,35 +61,6 @@ namespace FLEx_ChorusPlugin.Controller
 			_currentLanguageProject = new LanguageProject(filePath);
 			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
-
-			_chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
-		}
-
-		private void JumpToFlexObject(string url)
-		{
-			// Todo JohnT:
-			// 1. insert project name (while FlexBridge remains stand-alone).
-			// 2. When we are embedded in FLEx, should be able to do something like this:
-			//var args = new LocalLinkArgs() { Link = url };
-			//if (Mediator != null)
-			//{
-			//    Mediator.SendMessage("HandleLocalHotlink", args);
-			//    if (args.LinkHandledLocally)
-			//        return;
-			//}
-
-			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
-			var hostLength = url.IndexOf("?");
-			if (hostLength < 0)
-				return; // can't do it, not a valid FLEx url.
-			var host = url.Substring(0, hostLength);
-			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
-			var query = HttpUtility.UrlEncode(originalQuery);
-
-			// Setup URL to pass to FLEx and close FLExBridge
-			JumpUrl = host + "?" + query;
-			MainForm.Close();
-
 		}
 
 		internal virtual void SetViewControls(string filePath)
