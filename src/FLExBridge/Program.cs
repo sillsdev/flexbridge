@@ -70,7 +70,8 @@ namespace FLExBridge
 							using (var controller = new FwBridgeConflictController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//YAGNI for when we allow user to reverse changes in the Conflict Report
+								changesReceived = controller.ChangesReceived;
 							}
 							break;
 						default:
