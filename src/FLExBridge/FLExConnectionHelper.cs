@@ -34,6 +34,7 @@ namespace FLExBridge
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
 			_pipe = pipeFactory.CreateChannel();
+			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
 			try
 			{
 				//Notify FLEx that we are ready to receive requests.
@@ -122,7 +123,7 @@ namespace FLExBridge
 				{
 					try
 					{
-						Monitor.Wait(WaitObject);
+						Monitor.Wait(WaitObject, -1);
 						_workComplete = true;
 					}
 					catch (ThreadInterruptedException)

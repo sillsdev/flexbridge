@@ -295,7 +295,9 @@
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="View\ExistingSystemView.resx">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
