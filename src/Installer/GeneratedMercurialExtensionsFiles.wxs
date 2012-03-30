@@ -51,9 +51,7 @@
 			<ComponentRef Id="_.hgignore" />
 			<ComponentRef Id="_.hg_archival.txt" />
 			<ComponentRef Id="buildcpmap.py" />
-			<ComponentRef Id="cpmap.py" />
 			<ComponentRef Id="cpmap.pyc" />
-			<ComponentRef Id="cpmap.pyo" />
 			<ComponentRef Id="fixutf8.py" />
 			<ComponentRef Id="fixutf8.pyc" />
 			<ComponentRef Id="fixutf8.pyo" />
