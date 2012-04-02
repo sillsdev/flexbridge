@@ -31,12 +31,13 @@ namespace FLEx_ChorusPlugin.View
 				File.WriteAllText(lockPathname, "");
 
 				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
-				// Break up into smaller files.
-				MultipleFileServices.PushHumptyOffTheWall(origPathname);
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
 				{
+					// Break up into smaller files after dialog is visible.
+					syncDlg.Shown += delegate { MultipleFileServices.PushHumptyOffTheWall(origPathname); };
+
 					// Chorus does it in ths order:
 					// local Commit
 					// Pull
