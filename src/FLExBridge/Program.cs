@@ -34,6 +34,7 @@ namespace FLExBridge
 					return;
 				}
 
+				string jumpUrl = string.Empty;
 				// args are:
 				// -u username
 				// -p pathname to fwdata file.
@@ -70,7 +71,10 @@ namespace FLExBridge
 							using (var controller = new FwBridgeConflictController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//YAGNI for when we allow user to reverse changes in the Conflict Report
+								changesReceived = controller.ChangesReceived;
+								if (!string.IsNullOrEmpty(controller.JumpUrl))
+									jumpUrl = controller.JumpUrl;
 							}
 							break;
 						default:
@@ -78,7 +82,7 @@ namespace FLExBridge
 							break;
 					}
 				}
-				flexCommHelper.SignalBridgeWorkComplete(changesReceived);
+				flexCommHelper.SignalBridgeWorkComplete(changesReceived, jumpUrl);
 				Settings.Default.Save();
 			}
 		}
