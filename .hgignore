@@ -1,4 +1,5 @@
 relre:output/*
+relre:^Mercurial/
 syntax: regexp
 Perf test  results/*.*
 src/FLEx-ChorusPlugin/bin/*.*
