@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.ServiceModel;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.View;
 using Palaso.Reporting;
 
 namespace FLExBridge

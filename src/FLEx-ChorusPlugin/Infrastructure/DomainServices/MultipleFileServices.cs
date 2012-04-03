@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
-using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -93,117 +91,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (File.Exists(tempPathname))
 					File.Delete(tempPathname);
 			}
-		}
-
-		internal static void PushHumptyOffTheWall(string mainFilePathname)
-		{
-			FileWriterService.CheckFilename(mainFilePathname);
-
-			DeleteOldFiles(Path.GetDirectoryName(mainFilePathname));
-			RestoreFiles(mainFilePathname);
-
-#if DEBUG
-			// Enable ONLY for testing a round trip.
-			//PutHumptyTogetherAgain(mainFilePathname, projectName);
-#endif
-		}
-
-		private static void RestoreFiles(string mainFilePathname)
-		{
-			var mdc = MetadataCache.MdCache; // Upgrade is done shortly.
-
-			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-			// 1. Write version number file.
-			using (var reader = XmlReader.Create(mainFilePathname, FileWriterService.CanonicalReaderSettings))
-			{
-				reader.MoveToContent();
-				reader.MoveToAttribute("version");
-				var version = reader.Value;
-				FileWriterService.WriteVersionNumberFile(pathRoot, version);
-				mdc.UpgradeToVersion(int.Parse(version));
-			}
-
-			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
-			// The inner dictionary has a caseless guid as the key and the byte array as the value.
-			// (Only has current concrete classes.)
-			var classData = GenerateBasicClassData(mdc);
-			var guidToClassMapping = new Dictionary<string, string>();
-			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
-			{
-				var haveWrittenCustomFile = false;
-				bool foundOptionalFirstElement;
-				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
-				{
-					if (foundOptionalFirstElement)
-					{
-						// 2. Write custom properties file with custom properties.
-						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, record);
-						foundOptionalFirstElement = false;
-						haveWrittenCustomFile = true;
-					}
-					else
-					{
-						CacheDataRecord(classData, guidToClassMapping, record);
-					}
-				}
-				if (!haveWrittenCustomFile)
-				{
-					// Write empty custom properties file.
-					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), null);
-				}
-			}
-
-			// 3. Write all data files, here and there.
-			BaseDomainServices.WriteDomainData(mdc, pathRoot, classData, guidToClassMapping);
-		}
-
-		private static Dictionary<string, SortedDictionary<string, XElement>> GenerateBasicClassData(MetadataCache mdc)
-		{
-			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
-		}
-
-		private static void DeleteOldFiles(string pathRoot)
-		{
-			// Wipe out custom props file, as it will be re-created, even if it only has the root element in it.
-			var customPropPathname = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
-			if (File.Exists(customPropPathname))
-				File.Delete(customPropPathname);
-			// Delete ModelVersion file, but it gets rewritten soon.
-			var modelVersionPathname = Path.Combine(pathRoot, SharedConstants.ModelVersionFilename);
-			if (File.Exists(modelVersionPathname))
-				File.Delete(modelVersionPathname);
-
-			// Deletes stuff in old and new locations. And (for now) makes sure "DataFiles" folder exists.
-			// Brutal, but effective. :-) (But, leaves all ChorusNotes files.)
-			BaseDomainServices.RemoveDomainData(pathRoot);
-		}
-
-		private static void CacheDataRecord(
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			IDictionary<string, string> guidToClassMapping,
-			byte[] record)
-		{
-			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
-			var className = rtElement.Attribute(SharedConstants.Class).Value;
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			guidToClassMapping.Add(guid, className);
-
-			// 1. Remove 'Checksum' from wordforms.
-			if (className == "WfiWordform")
-			{
-				// Always set it to zero (0), and force re-parse.
-				var csElement = rtElement.Element("Checksum");
-				if (csElement != null)
-					csElement.Attribute(SharedConstants.Val).Value = "0";
-			}
-
-			// Theory has it the FW data is sorted.
-			//// 2. Sort <rt>
-			//DataSortingService.SortMainElement(rtElement);
-
-			// 3. Cache it.
-			classData[className].Add(guid, rtElement);
 		}
 
 		private static string RestoreAdjustedTypeValue(string storedType)

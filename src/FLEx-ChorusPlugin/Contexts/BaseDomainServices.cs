@@ -15,13 +15,35 @@ namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
+		internal static void WriteLinguisticsData(string pathRoot,
 											 Dictionary<string, SortedDictionary<string, XElement>> classData,
 											 Dictionary<string, string> guidToClassMapping)
 		{
+			var mdc = MetadataCache.MdCache;
 			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+		}
+
+		internal static void WriteAnthropologyData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
+		{
+			var mdc = MetadataCache.MdCache;
 			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
+		}
+
+		internal static void WriteScriptureData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
+		{
+			var mdc = MetadataCache.MdCache;
 			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+		}
+
+		internal static void WriteGeneralData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
+		{
+			var mdc = MetadataCache.MdCache;
 			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
 		}
 

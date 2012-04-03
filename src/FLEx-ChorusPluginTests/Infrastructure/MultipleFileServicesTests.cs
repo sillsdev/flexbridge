@@ -9,22 +9,23 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 	[TestFixture]
 	public class MultipleFileServicesTests
 	{
+
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(null));
+			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(""));
+			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(""));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter("Bogus.fwdata"));
 		}
 
 		[Test]
@@ -32,7 +33,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.PushHumptyOffTheWall(tempFile.Path));
+				Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(tempFile.Path));
 			}
 		}
 
