@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows.Forms;
 using FLEx_ChorusPlugin.Controller;
-using FLEx_ChorusPluginTests.BorrowedCode;
 using FLEx_ChorusPluginTests.Mocks;
 using NUnit.Framework;
 

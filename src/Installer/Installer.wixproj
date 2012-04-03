@@ -53,11 +53,6 @@
 	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>..\..\output\Installer\</OutputPath>
-	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
-	<DefineSolutionProperties>False</DefineSolutionProperties>
-  </PropertyGroup>
   <ItemGroup>
 	<Compile Include="Installer.wxs"/>
 	<Compile Include="GeneratedDistFiles.wxs"/>
