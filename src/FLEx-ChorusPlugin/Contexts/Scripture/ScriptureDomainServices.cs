@@ -50,12 +50,16 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// These are intentionally out of order from the above numbering scheme.
 			var scripture = classData[SharedConstants.Scripture].Values.FirstOrDefault();
-			if (scripture == null)
-				return; // Lela Teli-3 has nul.
-			ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
-			ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
-			ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
-			ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
+			// // Lela Teli-3 has null.
+			if (scripture != null)
+			{
+				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
+				ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
+				ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
+				ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
+			}
+
+			RemoveFolderIfEmpty(scriptureBaseDir);
 		}
 
 		internal static void FlattenDomain(
@@ -70,7 +74,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			ScriptureReferenceSystemBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 			ScriptureCheckListsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 
-			// Have to flatten the main Scripture context, before the rest, since the main context owns the other four.
+			// Have to flatten the main Scripture context before the rest, since the main context owns the other four.
 			// The main obj gets stuffed into highLevelData, so the owned stuff can have owner guid restored.
 			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 			ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
@@ -81,6 +85,15 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
 			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Scripture));
+		}
+
+		private static void RemoveFolderIfEmpty(string scriptureDir)
+		{
+			if (!Directory.Exists(scriptureDir))
+				return;
+
+			if (Directory.GetDirectories(scriptureDir).Length == 0 && Directory.GetFiles(scriptureDir).Length == 0)
+				Directory.Delete(scriptureDir);
 		}
 	}
 }
