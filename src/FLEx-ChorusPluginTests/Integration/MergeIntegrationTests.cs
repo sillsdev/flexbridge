@@ -17,7 +17,7 @@ namespace FLEx_ChorusPluginTests.Integration
 	[TestFixture]
 	public class MergeIntegrationTests
 	{
-		[Test, Ignore("Temporary block, while setting up for .Net 4.")]
+		[Test]
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =
