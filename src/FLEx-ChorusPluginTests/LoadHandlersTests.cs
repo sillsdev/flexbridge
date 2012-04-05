@@ -9,21 +9,26 @@ namespace FLEx_ChorusPluginTests
 	[TestFixture]
 	public class LoadHandlersTests
 	{
-		[Test]
-		public void EnsureHandlersAreLoaded()
+		private IChorusFileTypeHandler _commonHandler;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			var handlerNames = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							   select handler.GetType().Name).ToList();
-			Assert.IsTrue(handlerNames.Contains("FieldWorksCommonFileHandler"));
-			var unexpectedBridgeHandlers = new HashSet<string>
-											{
-												"FieldWorksCustomPropertyFileHandler",
-												"FieldWorksModelVersionFileHandler",
-												"FieldWorksFileHandler",
-												"FieldWorksReversalTypeHandler"
-											};
-			foreach (var unexpectedBridgeHandler in unexpectedBridgeHandlers)
-				Assert.IsFalse(handlerNames.Contains(unexpectedBridgeHandler));
+			_commonHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+							  where handler.GetType().Name == "FieldWorksCommonFileHandler"
+							  select handler).FirstOrDefault();
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown()
+		{
+			_commonHandler = null;
+		}
+
+		[Test]
+		public void EnsureHandlerIsLoaded()
+		{
+			Assert.IsNotNull(_commonHandler);
 		}
 
 		[Test]
@@ -65,10 +70,7 @@ namespace FLEx_ChorusPluginTests
 				SharedConstants.Agents
 			};
 
-			var commonHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-						   where handler.GetType().Name == "FieldWorksCommonFileHandler"
-						   select handler).First();
-			var knownExtensions = new HashSet<string>(commonHandler.GetExtensionsOfKnownTextFileTypes());
+			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());
 			Assert.IsTrue(knownExtensions.SetEquals(supportedExtensions));
 		}
 	}

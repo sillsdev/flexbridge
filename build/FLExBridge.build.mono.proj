@@ -1,0 +1,69 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+  </PropertyGroup>
+
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"/>
+
+  <!-- ***************** Main build ***************** -->
+  <PropertyGroup>
+	<Solution>FLExBridge VS2010.sln</Solution>
+	<ApplicationName>FLEx Bridge</ApplicationName>
+	<Configuration>ReleaseMono</Configuration>
+  </PropertyGroup>
+
+  <Import Project="$(RootDir)/build/build.common.proj"/>
+
+  <Target Name="Build">
+	<CallTarget Targets="Clean"/>
+	<CallTarget Targets="CreateDirectories"/>
+	<CallTarget Targets="SetAssemblyVersion"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
+	<CallTarget Targets="Compile"/>
+	<Message Text="Build Complete"/>
+  </Target>
+
+  <ItemGroup>
+	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+  </ItemGroup>
+  <ItemGroup>
+	<OutputDirectory Include="$(RootDir)\output\"/>
+  </ItemGroup>
+  <Target Name="Clean">
+	<Message Text="Starting Clean"/>
+	<Delete Files="@(ExistingObjectFiles)"/>
+	<RemoveDir Directories="$(OutputDirectory)"/>
+	<Message Text="End Clean"/>
+  </Target>
+
+  <Target Name="CreateDirectories">
+	<MakeDir Directories="$(RootDir)/output/"/>
+	<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
+  </Target>
+
+  <ItemGroup>
+	<MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
+	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
+  </ItemGroup>
+  <Target Name="CopyMercurialFolders">
+	<Copy SourceFiles="@(MyMercurialFiles)" DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')"/>
+	<Copy SourceFiles="@(MyMercurialExtensionFiles)" DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')"/>
+  </Target>
+
+  <Target Name="Compile" >
+	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <!-- ***************** Testing ***************** -->
+
+  <Target Name="Test" DependsOnTargets="Build">
+	<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
+	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
+	</CreateItem>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity;UnknownMonoIssue" NUnitVersion="NUnit-2.5.5"/>
+  </Target>
+
+</Project>
