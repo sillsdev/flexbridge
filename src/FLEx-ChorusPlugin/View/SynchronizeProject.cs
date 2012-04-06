@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.View
 				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
 
 				// Do the Chorus business.
-				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
+				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
 					// Break up into smaller files after dialog is visible.
 					syncDlg.Shown += delegate { MultipleFileServices.PushHumptyOffTheWall(origPathname); };
