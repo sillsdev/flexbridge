@@ -103,16 +103,16 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="NestFwdataFile.cs">
+	<Compile Include="NestFwdatafile.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="NestFwdataFile.Designer.cs">
-	  <DependentUpon>NestFwdataFile.cs</DependentUpon>
+	<Compile Include="NestFwdatafile.Designer.cs">
+	  <DependentUpon>NestFwdatafile.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<EmbeddedResource Include="NestFwdataFile.resx">
-	  <DependentUpon>NestFwdataFile.cs</DependentUpon>
+	<EmbeddedResource Include="NestFwdatafile.resx">
+	  <DependentUpon>NestFwdatafile.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
