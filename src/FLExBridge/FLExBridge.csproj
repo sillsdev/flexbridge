@@ -167,11 +167,7 @@
   </Target>
   -->
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)lib\$(Configuration)\ChorusMerge.exe $(TargetDir)
-copy $(SolutionDir)lib\$(Configuration)\icu.net.dll $(TargetDir)
-copy $(SolutionDir)lib\$(Configuration)\Autofac.dll $(TargetDir)
-copy $(SolutionDir)lib\$(Configuration)\Palaso.dll $(TargetDir)
-copy $(SolutionDir)DistFiles\about.htm $(TargetDir)
-copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)</PostBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>
