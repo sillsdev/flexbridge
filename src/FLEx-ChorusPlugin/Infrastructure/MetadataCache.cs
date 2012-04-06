@@ -70,6 +70,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// 7000044: Starting point (FW 7.1 & 7.1.1)
 			// 7000051: FW 7.2 released.
+			// 700005x: FW 7.3 released.
 
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");
@@ -172,6 +173,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("GlossAppend", DataType.MultiUnicode));
 						newClass.AddProperty(new FdoPropertyInfo("InflFeats", DataType.OwningAtomic));
 						newClass.AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						break;
+					case 7000056:
+						// 7000056: No actual model change.
 						break;
 				}
 			}
