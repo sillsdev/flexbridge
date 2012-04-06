@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
+using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -88,8 +90,9 @@ namespace SIL.LiftBridge.View
 					{
 						usbCloneDlg.Model.ProjectFilter = path =>
 							{
-								var hgDataFolder = Path.Combine(Path.Combine(path, "store"), "data");
-								return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Length > 0;
+								var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+								return Directory.Exists(hgDataFolder)
+									&& Directory.GetFiles(hgDataFolder).Any(pathname => pathname.ToLowerInvariant().EndsWith(".lift.i"));
 							};
 						var dlgResult = usbCloneDlg.ShowDialog(parent);
 						switch (dlgResult)
