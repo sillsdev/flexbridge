@@ -111,7 +111,7 @@ namespace SIL.LiftBridge.View
 			}
 
 			// Use SyncDialog to do the S/R stuff.
-			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog())
+			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 			{
 				// Commit/Pull/[Merg]e/Send(Push) is the order Chorus does it.
 				// (Setting the options here has no effect on Chorus processing order, but it does help humans know the order.)
