@@ -299,15 +299,19 @@ namespace FwdataTestApp
 						}
 
 						// Scripture
-						foreach (var scripturePathname in Directory.GetFiles(Path.Combine(_workingDir, "Scripture"), "*.*", SearchOption.AllDirectories))
+						var scriptureFolder = Path.Combine(_workingDir, "Other");
+						if (Directory.Exists(scriptureFolder))
 						{
-							validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
-							if (validationError == null)
-								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
-							sb.AppendLine();
+							foreach (var scripturePathname in Directory.GetFiles(scriptureFolder, "*.*", SearchOption.AllDirectories))
+							{
+								validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
+								if (validationError == null)
+									continue;
+								sbValidation.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
+								sbValidation.AppendLine();
+								sb.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
+								sb.AppendLine();
+							}
 						}
 
 						// Linguistics

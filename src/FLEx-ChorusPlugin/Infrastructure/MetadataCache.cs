@@ -271,8 +271,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private static string GetMetaDataCacheOffsetFolder(MergeOrder mergeOrder)
 		{
 			var currentPathname = mergeOrder.pathToOurs;
-			if (currentPathname.Contains(SharedConstants.Scripture))
-				return SharedConstants.Scripture;
+			if (currentPathname.Contains(SharedConstants.Other))
+				return SharedConstants.Other;
 			if (currentPathname.Contains(SharedConstants.Linguistics))
 				return SharedConstants.Linguistics;
 			if (currentPathname.Contains(SharedConstants.Anthropology))

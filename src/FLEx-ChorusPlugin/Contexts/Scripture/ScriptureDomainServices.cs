@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		BC 5.		Styles props owns col of StStyle. [Put styles in subfolder and one for each style.]
 		BC 6.		ImportSettings prop owns col of ScrImportSet.  [Put sets in subfolder and one for each set.]
 */
-			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Scripture);
+			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Other);
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			SortedDictionary<string, XElement> sortedData,
 			string rootDir)
 		{
-			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Scripture);
+			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Other);
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
@@ -84,7 +84,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Scripture));
+			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Other));
 		}
 
 		private static void RemoveFolderIfEmpty(string scriptureDir)
