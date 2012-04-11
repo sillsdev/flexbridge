@@ -32,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 			var form = entry.SelectSingleNode("LexemeForm/MoStemAllomorph/Form/AUni");
 			return form == null
 				? EntryLabel
-				: EntryLabel + " " + form.InnerText;
+				: EntryLabel + Space + Quote + form.InnerText + Quote;
 		}
 	}
 }

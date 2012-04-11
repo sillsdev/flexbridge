@@ -94,25 +94,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 		}
 
-		///// <summary></summary>
-		//[Test]
-		//public void LexDbHasCollectionProperties()
-		//{
-		//    Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
-		//}
-
-		///// <summary></summary>
-		//[Test]
-		//public void SegmentHasNoCollectionProperties()
-		//{
-		//    Assert.IsTrue(!_mdc.GetClassInfo("Segment").AllCollectionProperties.Any());
-		//}
-
+		/// <summary></summary>
 		[Test]
-		public void UnsupportedUpdateThrows()
+		public void LexDbHasCollectionProperties()
 		{
-			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
-			Assert.Throws<ArgumentOutOfRangeException>(() => mdc.UpgradeToVersion(Int32.MaxValue));
+			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void SegmentHasNoCollectionProperties()
+		{
+			Assert.IsTrue(!_mdc.GetClassInfo("Segment").AllCollectionProperties.Any());
 		}
 	}
 }

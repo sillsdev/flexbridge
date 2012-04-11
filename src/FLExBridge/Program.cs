@@ -23,7 +23,7 @@ namespace FLExBridge
 				ExceptionHandler.Init();
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				bool changesReceived = false;
+				var changesReceived = false;
 
 				// Is mercurial set up?
 				var s = HgRepository.GetEnvironmentReadinessMessage("en");
@@ -33,6 +33,7 @@ namespace FLExBridge
 					return;
 				}
 
+				string jumpUrl = string.Empty;
 				// args are:
 				// -u username
 				// -p pathname to fwdata file.
@@ -54,7 +55,7 @@ namespace FLExBridge
 							using (var controller = new ObtainProjectController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//changesReceived = false;
 								string fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
 								// get the whole path with .fwdata on the end!!!
 								flexCommHelper.SetFwProjectName(fwProjectName);
@@ -72,22 +73,25 @@ namespace FLExBridge
 							using (var controller = new FwBridgeConflictController(options))
 							{
 								Application.Run(controller.MainForm);
-								changesReceived = false;
+								//YAGNI for when we allow user to reverse changes in the Conflict Report
+								changesReceived = controller.ChangesReceived;
+								if (!string.IsNullOrEmpty(controller.JumpUrl))
+									jumpUrl = controller.JumpUrl;
 							}
 							break;
 						default:
-							//display options dialog
+							// TODO: display options dialog
 							break;
 					}
 				}
-				flexCommHelper.SignalBridgeWorkComplete(changesReceived);
+				flexCommHelper.SignalBridgeWorkComplete(changesReceived, jumpUrl);
 				Settings.Default.Save();
 			}
 		}
 
 		static Dictionary<string, string> ParseCommandLineArgs(string[] args)
 		{
-			Dictionary<string, string> options = new Dictionary<string, string>();
+			var options = new Dictionary<string, string>();
 			if(args != null && args.Length > 0)
 			{
 				string currentKey = null;

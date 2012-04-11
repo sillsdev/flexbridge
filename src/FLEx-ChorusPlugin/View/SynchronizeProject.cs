@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Palaso.Progress;
 using Palaso.UI.WindowsForms.Progress;
@@ -33,11 +34,10 @@ namespace FLEx_ChorusPlugin.View
 				File.WriteAllText(lockPathname, "");
 
 				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
-				// Break up into smaller files.
-				//MultipleFileServices.PushHumptyOffTheWallWatching(origPathname);
+
 
 				// Do the Chorus business.
-				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog())
+				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
 					// Break up into smaller files after dialog is visible.
 					syncDlg.Shown += delegate { SplitFwdataDelegate(syncDlg, origPathname); };
