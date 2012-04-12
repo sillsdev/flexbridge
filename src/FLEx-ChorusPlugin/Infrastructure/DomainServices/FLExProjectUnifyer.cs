@@ -232,10 +232,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
 		public static void UnifyFwdataProgress(Form parentForm, string origPathname)
 		{
-			// MessageBox.Show("Attach to FLExBridge(unify)", "Breaker, Breaker", MessageBoxButtons.OK);
 			_unifyFwdataCommand = new UnifyFwdataCommand(origPathname);
 			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand);
-
 			progressHandler.Finished += (sender, args) => parentForm.Close();
 			var progress = new ProgressDialogProgressState(progressHandler);
 			_unifyFwdataCommand.BeginInvoke(progress);

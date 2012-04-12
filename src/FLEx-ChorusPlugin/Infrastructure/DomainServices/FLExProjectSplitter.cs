@@ -235,19 +235,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		public static void SplitFwdataDelegate(Form parentForm, string origPathname)
 		{
-			// MessageBox.Show("Attach to FLExBridge", "Breaker, Breaker", MessageBoxButtons.OK);
-			var splitFwdataCommand = new FLExProjectSplitter.SplitFwdataCommand(origPathname);
+			var splitFwdataCommand = new SplitFwdataCommand(origPathname);
 			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand);
 			var progress = new ProgressDialogProgressState(progressHandler);
 			splitFwdataCommand.BeginInvoke(progress);
 			while (progress.State != ProgressState.StateValue.Finished)
 			{
 				Application.DoEvents();
-				if (splitFwdataCommand.wasCancelled)
-				{
-					parentForm.Close();
-					break;
-				}
 			}
 		}
 
