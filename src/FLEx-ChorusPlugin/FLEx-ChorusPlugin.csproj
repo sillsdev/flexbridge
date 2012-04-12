@@ -91,7 +91,7 @@
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\net2.0\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
@@ -119,6 +119,7 @@
 	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
+	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifyer.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
@@ -187,7 +188,6 @@
 	<Compile Include="Infrastructure\MetadataCache.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
-	<Compile Include="Infrastructure\DomainServices\MultipleFileServices.cs" />
 	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />

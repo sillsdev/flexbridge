@@ -108,11 +108,10 @@ namespace FwdataTestApp
 				{
 					File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
 					breakupTimer.Start();
-					//MultipleFileServices.PushHumptyOffTheWallWatching(_srcFwdataPathname);
-					new FLExProjectSplitter(srcFwdataPathname).PushHumptyOffTheWall();
+					new FLExProjectSplitter(_srcFwdataPathname).PushHumptyOffTheWall();
 					breakupTimer.Stop();
 					restoreTimer.Start();
-					MultipleFileServices.PutHumptyTogetherAgain(_srcFwdataPathname);
+					new FLExProjectUnifyer(_srcFwdataPathname).PutHumptyTogetherAgain();
 					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)

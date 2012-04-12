@@ -1,10 +1,14 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
+using Palaso.Progress;
+using Palaso.UI.WindowsForms.Progress;
+using Palaso.UI.WindowsForms.Progress.Commands;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -18,6 +22,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// spent in writing and caching xml "properties" and writing out files.
 	/// Two static methods from MultipleFileServices were moved here since
 	/// they are only used in this task.
+	///
+	/// Randy's summary:
+	///  1. Break up the main fwdata file into multiple files
+	///		A. One file for the custom property declarations (even if there are no custom properties), and
+	///		B. One file for the model version
+	///		C. Various files for the CmObject data.
+
 	/// </summary>
 	class FLExProjectSplitter
 	{
@@ -41,7 +52,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 		// The inner dictionary has a caseless guid as the key and the byte array as the value.
 		// (Only has current concrete classes.)
-		private Dictionary<string, SortedDictionary<string,XElement>> _classData;
+		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
 		private Dictionary<string, string> _guidToClassMapping;
 
 		private bool _haveWrittenCustomFile = false;
@@ -59,7 +70,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			get
 			{
-				return Enum.GetValues(typeof (SplitTasks)).GetLength(0);
+				return Enum.GetValues(typeof(SplitTasks)).GetLength(0);
 			}
 		}
 
@@ -114,7 +125,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				default:
 					SplitTasks badState = _nextSplitTask;
 					_nextSplitTask = SplitTasks.DeleteOldFiles;
-					throw new InvalidOperationException("Invalid state [" + badState + "] while processing Send/Receive project file.");
+					throw new InvalidOperationException("Invalid state [" + badState + "] while splitting Send/Receive project file.");
 			}
 #if DEBUG
 			// Enable ONLY for testing a round trip.
@@ -148,7 +159,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				reader.MoveToAttribute("version");
 				var version = reader.Value;
 				FileWriterService.WriteVersionNumberFile(pathRoot, version);
-				_mdc.UpgradeToVersion(int.Parse(version));
+				_mdc.UpgradeToVersion(Int32.Parse(version));
 			}
 		}
 
@@ -217,6 +228,78 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// 3. Cache it.
 			classData[className].Add(guid, rtElement);
+		}
+
+		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
+		// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
+
+		public static void SplitFwdataDelegate(Form parentForm, string origPathname)
+		{
+			// MessageBox.Show("Attach to FLExBridge", "Breaker, Breaker", MessageBoxButtons.OK);
+			var splitFwdataCommand = new FLExProjectSplitter.SplitFwdataCommand(origPathname);
+			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand);
+			var progress = new ProgressDialogProgressState(progressHandler);
+			splitFwdataCommand.BeginInvoke(progress);
+			while (progress.State != ProgressState.StateValue.Finished)
+			{
+				Application.DoEvents();
+				if (splitFwdataCommand.wasCancelled)
+				{
+					parentForm.Close();
+					break;
+				}
+			}
+		}
+
+		public class SplitFwdataCommand : BasicCommand
+		{
+			public bool wasCancelled = false;
+
+			private string _pathName;
+			private FLExProjectSplitter _fps;
+			private int _steps;
+
+			public SplitFwdataCommand(string pathName)
+			{
+				_pathName = pathName;
+				_fps = new FLExProjectSplitter(_pathName);
+				_steps = _fps.Steps;
+			}
+
+			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback,
+										   StatusCallback primaryStatusTextCallback,
+										   StatusCallback secondaryStatusTextCallback)
+			{
+				int countForWork = 0;
+				while (countForWork < _steps)
+				{
+					if (Canceling)
+					{
+						wasCancelled = true;
+						return;
+					}
+					_fps.PushHumptyOffTheWallWatching();
+					countForWork++;
+				}
+			}
+
+			protected override void DoWork2(ProgressState progress)
+			{
+				int countForWork = 0;
+				progress.TotalNumberOfSteps = _steps;
+				while (countForWork < _steps)
+				{
+					if (Canceling)
+					{
+						wasCancelled = true;
+						return;
+					}
+					_fps.PushHumptyOffTheWallWatching();
+					countForWork++;
+					progress.NumberOfStepsCompleted = countForWork;
+				}
+				progress.State = ProgressState.StateValue.Finished;
+			}
 		}
 	}
 }

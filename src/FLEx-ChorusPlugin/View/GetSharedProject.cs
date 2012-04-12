@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿﻿using System.IO;
 using System.Windows.Forms;
 using Chorus.clone;
 using Chorus.UI.Clone;
@@ -52,7 +51,7 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
-								MultipleFileServices.PutHumptyTogetherAgain(currentBaseFieldWorksBridgePath);
+								FLExProjectUnifyer.UnifyFwdataProgress(parent, currentBaseFieldWorksBridgePath);
 								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
 								break;
 						}
@@ -86,7 +85,7 @@ namespace FLEx_ChorusPlugin.View
 								cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
 
 								var mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
-								MultipleFileServices.PutHumptyTogetherAgain(mainFilePathName);
+								FLExProjectUnifyer.UnifyFwdataProgress(parent, mainFilePathName);
 								break;
 						}
 					}
@@ -95,10 +94,10 @@ namespace FLEx_ChorusPlugin.View
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(currentBaseFieldWorksBridgePath))
 					{
 						usbCloneDlg.Model.ProjectFilter = path =>
-															{
-																var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-																return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
-															};
+						{
+							var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+							return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+						};
 						switch (usbCloneDlg.ShowDialog(parent))
 						{
 							default:
@@ -107,7 +106,7 @@ namespace FLEx_ChorusPlugin.View
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
 								string fwFullPath = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								MultipleFileServices.PutHumptyTogetherAgain(fwFullPath);
+								FLExProjectUnifyer.UnifyFwdataProgress(parent, fwFullPath);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
@@ -131,6 +130,5 @@ namespace FLEx_ChorusPlugin.View
 			if (newProjPath != currentRootDataPath)
 				Directory.Move(newProjPath, currentRootDataPath);
 		}
-
 	}
 }

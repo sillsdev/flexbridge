@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
@@ -40,19 +40,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(null));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(""));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer("Bogus.fwdata"));
 		}
 
 		[Test]
@@ -60,7 +60,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile())
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.PutHumptyTogetherAgain(Path.Combine(tempFile.Path, "Itaintthere")));
+				Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(Path.Combine(tempFile.Path, "Itaintthere")));
 			}
 		}
 	}

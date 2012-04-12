@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
-using Palaso.Progress;
-using Palaso.UI.WindowsForms.Progress;
-using Palaso.UI.WindowsForms.Progress.Commands;
 using Chorus;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -40,7 +36,7 @@ namespace FLEx_ChorusPlugin.View
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
 					// Break up into smaller files after dialog is visible.
-					syncDlg.Shown += delegate { SplitFwdataDelegate(syncDlg, origPathname); };
+					syncDlg.Shown += delegate { FLExProjectSplitter.SplitFwdataDelegate(syncDlg, origPathname); };
 
 					// Chorus does it in ths order:
 					// local Commit
@@ -56,7 +52,7 @@ namespace FLEx_ChorusPlugin.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						MultipleFileServices.PutHumptyTogetherAgain(origPathname);
+						FLExProjectUnifyer.UnifyFwdataProgress(syncDlg, origPathname);
 						othersChanges = true;
 					}
 				}
@@ -74,79 +70,6 @@ namespace FLEx_ChorusPlugin.View
 		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
 		{
 			SynchronizeFieldWorksProject(controller.MainForm, controller.ChorusSystem, controller.CurrentProject);
-		}
-
-		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
-		// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
-		internal static void SplitFwdataDelegate(Form parentForm, string origPathname)
-		{
-			// MessageBox.Show("Attach to FLExBridge", "Breaker, Breaker", MessageBoxButtons.OK);
-			var splitFwdataCommand = new SplitFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand);
-			var progress = new ProgressDialogProgressState(progressHandler);
-			splitFwdataCommand.BeginInvoke(progress);
-			while (progress.State != ProgressState.StateValue.Finished)
-			{
-				Application.DoEvents();
-				if (splitFwdataCommand.wasCancelled)
-				{
-					parentForm.Close();
-					break;
-				}
-			}
-			if (splitFwdataCommand.wasCancelled)
-				parentForm.Close();
-		}
-
-		internal class SplitFwdataCommand : BasicCommand
-		{
-			public bool wasCancelled = false;
-
-			private string _pathName;
-			private FLExProjectSplitter _fps;
-			private int _steps;
-
-			public SplitFwdataCommand (string pathName)
-			{
-				_pathName = pathName;
-				_fps = new FLExProjectSplitter(_pathName);
-				_steps = _fps.Steps;
-			}
-
-			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback,
-										   StatusCallback primaryStatusTextCallback,
-										   StatusCallback secondaryStatusTextCallback)
-			{
-				int countForWork = 0;
-				while (countForWork < _steps)
-				{
-					if (Canceling)
-					{
-						wasCancelled = true;
-						return;
-					}
-					_fps.PushHumptyOffTheWallWatching();
-					countForWork++;
-				}
-			}
-
-			protected override void DoWork2(ProgressState progress)
-			{
-				int countForWork = 0;
-				progress.TotalNumberOfSteps = _steps;
-				while (countForWork < _steps)
-				{
-					if (Canceling)
-					{
-						wasCancelled = true;
-						return;
-					}
-					_fps.PushHumptyOffTheWallWatching();
-					countForWork++;
-					progress.NumberOfStepsCompleted = countForWork;
-				}
-				progress.State = ProgressState.StateValue.Finished;
-			}
 		}
 	}
 }
