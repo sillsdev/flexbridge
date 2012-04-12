@@ -5,6 +5,9 @@ using System.Reflection;
 using System.Web;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.UI.Misc;
+using Chorus.UI.Settings;
+using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
@@ -27,7 +30,13 @@ namespace FLEx_ChorusPlugin.View
 			{
 				ClearPage(_tcMain.TabPages[0]);
 				ClearPage(_tcMain.TabPages[1]);
-				// About page: ClearPage(_tcMain.TabPages[2]);
+				// Need to know when S/R is about to start and stop (events) in order to do these.
+				//ClearPage(_tcMain.TabPages[2]);
+				_tcMain.TabPages[2].Enabled = false;
+				_tcMain.TabPages[2].Visible = false;
+				ClearPage(_tcMain.TabPages[3]);
+				ClearPage(_tcMain.TabPages[4]);
+				// About page: ClearPage(_tcMain.TabPages[5]);
 			}
 			else
 			{
@@ -38,7 +47,17 @@ namespace FLEx_ChorusPlugin.View
 				_tcMain.Enabled = true;
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
-				//ResetTabPage(2, TODO: Figure out what to do on About page.);
+				// Need to know when S/R is about to start and stop (events) in order to do these.
+				//var syncPanel = new SyncPanel(new SyncControlModel(chorusSystem.ProjectFolderConfiguration, SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,
+				//                                       new ChorusUser(chorusSystem.UserNameForHistoryAndNotes)));
+				//ResetPage(2, syncPanel);
+				_tcMain.TabPages[2].Enabled = false;
+				_tcMain.TabPages[2].Visible = false;
+				//// 3 - SettingsView
+				ResetPage(3, new SettingsView(new SettingsModel(chorusSystem.Repository)));
+				// 4 - TroubleshootingView
+				ResetPage(4, new TroubleshootingView(chorusSystem.Repository));
+				//ResetTabPage(5, TODO: Figure out what to do on About page.);
 				chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
 			}
 
