@@ -229,7 +229,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		public static void SplitFwdataDelegate(Form parentForm, string origPathname)
 		{
 			var splitFwdataCommand = new SplitFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand);
+			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand, "Split up project file");
 			var progress = new ProgressDialogProgressState(progressHandler);
 			splitFwdataCommand.BeginInvoke(progress);
 			while (progress.State != ProgressState.StateValue.Finished)
@@ -257,7 +257,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 										   StatusCallback primaryStatusTextCallback,
 										   StatusCallback secondaryStatusTextCallback)
 			{
-				int countForWork = 0;
+				var countForWork = 0;
 				while (countForWork < _steps)
 				{
 					if (Canceling)
@@ -272,7 +272,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			protected override void DoWork2(ProgressState progress)
 			{
-				int countForWork = 0;
+				var countForWork = 0;
 				progress.TotalNumberOfSteps = _steps;
 				while (countForWork < _steps)
 				{

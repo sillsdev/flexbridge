@@ -230,7 +230,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		public static void UnifyFwdataProgress(Form parentForm, string origPathname)
 		{
 			_unifyFwdataCommand = new UnifyFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand);
+			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand, "Restore project file");
 			progressHandler.Finished += (sender, args) => parentForm.Close();
 			var progress = new ProgressDialogProgressState(progressHandler);
 			_unifyFwdataCommand.BeginInvoke(progress);
