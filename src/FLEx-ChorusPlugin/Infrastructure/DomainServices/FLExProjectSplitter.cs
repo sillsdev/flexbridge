@@ -28,7 +28,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	///		A. One file for the custom property declarations (even if there are no custom properties), and
 	///		B. One file for the model version
 	///		C. Various files for the CmObject data.
-
 	/// </summary>
 	class FLExProjectSplitter
 	{
@@ -46,24 +45,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		private SplitTasks _nextSplitTask = SplitTasks.DeleteOldFiles;
 
-		private string _mainFilePathname;
-		private MetadataCache _mdc = MetadataCache.MdCache;
-
+		private readonly string _mainFilePathname;
+		private readonly MetadataCache _mdc = MetadataCache.MdCache;
 		// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 		// The inner dictionary has a caseless guid as the key and the byte array as the value.
 		// (Only has current concrete classes.)
 		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
 		private Dictionary<string, string> _guidToClassMapping;
 
-		private bool _haveWrittenCustomFile = false;
-		private bool _foundOptionalFirstElement;
-		private FastXmlElementSplitter _fastSplitter;
-
 		public FLExProjectSplitter(string mainFilePathname)
 		{
-			FileWriterService.CheckPathname(mainFilePathname);
+			FileWriterService.CheckFilename(mainFilePathname);
 			_mainFilePathname = mainFilePathname;
-			_fastSplitter = new FastXmlElementSplitter(_mainFilePathname);
 		}
 
 		public int Steps
@@ -76,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal void PushHumptyOffTheWall()
 		{
-			for (int subtask = 0; subtask < Steps; subtask++)
+			for (var subtask = 0; subtask < Steps; subtask++)
 			{
 				PushHumptyOffTheWallWatching();
 			}
@@ -123,7 +116,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					_nextSplitTask = SplitTasks.DeleteOldFiles;
 					break;
 				default:
-					SplitTasks badState = _nextSplitTask;
+					var badState = _nextSplitTask;
 					_nextSplitTask = SplitTasks.DeleteOldFiles;
 					throw new InvalidOperationException("Invalid state [" + badState + "] while splitting Send/Receive project file.");
 			}
@@ -247,11 +240,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		public class SplitFwdataCommand : BasicCommand
 		{
-			public bool wasCancelled = false;
+			public bool WasCancelled;
 
-			private string _pathName;
-			private FLExProjectSplitter _fps;
-			private int _steps;
+			private readonly string _pathName;
+			private readonly FLExProjectSplitter _fps;
+			private readonly int _steps;
 
 			public SplitFwdataCommand(string pathName)
 			{
@@ -269,7 +262,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					if (Canceling)
 					{
-						wasCancelled = true;
+						WasCancelled = true;
 						return;
 					}
 					_fps.PushHumptyOffTheWallWatching();
@@ -285,7 +278,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					if (Canceling)
 					{
-						wasCancelled = true;
+						WasCancelled = true;
 						return;
 					}
 					_fps.PushHumptyOffTheWallWatching();

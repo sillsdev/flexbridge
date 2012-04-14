@@ -33,7 +33,7 @@ namespace FLExBridge
 					return;
 				}
 
-				string jumpUrl = string.Empty;
+				var jumpUrl = string.Empty;
 				// args are:
 				// -u username
 				// -p pathname to fwdata file.
@@ -55,8 +55,7 @@ namespace FLExBridge
 							using (var controller = new ObtainProjectController(options))
 							{
 								Application.Run(controller.MainForm);
-								//changesReceived = false;
-								string fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
+								var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
 								// get the whole path with .fwdata on the end!!!
 								flexCommHelper.SetFwProjectName(fwProjectName);
 							}

@@ -33,26 +33,27 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(tempFile.Path));
+				var pathname = tempFile.Path;
+				Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(pathname));
 			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(null));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(""));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier("Bogus.fwdata"));
 		}
 
 		[Test]
@@ -60,7 +61,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile())
 			{
-				Assert.Throws<ApplicationException>(() => new FLExProjectUnifyer(Path.Combine(tempFile.Path, "Itaintthere")));
+				var pathname = tempFile.Path;
+				Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(Path.Combine(pathname, "Itaintthere")));
 			}
 		}
 	}

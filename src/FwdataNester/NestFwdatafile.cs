@@ -111,7 +111,7 @@ namespace FwdataTestApp
 					new FLExProjectSplitter(_srcFwdataPathname).PushHumptyOffTheWall();
 					breakupTimer.Stop();
 					restoreTimer.Start();
-					new FLExProjectUnifyer(_srcFwdataPathname).PutHumptyTogetherAgain();
+					new FLExProjectUnifier(_srcFwdataPathname).PutHumptyTogetherAgain();
 					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)

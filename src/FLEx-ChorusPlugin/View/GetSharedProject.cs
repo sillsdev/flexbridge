@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.View
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = flexProjectFolder;
 			const string noProject = "NOT YET IMPLEMENTED FOR THIS SOURCE";
-			string langProjName = noProject;
+			var langProjName = noProject;
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
@@ -51,7 +51,7 @@ namespace FLEx_ChorusPlugin.View
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name.
-								FLExProjectUnifyer.UnifyFwdataProgress(parent, currentBaseFieldWorksBridgePath);
+								FLExProjectUnifier.UnifyFwdataProgress(parent, currentBaseFieldWorksBridgePath);
 								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
 								break;
 						}
@@ -85,7 +85,7 @@ namespace FLEx_ChorusPlugin.View
 								cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
 
 								var mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
-								FLExProjectUnifyer.UnifyFwdataProgress(parent, mainFilePathName);
+								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
 								break;
 						}
 					}
@@ -106,7 +106,7 @@ namespace FLEx_ChorusPlugin.View
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
 								string fwFullPath = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								FLExProjectUnifyer.UnifyFwdataProgress(parent, fwFullPath);
+								FLExProjectUnifier.UnifyFwdataProgress(parent, fwFullPath);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
@@ -115,8 +115,8 @@ namespace FLEx_ChorusPlugin.View
 			}
 			if (langProjName != noProject)
 			{
-				string currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
-				string fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
+				var currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
+				var fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
 				CurrentProject = new LanguageProject(fwProjectPath);
 			}
 

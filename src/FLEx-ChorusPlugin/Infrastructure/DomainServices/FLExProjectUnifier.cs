@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
@@ -28,9 +26,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	///  2. Put the multiple files back together into the main fwdata file,
 	///		but only if a Send/Receive had new information brought back into the local repo.
 	///		NB: The client of the service decides if new information was found, and decides to call the service, or not.
-
 	/// </summary>
-	internal class FLExProjectUnifyer
+	internal class FLExProjectUnifier
 	{
 		private enum JoinTasks
 		{
@@ -43,14 +40,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		private JoinTasks _nextJoinTask = JoinTasks.SetupUnifiedFile;
 
-		private MetadataCache _mdc = MetadataCache.MdCache;
-		private string _mainFilePathname;
-		private string _pathRoot;
+		private readonly MetadataCache _mdc = MetadataCache.MdCache;
+		private readonly string _mainFilePathname;
+		private readonly string _pathRoot;
 		private static string _tempPathname;
 		private static UnifyFwdataCommand _unifyFwdataCommand;
 		private XmlWriter _writer;
 
-		public FLExProjectUnifyer(string mainFilePathname)
+		public FLExProjectUnifier(string mainFilePathname)
 		{
 			FileWriterService.CheckPathname(mainFilePathname);
 			_mainFilePathname = mainFilePathname;
@@ -71,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			try
 			{
-				for (int subtask = 0; subtask < Steps; subtask++)
+				for (var subtask = 0; subtask < Steps; subtask++)
 				{
 					PutHumptyTogetherAgainWatching();
 				}
@@ -112,7 +109,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					break;
 				default:
 					CloseTempFile();
-					JoinTasks badState = _nextJoinTask;
+					var badState = _nextJoinTask;
 					_nextJoinTask = JoinTasks.SetupUnifiedFile;
 					throw new InvalidOperationException("Invalid state [" + badState + "] while assembling Send/Receive project file.");
 			}
@@ -159,21 +156,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// Remove 'key' attribute from CustomField elements, before writing to main file.
 			var doc = XDocument.Load(optionalCustomPropFile);
 			var customFieldElements = doc.Root.Elements("CustomField").ToList();
-			if (customFieldElements.Any())
-			{
-				foreach (var cf in customFieldElements)
-				{
-					cf.Attribute("key").Remove();
-					// Restore type attr for object values.
-					var propType = cf.Attribute("type").Value;
-					cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+			if (!customFieldElements.Any())
+				return;
 
-					_mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(
-						new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
-				}
-				_mdc.ResetCaches();
-				FileWriterService.WriteElement(_writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
+			foreach (var cf in customFieldElements)
+			{
+				cf.Attribute("key").Remove();
+				// Restore type attr for object values.
+				var propType = cf.Attribute("type").Value;
+				cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+
+				_mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(
+					new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 			}
+			_mdc.ResetCaches();
+			FileWriterService.WriteElement(_writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 		}
 
 		internal void RestoreDomainData()
@@ -245,16 +242,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		public class UnifyFwdataCommand : BasicCommand
 		{
-			public bool wasCancelled = false;
-
-			private string _pathName;
-			private FLExProjectUnifyer _fpu;
-			private int _steps;
+			public bool WasCancelled;
+			private readonly string _pathName;
+			private readonly FLExProjectUnifier _fpu;
+			private readonly int _steps;
 
 			public UnifyFwdataCommand(string pathName)
 			{
 				_pathName = pathName;
-				_fpu = new FLExProjectUnifyer(_pathName);
+				_fpu = new FLExProjectUnifier(_pathName);
 				_steps = _fpu.Steps;
 			}
 
@@ -265,12 +261,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				try
 				{
 
-					int countForWork = 0;
+					var countForWork = 0;
 					while (countForWork < _steps)
 					{
 						if (Canceling)
 						{
-							wasCancelled = true;
+							WasCancelled = true;
 							return;
 						}
 						_fpu.PutHumptyTogetherAgainWatching();
@@ -287,13 +283,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			{
 				try
 				{
-					int countForWork = 0;
+					var countForWork = 0;
 					progress.TotalNumberOfSteps = _steps;
 					while (countForWork < _steps)
 					{
 						if (Canceling)
 						{
-							wasCancelled = true;
+							WasCancelled = true;
 							return;
 						}
 						_fpu.PutHumptyTogetherAgainWatching();
