@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using FLEx_ChorusPlugin.Contexts;
+using FLEx_ChorusPlugin.Contexts.Anthropology;
+using FLEx_ChorusPlugin.Contexts.General;
+using FLEx_ChorusPlugin.Contexts.Linguistics;
+using FLEx_ChorusPlugin.Contexts.Scripture;
 using Palaso.Progress;
 using System.Windows.Forms;
 using Palaso.UI.WindowsForms.Progress;
@@ -34,7 +38,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			SetupUnifiedFile,
 			UpdateVersion,
 			WriteOptionalProperties,
-			RestoreDomainData,
+			RestoreGeneralDomain,
+			RestoreScriptureDomain,
+			RestoreAnthropologyDomain,
+			RestoreLinguisticsDomain,
+			WriteTempFile,
 			CopyTempToFwdata
 		};
 
@@ -46,6 +54,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		private static string _tempPathname;
 		private static UnifyFwdataCommand _unifyFwdataCommand;
 		private XmlWriter _writer;
+		private readonly SortedDictionary<string, XElement> _sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+		private readonly SortedDictionary<string, XElement> _highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
 		public FLExProjectUnifier(string mainFilePathname)
 		{
@@ -97,10 +107,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					break;
 				case JoinTasks.WriteOptionalProperties:
 					WriteOptionalProperties();
-					_nextJoinTask = JoinTasks.RestoreDomainData;
+					_nextJoinTask = JoinTasks.RestoreGeneralDomain;
 					break;
-				case JoinTasks.RestoreDomainData:
-					RestoreDomainData();
+				// NB: The various 'restores' are crucially ordered, so be careful changing them,if you think you must.
+				case JoinTasks.RestoreGeneralDomain:
+					_sortedData.Clear();
+					_highLevelData.Clear();
+					GeneralDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
+					_nextJoinTask = JoinTasks.RestoreScriptureDomain;
+					break;
+				case JoinTasks.RestoreScriptureDomain:
+					ScriptureDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
+					_nextJoinTask = JoinTasks.RestoreAnthropologyDomain;
+					break;
+				case JoinTasks.RestoreAnthropologyDomain:
+					AnthropologyDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
+					_nextJoinTask = JoinTasks.RestoreLinguisticsDomain;
+					break;
+				case JoinTasks.RestoreLinguisticsDomain:
+					LinguisticsDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
+					_nextJoinTask = JoinTasks.WriteTempFile;
+					break;
+				case JoinTasks.WriteTempFile:
+					WriteTempFile();
+					_sortedData.Clear();
+					_highLevelData.Clear();
 					_nextJoinTask = JoinTasks.CopyTempToFwdata;
 					break;
 				case JoinTasks.CopyTempToFwdata:
@@ -117,8 +148,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal void SetupUnifiedFile()
 		{
-			// There is no particular reason to ensure the order of objects in 'mainFilePathname' is retained,
-			// but the optional custom props element must be first.
+			// The optional custom props element must be first.
 			// NB: This should follow current FW write settings practice.
 			var fwWriterSettings = new XmlWriterSettings
 			{
@@ -173,10 +203,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			FileWriterService.WriteElement(_writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 		}
 
-		internal void RestoreDomainData()
+		private void WriteTempFile()
 		{
-				BaseDomainServices.RestoreDomainData(_writer, _pathRoot);
-				_writer.WriteEndElement();
+			foreach (var rtElement in _sortedData.Values)
+				FileWriterService.WriteElement(_writer, rtElement);
+			_writer.WriteEndElement();
 		}
 
 		internal void CopyTempToFwdata()

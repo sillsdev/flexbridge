@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Anthropology;
 using FLEx_ChorusPlugin.Contexts.General;
@@ -45,20 +44,6 @@ namespace FLEx_ChorusPlugin.Contexts
 		{
 			var mdc = MetadataCache.MdCache;
 			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
-		}
-
-		internal static void RestoreDomainData(XmlWriter writer, string pathRoot)
-		{
-			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-
-			GeneralDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-
-			foreach (var rtElement in sortedData.Values)
-				FileWriterService.WriteElement(writer, rtElement);
 		}
 
 		internal static void RemoveDomainData(string pathRoot)

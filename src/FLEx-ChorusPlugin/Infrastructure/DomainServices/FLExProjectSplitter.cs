@@ -114,6 +114,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				case SplitTasks.WriteGeneralFile:
 					BaseDomainServices.WriteGeneralData(Path.GetDirectoryName(_mainFilePathname), _classData, _guidToClassMapping);
 					_nextSplitTask = SplitTasks.DeleteOldFiles;
+					_classData = null;
+					_guidToClassMapping = null;
 					break;
 				default:
 					var badState = _nextSplitTask;
@@ -137,8 +139,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (File.Exists(modelVersionPathname))
 				File.Delete(modelVersionPathname);
 
-			// Deletes stuff in old and new locations. And (for now) makes sure "DataFiles" folder exists.
-			// Brutal, but effective. :-) (But, leaves all ChorusNotes files.)
+			// Deletes all files in new locations, except the ChorusNotes files.
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
@@ -180,7 +181,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					}
 					else
 					{
-						CacheDataRecord(_classData, _guidToClassMapping, record);
+						CacheDataRecord(record);
 					}
 				}
 				if (!haveWrittenCustomFile)
@@ -196,15 +197,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static void CacheDataRecord(
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
-			IDictionary<string, string> guidToClassMapping,
-			byte[] record)
+		private void CacheDataRecord(byte[] record)
 		{
 			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			guidToClassMapping.Add(guid, className);
+			_guidToClassMapping.Add(guid, className);
 
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")
@@ -220,7 +218,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
-			classData[className].Add(guid, rtElement);
+			_classData[className].Add(guid, rtElement);
 		}
 
 		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
