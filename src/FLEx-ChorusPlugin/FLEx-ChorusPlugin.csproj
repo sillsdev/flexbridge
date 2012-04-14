@@ -91,7 +91,7 @@
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
@@ -119,7 +119,7 @@
 	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
-	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifyer.cs" />
+	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
