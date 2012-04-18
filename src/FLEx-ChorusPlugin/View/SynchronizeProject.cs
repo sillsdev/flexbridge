@@ -41,7 +41,7 @@ namespace FLEx_ChorusPlugin.View
 					// Chorus does it in ths order:
 					// local Commit
 					// Pull
-					// Merge (Only if anything came in with the pull from other sources)
+					// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
 					// Push
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
