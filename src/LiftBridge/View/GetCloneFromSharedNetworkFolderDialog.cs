@@ -27,10 +27,16 @@ namespace SIL.LiftBridge.View
 
 			_model = new CloneFromSharedNetworkFolder();
 			_progress = _logBox;
+			UpdateDisplay(State.LookingForFolder);
 		}
 
 		private void BrowseClicked(object sender, EventArgs e)
 		{
+			_lvRepositorySourceCandidates.SuspendLayout();
+			_lvRepositorySourceCandidates.Items.Clear();
+			_lvRepositorySourceCandidates.ResumeLayout();
+			_lvRepositorySourceCandidates.Visible = false;
+
 			using (var folderBrowserDlg = new FolderBrowserDialog())
 			{
 				folderBrowserDlg.Description = Resources.KLocateNetworkedComputer;
@@ -83,6 +89,9 @@ namespace SIL.LiftBridge.View
 				_lvRepositorySourceCandidates.Items.Add(item);
 			}
 
+			if (_lvRepositorySourceCandidates.Items.Count > 0)
+				_lvRepositorySourceCandidates.Items[0].Selected = true;
+
 			_lvRepositorySourceCandidates.ResumeLayout();
 			UpdateDisplay(_lvRepositorySourceCandidates.Items.Count > 0 ? State.WaitingForUserSelection : State.LookingForFolder);
 		}
@@ -97,12 +106,15 @@ namespace SIL.LiftBridge.View
 					_okButton.Visible = false;
 					_lvRepositorySourceCandidates.Visible = false;
 					_copyToComputerButton.Visible = true;
+					_cancelButton.Visible = false;
+					_cancelButton.Enabled = false;
 					break;
 				case State.FoundFolderButNoProjects:
 					_lvRepositorySourceCandidates.Visible = false;
 					break;
 				case State.WaitingForUserSelection:
 					_lvRepositorySourceCandidates.Visible = true;
+					_copyToComputerButton.Visible = true;
 					break;
 				case State.MakingClone:
 					_copyToComputerButton.Visible = false;
@@ -111,9 +123,12 @@ namespace SIL.LiftBridge.View
 					_logBox.Bounds = _lvRepositorySourceCandidates.Bounds;
 					_logBox.Visible = true;
 					//_progress.ShowVerbose = true;
+					_cancelButton.Visible = true;
+					_cancelButton.Enabled = true;
 					break;
 				case State.Success:
 					_okButton.Visible = true;
+					_okButton.Enabled = true;
 					_cancelButton.Enabled = false;
 					_logBox.Visible = false;
 					break;
