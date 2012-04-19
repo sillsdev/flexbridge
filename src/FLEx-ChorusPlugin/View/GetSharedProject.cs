@@ -1,9 +1,10 @@
-﻿﻿using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
+using Chorus.VcsDrivers;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.clone;
 using Chorus.UI.Clone;
 using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.Model;
 using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -12,23 +13,13 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed class GetSharedProject : IGetSharedProject
 	{
-		private LanguageProject _currentProject;
+		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
+		{
+			if (newProjPath != currentRootDataPath)
+				Directory.Move(newProjPath, currentRootDataPath);
+		}
 
 		#region Implementation of IGetSharedProject
-
-		public LanguageProject CurrentProject
-		{
-			get
-			{
-				if (_currentProject == null)
-					throw new System.FieldAccessException("Call GetSharedProjectUsing() first.");
-				return _currentProject;
-			}
-			set
-			{
-				_currentProject = value;
-			}
-		}
 
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.
@@ -37,8 +28,7 @@ namespace FLEx_ChorusPlugin.View
 		{
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = flexProjectFolder;
-			const string noProject = "NOT YET IMPLEMENTED FOR THIS SOURCE";
-			var langProjName = noProject;
+			string langProjName = "NOT YET IMPLEMENTED FOR THIS SOURCE";
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
@@ -62,6 +52,12 @@ namespace FLEx_ChorusPlugin.View
 					// The real 'fix' is to add a new view and a new model to Chorus that does handle this.
 					// That new model really needs to make sure it has something like the "ProjectFilter" delegate
 					// on the CloneFromUsb model, which filters the folders to only allow selection of one that is for FW data (cf. below).
+					// More notes on using the CloneFromUsb model in this context:
+					//	All of the code starting at "var actualClonedFolder" and going through the line "repo.SetIsOneDefaultSyncAddresses(address, true);"
+					//	Belong in the model, not here. But, the USB clone model doesn't do that, since it doens;t need to write to the hgrc file for its location.
+					//	And, even if it did such a write, nobody would care enough to read it, as USB S/R is *much* simpler to figure out,
+					//	and its S/R is quite deterministic with no need to store a location.
+					// See how this was done in Lift Bridge with a new model and view which I hope end up in Chorus at some point.
 					var cloner = new CloneFromUsb();
 					using (var openFileDlg = new FolderBrowserDialog())
 					{
@@ -82,10 +78,23 @@ namespace FLEx_ChorusPlugin.View
 									MessageBox.Show(parent, Resources.ksTargetDirectoryExistsContent, Resources.ksTargetDirectoryExistsTitle);
 									return false;
 								}
-								cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
+								var actualClonedFolder = cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
+
+								var repo = new HgRepository(currentBaseFieldWorksBridgePath, new NullProgress());
+								var address = RepositoryAddress.Create("Shared NetWork", fileFromDlg);
+								// These next two calls are fine in how they treat the hgrc update, as a bootstrap clone has no old stuff to fret about.
+								// SetKnownRepositoryAddresses blows away entire 'paths' section, including the "default" one that hg puts in, which we don't really want anyway.
+								repo.SetKnownRepositoryAddresses(new[] { address });
+								// SetIsOneDefaultSyncAddresses adds 'address' to another section (ChorusDefaultRepositories) in hgrc.
+								// 'true' then writes the "address.Name=" (section.Set(address.Name, string.Empty);).
+								// I (RandyR) think this then uses that address.Name as the new 'default' for that particular repo source type.
+								repo.SetIsOneDefaultSyncAddresses(address, true);
 
 								var mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
 								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
+								// TODO: Call this, as is done for other two?
+								//PossiblyRenameFolder(actualClonedFolder, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
+								// TODO: Consider renaming the fwdata file (read: 'project name').
 								break;
 						}
 					}
@@ -94,10 +103,10 @@ namespace FLEx_ChorusPlugin.View
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(currentBaseFieldWorksBridgePath))
 					{
 						usbCloneDlg.Model.ProjectFilter = path =>
-						{
-							var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-							return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
-						};
+															{
+																var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+																return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+															};
 						switch (usbCloneDlg.ShowDialog(parent))
 						{
 							default:
@@ -105,30 +114,18 @@ namespace FLEx_ChorusPlugin.View
 							case DialogResult.OK:
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
-								string fwFullPath = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								FLExProjectUnifier.UnifyFwdataProgress(parent, fwFullPath);
+								var mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
+								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
 					}
 					break;
 			}
-			if (langProjName != noProject)
-			{
-				var currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
-				var fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
-				CurrentProject = new LanguageProject(fwProjectPath);
-			}
 
 			return true;
 		}
 
 		#endregion
-
-		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
-		{
-			if (newProjPath != currentRootDataPath)
-				Directory.Move(newProjPath, currentRootDataPath);
-		}
 	}
 }

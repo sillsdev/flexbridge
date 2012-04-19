@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -31,7 +32,6 @@ namespace FLEx_ChorusPlugin.View
 
 				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
 
-
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
@@ -42,7 +42,7 @@ namespace FLEx_ChorusPlugin.View
 					// Chorus does it in ths order:
 					// local Commit
 					// Pull
-					// Merge (Only if anything came in with the pull from other sources)
+					// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
 					// Push
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
@@ -53,7 +53,7 @@ namespace FLEx_ChorusPlugin.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						FLExProjectUnifier.UnifyFwdataProgress(syncDlg, origPathname);
+						FLExProjectUnifier.UnifyFwdataProgress(dlg, origPathname);
 						othersChanges = true;
 					}
 				}
