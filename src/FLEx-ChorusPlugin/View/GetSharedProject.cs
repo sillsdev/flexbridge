@@ -5,6 +5,7 @@ using Chorus.VcsDrivers.Mercurial;
 using Chorus.clone;
 using Chorus.UI.Clone;
 using FLEx_ChorusPlugin.Properties;
+using FLEx_ChorusPlugin.Model;
 using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -13,6 +14,8 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed class GetSharedProject : IGetSharedProject
 	{
+		private LanguageProject _currentProject;
+
 		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
 		{
 			if (newProjPath != currentRootDataPath)
@@ -21,6 +24,20 @@ namespace FLEx_ChorusPlugin.View
 
 		#region Implementation of IGetSharedProject
 
+		public LanguageProject CurrentProject
+		{
+			get
+			{
+				if (_currentProject == null)
+					throw new System.FieldAccessException("Call GetSharedProjectUsing() first.");
+				return _currentProject;
+			}
+			set
+			{
+				_currentProject = value;
+			}
+		}
+
 		/// <summary>
 		/// Get a teammate's shared FieldWorks project from the specified source.
 		/// </summary>
@@ -28,7 +45,8 @@ namespace FLEx_ChorusPlugin.View
 		{
 			// 2. Make clone from some source.
 			var currentBaseFieldWorksBridgePath = flexProjectFolder;
-			string langProjName = "NOT YET IMPLEMENTED FOR THIS SOURCE";
+			const string noProject = "NOT YET IMPLEMENTED FOR THIS SOURCE";
+			var langProjName = noProject;
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
@@ -103,10 +121,10 @@ namespace FLEx_ChorusPlugin.View
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(currentBaseFieldWorksBridgePath))
 					{
 						usbCloneDlg.Model.ProjectFilter = path =>
-															{
-																var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-																return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
-															};
+						{
+							var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+							return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+						};
 						switch (usbCloneDlg.ShowDialog(parent))
 						{
 							default:
@@ -121,6 +139,12 @@ namespace FLEx_ChorusPlugin.View
 						}
 					}
 					break;
+			}
+			if (langProjName != noProject)
+			{
+				var currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
+				var fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
+				CurrentProject = new LanguageProject(fwProjectPath);
 			}
 
 			return true;
