@@ -128,7 +128,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
-		internal const string ScriptureReferenceSystem = "ScriptureReferenceSystem";
+		internal const string ScriptureReferenceSystem = "ReferenceSystem";
 		internal const string ArchivedDrafts = "ArchivedDrafts";
 		internal const string ArchivedDraft = "ArchivedDraft";
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
@@ -136,9 +136,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ImportSetting = "ImportSetting";
 		internal const string Trans = "trans";
 		internal const string Scripture = "Scripture";
+		internal const string Other = "Other";
 		internal const string Srs = "srs";
 		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
-		internal const string ScriptureTranslation = "ScriptureTranslation";
+		internal const string ScriptureTranslation = "Translations";
 		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
 		internal const string NoteCategories = "NoteCategories";
 		internal const string NoteCategoriesListFilename = NoteCategories + "." + List;

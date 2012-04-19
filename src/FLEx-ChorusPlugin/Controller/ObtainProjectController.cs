@@ -53,7 +53,7 @@ namespace FLEx_ChorusPlugin.Controller
 			if (_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder))
 			{
 				CurrentProject = _getSharedProject.CurrentProject;
-				MainForm.Close();
+				//MainForm.Close();
 			}
 			MainForm.Cursor = Cursors.Default;
 		}

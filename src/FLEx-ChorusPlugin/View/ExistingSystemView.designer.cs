@@ -34,6 +34,9 @@
 			this._tpHistory = new System.Windows.Forms.TabPage();
 			this._tpAbout = new System.Windows.Forms.TabPage();
 			this._webBrowser = new System.Windows.Forms.WebBrowser();
+			this._tpSendReceive = new System.Windows.Forms.TabPage();
+			this._tpSettings = new System.Windows.Forms.TabPage();
+			this._tpTroubleshoot = new System.Windows.Forms.TabPage();
 			this._tcMain.SuspendLayout();
 			this._tpAbout.SuspendLayout();
 			this.SuspendLayout();
@@ -42,6 +45,9 @@
 			//
 			this._tcMain.Controls.Add(this._tpNotes);
 			this._tcMain.Controls.Add(this._tpHistory);
+			this._tcMain.Controls.Add(this._tpSendReceive);
+			this._tcMain.Controls.Add(this._tpSettings);
+			this._tcMain.Controls.Add(this._tpTroubleshoot);
 			this._tcMain.Controls.Add(this._tpAbout);
 			this._tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tcMain.Location = new System.Drawing.Point(0, 0);
@@ -95,6 +101,34 @@
 			this._webBrowser.TabIndex = 0;
 			this._webBrowser.Url = new System.Uri("", System.UriKind.Relative);
 			//
+			// _tpSendReceive
+			//
+			this._tpSendReceive.Location = new System.Drawing.Point(4, 22);
+			this._tpSendReceive.Name = "_tpSendReceive";
+			this._tpSendReceive.Padding = new System.Windows.Forms.Padding(3);
+			this._tpSendReceive.Size = new System.Drawing.Size(442, 283);
+			this._tpSendReceive.TabIndex = 4;
+			this._tpSendReceive.Text = "Send/Receive";
+			this._tpSendReceive.UseVisualStyleBackColor = true;
+			//
+			// _tpSettings
+			//
+			this._tpSettings.Location = new System.Drawing.Point(4, 22);
+			this._tpSettings.Name = "_tpSettings";
+			this._tpSettings.Size = new System.Drawing.Size(442, 283);
+			this._tpSettings.TabIndex = 5;
+			this._tpSettings.Text = "Settings";
+			this._tpSettings.UseVisualStyleBackColor = true;
+			//
+			// _tpTroubleshoot
+			//
+			this._tpTroubleshoot.Location = new System.Drawing.Point(4, 22);
+			this._tpTroubleshoot.Name = "_tpTroubleshoot";
+			this._tpTroubleshoot.Size = new System.Drawing.Size(442, 283);
+			this._tpTroubleshoot.TabIndex = 6;
+			this._tpTroubleshoot.Text = "Troubleshoot";
+			this._tpTroubleshoot.UseVisualStyleBackColor = true;
+			//
 			// ExistingSystemView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -118,5 +152,8 @@
 		internal System.Windows.Forms.TabPage _tpAbout;
 		internal System.Windows.Forms.TabControl _tcMain;
 		private System.Windows.Forms.WebBrowser _webBrowser;
+		private System.Windows.Forms.TabPage _tpSendReceive;
+		private System.Windows.Forms.TabPage _tpSettings;
+		private System.Windows.Forms.TabPage _tpTroubleshoot;
 	}
 }

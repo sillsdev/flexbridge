@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 {
@@ -14,17 +15,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 
 		string EnvName
 		{
-			get { return "Environment"; } // Todo: internationalize
+			get { return Resources.ksEnvironment; }
 		}
 
 		private string GetLabelForEnvironment(XmlNode entry)
 		{
 			var name = entry.SelectSingleNode("Name/AUni");
 			if (name != null)
-				return EnvName + " " + name.InnerText;
+				return EnvName + Space + Quote + name.InnerText + Quote;
 			var rep = entry.SelectSingleNode("StringRepresentation/Str");
 			return rep != null
-				? EnvName + " " + rep.InnerText
+				? EnvName + Space + Quote + rep.InnerText + Quote
 				: EnvName + " with no name or representation";
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
@@ -149,6 +150,16 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "GlossAppend", DataType.MultiUnicode);
 			CheckNewPropertyAfterUpgrade(classInfo, "InflFeats", DataType.OwningAtomic);
 			CheckNewPropertyAfterUpgrade(classInfo, "Slots", DataType.ReferenceCollection);
+
+			// 7000056: No actual model change.
+			CheckUpgrade(mdc, fileHandler, 7000056);
+		}
+
+		[Test]
+		public void UnsupportedUpdateThrows()
+		{
+			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
+			Assert.Throws<ArgumentOutOfRangeException>(() => mdc.UpgradeToVersion(Int32.MaxValue));
 		}
 
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
