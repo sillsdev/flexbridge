@@ -15,9 +15,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		///
 		/// A CmObject may, or may not, contain nested CmObjects.
 		/// </summary>
-		/// <returns>a String with the first problem fouud in the CmObject, or null, if no problems were found.</returns>
+		/// <returns>a String with the first problem found in the CmObject, or null, if no problems were found.</returns>
 		/// <exception cref="ArgumentNullException">Thrown is either <paramref name="mdc"/> of <paramref name="obj"/> are null.</exception>
 		internal static string ValidateObject(MetadataCache mdc, XElement obj)
+		{
+			return ValidateObject(mdc, obj, "");
+		}
+
+		/// <summary>
+		/// Validate a CmObject instance, as represented by an XElement.
+		///
+		/// A CmObject may, or may not, contain nested CmObjects.
+		/// </summary>
+		/// <returns>a String with the first problem found in the CmObject, or null, if no problems were found.</returns>
+		/// <exception cref="ArgumentNullException">Thrown is either <paramref name="mdc"/> of <paramref name="obj"/> are null.</exception>
+		private static string ValidateObject(MetadataCache mdc, XElement obj, string indentation)
 		{
 			if (mdc == null)
 				throw new ArgumentNullException("mdc");
@@ -31,19 +43,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				string result;
 				var className = GetClassName(obj, out result);
 				if (attribute == null)
-					return GetFormattedResult("No guid attribute", null, className ?? "", null);
+					return GetFormattedResult(indentation, null, null, className ?? "", null, "Reports error: ", "No guid attribute");
 				var guid = new Guid(attribute.Value); // Will throw if not a guid.
 				if (result != null)
-					return GetFormattedResult(result, null, className ?? "", guid);
+					return GetFormattedResult(indentation, null, null, className ?? "", guid, result);
 				var classInfo = mdc.GetClassInfo(className);
 				if (classInfo == null)
-					return GetFormattedResult("No recognized class", null, className, guid);
+					return GetFormattedResult(indentation, null, null, className, guid, "No recognized class");
 				if (classInfo.IsAbstract)
-					return GetFormattedResult("Abstract class", null, className, guid);
+					return GetFormattedResult(indentation, null, null, className, guid, "Abstract class");
 
 				attribute = obj.Attribute(SharedConstants.OwnerGuid);
 				if (attribute != null)
-					return GetFormattedResult("Has 'ownerguid' attribute", null, className, guid);
+					return GetFormattedResult(indentation, null, null, className, guid, "Has 'ownerguid' attribute");
 
 				if (!obj.Elements().Any())
 					return null; // No property nodes at all, which is fine.
@@ -59,73 +71,75 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var propertyName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
 
 					if (!allPropertyNames.Contains(propertyName))
-						return GetFormattedResult("Not a property element child", propertyName, className, guid);
+						return GetFormattedResult(indentation, null, propertyName, className, guid, "Not a property element child");
 
 					var currentPropertyinfo = (allProperties.Where(pi => pi.PropertyName == propertyName)).First();
-
+					var nextIndentationLevel = indentation + "\t";
+					var nextOwningLevel = Environment.NewLine + indentation;
+					var nextPropertyLevel = Environment.NewLine + nextIndentationLevel;
 					switch (currentPropertyinfo.DataType)
 					{
 						case DataType.OwningCollection:
-							result = ValidateOwningCollectionProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateOwningCollectionProperty(mdc, isCustomProperty, propertyElement, nextIndentationLevel);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextOwningLevel, "Collection Owning", propertyName, className, guid, "in:", result);
 							break;
 						case DataType.OwningSequence:
-							result = ValidateOwningSequenceProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateOwningSequenceProperty(mdc, isCustomProperty, propertyElement, nextIndentationLevel);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextOwningLevel, "Sequence Owning", propertyName, className, guid, "in:", result);
 							break;
 						case DataType.OwningAtomic:
-							result = ValidateOwningAtomicProperty(mdc, isCustomProperty, propertyElement);
+							result = ValidateOwningAtomicProperty(mdc, isCustomProperty, propertyElement, nextIndentationLevel);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextOwningLevel, "Atomic Owning", propertyName, className, guid, "in:", result);
 							break;
 
 						case DataType.ReferenceCollection:
 							result = ValidateReferenceCollectionProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Collection Reference", propertyName, className, guid, result);
 							break;
 						case DataType.ReferenceSequence:
 							result = ValidateReferenceSequenceProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Sequence Reference", propertyName, className, guid, result);
 							break;
 						case DataType.ReferenceAtomic:
 							result = ValidateReferenceAtomicProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Atomic Reference", propertyName, className, guid, result);
 							break;
 
 						case DataType.MultiUnicode:
 							result = ValidateMultiUnicodeProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "MultiUnicode", propertyName, className, guid, result);
 							break;
 						case DataType.MultiString:
 							result = ValidateMultiStringProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "MultiString", propertyName, className, guid, result);
 							break;
 						case DataType.Unicode:
 							result = ValidateUnicodeProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Unicode", propertyName, className, guid, result);
 							break;
 						case DataType.String:
 							result = ValidateStringProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "String (TsString)", propertyName, className, guid, result);
 							break;
 						case DataType.Binary:
 							result = ValidateBinaryProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Binary", propertyName, className, guid, result);
 							break;
 						case DataType.TextPropBinary:
 							result = ValidateTextPropBinaryProperty(isCustomProperty, propertyElement);
 							if (result != null)
-								return GetFormattedResult(result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "TextPropBinary", propertyName, className, guid, result);
 							break;
 
 						case DataType.Integer:
@@ -136,7 +150,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult("Invalid Integer property", result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Integer", propertyName, className, guid, result);
 							}
 							break;
 						case DataType.Boolean:
@@ -147,7 +161,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult("Invalid Boolean property", result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Boolean", propertyName, className, guid, result);
 							}
 							break;
 						case DataType.Time:
@@ -158,7 +172,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult("Invalid Time (DateTime) property", result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "Time (DateTime)", propertyName, className, guid, result);
 							}
 							break;
 						case DataType.GenDate:
@@ -171,7 +185,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult("Invalid GenDate property", result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "GenDate", propertyName, className, guid, result);
 							}
 							break;
 						case DataType.Guid:
@@ -182,7 +196,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult("Invalid Guid property", result, propertyName, className, guid);
+								return GetFormattedResult(nextPropertyLevel, "v", propertyName, className, guid, result);
 							}
 							break;
 					}
@@ -196,23 +210,26 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return null;
 		}
 
-		private static string GetFormattedResult(string baseText, string error, string propertyName, string className, Guid guid)
+		private static string GetFormattedResult(string currentIndentation, string propertyType, string propertyName, string className, Guid guid, string error)
 		{
-			return GetFormattedResult(string.Format("{0} reports: {1}", baseText, error), propertyName, className, guid.ToString());
+			return GetFormattedResult(currentIndentation, propertyType, propertyName, className, guid.ToString(), "Reports error: ", error);
 		}
 
-		private static string GetFormattedResult(string baseText, string propertyName, string className, Guid guid)
+		private static string GetFormattedResult(string currentIndentation, string propertyType, string propertyName, string className, Guid guid, string introduction, string baseText)
 		{
-			return GetFormattedResult(baseText, propertyName, className, guid.ToString());
+			return GetFormattedResult(currentIndentation, propertyType, propertyName, className, guid.ToString(), introduction, baseText);
 		}
 
-		private static string GetFormattedResult(string baseText, string propertyName, string className, string guid)
+		private static string GetFormattedResult(string currentIndentation, string propertyType, string propertyName, string className, string guid, string introduction, string baseText)
 		{
-			return string.Format("{0}: {1} {2} {3}",
-				baseText,
-				string.IsNullOrEmpty(propertyName) ? "" : string.Format("{0} of class: ", propertyName),
-				className ?? "",
-				string.IsNullOrEmpty(guid) ? "" : string.Format("'{0}'", guid));
+			return string.Format("{0}{1}{2}{3}{4}{5}{6}",
+				currentIndentation, // 0
+				(string.IsNullOrEmpty(propertyName) ? "" : string.Format("Invalid {0} '{1}' property of class:", propertyType, propertyName)), // 1
+				(className == null ? "" : string.Format(" {0}", className)), // 2
+				string.IsNullOrEmpty(guid) ? "" : string.Format("'{0}'", guid), //3
+				introduction == null ? " Reports error: " : string.Format(" {0}", introduction), // 4
+				baseText, //5
+				Environment.NewLine); // 6
 		}
 
 		private static string GetClassName(XElement obj, out string result)
@@ -279,9 +296,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			// Has one Prop element
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (propertyElement.Elements().Count() > 1)
-				return "Has too many child elements.";
+				return "Has too many child elements";
 
 			// Handle 'Prop' element.
 			var propElement = propertyElement.Element(SharedConstants.Prop);
@@ -298,7 +315,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					case "BulNumFontInfo":
 						if (childElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
 						{
-							return "Invalid attribute for <BulNumFontInfo> element.";
+							return "Invalid attribute for <BulNumFontInfo> element";
 						}
 						break;
 					case "WsStyles9999":
@@ -310,7 +327,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							if (wsAttr == null)
 								return "WsProp must contain a 'ws' attribute.";
 							if (grandchildElement.Attributes().Any(attr => !attrs.Contains(attr.Name.LocalName)))
-								return "Invalid attribute for <WsProp> element.";
+								return "Invalid attribute for <WsProp> element";
 						}
 						break;
 					default:
@@ -391,7 +408,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			var set = attrs;
 			return propElement.Attributes().Any(attr => !set.Contains(attr.Name.LocalName))
-				? string.Format("Invalid attribute for <{0}> element.", propElement.Name.LocalName)
+				? string.Format("Invalid attribute for <{0}> element", propElement.Name.LocalName)
 				: null;
 		}
 
@@ -401,9 +418,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			// contains array of bytes.
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (propertyElement.Elements().Count() > 1)
-				return "Has too many child elements.";
+				return "Has too many child elements";
 			return null;
 		}
 
@@ -413,9 +430,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			// TsString.
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (propertyElement.Elements().Count() > 1)
-				return "Has too many child elements.";
+				return "Has too many child elements";
 			return ValidateComplexTsString(propertyElement.Element(SharedConstants.Str));
 		}
 
@@ -425,18 +442,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			// Ordinary C# string. May, or may not, have content.
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (!propertyElement.HasElements)
 				return null; // No <Uni> child.
 			if (propertyElement.Elements().Count() > 1)
-				return "Too many child elements.";
+				return "Too many child elements";
 			var uniElement = propertyElement.Element(SharedConstants.Uni);
 			if (uniElement == null)
-				return "Unexpected child element.";
+				return "Unexpected child element";
 			if (uniElement.HasElements)
-				return "Has non-text child element.";
+				return "Has non-text child element";
 			if (uniElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			return null;
 		}
 
@@ -445,10 +462,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 
 			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AStr))
-				return "Has non-AStr child element.";
+				return "Has non-AStr child element";
 
 			var extantAlts = new HashSet<string>();
 			foreach (var astrElement in propertyElement.Elements(SharedConstants.AStr))
@@ -470,7 +487,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			var runs = complexTsStringElement.Elements("Run").ToList();
 			if (!runs.Any())
-				return "No <Run> elements.";
+				return "No <Run> element(s)";
 
 			foreach (var runElement in runs)
 			{
@@ -479,7 +496,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (result != null)
 					return result;
 				if (runElement.HasElements)
-					return "Has non-text child element.";
+					return "Has non-text child element";
 			}
 			return null;
 		}
@@ -489,20 +506,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (propertyElement.Elements().Any(childElement => childElement.Name.LocalName != SharedConstants.AUni))
-				return "Has non-AUni child element.";
+				return "Has non-AUni child element";
 
 			var extantAlts = new HashSet<string>();
 			foreach (var uniAlt in propertyElement.Elements(SharedConstants.AUni))
 			{
 				if (uniAlt.Attributes().Count() > 1)
-					return "Has too many attributes.";
+					return "Has too many attributes";
 				var wsAttr = uniAlt.Attribute(SharedConstants.Ws);
 				if (wsAttr == null)
-					return "Does not have required 'ws' attribute.";
+					return "Does not have required 'ws' attribute";
 				if (uniAlt.HasElements)
-					return "Has non-text child element.";
+					return "Has non-text child element";
 				var currentWs = wsAttr.Value;
 				if (extantAlts.Contains(currentWs))
 					return "Duplicate alternative for ws: " + currentWs;
@@ -516,17 +533,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (propertyElement.Elements().Count() > 1)
-				return "Has too many child elements.";
+				return "Has too many child elements";
 			var objsur = propertyElement.Element(SharedConstants.Objsur);
 			if (objsur == null)
 				return null;
 			if (objsur.Elements().Any())
-				return "'objsur' element has child element(s).";
+				return "'objsur' element has child element(s)";
 			var objsurAttrs = objsur.Attributes().ToList();
 			if (objsurAttrs.Count > 2)
-				return "Has too many attributes.";
+				return "Has too many attributes";
 			string result;
 			ReferencePropertyIsInvalid(objsurAttrs, out result);
 			return result;
@@ -538,10 +555,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			string result = null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			var otherchildElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refseq);
 			if (otherchildElements.Any())
-				return "Contains child elements that are not 'refseq'.";
+				return "Contains child elements that are not 'refseq'";
 			foreach (var refseqElement in propertyElement.Elements(SharedConstants.Refseq).Where(refseqElement => ReferencePropertyIsInvalid(refseqElement.Attributes().ToList(), out result)))
 				break;
 			return result;
@@ -553,35 +570,35 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return null;
 			string result = null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			var otherElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName != SharedConstants.Refcol);
 			if (otherElements.Any())
-				return "Contains child elements that are not 'refcol'.";
+				return "Contains child elements that are not 'refcol'";
 			foreach (var refcolElement in propertyElement.Elements(SharedConstants.Refcol).Where(refcolElement => ReferencePropertyIsInvalid(refcolElement.Attributes().ToList(), out result)))
 				break;
 			return result;
 		}
 
-		private static string ValidateOwningAtomicProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateOwningAtomicProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement, string indentation)
 		{
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			var children = propertyElement.Elements().ToList();
 			return (children.Count > 1)
-					? "Has too many child elements."
+					? "Has too many child elements"
 					: ((children.Count == 0)
 						? null
-						: ValidateObject(mdc, children[0]));
+						: ValidateObject(mdc, children[0], indentation));
 		}
 
-		private static string ValidateOwningSequenceProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateOwningSequenceProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement, string indentation)
 		{
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (!propertyElement.HasElements)
 				return null; // No children.
 			// ownseq XOR ownseqatomic
@@ -590,7 +607,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					childElement.Name.LocalName == SharedConstants.Ownseq ||
 					childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
 			if (ownseqChildElements.Count != propertyElement.Elements().Count())
-				return "Contains unrecognized child elements.";
+				return "Contains unrecognized child elements";
 
 			if (ownseqChildElements.Count > 1)
 			{
@@ -600,21 +617,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var otherOwnSeqElements = propertyElement.Elements().Where(childElement =>
 															 childElement.Name.LocalName == otherName).ToList();
 				if (otherOwnSeqElements.Count > 0)
-					return "Mixed owning sequence element names.";
+					return "Mixed owning sequence element names";
 			}
 
-			return ownseqChildElements.Select(ownseqChildElement => ValidateObject(mdc, ownseqChildElement)).FirstOrDefault(result => result != null);
+			return ownseqChildElements.Select(ownseqChildElement => ValidateObject(mdc, ownseqChildElement, indentation)).FirstOrDefault(result => result != null);
 		}
 
-		private static string ValidateOwningCollectionProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement)
+		private static string ValidateOwningCollectionProperty(MetadataCache mdc, bool isCustomProperty, XElement propertyElement, string indentation)
 		{
 			if (propertyElement == null)
 				return null;
 			if (!isCustomProperty && propertyElement.HasAttributes)
-				return "Has unrecognized attributes.";
+				return "Has unrecognized attribute(s)";
 			if (!propertyElement.HasElements)
 				return null;
-			return propertyElement.Elements().Select(ownedElement => ValidateObject(mdc, ownedElement)).FirstOrDefault(result => result != null);
+			return propertyElement.Elements().Select(ownedElement => ValidateObject(mdc, ownedElement, indentation)).FirstOrDefault(result => result != null);
 		}
 
 		private static bool ReferencePropertyIsInvalid(List<XAttribute> objsurAttrs, out string result)
@@ -623,7 +640,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var typeAttrValue = objsurAttrs.Single(attr => attr.Name.LocalName == "t").Value;
 			if (typeAttrValue != "r")
 			{
-				result = "Has incorrect attribute value for reference property.";
+				result = "Has incorrect attribute value for reference property";
 				return true;
 			}
 			result = null;
@@ -641,12 +658,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			{
 				if (element.Attributes().Count() != 2)
 				{
-					value = "Wrong number of attributes.";
+					value = "Wrong number of attributes";
 					return false;
 				}
 				if (element.Attribute(SharedConstants.Name) == null)
 				{
-					value = "Custom property has no 'name' attribute.";
+					value = "Custom property has no 'name' attribute";
 					return false;
 				}
 			}
@@ -654,7 +671,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			{
 				if (element.Attributes().Count() != 1)
 				{
-					value = "Wrong number of attributes.";
+					value = "Wrong number of attributes";
 					return false;
 				}
 			}

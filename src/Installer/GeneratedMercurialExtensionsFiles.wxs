@@ -12,14 +12,8 @@
 				<Component Id="buildcpmap.py" Guid="35E88DF1-96B3-49C7-9803-AC0A69CAB566">
 					<File Id="buildcpmap.py" Name="buildcpmap.py" Source="..\..\MercurialExtensions\fixutf8\buildcpmap.py" />
 				</Component>
-				<Component Id="cpmap.py" Guid="BCC20EE1-3765-48B9-A05B-6BBC8919F18E">
-					<File Id="cpmap.py" Name="cpmap.py" Source="..\..\MercurialExtensions\fixutf8\cpmap.py" />
-				</Component>
 				<Component Id="cpmap.pyc" Guid="0FD1E8EF-3BC6-4587-83D1-2ACD56F2FE76">
 					<File Id="cpmap.pyc" Name="cpmap.pyc" Source="..\..\MercurialExtensions\fixutf8\cpmap.pyc" />
-				</Component>
-				<Component Id="cpmap.pyo" Guid="910694C0-956A-47C6-AB1D-D144E21C5257">
-					<File Id="cpmap.pyo" Name="cpmap.pyo" Source="..\..\MercurialExtensions\fixutf8\cpmap.pyo" />
 				</Component>
 				<Component Id="fixutf8.py" Guid="8EED2757-4E8E-4CE9-ABEC-C9F8FB30691F">
 					<File Id="fixutf8.py" Name="fixutf8.py" Source="..\..\MercurialExtensions\fixutf8\fixutf8.py" />
@@ -57,9 +51,7 @@
 			<ComponentRef Id="_.hgignore" />
 			<ComponentRef Id="_.hg_archival.txt" />
 			<ComponentRef Id="buildcpmap.py" />
-			<ComponentRef Id="cpmap.py" />
 			<ComponentRef Id="cpmap.pyc" />
-			<ComponentRef Id="cpmap.pyo" />
 			<ComponentRef Id="fixutf8.py" />
 			<ComponentRef Id="fixutf8.pyc" />
 			<ComponentRef Id="fixutf8.pyo" />

@@ -54,7 +54,7 @@ namespace FLExBridge
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived)
+		internal void SignalBridgeWorkComplete(bool changesReceived, string jumpUrl)
 		{
 			//wake up the BridgeWorkOngoing message and let it return to FLEx.
 			//This is unnecessary except to avoid an exception on the FLEx side, just trying to be nice.
@@ -65,7 +65,7 @@ namespace FLExBridge
 			try
 			{
 				if(_pipe != null)
-					_pipe.BridgeWorkComplete(changesReceived);
+					_pipe.BridgeWorkComplete(changesReceived, jumpUrl);
 			}
 			catch (Exception)
 			{
@@ -79,7 +79,7 @@ namespace FLExBridge
 		private interface IFLExBridgeService
 		{
 			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived);
+			void BridgeWorkComplete(bool changesReceived, string jumpUrl);
 
 			[OperationContract]
 			void BridgeReady();

@@ -53,9 +53,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 <ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -66,9 +66,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 <ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
@@ -91,9 +91,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 <ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -104,7 +104,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string parent =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
 		<Books>
 			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
@@ -114,7 +114,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			</ScrBookRef>
 		</Books>
 	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			var child = parent.Replace("Genesis", "Startup");
 
@@ -143,7 +143,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
 		<Books>
 			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
@@ -154,7 +154,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			</ScrBookRef>
 		</Books>
 	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			var ourContent = commonAncestor.Replace(">Genesis<", ">Start<");
 			var theirContent = commonAncestor.Replace(">GenesisSp<", ">StartSp<");
@@ -176,7 +176,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScriptureReferenceSystem>
+<ReferenceSystem>
 	<ScrRefSystem guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
 		<Books>
 			<ScrBookRef guid='51caa4a0-8cd1-4c66-acac-7daead917510'>
@@ -187,7 +187,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			</ScrBookRef>
 		</Books>
 	</ScrRefSystem>
-</ScriptureReferenceSystem>";
+</ReferenceSystem>";
 
 			var ourContent = commonAncestor.Replace("GenesisSp", "GenesisSpOurs");
 			var theirContent = commonAncestor.Replace("GenesisSp", "GenesisSpTheirs");

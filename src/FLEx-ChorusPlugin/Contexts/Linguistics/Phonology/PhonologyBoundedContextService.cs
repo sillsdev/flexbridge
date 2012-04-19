@@ -22,8 +22,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			// 1. Nest: LP's PhonologicalData(PhPhonData OA) (Also does PhPhonData's PhonRuleFeats(CmPossibilityList)
 			// NB: PhPhonData is a singleton
 			var phonDataPropElement = langProjElement.Element("PhonologicalData");
-			phonDataPropElement.RemoveNodes();
 			var phonDataElement = classData["PhPhonData"].Values.First();
+			// 1.A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If it exists, but *before* nesting "PhPhonData".)
+			FileWriterService.WriteNestedListFileIfItExists(
+				classData, guidToClassMapping,
+				phonDataElement, "PhonRuleFeats",
+				Path.Combine(phonologyDir, SharedConstants.PhonRuleFeaturesFilename));
+			phonDataPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,
 				phonDataElement,
@@ -40,12 +45,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
-
-			// A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If is exists.)
-			FileWriterService.WriteNestedListFileIfItExists(
-				classData, guidToClassMapping,
-				phonDataElement, "PhonRuleFeats",
-				Path.Combine(phonologyDir, SharedConstants.PhonRuleFeaturesFilename));
 			// B. Write: LP's PhonologicalData(PhPhonData) (Sans its PhonRuleFeats(CmPossibilityList) in a new extension (phondata).
 			FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonologicalDataFilename), new XElement("PhonologicalData", phonDataElement));
 			// C. Write: LP's PhFeatureSystem(FsFeatureSystem) in its own file with a new (shared extension of featsys).
