@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Anthropology;
 using FLEx_ChorusPlugin.Contexts.General;
@@ -15,28 +14,36 @@ namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void WriteDomainData(MetadataCache mdc, string pathRoot,
+		internal static void WriteLinguisticsData(string pathRoot,
 											 Dictionary<string, SortedDictionary<string, XElement>> classData,
 											 Dictionary<string, string> guidToClassMapping)
 		{
+			var mdc = MetadataCache.MdCache;
 			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
-			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
-			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
-			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
 		}
 
-		internal static void RestoreDomainData(XmlWriter writer, string pathRoot)
+		internal static void WriteAnthropologyData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
 		{
-			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var mdc = MetadataCache.MdCache;
+			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
+		}
 
-			GeneralDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			LinguisticsDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
+		internal static void WriteScriptureData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
+		{
+			var mdc = MetadataCache.MdCache;
+			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+		}
 
-			foreach (var rtElement in sortedData.Values)
-				FileWriterService.WriteElement(writer, rtElement);
+		internal static void WriteGeneralData(string pathRoot,
+											 Dictionary<string, SortedDictionary<string, XElement>> classData,
+											 Dictionary<string, string> guidToClassMapping)
+		{
+			var mdc = MetadataCache.MdCache;
+			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
 		}
 
 		internal static void RemoveDomainData(string pathRoot)

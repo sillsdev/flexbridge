@@ -36,7 +36,8 @@ namespace FLEx_ChorusPlugin.View
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
 					// Break up into smaller files after dialog is visible.
-					syncDlg.Shown += delegate { MultipleFileServices.PushHumptyOffTheWall(origPathname); };
+					var dlg = syncDlg;
+					syncDlg.Shown += delegate { FLExProjectSplitter.SplitFwdataDelegate(dlg, origPathname); };
 
 					// Chorus does it in ths order:
 					// local Commit
@@ -52,7 +53,7 @@ namespace FLEx_ChorusPlugin.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						MultipleFileServices.PutHumptyTogetherAgain(origPathname);
+						FLExProjectUnifier.UnifyFwdataProgress(dlg, origPathname);
 						othersChanges = true;
 					}
 				}

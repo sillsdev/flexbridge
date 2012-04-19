@@ -40,6 +40,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
+			MainForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
 			// This handler can't really work (yet) in an environment where the local system has an extant project,
 			// and the local user wants to collaborate with a remote user,
 			// where the FW language project is the 'same' on both computers.
@@ -49,8 +50,12 @@ namespace FLEx_ChorusPlugin.Controller
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 
-			if(_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder))
-				MainForm.Close();
+			if (_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder))
+			{
+				CurrentProject = _getSharedProject.CurrentProject;
+				//MainForm.Close();
+			}
+			MainForm.Cursor = Cursors.Default;
 		}
 
 		public void Dispose()
@@ -69,9 +74,6 @@ namespace FLEx_ChorusPlugin.Controller
 			get { return _chorusSystem; }
 		}
 
-		public LanguageProject CurrentProject
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public LanguageProject CurrentProject { get; set; }
 	}
 }

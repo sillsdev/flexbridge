@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -14,5 +15,11 @@ namespace FLEx_ChorusPlugin.View
 		/// 'true' if the shared project was cloned, otherwise 'false'.
 		/// </returns>
 		bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectDir);
+
+		/// <summary>
+		/// Access some current language project data.
+		/// Implementations may throw an exception if called before GetSharedProjectUsing().
+		/// </summary>
+		LanguageProject CurrentProject { get; set; }
 	}
 }

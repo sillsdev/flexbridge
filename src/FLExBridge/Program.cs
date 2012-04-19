@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ServiceModel;
+using System.IO;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.View;
 using Palaso.Reporting;
 
 namespace FLExBridge
@@ -34,7 +33,7 @@ namespace FLExBridge
 					return;
 				}
 
-				string jumpUrl = string.Empty;
+				var jumpUrl = string.Empty;
 				// args are:
 				// -u username
 				// -p pathname to fwdata file.
@@ -56,7 +55,9 @@ namespace FLExBridge
 							using (var controller = new ObtainProjectController(options))
 							{
 								Application.Run(controller.MainForm);
-								//changesReceived = false;
+								var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
+								// get the whole path with .fwdata on the end!!!
+								flexCommHelper.SetFwProjectName(fwProjectName);
 							}
 							break;
 						case "start":

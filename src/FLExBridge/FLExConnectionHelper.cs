@@ -11,6 +11,7 @@ namespace FLExBridge
 	{
 		private readonly ServiceHost _host;
 		private readonly IFLExBridgeService _pipe;
+
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
@@ -33,6 +34,7 @@ namespace FLExBridge
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
 			_pipe = pipeFactory.CreateChannel();
+			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
 			try
 			{
 				//Notify FLEx that we are ready to receive requests.
@@ -47,6 +49,24 @@ namespace FLExBridge
 			if (!hostOpened)
 			{
 				throw new ApplicationException("FLExBridge already running.");
+			}
+		}
+
+		/// <summary>
+		/// Sets the entire FieldWorks project directory path (must include the
+		/// project folder and project name with "fwdata" extension).
+		/// </summary>
+		/// <param name="fwProjectName">The whole fw project path</param>
+		public void SetFwProjectName(string fwProjectName)
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.InformFwProjectName(fwProjectName);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("FLEx isn't listening."); //It isn't fatal if FLEx isn't listening to us.
 			}
 		}
 
@@ -83,6 +103,9 @@ namespace FLExBridge
 
 			[OperationContract]
 			void BridgeReady();
+
+			[OperationContract]
+			void InformFwProjectName(string fwProjectName);
 		}
 
 		/// <summary>
@@ -100,7 +123,7 @@ namespace FLExBridge
 				{
 					try
 					{
-						Monitor.Wait(WaitObject);
+						Monitor.Wait(WaitObject, -1);
 						_workComplete = true;
 					}
 					catch (ThreadInterruptedException)
