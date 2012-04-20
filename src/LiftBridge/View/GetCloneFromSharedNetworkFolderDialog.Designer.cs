@@ -76,7 +76,10 @@
 			this._lvRepositorySourceCandidates.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 			this.columnHeader1,
 			this.columnHeader2});
+			this._lvRepositorySourceCandidates.Enabled = false;
 			this._lvRepositorySourceCandidates.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._lvRepositorySourceCandidates.FullRowSelect = true;
+			this._lvRepositorySourceCandidates.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this._lvRepositorySourceCandidates.Location = new System.Drawing.Point(7, 50);
 			this._lvRepositorySourceCandidates.MultiSelect = false;
 			this._lvRepositorySourceCandidates.Name = "_lvRepositorySourceCandidates";

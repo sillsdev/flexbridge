@@ -104,16 +104,13 @@ namespace SIL.LiftBridge.View
 				case State.LookingForFolder:
 					_logBox.Visible = false;
 					_okButton.Visible = false;
-					_lvRepositorySourceCandidates.Visible = false;
 					_copyToComputerButton.Visible = true;
 					_cancelButton.Visible = false;
-					_cancelButton.Enabled = false;
 					break;
 				case State.FoundFolderButNoProjects:
 					_lvRepositorySourceCandidates.Visible = false;
 					break;
 				case State.WaitingForUserSelection:
-					_lvRepositorySourceCandidates.Visible = true;
 					_copyToComputerButton.Visible = true;
 					break;
 				case State.MakingClone:
@@ -122,7 +119,6 @@ namespace SIL.LiftBridge.View
 					_logBox.Location = _lvRepositorySourceCandidates.Location;
 					_logBox.Bounds = _lvRepositorySourceCandidates.Bounds;
 					_logBox.Visible = true;
-					//_progress.ShowVerbose = true;
 					_cancelButton.Visible = true;
 					_cancelButton.Enabled = true;
 					break;
@@ -156,7 +152,13 @@ namespace SIL.LiftBridge.View
 
 		private void CopyToMyComputerClicked(object sender, EventArgs e)
 		{
-			var expectedTarget = Path.Combine(_parentDirectoryToPutCloneIn, Path.GetDirectoryName(SelectedPath));
+			var selPath = SelectedPath;
+			if (selPath == null)
+			{
+				UpdateDisplay(_lvRepositorySourceCandidates.Items.Count > 0 ? State.WaitingForUserSelection : State.LookingForFolder);
+				return;
+			}
+			var expectedTarget = Path.Combine(_parentDirectoryToPutCloneIn, Path.GetDirectoryName(selPath));
 			try
 			{
 				UpdateDisplay(State.MakingClone);
