@@ -106,6 +106,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="Palaso.dll" Guid="3D9BF2E4-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.dll"/>
 			</Component>
+			<Component Id="PalasoUIWindowsForms.dll" Guid="C1EDBBDD-E382-11DE-8A39-0800200C9A66">
+			  <File Id="PalasoUIWindowsForms.dll" Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.dll"/>
+			</Component>
 			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
 			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll"/>
 			</Component>
@@ -143,6 +146,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="ChorusMerge.exe"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
 	  <ComponentRef Id="Palaso.dll"/>
+	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id="icu.net.dll"/>
 	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
