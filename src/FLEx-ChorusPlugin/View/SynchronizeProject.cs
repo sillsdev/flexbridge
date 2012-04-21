@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -10,6 +11,8 @@ namespace FLEx_ChorusPlugin.View
 {
 	internal sealed class SynchronizeProject : ISynchronizeProject
 	{
+		private string _origPathname;
+
 		#region Implementation of ISynchronizeProject
 
 		/// <summary>
@@ -29,14 +32,13 @@ namespace FLEx_ChorusPlugin.View
 			{
 				File.WriteAllText(lockPathname, "");
 
-				var origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
+				_origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
 					// Break up into smaller files after dialog is visible.
-					var dlg = syncDlg;
-					syncDlg.Shown += delegate { FLExProjectSplitter.SplitFwdataDelegate(dlg, origPathname); };
+					syncDlg.Shown += SyncDlgShown;
 
 					// Chorus does it in ths order:
 					// local Commit
@@ -48,11 +50,13 @@ namespace FLEx_ChorusPlugin.View
 					syncDlg.SyncOptions.DoSendToOthers = true;
 					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
 					syncDlg.ShowDialog(parent);
+					syncDlg.Shown -= SyncDlgShown;
 
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						FLExProjectUnifier.UnifyFwdataProgress(dlg, origPathname);
+						// Use'parent', not 'syncDlg', scine syncDlg will be closed by the time this is called.
+						FLExProjectUnifier.UnifyFwdataProgress(parent, _origPathname);
 						othersChanges = true;
 					}
 				}
@@ -66,6 +70,11 @@ namespace FLEx_ChorusPlugin.View
 		}
 
 		#endregion
+
+		void SyncDlgShown(object sender, EventArgs e)
+		{
+			FLExProjectSplitter.SplitFwdataDelegate((Form)sender, _origPathname);
+		}
 
 		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
 		{

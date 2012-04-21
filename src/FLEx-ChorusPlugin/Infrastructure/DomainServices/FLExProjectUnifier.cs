@@ -257,12 +257,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
-		// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
+		// so we can monitor "humpty" as he gets rebuilt and make the user feel good about it.
 		public static void UnifyFwdataProgress(Form parentForm, string origPathname)
 		{
 			_unifyFwdataCommand = new UnifyFwdataCommand(origPathname);
 			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand, "Restore project file");
-			progressHandler.Finished += (sender, args) => parentForm.Close();
+			// No.
+			// When parent was syncDlg, it was already closed at this time, and caused a Disposed Access exception to be thrown.
+			// With parent beingthe main form, then letit beclosed elsewhere.
+			//progressHandler.Finished += (sender, args) => parentForm.Close();
 			var progress = new ProgressDialogProgressState(progressHandler);
 			_unifyFwdataCommand.BeginInvoke(progress);
 			while (progress.State != ProgressState.StateValue.Finished)
