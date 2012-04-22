@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.Anthropology;
@@ -35,15 +36,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	{
 		private enum JoinTasks
 		{
-			SetupUnifiedFile,
-			UpdateVersion,
-			WriteOptionalProperties,
-			RestoreGeneralDomain,
-			RestoreScriptureDomain,
-			RestoreAnthropologyDomain,
-			RestoreLinguisticsDomain,
-			WriteTempFile,
-			CopyTempToFwdata
+			SetupUnifiedFile = 0,
+			UpdateVersion = 1,
+			WriteOptionalProperties = 2,
+			RestoreGeneralDomain = 3,
+			RestoreScriptureDomain = 4,
+			RestoreAnthropologyDomain = 5,
+			RestoreLinguisticsDomain = 6,
+			WriteTempFile = 7,
+			CopyTempToFwdata = 8
 		};
 
 		private JoinTasks _nextJoinTask = JoinTasks.SetupUnifiedFile;
@@ -212,6 +213,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal void CopyTempToFwdata()
 		{
+			_writer.Flush();
 			_writer.Close();
 			File.Copy(_tempPathname, _mainFilePathname, true);
 		}
@@ -219,8 +221,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		//finally -- must execute even if some other part of process fails
 		internal static void CloseTempFile()
 		{
-			if (File.Exists(_tempPathname))
-				File.Delete(_tempPathname);
+			while (File.Exists(_tempPathname))
+			{
+				try
+				{
+					// I (RandyR) saw an access exception on Sue's computer with this.
+					File.Delete(_tempPathname);
+				}
+				catch (Exception)
+				{
+					Thread.Sleep(2000);
+				}
+			}
 		}
 
 		private static string RestoreAdjustedTypeValue(string storedType)

@@ -59,10 +59,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("Anthropology/DataNotebook.ntbk");
 
 			// Scripture
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureReferenceSystem.srs");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/*.ArchivedDraft");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/ScriptureTranslation.trans");
-			projectFolderConfiguration.IncludePatterns.Add("Scripture/Settings.ImportSetting");
+			projectFolderConfiguration.IncludePatterns.Add("Other/ReferenceSystem.srs");
+			projectFolderConfiguration.IncludePatterns.Add("Other/Drafts.ArchivedDraft");
+			projectFolderConfiguration.IncludePatterns.Add("Other/Translations.trans");
+			projectFolderConfiguration.IncludePatterns.Add("Other/Settings.ImportSetting");
 
 			// Leftovers
 			// Style file and user-defined lists ought to be covered, above.
