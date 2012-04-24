@@ -85,20 +85,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="Autofac.dll" Guid="3D9BF2E0-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
 			</Component>
-			<Component Id="Chorus.exe" Guid="3D9BF2E3-4A25-11DF-9879-0800200C9A66">
-			  <File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Release\Chorus.exe"/>
-			</Component>
 			<Component Id="Chorus.pdb" Guid="C1EDBBD4-E382-11DE-8A39-0800200C9A66">
 			  <File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
 			</Component>
-			<Component Id="ChorusMerge.exe" Guid="3D9BF2E1-4A25-11DF-9879-0800200C9A66">
-			  <File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe"/>
-			</Component>
 			<Component Id="ChorusMerge.pdb" Guid="C1EDBBD5-E382-11DE-8A39-0800200C9A66">
 			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
-			</Component>
-			<Component Id="LibChorus.dll" Guid="3D9BF2E2-4A25-11DF-9879-0800200C9A66">
-			  <File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Release\LibChorus.dll"/>
 			</Component>
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
@@ -112,9 +103,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
 			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll"/>
 			</Component>
-			<!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
-			<Directory Id="MercurialDir" Name="Mercurial"/>
-			<Directory Id="MercurialExtensionsDir" Name="MercurialExtensions"/>
+			<Merge  Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\ChorusMergeModule.msm" DiskId="1" />
 		  </Directory>
 		</Directory>
 	  </Directory>
@@ -139,19 +128,17 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="ApplicationShortcut"/>
 	  <ComponentRef Id="RegInstallationDir"/>
 	  <ComponentRef Id="Autofac.dll"/>
-	  <ComponentRef Id="LibChorus.dll"/>
 	  <ComponentRef Id="LibChorus.pdb"/>
-	  <ComponentRef Id="Chorus.exe"/>
 	  <ComponentRef Id="Chorus.pdb"/>
-	  <ComponentRef Id="ChorusMerge.exe"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
 	  <ComponentRef Id="Palaso.dll"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id="icu.net.dll"/>
+
+	  <MergeRef Id="ChorusMergeModule" />
+
 	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
-	  <ComponentGroupRef Id="MercurialFiles"/>
-	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
 	</Feature>
 
 	<Icon Id="FLExBridge.ico" SourceFile="..\..\output\Release\FLExBridge.exe"/>

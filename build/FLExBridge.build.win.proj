@@ -127,30 +127,4 @@
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
   </Target>
-
-  <Target Name="MakeWixForMercurialFiles" DependsOnTargets="UnzipMercurial; CreateDirectories">
-	<!--
-	  An apparent bug in the PathUtils in our custom tasks can't work
-	  with the right root path, so we have to unzip it again
-	  in a place it works.
-	  The preferred root is:
-	  RootDirectory="$(RootDir)\output\common\Mercurial"
-	-->
-	<MakeWixForDirTree DirectoryReferenceId="MercurialDir" ComponentGroupId="MercurialFiles"
-		RootDirectory="$(RootDir)\Mercurial"
-		OutputFilePath="$(RootDir)\src\Installer\GeneratedMercurialFiles.wxs"
-		MatchRegExPattern=".*">
-	  <!--what does this do? -->
-	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
-	</MakeWixForDirTree>
-
-	<MakeWixForDirTree DirectoryReferenceId="MercurialExtensionsDir"
-		ComponentGroupId="MercurialExtensionsFiles"
-		RootDirectory="$(RootDir)\MercurialExtensions"
-		OutputFilePath="$(RootDir)\src\Installer\GeneratedMercurialExtensionsFiles.wxs"
-		MatchRegExPattern=".*">
-	  <!--what does this do? -->
-	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
-	</MakeWixForDirTree>
-  </Target>
 </Project>
