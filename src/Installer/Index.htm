@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>Lift Bridge</title>
+		<title>LIFT Bridge</title>
 	</head>
 	<body>
 		<h1>Overview</h1>
@@ -36,7 +36,7 @@
 							<tbody>
 								<tr>
 									<td width="200">
-										<a href="http://downloads.palaso.org/LiftBridge/LIFTBridgeInstaller.msi">Lift Bridge DEV_VERSION_NUMBER</a>
+										<a href="http://downloads.palaso.org/LiftBridge/LIFTBridgeInstaller.msi">LIFT Bridge DEV_VERSION_NUMBER</a>
 									</td>
 									<td>DEV_RELEASE_DATE</td>
 								</tr>
@@ -52,40 +52,74 @@
 		<h1>Release Notes:</h1>
 		<ul>
 			<li>DEV_VERSION_NUMBER<ol>
-			<li>Fix large file's not being prevented from being put into the repository.</li>
-			<li>Fix rare problem of null refence crash with selected project.</li>
+				<li>Fix problems in Chorus related to cancelling the S/R.</li>
+				<li>Use new Chorus merge module for core installed itmes from Chorus. (Should fix issues related to utf8 filenames.)</li>
+			</ol></li>
+			<li>1.4.13<ol>
+				<li>Fix bug in Chorus where large files were being prevented from being put into the repository. (Mercurial refuses to not allow large 'wav' files to be excluded.)</li>
+				<li>Fix rare LIFT Bridge problem of null refence crash with selected project.</li>
 			</ol></li>
 			<li>1.4.12<ol>
-			<li>Fix bugs in shared network dialog.</li>
-			<li>Fix problem of not saving location of a shared network folder.</li>
+				<li>Fix LIFT Bridge bugs in shared network dialog.</li>
+				<li>Fix problem (LIFT Bridge and Chorus) of not saving locations of a shared network folder and internet settings.</li>
 			</ol></li>
 			<li>1.4.10<ol>
-			<li>Fix issues related to Lift Bridge moratorium.</li>
-			<li>Fix LIFT Bridge installer. (NB: Please manually uninstall any, and all, previous LIFT Bridge installations that show up in your Control Panel, *before* installing this version.)</li>
-			<li>Fix LIFT Bridge to handle startup a bit better, when the user is getting a system from somewhere else.</li>
-			<li>Fix bug locating a shared network folder.</li>
+				<li>Fix issues in Chorus related to LIFT Bridge moratorium.</li>
+				<li>Fix LIFT Bridge installer. (NB: Please manually uninstall any, and all, previous LIFT Bridge installations that show up in your Control Panel, *before* installing this version.)</li>
+				<li>Fix LIFT Bridge to handle startup a bit better, when the user is getting a system from somewhere else.</li>
+				<li>Fix LIFT Bridge bug locating a shared network folder.</li>
 			</ol></li>
-			<li>1.3.0.8<ol><li>Fix bug in Chorus where changes were not displayed properly in some cases.</li></ol></li>
-			<li>1.3.0.7<ol><li>Fix undesirable 'feature' I introduced in Chorus where it updated the USB repository, rather than the new clone in the LIFT Bridge folder. :-(</li></ol></li>
-			<li>1.3.0.5<ol><li>Fix a problem in Chorus where LIFT Bridge crashed when Refresh button was clicked multiple times (LT-12513).</li>
-<li>Fixed more cloning issues for USB drives and shared network folders.</li>
-<li>USB drives and shared network folders are no longer updated with latest files from the repository. Only the repository is updated.</li>
+			<li>1.3.0.8<ol>
+				<li>Fix bug in Chorus where changes were not displayed properly in some cases.</li>
 			</ol></li>
-			<li>1.3.0.4<ol><li>Fix some problems in Chorus related to cloning onto a USB drive (LT-12511).</li></ol></li>
-			<li>1.3.0.2<ol><li>Fix null reference crash (LT-12497) and add new message if FLEx fails to export LIFT file.</li></ol></li>
-			<li>1.3.0.1<ol><li>Revise how LIFT Bridge and FLEX handle repository identifier.</li></ol></li>
-			<li>1.2.0.1<ol><li>Have FLEx store the Mercurial repository identifier and give it to LIFT Bridge.</li></ol></li>
-			<li>1.0.13.0<ol><li>Set LIFT Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, LIFT Bridge will try to get FLEx to import the data that had failed before. While a bit harsh, it protects the shared data.</li></ol></li>
-			<li>1.0.11.0<ol><li>Fixed bug in LIFT Bridge where user had selected a simple exported LIFT file.</li>
-<li>Fixed problem where Chorus tried to create a system where the folder already existed.</li>
+			<li>1.3.0.7<ol>
+				<li>Fix undesirable 'feature' I introduced in Chorus where it updated the USB repository, rather than the new clone in the LIFT Bridge folder. :-(</li>
 			</ol></li>
-			<li>1.0.10.0<ol><li>Fixed two bugs in Chorus related to merge conflicts.</li></ol></li>
-			<li>1.0.9.0<ol><li>Fixed bug with unexpected xml entities in 'id' attribute for LIFT entries.</li></ol></li>
-			<li>1.0.5.0<ol><li>Revert installation location to original place.</li></ol></li>
-			<li>1.0.1.4<ol><li>Fix installation path to what FLEx expects.</li></ol></li>
-			<li>1.0.1.1<ol><li>Added support to Chorus to process the writing system files (ldml) better. [Chorus is used by LIFT Bridge in its work.]</li></ol></li>
-			<li>1.0.0.5<ol><li>Moved the installed location to be easier for a Linux version.</li></ol></li>
-			<li>0.7.32<ol><li>Last in the FieldWorks 7.0.x series.</li> </ol> </li>
+			<li>1.3.0.5<ol>
+				<li>Fix a problem in Chorus where LIFT Bridge crashed when Refresh button was clicked multiple times (LT-12513).</li>
+				<li>Fixed more cloning issues in Chorus for USB drives and shared network folders.</li>
+				<li>Fixed Chorus so USB drives and shared network folders are no longer updated with latest files from the repository. Only the repository is updated.</li>
+			</ol></li>
+			<li>1.3.0.4<ol>
+				<li>Fix some problems in Chorus related to cloning onto a USB drive (LT-12511).</li>
+			</ol></li>
+			<li>1.3.0.2<ol>
+				<li>Fix null reference crash (LT-12497) and add new message if FLEx fails to export LIFT file.</li>
+			</ol></li>
+			<li>1.3.0.1<ol>
+				<li>Revise how LIFT Bridge and FLEX handle repository identifier.</li>
+			</ol></li>
+			<li>1.2.0.1<ol>
+				<li>Have FLEx store the Mercurial repository identifier and give it to LIFT Bridge.</li>
+			</ol></li>
+			<li>1.0.13.0<ol>
+				<li>Set LIFT Bridge to not allow FLEx to do Send/Receive again, if the last attempt ended with failing to import what had come in. On following attempts, LIFT Bridge will try to get FLEx to import the data that had failed before. While a bit harsh, it protects the shared data.</li>
+			</ol></li>
+			<li>1.0.11.0<ol>
+				<li>Fixed bug in LIFT Bridge where user had selected a simple exported LIFT file.</li>
+				<li>Fixed problem where Chorus tried to create a system where the folder already existed.</li>
+			</ol></li>
+			<li>1.0.10.0<ol>
+				<li>Fixed two bugs in Chorus related to merge conflicts.</li>
+			</ol></li>
+			<li>1.0.9.0<ol>
+				<li>Fixed Chorus problem with unexpected xml entities in 'id' attribute for LIFT entries.</li>
+			</ol></li>
+			<li>1.0.5.0<ol>
+				<li>Revert installation location to original place.</li>
+			</ol></li>
+			<li>1.0.1.4<ol>
+				<li>Fix installation path to what FLEx expects.</li>
+			</ol></li>
+			<li>1.0.1.1<ol>
+				<li>Added support to Chorus to process the writing system files (ldml) better. [Chorus is used by LIFT Bridge in its work.]</li>
+			</ol></li>
+			<li>1.0.0.5<ol>
+				<li>Moved the installed location to be easier for a Linux version.</li>
+			</ol></li>
+			<li>0.7.32<ol>
+				<li>Last in the FieldWorks 7.0.x series.</li>
+			</ol></li>
 		</ul>
 	</body>
 </html>

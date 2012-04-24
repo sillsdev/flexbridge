@@ -71,23 +71,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="LiftBridge.pdb" Name="LiftBridge.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge.pdb"/>
 		  </Component>
 
-		  <Component Id="Chorusexe" Guid="F7478099-2687-49EE-8103-1F082397EAB8">
-			<File Id="Chorus.exe" Name="Chorus.exe" KeyPath="yes" Source="..\..\output\Release\Chorus.exe"/>
-		  </Component>
 		  <Component Id="Choruspdb" Guid="D02EA721-2F0C-4117-AB48-5CD24D08E198">
 			<File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
 		  </Component>
 
-		  <Component Id="ChorusMergeexe" Guid="6A7E9360-050B-4CC6-B726-841013A1B33A">
-			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe"/>
-		  </Component>
 		  <Component Id="ChorusMergepdb" Guid="051706AF-C292-43E4-9D43-6FEBB958CE2C">
 			<File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
 		  </Component>
 
-		  <Component Id="LibChorusdll" Guid="B48F4ADC-825D-4185-8D01-EDBE2212B029">
-			<File Id="LibChorus.dll" Name="LibChorus.dll" KeyPath="yes" Source="..\..\output\Release\LibChorus.dll"/>
-		  </Component>
 		  <Component Id="LibChoruspdb" Guid="33EBFAF5-D605-43A6-B10E-F7D23692A094">
 			<File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 		  </Component>
@@ -98,10 +89,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <!-- LiftBridgeCore.dll is also required, but we'll use the one FW uses. -->
 		  <!-- Palaso.dll is also required, but we'll use the one FW uses. -->
+		  <Merge  Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\ChorusMergeModule.msm" DiskId="1" />
 
-		  <!-- Hopefully, the generated stuff will see that all the Hg gets added here. -->
-		  <Directory Id="MercurialDir" Name="Mercurial"/>
-		  <Directory Id="MercurialExtensionsDir" Name="MercurialExtensions"/>
 		</Directory>
 	  </Directory>
 	</Directory>
@@ -110,21 +99,18 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LiftBridgedll"/>
 	  <ComponentRef Id="LiftBridgepdb"/>
 
-	  <ComponentRef Id="Chorusexe"/>
 	  <ComponentRef Id="Choruspdb"/>
 
-	  <ComponentRef Id="ChorusMergeexe"/>
 	  <ComponentRef Id="ChorusMergepdb"/>
 
-	  <ComponentRef Id="LibChorusdll"/>
 	  <ComponentRef Id="LibChoruspdb"/>
 
 	  <ComponentRef Id="Autofacdll"/>
 
+	  <MergeRef Id="ChorusMergeModule" />
+
 	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
-	  <ComponentGroupRef Id="MercurialFiles"/>
-	  <ComponentGroupRef Id="MercurialExtensionsFiles"/>
 	</Feature>
 
 	<!-- what you see in add/remove programs control panel -->
