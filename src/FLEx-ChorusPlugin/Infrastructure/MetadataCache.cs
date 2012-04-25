@@ -175,7 +175,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
 						break;
 					case 7000056:
-						// 7000056: No actual model change.
+					// 7000056: No actual model change.
+					case 7000057:
+					// 7000057: No actual model change.
+					case 7000058:
+					// 7000058: No actual model change.
 						break;
 				}
 			}
