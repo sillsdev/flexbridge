@@ -94,9 +94,9 @@ namespace FLEx_ChorusPlugin.Controller
 			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
 			var query = HttpUtility.UrlEncode(originalQuery);
 
-			// Setup URL to pass to FLEx and close FLExBridge
+			// Setup URL to pass to FLEx
 			JumpUrl = host + "?" + query;
-			MainForm.Close();
+			//MainForm.Close(); don't want to close conflict viewer anymore
 
 		}
 

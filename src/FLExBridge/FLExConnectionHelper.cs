@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading;
 
@@ -11,13 +12,15 @@ namespace FLExBridge
 	{
 		private readonly ServiceHost _host;
 		private readonly IFLExBridgeService _pipe;
+		private bool _hostOpened;
 
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
 		internal FLExConnectionHelper()
 		{
-			var hostOpened = true;
+			_hostOpened = true;
+			//Debug.Fail("attach debugger here.");
 			try
 			{
 				_host = new ServiceHost(typeof(FLExService),
@@ -26,10 +29,10 @@ namespace FLExBridge
 				_host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
 				_host.Open();
 			}
-			catch (Exception)
+			catch (AddressAlreadyInUseException)
 			{
 				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
-				hostOpened = false;
+				_hostOpened = false;
 			}
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
@@ -46,11 +49,9 @@ namespace FLExBridge
 				Console.WriteLine("FLEx isn't listening.");
 				_pipe = null; //FLEx isn't listening.
 			}
-			if (!hostOpened)
-			{
-				throw new ApplicationException("FLExBridge already running.");
-			}
 		}
+
+		public bool HostOpened { get { return _hostOpened; } }
 
 		/// <summary>
 		/// Sets the entire FieldWorks project directory path (must include the
@@ -151,7 +152,8 @@ namespace FLExBridge
 
 		public void Dispose()
 		{
-			_host.Close();
+			if (_hostOpened)
+				_host.Close();
 		}
 	}
 }

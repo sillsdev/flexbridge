@@ -227,4 +227,8 @@
   <data name="SendReceiveView_DialogTitle" xml:space="preserve">
 	<value>Send/Receive Project</value>
   </data>
+  <data name="kAlreadyRunning" xml:space="preserve">
+	<value>There is already a copy of FLExBridge running.
+You probably have a Conflict Report open. It will need to be closed before you can do Send/Receive Project.</value>
+  </data>
 </root>
