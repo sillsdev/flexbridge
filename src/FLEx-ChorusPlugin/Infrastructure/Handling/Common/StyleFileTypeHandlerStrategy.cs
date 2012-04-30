@@ -27,18 +27,50 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public string ValidateFile(string pathToFile)
 		{
-			try
+			try  // but not too hard... this isn't AI. Let the user solve the problems.
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Styles || !root.Elements(SharedConstants.StStyle).Any())
 					return "Not valid styles file";
-
+				var styles = root.Elements(SharedConstants.StStyle);
+				var duplicateStyleElts = new List<XElement[]>();
+				var dupName = new List<string>();
+				foreach (var style in styles)
+				{   // NOTE: there is a SharedConstants.Name, but it is not initial cap, it's all lower case.
+					string name = style.Element("Name").Element(SharedConstants.Uni).Value;
+					if (dupName.Contains(name)) continue; // don't duplicate the entry
+					foreach (var otherStyle in styles)
+					{
+						string otherName = otherStyle.Element("Name").Element(SharedConstants.Uni).Value;
+						if (style != otherStyle && name == otherName)
+						{
+							duplicateStyleElts.Add(new [] {style, otherStyle});
+							dupName.Add(name);
+							break;
+						}
+					}
+				}
+				if (duplicateStyleElts.Any())
+				{   // There were duplicate style names - Stop the press!
+					string message = "Duplicate Text Styles: ";
+					bool comma = false;
+					foreach (var duplicates in duplicateStyleElts)
+					{
+						if (comma)
+							message += ", ";
+						comma = true;
+						message += "{" + duplicates[0].Element("Name").Element(SharedConstants.Uni).Value + "}";
+						message += " with guids " + duplicates[0].Attribute(SharedConstants.GuidStr).Value + " and " +
+							duplicates[1].Attribute(SharedConstants.GuidStr).Value;
+					}
+					return message + ".";
+				}
 				return root.Elements(SharedConstants.StStyle)
 					.Select(style => CmObjectValidator.ValidateObject(MetadataCache.MdCache, style)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
-			{
+			{  // you have to love these catch all's.
 				return e.Message;
 			}
 		}
