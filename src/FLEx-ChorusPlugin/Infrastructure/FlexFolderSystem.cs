@@ -16,9 +16,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("*.bak");
 			projectFolderConfiguration.ExcludePatterns.Add("*.lock");
 			projectFolderConfiguration.ExcludePatterns.Add("*.tmp");
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("**", "Temp"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("**", "BackupSettings"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("**", "ConfigurationSettings"));
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("ConfigurationSettings", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", Path.Combine("trash", "**.*")));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
