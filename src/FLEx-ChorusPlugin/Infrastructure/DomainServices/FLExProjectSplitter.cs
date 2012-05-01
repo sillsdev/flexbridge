@@ -258,7 +258,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback, StatusCallback primaryStatusTextCallback, StatusCallback secondaryStatusTextCallback)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			protected override void DoWork2(ProgressState progress)
