@@ -27,34 +27,34 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public string ValidateFile(string pathToFile)
 		{
-			try
-			{
+			try  // but not too hard... this isn't AI. Let the user solve the problems.
+			{    // if there are at least two styles with the same name, this file can't be valid.
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Styles || !root.Elements(SharedConstants.StStyle).Any())
 					return "Not valid styles file";
-				var styles = root.Elements(SharedConstants.StStyle).ToList();
+				var styles = root.Elements(SharedConstants.StStyle);
 				var duplicateStyleElts = new List<XElement[]>();
-				var dupName = new HashSet<string>();
+				var dupName = new List<string>();
 				foreach (var style in styles)
-				{
-					// NOTE: there is a SharedConstants.Name, but it is not initial cap, it's all lower case.
-					// Right. That is because it is for an attribute 'name', not an element name.
-					var currentName = style.Element("Name").Element(SharedConstants.Uni).Value;
-					if (dupName.Contains(currentName))
-						continue; // Don't fret over a triplicate style.
-					var styleWithSameName = (styles.Where(otherStyle => style != otherStyle
-						&& otherStyle.Element("Name").Element(SharedConstants.Uni).Value == currentName)).FirstOrDefault();
-					if (styleWithSameName == null)
-						continue;
-					duplicateStyleElts.Add(new[] { style, styleWithSameName });
-					dupName.Add(currentName);
+				{   // NOTE: there is a SharedConstants.Name, but it is not initial cap, it's all lower case.
+					string name = style.Element("Name").Element(SharedConstants.Uni).Value;
+					if (dupName.Contains(name)) continue; // don't duplicate the entry
+					foreach (var otherStyle in styles)
+					{
+						string otherName = otherStyle.Element("Name").Element(SharedConstants.Uni).Value;
+						if (style != otherStyle && name == otherName)
+						{
+							duplicateStyleElts.Add(new [] {style, otherStyle});
+							dupName.Add(name);
+							break;
+						}
+					}
 				}
 				if (duplicateStyleElts.Any())
-				{
-					// There were duplicate style names. Return a message to caller.
-					var message = "Duplicate Styles: ";
-					var comma = false;
+				{   // There were duplicate style names - Stop the press!
+					string message = "Duplicate Text Styles: ";
+					bool comma = false;
 					foreach (var duplicates in duplicateStyleElts)
 					{
 						if (comma)
@@ -66,11 +66,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 					}
 					return message + ".";
 				}
+				// The following checks the integrity of the file objects, but is ignorant of required structure/content.
 				return root.Elements(SharedConstants.StStyle)
 					.Select(style => CmObjectValidator.ValidateObject(MetadataCache.MdCache, style)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
-			{
+			{  // you have to love these catch all's.
 				return e.Message;
 			}
 		}
