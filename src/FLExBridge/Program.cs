@@ -62,9 +62,13 @@ namespace FLExBridge
 								using (var controller = new ObtainProjectController(options))
 								{
 									Application.Run(controller.MainForm);
-									var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
-									// get the whole path with .fwdata on the end!!!
-									flexCommHelper.SetFwProjectName(fwProjectName);
+									if (controller.CurrentProject != null)
+									{
+										var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName,
+																		 controller.CurrentProject.Name + ".fwdata");
+										// get the whole path with .fwdata on the end!!!
+										flexCommHelper.SetFwProjectName(fwProjectName);
+									}
 								}
 								break;
 							case "start":
