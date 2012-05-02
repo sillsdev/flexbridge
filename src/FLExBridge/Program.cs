@@ -21,7 +21,6 @@ namespace FLExBridge
 			using (var flexCommHelper = new FLExConnectionHelper())
 			{
 				var changesReceived = false;
-				var jumpUrl = string.Empty;
 				try
 				{
 					ExceptionHandler.Init();
@@ -79,11 +78,9 @@ namespace FLExBridge
 							case "view_notes": //view the conflict\notes report
 								using (var controller = new FwBridgeConflictController(options))
 								{
+									controller.JumpUrlChanged += flexCommHelper.SendJumpUrlToFlex;
 									Application.Run(controller.MainForm);
-									//YAGNI for when we allow user to reverse changes in the Conflict Report
-									changesReceived = controller.ChangesReceived;
-									if (!string.IsNullOrEmpty(controller.JumpUrl))
-										jumpUrl = controller.JumpUrl;
+									controller.JumpUrlChanged -= flexCommHelper.SendJumpUrlToFlex;
 								}
 								break;
 							default:
@@ -94,7 +91,7 @@ namespace FLExBridge
 				}
 				finally
 				{
-					flexCommHelper.SignalBridgeWorkComplete(changesReceived, jumpUrl);
+					flexCommHelper.SignalBridgeWorkComplete(changesReceived);
 				}
 				Settings.Default.Save();
 			}

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading;
+using FLEx_ChorusPlugin.Controller;
 
 namespace FLExBridge
 {
@@ -75,7 +75,7 @@ namespace FLExBridge
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived, string jumpUrl)
+		internal void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			//wake up the BridgeWorkOngoing message and let it return to FLEx.
 			//This is unnecessary except to avoid an exception on the FLEx side, just trying to be nice.
@@ -86,13 +86,30 @@ namespace FLExBridge
 			try
 			{
 				if(_pipe != null)
-					_pipe.BridgeWorkComplete(changesReceived, jumpUrl);
+					_pipe.BridgeWorkComplete(changesReceived);
 			}
 			catch (Exception)
 			{
 				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
 			}
 		}
+
+		/// <summary>
+		/// Signals FLEx that the bridge sent a jump URL to process.
+		/// </summary>
+		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.BridgeSentJumpUrl(e.JumpUrl);
+			}
+			catch(Exception)
+			{
+				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+			}
+		}
+
 		/// <summary>
 		/// Interface for the service which FLEx implements
 		/// </summary>
@@ -100,13 +117,16 @@ namespace FLExBridge
 		private interface IFLExBridgeService
 		{
 			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived, string jumpUrl);
+			void BridgeWorkComplete(bool changesReceived);
 
 			[OperationContract]
 			void BridgeReady();
 
 			[OperationContract]
 			void InformFwProjectName(string fwProjectName);
+
+			[OperationContract]
+			void BridgeSentJumpUrl(string jumpUrl);
 		}
 
 		/// <summary>
