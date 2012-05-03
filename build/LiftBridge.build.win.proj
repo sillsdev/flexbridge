@@ -3,20 +3,19 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/net2.0/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/net2.0/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/net2.0/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/net2.0/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
-  <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-
-  <!-- ***************** Main build ***************** -->
   <PropertyGroup>
 	<Solution>LiftBridge VS2010.sln</Solution>
 	<ApplicationName>LiftBridge</ApplicationName>
 	<Configuration>Release</Configuration>
   </PropertyGroup>
+
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+
+  <!-- ***************** Main build ***************** -->
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
 
@@ -31,30 +30,45 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="MergeAssemblies"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
 
   <ItemGroup>
-	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*" Exclude="$(RootDir)/.hg/**/*"/>
+  </ItemGroup>
+  <ItemGroup>
+	<OutputDirectory Include="$(RootDir)\output\" />
   </ItemGroup>
   <Target Name="Clean">
+	<Message Text="Starting Clean"/>
 	<Delete Files="@(ExistingObjectFiles)"/>
+	<RemoveDir Directories="$(OutputDirectory)" />
+	<Message Text="End Clean"/>
   </Target>
 
   <Target Name="Compile">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
-  <Target Name="MergeAssemblies">
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll $(RootDir)/lib/net2.0/Chorus.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="$(RootDir)/lib/common/ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe $(RootDir)/lib/net2.0/ChorusMerge.exe $(RootDir)/lib/net2.0/LibChorus.dll $(RootDir)/lib/net2.0/Palaso.dll $(RootDir)/lib/net2.0/Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
+  <ItemGroup>
+	<MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
+	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
+  </ItemGroup>
+  <Target Name="CopyMercurialFolders">
+	<Copy
+	  SourceFiles="@(MyMercurialFiles)"
+	  DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy
+	  SourceFiles="@(MyMercurialExtensionFiles)"
+	  DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <!-- ***************** Testing ***************** -->
+
   <Target Name="Test" DependsOnTargets="Build">
-	<CreateItem Include="$(RootDir)/output/$(Configuration)/*.Tests.dll">
+	<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
 	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
@@ -62,8 +76,30 @@
 
   <!-- ***************** Installer stuff below this line. ***************** -->
 
-  <Target Name="UnzipMercurial" DependsOnTargets="CreateDirectories">
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\output\common"/>
+  <Target Name="Installer" DependsOnTargets="Build; SetAboutInfo">
+	<!-- Copy it to a safe place first, since it gets modified. -->
+	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
+
+	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
+		changing of the script, but I haven't figured that out. -->
+	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
+
+	<Message Text="Making Installer Version: $(Version)" Importance="high"/>
+
+	<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
+
+	<!-- copy them back so it appears we aren't modifying the original, which then is a pain on dev machines -->
+	<Copy SourceFiles="$(RootDir)\output\Installer\about.htm" DestinationFolder="$(RootDir)\DistFiles"/>
+	<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
+
+  </Target>
+
+  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
+	<Message Text="Attempting rsync of LIFTBridgeInstaller.msi" Importance="high"/>
+
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller.msi"/>
+
+	<CallTarget Targets="MakeIndex"/>
   </Target>
 
   <Target Name="MakeIndex" DependsOnTargets="VersionNumbers">
@@ -76,40 +112,18 @@
 
 	<!-- Push the index.htm file up to the web. -->
 	<Message Text="Attempting rsync of Index.html" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
-  </Target>
-
-  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
-	<Message Text="Attempting rsync of LiftBridgeForFW7Installer.$(Version).msi" Importance="high"/>
-
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridgeForFW7Installer.$(Version).msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridgeForFW7Installer.$(Version).msi"/>
-
-	<CallTarget Targets="MakeIndex"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
   </Target>
 
   <Target Name="SetAboutInfo" DependsOnTargets="VersionNumbers">
 
+	<!-- copy it so we can pretend we aren't modifying the original, which then is a pain on dev machines. It gets copied back -->
+	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm" DestinationFolder="$(RootDir)\output\Installer"/>
+
 	<!-- replace some parts of the file with the version number & date -->
 	<FileUpdate File="$(RootDir)\DistFiles\about.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 
-  </Target>
-
-  <Target Name="Installer" DependsOnTargets="Build; MakeWixForDistFiles; MakeWixForMercurialFiles">
-	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
-		changing of the script, but I haven't figured that out. -->
-	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion =       &quot;$(Version)&quot;"/>
-
-	<Message Text="Making Installer Version: $(Version)" Importance="high"/>
-
-	<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
-
-	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(RootDir)\output\Installer\LiftBridgeForFW7Installer.$(Version).msi" TreatErrorsAsWarnings="false"/>
-
-	<Copy SourceFiles="$(RootDir)\output\Installer\LiftBridgeForFW7Installer.msi" DestinationFiles="$(RootDir)\output\Installer\LiftBridgeForFW7Installer.$(Version).msi"/>
-
-	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(RootDir)\output\Installer\LiftBridgeForFW7Installer.msi" TreatErrorsAsWarnings="false"/>
+	<!-- The Installer target copies a clean one back. -->
 
   </Target>
 
@@ -118,21 +132,5 @@
 	  <!--what does this do?-->
 	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
 	</MakeWixForDirTree>
-  </Target>
-
-  <Target Name="MakeWixForMercurialFiles" DependsOnTargets="UnzipMercurial; CreateDirectories">
-	<!--
-	  An apparent bug in the PathUtils in our custom tasks can't work
-	  with the right root path, so we have to unzip it again
-	  in a place it works.
-	  The preferred root is:
-	  RootDirectory="$(RootDir)\output\common\Mercurial"
-	-->
-	<Unzip ZipFileName="$(RootDir)\lib\net2.0\Mercurial.zip" TargetDirectory="$(RootDir)\"/>
-	<MakeWixForDirTree DirectoryReferenceId="MercurialDir" ComponentGroupId="MercurialFiles" RootDirectory="$(RootDir)\Mercurial" OutputFilePath="$(RootDir)\output\Installer\GeneratedMercurialFiles.wxs" MatchRegExPattern=".*">
-	  <!--what does this do? -->
-	  <Output TaskParameter="OutputFilePath" ItemName="Compile"/>
-	</MakeWixForDirTree>
-	<Delete Files="$(RootDir)\Mercurial" TreatErrorsAsWarnings="false"/>
   </Target>
 </Project>

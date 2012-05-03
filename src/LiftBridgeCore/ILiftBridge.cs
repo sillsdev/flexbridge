@@ -40,4 +40,9 @@ namespace LiftBridgeCore
 		/// </exception>
 		void DoSendReceiveForLanguageProject(Form parent, string projectName);
 	}
+
+	public interface ILiftBridge3
+	{
+		Guid LanguageProjectGuid { set; }
+	}
 }

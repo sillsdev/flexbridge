@@ -41,6 +41,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -50,43 +51,11 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<PlatformTarget>x86</PlatformTarget>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
 	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<PlatformTarget>AnyCPU</PlatformTarget>
-	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
@@ -103,20 +72,6 @@
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
-	<PlatformTarget>AnyCPU</PlatformTarget>
-	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|x86'">
-	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\LiftBridge.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
@@ -127,8 +82,23 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="ChorusPlus">
-	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
+	<Reference Include="Chorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	  <ExecutableExtension>.exe</ExecutableExtension>
+	</Reference>
+	<Reference Include="ChorusMerge, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	  <ExecutableExtension>.exe</ExecutableExtension>
+	</Reference>
+	<Reference Include="LibChorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
@@ -143,12 +113,20 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Model\CloneFromSharedNetworkFolder.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
+	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="View\ExistingSystem.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="View\ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.Designer.cs">
+	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\GetSharedProject.cs" />
 	<Compile Include="View\IActiveView.cs" />
@@ -183,6 +161,9 @@
 	<EmbeddedResource Include="View\ExistingSystem.resx">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\GetCloneFromSharedNetworkFolderDialog.resx">
+	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\LiftBridgeDlg.resx">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
@@ -221,12 +202,16 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<None Include="Resources\error.wav" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\finished.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PostBuildEvent>copy $(SolutionDir)DistFiles\about.htm $(TargetDir)
-copy $(SolutionDir)DistFiles\LogoForAbout.png $(TargetDir)
-copy $(SolutionDir)output\common\ChorusMerge.exe $(TargetDir)</PostBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

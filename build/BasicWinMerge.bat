@@ -1,2 +1,0 @@
-..\lib\common\ILRepack /target:library /out:..\output\common\ChorusPlus.dll ..\lib\net2.0\Chorus.exe ..\lib\net2.0\LibChorus.dll ..\lib\net2.0\Palaso.dll ..\lib\net2.0\Autofac.dll ..\lib\common\icu.net.dll
-..\lib\common\ILRepack /out:..\output\common\ChorusMerge.exe ..\lib\net2.0\ChorusMerge.exe ..\lib\net2.0\LibChorus.dll ..\lib\net2.0\Palaso.dll ..\lib\net2.0\Autofac.dll ..\lib\common\icu.net.dll

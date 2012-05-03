@@ -3,19 +3,23 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
+using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
+using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.Services;
 using SIL.LiftBridge.View;
 
 namespace SIL.LiftBridge.Controller
 {
-	internal class LiftBridgeController : ILiftBridge
+	internal class LiftBridgeController : ILiftBridge, ILiftBridge3
 	{
 		private readonly ILiftBridgeView _liftBridgeView;
 		private readonly IStartupNewView _startupNewView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly IGetSharedProject _getSharedProject;
+		private Guid _languageProjectGuid = Guid.Empty;
 
 		/// <summary>
 		/// Constructor used by ILiftBridge client (via Reflection).
@@ -58,11 +62,13 @@ namespace SIL.LiftBridge.Controller
 			_liftBridgeView.ActivateView(_existingSystemView);
 			_existingSystemView.ImportLexicon += OnImportLexicon;
 			_existingSystemView.ExportLexicon += OnExportLexicon;
+			_existingSystemView.BasicImportLexicon += OnBasicImport;
 		}
 
 		void OnExportLexicon(object sender, LiftBridgeEventArgs e)
 		{
 			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
 			if (ExportLexicon != null)
 				ExportLexicon(this, e);
 			else
@@ -72,8 +78,19 @@ namespace SIL.LiftBridge.Controller
 		void OnImportLexicon(object sender, LiftBridgeEventArgs e)
 		{
 			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
 			if (ImportLexicon != null)
 				ImportLexicon(this, e);
+			else
+				e.Cancel = true;
+		}
+
+		void OnBasicImport(object sender, LiftBridgeEventArgs e)
+		{
+			// Just pass it on, or cancel.
+			// Caller has to worry about a cancel.
+			if (BasicLexiconImport != null)
+				BasicLexiconImport(this, e);
 			else
 				e.Cancel = true;
 		}
@@ -91,31 +108,65 @@ namespace SIL.LiftBridge.Controller
 				default:
 					throw new InvalidOperationException("Unrecognized type of shared system.");
 				case SharedSystemType.New:
-					File.WriteAllText(
-						Path.Combine(
-							LiftProjectServices.PathToProject(Liftproject),
-							Liftproject.LiftProjectName + ".lift"),
+					// Create new repo with empty LIFT file.
+					var newRepoPath = LiftProjectServices.PathToProject(Liftproject); // DirectoryUtilities.GetUniqueFolderPath(LiftProjectServices.PathToProject(Liftproject));
+					var newLiftPathname = Path.Combine(
+						newRepoPath,
+						Liftproject.LiftProjectName + ".lift");
+					File.WriteAllText(newLiftPathname,
 @"<?xml version='1.0' encoding='UTF-8'?>
 <lift version='0.13'>
 </lift>");
+					HgRepository.CreateRepositoryInExistingDir(newRepoPath, new NullProgress());
+					var repo = new HgRepository(newRepoPath, new NullProgress());
+					repo.AddAndCheckinFile(newLiftPathname);
+					Liftproject.RepositoryIdentifier = repo.Identifier;
 					break;
 				case SharedSystemType.Extant:
-					if (!_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject))
+					var results = _getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject);
+					// CloneResult.OkToCreate
+					// CloneResult.Cancel
+					// CloneResult.UseExisting
+					// CloneResult.Created
+					// CloneResult.NotCreated
+					/*
+		OK. Created, // Used by GetSharedProject
+		OK. NotCreated, // Used by GetSharedProject
+		OK. Cancel, // Used by GetSharedProject
+		OK-Not returned OkToCreate,
+		OK. UseExisting // Used by GetSharedProject
+					*/
+					switch (results)
 					{
-						// Clone not made for some reason.
-						MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
+						//case CloneResult.OkToCreate: Not going to be returned.
+						// 	break;
+						case CloneResult.NotCreated:
+							// Clone not made for some reason.
+							MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
 										MessageBoxIcon.Warning);
-						_liftBridgeView.Close();
-						return;
+							_liftBridgeView.Close();
+							return;
+						case CloneResult.Cancel:
+							MessageBox.Show(MainForm, "The user seems to have cancelled the sharing attempt.", "Sharing Attempt Cancelled", MessageBoxButtons.OK,
+										MessageBoxIcon.Information);
+							_liftBridgeView.Close();
+							return;
+						case CloneResult.Created:
+						case CloneResult.UseExisting:
+							// Proceed
+							break;
 					}
+
 					if (BasicLexiconImport != null)
 					{
 						var eventArgs = new LiftBridgeEventArgs(Liftproject.LiftPathname);
-						BasicLexiconImport((ILiftBridge)this, eventArgs);
+						BasicLexiconImport(this, eventArgs);
 						if (eventArgs.Cancel)
 						{
+							// Event handler could not complete the basic import.
+							ImportFailureServices.RegisterBasicImportFailure((_liftBridgeView as Form), Liftproject);
 							_liftBridgeView.Close();
-							return; // Event handler could not complete the basic import.
+							return;
 						}
 					}
 					break;
@@ -155,19 +206,40 @@ namespace SIL.LiftBridge.Controller
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName");
 
-			Liftproject = new LiftProject(projectName);
+			Liftproject = _languageProjectGuid == Guid.Empty
+				? new LiftProject(projectName) // Try to support backwards compatibility.
+				: new LiftProject(projectName, _languageProjectGuid);
 
 			try
 			{
 				if (LiftProjectServices.ProjectIsShared(Liftproject))
+				{
 					InstallExistingSystemControl();
+				}
 				else
+				{
 					InstallNewSystem();
+				}
 				_liftBridgeView.Show(parent, string.Format(Resources.kTitle, Liftproject.LiftProjectName));
 			}
 			finally
 			{
 				_liftBridgeView.Dispose();
+			}
+		}
+
+		#endregion
+
+		#region Implementation of ILiftBridge3
+
+		public Guid LanguageProjectGuid
+		{
+			set
+			{
+				if (value == Guid.Empty)
+					throw new InvalidOperationException("The value cannot be Guid.Empty.");
+
+				_languageProjectGuid = value;
 			}
 		}
 
@@ -225,6 +297,7 @@ namespace SIL.LiftBridge.Controller
 				_startupNewView.Startup -= Startup;
 				_existingSystemView.ImportLexicon -= OnImportLexicon;
 				_existingSystemView.ExportLexicon -= OnExportLexicon;
+				_existingSystemView.BasicImportLexicon -= OnBasicImport;
 
 				MainForm.Dispose();
 			}

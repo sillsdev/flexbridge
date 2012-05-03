@@ -2,24 +2,22 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<ProductVersion>3.0</ProductVersion>
-	<ProjectGuid>{c1ecd18a-e382-11de-8a39-0800200c9a66}</ProjectGuid>
+	<ProjectGuid>C1ECD18A-E382-11DE-8A39-0800200C9A66</ProjectGuid>
 	<SchemaVersion>2.0</SchemaVersion>
-	<OutputName>LiftBridgeForFW7Installer</OutputName>
+	<OutputName>LIFTBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
-	<WixToolPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3\bin\</WixToolPath>
-	<WixToolPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3\bin\</WixToolPath>
+	<WixToolPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3.5\bin\</WixToolPath>
+	<WixToolPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3.5\bin\</WixToolPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-	<OutputPath>..\..\output\installer\</OutputPath>
+	<OutputPath>..\..\output\Installer\</OutputPath>
 	<IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
 	<DefineConstants>Debug</DefineConstants>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
 	<AllowIdenticalRows>False</AllowIdenticalRows>
-	<CabinetCachePath>
-	</CabinetCachePath>
+	<CabinetCachePath> </CabinetCachePath>
 	<CabinetCreationThreadCount>-1</CabinetCreationThreadCount>
-	<Cultures>
-	</Cultures>
+	<Cultures> </Cultures>
 	<LeaveTemporaryFiles>False</LeaveTemporaryFiles>
 	<LinkerPedantic>False</LinkerPedantic>
 	<ReuseCabinetCache>False</ReuseCabinetCache>
@@ -32,53 +30,50 @@
 	<SuppressDroppingUnrealTables>False</SuppressDroppingUnrealTables>
 	<SuppressFileHashAndInfo>False</SuppressFileHashAndInfo>
 	<SuppressFiles>False</SuppressFiles>
-	<SuppressIces>
-	</SuppressIces>
+	<SuppressIces> </SuppressIces>
 	<LinkerSuppressIntermediateFileVersionMatching>False</LinkerSuppressIntermediateFileVersionMatching>
 	<SuppressLayout>False</SuppressLayout>
 	<SuppressMsiAssemblyTableProcessing>False</SuppressMsiAssemblyTableProcessing>
 	<LinkerSuppressSchemaValidation>False</LinkerSuppressSchemaValidation>
-	<LinkerSuppressSpecificWarnings>
-	</LinkerSuppressSpecificWarnings>
+	<LinkerSuppressSpecificWarnings> </LinkerSuppressSpecificWarnings>
 	<SuppressValidation>False</SuppressValidation>
 	<LinkerTreatWarningsAsErrors>False</LinkerTreatWarningsAsErrors>
 	<LinkerVerboseOutput>False</LinkerVerboseOutput>
-	<WixVariables>
-	</WixVariables>
-	<IncludeSearchPaths>
-	</IncludeSearchPaths>
+	<WixVariables> </WixVariables>
+	<IncludeSearchPaths> </IncludeSearchPaths>
 	<Pedantic>False</Pedantic>
 	<ShowSourceTrace>False</ShowSourceTrace>
 	<SuppressSchemaValidation>False</SuppressSchemaValidation>
-	<SuppressSpecificWarnings>
-	</SuppressSpecificWarnings>
+	<SuppressSpecificWarnings> </SuppressSpecificWarnings>
 	<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
 	<VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-	<OutputPath>..\..\output\installer\</OutputPath>
+	<OutputPath>..\..\output\Installer\</OutputPath>
 	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>..\..\output\installer\</OutputPath>
+	<OutputPath>..\..\output\Installer\</OutputPath>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
-	<Compile Include="Installer.wxs" />
-	<Compile Include="..\..\output\Installer\GeneratedDistFiles.wxs" />
-	<Compile Include="..\..\output\Installer\GeneratedMercurialFiles.wxs" />
+	<Compile Include="Installer.wxs"/>
+	<Compile Include="GeneratedDistFiles.wxs"/>
   </ItemGroup>
   <ItemGroup>
 	<WixExtension Include="WixUtilExtension">
-	  <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixUtilExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixUtilExtension.dll</HintPath>
+	  <Name>WixUtilExtension</Name>
 	</WixExtension>
 	<WixExtension Include="WixUIExtension">
-	  <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixUIExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixUIExtension.dll</HintPath>
+	  <Name>WixUIExtension</Name>
 	</WixExtension>
 	<WixExtension Include="WixNetFxExtension">
-	  <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixNetFxExtension.dll</HintPath>
+	  <HintPath>C:\Program Files\Windows Installer XML v3.5\bin\WixNetFxExtension.dll</HintPath>
+	  <Name>WixNetFxExtension</Name>
 	</WixExtension>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets"/>
 </Project>

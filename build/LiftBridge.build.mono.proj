@@ -3,20 +3,18 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/mono/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
-  <!-- From http://msbuildtasks.tigris.org/ Has UnZip task
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/> -->
-
-  <!-- ***************** Main build ***************** -->
   <PropertyGroup>
 	<Solution>LiftBridge VS2010.sln</Solution>
 	<ApplicationName>LiftBridge</ApplicationName>
 	<Configuration>ReleaseMono</Configuration>
   </PropertyGroup>
+
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"/>
+
+  <!-- ***************** Main build ***************** -->
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
 
@@ -30,11 +28,10 @@
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="MergeAssemblies"/>
+	<CallTarget Targets="CopyMercurialFolders"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
-
 
   <ItemGroup>
 	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/.hg/**/*"/>
@@ -44,21 +41,23 @@
   </Target>
 
   <Target Name="Compile">
-	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)\$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
-  <Target Name="MergeAssemblies">
-	<Exec Command="cd $(RootDir)/lib/mono/" />
-	<Exec Command="mono ILRepack.exe  /target:library /out:$(RootDir)/output/common/ChorusPlus.dll Chorus.exe LibChorus.dll Palaso.dll Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="mono ILRepack.exe  /out:$(RootDir)/output/common/ChorusMerge.exe ChorusMerge.exe LibChorus.dll Palaso.dll Autofac.dll $(RootDir)/lib/common/icu.net.dll"/>
-	<Exec Command="cd $(RootDir)/"/>
+  <ItemGroup>
+	<MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
+	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
+  </ItemGroup>
+  <Target Name="CopyMercurialFolders">
+	<Copy SourceFiles="@(MyMercurialFiles)" DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')"/>
+	<Copy SourceFiles="@(MyMercurialExtensionFiles)" DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
   <Target Name="Test" DependsOnTargets="Build">
-	<CreateItem Include="$(RootDir)/output/$(Configuration)/*.Tests.dll">
+	<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
-	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.5.5"/>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity;UnknownMonoIssue" NUnitVersion="NUnit-2.5.5"/>
   </Target>
 </Project>
