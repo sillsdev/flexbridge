@@ -238,7 +238,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
+			var doc = new XmlDocument();
+			doc.LoadXml(mergeElement);
+			return GenerateContextDescriptor(doc.DocumentElement, filePath);
 		}
 
 		/// <summary>

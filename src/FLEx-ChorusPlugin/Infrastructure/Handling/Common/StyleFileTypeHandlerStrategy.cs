@@ -34,6 +34,40 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				if (root.Name.LocalName != SharedConstants.Styles || !root.Elements(SharedConstants.StStyle).Any())
 					return "Not valid styles file";
 
+				var styles = root.Elements(SharedConstants.StStyle).ToList();
+				var duplicateStyleElts = new List<XElement[]>();
+				var dupName = new HashSet<string>();
+				foreach (var style in styles)
+				{
+					// NOTE: there is a SharedConstants.Name, but it is not initial cap, it's all lower case.
+					// Right. That is because it is for an attribute 'name', not an element name.
+					var currentName = style.Element("Name").Element(SharedConstants.Uni).Value;
+					if (dupName.Contains(currentName))
+						continue; // Don't fret over a triplicate style.
+
+					var styleWithSameName = (styles.Where(otherStyle => style != otherStyle
+						&& otherStyle.Element("Name").Element(SharedConstants.Uni).Value == currentName)).FirstOrDefault();
+					if (styleWithSameName == null)
+						continue;
+					duplicateStyleElts.Add(new[] { style, styleWithSameName });
+					dupName.Add(currentName);
+				}
+				if (duplicateStyleElts.Any())
+				{
+					// There were duplicate style names. Return a message to caller.
+					var message = "Duplicate Styles: ";
+					var comma = false;
+					foreach (var duplicates in duplicateStyleElts)
+					{
+						if (comma)
+							message += ", ";
+						comma = true;
+						message += "{" + duplicates[0].Element("Name").Element(SharedConstants.Uni).Value + "}";
+						message += " with guids " + duplicates[0].Attribute(SharedConstants.GuidStr).Value + " and " +
+							duplicates[1].Attribute(SharedConstants.GuidStr).Value;
+					}
+					return message + ".";
+				}
 				return root.Elements(SharedConstants.StStyle)
 					.Select(style => CmObjectValidator.ValidateObject(MetadataCache.MdCache, style)).FirstOrDefault(result => result != null);
 			}

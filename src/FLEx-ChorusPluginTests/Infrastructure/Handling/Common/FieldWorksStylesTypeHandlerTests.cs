@@ -104,9 +104,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Styles>
-<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+<StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<Name>
+			<Uni>Line3</Uni>
+		</Name>
+</StStyle>
 </Styles>";
-
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
@@ -198,6 +201,38 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("Line4"));
+		}
+
+		[Test]
+		public void DuplicateStylesAreNotValid()
+		{
+			const string data =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Styles>
+<StStyle guid='c1edbbe3-e382-11de-8a39-0800200c9a66'>
+		<Name>
+			<Uni>NoProblem</Uni>
+		</Name>
+	</StStyle>
+<StStyle guid='a3045a7c-9286-4fab-930c-53562c0cc3ec'>
+		<Name>
+			<Uni>Conflict</Uni>
+		</Name>
+	</StStyle>
+	<StStyle guid='8da1fa5b-096c-495f-8d37-2b046493db3c'>
+		<Name>
+			<Uni>Conflict</Uni>
+		</Name>
+	</StStyle>
+</Styles>";
+			File.WriteAllText(_ourFile.Path, data);
+			var result = FileHandler.ValidateFile(_ourFile.Path, new NullProgress());
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("Conflict"));
+			Assert.IsTrue(result.Contains("a3045a7c-9286-4fab-930c-53562c0cc3ec"));
+			Assert.IsTrue(result.Contains("8da1fa5b-096c-495f-8d37-2b046493db3c"));
+			Assert.IsFalse(result.Contains("NoProblem"));
+			Assert.IsFalse(result.Contains("c1edbbe3-e382-11de-8a39-0800200c9a66"));
 		}
 	}
 }

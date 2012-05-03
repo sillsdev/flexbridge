@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+﻿﻿using System.Threading;
+﻿﻿using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
@@ -221,18 +222,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			_classData[className].Add(guid, rtElement);
 		}
 
-		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
-		// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
 
+		/// <summary>
+		/// Method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
+		/// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
+		/// </summary>
+		/// <param name="parentForm"></param>
+		/// <param name="origPathname"></param>
 		public static void SplitFwdataDelegate(Form parentForm, string origPathname)
 		{
 			var splitFwdataCommand = new SplitFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand, "Split up project file");
-			var progress = new ProgressDialogProgressState(progressHandler);
-			splitFwdataCommand.BeginInvoke(progress);
-			while (progress.State != ProgressState.StateValue.Finished)
+			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand, "Split up project file", true);
+			var state = new ProgressDialogProgressState(progressHandler);
+			progressHandler.ShowModal(state);
+			if (state.Cancel)
 			{
-				Application.DoEvents();
+				parentForm.Close();
 			}
 		}
 
@@ -251,21 +256,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				_steps = _fps.Steps;
 			}
 
-			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback,
-										   StatusCallback primaryStatusTextCallback,
-										   StatusCallback secondaryStatusTextCallback)
+			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback, StatusCallback primaryStatusTextCallback, StatusCallback secondaryStatusTextCallback)
 			{
-				var countForWork = 0;
-				while (countForWork < _steps)
-				{
-					if (Canceling)
-					{
-						WasCancelled = true;
-						return;
-					}
-					_fps.PushHumptyOffTheWallWatching();
-					countForWork++;
-				}
+				throw new NotSupportedException();
 			}
 
 			protected override void DoWork2(ProgressState progress)
@@ -277,6 +270,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					if (Canceling)
 					{
 						WasCancelled = true;
+						progress.State = ProgressState.StateValue.Finished;
 						return;
 					}
 					_fps.PushHumptyOffTheWallWatching();

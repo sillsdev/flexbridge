@@ -219,8 +219,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		//finally -- must execute even if some other part of process fails
-		internal static void CloseTempFile()
+		internal void CloseTempFile()
 		{
+			if(_writer != null)
+			{
+				_writer.Close();
+			}
 			while (File.Exists(_tempPathname))
 			{
 				try
@@ -273,17 +277,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		public static void UnifyFwdataProgress(Form parentForm, string origPathname)
 		{
 			_unifyFwdataCommand = new UnifyFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand, "Restore project file");
-			// No.
-			// When parent was syncDlg, it was already closed at this time, and caused a Disposed Access exception to be thrown.
-			// With parent beingthe main form, then letit beclosed elsewhere.
-			//progressHandler.Finished += (sender, args) => parentForm.Close();
+			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand, "Restore project file", true);
 			var progress = new ProgressDialogProgressState(progressHandler);
-			_unifyFwdataCommand.BeginInvoke(progress);
-			while (progress.State != ProgressState.StateValue.Finished)
-			{
-				Application.DoEvents();
-			}
+			progressHandler.ShowModal(progress);
 		}
 
 		public class UnifyFwdataCommand : BasicCommand
@@ -304,25 +300,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 										   StatusCallback primaryStatusTextCallback,
 										   StatusCallback secondaryStatusTextCallback)
 			{
-				try
-				{
-
-					var countForWork = 0;
-					while (countForWork < _steps)
-					{
-						if (Canceling)
-						{
-							WasCancelled = true;
-							return;
-						}
-						_fpu.PutHumptyTogetherAgainWatching();
-						countForWork++;
-					}
-				}
-				finally
-				{
-					CloseTempFile();
-				}
+				throw new NotSupportedException();
 			}
 
 			protected override void DoWork2(ProgressState progress)
@@ -336,6 +314,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						if (Canceling)
 						{
 							WasCancelled = true;
+							progress.State = ProgressState.StateValue.Finished;
 							return;
 						}
 						_fpu.PutHumptyTogetherAgainWatching();
@@ -345,7 +324,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				}
 				finally
 				{
-					CloseTempFile();
+					_fpu.CloseTempFile();
 					progress.State = ProgressState.StateValue.Finished;
 				}
 			}

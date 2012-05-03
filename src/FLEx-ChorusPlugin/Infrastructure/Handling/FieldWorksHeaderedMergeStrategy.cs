@@ -20,6 +20,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		#region Implementation of IMergeStrategy
 
+		/// <summary>
+		/// Produce a string that represents the 3-way merger of the given three elements.
+		/// </summary>
 		public string MakeMergedEntry(IMergeEventListener eventListener, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			var extantNode = ourEntry ?? theirEntry ?? commonEntry;
@@ -54,6 +57,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			}
 
 			return _merger.Merge(eventListener, ourEntry, theirEntry, commonEntry).OuterXml;
+		}
+
+		/// <summary>
+		/// Return the ElementStrategy instance for the given <param name="element"/>, or a default instance set up like this:
+		/// ElementStrategy def = new ElementStrategy(true);//review: this says the default is to consder order relevant
+		/// def.MergePartnerFinder = new FindByEqualityOfTree();
+		/// </summary>
+		public ElementStrategy GetElementStrategy(XmlNode element)
+		{
+			return _merger.MergeStrategies.GetElementStrategy(element);
 		}
 
 		#endregion
