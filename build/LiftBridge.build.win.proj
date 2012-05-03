@@ -76,7 +76,7 @@
 
   <!-- ***************** Installer stuff below this line. ***************** -->
 
-  <Target Name="Installer" DependsOnTargets="Build; SetAboutInfo">
+  <Target Name="Installer" DependsOnTargets="Test; SetAboutInfo; MakeIndex">
 	<!-- Copy it to a safe place first, since it gets modified. -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 
@@ -94,12 +94,16 @@
 
   </Target>
 
-  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
+  <Target Name="Upload">
 	<Message Text="Attempting rsync of LIFTBridgeInstaller.msi" Importance="high"/>
 
+	<!-- Upload the installer up to the web. -->
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller.msi"/>
 
-	<CallTarget Targets="MakeIndex"/>
+	<!-- Upload the index.htm file up to the web. -->
+	<Message Text="Attempting rsync of Index.html" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oU
+
   </Target>
 
   <Target Name="MakeIndex" DependsOnTargets="VersionNumbers">
@@ -108,11 +112,7 @@
 	<Copy SourceFiles="$(RootDir)\src\Installer\Index.htm" DestinationFolder="$(RootDir)\output\Installer"/>
 
 	<!-- replace some parts of the file with the version number & date -->
-	<FileUpdate File="$(RootDir)\output\Installer\Index.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-
-	<!-- Push the index.htm file up to the web. -->
-	<Message Text="Attempting rsync of Index.html" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	<FileUpdate File="$(RootDir)\output\Installer\Index.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>serKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
   </Target>
 
   <Target Name="SetAboutInfo" DependsOnTargets="VersionNumbers">
