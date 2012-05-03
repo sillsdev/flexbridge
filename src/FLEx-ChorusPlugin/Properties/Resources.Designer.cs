@@ -68,6 +68,19 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to There is already a copy of FLExBridge running.
+		///You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
+		///-- Send/Receive Project
+		///-- Receive Project from a colleague
+		///-- View Conflict Report (can&apos;t have two open).
+		/// </summary>
+		internal static string kAlreadyRunning {
+			get {
+				return ResourceManager.GetString("kAlreadyRunning", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select a Chorus-enabled FieldWorks project to open:.
 		/// </summary>
 		internal static string kChorusEnabledFwProject {

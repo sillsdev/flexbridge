@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 using System.Threading;
+using FLEx_ChorusPlugin.Controller;
 
 namespace FLExBridge
 {
@@ -11,13 +12,15 @@ namespace FLExBridge
 	{
 		private readonly ServiceHost _host;
 		private readonly IFLExBridgeService _pipe;
+		private bool _hostOpened;
 
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
 		internal FLExConnectionHelper()
 		{
-			var hostOpened = true;
+			_hostOpened = true;
+			//Debug.Fail("attach debugger here.");
 			try
 			{
 				_host = new ServiceHost(typeof(FLExService),
@@ -26,10 +29,10 @@ namespace FLExBridge
 				_host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
 				_host.Open();
 			}
-			catch (Exception)
+			catch (AddressAlreadyInUseException)
 			{
 				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
-				hostOpened = false;
+				_hostOpened = false;
 			}
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
@@ -46,11 +49,9 @@ namespace FLExBridge
 				Console.WriteLine("FLEx isn't listening.");
 				_pipe = null; //FLEx isn't listening.
 			}
-			if (!hostOpened)
-			{
-				throw new ApplicationException("FLExBridge already running.");
-			}
 		}
+
+		public bool HostOpened { get { return _hostOpened; } }
 
 		/// <summary>
 		/// Sets the entire FieldWorks project directory path (must include the
@@ -74,7 +75,7 @@ namespace FLExBridge
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived, string jumpUrl)
+		internal void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			//wake up the BridgeWorkOngoing message and let it return to FLEx.
 			//This is unnecessary except to avoid an exception on the FLEx side, just trying to be nice.
@@ -85,13 +86,30 @@ namespace FLExBridge
 			try
 			{
 				if(_pipe != null)
-					_pipe.BridgeWorkComplete(changesReceived, jumpUrl);
+					_pipe.BridgeWorkComplete(changesReceived);
 			}
 			catch (Exception)
 			{
 				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
 			}
 		}
+
+		/// <summary>
+		/// Signals FLEx that the bridge sent a jump URL to process.
+		/// </summary>
+		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.BridgeSentJumpUrl(e.JumpUrl);
+			}
+			catch(Exception)
+			{
+				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+			}
+		}
+
 		/// <summary>
 		/// Interface for the service which FLEx implements
 		/// </summary>
@@ -99,13 +117,16 @@ namespace FLExBridge
 		private interface IFLExBridgeService
 		{
 			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived, string jumpUrl);
+			void BridgeWorkComplete(bool changesReceived);
 
 			[OperationContract]
 			void BridgeReady();
 
 			[OperationContract]
 			void InformFwProjectName(string fwProjectName);
+
+			[OperationContract]
+			void BridgeSentJumpUrl(string jumpUrl);
 		}
 
 		/// <summary>
@@ -151,7 +172,8 @@ namespace FLExBridge
 
 		public void Dispose()
 		{
-			_host.Close();
+			if (_hostOpened)
+				_host.Close();
 		}
 	}
 }

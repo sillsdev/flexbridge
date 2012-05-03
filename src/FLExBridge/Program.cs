@@ -20,70 +20,83 @@ namespace FLExBridge
 		{
 			using (var flexCommHelper = new FLExConnectionHelper())
 			{
-				ExceptionHandler.Init();
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
 				var changesReceived = false;
-
-				// Is mercurial set up?
-				var s = HgRepository.GetEnvironmentReadinessMessage("en");
-				if (!string.IsNullOrEmpty(s))
+				try
 				{
-					MessageBox.Show(s, Resources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-					return;
-				}
+					ExceptionHandler.Init();
+					Application.EnableVisualStyles();
+					Application.SetCompatibleTextRenderingDefault(false);
 
-				var jumpUrl = string.Empty;
-				// args are:
-				// -u username
-				// -p pathname to fwdata file.
-				// -v kind of S/R operation: obtain, start, send_receive, view_notes
-				// No args at all: Use regular UI. FW app must not be running on S/R project.
-				var options = ParseCommandLineArgs(args);
-				if (!options.ContainsKey("-v") || options["-v"] == null)
-				{
-					using (var controller = new FwBridgeController())
+					if (!flexCommHelper.HostOpened)
 					{
-						Application.Run(controller.MainForm);
+						// display messagebox and quit
+						MessageBox.Show(Resources.kAlreadyRunning, Resources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+						return;
+					}
+					// Is mercurial set up?
+					var s = HgRepository.GetEnvironmentReadinessMessage("en");
+					if (!string.IsNullOrEmpty(s))
+					{
+						MessageBox.Show(s, Resources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+						return;
+					}
+
+					// args are:
+					// -u username
+					// -p pathname to fwdata file.
+					// -v kind of S/R operation: obtain, start, send_receive, view_notes
+					// No args at all: Use regular UI. FW app must not be running on S/R project.
+					var options = ParseCommandLineArgs(args);
+					if (!options.ContainsKey("-v") || options["-v"] == null)
+					{
+						using (var controller = new FwBridgeController())
+						{
+							Application.Run(controller.MainForm);
+						}
+					}
+					else
+					{
+						switch (options["-v"])
+						{
+							case "obtain":
+								using (var controller = new ObtainProjectController(options))
+								{
+									Application.Run(controller.MainForm);
+									if (controller.CurrentProject != null)
+									{
+										var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName,
+																		 controller.CurrentProject.Name + ".fwdata");
+										// get the whole path with .fwdata on the end!!!
+										flexCommHelper.SetFwProjectName(fwProjectName);
+									}
+								}
+								break;
+							case "start":
+							case "send_receive":
+								using (var controller = new FwBridgeSynchronizeController(options))
+								{
+									controller.SyncronizeProjects();
+									changesReceived = controller.ChangesReceived;
+								}
+								break;
+							case "view_notes": //view the conflict\notes report
+								using (var controller = new FwBridgeConflictController(options))
+								{
+									controller.JumpUrlChanged += flexCommHelper.SendJumpUrlToFlex;
+									Application.Run(controller.MainForm);
+									controller.JumpUrlChanged -= flexCommHelper.SendJumpUrlToFlex;
+								}
+								break;
+							default:
+								// TODO: display options dialog
+								break;
+						}
 					}
 				}
-				else
+				finally
 				{
-					switch (options["-v"])
-					{
-						case "obtain":
-							using (var controller = new ObtainProjectController(options))
-							{
-								Application.Run(controller.MainForm);
-								var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName, controller.CurrentProject.Name + ".fwdata");
-								// get the whole path with .fwdata on the end!!!
-								flexCommHelper.SetFwProjectName(fwProjectName);
-							}
-							break;
-						case "start":
-						case "send_receive":
-							using (var controller = new FwBridgeSynchronizeController(options))
-							{
-								controller.SyncronizeProjects();
-								changesReceived = controller.ChangesReceived;
-							}
-							break;
-						case "view_notes": //view the conflict\notes report
-							using (var controller = new FwBridgeConflictController(options))
-							{
-								Application.Run(controller.MainForm);
-								//YAGNI for when we allow user to reverse changes in the Conflict Report
-								changesReceived = controller.ChangesReceived;
-								if (!string.IsNullOrEmpty(controller.JumpUrl))
-									jumpUrl = controller.JumpUrl;
-							}
-							break;
-						default:
-							// TODO: display options dialog
-							break;
-					}
+					flexCommHelper.SignalBridgeWorkComplete(changesReceived);
 				}
-				flexCommHelper.SignalBridgeWorkComplete(changesReceived, jumpUrl);
 				Settings.Default.Save();
 			}
 		}

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Web;
 using System.Windows.Forms;
 using Chorus;
@@ -22,6 +20,10 @@ namespace FLEx_ChorusPlugin.Controller
 		protected NotesInProjectViewModel _notesModel;
 		protected AnnotationEditorModel _editorModel;
 		protected NotesBrowserPage _notesBrowser;
+
+		public delegate void JumpEventHandler(object sender, JumpEventArgs e);
+
+		public event JumpEventHandler JumpUrlChanged;
 
 		/// <summary>
 		/// for testing (but called by the main constructor)
@@ -56,12 +58,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 			SetupChorusAndLanguageProject(user, filePath);
 			SetViewControls(filePath);
-			ChangesReceived = false;
 		}
-
-		public Boolean ChangesReceived { get; set; }
-
-		public string JumpUrl { get; set; }
 
 		private void SetupChorusAndLanguageProject(string user, string filePath)
 		{
@@ -75,17 +72,6 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private void JumpToFlexObject(string url)
 		{
-			// Todo JohnT:
-			// 1. insert project name (while FlexBridge remains stand-alone).
-			// 2. When we are embedded in FLEx, should be able to do something like this:
-			//var args = new LocalLinkArgs() { Link = url };
-			//if (Mediator != null)
-			//{
-			//    Mediator.SendMessage("HandleLocalHotlink", args);
-			//    if (args.LinkHandledLocally)
-			//        return;
-			//}
-
 			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
 			var hostLength = url.IndexOf("?");
 			if (hostLength < 0)
@@ -94,10 +80,10 @@ namespace FLEx_ChorusPlugin.Controller
 			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
 			var query = HttpUtility.UrlEncode(originalQuery);
 
-			// Setup URL to pass to FLEx and close FLExBridge
-			JumpUrl = host + "?" + query;
-			MainForm.Close();
-
+			// Instead of closing the conflict viewer we now need to fire this event to notify
+			// the FLExConnectionHelper that we have a URL to jump to.
+			if (JumpUrlChanged != null)
+				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
 		}
 
 		internal virtual void SetViewControls(string filePath)
@@ -126,7 +112,6 @@ namespace FLEx_ChorusPlugin.Controller
 		}
 
 		#endregion
-
 
 		#region Implementation of IDisposable
 
@@ -196,5 +181,20 @@ namespace FLEx_ChorusPlugin.Controller
 		}
 
 		#endregion
+	}
+
+	internal class JumpEventArgs : EventArgs
+	{
+		private readonly string _jumpUrl;
+
+		internal JumpEventArgs(string jumpUrl)
+		{
+			_jumpUrl = jumpUrl;
+		}
+
+		internal string JumpUrl
+		{
+			get { return _jumpUrl; }
+		}
 	}
 }
