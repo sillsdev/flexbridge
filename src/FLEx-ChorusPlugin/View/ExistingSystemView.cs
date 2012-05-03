@@ -52,31 +52,16 @@ namespace FLEx_ChorusPlugin.View
 				//ResetPage(2, syncPanel);
 				_tcMain.TabPages[2].Enabled = false;
 				_tcMain.TabPages[2].Visible = false;
-				//// 3 - SettingsView
+				// 3 - SettingsView
 				ResetPage(3, new SettingsView(new SettingsModel(chorusSystem.Repository)));
 				// 4 - TroubleshootingView
 				ResetPage(4, new TroubleshootingView(chorusSystem.Repository));
 				//ResetTabPage(5, TODO: Figure out what to do on About page.);
-				//chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
 			}
 
 			_tcMain.ResumeLayout(true);
 			_tcMain.Enabled = (chorusSystem != null);
 		}
-
-		//private void JumpToFlexObject(string url)
-		//{
-		//    // Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
-		//    var hostLength = url.IndexOf("?");
-		//    if (hostLength < 0)
-		//        return; // can't do it, not a valid FLEx url.
-		//    var host = url.Substring(0, hostLength);
-		//    string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _project.Name);
-		//    var query = HttpUtility.UrlEncode(originalQuery);
-		//    var fwUrl = host + "?" + query;
-
-		//    Process.Start(fwUrl); // Crashes here with Unknown Error
-		//}
 
 		private void ResetPage(int idx, Control newContent)
 		{
