@@ -17,9 +17,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			var langProjElement = classData["LangProject"].Values.First();
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
-										  langProjElement, SharedConstants.AnnotationDefs,
-										  Path.Combine(generalBaseDir, SharedConstants.AnnotationDefsListFilename));
+			FileWriterService.WriteNestedListFileIfItExists(classData,
+				guidToClassMapping,
+				langProjElement, SharedConstants.AnnotationDefs,
+				Path.Combine(generalBaseDir, SharedConstants.AnnotationDefsListFilename));
 
 			// LP Styles (OC-StStyle) is used by everyone, but Scripture, so they go here.
 			BaseDomainServices.NestStylesPropertyElement(
@@ -38,7 +39,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 					var filterGuid = filterObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
 					var filterElement = classData[className][filterGuid];
-					CmObjectNestingService.NestObject(false, filterElement, new Dictionary<string, HashSet<string>>(), classData, guidToClassMapping);
+					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
 				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.FLExFiltersFilename), root);
@@ -57,7 +58,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 					var annotationGuid = annotationObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
 					var annotationElement = classData[className][annotationGuid];
-					CmObjectNestingService.NestObject(false, annotationElement, new Dictionary<string, HashSet<string>>(), classData, guidToClassMapping);
+					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
 				}
@@ -68,7 +69,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// Yippee!! Write LP here. :-) [LanguageProject.langproj; new ext]
 			CmObjectNestingService.NestObject(false,
 				langProjElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.LanguageProjectFilename), new XElement(SharedConstants.LanguageProject, langProjElement));

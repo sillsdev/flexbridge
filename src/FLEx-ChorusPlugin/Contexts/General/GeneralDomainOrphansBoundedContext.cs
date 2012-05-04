@@ -72,7 +72,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				CmObjectNestingService.NestObject(
 					false,
 					curiosityElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 				// Fix up name.

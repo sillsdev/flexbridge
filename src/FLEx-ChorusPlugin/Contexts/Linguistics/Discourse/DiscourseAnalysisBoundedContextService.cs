@@ -15,7 +15,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	/// </summary>
 	internal static class DiscourseAnalysisBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
+			SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
 			if (!Directory.Exists(discourseDir))
@@ -32,7 +34,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			CmObjectNestingService.NestObject(
 				false,
 				discourseElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 

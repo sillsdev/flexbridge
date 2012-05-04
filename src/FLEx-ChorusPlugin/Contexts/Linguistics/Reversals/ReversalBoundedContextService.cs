@@ -71,7 +71,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					Path.Combine(revIndexDir, ws + "-" + SharedConstants.PartsOfSpeechFilename));
 
 				CmObjectNestingService.NestObject(false, revIndexElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 

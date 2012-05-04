@@ -53,16 +53,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void NullObjectThrows()
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, null,
-				new Dictionary<string, HashSet<string>>(),
-				new Dictionary<string, SortedDictionary<string, XElement>>(),
-				new Dictionary<string, string>()));
-		}
-
-		[Test]
-		public void NullExceptionListThrows()
-		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
-				null,
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
 				new Dictionary<string, string>()));
 		}
@@ -71,7 +61,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void NullClassDataThrows()
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
-				new Dictionary<string, HashSet<string>>(),
 				null,
 				new Dictionary<string, string>()));
 		}
@@ -80,7 +69,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void NullGuidToClassMappingThrows()
 		{
 			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
-				new Dictionary<string, HashSet<string>>(),
 				new Dictionary<string, SortedDictionary<string, XElement>>(),
 				null));
 		}
@@ -88,10 +76,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void ElementRenamed()
 		{
-			CmObjectNestingService.NestObject(false, _rt,
-											  new Dictionary<string, HashSet<string>>(),
-											  _classData,
-											  _guidToClassMapping);
+			CmObjectNestingService.NestObject(false,
+				_rt,
+				_classData,
+				_guidToClassMapping);
 			Assert.IsTrue(_rt.Name.LocalName == "ReversalIndex");
 			Assert.IsNull(_rt.Attribute(SharedConstants.Class));
 		}
@@ -101,7 +89,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		{
 			AddOwnedObjects();
 			CmObjectNestingService.NestObject(false, _rt,
-				new Dictionary<string, HashSet<string>>(),
 				_classData,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
@@ -117,25 +104,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			pos = entriesElements.ToList()[1];
 			Assert.AreEqual(pos.Attribute(SharedConstants.GuidStr).Value, "c1ed6dc7-e382-11de-8a39-0800200c9a66");
 			Assert.AreEqual(pos.Attribute(SharedConstants.Class).Value, "PartOfSpeech");
-		}
-
-		[Test]
-		public void ExcludedObjectsAreNotNested()
-		{
-			var exclusions = new Dictionary<string, HashSet<string>>
-								{
-									{"ReversalIndex", new HashSet<string> {"PartsOfSpeech"}}
-								};
-			AddOwnedObjects();
-			CmObjectNestingService.NestObject(false, _rt,
-				exclusions,
-				_classData,
-				_guidToClassMapping);
-			var entriesElement = _rt.Element("Entries");
-			var entriesElements = entriesElement.Elements("ReversalIndexEntry");
-			Assert.AreEqual(2, entriesElements.Count());
-			Assert.AreEqual(0, _rt.Element("PartsOfSpeech").Elements(SharedConstants.CmPossibilityList).Count());
-			Assert.AreEqual(1, _rt.Element("PartsOfSpeech").Elements(SharedConstants.Objsur).Count());
 		}
 
 		[Test]
@@ -155,7 +123,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			classData.Add("Segment", data);
 			var guidToClassMapping = new Dictionary<string, string> {{"c1ed6dc8-e382-11de-8a39-0800200c9a66", "Segment"}};
 			CmObjectNestingService.NestObject(false, rt,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			var result = rt.ToString();
@@ -179,7 +146,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			classData.Add("CmPossibility", data);
 			var guidToClassMapping = new Dictionary<string, string> { { "c1ed6dc8-e382-11de-8a39-0800200c9a66", "CmPossibility" } };
 			CmObjectNestingService.NestObject(false, rt,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			var result = rt.ToString();
@@ -194,7 +160,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.IsTrue(originalElement.ToString().Contains(SharedConstants.OwnerGuid));
 
 			CmObjectNestingService.NestObject(false, _rt,
-				new Dictionary<string, HashSet<string>>(),
 				_classData,
 				_guidToClassMapping);
 			Assert.IsFalse(_rt.ToString().Contains(SharedConstants.OwnerGuid));

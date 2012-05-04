@@ -80,8 +80,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 													 string pathRoot,
 													 byte[] record)
 		{
+			WriteCustomPropertyFile(mdc, pathRoot, SharedConstants.Utf8.GetString(record));
+		}
+
+		internal static void WriteCustomPropertyFile(MetadataCache mdc,
+													 string pathRoot,
+													 string record)
+		{
 			// Theory has it that the fwdata file is all sorted.
-			var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+			var cpElement = DataSortingService.SortCustomPropertiesRecord(record);
 			// Not this one, since it leaves out the temporary "key' attr. var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			var hasCustomProperties = false;
@@ -175,10 +182,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						: extension.Substring(1));
 		}
 
-		internal static void WriteNestedListFileIfItExists(IDictionary<string, SortedDictionary<string, XElement>> classData,
-														   Dictionary<string, string> guidToClassMapping,
-														   XElement listOwningElement, string listOwningPropertyName,
-														   string listPathname)
+		internal static void WriteNestedListFileIfItExists(IDictionary<string,
+			SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			XElement listOwningElement, string listOwningPropertyName,
+			string listPathname)
 		{
 			var listPropElement = listOwningElement.Element(listOwningPropertyName);
 			if (listPropElement == null || !listPropElement.HasElements)
@@ -187,7 +195,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var listElement = classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
 			CmObjectNestingService.NestObject(false,
 											  listElement,
-											  new Dictionary<string, HashSet<string>>(),
 											  classData,
 											  guidToClassMapping);
 			listPropElement.RemoveNodes(); // Remove the single list objsur element.

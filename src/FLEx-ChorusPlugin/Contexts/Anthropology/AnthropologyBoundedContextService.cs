@@ -40,7 +40,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				headerElement.Add(notebookElement);
 
 				CmObjectNestingService.NestObject(false, notebookElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 

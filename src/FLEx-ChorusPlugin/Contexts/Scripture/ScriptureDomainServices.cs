@@ -12,7 +12,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureDomainServices
 	{
 		internal static void WriteNestedDomainData(string rootDir,
-			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{

@@ -12,7 +12,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 	{
 		private const string LexDb = "LexDb";
 
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
@@ -54,7 +56,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			root.Add(header);
 			header.Add(lexDb);
 			CmObjectNestingService.NestObject(false, lexDb,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 
@@ -71,7 +72,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				foreach (var entry in srcDataCopy.Values)
 				{
 					CmObjectNestingService.NestObject(false, entry,
-						new Dictionary<string, HashSet<string>>(),
 						classData,
 						guidToClassMapping);
 					root.Add(entry);
@@ -149,7 +149,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			XContainer owningElement,
 			IEnumerable<string> propNames)
 		{
-			var exceptions = new Dictionary<string, HashSet<string>>();
 			foreach (var propName in propNames)
 			{
 				var listPropElement = owningElement.Element(propName);
@@ -160,7 +159,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
 				CmObjectNestingService.NestObject(false,
 					listElement,
-					exceptions,
 					classData,
 					guidToClassMapping);
 				listPropElement.RemoveNodes(); // Remove the single list objsur element.

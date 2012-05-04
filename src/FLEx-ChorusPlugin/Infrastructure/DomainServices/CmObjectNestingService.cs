@@ -14,12 +14,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		internal static void NestObject(
 			bool isOwningSeqProp,
 			XElement obj,
-			Dictionary<string, HashSet<string>> exceptions,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
-			if (exceptions == null) throw new ArgumentNullException("exceptions");
 			if (classData == null) throw new ArgumentNullException("classData");
 			if (guidToClassMapping == null) throw new ArgumentNullException("guidToClassMapping");
 
@@ -31,16 +29,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (ownerGuidAttribute != null)
 				ownerGuidAttribute.Remove();
 
-			// 2. Nest owned objects in 'obj'.
-			NestOwnedObjects(exceptions, classData, guidToClassMapping, obj);
+			var propCacheForClass = MetadataCache.MdCache.PropertyCache[className];
+			// 2. Nest owned objects in 'obj', but only if it has any owning props.
+			if (propCacheForClass["AllOwning"].Count > 0)
+				NestOwnedObjects(classData, guidToClassMapping, obj);
 
 			// 3. Reset ref seq prop nodes from "objsur" to SharedConstants.Refseq,
 			// so they can use a special ElementStrategy for SharedConstants.Refseq that has isOrderRelevant to be true.
-			RenameReferenceSequenceObjsurNodes(className, obj);
+			if (propCacheForClass["AllReferenceSequence"].Count > 0)
+				RenameReferenceSequenceObjsurNodes(className, obj);
 
 			// 4. Rename ref col prop nodes from "objsur" to SharedConstants.Refcol,
 			// so they can use a special ElementStrategy for SharedConstants.Refcol that has isOrderRelevant to be false.
-			RenameReferenceCollectionObjsurNodes(className, obj);
+			if (propCacheForClass["AllReferenceCollection"].Count > 0)
+				RenameReferenceCollectionObjsurNodes(className, obj);
 
 			// 5. Remove 'obj' from lists.
 			var guid = obj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
@@ -93,7 +95,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		private static void NestOwnedObjects(
-			Dictionary<string, HashSet<string>> exceptions,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
@@ -104,7 +105,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					? owningObjElement.Attribute(SharedConstants.Class).Value
 					: owningObjElement.Name.LocalName;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
-			var owningProps = (from owningPropInfo in classInfo.AllOwningProperties select owningPropInfo.PropertyName).ToList();
+			var owningProps = MetadataCache.MdCache.PropertyCache[className]["AllOwning"];
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
 				var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
@@ -118,14 +119,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var owningObjSurElements = propertyElement.Elements(SharedConstants.Objsur).Where(objsurEl => objsurEl.Attribute("t").Value == "o").ToList();
 				if (!owningObjSurElements.Any())
 					continue;
-				// NB: There is no way the user can declare an owning custom property to be an exception, so not to worry about them.
-				if (!isCustomProperty)
-				{
-					// Skip owning properties that are in the 'exceptions' list.
-					HashSet<string> exceptionProperties;
-					if (exceptions.TryGetValue(owningObjElement.Name.LocalName, out exceptionProperties) && exceptionProperties.Contains(propertyElement.Name.LocalName))
-						continue;
-				}
 
 				var isOwningSeqProp = classInfo.GetProperty(propName).DataType == DataType.OwningSequence;
 				// Replace each objsur node with actual element.
@@ -139,7 +132,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var ownedElement = classData[classOfOwnedObject][guid];
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
-					NestObject(isOwningSeqProp, ownedElement, exceptions, classData, guidToClassMapping);
+					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);
 				}
 			}
 		}
@@ -147,20 +140,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		private static string RenameElement(bool isOwningSeqProp, XElement obj)
 		{
 			var classAttr = obj.Attribute(SharedConstants.Class);
+			var className = classAttr.Value;
 			if (isOwningSeqProp)
 			{
-				var className = obj.Attribute(SharedConstants.Class).Value;
 				obj.Name = (className == "StTxtPara" || className == "ScrTxtPara")
 					? SharedConstants.OwnseqAtomic // Atomic here means the whole elment is treated as effectively as if it were binary data.
 					: SharedConstants.Ownseq;
 			}
 			else
 			{
-				obj.Name = classAttr.Value;
+				obj.Name = className;
 				classAttr.Remove();
 			}
 
-			return classAttr.Value;
+			return className;
 		}
 	}
 }
