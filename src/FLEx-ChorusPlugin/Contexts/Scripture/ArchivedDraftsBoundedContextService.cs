@@ -31,7 +31,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var draft = classData[className][draftGuid];
 
 				CmObjectNestingService.NestObject(false, draft,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 

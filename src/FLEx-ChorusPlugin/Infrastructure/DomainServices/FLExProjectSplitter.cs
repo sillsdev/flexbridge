@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-﻿﻿using System.Threading;
 ﻿﻿using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -89,15 +88,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					_nextSplitTask = SplitTasks.UpdateVersion;
 					break;
 				case SplitTasks.UpdateVersion:
-					WriteVersionFile(_mainFilePathname);
+					WriteVersionFile();
 					_nextSplitTask = SplitTasks.SortClassXml;
 					break;
 				case SplitTasks.SortClassXml:
-					_classData = GenerateBasicClassData(_mdc);
+					GenerateBasicClassData();
 					_nextSplitTask = SplitTasks.WriteOrCacheXmlProps;
 					break;
 				case SplitTasks.WriteOrCacheXmlProps:
-					WriteOrCacheProperties(_mainFilePathname);
+					WriteOrCacheProperties();
 					_nextSplitTask = SplitTasks.WriteLinguisticsFile;
 					break;
 				case SplitTasks.WriteLinguisticsFile:
@@ -144,11 +143,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
-		private void WriteVersionFile(string mainFilePathname)
+		private void WriteVersionFile()
 		{
-			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			var pathRoot = Path.GetDirectoryName(_mainFilePathname);
 			// 1. Write version number file.
-			using (var reader = XmlReader.Create(mainFilePathname, FileWriterService.CanonicalReaderSettings))
+			using (var reader = XmlReader.Create(_mainFilePathname, FileWriterService.CanonicalReaderSettings))
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
@@ -158,20 +157,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		private void WriteOrCacheProperties(string mainFilePathname)
+		private void WriteOrCacheProperties()
 		{
-			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			var pathRoot = Path.GetDirectoryName(_mainFilePathname);
 
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			// (Only has current concrete classes.)
 			_guidToClassMapping = new Dictionary<string, string>();
-			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
+			using (var fastSplitter = new FastXmlElementSplitter(_mainFilePathname))
 			{
 				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -193,14 +192,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		private static Dictionary<string, SortedDictionary<string, XElement>> GenerateBasicClassData(MetadataCache mdc)
+		private void GenerateBasicClassData()
 		{
-			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
+			_classData = _mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
 		}
 
 		private void CacheDataRecord(byte[] record)
 		{
-			var rtElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
+			CacheDataRecord(SharedConstants.Utf8.GetString(record));
+		}
+
+		private void CacheDataRecord(string record)
+		{
+			var rtElement = XElement.Parse(record);
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			_guidToClassMapping.Add(guid, className);
@@ -221,7 +225,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// 3. Cache it.
 			_classData[className].Add(guid, rtElement);
 		}
-
 
 		/// <summary>
 		/// Method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog

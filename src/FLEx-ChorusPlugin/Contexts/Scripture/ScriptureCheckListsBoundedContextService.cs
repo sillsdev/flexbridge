@@ -30,7 +30,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var checkList = classData[className][checkListGuid];
 
 				CmObjectNestingService.NestObject(false, checkList,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 

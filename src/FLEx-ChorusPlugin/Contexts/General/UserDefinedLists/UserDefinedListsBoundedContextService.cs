@@ -27,7 +27,6 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 				CmObjectNestingService.NestObject(
 					false,
 					userDefinedListElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(

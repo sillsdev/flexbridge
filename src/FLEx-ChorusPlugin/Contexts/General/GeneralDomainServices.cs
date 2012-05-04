@@ -9,7 +9,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal static class GeneralDomainServices
 	{
 		internal static void WriteNestedDomainData(string rootDir,
-			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{

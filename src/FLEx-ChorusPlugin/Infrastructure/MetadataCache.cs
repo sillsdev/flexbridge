@@ -16,6 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private const int StartingModelVersion = 7000037;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
 		private IEnumerable<FdoClassInfo> _concreteClasses;
+		private readonly Dictionary<string, Dictionary<string, HashSet<string>>> _propertyCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 		private static MetadataCache _mdc;
 
 		/// <summary>
@@ -38,6 +39,50 @@ namespace FLEx_ChorusPlugin.Infrastructure
 													  select classInfo);
 
 			_classes["CmObject"].ResetCaches(new Dictionary<string, FdoClassInfo>(_classes));
+
+			CacheProperties();
+		}
+
+		private void CacheProperties()
+		{
+			_propertyCache.Clear();
+
+			foreach (var className in AllConcreteClasses.Select(ci => ci.ClassName))
+			{
+				var propTypeCache = new Dictionary<string, HashSet<string>>();
+				var currentClassInfo = GetClassInfo(className);
+
+				var currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllOwningProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllOwning", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllReferenceSequenceProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllReferenceSequence", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllOwningSequenceProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllOwningSequence", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllCollectionProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllCollection", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllReferenceCollectionProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllReferenceCollection", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllMultiAltProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllMultiAlt", currentHash);
+
+				_propertyCache.Add(className, propTypeCache);
+			}
+		}
+
+		internal Dictionary<string, Dictionary<string, HashSet<string>>> PropertyCache
+		{
+			get { return _propertyCache; }
 		}
 
 		internal static MetadataCache MdCache

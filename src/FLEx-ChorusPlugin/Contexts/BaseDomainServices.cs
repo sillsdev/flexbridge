@@ -15,35 +15,31 @@ namespace FLEx_ChorusPlugin.Contexts
 	internal static class BaseDomainServices
 	{
 		internal static void WriteLinguisticsData(string pathRoot,
-											 Dictionary<string, SortedDictionary<string, XElement>> classData,
-											 Dictionary<string, string> guidToClassMapping)
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var mdc = MetadataCache.MdCache;
-			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
 		internal static void WriteAnthropologyData(string pathRoot,
-											 Dictionary<string, SortedDictionary<string, XElement>> classData,
-											 Dictionary<string, string> guidToClassMapping)
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var mdc = MetadataCache.MdCache;
 			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
 		internal static void WriteScriptureData(string pathRoot,
-											 Dictionary<string, SortedDictionary<string, XElement>> classData,
-											 Dictionary<string, string> guidToClassMapping)
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var mdc = MetadataCache.MdCache;
-			ScriptureDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
 		internal static void WriteGeneralData(string pathRoot,
-											 Dictionary<string, SortedDictionary<string, XElement>> classData,
-											 Dictionary<string, string> guidToClassMapping)
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var mdc = MetadataCache.MdCache;
-			GeneralDomainServices.WriteNestedDomainData(pathRoot, mdc, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
 		internal static void RemoveDomainData(string pathRoot)
@@ -137,7 +133,7 @@ namespace FLEx_ChorusPlugin.Contexts
 				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
 				var style = classData[className][styleGuid];
-				CmObjectNestingService.NestObject(false, style, new Dictionary<string, HashSet<string>>(), classData, guidToClassMapping);
+				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}
 

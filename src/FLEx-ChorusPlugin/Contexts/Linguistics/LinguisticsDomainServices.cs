@@ -18,7 +18,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	internal static class LinguisticsDomainServices
 	{
 		internal static void WriteNestedDomainData(string rootDir,
-			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{

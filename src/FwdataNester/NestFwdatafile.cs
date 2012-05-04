@@ -383,7 +383,6 @@ namespace FwdataTestApp
 			TokenizeFile(mdc, srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
 
 			var root = new XElement("root");
-			var exceptions = new Dictionary<string, HashSet<string>>();
 			foreach (var unownedElementKvp in unownedObjects)
 			{
 				var className = unownedElementKvp.Key;
@@ -393,7 +392,6 @@ namespace FwdataTestApp
 				{
 					classElement.Add(unownedElement);
 					CmObjectNestingService.NestObject(false, unownedElement,
-												  exceptions,
 												  classData,
 												  guidToClassMapping);
 				}

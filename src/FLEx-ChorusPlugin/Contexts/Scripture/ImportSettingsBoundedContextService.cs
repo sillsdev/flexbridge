@@ -11,9 +11,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ImportSettingsBoundedContextService
 	{
 		internal static void NestContext(XElement importSettingsProperty,
-										 string scriptureBaseDir,
-										 IDictionary<string, SortedDictionary<string, XElement>> classData,
-										 Dictionary<string, string> guidToClassMapping)
+			string scriptureBaseDir,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			if (importSettingsProperty == null)
 				return;
@@ -30,7 +30,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var importSetting = classData[className][styleGuid];
 
 				CmObjectNestingService.NestObject(false, importSetting,
-												  new Dictionary<string, HashSet<string>>(),
 												  classData,
 												  guidToClassMapping);
 

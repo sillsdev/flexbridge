@@ -23,7 +23,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// </summary>
 	internal static class TextCorpusBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
 			if (!Directory.Exists(textCorpusBaseDir))
@@ -62,7 +64,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				CmObjectNestingService.NestObject(
 					false,
 					textElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(

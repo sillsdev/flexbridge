@@ -32,7 +32,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			CmObjectNestingService.NestObject(
 				false,
 				phonDataElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			// 2. Nest: LP's PhFeatureSystem(FsFeatureSystem OA)
@@ -42,7 +41,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			CmObjectNestingService.NestObject(
 				false,
 				phonFeatureSystemElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			// B. Write: LP's PhonologicalData(PhPhonData) (Sans its PhonRuleFeats(CmPossibilityList) in a new extension (phondata).

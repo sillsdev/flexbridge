@@ -9,10 +9,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureBoundedContextService
 	{
-		internal static void NestContext(XElement languageProjectElement, XElement scriptureElement,
-										 string baseDirectory,
-										 IDictionary<string, SortedDictionary<string, XElement>> classData,
-										 Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(XElement languageProjectElement,
+			XElement scriptureElement,
+			string baseDirectory,
+			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
 			var scriptureBaseDir = baseDirectory;
@@ -23,7 +24,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 										  Path.Combine(scriptureBaseDir, SharedConstants.NoteCategoriesListFilename));
 
 			CmObjectNestingService.NestObject(false, scriptureElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 

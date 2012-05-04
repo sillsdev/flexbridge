@@ -35,7 +35,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			CmObjectNestingService.NestObject(
 				false,
 				morphDataElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			// Hold off writing it until its list is written.
@@ -48,7 +47,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			CmObjectNestingService.NestObject(
 				false,
 				morphFeatureSystemElement,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynFeaturesFilename), new XElement("FeatureSystem", morphFeatureSystemElement));
@@ -70,7 +68,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				CmObjectNestingService.NestObject(
 					false,
 					agentElement,
-					new Dictionary<string, HashSet<string>>(),
 					classData,
 					guidToClassMapping);
 			}

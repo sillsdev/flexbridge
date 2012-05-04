@@ -28,7 +28,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var refSystem = sortedInstanceData.First().Value;
 
 			CmObjectNestingService.NestObject(false, refSystem,
-				new Dictionary<string, HashSet<string>>(),
 				classData,
 				guidToClassMapping);
 

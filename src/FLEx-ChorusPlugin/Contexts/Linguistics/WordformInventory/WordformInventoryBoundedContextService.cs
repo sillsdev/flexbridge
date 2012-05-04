@@ -10,7 +10,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 {
 	internal static class WordformInventoryBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
+			SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
 			var sortedWfiWordformInstanceData = classData["WfiWordform"];
@@ -38,7 +40,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					header.Add(punctFormElement);
 					CmObjectNestingService.NestObject(false,
 						punctFormElement,
-						new Dictionary<string, HashSet<string>>(),
 						classData,
 						guidToClassMapping);
 				}
@@ -58,7 +59,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					root.Add(wordFormElement);
 					CmObjectNestingService.NestObject(false,
 						wordFormElement,
-						new Dictionary<string, HashSet<string>>(),
 						classData,
 						guidToClassMapping);
 				}
