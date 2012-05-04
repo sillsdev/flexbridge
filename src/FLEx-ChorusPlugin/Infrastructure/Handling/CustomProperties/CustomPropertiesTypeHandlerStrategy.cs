@@ -16,6 +16,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 	{
 		#region Implementation of IFieldWorksFileHandler
 
+		private const string CustomField = "CustomField";
+		private const string Key = "key";
+
 		public bool CanValidateFile(string pathToFile)
 		{
 			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.CustomProperties) &&
@@ -49,7 +52,7 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 											"name",
 											"class",
 											"type",
-											"key" // Special attr added so fast xml splitter can find each one.
+											Key // Special attr added so fast xml splitter can find each one.
 										};
 				var optionalAttrs = new HashSet<string>
 										{
@@ -59,7 +62,7 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 											"listRoot",
 											"label"
 										};
-				foreach (var customFieldElement in root.Elements("CustomField"))
+				foreach (var customFieldElement in root.Elements(CustomField))
 				{
 					if (requiredAttrs
 						.Any(requiredAttr => customFieldElement.Attribute(requiredAttr) == null))
@@ -73,7 +76,7 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 						return "Contains unrecognized attribute";
 					}
 					// Make sure 'key' attr is class+name.
-					if (customFieldElement.Attribute("class").Value + customFieldElement.Attribute("name").Value != customFieldElement.Attribute("key").Value)
+					if (customFieldElement.Attribute("class").Value + customFieldElement.Attribute("name").Value != customFieldElement.Attribute(Key).Value)
 						return "Mis-matched 'key' attribute with property class+name atributes";
 				}
 
@@ -96,7 +99,7 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"CustomField", "key");
+				CustomField, Key);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -105,7 +108,7 @@ customPropertyDeclarations.Add(new XElement("CustomField",
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
 				null,
-				"CustomField", "key", WritePreliminaryCustomPropertyInformation);
+				CustomField, Key, WritePreliminaryCustomPropertyInformation);
 		}
 
 		public string Extension

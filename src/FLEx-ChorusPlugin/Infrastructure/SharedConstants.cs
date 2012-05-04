@@ -86,6 +86,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string WordformInventoryRootFolder = "Inventory";
 		internal const string WordformInventory = "WordformInventory";
 		internal const string WordformInventoryFilename = WordformInventory + "." + Inventory;
+		internal const string WfiWordform = "WfiWordform";
 		internal const string DiscourseRootFolder = "Discourse";
 		internal const string ConstChartTempl = "ConstChartTempl";
 		internal const string ConstChartTemplFilename = ConstChartTempl + "." + List;

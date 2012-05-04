@@ -31,7 +31,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.WordformInventoryRootFolder // "Inventory"
 					|| (root.Element(SharedConstants.Header) != null && !root.Element(SharedConstants.Header).Elements("PunctuationForm").Any())
-					|| !root.Elements("WfiWordform").Any())
+					|| !root.Elements(SharedConstants.WfiWordform).Any())
 				{
 					return "Not valid inventory file";
 				}
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 						return punctResult;
 					}
 				}
-				foreach (var record in root.Elements("WfiWordform"))
+				foreach (var record in root.Elements(SharedConstants.WfiWordform))
 				{
 					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
 						return null;
@@ -73,7 +73,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				parent,
 				child,
 				SharedConstants.Header,
-				"WfiWordform", SharedConstants.GuidStr);
+				SharedConstants.WfiWordform, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -84,7 +84,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
-				SharedConstants.LexEntry,
+				SharedConstants.WfiWordform,
 				SharedConstants.GuidStr,
 				WritePreliminaryTextCorpusInformation);
 		}

@@ -14,6 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 	internal sealed class TextCorpusFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		private const string TextInCorpus = "TextInCorpus"; // NB: Not the same as what is in SharedSharedConstants.
+		private const string Text = "Text";
 
 		#region Implementation of IFieldWorksFileHandler
 
@@ -29,11 +30,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != TextInCorpus
-					|| root.Element("Text") == null)
+					|| root.Element(Text) == null)
 				{
 					return "Not valid text corpus file";
 				}
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element("Text"));
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(Text));
 			}
 			catch (Exception e)
 			{
@@ -50,7 +51,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				"Text", SharedConstants.GuidStr);
+				Text, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -60,7 +61,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
 				null,
-				"Text", SharedConstants.GuidStr, WritePreliminaryTextCorpusInformation);
+				Text, SharedConstants.GuidStr, WritePreliminaryTextCorpusInformation);
 		}
 
 		public string Extension

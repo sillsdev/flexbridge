@@ -55,7 +55,7 @@ namespace FLEx_ChorusPlugin.View
 					if (syncDlg.SyncResult.DidGetChangesFromOthers)
 					{
 						// Put Humpty together again.
-						// Use'parent', not 'syncDlg', scine syncDlg will be closed by the time this is called.
+						// Use'parent', not 'syncDlg', since syncDlg will be closed by the time this is called.
 						FLExProjectUnifier.UnifyFwdataProgress(parent, _origPathname);
 						othersChanges = true;
 					}
