@@ -66,7 +66,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					classData,
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(
-					Path.Combine(textCorpusBaseDir, "Test_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
+					Path.Combine(textCorpusBaseDir, "Text_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
 					rootElement);
 			}
 			// Remove child objsur nodes from owning LangProg
