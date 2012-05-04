@@ -25,24 +25,82 @@ namespace FLEx_ChorusPluginTests.Integration
 		[Test]
 		public void MetaDataCacheIsUpdated()
 		{
-			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
+			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000037.
 			var fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 							   where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							   select handler).First();
 
+			Assert.AreEqual(7000037, mdc.ModelVersion);
+
+			// 7000038:
+			CheckClassDoesNotExistBeforeUpGrade(mdc, "VirtualOrdering");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEntry", "DoNotPublishIn");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexExampleSentence", "DoNotPublishIn");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "PublicationTypes");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "DoNotPublishIn");
+			DoMerge(fileHandler, 7000038);
+			//		1. Add CmObject::VirtualOrdering (concrete)
+			var classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "VirtualOrdering");
+			Assert.IsFalse(classInfo.IsAbstract);
+			//			Add: RA "Source"							[CmObject]
+			CheckNewPropertyAfterUpgrade(classInfo, "Source", DataType.ReferenceAtomic);
+			//			Add: basic "Field"							[Unicode]
+			CheckNewPropertyAfterUpgrade(classInfo, "Field", DataType.Unicode);
+			//			Add: RS "Items"								[CmObject]
+			CheckNewPropertyAfterUpgrade(classInfo, "Items", DataType.ReferenceSequence);
+			//		2. Modified LexEntry
+			//			Add: RC "DoNotPublishIn"					[CmPossibility]
+			classInfo = mdc.GetClassInfo("LexEntry");
+			CheckNewPropertyAfterUpgrade(classInfo, "DoNotPublishIn", DataType.ReferenceCollection);
+			//		3. Modified LexExampleSentence
+			//			Add: RC "DoNotPublishIn"					[CmPossibility]
+			classInfo = mdc.GetClassInfo("LexExampleSentence");
+			CheckNewPropertyAfterUpgrade(classInfo, "DoNotPublishIn", DataType.ReferenceCollection);
+			//		4. Modified LexDb
+			//			Add: OA "PublicationTypes"					[CmPossibilityList]
+			classInfo = mdc.GetClassInfo("LexDb");
+			CheckNewPropertyAfterUpgrade(classInfo, "PublicationTypes", DataType.OwningAtomic);
+			//		5. Modified LexSense
+			//			Add: RC "DoNotPublishIn"					[CmPossibility]
+			classInfo = mdc.GetClassInfo("LexSense");
+			CheckNewPropertyAfterUpgrade(classInfo, "DoNotPublishIn", DataType.ReferenceCollection);
+
+			// 7000039: Modified ScrBook
+			//			Add: basic "ImportedCheckSum"				[Unicode]
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000039, "ScrBook", "ImportedCheckSum", DataType.Unicode);
+
+			// 7000040: Modified LexEntryRef
+			//			Add: RS "ShowComplexFormsIn"				[CmObject]
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000040, "LexEntryRef", "ShowComplexFormsIn", DataType.ReferenceSequence);
+
+			// 7000041: Modified LexEntry
+			//			Add: RC "DoNotShowMainEntryIn"				[CmPossibility]
+			// NOT YET!!!	REMOVE: basic ExcludeAsHeadword				[Boolean]
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000041, "LexEntry", "DoNotShowMainEntryIn", DataType.ReferenceCollection);
+
+			// 7000042: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000042);
+
+			// 7000043: Modified ScrBook
+			//			Add: basic "ImportedBtCheckSum"				[MultiUnicode]
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000043, "ScrBook", "ImportedBtCheckSum", DataType.MultiUnicode);
+
+			// 7000044: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000044);
+
 			// 7000045: Modified Segment
 			//		Add: basic "Reference"	[String]
-			CheckUpgrade(mdc, fileHandler, 7000045, "Segment", "Reference", DataType.String);
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000045, "Segment", "Reference", DataType.String);
 
 			// 7000046: Modified RnGenericRec
 			//		Add: OA "Text"	[Text]
-			CheckUpgrade(mdc, fileHandler, 7000046, "RnGenericRec", "Text", DataType.OwningAtomic);
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000046, "RnGenericRec", "Text", DataType.OwningAtomic);
 
 			// 7000047: No actual model change.
-			CheckUpgrade(mdc, fileHandler, 7000047);
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000047);
 
 			// 7000048: No actual model change.
-			CheckUpgrade(mdc, fileHandler, 7000048);
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000048);
 
 			// 7000049:
 			//		1. Add CmObject::CmMediaContainer (concrete)
@@ -65,12 +123,14 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Text", "MediaFiles");
 			DoMerge(fileHandler, 7000049);
 			// 1.
-			var classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "CmMediaContainer");
+			classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "CmMediaContainer");
 			CheckNewPropertyAfterUpgrade(classInfo, "OffsetType", DataType.Unicode);
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaURIs", DataType.OwningCollection);
+			Assert.IsFalse(classInfo.IsAbstract);
 			// 1A.
 			classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "CmMediaURI");
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaURI", DataType.Unicode);
+			Assert.IsFalse(classInfo.IsAbstract);
 			// 2.
 			classInfo = mdc.GetClassInfo("Segment");
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaURI", DataType.ReferenceAtomic);
@@ -83,13 +143,13 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000050: Modified Segment
 			//		Add: RA "Speaker"									[CmPerson]
-			CheckUpgrade(mdc, fileHandler, 7000050);
+			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000050, "Segment", "Speaker", DataType.ReferenceAtomic);
 
 			// 7000051: No actual model change.
-			CheckUpgrade(mdc, fileHandler, 7000051);
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000051);
 
 			// 7000052: No actual model change.
-			CheckUpgrade(mdc, fileHandler, 7000052);
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000052);
 
 			// 7000053:
 			// Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
@@ -150,9 +210,16 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "GlossAppend", DataType.MultiUnicode);
 			CheckNewPropertyAfterUpgrade(classInfo, "InflFeats", DataType.OwningAtomic);
 			CheckNewPropertyAfterUpgrade(classInfo, "Slots", DataType.ReferenceCollection);
+			Assert.IsFalse(classInfo.IsAbstract);
 
 			// 7000056: No actual model change.
-			CheckUpgrade(mdc, fileHandler, 7000056);
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000056);
+
+			// 7000057: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000057);
+
+			// 7000058: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000058);
 		}
 
 		[Test]
@@ -170,7 +237,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			return result;
 		}
 
-		private static void CheckUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours)
+		private static void CheckNoModelChangesUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours)
 		{
 			var startingClassCount = mdc.AllClasses.Count();
 			var startingPropertyCount = mdc.AllClasses.Sum(classInfo => classInfo.AllProperties.Count());
@@ -179,7 +246,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			Assert.AreEqual(startingPropertyCount, mdc.AllClasses.Sum(classInfo => classInfo.AllProperties.Count()), "Different number of properties.");
 		}
 
-		private static void CheckUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours, string className, string newPropName, DataType dataType)
+		private static void CheckSinglePropertyAddedUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours, string className, string newPropName, DataType dataType)
 		{
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, className, newPropName);
 
