@@ -15,6 +15,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 	{
 		#region Implementation of IFieldWorksFileHandler
 
+		private const string ReversalIndexEntry = "ReversalIndexEntry";
+
 		public bool CanValidateFile(string pathToFile)
 		{
 			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Reversal);
@@ -32,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("ReversalIndex"));
 				if (result != null)
 					return result;
-				foreach (var record in root.Elements("ReversalIndexEntry"))
+				foreach (var record in root.Elements(ReversalIndexEntry))
 				{
 					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
 						return null;
@@ -57,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				SharedConstants.Header,
-				"ReversalIndexEntry", SharedConstants.GuidStr);
+				ReversalIndexEntry, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -67,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
 				SharedConstants.Header,
-				"ReversalIndexEntry", SharedConstants.GuidStr, WritePreliminaryReversalInformation);
+				ReversalIndexEntry, SharedConstants.GuidStr, WritePreliminaryReversalInformation);
 		}
 
 		public string Extension
