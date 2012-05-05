@@ -110,7 +110,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					WriteOptionalProperties();
 					_nextJoinTask = JoinTasks.RestoreGeneralDomain;
 					break;
-				// NB: The various 'restores' are crucially ordered, so be careful changing them,if you think you must.
+				// NB: The various 'restores' are crucially ordered, so be careful changing them, if you think you must.
 				case JoinTasks.RestoreGeneralDomain:
 					_sortedData.Clear();
 					_highLevelData.Clear();
