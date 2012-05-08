@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.View
 								}
 								var actualClonedFolder = cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
 
-								var repo = new HgRepository(currentBaseFieldWorksBridgePath, new NullProgress());
+								var repo = new HgRepository(actualClonedFolder, new NullProgress());
 								var address = RepositoryAddress.Create("Shared NetWork", fileFromDlg);
 								// These next two calls are fine in how they treat the hgrc update, as a bootstrap clone has no old stuff to fret about.
 								// SetKnownRepositoryAddresses blows away entire 'paths' section, including the "default" one that hg puts in, which we don't really want anyway.
@@ -108,7 +108,7 @@ namespace FLEx_ChorusPlugin.View
 								// I (RandyR) think this then uses that address.Name as the new 'default' for that particular repo source type.
 								repo.SetIsOneDefaultSyncAddresses(address, true);
 
-								var mainFilePathName = Path.Combine(Path.Combine(currentBaseFieldWorksBridgePath, langProjName), langProjName + ".fwdata");
+								var mainFilePathName = Path.Combine(actualClonedFolder, langProjName + ".fwdata");
 								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
 								// TODO: Call this, as is done for other two?
 								//PossiblyRenameFolder(actualClonedFolder, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
