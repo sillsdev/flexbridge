@@ -77,10 +77,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				// Fix up name.
 				BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.curiosity, curiosityElement);
 				root.Add(curiosityElement);
-
-				// Write file.
-				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.LintFilename), root);
 			}
+			// Write file.
+			if (root.HasElements)
+				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.LintFilename), root);
 
 #if DEBUG
 			// By this point, there should be nothing left in either classData or guidToClassMapping.

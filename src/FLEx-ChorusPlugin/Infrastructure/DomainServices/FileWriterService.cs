@@ -20,11 +20,26 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void WriteNestedFile(string newPathname, XElement root)
 		{
-			var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), root);
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(doc.ToString()), false), CanonicalReaderSettings))
 			{
-				writer.WriteNode(nodeReader, true);
+				writer.WriteStartDocument();
+				writer.WriteStartElement(root.Name.LocalName);
+				foreach (var childNode in root.Elements().ToArray())
+				{
+					writer.WriteStartElement(childNode.Name.LocalName);
+					foreach (var attribute in childNode.Attributes())
+					{
+						writer.WriteAttributeString(attribute.Name.LocalName, attribute.Value);
+					}
+					foreach (var innerChildNode in childNode.Elements().ToArray())
+					{
+						WriteElement(writer, innerChildNode);
+						innerChildNode.Remove();
+					}
+					writer.WriteEndElement();
+					childNode.Remove();
+				}
+				writer.WriteEndElement();
 			}
 		}
 
