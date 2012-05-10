@@ -85,9 +85,10 @@ namespace SIL.LiftBridge.Model
 						select file).FirstOrDefault();
 		}
 
-		private static bool HasOnlyOneDot(string file)
+		private static bool HasOnlyOneDot(string pathname)
 		{
-			return file.IndexOf(".") == file.LastIndexOf(".");
+			var filename = Path.GetFileName(pathname);
+			return filename.IndexOf(".", StringComparison.InvariantCulture) == filename.LastIndexOf(".", StringComparison.InvariantCulture);
 		}
 
 		internal static void ClearRepoIdentifier(Guid langProjId)

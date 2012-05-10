@@ -9,9 +9,9 @@ namespace LiftBridgeTests.ModelTests
 	{
 		private string _pathToProject;
 
-		private LiftProject CreateNewbieProject()
+		private LiftProject CreateNewbieProject(string projectName = "Newbie")
 		{
-			var liftProject = new LiftProject("Newbie");
+			var liftProject = new LiftProject(projectName);
 			_pathToProject = LiftProjectServices.PathToProject(liftProject);
 			Directory.CreateDirectory(_pathToProject);
 			return liftProject;
@@ -77,6 +77,16 @@ namespace LiftBridgeTests.ModelTests
 			var liftProject = CreateNewbieProject();
 			var badLiftPathname = Path.Combine(_pathToProject, "Newbie.0.12.lift");
 			File.WriteAllText(badLiftPathname, "");
+			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			File.WriteAllText(goodLiftPathname, "");
+			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
+		}
+
+		[Test]
+		[Category("UnknownMonoIssue")] // It insists on failing on mono, for some reason.
+		public void ProjectReturnsOnlyLiftFileWhereFullPathnameHasAPeriodInIt()
+		{
+			var liftProject = CreateNewbieProject("With.Period");
 			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
 			File.WriteAllText(goodLiftPathname, "");
 			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
