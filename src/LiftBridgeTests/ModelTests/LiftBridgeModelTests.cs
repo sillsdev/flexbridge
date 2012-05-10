@@ -9,7 +9,12 @@ namespace LiftBridgeTests.ModelTests
 	{
 		private string _pathToProject;
 
-		private LiftProject CreateNewbieProject(string projectName = "Newbie")
+		private LiftProject CreateNewbieProject()
+		{
+			return CreateNewbieProject("Newbie");
+		}
+
+		private LiftProject CreateNewbieProject(string projectName)
 		{
 			var liftProject = new LiftProject(projectName);
 			_pathToProject = LiftProjectServices.PathToProject(liftProject);
