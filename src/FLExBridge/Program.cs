@@ -18,7 +18,20 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
-			using (var flexCommHelper = new FLExConnectionHelper())
+			// args are:
+			// -u username
+			// -p entire pathname to fwdata file including extension.
+			// -v kind of S/R operation: obtain, start, send_receive, view_notes
+			// No args at all: Use regular UI. FW app must not be running on S/R project.
+			var options = ParseCommandLineArgs(args);
+			string fwProjectPath = null;
+			if (options.ContainsKey("-p"))
+				fwProjectPath = options["-p"];
+			// else if (options.ContainsKey("-v") && options["-v"] == "send_receive")
+				// TBD Normally should not continue without a project path for S/R
+				// but this can happen if FLExBridge is launched independently of FieldWorks.
+				// At the moment that's fine.
+			using (var flexCommHelper = new FLExConnectionHelper(fwProjectPath))
 			{
 				var changesReceived = false;
 				try
@@ -41,12 +54,6 @@ namespace FLExBridge
 						return;
 					}
 
-					// args are:
-					// -u username
-					// -p pathname to fwdata file.
-					// -v kind of S/R operation: obtain, start, send_receive, view_notes
-					// No args at all: Use regular UI. FW app must not be running on S/R project.
-					var options = ParseCommandLineArgs(args);
 					if (!options.ContainsKey("-v") || options["-v"] == null)
 					{
 						using (var controller = new FwBridgeController())
@@ -63,11 +70,10 @@ namespace FLExBridge
 								{
 									Application.Run(controller.MainForm);
 									if (controller.CurrentProject != null)
-									{
+									{	// get the whole path with .fwdata on the end!!!
 										var fwProjectName = Path.Combine(controller.CurrentProject.DirectoryName,
 																		 controller.CurrentProject.Name + ".fwdata");
-										// get the whole path with .fwdata on the end!!!
-										flexCommHelper.SetFwProjectName(fwProjectName);
+										flexCommHelper.SendFwProjectName(fwProjectName);
 									}
 								}
 								break;
