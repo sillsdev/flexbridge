@@ -162,6 +162,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				NewLineOnAttributes = false
 			};
 			// only throws ArgumentNullException, which is prevented by a check when this class is constructed
+			if (_writer != null)
+				_writer.Close();
 			_writer = XmlWriter.Create(_tempPathname, fwWriterSettings);
 		}
 
@@ -224,6 +226,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if(_writer != null)
 			{
 				_writer.Close();
+				_writer = null;
 			}
 			while (File.Exists(_tempPathname))
 			{
