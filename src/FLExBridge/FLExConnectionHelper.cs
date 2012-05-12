@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Windows.Forms;
 using System.ServiceModel;
 using System.Threading;
 using FLEx_ChorusPlugin.Controller;
@@ -17,14 +19,20 @@ namespace FLExBridge
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
-		internal FLExConnectionHelper()
+		/// <param name="fwProjectPath">The entire FieldWorks project folder path.
+		/// Must include the project folder and project name with "fwdata" extension.
+		/// Empty is OK if not send_receive command.</param>
+		internal FLExConnectionHelper(string fwProjectPath)
 		{
 			_hostOpened = true;
-			//Debug.Fail("attach debugger here.");
+			string fwProjectName = ""; // will only be able to to S/R one project at a time
+			if (!String.IsNullOrEmpty(fwProjectPath)) // can S/R multiple projects simultaneously
+				fwProjectName = Path.GetFileNameWithoutExtension(fwProjectPath);
+
 			try
 			{
 				_host = new ServiceHost(typeof(FLExService),
-									   new[] { new Uri("net.pipe://localhost/FLExEndpoint") });
+									   new[] { new Uri("net.pipe://localhost/FLExEndpoint" + fwProjectName) });
 				//open host ready for business
 				_host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
 				_host.Open();
@@ -35,7 +43,7 @@ namespace FLExBridge
 				_hostOpened = false;
 			}
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
-													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint/FLExPipe"));
+													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint" + fwProjectName + "/FLExPipe"));
 			_pipe = pipeFactory.CreateChannel();
 			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
 			try
@@ -54,11 +62,12 @@ namespace FLExBridge
 		public bool HostOpened { get { return _hostOpened; } }
 
 		/// <summary>
-		/// Sets the entire FieldWorks project directory path (must include the
-		/// project folder and project name with "fwdata" extension).
+		/// Sends the entire FieldWorks project folder path (must include the
+		/// project folder and project name with "fwdata" extension) across the pipe
+		/// to FieldWorks.
 		/// </summary>
 		/// <param name="fwProjectName">The whole fw project path</param>
-		public void SetFwProjectName(string fwProjectName)
+		public void SendFwProjectName(string fwProjectName)
 		{
 			try
 			{
