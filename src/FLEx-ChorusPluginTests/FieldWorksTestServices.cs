@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
@@ -32,37 +33,51 @@ namespace FLEx_ChorusPluginTests
 			var parentDir = Path.GetDirectoryName(ourFile.Path);
 			ourFile.Dispose();
 			ourFile = null;
-			Directory.Delete(parentDir);
+			Directory.Delete(parentDir, true);
 
 			parentDir = Path.GetDirectoryName(commonFile.Path);
 			commonFile.Dispose();
 			commonFile = null;
-			Directory.Delete(parentDir);
+			Directory.Delete(parentDir, true);
 
 			parentDir = Path.GetDirectoryName(theirFile.Path);
 			theirFile.Dispose();
 			theirFile = null;
-			Directory.Delete(parentDir);
+			Directory.Delete(parentDir, true);
 		}
 
 		internal static void SetupTempFilesWithName(string filename, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
-			var counter = 1;
-			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter++));
-			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter++));
-			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, counter));
+			SetupTempFilesWithName(filename, MetadataCache.MaximumModelVersion, out ourFile, out commonFile, out theirFile);
 		}
 
-		internal static string CreateTempFileWithName(string filename, int counter)
+		internal static void SetupTempFilesWithName(string filename, int modelVersion, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
+		{
+			var counter = 1;
+			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
+			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
+			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter));
+		}
+
+		private static string CreateTempFileWithName(string filename, int modelVersion, int counter)
 		{
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
 			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
 			if (Directory.Exists(newDirName))
-				Directory.Delete(newDirName,true);
+				Directory.Delete(newDirName, true);
 			Directory.CreateDirectory(newDirName);
 			var replacement = Path.Combine(newDirName, filename);
 			File.Move(tempFileName, replacement);
+
+			if (filename != SharedConstants.ModelVersionFilename &&
+				Path.GetExtension(filename) != "." + SharedConstants.ModelVersion)
+			{
+				// Add model version file with given version to 'newDirName'.
+				var newModelVersionFileContents = "{\"modelversion\": " + modelVersion + "}";
+				File.WriteAllText(Path.Combine(newDirName, SharedConstants.ModelVersionFilename), newModelVersionFileContents);
+			}
+
 			return replacement;
 		}
 

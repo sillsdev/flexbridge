@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge.xml.generic;
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		public void TestSetup()
 		{
 			_eventListener = new ListenerForUnitTests();
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DataNotebookFilename, out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DataNotebookFilename, MetadataCache.MaximumModelVersion, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -191,6 +192,34 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 					}, null,
 				0, new List<Type>(),
 				2, new List<Type> {typeof (XmlAdditionChangeReport), typeof (XmlAdditionChangeReport)});
+		}
+
+		[Test]
+		public void ShouldNotHaveTwoTextElementsAftermerge()
+		{
+			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+			baseDir = Environment.OSVersion.Platform == PlatformID.Unix ? baseDir : baseDir.Replace(@"file:\", null);
+			var testDataDir = Path.Combine(baseDir, "TestData");
+			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
+			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));
+			var susannaTheirs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Susanna.ntbk"));
+
+			// No. FieldWorksCommonFileHandler-Do3WayMerge method needs to do this.
+			// var mdc = MetadataCache.TestOnlyNewCache;
+			// mdc.UpgradeToVersion(7000058);
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, annOurs,
+				_commonFile, common,
+				_theirFile, susannaTheirs,
+				new List<string>
+					{
+						@"Anthropology/RnGenericRec/Text"
+					},
+				null,
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlDeletionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]

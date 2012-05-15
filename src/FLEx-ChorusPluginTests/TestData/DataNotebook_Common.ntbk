@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Anthropology>
+	<header>
+		<RnResearchNbk
+			guid="d739cbea-ea5e-11de-85be-0013722f8dec">
+			<DateCreated
+				val="2012-5-11 20:30:59.450" />
+			<DateModified
+				val="2012-5-11 21:25:40.965" />
+			<Name>
+				<AUni
+					ws="en">Data Notebook</AUni>
+			</Name>
+			<Records />
+			<RecTypes />
+		</RnResearchNbk>
+	</header>
+	<RnGenericRec
+		guid="4a25547a-8ec7-4650-b53b-27c6f6d37fd4">
+		<AnthroCodes>
+			<refcol
+				guid="37186836-ffdb-4c3e-b0c7-8c63257bc76e"
+				t="r" />
+		</AnthroCodes>
+		<DateCreated
+			val="2012-5-11 21:25:40.964" />
+		<DateModified
+			val="2012-5-11 21:25:55.978" />
+		<DateOfEvent
+			val="0" />
+		<Locations>
+			<refcol
+				guid="be9031c1-c655-47e7-b22f-26b9ad504ae7"
+				t="r" />
+		</Locations>
+		<Researchers>
+			<refcol
+				guid="b8a34cb3-27f1-4b0d-b0f2-89dc674329b1"
+				t="r" />
+		</Researchers>
+		<Sources>
+			<refcol
+				guid="5f8112e0-cfad-4479-9803-7f75efe947ec"
+				t="r" />
+		</Sources>
+		<Text>
+			<Text
+				guid="f123e367-df11-439a-9b7a-7adff0ba1efc">
+				<Contents>
+					<StText
+						guid="f0392d21-e8eb-4c05-8bc7-783ce641223b">
+						<DateModified
+							val="2012-5-11 21:20:21.98" />
+						<Paragraphs>
+							<ownseqatomic
+								class="StTxtPara"
+								guid="d8c66454-63e4-4052-9fa9-eb1b1b0e4c6d">
+								<Contents>
+									<Str>
+										<Run
+											ws="fr">Ding, dong, la cloche, Pussy est dans le puits! Qui lui mettre? Petit Tommy vert. Qui lui a sorti? Big Johnny Stout. Qu'est-ce un vilain garçon, c'est que, Pour noyer les pauvres chatte, Qui n'a jamais lui nuire, Mais a tué les souris dans la grange de son père! </Run>
+									</Str>
+								</Contents>
+								<ParseIsCurrent
+									val="True" />
+								<Segments>
+									<ownseq
+										class="Segment"
+										guid="e1dc51be-ce85-4215-bff9-1d53a2c3c6ac">
+										<Analyses>
+											<refseq
+												guid="b65a4ae9-6f45-4600-a781-7e76ed4a7488"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="c5ec6a0e-8727-4ddd-844e-22e28dc897c2"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="1c53c7d4-cc22-432c-bead-d71eac9ec005"
+												t="r" />
+											<refseq
+												guid="76ed55f8-7b0f-43a1-9936-e4ab30d47c06"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="6bd1ce10-21d6-48ce-956e-7e54f18e1638"
+												t="r" />
+											<refseq
+												guid="656f8ae6-e54a-4582-a3f4-af205b058778"
+												t="r" />
+											<refseq
+												guid="c51e8333-d0f2-4be2-ab5f-6427d9115c65"
+												t="r" />
+											<refseq
+												guid="04fd44fe-5c2d-443d-b75f-5e8e9e069dde"
+												t="r" />
+											<refseq
+												guid="f837b53a-6c58-4ecb-98c0-634e00144964"
+												t="r" />
+											<refseq
+												guid="05c977c2-1be3-43c1-971e-de36c9501e4c"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="0" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+									<ownseq
+										class="Segment"
+										guid="7085deba-58d6-4138-aa48-e69728b93244">
+										<Analyses>
+											<refseq
+												guid="8b82e864-7d26-4441-9617-4ea0338b602e"
+												t="r" />
+											<refseq
+												guid="197b9cf2-5b0a-422f-b519-5df2f9362f7f"
+												t="r" />
+											<refseq
+												guid="76bfc75b-7779-479c-a61c-27cb65f14816"
+												t="r" />
+											<refseq
+												guid="7678f82e-8ea2-46eb-9e47-9caad019660d"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="48" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+									<ownseq
+										class="Segment"
+										guid="b06d1cba-159b-4381-8e27-e5472f800533">
+										<Analyses>
+											<refseq
+												guid="2cf4ae1c-e9cd-463c-a7bb-5ab8fa61f09c"
+												t="r" />
+											<refseq
+												guid="b0d05a1d-5445-43b4-a7c7-150134dfb938"
+												t="r" />
+											<refseq
+												guid="2758c7c0-adcd-4233-a470-9538bf6cf23f"
+												t="r" />
+											<refseq
+												guid="6fba9dcf-519a-433a-81e2-c0733c9c6a4d"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="64" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+									<ownseq
+										class="Segment"
+										guid="b1495b0b-c677-40ff-a179-b18f3f11be41">
+										<Analyses>
+											<refseq
+												guid="8b82e864-7d26-4441-9617-4ea0338b602e"
+												t="r" />
+											<refseq
+												guid="197b9cf2-5b0a-422f-b519-5df2f9362f7f"
+												t="r" />
+											<refseq
+												guid="ed59be0c-9a50-4778-a1f8-a88e792fa3b9"
+												t="r" />
+											<refseq
+												guid="7678f82e-8ea2-46eb-9e47-9caad019660d"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="82" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+									<ownseq
+										class="Segment"
+										guid="115f3925-3881-488f-9a28-e414bf3647b2">
+										<Analyses>
+											<refseq
+												guid="523accf7-60e0-4718-adfc-b1fc26a4e09f"
+												t="r" />
+											<refseq
+												guid="b09b8308-1b47-4a3a-8b95-5af9cf12698b"
+												t="r" />
+											<refseq
+												guid="9bec7ee8-76d7-4494-892e-c97f1b0570d8"
+												t="r" />
+											<refseq
+												guid="6fba9dcf-519a-433a-81e2-c0733c9c6a4d"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="99" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+									<ownseq
+										class="Segment"
+										guid="23f323b3-2187-4fce-a804-3af2630aa294">
+										<Analyses>
+											<refseq
+												guid="56787236-852c-4bdd-a16a-b721d2f767cc"
+												t="r" />
+											<refseq
+												guid="1e906df6-4e9d-40f3-a3c8-1b8d7e26dd13"
+												t="r" />
+											<refseq
+												guid="ac55b35d-dffc-4af3-b4ce-93461a94a3af"
+												t="r" />
+											<refseq
+												guid="1f1982c0-f403-4dd0-8206-1975902916c5"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="40ff84ac-147e-4a58-8569-fa27c71c97a2"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="7b4a82e1-14a3-4f39-ae3d-a30261e16d05"
+												t="r" />
+											<refseq
+												guid="1620f10c-2561-4455-bc99-1fd00711b62b"
+												t="r" />
+											<refseq
+												guid="464bae97-d58a-4c2f-8995-8a86bd4038fe"
+												t="r" />
+											<refseq
+												guid="57275e97-90e4-4f89-b0bc-cad65583b2e2"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="8b82e864-7d26-4441-9617-4ea0338b602e"
+												t="r" />
+											<refseq
+												guid="a35e4eaa-88b0-4fd0-af71-d3ac6d507e3c"
+												t="r" />
+											<refseq
+												guid="30db2a3a-9bda-465c-8cbb-9e2a60d90ee1"
+												t="r" />
+											<refseq
+												guid="197b9cf2-5b0a-422f-b519-5df2f9362f7f"
+												t="r" />
+											<refseq
+												guid="6841fbe0-c40a-4376-921d-7fb5cda2c849"
+												t="r" />
+											<refseq
+												guid="d9516ccf-14ba-4ce7-b813-986ace8031c4"
+												t="r" />
+											<refseq
+												guid="bdfd2038-8706-4e72-9ebf-280dcd0b9d31"
+												t="r" />
+											<refseq
+												guid="e394a858-aa95-48eb-9add-6cb6fb65e458"
+												t="r" />
+											<refseq
+												guid="e31b9bc1-024d-4c21-8ccd-cd5292f67477"
+												t="r" />
+											<refseq
+												guid="1620f10c-2561-4455-bc99-1fd00711b62b"
+												t="r" />
+											<refseq
+												guid="299f2275-866c-40f3-b151-a5c8d09819d3"
+												t="r" />
+											<refseq
+												guid="c51e8333-d0f2-4be2-ab5f-6427d9115c65"
+												t="r" />
+											<refseq
+												guid="1c53c7d4-cc22-432c-bead-d71eac9ec005"
+												t="r" />
+											<refseq
+												guid="18367734-06f3-4427-bf6a-a08fbb9ffecf"
+												t="r" />
+											<refseq
+												guid="11b82e70-81aa-4629-a93e-fe3fabf22129"
+												t="r" />
+											<refseq
+												guid="62998f92-9f88-48d1-b758-421c85198b46"
+												t="r" />
+											<refseq
+												guid="f44e4ae2-5edb-41c8-bcf4-513d5ac315c2"
+												t="r" />
+											<refseq
+												guid="05c977c2-1be3-43c1-971e-de36c9501e4c"
+												t="r" />
+										</Analyses>
+										<BeginOffset
+											val="117" />
+										<FreeTranslation>
+											<AStr
+												ws="en">
+												<Run
+													ws="en"></Run>
+											</AStr>
+										</FreeTranslation>
+									</ownseq>
+								</Segments>
+							</ownseqatomic>
+						</Paragraphs>
+						<RightToLeft
+							val="False" />
+					</StText>
+				</Contents>
+				<DateCreated
+					val="2012-5-11 21:20:21.80" />
+				<DateModified
+					val="2012-5-11 21:25:40.965" />
+				<Description>
+					<AStr
+						ws="fr">
+						<Run
+							ws="fr">Phew, I can see this text now.  I wondered where it was last time!</Run>
+					</AStr>
+				</Description>
+				<IsTranslated
+					val="False" />
+				<Name>
+					<AUni
+						ws="en">Poor Kitty</AUni>
+					<AUni
+						ws="fr">La pauvre Ketty</AUni>
+				</Name>
+			</Text>
+		</Text>
+		<Type>
+			<objsur
+				guid="00951e6f-2523-4ac9-a649-ad42c659cf83"
+				t="r" />
+		</Type>
+	</RnGenericRec>
+</Anthropology>

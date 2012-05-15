@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Anthropology>
+	<header>
+		<RnResearchNbk
+			guid="d739cbea-ea5e-11de-85be-0013722f8dec">
+			<DateCreated
+				val="2012-5-11 20:30:59.450" />
+			<DateModified
+				val="2012-5-11 21:25:40.965" />
+			<Name>
+				<AUni
+					ws="en">Data Notebook</AUni>
+			</Name>
+			<Records />
+			<RecTypes />
+		</RnResearchNbk>
+	</header>
+	<RnGenericRec
+		guid="4a25547a-8ec7-4650-b53b-27c6f6d37fd4">
+		<AnthroCodes>
+			<refcol
+				guid="37186836-ffdb-4c3e-b0c7-8c63257bc76e"
+				t="r" />
+		</AnthroCodes>
+		<DateCreated
+			val="2012-5-11 21:25:40.964" />
+		<DateModified
+			val="2012-5-11 21:25:55.978" />
+		<DateOfEvent
+			val="0" />
+		<Locations>
+			<refcol
+				guid="be9031c1-c655-47e7-b22f-26b9ad504ae7"
+				t="r" />
+		</Locations>
+		<Researchers>
+			<refcol
+				guid="b8a34cb3-27f1-4b0d-b0f2-89dc674329b1"
+				t="r" />
+		</Researchers>
+		<Sources>
+			<refcol
+				guid="5f8112e0-cfad-4479-9803-7f75efe947ec"
+				t="r" />
+		</Sources>
+		<Text>
+			<Text
+				guid="f123e367-df11-439a-9b7a-7adff0ba1efc">
+				<Contents>
+					<StText
+						guid="f0392d21-e8eb-4c05-8bc7-783ce641223b">
+						<DateModified
+							val="2012-5-11 21:20:21.98" />
+						<Paragraphs>
+							<ownseqatomic
+								class="StTxtPara"
+								guid="378fe472-be32-43a9-a6e5-6212813050ae">
+								<Contents>
+									<Str>
+										<Run
+											ws="fr"></Run>
+									</Str>
+								</Contents>
+								<ParseIsCurrent
+									val="True" />
+							</ownseqatomic>
+						</Paragraphs>
+						<RightToLeft
+							val="False" />
+					</StText>
+				</Contents>
+				<DateCreated
+					val="2012-5-11 21:20:21.80" />
+				<DateModified
+					val="2012-5-11 21:25:40.965" />
+				<Description>
+					<AStr
+						ws="fr">
+						<Run
+							ws="fr">Phew, I can see this text now.  I wondered where it was last time!</Run>
+					</AStr>
+				</Description>
+				<IsTranslated
+					val="False" />
+				<Name>
+					<AUni
+						ws="en">Poor Kitty</AUni>
+					<AUni
+						ws="fr">La pauvre Ketty</AUni>
+				</Name>
+			</Text>
+		</Text>
+		<Type>
+			<objsur
+				guid="00951e6f-2523-4ac9-a649-ad42c659cf83"
+				t="r" />
+		</Type>
+	</RnGenericRec>
+</Anthropology>

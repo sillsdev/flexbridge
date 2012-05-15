@@ -7,6 +7,7 @@ using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
@@ -81,7 +82,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			if (mergeOrder == null)
 				throw new ArgumentNullException("mergeOrder");
 
+			// Make sure MDC is updated.
+			// Since this method is called in another process by ChorusMerge,
+			// the MDC that was set up for splitting the file is not available.
 			var extension = FileWriterService.GetExtensionFromPathname(mergeOrder.pathToOurs);
+			if (extension != SharedConstants.ModelVersion)
+			{
+				var pathToOurs = mergeOrder.pathToOurs;
+				var folder = Path.GetDirectoryName(pathToOurs);
+				while (!File.Exists(Path.Combine(folder, SharedConstants.ModelVersionFilename)))
+				{
+					var parent = Directory.GetParent(folder);
+					folder = parent != null ? parent.ToString() : null;
+					if (folder == null)
+						break;
+				}
+				// 'folder' should now have the required model version file in it, or null for some tests.
+				var desiredModelNumber = MetadataCache.MaximumModelVersion;
+				if (folder != null)
+				{
+					var ourModelFileData = File.ReadAllText(Path.Combine(folder, SharedConstants.ModelVersionFilename));
+					desiredModelNumber = Int32.Parse(ModelVersionFileTypeHandlerStrategy.SplitData(ourModelFileData)[1]);
+				}
+				MetadataCache.MdCache.UpgradeToVersion(desiredModelNumber);
+			}
+
 			GetHandlerfromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 

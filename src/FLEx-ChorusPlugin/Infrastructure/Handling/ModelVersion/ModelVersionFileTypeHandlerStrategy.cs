@@ -121,7 +121,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 
 		#endregion
 
-		private static string[] SplitData(string data)
+		internal static string[] SplitData(string data)
 		{
 			return data.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
 		}

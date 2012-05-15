@@ -110,6 +110,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			if (newVersion < ModelVersion)
 				throw new InvalidOperationException("The version number cannot be downgraded.");
+			if (newVersion > MaximumModelVersion)
+				throw new ArgumentOutOfRangeException(String.Format("Upgrading to version {0} is not yet supported.", newVersion));
 			if (newVersion == ModelVersion)
 				return ModelVersion;
 
@@ -274,6 +276,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000058:
 					// 7000058: No actual model change.
 						break;
+					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
 
@@ -281,6 +284,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
+		public const int MaximumModelVersion = 7000058;
 
 		///<summary>
 		/// Get the FDO class information for the given class.

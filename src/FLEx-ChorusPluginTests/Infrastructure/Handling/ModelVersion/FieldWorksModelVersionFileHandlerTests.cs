@@ -24,6 +24,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		[SetUp]
 		public void TestSetup()
 		{
+			var mdc = MetadataCache.TestOnlyNewCache;
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ModelVersionFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
@@ -194,9 +195,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 		[Test]
 		public void ShouldHaveNoChanges()
 		{
-			const string commonData = "{\"modelversion\": 7000002}";
-			const string ourData = "{\"modelversion\": 7000002}";
-			const string theirData = "{\"modelversion\": 7000002}";
+			const string commonData = "{\"modelversion\": 7000037}";
+			const string ourData = "{\"modelversion\": 7000037}";
+			const string theirData = "{\"modelversion\": 7000037}";
 
 				File.WriteAllText(_commonFile.Path, commonData);
 				File.WriteAllText(_ourFile.Path, ourData);
