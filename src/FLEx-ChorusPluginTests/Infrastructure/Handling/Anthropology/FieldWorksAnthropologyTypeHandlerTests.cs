@@ -195,10 +195,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		}
 
 		[Test]
-		public void ShouldNotHaveTwoTextElementsAftermerge()
+		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
 			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-			baseDir = Environment.OSVersion.Platform == PlatformID.Unix ? baseDir : baseDir.Replace(@"file:\", null);
+#if MONO
+			baseDir = baseDir.Replace(@"file:/", null);
+#else
+			baseDir = baseDir.Replace(@"file:\", null);
+#endif
 			var testDataDir = Path.Combine(baseDir, "TestData");
 			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));
