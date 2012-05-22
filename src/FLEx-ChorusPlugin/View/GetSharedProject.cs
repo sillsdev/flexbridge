@@ -66,28 +66,28 @@ namespace FLEx_ChorusPlugin.View
 					}
 					break;
 				case ExtantRepoSource.LocalNetwork:
-					// This is not the right model for this operation.
-					// The real 'fix' is to add a new view and a new model to Chorus that does handle this.
-					// That new model really needs to make sure it has something like the "ProjectFilter" delegate
-					// on the CloneFromUsb model, which filters the folders to only allow selection of one that is for FW data (cf. below).
-					// More notes on using the CloneFromUsb model in this context:
-					//	All of the code starting at "var actualClonedFolder" and going through the line "repo.SetIsOneDefaultSyncAddresses(address, true);"
-					//	Belong in the model, not here. But, the USB clone model doesn't do that, since it doens;t need to write to the hgrc file for its location.
-					//	And, even if it did such a write, nobody would care enough to read it, as USB S/R is *much* simpler to figure out,
-					//	and its S/R is quite deterministic with no need to store a location.
-					// See how this was done in Lift Bridge with a new model and view which I hope end up in Chorus at some point.
-					var cloner = new CloneFromUsb();
-					using (var openFileDlg = new FolderBrowserDialog())
+					var cloneFromNetworkFolderModel = new GetCloneFromNetworkFolderModel(currentBaseFieldWorksBridgePath);
+					// TODO: Set sensible default folder. This one expands to the path of our .exe file:
+					cloneFromNetworkFolderModel.FolderPath = "home";
+					// Filter copied from usbCloneDlg.Model below:
+					cloneFromNetworkFolderModel.ProjectFilter = path =>
 					{
-						openFileDlg.Description = Resources.ksFindProjectDirectory;
-						openFileDlg.ShowNewFolderButton = false;
+						var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+						return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+					};
+
+					using (var openFileDlg = new GetCloneFromNetworkFolderDlg())
+					{
+						// We don't have a GetCloneFromNetworkFolderDlg constructor that takes the model because
+						// it would inexplicably mess up Visual Studio's designer view of the dialog:
+						openFileDlg.LoadFromModel(cloneFromNetworkFolderModel);
 
 						switch (openFileDlg.ShowDialog(parent))
 						{
 							default:
 								return false;
 							case DialogResult.OK:
-								var fileFromDlg = openFileDlg.SelectedPath;
+								var fileFromDlg = cloneFromNetworkFolderModel.UserSelectedRepositoryPath;
 								langProjName = Path.GetFileNameWithoutExtension(fileFromDlg);
 								// Make a clone the hard way.
 								var target = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
@@ -96,19 +96,10 @@ namespace FLEx_ChorusPlugin.View
 									MessageBox.Show(parent, Resources.ksTargetDirectoryExistsContent, Resources.ksTargetDirectoryExistsTitle);
 									return false;
 								}
-								var actualClonedFolder = cloner.MakeClone(fileFromDlg, currentBaseFieldWorksBridgePath, new StatusProgress());
 
-								var repo = new HgRepository(actualClonedFolder, new NullProgress());
-								var address = RepositoryAddress.Create("Shared NetWork", fileFromDlg);
-								// These next two calls are fine in how they treat the hgrc update, as a bootstrap clone has no old stuff to fret about.
-								// SetKnownRepositoryAddresses blows away entire 'paths' section, including the "default" one that hg puts in, which we don't really want anyway.
-								repo.SetKnownRepositoryAddresses(new[] { address });
-								// SetIsOneDefaultSyncAddresses adds 'address' to another section (ChorusDefaultRepositories) in hgrc.
-								// 'true' then writes the "address.Name=" (section.Set(address.Name, string.Empty);).
-								// I (RandyR) think this then uses that address.Name as the new 'default' for that particular repo source type.
-								repo.SetIsOneDefaultSyncAddresses(address, true);
+								cloneFromNetworkFolderModel.SaveSettings();
 
-								var mainFilePathName = Path.Combine(actualClonedFolder, langProjName + ".fwdata");
+								var mainFilePathName = Path.Combine(cloneFromNetworkFolderModel.ActualClonedFolder, langProjName + ".fwdata");
 								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
 								// TODO: Call this, as is done for other two?
 								//PossiblyRenameFolder(actualClonedFolder, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
