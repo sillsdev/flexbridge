@@ -58,9 +58,13 @@ namespace FLEx_ChorusPlugin.View
 							default:
 								return false;
 							case DialogResult.OK:
-								// It made a clone, but maybe in the wrong name.
-								FLExProjectUnifier.UnifyFwdataProgress(parent, currentBaseFieldWorksBridgePath);
-								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
+								// It made a clone, but maybe in the wrong name, grab the project name.
+								langProjName = Path.GetFileName(internetCloneDlg.PathToNewProject);
+								if (langProjName == noProject)
+									return false;
+								var mainFilePathName = Path.Combine(internetCloneDlg.PathToNewProject, langProjName + ".fwdata");
+								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
+								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
 					}
