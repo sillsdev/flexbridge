@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -11,12 +10,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// <summary>
 	/// Read/Write the text corpus bounded context.
 	///
-	/// The Text instances owned in the Texts property of lang proj, including all they own, need to then be removed from 'classData',
-	/// as that stuff will be stored elsewhere.
+	/// The Text instances are all unowned, as of DM 59, and as such get written out here.
 	///
 	/// Each Text instance will be in its own file, along with everything it owns (nested ownership as well).
 	/// The folder pattern is:
-	/// Linguistics\TextCorpus\foo.textincorpus, where foo is the guid of a Text.
+	/// Linguistics\TextCorpus\Text_guid.textincorpus, where 'guid' is the guid of a Text.
 	///
 	/// Data that is common to all texts will be in the main Linguistics\TextCorpus folder,
 	/// such as the "GenreList" property of Lang Proj.
@@ -50,13 +48,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
-				return; // No texts to process, regardless of owner. (Some can be owned by RnGenericRec.)
+				return; // No texts to process.
 
-			var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
-			if (textGuidsInLangProj.Count == 0)
-				return; //  None owned by lang project. (Some can be owned by RnGenericRec.)
-
-			foreach (var textGuid in textGuidsInLangProj)
+			foreach (var textGuid in texts.Keys)
 			{
 				var rootElement = new XElement("TextInCorpus");
 				var textElement = texts[textGuid];
@@ -70,8 +64,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					Path.Combine(textCorpusBaseDir, "Text_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
 					rootElement);
 			}
-			// Remove child objsur nodes from owning LangProg
-			langProjElement.Element("Texts").RemoveNodes();
 		}
 
 		internal static void FlattenContext(
@@ -99,28 +91,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			doc = XDocument.Load(pathname);
 			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 
-			// Put Texts back into LP.
-			var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			// Put Texts (all unowned now) all in 'sortedData'.
 			foreach (var textPathname in Directory.GetFiles(textCorpusBaseDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
 			{
 				var textDoc = XDocument.Load(textPathname);
-				// Put texts back into index's Entries element.
 				var root = textDoc.Root;
 				var textElement = root.Elements().First();
 				CmObjectFlatteningService.FlattenObject(
 					textPathname,
 					sortedData,
 					textElement,
-					langProjGuid); // Restore 'ownerguid' to text.
-				var textGuid = textElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedTexts.Add(textGuid, BaseDomainServices.CreateObjSurElement(textGuid));
+					null); // No owner.
 			}
-			// Restore LP Texts property in sorted order.
-			if (sortedTexts.Count == 0)
-				return;
-			var langProjOwningProp = langProjElement.Element("Texts");
-			foreach (var sortedTextObjSurElement in sortedTexts.Values)
-				langProjOwningProp.Add(sortedTextObjSurElement);
 		}
 	}
 }
