@@ -50,6 +50,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			_directProperties.Add(propertyinfo);
 		}
 
+		internal void RemoveProperty(string propertyName)
+		{
+			_directProperties.Remove((from pi in _directProperties
+										 where pi.PropertyName == propertyName
+										 select pi).First());
+		}
+
 		internal FdoPropertyInfo GetProperty(string propertyName)
 		{
 			return (from propInfo in AllProperties

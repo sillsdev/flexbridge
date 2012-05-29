@@ -74,9 +74,11 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000040, "LexEntryRef", "ShowComplexFormsIn", DataType.ReferenceSequence);
 
 			// 7000041: Modified LexEntry
+			//			Remove: basic ExcludeAsHeadword				[Boolean]
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEntry", "ExcludeAsHeadword");
 			//			Add: RC "DoNotShowMainEntryIn"				[CmPossibility]
-			// NOT YET!!!	REMOVE: basic ExcludeAsHeadword				[Boolean]
 			CheckSinglePropertyAddedUpgrade(mdc, fileHandler, 7000041, "LexEntry", "DoNotShowMainEntryIn", DataType.ReferenceCollection);
+			CheckPropertyRemovedAfterUpGrade(mdc, "LexEntry", "ExcludeAsHeadword");
 
 			// 7000042: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000042);
@@ -114,6 +116,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			//			Add: basic "EndTimeOffset"						[Unicode]
 			//		3. Modified Text:
 			//			Remove: SoundFilePath							[Unicode]
+			CheckPropertyExistsBeforeUpGrade(mdc, "Text", "SoundFilePath");
 			//			Add: OA "MediaFiles"							[CmMediaContainer]
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "CmMediaContainer");
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "CmMediaURI");
@@ -138,7 +141,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "EndTimeOffset", DataType.Unicode);
 			// 3.
 			classInfo = mdc.GetClassInfo("Text");
-			CheckNewPropertyAfterUpgrade(classInfo, "SoundFilePath", DataType.Unicode); // Do NOT remove it, yet.
+			CheckPropertyRemovedAfterUpGrade(mdc, "Text", "SoundFilePath");
 			CheckNewPropertyAfterUpgrade(classInfo, "MediaFiles", DataType.OwningAtomic);
 
 			// 7000050: Modified Segment
@@ -220,6 +223,17 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000058: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000058);
+
+			// 7000059:
+			//	Modified: RnGenericRec
+			//		Modified OA to RA: RA "Text" (added in 7000046)							[Text]
+			Assert.AreEqual(DataType.OwningAtomic, mdc.GetClassInfo("RnGenericRec").GetProperty("Text").DataType);
+			//	Modifed: LangProject
+			//		Remove: OC "Texts" property
+			CheckPropertyExistsBeforeUpGrade(mdc, "LangProject", "Texts");
+			DoMerge(fileHandler, 7000059);
+			Assert.AreEqual(DataType.ReferenceAtomic, mdc.GetClassInfo("RnGenericRec").GetProperty("Text").DataType);
+			CheckPropertyRemovedAfterUpGrade(mdc, "LangProject", "Texts");
 		}
 
 		[Test]
@@ -258,6 +272,24 @@ namespace FLEx_ChorusPluginTests.Integration
 		private static void CheckClassDoesNotExistBeforeUpGrade(MetadataCache mdc, string className)
 		{
 			Assert.IsNull(mdc.GetClassInfo(className));
+		}
+
+		private static void CheckPropertyExistsBeforeUpGrade(MetadataCache mdc, string className, string extantPropName)
+		{
+			var classInfo = mdc.GetClassInfo(className);
+			var newProperty = (from propInfo in classInfo.AllProperties
+							   where propInfo.PropertyName == extantPropName
+							   select propInfo).FirstOrDefault();
+			Assert.IsNotNull(newProperty, string.Format("{0} {1} should exist, before upgrade.", className, extantPropName));
+		}
+
+		private static void CheckPropertyRemovedAfterUpGrade(MetadataCache mdc, string className, string removedPropName)
+		{
+			var classInfo = mdc.GetClassInfo(className);
+			var newProperty = (from propInfo in classInfo.AllProperties
+							   where propInfo.PropertyName == removedPropName
+							   select propInfo).FirstOrDefault();
+			Assert.IsNull(newProperty, string.Format("{0} {1} should not exist, after upgrade.", className, removedPropName));
 		}
 
 		private static void CheckPropertyDoesNotExistBeforeUpGrade(MetadataCache mdc, string className, string newPropName)
