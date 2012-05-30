@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			}
 			else
 			{
-				foreach (var textGuid in texts.Keys)
+				foreach (var textGuid in texts.Keys.ToArray()) // Needs a copy, since the dictionary is changed.
 				{
 					var rootElement = new XElement("TextInCorpus");
 					var textElement = texts[textGuid];
