@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -10,6 +11,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// <summary>
 	/// Read/Write the text corpus bounded context.
 	///
+	/// [NB: this next comment is for DM58 and earlier, (for backwards compatibility).]
+	/// The Text instances owned in the Texts property of lang proj, including all they own are stored in the TextCorpus folder.
+	///
+	/// [NB: this next comment is for DM59 and later.]
 	/// The Text instances are all unowned, as of DM 59, and as such get written out here.
 	///
 	/// Each Text instance will be in its own file, along with everything it owns (nested ownership as well).
@@ -50,19 +55,46 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (texts.Count == 0)
 				return; // No texts to process.
 
-			foreach (var textGuid in texts.Keys)
+			if (MetadataCache.MdCache.ModelVersion < 7000059)
 			{
-				var rootElement = new XElement("TextInCorpus");
-				var textElement = texts[textGuid];
-				rootElement.Add(textElement);
-				CmObjectNestingService.NestObject(
-					false,
-					textElement,
-					classData,
-					guidToClassMapping);
-				FileWriterService.WriteNestedFile(
-					Path.Combine(textCorpusBaseDir, "Text_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
-					rootElement);
+				// Backwards compatible code.
+				var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
+				if (textGuidsInLangProj.Count == 0)
+					return; //  None owned by lang project. (Some can be owned by RnGenericRec.)
+
+				foreach (var textGuid in textGuidsInLangProj)
+				{
+					var rootElement = new XElement("TextInCorpus");
+					var textElement = texts[textGuid];
+					rootElement.Add(textElement);
+					CmObjectNestingService.NestObject(
+						false,
+						textElement,
+						classData,
+						guidToClassMapping);
+					FileWriterService.WriteNestedFile(
+						Path.Combine(textCorpusBaseDir, "Text_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
+						rootElement);
+				}
+				// Remove child objsur nodes from owning LangProg
+				langProjElement.Element("Texts").RemoveNodes();
+			}
+			else
+			{
+				foreach (var textGuid in texts.Keys)
+				{
+					var rootElement = new XElement("TextInCorpus");
+					var textElement = texts[textGuid];
+					rootElement.Add(textElement);
+					CmObjectNestingService.NestObject(
+						false,
+						textElement,
+						classData,
+						guidToClassMapping);
+					FileWriterService.WriteNestedFile(
+						Path.Combine(textCorpusBaseDir, "Text_" + textGuid.ToLowerInvariant() + "." + SharedConstants.TextInCorpus),
+						rootElement);
+				}
 			}
 		}
 
@@ -91,17 +123,46 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			doc = XDocument.Load(pathname);
 			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, SharedConstants.TranslationTags, doc.Root.Element(SharedConstants.CmPossibilityList));
 
-			// Put Texts (all unowned now) all in 'sortedData'.
-			foreach (var textPathname in Directory.GetFiles(textCorpusBaseDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
+			if (MetadataCache.MdCache.ModelVersion < 7000059)
 			{
-				var textDoc = XDocument.Load(textPathname);
-				var root = textDoc.Root;
-				var textElement = root.Elements().First();
-				CmObjectFlatteningService.FlattenObject(
-					textPathname,
-					sortedData,
-					textElement,
-					null); // No owner.
+				// Backwards compatible code.
+				// Put Texts back into LP.
+				var sortedTexts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+				foreach (var textPathname in Directory.GetFiles(textCorpusBaseDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
+				{
+					var textDoc = XDocument.Load(textPathname);
+					// Put texts back into index's Entries element.
+					var root = textDoc.Root;
+					var textElement = root.Elements().First();
+					CmObjectFlatteningService.FlattenObject(
+						textPathname,
+						sortedData,
+						textElement,
+						langProjGuid); // Restore 'ownerguid' to text.
+					var textGuid = textElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+					sortedTexts.Add(textGuid, BaseDomainServices.CreateObjSurElement(textGuid));
+				}
+				// Restore LP Texts property in sorted order.
+				if (sortedTexts.Count == 0)
+					return;
+				var langProjOwningProp = langProjElement.Element("Texts");
+				foreach (var sortedTextObjSurElement in sortedTexts.Values)
+					langProjOwningProp.Add(sortedTextObjSurElement);
+			}
+			else
+			{
+				// Put Texts (all unowned now) all in 'sortedData'.
+				foreach (var textPathname in Directory.GetFiles(textCorpusBaseDir, "*." + SharedConstants.TextInCorpus, SearchOption.TopDirectoryOnly))
+				{
+					var textDoc = XDocument.Load(textPathname);
+					var root = textDoc.Root;
+					var textElement = root.Elements().First();
+					CmObjectFlatteningService.FlattenObject(
+						textPathname,
+						sortedData,
+						textElement,
+						null); // No owner.
+				}
 			}
 		}
 	}
