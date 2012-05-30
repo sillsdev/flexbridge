@@ -95,7 +95,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateFile2()
+		public void ShouldBeAbleToValidateFileWithNoWordforms()
 		{
 			const string data =
 @"<Inventory>
@@ -105,7 +105,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 </Inventory>";
 
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]

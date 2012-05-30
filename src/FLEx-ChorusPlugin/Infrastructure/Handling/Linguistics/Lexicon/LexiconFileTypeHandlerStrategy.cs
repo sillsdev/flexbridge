@@ -31,8 +31,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Lexicon
 					|| root.Element(SharedConstants.Header) == null
-					|| root.Element(SharedConstants.Header).Element("LexDb") == null
-					|| !root.Elements(SharedConstants.LexEntry).Any())
+					|| root.Element(SharedConstants.Header).Element("LexDb") == null)
 				{
 					return "Not valid lexicon file";
 				}

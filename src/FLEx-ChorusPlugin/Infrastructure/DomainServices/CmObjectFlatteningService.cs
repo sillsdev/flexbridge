@@ -174,5 +174,25 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return xmlDoc;
 			}
 		}
+
+		internal static XElement AddNewPropertyElement(XElement parent, string propertyName)
+		{
+			var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase)
+				{
+					{propertyName, new XElement(propertyName)}
+				};
+			foreach (var propertyNode in parent.Elements())
+			{
+				var propName = propertyNode.Name.LocalName;
+				if (propName == SharedConstants.Custom)
+					propName = propertyNode.Attribute(SharedConstants.Name).Value;
+				sortedRecords.Add(propName, propertyNode);
+			}
+			parent.RemoveNodes();
+			foreach (var sortedPropElement in sortedRecords.Values)
+				parent.Add(sortedPropElement);
+
+			return sortedRecords[propertyName];
+		}
 	}
 }

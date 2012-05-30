@@ -60,20 +60,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				guidToClassMapping);
 
 			var sortedInstanceData = classData[SharedConstants.LexEntry];
-			if (sortedInstanceData.Count == 0)
-			{
-				// Add a dummy LexEntry, so fast xml splitter won't choke.
-				// Restore will remove it, if found.
-				root.Add(new XElement(SharedConstants.LexEntry, new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
-			}
-			else
+			if (sortedInstanceData.Count > 0)
 			{
 				var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
 					CmObjectNestingService.NestObject(false, entry,
-						classData,
-						guidToClassMapping);
+													  classData,
+													  guidToClassMapping);
 					root.Add(entry);
 				}
 			}
@@ -131,8 +125,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				lexDb,
 				langProjGuid); // Restore 'ownerguid' to LexDb.
 
-			// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
-			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry).TakeWhile(entryElement => entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != Guid.Empty.ToString().ToLowerInvariant()))
+			// Flatten all entries in root of lexDbDoc.
+			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry))
 			{
 				CmObjectFlatteningService.FlattenObject(
 					lexDbPathname,

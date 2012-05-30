@@ -31,8 +31,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.DiscourseRootFolder
 					|| root.Element(SharedConstants.Header) == null
-					|| root.Element(SharedConstants.Header).Element("DsDiscourseData") == null
-					|| !root.Elements(SharedConstants.DsChart).Any())
+					|| root.Element(SharedConstants.Header).Element("DsDiscourseData") == null)
 				{
 					return "Not valid discourse file.";
 				}

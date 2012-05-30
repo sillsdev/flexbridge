@@ -30,8 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.WordformInventoryRootFolder // "Inventory"
-					|| (root.Element(SharedConstants.Header) != null && !root.Element(SharedConstants.Header).Elements("PunctuationForm").Any())
-					|| !root.Elements(SharedConstants.WfiWordform).Any())
+					|| (root.Element(SharedConstants.Header) != null && !root.Element(SharedConstants.Header).Elements("PunctuationForm").Any()))
 				{
 					return "Not valid inventory file";
 				}
@@ -47,8 +46,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				}
 				foreach (var record in root.Elements(SharedConstants.WfiWordform))
 				{
-					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == Guid.Empty.ToString().ToLowerInvariant())
-						return null;
 					var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
 					if (result != null)
 						return result;

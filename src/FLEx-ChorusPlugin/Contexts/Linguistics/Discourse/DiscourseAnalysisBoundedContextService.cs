@@ -69,14 +69,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			langProjElement.Element("DiscourseData").RemoveNodes();
 
 			var chartElements = discourseElement.Element("Charts");
-			if (chartElements == null || !chartElements.HasElements)
-			{
-				// Add one 'dummy' using the one concrete DsConstChart class.
-				root.Add(new XElement(SharedConstants.DsChart,
-												new XAttribute(SharedConstants.Class, "DsConstChart"),
-												new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
-			}
-			else
+			if (chartElements != null && chartElements.HasElements)
 			{
 				foreach (var chartElement in chartElements.Elements())
 				{
@@ -122,25 +115,22 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 						break;
 				}
 			}
-			// Add the chart elements (except the possible dummy one) into discourseElement.
+			// Add the chart elements into discourseElement.
 			var sortedCharts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var chartElement in root.Elements(SharedConstants.DsChart))
 			{
-				var chartGuid = chartElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				if (chartGuid == Guid.Empty.ToString().ToLowerInvariant())
-					break;
-
 				// No. Add it to discourseElement, BUT in sorted order, below, and then flatten discourseElement.
 				// Restore the right main element name from the class attribute.
 				var classAttr = chartElement.Attribute(SharedConstants.Class);
 				chartElement.Name = classAttr.Value;
 				classAttr.Remove();
-				sortedCharts.Add(chartGuid, chartElement);
+				sortedCharts.Add(chartElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), chartElement);
 			}
 
 			if (sortedCharts.Count > 0)
 			{
-				var discourseElementOwningProp = discourseElement.Element("Charts");
+				var discourseElementOwningProp = discourseElement.Element("Charts")
+												 ?? CmObjectFlatteningService.AddNewPropertyElement(discourseElement, "Charts");
 				foreach (var sortedChartElement in sortedCharts.Values)
 					discourseElementOwningProp.Add(sortedChartElement);
 			}

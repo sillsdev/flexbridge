@@ -56,7 +56,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// Restore scrElement Styles property in sorted order.
 			if (sortedStyles.Count == 0)
 				return;
-			var stylesOwningProp = scrElement.Element(SharedConstants.Styles);
+			var stylesOwningProp = scrElement.Element(SharedConstants.Styles)
+								   ?? CmObjectFlatteningService.AddNewPropertyElement(scrElement, SharedConstants.Styles);
 			foreach (var sortedStyle in sortedStyles.Values)
 				stylesOwningProp.Add(sortedStyle);
 		}

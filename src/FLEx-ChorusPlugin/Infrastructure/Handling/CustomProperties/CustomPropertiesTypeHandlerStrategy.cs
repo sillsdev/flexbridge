@@ -29,17 +29,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			try
 			{
-/*
-customPropertyDeclarations.Add(new XElement("CustomField",
-	new XAttribute("name", customFieldInfo.m_fieldname),
-	new XAttribute("class", customFieldInfo.m_classname),
-	new XAttribute("type", GetFlidTypeAsString(customFieldInfo.m_fieldType)),
-	(customFieldInfo.m_destinationClass != 0) ? new XAttribute("destclass", customFieldInfo.m_destinationClass.ToString()) : null,
-	(customFieldInfo.m_fieldWs != 0) ? new XAttribute("wsSelector", customFieldInfo.m_fieldWs.ToString()) : null,
-	(!String.IsNullOrEmpty(customFieldInfo.m_fieldHelp)) ? new XAttribute("helpString", customFieldInfo.m_fieldHelp) : null,
-	(customFieldInfo.m_fieldListRoot != Guid.Empty) ? new XAttribute("listRoot", customFieldInfo.m_fieldListRoot.ToString()) : null,
-	(customFieldInfo.Label != customFieldInfo.m_fieldname) ? new XAttribute("label", customFieldInfo.Label) : null));
-*/
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.AdditionalFieldsTag)
