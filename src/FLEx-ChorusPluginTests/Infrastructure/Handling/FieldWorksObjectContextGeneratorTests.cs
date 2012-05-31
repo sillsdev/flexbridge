@@ -38,6 +38,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
 			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
 			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
+			strategies.SetStrategy("MorphoSyntaxAnalysis", MakeClassStrategy(new PosContextGenerator(), strategies));
 			return result;
 		}
 
@@ -1475,6 +1476,52 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Discourse Chart 1 (Row 2) StartDependentClauseGroup"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "449ab63e-33b1-43e8-a7bb-b1fe517b0e7e"));
+		}
+
+		[Test]
+		public void GetPartOfSpeechLabel()
+		{
+			const string source = @"<LexEntry guid='89942b8e-2b1e-4074-8641-1abca93982f8'>
+				<LexemeForm>
+				  <MoStemAllomorph guid='4109d3d2-faf4-4f80-b28c-f8e4e0146c11'>
+					<Form>
+					  <AUni ws='seh'>conflict</AUni>
+					</Form>
+				  </MoStemAllomorph>
+				</LexemeForm>
+				<MorphoSyntaxAnalyses>
+				  <MoStemMsa guid='54699bf4-7285-4f91-9f65-59b8dab40031'>
+					<PartOfSpeech>
+					  <objsur guid='8e45de56-5105-48dc-b302-05985432e1e7' t='r' />
+					</PartOfSpeech>
+				  </MoStemMsa>
+				  <MoStemMsa guid='156875ac-9f6a-4bab-9979-e914d8a062fc'>
+					<PartOfSpeech>
+					  <objsur guid='3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c' t='r' />
+					</PartOfSpeech>
+				  </MoStemMsa>
+				</MorphoSyntaxAnalyses>
+				<Senses>
+				  <ownseq class='LexSense' guid='4bd15611-5a36-422e-baa6-b6edb943c4da'>
+					<MorphoSyntaxAnalysis>
+					  <objsur guid='156875ac-9f6a-4bab-9979-e914d8a062fc' t='r' />
+					</MorphoSyntaxAnalysis>
+				  </ownseq>
+				</Senses>
+			  </LexEntry>";
+			var root = GetNode(source);
+			var input = root.ChildNodes[2].ChildNodes[0].ChildNodes[0]; // MorphoSyntaxAnalysis
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"conflict\" Grammatical Info."));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "4bd15611-5a36-422e-baa6-b6edb943c4da"));
+
+			// this is how XmlMerge/MergeChildren() gets to the correct HtmlContext
+			var dg = generator.MergeStrategies.GetElementStrategy(input).ContextDescriptorGenerator;
+			var hg = (dg as IGenerateHtmlContext);
+			Assert.That(hg.HtmlContext(input),
+				Is.EqualTo(@"<div class='guid'>Guid of part of speech: 3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c</div>"));
 		}
 	}
 }

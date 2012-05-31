@@ -15,12 +15,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 	{
 		protected override string GetLabel(XmlNode start)
 		{
-			return base.GetLabel(start) + Space + GetLabelForPos(start);
+			return LexEntryName(start) + Space + GetLabelForPos(start);
 		}
 
-		string MsaLabel
+		string EntryLabel
 		{
-			get { return Resources.kMoStemMsaClassLabel; }
+			get { return Resources.kLexEntryClassLabel; }
+		}
+
+		private string LexEntryName(XmlNode start)
+		{
+			var form = start.SelectSingleNode("ancestor::LexEntry/LexemeForm/MoStemAllomorph/Form/AUni");
+			return form == null
+				? EntryLabel
+				: EntryLabel + Space + Quote + form.InnerText + Quote;
 		}
 
 		private string GetLabelForPos(XmlNode entry)
@@ -43,18 +51,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 		{
 			string guid = ""; // guid of the MoStemMsa with the POS
 			XmlNode pos = null; // reference to the part of speech node that changed
-			var msa = mergeElement.SelectSingleNode("MorphoSyntaxAnalysis"); // should only be one in a validated file
-			if (msa != null)
+			if (mergeElement != null && mergeElement.Name == "MorphoSyntaxAnalysis")
 			{
-				guid = msa.SelectSingleNode("objsur/@guid").Value; // should only be one and have a guid in a validated file
-				pos = mergeElement.SelectSingleNode("../preceding-sibling::MorphoSyntaxAnalyses/MoStemMsa[@guid = \"" + guid + "\"]/PartOfSpeech");
+				guid = mergeElement.SelectSingleNode("objsur/@guid").Value; // should only be one and have a guid in a validated file
+				pos = mergeElement.SelectSingleNode("../../preceding-sibling::MorphoSyntaxAnalyses/MoStemMsa[@guid = \"" + guid + "\"]/PartOfSpeech");
 			}
 			if (pos == null)
 				return base.HtmlContext(mergeElement); // something not right!
 
 			var posGuid = pos.SelectSingleNode("objsur/@guid").Value;
 			return "<div class='guid'>" + "Guid of part of speech: " + posGuid  + "</div>";
-
 		}
 	}
 }
