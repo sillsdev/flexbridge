@@ -255,13 +255,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		public string HtmlContext(XmlNode mergeElement)
+		public virtual string HtmlContext(XmlNode mergeElement)
 		{
 			// I expect the following code will eventually just be a default, if we can't match something better.
 			if (IsMultiString(mergeElement))
 				return HtmlForMultiString(mergeElement);
 			if (IsMultiStringChild(mergeElement))
 				return HtmlForMultiString(mergeElement.ParentNode);
+			if (mergeElement.Name == SharedConstants.Ownseq)
+			{
+				var strategy = GetOwnSeqStrategy(mergeElement);
+				if (strategy != null && strategy.ContextDescriptorGenerator != null)
+				{
+					return ((FieldWorkObjectContextGenerator)strategy.ContextDescriptorGenerator).HtmlContext(mergeElement);
+				}
+			}
 			// last resort
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
 		}
