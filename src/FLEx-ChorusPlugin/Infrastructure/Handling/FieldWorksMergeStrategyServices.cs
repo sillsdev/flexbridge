@@ -178,17 +178,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							}
 							break;
 					}
-
-					string propKey = String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName);
-					switch (propKey)
-					{
-						//case "LexSense_MorphoSyntaxAnalysis":
-						//    strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PosContextGenerator()));
-						//    break;
-						default:
-							strategiesForMerger.SetStrategy(propKey, propStrategy);
-							break;
-					}
+					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
 				}
 			}
 		}

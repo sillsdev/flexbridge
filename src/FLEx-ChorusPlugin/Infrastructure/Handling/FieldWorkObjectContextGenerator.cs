@@ -262,15 +262,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return HtmlForMultiString(mergeElement);
 			if (IsMultiStringChild(mergeElement))
 				return HtmlForMultiString(mergeElement.ParentNode);
-/*			if (mergeElement.Name == SharedConstants.Ownseq)
-			{
-				var strategy = GetOwnSeqStrategy(mergeElement);
-				if (strategy != null && strategy.ContextDescriptorGenerator != null)
-				{
-					return ((FieldWorkObjectContextGenerator)strategy.ContextDescriptorGenerator).HtmlContext(mergeElement);
-				}
-			}
- */
 			// last resort
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
 		}
