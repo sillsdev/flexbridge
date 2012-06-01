@@ -124,9 +124,10 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var root = doc.Root;
 			var dnMainElement = root.Element(SharedConstants.Header).Element("RnResearchNbk");
 
-			// Add the chart elements into discourseElement.
+			// Add the record elements (except the possible dummy one) into dnMainElement.
 			var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var recordElement in root.Elements("RnGenericRec").ToList())
+			foreach (var recordElement in root.Elements("RnGenericRec")
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
 				// Add it to Records property of dnMainElement, BUT in sorted order, below, and then flatten dnMainElement.
 				sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);

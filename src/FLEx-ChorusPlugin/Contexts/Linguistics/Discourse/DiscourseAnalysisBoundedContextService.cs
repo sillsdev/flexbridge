@@ -115,9 +115,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 						break;
 				}
 			}
-			// Add the chart elements into discourseElement.
+			// Add the chart elements (except the possible dummy one) into discourseElement.
 			var sortedCharts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var chartElement in root.Elements(SharedConstants.DsChart))
+			foreach (var chartElement in root.Elements(SharedConstants.DsChart)
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
 				// No. Add it to discourseElement, BUT in sorted order, below, and then flatten discourseElement.
 				// Restore the right main element name from the class attribute.

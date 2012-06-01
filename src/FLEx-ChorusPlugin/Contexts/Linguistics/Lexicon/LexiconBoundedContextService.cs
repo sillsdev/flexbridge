@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -125,8 +124,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				lexDb,
 				langProjGuid); // Restore 'ownerguid' to LexDb.
 
-			// Flatten all entries in root of lexDbDoc.
-			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry))
+			// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
+			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry)
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
 				CmObjectFlatteningService.FlattenObject(
 					lexDbPathname,

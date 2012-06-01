@@ -1,10 +1,12 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal static class SharedConstants
 	{
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
+		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
 
 		// General
 		internal const string Str = "Str";

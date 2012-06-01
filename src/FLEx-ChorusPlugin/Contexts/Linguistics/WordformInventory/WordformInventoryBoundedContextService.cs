@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -85,7 +84,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (optionalHeaderElement != null)
 				unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
 			unownedElements.AddRange(doc.Root.Elements("WfiWordform"));
-			foreach (var unownedElement in unownedElements)
+			// Query skips the dummy WfiWordform, if it is present.
+			foreach (var unownedElement in unownedElements
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
 				CmObjectFlatteningService.FlattenObject(
 					inventoryPathname,

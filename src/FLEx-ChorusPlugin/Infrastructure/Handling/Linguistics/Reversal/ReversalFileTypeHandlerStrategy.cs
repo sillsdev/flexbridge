@@ -36,6 +36,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 					return result;
 				foreach (var record in root.Elements(ReversalIndexEntry))
 				{
+					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
+						return null;
 					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
 					if (result != null)
 						return result;

@@ -46,6 +46,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 				}
 				foreach (var record in root.Elements(SharedConstants.WfiWordform))
 				{
+					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
+						return null;
 					var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
 					if (result != null)
 						return result;

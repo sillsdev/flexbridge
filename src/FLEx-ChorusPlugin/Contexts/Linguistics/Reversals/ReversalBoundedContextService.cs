@@ -124,8 +124,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				}
 
 				// Put all records back in ReversalIndex, before sort and restore.
+				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 				var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-				foreach (var recordElement in root.Elements("ReversalIndexEntry").ToList())
+				foreach (var recordElement in root.Elements("ReversalIndexEntry")
+					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 				{
 					// Add it to Records property of revIdxElement, BUT in sorted order, below, and then flatten dnMainElement.
 					sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);
