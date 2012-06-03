@@ -94,20 +94,13 @@ namespace FLEx_ChorusPlugin.Controller
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
 			var chorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, Environment.UserName);
-			var enableSendReceiveBtn = true;
-			var makeWarningsVisible = false;
-
-			// 1: If FW project is in use, then disable the S/R btn and show a warning message.
-			if (_currentLanguageProject.FieldWorkProjectInUse)
-			{
-				// This still allows the user to see the history,notes, etc, tab control.
-				enableSendReceiveBtn = false;
-				makeWarningsVisible = true;
-			}
+			// 1: If FW project is in use, then show a warning message.
+			var projectInUse = _currentLanguageProject.FieldWorkProjectInUse;
 
 			// 2. Show correct view and enable/disable S/R btn and show (or not) the warnings.
 			_projectView.ActivateView(_existingSystemView);
-			_fwBridgeView.EnableSendReceiveControls(enableSendReceiveBtn, makeWarningsVisible);
+			_existingSystemView.UpdateDisplay(projectInUse);
+			_fwBridgeView.EnableSendReceiveControls(projectInUse);
 			SetSystem(chorusSystem);
 		}
 

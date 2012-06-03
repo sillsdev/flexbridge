@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Web;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Misc;
@@ -19,6 +17,11 @@ namespace FLEx_ChorusPlugin.View
 		internal ExistingSystemView()
 		{
 			InitializeComponent();
+		}
+
+		void IExistingSystemView.UpdateDisplay(bool projectIsInUse)
+		{
+			_tcMain.TabPages[2].Enabled = !projectIsInUse;
 		}
 
 		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem, LanguageProject project)
@@ -55,7 +58,7 @@ namespace FLEx_ChorusPlugin.View
 				ResetPage(3, new SettingsView(new SettingsModel(chorusSystem.Repository)));
 				// 4 - TroubleshootingView
 				ResetPage(4, new TroubleshootingView(chorusSystem.Repository));
-				//ResetTabPage(5, TODO: Figure out what to do on About page.);
+				//Nothing to do for About page: ResetTabPage(5, xyz);
 			}
 
 			_tcMain.ResumeLayout(true);

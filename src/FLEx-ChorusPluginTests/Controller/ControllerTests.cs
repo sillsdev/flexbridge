@@ -66,7 +66,7 @@ namespace FLEx_ChorusPluginTests.Controller
 		}
 
 		[Test]
-		public void EnsureSendReceiveBtnIsDisabledForSharableProject()
+		public void EnsureWarningsAreVisibleForLockedSharableProject()
 		{
 			var sharableButLockedProject = (from project in _mockedFwBridgeView.Projects
 									 where project.IsRemoteCollaborationEnabled
@@ -77,13 +77,14 @@ namespace FLEx_ChorusPluginTests.Controller
 			try
 			{
 				_mockedFwBridgeView.RaiseProjectSelected(sharableButLockedProject);
-				Assert.IsFalse(_mockedFwBridgeView.EnableSendReceive);
 
 				// Tests IProjectView_ActivateView
 				Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
 
 				// Tests IExistingSystemView_ChorusSys
 				Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+
+				Assert.IsTrue(_mockedFwBridgeView.WarningsAreVisible);
 			}
 			finally
 			{
@@ -93,13 +94,12 @@ namespace FLEx_ChorusPluginTests.Controller
 		}
 
 		[Test]
-		public void EnsureSendReceiveBtnIsEnabledForUnsharedButSharableProject()
+		public void EnsureWarningsAreNotVisibleForUnsharedButSharableProject()
 		{
 			var unsharedButSharableProject = (from project in _mockedFwBridgeView.Projects
 									 where !project.IsRemoteCollaborationEnabled
 									 select project).First();
 			_mockedFwBridgeView.RaiseProjectSelected(unsharedButSharableProject);
-			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
@@ -111,19 +111,20 @@ namespace FLEx_ChorusPluginTests.Controller
 		}
 
 		[Test]
-		public void EnsureSendReceiveBtnIsEnabledForSharableProject()
+		public void EnsureWarningsAreNotVisibleForSharableProject()
 		{
 			var sharableProject = (from project in _mockedFwBridgeView.Projects
 									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
 			_mockedFwBridgeView.RaiseProjectSelected(sharableProject);
-			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
 
 			// Tests IExistingSystemView_ChorusSys
 			Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+
+			Assert.IsFalse(_mockedFwBridgeView.WarningsAreVisible);
 		}
 
 		[Test]
