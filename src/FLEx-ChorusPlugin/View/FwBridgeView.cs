@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.View
 				_cbProjects.SuspendLayout();
 
 				_cbProjects.Items.Clear();
-				var projectsCopy = _projects.ToList();
+				var projectsCopy = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
 				foreach (var project in projectsCopy)
 					_cbProjects.Items.Add(project);
 				if (projectsCopy.Any())
