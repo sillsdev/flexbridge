@@ -219,6 +219,7 @@
 	<Compile Include="View\FLExBridge.Designer.cs">
 	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\FlexBridgeSychronizerAdjunct.cs" />
 	<Compile Include="View\FwBridgeConflictView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
