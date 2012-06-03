@@ -4,7 +4,7 @@ using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal sealed class FlexBridgeSychronizerAdjunct : ISychronizerAdjunct
 	{

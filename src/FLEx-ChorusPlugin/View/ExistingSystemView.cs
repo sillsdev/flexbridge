@@ -6,6 +6,7 @@ using Chorus;
 using Chorus.UI.Misc;
 using Chorus.UI.Settings;
 using Chorus.UI.Sync;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View

@@ -4,8 +4,9 @@ using Chorus;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
+using FLEx_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal sealed class SynchronizeProject : ISynchronizeProject
 	{

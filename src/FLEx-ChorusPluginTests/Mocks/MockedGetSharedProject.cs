@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.View;
 
