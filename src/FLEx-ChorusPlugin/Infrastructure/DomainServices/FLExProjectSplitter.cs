@@ -238,7 +238,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand, "Split up project file", true);
 			var state = new ProgressDialogProgressState(progressHandler);
 			progressHandler.ShowModal(state);
-			if (state.Cancel)
+			if (state.Cancel && parentForm != null)
 			{
 				parentForm.Close();
 			}

@@ -36,13 +36,15 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
+					syncDlg.Parent = parent;
+
 					// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring now.
 					// 'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and
 					// the Synchoronizer class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit) call.
 					// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
-					// so FlexBrigge can restore the fwdata file, AND, most importantly,
+					// so Flex Bridge can restore the fwdata file, AND, most importantly,
 					// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-					syncDlg.SetSynchronizerAdjunct(new FlexBridgeSychronizerAdjunct(parent, _origPathname));
+					syncDlg.SetSynchronizerAdjunct(new FlexBridgeSychronizerAdjunct(_origPathname));
 
 					// Chorus does it in ths order:
 					// local Commit

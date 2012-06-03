@@ -8,12 +8,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal sealed class FlexBridgeSychronizerAdjunct : ISychronizerAdjunct
 	{
-		private readonly Form _parent;
 		private readonly string _fwdataPathname;
+		private bool _needToNestMainFile = true;
 
-		internal FlexBridgeSychronizerAdjunct(Form parent, string fwdataPathname)
+		internal FlexBridgeSychronizerAdjunct(string fwdataPathname)
 		{
-			_parent = parent;
 			_fwdataPathname = fwdataPathname;
 		}
 
@@ -26,14 +25,24 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		public void PrepareForInitialCommit(IProgress progress)
 		{
+			if (!_needToNestMainFile)
+				return; // Only nest it one time.
+
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
-			FLExProjectSplitter.SplitFwdataDelegate(_parent, _fwdataPathname);
+			using (var newParent = new Form())
+			{
+				FLExProjectSplitter.SplitFwdataDelegate(newParent, _fwdataPathname);
+			}
+			_needToNestMainFile = false;
 		}
 
 		public void PrepareForPostMergeCommit(IProgress progress, int totalNumberOfMerges, int currentMerge)
 		{
 			progress.WriteMessage("Restore project file '{0}' for merge {1} of {2}", ProjectFilename, currentMerge, totalNumberOfMerges);
-			FLExProjectUnifier.UnifyFwdataProgress(_parent, _fwdataPathname);
+			using (var newParent = new Form())
+			{
+				FLExProjectUnifier.UnifyFwdataProgress(newParent, _fwdataPathname);
+			}
 		}
 
 		#endregion

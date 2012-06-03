@@ -48,7 +48,7 @@ namespace FLEx_ChorusPlugin.View
 				_tcMain.Enabled = true;
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
-				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(FindForm(), Path.Combine(_project.DirectoryName, _project.Name + ".fwdata"));
+				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(_project.DirectoryName, _project.Name + ".fwdata"));
 				var syncModel = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
 													 SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,
 													 new ChorusUser(chorusSystem.UserNameForHistoryAndNotes));
