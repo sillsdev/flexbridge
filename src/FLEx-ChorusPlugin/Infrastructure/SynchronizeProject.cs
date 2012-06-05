@@ -36,8 +36,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
-					syncDlg.Parent = parent;
-
 					// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring now.
 					// 'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and
 					// the Synchoronizer class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit) call.
