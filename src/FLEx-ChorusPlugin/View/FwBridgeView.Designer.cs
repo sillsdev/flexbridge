@@ -30,7 +30,6 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwBridgeView));
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._sendReceiveButton = new System.Windows.Forms.Button();
 			this._label1 = new System.Windows.Forms.Label();
 			this._cbProjects = new System.Windows.Forms.ComboBox();
 			this._projectView = new ProjectView();
@@ -57,7 +56,6 @@
 			this._splitContainer.Panel1.Controls.Add(this._warninglabel2);
 			this._splitContainer.Panel1.Controls.Add(this._pictureBox);
 			this._splitContainer.Panel1.Controls.Add(this._warninglabel1);
-			this._splitContainer.Panel1.Controls.Add(this._sendReceiveButton);
 			this._splitContainer.Panel1.Controls.Add(this._label1);
 			this._splitContainer.Panel1.Controls.Add(this._cbProjects);
 			//
@@ -66,20 +64,6 @@
 			this._splitContainer.Panel2.Controls.Add(this._projectView);
 			this._splitContainer.Size = new System.Drawing.Size(852, 456);
 			this._splitContainer.TabIndex = 0;
-			//
-			// _sendReceiveButton
-			//
-			this._sendReceiveButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-			this._sendReceiveButton.Image = ((System.Drawing.Image)(resources.GetObject("_sendReceiveButton.Image")));
-			this._sendReceiveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this._sendReceiveButton.Location = new System.Drawing.Point(337, 5);
-			this._sendReceiveButton.Name = "_sendReceiveButton";
-			this._sendReceiveButton.Size = new System.Drawing.Size(132, 38);
-			this._sendReceiveButton.TabIndex = 21;
-			this._sendReceiveButton.Text = "Send/Receive";
-			this._sendReceiveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._sendReceiveButton.UseVisualStyleBackColor = false;
-			this._sendReceiveButton.Click += new System.EventHandler(this.SendReceiveButtonClick);
 			//
 			// _label1
 			//
@@ -156,7 +140,6 @@
 		#endregion
 
 		private System.Windows.Forms.SplitContainer _splitContainer;
-		private System.Windows.Forms.Button _sendReceiveButton;
 		private System.Windows.Forms.Label _label1;
 		private System.Windows.Forms.ComboBox _cbProjects;
 		private ProjectView _projectView;

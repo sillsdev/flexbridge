@@ -4,6 +4,7 @@ using Chorus.VcsDrivers;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.clone;
 using Chorus.UI.Clone;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.Model;
 using Palaso.Extensions;

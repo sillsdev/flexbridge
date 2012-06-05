@@ -1,7 +1,8 @@
 ﻿using System.Windows.Forms;
 using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	/// <summary>
 	/// Interface that handles getting a teammate's shared FieldWorks project.

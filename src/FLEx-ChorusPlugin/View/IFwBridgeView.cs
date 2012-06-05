@@ -10,6 +10,6 @@ namespace FLEx_ChorusPlugin.View
 
 		IEnumerable<LanguageProject> Projects { set; }
 		IProjectView ProjectView { get; }
-		void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible);
+		void EnableSendReceiveControls(bool makeWarningsVisible);
 	}
 }
