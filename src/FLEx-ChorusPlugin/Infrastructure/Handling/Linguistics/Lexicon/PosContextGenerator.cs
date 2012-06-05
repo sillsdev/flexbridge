@@ -59,10 +59,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 				guid = mergeElement.SelectSingleNode("objsur/@guid").Value; // should only be one and have a guid in a validated file
 				pos = mergeElement.SelectSingleNode("../../preceding-sibling::MorphoSyntaxAnalyses/*[@guid = \"" + guid + "\"]/PartOfSpeech");
 			}
-			if (pos == null)
-				throw new ArgumentException("Node is not valid for part of speech guid lookup."); // something not right!
 
-			var posGuid = pos.SelectSingleNode("objsur/@guid").Value;
+			var posGuid = pos != null ? pos.SelectSingleNode("objsur/@guid").Value : "unknown";
 			return "<div class='guid'>" + "Guid of part of speech: " + posGuid  + "</div>";
 		}
 
