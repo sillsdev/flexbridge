@@ -25,7 +25,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			GeneralDomainOrphansBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 		}
 
-		internal static void FlattenDomain(
+		internal static void FlattenDomain(IProgress progress,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string rootDir)
@@ -35,8 +35,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				return;
 
 			// Do in reverse order from nesting.
+			progress.WriteMessage("Collecting the problem data....");
 			GeneralDomainOrphansBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
+			progress.WriteMessage("Collecting the language project data....");
 			GeneralDomainBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
+			progress.WriteMessage("Collecting the user-defined list data....");
 			UserDefinedListsBoundedContextService.FlattenContext(highLevelData, sortedData, generalBaseDir);
 		}
 

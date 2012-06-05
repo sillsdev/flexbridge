@@ -1,5 +1,4 @@
 using System.IO;
-using System.Windows.Forms;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
@@ -30,16 +29,15 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
 			FLExProjectSplitter.PushHumptyOffTheWall(progress, _fwdataPathname);
+			progress.WriteMessage("Finished splitting up project file: {0}", ProjectFilename);
 			_needToNestMainFile = false;
 		}
 
 		public void PrepareForPostMergeCommit(IProgress progress, int totalNumberOfMerges, int currentMerge)
 		{
 			progress.WriteMessage("Restore project file '{0}' for merge {1} of {2}", ProjectFilename, currentMerge, totalNumberOfMerges);
-			using (var newParent = new Form())
-			{
-				FLExProjectUnifier.UnifyFwdataProgress(newParent, _fwdataPathname);
-			}
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _fwdataPathname);
+			progress.WriteMessage("Finished Restoring project file '{0}' for merge {1} of {2}", ProjectFilename, currentMerge, totalNumberOfMerges);
 		}
 
 		#endregion

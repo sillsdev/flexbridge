@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Contexts.Anthropology;
 using FLEx_ChorusPlugin.Contexts.General;
 using FLEx_ChorusPlugin.Contexts.Linguistics;
 using FLEx_ChorusPlugin.Contexts.Scripture;
-using Palaso.Progress;
-using System.Windows.Forms;
-using Palaso.UI.WindowsForms.Progress;
-using Palaso.UI.WindowsForms.Progress.Commands;
+using Palaso.Code;
+using Palaso.IO;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -32,305 +31,85 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	///		but only if a Send/Receive had new information brought back into the local repo.
 	///		NB: The client of the service decides if new information was found, and decides to call the service, or not.
 	/// </summary>
-	internal class FLExProjectUnifier
+	internal static class FLExProjectUnifier
 	{
-		private enum JoinTasks
+		internal static void PutHumptyTogetherAgain(IProgress progress, string mainFilePathname)
 		{
-			SetupUnifiedFile = 0,
-			UpdateVersion = 1,
-			WriteOptionalProperties = 2,
-			RestoreGeneralDomain = 3,
-			RestoreScriptureDomain = 4,
-			RestoreAnthropologyDomain = 5,
-			RestoreLinguisticsDomain = 6,
-			WriteTempFile = 7,
-			CopyTempToFwdata = 8
-		};
-
-		private JoinTasks _nextJoinTask = JoinTasks.SetupUnifiedFile;
-
-		private readonly MetadataCache _mdc = MetadataCache.MdCache;
-		private readonly string _mainFilePathname;
-		private readonly string _pathRoot;
-		private static string _tempPathname;
-		private static UnifyFwdataCommand _unifyFwdataCommand;
-		private XmlWriter _writer;
-		private readonly SortedDictionary<string, XElement> _sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-		private readonly SortedDictionary<string, XElement> _highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-
-		public FLExProjectUnifier(string mainFilePathname)
-		{
+			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckPathname(mainFilePathname);
-			_mainFilePathname = mainFilePathname;
-			_pathRoot = Path.GetDirectoryName(_mainFilePathname);
-			_tempPathname = Path.GetTempFileName();
-		}
 
-		public int Steps
-		{
-			get
+			using (var tempFile = new TempFile())
 			{
-				return Enum.GetValues(typeof(JoinTasks)).GetLength(0);
-			}
-		}
-
-		// ONLY use in tests where you don't want the progress bar to show.
-		internal void PutHumptyTogetherAgain()
-		{
-			try
-			{
-				for (var subtask = 0; subtask < Steps; subtask++)
+				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings
+																		{
+																			OmitXmlDeclaration = false,
+																			CheckCharacters = true,
+																			ConformanceLevel = ConformanceLevel.Document,
+																			Encoding = new UTF8Encoding(false),
+																			Indent = true,
+																			IndentChars = (""),
+																			NewLineOnAttributes = false
+																		}))
 				{
-					PutHumptyTogetherAgainWatching();
+					var pathRoot = Path.GetDirectoryName(mainFilePathname);
+					// NB: The method calls are strictly ordered.
+					// Don't even think of changing them.
+					progress.WriteMessage("Processing data model version number....");
+					UpgradeToVersion(writer, pathRoot);
+					progress.WriteMessage("Processing custom properties....");
+					WriteOptionalCustomProperties(writer, pathRoot);
+
+					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(progress, pathRoot);
+
+					progress.WriteMessage("Writing temporary fwdata file....");
+					foreach (var rtElement in sortedData.Values)
+						FileWriterService.WriteElement(writer, rtElement);
+					writer.WriteEndElement();
 				}
-			}
-			finally
-			{
-				CloseTempFile();
-			}
-		}
-
-		/// <summary>
-		/// A state machine needed to quantize the process of unifying the split *.fwdata
-		/// files so a progress bar can track it.
-		/// </summary>
-		internal void PutHumptyTogetherAgainWatching()
-		{
-			switch (_nextJoinTask)
-			{
-				case JoinTasks.SetupUnifiedFile:
-					SetupUnifiedFile();
-					_nextJoinTask = JoinTasks.UpdateVersion;
-					break;
-				case JoinTasks.UpdateVersion:
-					UpgradeToVersion();
-					_nextJoinTask = JoinTasks.WriteOptionalProperties;
-					break;
-				case JoinTasks.WriteOptionalProperties:
-					WriteOptionalProperties();
-					_nextJoinTask = JoinTasks.RestoreGeneralDomain;
-					break;
-				// NB: The various 'restores' are crucially ordered, so be careful changing them, if you think you must.
-				case JoinTasks.RestoreGeneralDomain:
-					_sortedData.Clear();
-					_highLevelData.Clear();
-					GeneralDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
-					_nextJoinTask = JoinTasks.RestoreScriptureDomain;
-					break;
-				case JoinTasks.RestoreScriptureDomain:
-					ScriptureDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
-					_nextJoinTask = JoinTasks.RestoreAnthropologyDomain;
-					break;
-				case JoinTasks.RestoreAnthropologyDomain:
-					AnthropologyDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
-					_nextJoinTask = JoinTasks.RestoreLinguisticsDomain;
-					break;
-				case JoinTasks.RestoreLinguisticsDomain:
-					LinguisticsDomainServices.FlattenDomain(_highLevelData, _sortedData, _pathRoot);
-					_nextJoinTask = JoinTasks.WriteTempFile;
-					break;
-				case JoinTasks.WriteTempFile:
-					WriteTempFile();
-					_sortedData.Clear();
-					_highLevelData.Clear();
-					_nextJoinTask = JoinTasks.CopyTempToFwdata;
-					break;
-				case JoinTasks.CopyTempToFwdata:
-					CopyTempToFwdata();
-					_nextJoinTask = JoinTasks.SetupUnifiedFile;
-					break;
-				default:
-					CloseTempFile();
-					var badState = _nextJoinTask;
-					_nextJoinTask = JoinTasks.SetupUnifiedFile;
-					throw new InvalidOperationException("Invalid state [" + badState + "] while assembling Send/Receive project file.");
+				//Thread.Sleep(2000); In case it blows (access denied) up again on Sue's computer.
+				progress.WriteMessage("Copying temporary fwdata file to main file....");
+				File.Copy(tempFile.Path, mainFilePathname, true);
 			}
 		}
 
-		internal void SetupUnifiedFile()
+		private static void UpgradeToVersion(XmlWriter writer, string pathRoot)
 		{
-			// The optional custom props element must be first.
-			// NB: This should follow current FW write settings practice.
-			var fwWriterSettings = new XmlWriterSettings
-			{
-				OmitXmlDeclaration = false,
-				CheckCharacters = true,
-				ConformanceLevel = ConformanceLevel.Document,
-				Encoding = new UTF8Encoding(false),
-				Indent = true,
-				IndentChars = (""),
-				NewLineOnAttributes = false
-			};
-			// only throws ArgumentNullException, which is prevented by a check when this class is constructed
-			if (_writer != null)
-				_writer.Close();
-			_writer = XmlWriter.Create(_tempPathname, fwWriterSettings);
-		}
-
-		internal void UpgradeToVersion()
-		{
-			_writer.WriteStartElement("languageproject");
+			writer.WriteStartElement("languageproject");
 
 			// Write out version number from the ModelVersion file.
-			var modelVersionData = File.ReadAllText(Path.Combine(_pathRoot, SharedConstants.ModelVersionFilename));
+			var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
 			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
 			var version = splitModelVersionData[1].Trim();
-			_writer.WriteAttributeString("version", version);
+			writer.WriteAttributeString("version", version);
 
 			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		internal void WriteOptionalProperties()
+		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
 		{
 			// Write out optional custom property data to the fwdata file.
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
-			var optionalCustomPropFile = Path.Combine(_pathRoot, SharedConstants.CustomPropertiesFilename);
-			// Remove 'key' attribute from CustomField elements, before writing to main file.
+			var optionalCustomPropFile = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
 			var doc = XDocument.Load(optionalCustomPropFile);
 			var customFieldElements = doc.Root.Elements("CustomField").ToList();
 			if (!customFieldElements.Any())
 				return;
 
+			var mdc = MetadataCache.MdCache;
 			foreach (var cf in customFieldElements)
 			{
+				// Remove 'key' attribute from CustomField elements, before writing to main file.
 				cf.Attribute("key").Remove();
 				// Restore type attr for object values.
 				var propType = cf.Attribute("type").Value;
-				cf.Attribute("type").Value = RestoreAdjustedTypeValue(propType);
+				cf.Attribute("type").Value = MetadataCache.RestoreAdjustedTypeValue(propType);
 
-				_mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(
+				mdc.GetClassInfo(cf.Attribute(SharedConstants.Class).Value).AddProperty(
 					new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 			}
-			_mdc.ResetCaches();
-			FileWriterService.WriteElement(_writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
-		}
-
-		private void WriteTempFile()
-		{
-			foreach (var rtElement in _sortedData.Values)
-				FileWriterService.WriteElement(_writer, rtElement);
-			_writer.WriteEndElement();
-		}
-
-		internal void CopyTempToFwdata()
-		{
-			_writer.Flush();
-			_writer.Close();
-			File.Copy(_tempPathname, _mainFilePathname, true);
-		}
-
-		//finally -- must execute even if some other part of process fails
-		internal void CloseTempFile()
-		{
-			if(_writer != null)
-			{
-				_writer.Close();
-				_writer = null;
-			}
-			while (File.Exists(_tempPathname))
-			{
-				try
-				{
-					// I (RandyR) saw an access exception on Sue's computer with this.
-					File.Delete(_tempPathname);
-				}
-				catch (Exception)
-				{
-					Thread.Sleep(2000);
-				}
-			}
-		}
-
-		private static string RestoreAdjustedTypeValue(string storedType)
-		{
-			string adjustedType;
-			switch (storedType)
-			{
-				default:
-					adjustedType = storedType;
-					break;
-
-				case "OwningCollection":
-					adjustedType = "OC";
-					break;
-				case "ReferenceCollection":
-					adjustedType = "RC";
-					break;
-
-				case "OwningSequence":
-					adjustedType = "OS";
-					break;
-				case "ReferenceSequence":
-					adjustedType = "RS";
-					break;
-
-				case "OwningAtomic":
-					adjustedType = "OA";
-					break;
-				case "ReferenceAtomic":
-					adjustedType = "RA";
-					break;
-			}
-			return adjustedType;
-		}
-
-		// method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
-		// so we can monitor "humpty" as he gets rebuilt and make the user feel good about it.
-		public static void UnifyFwdataProgress(Form parentForm, string origPathname)
-		{
-			_unifyFwdataCommand = new UnifyFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, _unifyFwdataCommand, "Restore project file", true);
-			var progress = new ProgressDialogProgressState(progressHandler);
-			progressHandler.ShowModal(progress);
-		}
-
-		public class UnifyFwdataCommand : BasicCommand
-		{
-			public bool WasCancelled;
-			private readonly string _pathName;
-			private readonly FLExProjectUnifier _fpu;
-			private readonly int _steps;
-
-			public UnifyFwdataCommand(string pathName)
-			{
-				_pathName = pathName;
-				_fpu = new FLExProjectUnifier(_pathName);
-				_steps = _fpu.Steps;
-			}
-
-			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback,
-										   StatusCallback primaryStatusTextCallback,
-										   StatusCallback secondaryStatusTextCallback)
-			{
-				throw new NotSupportedException();
-			}
-
-			protected override void DoWork2(ProgressState progress)
-			{
-				try
-				{
-					var countForWork = 0;
-					progress.TotalNumberOfSteps = _steps;
-					while (countForWork < _steps)
-					{
-						if (Canceling)
-						{
-							WasCancelled = true;
-							progress.State = ProgressState.StateValue.Finished;
-							return;
-						}
-						_fpu.PutHumptyTogetherAgainWatching();
-						countForWork++;
-						progress.NumberOfStepsCompleted = countForWork;
-					}
-				}
-				finally
-				{
-					_fpu.CloseTempFile();
-					progress.State = ProgressState.StateValue.Finished;
-				}
-			}
+			mdc.ResetCaches();
+			FileWriterService.WriteElement(writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
 		}
 	}
 }

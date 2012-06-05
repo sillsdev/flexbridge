@@ -42,19 +42,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(null));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(""));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), ""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectUnifier("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), "Bogus.fwdata"));
 		}
 
 		[Test]
@@ -63,7 +63,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			using (var tempFile = new TempFile())
 			{
 				var pathname = tempFile.Path;
-				Assert.Throws<ApplicationException>(() => new FLExProjectUnifier(Path.Combine(pathname, "Itaintthere")));
+				Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(pathname, "Itaintthere")));
 			}
 		}
 	}

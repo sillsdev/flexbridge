@@ -111,7 +111,7 @@ namespace FwdataTestApp
 					FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
 					breakupTimer.Stop();
 					restoreTimer.Start();
-					FLExProjectUnifier.UnifyFwdataProgress(this, _srcFwdataPathname);
+					FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 					restoreTimer.Stop();
 
 					if (_cbVerify.Checked)
@@ -343,7 +343,7 @@ namespace FwdataTestApp
 				if (_restoreDataFile.Checked)
 				{
 					restoreTimer.Start();
-					FLExProjectUnifier.UnifyFwdataProgress(this, _srcFwdataPathname);
+					FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 					restoreTimer.Stop();
 				}
 			}
@@ -424,7 +424,7 @@ namespace FwdataTestApp
 							var className = propElement.Attribute(SharedConstants.Class).Value;
 							var propName = propElement.Attribute(SharedConstants.Name).Value;
 							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = FileWriterService.AdjustedPropertyType(className, propName, typeAttr.Value);
+							var adjustedTypeValue = MetadataCache.AdjustedPropertyType(typeAttr.Value);
 							if (adjustedTypeValue != typeAttr.Value)
 								typeAttr.Value = adjustedTypeValue;
 							var customProp = new FdoPropertyInfo(
