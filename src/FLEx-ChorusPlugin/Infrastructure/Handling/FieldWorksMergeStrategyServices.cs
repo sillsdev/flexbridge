@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
@@ -305,6 +308,45 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								IsAtomic = isAtomic
 							};
 			sharedElementStrategies.Add(elementName, strategy);
+		}
+
+		/// <summary>
+		/// This method will return the guid associated with the given element moving up the heirarchy if necessary.
+		/// </summary>
+		internal static string GetGuid(XmlNode element)
+		{
+			var elt = element;
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
+				   && elt.Name != SharedConstants.Ownseq)
+				elt = elt.ParentNode;
+			return elt.Attributes[SharedConstants.GuidStr] == null
+				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
+				: elt.Attributes[SharedConstants.GuidStr].Value;
+		}
+
+		/// <summary>
+		/// Builds a context descriptor with the given parameters that will provide a url link to the correct area in FLEx.
+		/// </summary>
+		internal static ContextDescriptor GenerateContextDescriptor(string filePath, string guid, string label)
+		{
+			var appId = "FLEx";
+			var directory = Path.GetDirectoryName(filePath);
+			var lastDirectory = Path.GetFileName(directory);
+			if (lastDirectory == "Scripture")
+				appId = "TE";
+			// figure out here which we need.
+			var fwAppArgs = new FwAppArgs(appId, "current", "", "default", guid);
+			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
+			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
+			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
+			// The FwUrl has all the query part encoded.
+			// Chorus needs it unencoded so it can extract the label.
+			var fwUrl = fwAppArgs.ToString();
+			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
+			var host = fwUrl.Substring(0, hostLength);
+			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
+			var url = host + "?" + query;
+			return new ContextDescriptor(label, url);
 		}
 	}
 }

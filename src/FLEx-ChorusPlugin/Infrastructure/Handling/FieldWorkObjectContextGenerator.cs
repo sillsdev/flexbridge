@@ -47,46 +47,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				//    guid = element.Attributes[SharedConstants.GuidStr].Value;
 				//    break;
 				default:
-					guid = GetGuid(element);
+					guid = FieldWorksMergeStrategyServices.GetGuid(element);
 					label = GetLabel(element);
 					break;
 			}
 
-			// This seems to be the best we can do for now in regard to determining which application to launch.
-			// Eventually FieldWorks may be made smarter about determining it based on the object and its owners.
-			// However, that is difficult to do because various things (like putting up the splash screen)
-			// are done based on the indicated app before we even create a cache. It's helpful to do the best
-			// we can here even if FieldWorks ends up opening something else.
-			var appId = "FLEx";
-			var directory = Path.GetDirectoryName(filePath);
-			var lastDirectory = Path.GetFileName(directory);
-			if (lastDirectory == "Scripture")
-				appId = "TE";
-			// Todo JohnT: pass something like "default" for app name, since we can't readily
-			// figure out here which we need.
-			var fwAppArgs = new FwAppArgs(appId, "current", "", "default", guid);
-			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
-			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
-			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
-			// The FwUrl has all the query part encoded.
-			// Chorus needs it unencoded so it can extract the label.
-			var fwUrl = fwAppArgs.ToString();
-			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
-			var host = fwUrl.Substring(0, hostLength);
-			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
-			var url = host + "?" + query;
-			return new ContextDescriptor(label, url);
-		}
-
-		private static string GetGuid(XmlNode element)
-		{
-			var elt = element;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
-				   && elt.Name != SharedConstants.Ownseq)
-				elt = elt.ParentNode;
-			return elt.Attributes[SharedConstants.GuidStr] == null
-				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
-				: elt.Attributes[SharedConstants.GuidStr].Value;
+			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath, guid, label);
 		}
 
 		protected virtual string GetLabel(XmlNode start)

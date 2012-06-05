@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
+using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
@@ -11,11 +13,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 	/// that is in a different file.
 	/// The part of speech is now called "Grammatical Info."
 	/// </summary>
-	class PosContextGenerator : FieldWorkObjectContextGenerator
+	class PosContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
-		protected override string GetLabel(XmlNode start)
+		private string GetLabel(XmlNode start)
 		{
-			return LexEntryName(start) + Space + GetLabelForPos(start);
+			return LexEntryName(start) + ' ' + GetLabelForPos(start);
 		}
 
 		string EntryLabel
@@ -25,10 +27,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 
 		private string LexEntryName(XmlNode start)
 		{
+			//grab the form from the stem (if available) to give a user understandable message
 			var form = start.SelectSingleNode("ancestor::LexEntry/LexemeForm/MoStemAllomorph/Form/AUni");
 			return form == null
 				? EntryLabel
-				: EntryLabel + Space + Quote + form.InnerText + Quote;
+				: EntryLabel + " \"" + form.InnerText + '"';
 		}
 
 		private string GetLabelForPos(XmlNode entry)
@@ -47,20 +50,40 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		public override string HtmlContext(XmlNode mergeElement)
+		public string HtmlContext(XmlNode mergeElement)
 		{
 			string guid = ""; // guid of the MoStemMsa with the POS
 			XmlNode pos = null; // reference to the part of speech node that changed
 			if (mergeElement != null && mergeElement.Name == "MorphoSyntaxAnalysis")
 			{
 				guid = mergeElement.SelectSingleNode("objsur/@guid").Value; // should only be one and have a guid in a validated file
-				pos = mergeElement.SelectSingleNode("../../preceding-sibling::MorphoSyntaxAnalyses/MoStemMsa[@guid = \"" + guid + "\"]/PartOfSpeech");
+				pos = mergeElement.SelectSingleNode("../../preceding-sibling::MorphoSyntaxAnalyses/*[@guid = \"" + guid + "\"]/PartOfSpeech");
 			}
 			if (pos == null)
-				return base.HtmlContext(mergeElement); // something not right!
+				throw new ArgumentException("Node is not valid for part of speech guid lookup."); // something not right!
 
 			var posGuid = pos.SelectSingleNode("objsur/@guid").Value;
 			return "<div class='guid'>" + "Guid of part of speech: " + posGuid  + "</div>";
+		}
+
+		public string HtmlContextStyles(XmlNode mergeElement)
+		{
+			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
+		}
+
+		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
+		{
+			//throw new NotImplementedException();
+			var doc = new XmlDocument();
+			doc.LoadXml(mergeElement);
+			return GenerateContextDescriptor(doc.DocumentElement, filePath);
+		}
+
+		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
+		{
+			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath,
+																			 FieldWorksMergeStrategyServices.GetGuid(mergeElement),
+																			 GetLabel(mergeElement));
 		}
 	}
 }

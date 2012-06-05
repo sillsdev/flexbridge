@@ -38,7 +38,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
 			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
 			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
-			strategies.SetStrategy("MorphoSyntaxAnalysis", MakeClassStrategy(new PosContextGenerator(), strategies));
 			return result;
 		}
 
@@ -1511,15 +1510,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			  </LexEntry>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[2].ChildNodes[0].ChildNodes[0]; // MorphoSyntaxAnalysis
-			var generator = MakeGenerator();
+			var generator = new PosContextGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"conflict\" Grammatical Info."));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "4bd15611-5a36-422e-baa6-b6edb943c4da"));
 
-			// this is how XmlMerge/MergeChildren() gets to the correct HtmlContext
-			var dg = generator.MergeStrategies.GetElementStrategy(input).ContextDescriptorGenerator;
-			var hg = (dg as IGenerateHtmlContext);
+			// verify the html context generation
+			var hg = (generator as IGenerateHtmlContext);
 			Assert.That(hg.HtmlContext(input),
 				Is.EqualTo(@"<div class='guid'>Guid of part of speech: 3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c</div>"));
 		}
