@@ -8,7 +8,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 	/// <summary>
 	/// Context generator for LexEntry/Senses/ownseq/MorphoSyntaxAnalysis element.
 	/// It contains a objsur element that refers to the
-	/// LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur
+	/// LexEntry/MorphoSyntaxAnalyses/[SomeMSA]/PartOfSpeech/objsur
 	/// that refers the part of speech item in the part of speech list
 	/// that is in a different file.
 	/// The part of speech is now called "Grammatical Info."
@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 		private string LexEntryName(XmlNode start)
 		{
 			//grab the form from the stem (if available) to give a user understandable message
-			var form = start.SelectSingleNode("ancestor::LexEntry/LexemeForm/MoStemAllomorph/Form/AUni");
+			var form = start.SelectSingleNode("ancestor::LexEntry/LexemeForm//Form/AUni");
 			return form == null
 				? EntryLabel
 				: EntryLabel + " \"" + form.InnerText + '"';
