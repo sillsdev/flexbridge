@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
 using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics
 {
@@ -17,7 +18,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	/// </summary>
 	internal static class LinguisticsDomainServices
 	{
-		internal static void WriteNestedDomainData(string rootDir,
+		internal static void WriteNestedDomainData(IProgress progress, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -25,13 +26,20 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
+			progress.WriteMessage("Writing reversal data....");
 			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing morphology and syntax data....");
 			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			// Both ReversalBoundedContextService and MorphologyAndSyntaxBoundedContextService abscond with some stuff owned by LexDb. :-(
+			progress.WriteMessage("Writing lexical data....");
 			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing text corpus data....");
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing wordform and punctuation data....");
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing discourse data....");
 			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing phonology data....");
 			PhonologyBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 		}
 

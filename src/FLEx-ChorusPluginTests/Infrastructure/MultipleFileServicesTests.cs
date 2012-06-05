@@ -3,6 +3,7 @@ using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
 using System.IO;
+﻿using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
@@ -13,19 +14,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(null));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), null));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(""));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), ""));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => new FLExProjectSplitter("Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), "Bogus.fwdata"));
 		}
 
 		[Test]
@@ -34,7 +35,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			using (var tempFile = new TempFile(""))
 			{
 				var pathname = tempFile.Path;
-				Assert.Throws<ApplicationException>(() => new FLExProjectSplitter(pathname));
+				Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), pathname));
 			}
 		}
 

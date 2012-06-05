@@ -29,10 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return; // Only nest it one time.
 
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
-			using (var newParent = new Form())
-			{
-				FLExProjectSplitter.SplitFwdataDelegate(newParent, _fwdataPathname);
-			}
+			FLExProjectSplitter.PushHumptyOffTheWall(progress, _fwdataPathname);
 			_needToNestMainFile = false;
 		}
 

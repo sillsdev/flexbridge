@@ -9,37 +9,53 @@ using FLEx_ChorusPlugin.Contexts.Linguistics;
 using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void WriteLinguisticsData(string pathRoot,
+		internal static void PushHumptyOffTheWall(IProgress progress, string pathRoot,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			LinguisticsDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
+			// NB: Don't even think of changing the order these methods are called in.
+			WriteLinguisticsData(progress, pathRoot, classData, guidToClassMapping);
+			WriteAnthropologyData(progress, pathRoot, classData, guidToClassMapping);
+			WriteScriptureData(progress, pathRoot, classData, guidToClassMapping);
+			WriteGeneralData(progress, pathRoot, classData, guidToClassMapping);
 		}
 
-		internal static void WriteAnthropologyData(string pathRoot,
+		private static void WriteLinguisticsData(IProgress progress, string pathRoot,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
+			progress.WriteMessage("Writing the Linguistics data....");
+			LinguisticsDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
+		}
+
+		private static void WriteAnthropologyData(IProgress progress, string pathRoot,
+			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, string> guidToClassMapping)
+		{
+			progress.WriteMessage("Writing the Anthropology data....");
 			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
-		internal static void WriteScriptureData(string pathRoot,
+		private static void WriteScriptureData(IProgress progress, string pathRoot,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
+			progress.WriteMessage("Writing the Other data....");
 			ScriptureDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
-		internal static void WriteGeneralData(string pathRoot,
+		private static void WriteGeneralData(IProgress progress, string pathRoot,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			GeneralDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
+			progress.WriteMessage("Writing the General data....");
+			GeneralDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
 		}
 
 		internal static void RemoveDomainData(string pathRoot)

@@ -3,12 +3,13 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.General.UserDefinedLists;
 using FLEx_ChorusPlugin.Infrastructure;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.General
 {
 	internal static class GeneralDomainServices
 	{
-		internal static void WriteNestedDomainData(string rootDir,
+		internal static void WriteNestedDomainData(IProgress progress, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -16,8 +17,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (!Directory.Exists(generalBaseDir))
 				Directory.CreateDirectory(generalBaseDir);
 
+			progress.WriteMessage("Writing user-defined list data....");
 			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing language project data....");
 			GeneralDomainBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
+			progress.WriteMessage("Writing problem data....");
 			GeneralDomainOrphansBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 		}
 
