@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;

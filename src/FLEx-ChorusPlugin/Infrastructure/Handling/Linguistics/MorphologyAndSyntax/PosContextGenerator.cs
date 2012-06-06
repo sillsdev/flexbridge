@@ -2,7 +2,7 @@
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {
 	/// <summary>
 	/// Context generator for LexEntry/Senses/ownseq/MorphoSyntaxAnalysis element.

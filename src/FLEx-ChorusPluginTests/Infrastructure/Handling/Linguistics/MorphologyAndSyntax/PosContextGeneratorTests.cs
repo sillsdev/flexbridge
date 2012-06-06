@@ -1,7 +1,7 @@
-using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax;
 using NUnit.Framework;
 
-namespace FLEx_ChorusPluginTests.Infrastructure.Handling
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {
 	[TestFixture]
 	public class PosContextGeneratorTests
