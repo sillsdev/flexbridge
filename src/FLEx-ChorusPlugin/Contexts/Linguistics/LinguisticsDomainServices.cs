@@ -26,20 +26,20 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
-			progress.WriteMessage("Writing reversal data....");
+			progress.WriteVerbose("Writing reversal data....");
 			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing morphology and syntax data....");
+			progress.WriteVerbose("Writing morphology and syntax data....");
 			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 			// Both ReversalBoundedContextService and MorphologyAndSyntaxBoundedContextService abscond with some stuff owned by LexDb. :-(
-			progress.WriteMessage("Writing lexical data....");
+			progress.WriteVerbose("Writing lexical data....");
 			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing text corpus data....");
+			progress.WriteVerbose("Writing text corpus data....");
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing wordform and punctuation data....");
+			progress.WriteVerbose("Writing wordform and punctuation data....");
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing discourse data....");
+			progress.WriteVerbose("Writing discourse data....");
 			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing phonology data....");
+			progress.WriteVerbose("Writing phonology data....");
 			PhonologyBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 		}
 
@@ -53,21 +53,21 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 				return;
 
 			// Do in reverse order from nesting.
-			progress.WriteMessage("Collecting the phonology data....");
+			progress.WriteVerbose("Collecting the phonology data....");
 			PhonologyBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			progress.WriteMessage("Collecting the discourse data....");
+			progress.WriteVerbose("Collecting the discourse data....");
 			DiscourseAnalysisBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			progress.WriteMessage("Collecting the wordform and punctuation data....");
+			progress.WriteVerbose("Collecting the wordform and punctuation data....");
 			WordformInventoryBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			progress.WriteMessage("Collecting the text corpus data....");
+			progress.WriteVerbose("Collecting the text corpus data....");
 			TextCorpusBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 			// MorphologyAndSyntaxBoundedContextService and ReversalBoundedContextService, both *must* have LexiconBoundedContextService done before them,
 			// since they re-add stuff to LexDb that they removed
-			progress.WriteMessage("Collecting the lexical data....");
+			progress.WriteVerbose("Collecting the lexical data....");
 			LexiconBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			progress.WriteMessage("Collecting the morphology and syntax data....");
+			progress.WriteVerbose("Collecting the morphology and syntax data....");
 			MorphologyAndSyntaxBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
-			progress.WriteMessage("Collecting the reversal data....");
+			progress.WriteVerbose("Collecting the reversal data....");
 			ReversalBoundedContextService.FlattenContext(highLevelData, sortedData, linguisticsBaseDir);
 		}
 
