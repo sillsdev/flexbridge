@@ -446,6 +446,84 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			return adjustedDirPath;
 		}
 
+		private const string OC = "OC";
+		private const string OwningCollection = "OwningCollection";
+		private const string RC = "RC";
+		private const string ReferenceCollection = "ReferenceCollection";
+		private const string OS = "OS";
+		private const string OwningSequence = "OwningSequence";
+		private const string RS = "RS";
+		private const string ReferenceSequence = "ReferenceSequence";
+		private const string OA = "OA";
+		private const string OwningAtomic = "OwningAtomic";
+		private const string RA = "RA";
+		private const string ReferenceAtomic = "ReferenceAtomic";
+		internal static string AdjustedPropertyType(string rawType)
+		{
+			string adjustedType;
+			switch (rawType)
+			{
+				default:
+					adjustedType = rawType;
+					break;
+
+				case OC:
+					adjustedType = OwningCollection;
+					break;
+				case RC:
+					adjustedType = ReferenceCollection;
+					break;
+
+				case OS:
+					adjustedType = OwningSequence;
+					break;
+				case RS:
+					adjustedType = ReferenceSequence;
+					break;
+
+				case OA:
+					adjustedType = OwningAtomic;
+					break;
+				case RA:
+					adjustedType = ReferenceAtomic;
+					break;
+			}
+			return adjustedType;
+		}
+
+		internal static string RestoreAdjustedTypeValue(string storedType)
+		{
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
+
+				case OwningCollection:
+					adjustedType = OC;
+					break;
+				case ReferenceCollection:
+					adjustedType = RC;
+					break;
+
+				case OwningSequence:
+					adjustedType = OS;
+					break;
+				case ReferenceSequence:
+					adjustedType = RS;
+					break;
+
+				case OwningAtomic:
+					adjustedType = OA;
+					break;
+				case ReferenceAtomic:
+					adjustedType = RA;
+					break;
+			}
+			return adjustedType;
+		}
+
 		/// <summary>
 		/// This method started out as generated from the main FW FDO system.
 		/// But, now it will live on its own, and as the model changes, it will need to be changed by hand.

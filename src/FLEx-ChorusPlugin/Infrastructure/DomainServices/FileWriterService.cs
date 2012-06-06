@@ -113,7 +113,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var className = propElement.Attribute(SharedConstants.Class).Value;
 				var propName = propElement.Attribute(SharedConstants.Name).Value;
 				var typeAttr = propElement.Attribute("type");
-				var adjustedTypeValue = AdjustedPropertyType(className, propName, typeAttr.Value);
+				var adjustedTypeValue = MetadataCache.AdjustedPropertyType(typeAttr.Value);
 				if (adjustedTypeValue != typeAttr.Value)
 					typeAttr.Value = adjustedTypeValue;
 				var customProp = new FdoPropertyInfo(
@@ -127,41 +127,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (hasCustomProperties)
 				mdc.ResetCaches();
 			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
-		}
-
-		internal static string AdjustedPropertyType(string className, string propName, string rawType)
-		{
-			string adjustedType;
-			switch (rawType)
-			{
-				default:
-					adjustedType = rawType;
-					break;
-
-				case "OC":
-					adjustedType = "OwningCollection";
-					break;
-				case "RC":
-					adjustedType = "ReferenceCollection";
-					break;
-
-				case "OS":
-					adjustedType = "OwningSequence";
-					break;
-
-				case "RS":
-					adjustedType = "ReferenceSequence";
-					break;
-
-				case "OA":
-					adjustedType = "OwningAtomic";
-					break;
-
-				case "RA":
-					adjustedType = "ReferenceAtomic";
-					break;
-			}
-			return adjustedType;
 		}
 
 		internal static void CheckPathname(string mainFilePathname)
