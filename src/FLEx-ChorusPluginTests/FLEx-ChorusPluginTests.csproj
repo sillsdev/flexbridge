@@ -117,6 +117,7 @@
 	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\FieldWorksFeatureSystemTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\PosContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\BinaryDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\BooleanDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\GenDateDataTypeReportTests.cs" />

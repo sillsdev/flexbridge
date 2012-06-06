@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
@@ -38,7 +41,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		/// <remarks>
 		/// 1. A generic 'header' element will be handled, although it may not appear in the file.
-		/// 2. All classes  will be included.
+		/// 2. All classes will be included.
 		/// 3. Merge strategies for class properties (regular or custom) will have keys of "classname+propname" to make them unique, system-wide.
 		/// </remarks>
 		private static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
@@ -87,29 +90,29 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// Didn't work, since the paras are actually in an 'ownseq' element.
 				// So, use a new ownseatomic element tag.
 				// classStrat.IsAtomic = classInfo.ClassName == "StTxtPara" || classInfo.ClassName == "ScrTxtPara";
-
+				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 				switch (classInfo.ClassName)
 				{
 					case "LexEntry":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new LexEntryContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
 						break;
 					case "WfiWordform":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new WfiWordformContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
 						break;
 					case "Text":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new TextContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new TextContextGenerator();
 						break;
 					case "RnGenericRec":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new RnGenericRecContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
 						break;
 					case "ScrBook":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrBookContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
 						break;
 					case "ScrSection":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new ScrSectionContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
 						break;
 					case "CmPossibilityList":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityListContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
 						break;
 						// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
 						// OTOH, if we ever want special handling for any of them, we can easily add a special generator.
@@ -129,24 +132,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					case "LexEntryType":
 					case "LexRefType":
 					case "CmPossibility":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new PossibilityContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator();
 						break;
 					case "PhEnvironment":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new EnvironmentContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
 						break;
 					case "DsConstChart":
 					case "ConstChartRow":
 					case "ConstChartWordGroup":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new DiscourseChartContextGenerator()));
+						classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator();
 						break;
 					case "PhNCSegments":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation")));
+						classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
 						break;
 					case "FsClosedFeature":
-						strategiesForMerger.SetStrategy(classInfo.ClassName, MakeClassStrategy(new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation")));
-						break;
-					default:
-						strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
+						classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
 						break;
 				}
 				foreach (var propertyInfo in classInfo.AllProperties)
@@ -173,6 +173,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							break;
 						case DataType.Time:
 							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
+							break;
+						case DataType.ReferenceAtomic:
+							if(classInfo.ClassName ==  "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
+							{
+								propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
+							}
 							break;
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
@@ -302,6 +308,45 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 								IsAtomic = isAtomic
 							};
 			sharedElementStrategies.Add(elementName, strategy);
+		}
+
+		/// <summary>
+		/// This method will return the guid associated with the given element moving up the heirarchy if necessary.
+		/// </summary>
+		internal static string GetGuid(XmlNode element)
+		{
+			var elt = element;
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
+				   && elt.Name != SharedConstants.Ownseq)
+				elt = elt.ParentNode;
+			return elt.Attributes[SharedConstants.GuidStr] == null
+				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
+				: elt.Attributes[SharedConstants.GuidStr].Value;
+		}
+
+		/// <summary>
+		/// Builds a context descriptor with the given parameters that will provide a url link to the correct area in FLEx.
+		/// </summary>
+		internal static ContextDescriptor GenerateContextDescriptor(string filePath, string guid, string label)
+		{
+			var appId = "FLEx";
+			var directory = Path.GetDirectoryName(filePath);
+			var lastDirectory = Path.GetFileName(directory);
+			if (lastDirectory == "Scripture")
+				appId = "TE";
+			// figure out here which we need.
+			var fwAppArgs = new FwAppArgs(appId, "current", "", "default", guid);
+			// Add the "label" information which the Chorus Notes browser extracts to identify the object in the UI.
+			// This is just for a label and we can't have & or = in the value. So replace them if they occur.
+			fwAppArgs.AddProperty("label", label.Replace("&", " and ").Replace("=", " equals "));
+			// The FwUrl has all the query part encoded.
+			// Chorus needs it unencoded so it can extract the label.
+			var fwUrl = fwAppArgs.ToString();
+			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
+			var host = fwUrl.Substring(0, hostLength);
+			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
+			var url = host + "?" + query;
+			return new ContextDescriptor(label, url);
 		}
 	}
 }

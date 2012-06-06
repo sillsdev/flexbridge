@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using Chorus.merge.xml.generic;
+﻿using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
@@ -55,13 +54,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			return classStrat;
 		}
 
-		static XmlNode GetNode(string input)
-		{
-			var doc = new XmlDocument();
-			doc.LoadXml(input);
-			return doc.DocumentElement;
-		}
-
 		[Test]
 		public void LexEntryPartsFindLexemeForm()
 		{
@@ -86,7 +78,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						</MoStemAllomorph>
 					</LexemeForm>
 				</LexEntry>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0]; // MoStemAllomorph
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -128,7 +120,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					<SpellingStatus
 						val='0' />
 				</WfiWordform>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root; // WfiWordform
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -175,7 +167,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string predictedLabel = "Text \"myEngName\", \"monNom\"";
 			const string textGuid = "guid=e43b93a7-604e-4704-8118-d48999b330e3";
 			const string stTextGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root; // Text (CmMajorObject)
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -265,7 +257,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				</RnGenericRec>";
 			const string predictedLabel = "Data Notebook Record \"Some name\"";
 			const string recordGuid = "guid=175a2230-0302-4307-8bf4-f3dad9c19710";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root; // RnGenericRec
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -413,7 +405,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string predictedLabel = "Scripture Book \"Luke\"";
 			const string bookGuid = "guid=0e876238-341a-4e56-9db5-ed73b05cb8f5";
 			const string footnoteGuid = "guid=002c0cdf-e486-460f-b334-505ad66c5b43";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root; // ScrBook
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -465,7 +457,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			const string sectionOneGuid = "guid=3713db10-ba05-4a42-9685-9fe4dbc2693d";
 			const string sectionTwoGuid = "guid=3770c19f-ae61-4364-be08-5e4bf62d861a";
 			const string sectionOneStTextGuid = "guid=9e0d0f62-1c3a-4dd5-a488-fdf93471137a";
-			var root = GetNode(source).ChildNodes[6].ChildNodes[0]; // <ownseq> of ScrSections
+			var root = FieldWorksTestServices.GetNode(source).ChildNodes[6].ChildNodes[0]; // <ownseq> of ScrSections
 			var input = root.ChildNodes[0]; // first ScrSection
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -537,7 +529,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<WsSelector
 							val='-3' />
 					</CmPossibilityList>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0]; //<Abbreviation><AUni>
 			var generator = MakeGenerator();
 
@@ -574,7 +566,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							t='r' />
 					</Segments>
 				</ownseq>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0]; //<Abbreviation><AUni>
 			var generator = MakeGenerator();
 
@@ -654,7 +646,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				  </FsSymFeatVal>
 				</Values>
 			  </FsClosedFeature>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0]; //<Abbreviation><AUni>
 			var generator = MakeGenerator();
 
@@ -721,7 +713,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						</Mid>
 					</Outer>
 				</LexEntry>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
@@ -758,7 +750,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						</ownseq>
 					</SeqProp>
 				</LexEntry>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[1].ChildNodes[0]; // the Target element (in the second objseq).
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
@@ -777,7 +769,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							<AUni ws='en'>The Name</AUni>
 						</Name>
 					</ArbitraryLabel>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0];
 			var generator = new FieldWorkObjectContextGenerator();
 
@@ -824,7 +816,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<WsSelector
 							val='-3' />
 					</CmPossibilityList>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[2]; // ItemClsid
 			var generator = MakeGenerator();
 
@@ -878,7 +870,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<WsSelector
 							val='-3' />
 					</CmPossibilityList>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[4].ChildNodes[0].ChildNodes[3]; // <Possibilities><ownseq><ReverseAbbr>
 			var generator = MakeGenerator();
 
@@ -918,7 +910,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							</ownseq>
 						</Possibilities>
 					</CmPossibilityList>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[1]; // <Possibilities><ownseq><ReverseAbbr>
 			var generator = MakeGenerator();
 
@@ -954,7 +946,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							</ownseqatomic>
 						</Paragraphs>
 					</StText>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // <Paragraphs><ownseqatomic><Contents>
 			var generator = MakeGenerator();
 
@@ -1026,7 +1018,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 					  </ownseq>
 					</Possibilities>
 				</CmPossibilityList>";
-			var root = GetNode(source);
+			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[3].ChildNodes[1].ChildNodes[2].ChildNodes[0].ChildNodes[2]; // Possibilities><ownseq>[1]<SubPossibilities><ownseq><UnderColor>
 			var generator = MakeGenerator();
 
@@ -1093,7 +1085,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		</Environments>
 	</PhPhonData>
 </PhonologicalData>";
-			var root = GetNode(source); // PhonologicalData
+			var root = FieldWorksTestServices.GetNode(source); // PhonologicalData
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // 1st ownseq
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
@@ -1332,7 +1324,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		</Template>
 	</DsChart>
 </Discourse>";
-			var root = GetNode(source); // Discourse
+			var root = FieldWorksTestServices.GetNode(source); // Discourse
 			var generator = MakeGenerator();
 
 			// 2nd DsChart

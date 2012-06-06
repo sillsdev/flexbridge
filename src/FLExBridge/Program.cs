@@ -27,10 +27,6 @@ namespace FLExBridge
 			string fwProjectPath = null;
 			if (options.ContainsKey("-p"))
 				fwProjectPath = options["-p"];
-			// else if (options.ContainsKey("-v") && options["-v"] == "send_receive")
-				// TBD Normally should not continue without a project path for S/R
-				// but this can happen if FLExBridge is launched independently of FieldWorks.
-				// At the moment that's fine.
 			using (var flexCommHelper = new FLExConnectionHelper(fwProjectPath))
 			{
 				var changesReceived = false;
