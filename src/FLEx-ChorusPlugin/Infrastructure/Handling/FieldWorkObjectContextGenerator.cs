@@ -221,7 +221,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		public virtual string HtmlContext(XmlNode mergeElement)
+		public string HtmlContext(XmlNode mergeElement)
 		{
 			// I expect the following code will eventually just be a default, if we can't match something better.
 			if (IsMultiString(mergeElement))

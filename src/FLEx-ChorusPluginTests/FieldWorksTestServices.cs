@@ -185,5 +185,12 @@ namespace FLEx_ChorusPluginTests
 			theirNode = theirDoc.DocumentElement.FirstChild;
 			return ourNode;
 		}
+
+		internal static XmlNode GetNode(string input)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(input);
+			return doc.DocumentElement;
+		}
 	}
 }

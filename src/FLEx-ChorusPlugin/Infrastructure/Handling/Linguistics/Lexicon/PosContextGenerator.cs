@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
 
@@ -8,35 +7,41 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 	/// <summary>
 	/// Context generator for LexEntry/Senses/ownseq/MorphoSyntaxAnalysis element.
 	/// It contains a objsur element that refers to the
-	/// LexEntry/MorphoSyntaxAnalyses/[SomeMSA]/PartOfSpeech/objsur
+	/// LexEntry/MorphoSyntaxAnalyses/[SomeMSA]/[To/From]PartOfSpeech/objsur
 	/// that refers the part of speech item in the part of speech list
 	/// that is in a different file.
 	/// The part of speech is now called "Grammatical Info."
 	/// </summary>
-	class PosContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
+	internal sealed class PosContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
 		private string GetLabel(XmlNode start)
 		{
-			return LexEntryName(start) + ' ' + GetLabelForPos(start);
+			return LexEntryName(start) + ' ' + GetLabelForPos();
 		}
 
-		string EntryLabel
+		static string EntryLabel
 		{
 			get { return Resources.kLexEntryClassLabel; }
 		}
 
 		private string LexEntryName(XmlNode start)
 		{
+			var entryNode = GetLexEntryNode(start);
 			//grab the form from the stem (if available) to give a user understandable message
-			var form = start.SelectSingleNode("ancestor::LexEntry/LexemeForm//Form/AUni");
+			var form = entryNode.SelectSingleNode("LexemeForm//Form/AUni");
 			return form == null
 				? EntryLabel
 				: EntryLabel + " \"" + form.InnerText + '"';
 		}
 
-		private string GetLabelForPos(XmlNode entry)
+		private static string GetLabelForPos()
 		{
 			return "Grammatical Info.";
+		}
+
+		private static XmlNode GetLexEntryNode(XmlNode node)
+		{
+			return node.Name == "LexEntry" ? node : GetLexEntryNode(node.ParentNode);
 		}
 
 		/// <summary>
@@ -52,16 +57,43 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 		/// </summary>
 		public string HtmlContext(XmlNode mergeElement)
 		{
-			string guid = ""; // guid of the MoStemMsa with the POS
-			XmlNode pos = null; // reference to the part of speech node that changed
+			var hasTwoPoses = false;
+			var posGuids = new string[2]; // reference to the part of speech node(s) that changed
 			if (mergeElement != null && mergeElement.Name == "MorphoSyntaxAnalysis")
 			{
-				guid = mergeElement.SelectSingleNode("objsur/@guid").Value; // should only be one and have a guid in a validated file
-				pos = mergeElement.SelectSingleNode("../../preceding-sibling::MorphoSyntaxAnalyses/*[@guid = \"" + guid + "\"]/PartOfSpeech");
+				var entryNode = GetLexEntryNode(mergeElement);
+				var objsurNode = mergeElement.SelectSingleNode("objsur"); // Could be null.
+				if (objsurNode != null)
+				{
+					var msaGuid = objsurNode.Attributes["guid"].Value; // guid of the Msa with one or two POSes
+					var msa = entryNode.SelectSingleNode("MorphoSyntaxAnalyses/*[@guid = \"" + msaGuid + "\"]");
+					if (msa.Name == "MoDerivAffMsa")
+					{
+						hasTwoPoses = true;
+						posGuids[0] = GetPosGuidOrUnknown(msa, "FromPartOfSpeech");
+						posGuids[1] = GetPosGuidOrUnknown(msa, "ToPartOfSpeech");
+					}
+					else
+					{
+						//All others have 'PartOfSpeech' property.
+						posGuids[0] = GetPosGuidOrUnknown(msa, "PartOfSpeech");
+					}
+				}
 			}
 
-			var posGuid = pos != null ? pos.SelectSingleNode("objsur/@guid").Value : "unknown";
-			return "<div class='guid'>" + "Guid of part of speech: " + posGuid  + "</div>";
+			return string.Format("<div class='guid'>{0}</div>",
+				hasTwoPoses
+					? string.Format("Guids: {0}/{1}", posGuids[0], posGuids[1])
+					: string.Format("Guid of part of speech: {0}", posGuids[0]));
+		}
+
+		private static string GetPosGuidOrUnknown(XmlNode node, string propertyName)
+		{
+			var propNode = node.SelectSingleNode(propertyName);
+			if (propNode == null)
+				return "unknown";
+			var objsurNode = propNode.SelectSingleNode("objsur");
+			return objsurNode == null ? "unknown" : objsurNode.Attributes["guid"].Value;
 		}
 
 		public string HtmlContextStyles(XmlNode mergeElement)
