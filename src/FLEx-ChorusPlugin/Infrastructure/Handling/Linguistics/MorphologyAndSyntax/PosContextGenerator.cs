@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		public string HtmlContext(XmlNode mergeElement)
 		{
 			var hasTwoPoses = false;
-			var posGuids = new string[2]; // reference to the part of speech node(s) that changed
+			var posGuids = new[] { "unknown", "unknown" }; // reference to the part of speech node(s) that changed
 			if (mergeElement != null && mergeElement.Name == "MorphoSyntaxAnalysis")
 			{
 				var entryNode = GetLexEntryNode(mergeElement);
