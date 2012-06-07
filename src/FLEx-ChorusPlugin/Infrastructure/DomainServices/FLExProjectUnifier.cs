@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
-using FLEx_ChorusPlugin.Contexts.Anthropology;
-using FLEx_ChorusPlugin.Contexts.General;
-using FLEx_ChorusPlugin.Contexts.Linguistics;
-using FLEx_ChorusPlugin.Contexts.Scripture;
 using Palaso.Code;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -35,6 +30,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	{
 		internal static void PutHumptyTogetherAgain(IProgress progress, string mainFilePathname)
 		{
+			PutHumptyTogetherAgain(progress, true, mainFilePathname);
+		}
+
+		internal static void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckPathname(mainFilePathname);
 
@@ -59,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					progress.WriteMessage("Processing custom properties....");
 					WriteOptionalCustomProperties(writer, pathRoot);
 
-					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(progress, pathRoot);
+					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(progress, writeVerbose, pathRoot);
 
 					progress.WriteMessage("Writing temporary fwdata file....");
 					foreach (var rtElement in sortedData.Values)

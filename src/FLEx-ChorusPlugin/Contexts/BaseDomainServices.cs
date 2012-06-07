@@ -15,61 +15,26 @@ namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void PushHumptyOffTheWall(IProgress progress, string pathRoot,
+		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
-			WriteLinguisticsData(progress, pathRoot, classData, guidToClassMapping);
-			WriteAnthropologyData(progress, pathRoot, classData, guidToClassMapping);
-			WriteScriptureData(progress, pathRoot, classData, guidToClassMapping);
-			WriteGeneralData(progress, pathRoot, classData, guidToClassMapping);
+			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
+			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
 		}
 
-		private static void WriteLinguisticsData(IProgress progress, string pathRoot,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping)
-		{
-			progress.WriteVerbose("Writing the linguistics data....");
-			LinguisticsDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
-		}
-
-		private static void WriteAnthropologyData(IProgress progress, string pathRoot,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping)
-		{
-			progress.WriteVerbose("Writing the anthropology data....");
-			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
-		}
-
-		private static void WriteScriptureData(IProgress progress, string pathRoot,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping)
-		{
-			progress.WriteVerbose("Writing the other data....");
-			ScriptureDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
-		}
-
-		private static void WriteGeneralData(IProgress progress, string pathRoot,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
-			Dictionary<string, string> guidToClassMapping)
-		{
-			progress.WriteVerbose("Writing the general data....");
-			GeneralDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
-		}
-
-		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, string pathRoot)
+		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
 		{
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			progress.WriteVerbose("Collecting the general data....");
-			GeneralDomainServices.FlattenDomain(progress, highLevelData, sortedData, pathRoot);
-			progress.WriteVerbose("Collecting the other data....");
-			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			progress.WriteVerbose("Collecting the anthropology data....");
-			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			progress.WriteVerbose("Collecting the linguistics data....");
-			LinguisticsDomainServices.FlattenDomain(progress, highLevelData, sortedData, pathRoot);
+			// NB: Don't even think of changing the order these methods are called in.
+			GeneralDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			ScriptureDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			AnthropologyDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			LinguisticsDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
 			return sortedData;
 		}
 

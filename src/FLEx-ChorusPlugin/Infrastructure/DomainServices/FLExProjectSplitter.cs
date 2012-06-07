@@ -31,11 +31,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	{
 		internal static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
 		{
+			PushHumptyOffTheWall(progress, true, mainFilePathname);
+		}
+
+		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckFilename(mainFilePathname);
 
 			var rootDirectoryName = Path.GetDirectoryName(mainFilePathname);
-
 			// NB: This is strictly an ordered list of method calls.
 			// Don't even 'think' of changing any of them.
 			DeleteOldFiles(rootDirectoryName);
@@ -45,10 +49,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// (Only has current concrete classes.)
 			var classData = GenerateBasicClassData();
 			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData);
-			BaseDomainServices.PushHumptyOffTheWall(progress, rootDirectoryName, classData, guidToClassMapping);
+			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, classData, guidToClassMapping);
+
 #if DEBUG
 			// Enable ONLY for testing a round trip.
-			//PutHumptyTogetherAgain(mainFilePathname, projectName);
+			// FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
 #endif
 		}
 
