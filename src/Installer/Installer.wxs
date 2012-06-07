@@ -38,7 +38,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <RegistrySearch Id="SearchForFW7DevDir" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\7.0" Name="FwExeDir" Type="raw"/>
 	</Property>
 		<!-- Use the dev entry, but only if set. -->
-	<SetProperty Id="FW7INSTALLDIR" After="AppSearch" Value="[FW7DEVINSTALLDIR]">FW7DEVINSTALLDIR</SetProperty>
+	<SetProperty Id="FW7INSTALLDIR" Before="LaunchConditions" Value="[FW7DEVINSTALLDIR]">FW7DEVINSTALLDIR</SetProperty>
 
 	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
