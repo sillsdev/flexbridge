@@ -30,7 +30,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			progress.WriteMessage("Writing the linguistics data....");
+			progress.WriteVerbose("Writing the linguistics data....");
 			LinguisticsDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
 		}
 
@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			progress.WriteMessage("Writing the anthropology data....");
+			progress.WriteVerbose("Writing the anthropology data....");
 			AnthropologyDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
@@ -46,7 +46,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			progress.WriteMessage("Writing the other data....");
+			progress.WriteVerbose("Writing the other data....");
 			ScriptureDomainServices.WriteNestedDomainData(pathRoot, classData, guidToClassMapping);
 		}
 
@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			Dictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			progress.WriteMessage("Writing the general data....");
+			progress.WriteVerbose("Writing the general data....");
 			GeneralDomainServices.WriteNestedDomainData(progress, pathRoot, classData, guidToClassMapping);
 		}
 
@@ -62,13 +62,13 @@ namespace FLEx_ChorusPlugin.Contexts
 		{
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			progress.WriteMessage("Collecting the general data....");
+			progress.WriteVerbose("Collecting the general data....");
 			GeneralDomainServices.FlattenDomain(progress, highLevelData, sortedData, pathRoot);
-			progress.WriteMessage("Collecting the other data....");
+			progress.WriteVerbose("Collecting the other data....");
 			ScriptureDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			progress.WriteMessage("Collecting the anthropology data....");
+			progress.WriteVerbose("Collecting the anthropology data....");
 			AnthropologyDomainServices.FlattenDomain(highLevelData, sortedData, pathRoot);
-			progress.WriteMessage("Collecting the linguistics data....");
+			progress.WriteVerbose("Collecting the linguistics data....");
 			LinguisticsDomainServices.FlattenDomain(progress, highLevelData, sortedData, pathRoot);
 			return sortedData;
 		}

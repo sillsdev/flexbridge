@@ -17,11 +17,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (!Directory.Exists(generalBaseDir))
 				Directory.CreateDirectory(generalBaseDir);
 
-			progress.WriteMessage("Writing user-defined list data....");
+			progress.WriteVerbose("Writing user-defined list data....");
 			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing language project data....");
+			progress.WriteVerbose("Writing language project data....");
 			GeneralDomainBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
-			progress.WriteMessage("Writing problem data....");
+			progress.WriteVerbose("Writing problem data....");
 			GeneralDomainOrphansBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 		}
 
@@ -35,11 +35,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				return;
 
 			// Do in reverse order from nesting.
-			progress.WriteMessage("Collecting the problem data....");
+			progress.WriteVerbose("Collecting the problem data....");
 			GeneralDomainOrphansBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
-			progress.WriteMessage("Collecting the language project data....");
+			progress.WriteVerbose("Collecting the language project data....");
 			GeneralDomainBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
-			progress.WriteMessage("Collecting the user-defined list data....");
+			progress.WriteVerbose("Collecting the user-defined list data....");
 			UserDefinedListsBoundedContextService.FlattenContext(highLevelData, sortedData, generalBaseDir);
 		}
 
