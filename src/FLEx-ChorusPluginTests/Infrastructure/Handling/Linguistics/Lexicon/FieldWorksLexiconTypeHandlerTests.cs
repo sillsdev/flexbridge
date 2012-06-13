@@ -88,7 +88,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateWithNoEntries()
+		public void ShouldBeAbleToValidateWithNoEntries()
 		{
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
