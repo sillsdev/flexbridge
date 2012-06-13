@@ -131,41 +131,24 @@ namespace FLEx_ChorusPluginTests
 
 		internal static string DoMerge(
 			IChorusFileTypeHandler chorusFileHandler,
+			string extension,
 			string commonAncestor, string ourContent, string theirContent,
 			IEnumerable<string> matchesExactlyOne, IEnumerable<string> isNull,
 			int expectedConflictCount, List<Type> conflictTypes,
 			int expectedChangesCount, List<Type> changeTypes)
 		{
 			string result;
-			using (var ours = new TempFile(ourContent))
-			using (var theirs = new TempFile(theirContent))
-			using (var ancestor = new TempFile(commonAncestor))
+			using (var ours = TempFile.WithFilename("ours." + extension))
+			using (var theirs = new TempFile("theirs." + extension))
+			using (var ancestor = new TempFile("common." + extension))
 			{
-				var situation = new NullMergeSituation();
-				var mergeOrder = new MergeOrder(ours.Path, ancestor.Path, theirs.Path, situation);
-				var eventListener = new ListenerForUnitTests();
-				mergeOrder.EventListener = eventListener;
-
-				chorusFileHandler.Do3WayMerge(mergeOrder);
-				result = File.ReadAllText(ours.Path);
-				if (matchesExactlyOne != null)
-				{
-					foreach (var query in matchesExactlyOne)
-						XmlTestHelper.AssertXPathMatchesExactlyOne(result, query);
-				}
-				if (isNull != null)
-				{
-					foreach (var query in isNull)
-						XmlTestHelper.AssertXPathIsNull(result, query);
-				}
-				eventListener.AssertExpectedConflictCount(expectedConflictCount);
-				Assert.AreEqual(conflictTypes.Count, eventListener.Conflicts.Count);
-				for (var idx = 0; idx < conflictTypes.Count; ++idx)
-					Assert.AreSame(conflictTypes[idx], eventListener.Conflicts[idx].GetType());
-				eventListener.AssertExpectedChangesCount(expectedChangesCount);
-				Assert.AreEqual(changeTypes.Count, eventListener.Changes.Count);
-				for (var idx = 0; idx < changeTypes.Count; ++idx)
-					Assert.AreSame(changeTypes[idx], eventListener.Changes[idx].GetType());
+				result = DoMerge(chorusFileHandler,
+								 ours, ourContent,
+								 ancestor, commonAncestor,
+								 theirs, theirContent,
+								 matchesExactlyOne, isNull,
+								 expectedConflictCount, conflictTypes,
+								 expectedChangesCount, changeTypes);
 			}
 			return result;
 		}
