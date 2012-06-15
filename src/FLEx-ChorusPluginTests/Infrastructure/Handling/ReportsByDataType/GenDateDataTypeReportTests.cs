@@ -49,17 +49,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
-					if (classInfo.ClassName != "CmPerson" && classInfo.ClassName != "RnGenericRec")
-					{
-						Assert.IsFalse(elementStrategy.IsImmutable);
-						continue;
-					}
-					Assert.IsTrue(elementStrategy.IsImmutable);
+					Assert.IsFalse(elementStrategy.IsImmutable);
 				}
 			}
 		}
 
-		[Test, Ignore("For now")]
+		[Test]
 		public void EnsureDateOfEventAddedByLoserGetsMerged()
 		{
 			const string commonAncestor =
