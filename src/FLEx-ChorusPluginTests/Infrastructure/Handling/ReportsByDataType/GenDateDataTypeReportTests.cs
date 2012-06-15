@@ -15,9 +15,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	///
 	/// As of DM 7000052, GenDate is used in:
 	///
-	/// CmPerson		- DateOfBirth (immutable)
-	/// CmPerson		- DateOfDeath (immutable)
-	/// RnGenericRec	- DateOfEvent (immutable)
+	/// CmPerson		- DateOfBirth
+	/// CmPerson		- DateOfDeath
+	/// RnGenericRec	- DateOfEvent
 	/// Reminder		- Date
 	///
 	/// Of these, we'll go with immutable for merge purposes, even if the FLEx UI might allow a change.
@@ -29,8 +29,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		private XmlMerger _merger;
 
 		[TestFixtureSetUp]
-		public void FixtureSetup()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
 			_mdc = MetadataCache.TestOnlyNewCache;
 			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
 		}
