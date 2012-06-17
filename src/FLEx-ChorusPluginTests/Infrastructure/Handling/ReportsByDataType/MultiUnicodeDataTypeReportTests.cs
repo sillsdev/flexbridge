@@ -34,6 +34,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
 				{
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -47,6 +48,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsFalse(elementStrategy.IsAtomic);
 			Assert.IsFalse(elementStrategy.IsImmutable);
 			Assert.IsFalse(elementStrategy.OrderIsRelevant);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 		}

@@ -40,6 +40,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.IsFalse(elementStrategy.IsImmutable);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrOne, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -53,6 +54,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsTrue(elementStrategy.IsAtomic);
 			Assert.IsFalse(elementStrategy.OrderIsRelevant);
 			Assert.IsFalse(elementStrategy.IsImmutable);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrOne, elementStrategy.NumberOfChildren);
 		}
 	}
 }

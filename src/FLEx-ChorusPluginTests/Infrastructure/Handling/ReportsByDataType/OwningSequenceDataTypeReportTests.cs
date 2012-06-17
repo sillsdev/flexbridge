@@ -35,6 +35,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
 				{
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -48,6 +49,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsFalse(elementStrategy.IsAtomic);
 			Assert.IsFalse(elementStrategy.IsImmutable);
 			Assert.IsTrue(elementStrategy.OrderIsRelevant);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 			Assert.AreEqual(2, elementStrategy.AttributesToIgnoreForMerging.Count);
 			var ignoredAttrNames = new HashSet<string>
@@ -68,6 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsTrue(elementStrategy.IsAtomic);
 			Assert.IsFalse(elementStrategy.IsImmutable);
 			Assert.IsTrue(elementStrategy.OrderIsRelevant);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 			Assert.AreEqual(2, elementStrategy.AttributesToIgnoreForMerging.Count);
 			var ignoredAttrNames = new HashSet<string>

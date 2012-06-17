@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	/// <summary>
 	/// Test all expected reports (change and conflict) for the OwningAtomic (CmObject) data type.
 	/// </summary>
-	[TestFixture, Ignore("Not yet.")]
+	[TestFixture]
 	public class OwningAtomicDataTypeReportTests : BaseFieldWorksTypeHandlerTests
 	{
 		private MetadataCache _mdc;
@@ -24,6 +25,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			base.FixtureSetup();
 
 			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
 		}
 
@@ -40,6 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.IsFalse(elementStrategy.IsImmutable);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrOne, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -101,12 +104,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	</LexEntry>
 </Lexicon>";
 
-			var results = FieldWorksTestServices.DoMerge(FileHandler,
+			FieldWorksTestServices.DoMerge(FileHandler,
 				"lexdb",
-														 commonAncestor, ours, theirs,
-														 new[] { "Lexicon/LexEntry/Etymology/LexEtymology" }, null,
-														 0, new List<Type>(),
-														 0, new List<Type>());
+				commonAncestor, ours, theirs,
+				new[] { "Lexicon/LexEntry/Etymology/LexEtymology", "Lexicon/LexEntry/Etymology/LexEtymology[@guid='76dbd844-915a-4cbd-886f-eebef34fa04e']" },
+				new[] { "Lexicon/LexEntry/Etymology/LexEtymology[@guid='c909553a-aa91-4695-8fda-c708ec969a02']" },
+				1, new List<Type> { typeof(BothAddedMainElementButWithDifferentContentConflict) },
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 	}
 }

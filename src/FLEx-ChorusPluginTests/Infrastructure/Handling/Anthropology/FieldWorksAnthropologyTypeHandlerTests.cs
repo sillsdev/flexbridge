@@ -223,7 +223,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 					},
 				null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlDeletionChangeReport), typeof(XmlAdditionChangeReport) });
+				2, new List<Type> { typeof(XmlBothDeletionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]

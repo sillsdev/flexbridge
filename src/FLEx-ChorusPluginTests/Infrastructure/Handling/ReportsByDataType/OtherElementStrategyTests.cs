@@ -39,6 +39,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 						Assert.IsFalse(elementStrategy.IsAtomic);
 						Assert.IsFalse(elementStrategy.OrderIsRelevant);
 						Assert.IsFalse(elementStrategy.IsImmutable);
+						Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 						Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 						Assert.AreEqual(2, elementStrategy.AttributesToIgnoreForMerging.Count);
 						var ignoredAttrNames = new HashSet<string>
@@ -61,6 +62,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					elementStrategy = _merger.MergeStrategies.ElementStrategies[classInfo.ClassName];
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 					if (classInfo.ClassName == "ScrDraft")
 						Assert.IsTrue(elementStrategy.IsImmutable);
 					else
@@ -78,6 +80,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsFalse(elementStrategy.IsAtomic);
 			Assert.IsFalse(elementStrategy.OrderIsRelevant);
 			Assert.IsFalse(elementStrategy.IsImmutable);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 		}
 
@@ -89,6 +92,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsFalse(elementStrategy.OrderIsRelevant);
 			Assert.IsFalse(elementStrategy.IsImmutable);
 			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
+			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.AreEqual(4, elementStrategy.AttributesToIgnoreForMerging.Count);
 			var ignoredAttrNames = new HashSet<string>
 									{
