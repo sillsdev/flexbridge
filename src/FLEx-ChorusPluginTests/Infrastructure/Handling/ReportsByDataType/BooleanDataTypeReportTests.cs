@@ -59,6 +59,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.IsFalse(elementStrategy.IsImmutable);
+					Assert.AreEqual(NumberOfChildrenAllowed.Zero, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -95,7 +96,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				_theirFile, theirContent,
 				new List<string> { @"MorphTypes/CmPossibilityList/IsClosed[@val='True']" }, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlAdditionChangeReport) });
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 
 		[Test]
@@ -128,7 +129,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				_theirFile, theirContent,
 				new List<string> { @"MorphTypes/CmPossibilityList/IsClosed[@val='True']" }, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlAdditionChangeReport) });
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 	}
 }

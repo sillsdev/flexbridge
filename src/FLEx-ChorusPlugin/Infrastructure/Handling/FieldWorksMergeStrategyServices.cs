@@ -92,6 +92,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				// So, use a new ownseatomic element tag.
 				// classStrat.IsAtomic = classInfo.ClassName == "StTxtPara" || classInfo.ClassName == "ScrTxtPara";
 				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
+
 				switch (classInfo.ClassName)
 				{
 					case "LexEntry":
@@ -160,28 +161,43 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					{
 						//default:
 						//	break;
-						// Not for DataType.TextPropBinary (yet anyway), because its contained <Prop> element is atomic.
-						case DataType.GenDate:
-							// LT-13320 "Date of Event is lost after send/receive (data loss)"
-							// says these fields don;t play nice as immutable.
-							//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
-							//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
-							break;
-						case DataType.Guid:
-							if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
-								propStrategy.IsImmutable = true;
-							break;
-						case DataType.Binary:
-							propStrategy.IsAtomic = true;
-							break;
-						case DataType.Time:
-							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
-							break;
 						case DataType.ReferenceAtomic:
 							if(classInfo.ClassName ==  "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
 							{
 								propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
 							}
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+							break;
+						case DataType.OwningAtomic:
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+							break;
+
+						case DataType.TextPropBinary: // Fall through - Contains one <Prop> element
+						case DataType.Unicode: // Fall through - Contains one <Uni> element
+						case DataType.String: // Fall through (TsString) - Contains one <Str> element
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+							break;
+
+						case DataType.Integer: // Fall through
+						case DataType.Boolean: // Fall through
+						case DataType.GenDate:
+							// LT-13320 "Date of Event is lost after send/receive (data loss)"
+							// says these fields don;t play nice as immutable.
+							//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+							//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+							break;
+						case DataType.Time:
+							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+							break;
+						case DataType.Guid:
+							if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
+								propStrategy.IsImmutable = true;
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+							break;
+						case DataType.Binary:
+							propStrategy.IsAtomic = true;
 							break;
 					}
 					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
@@ -243,6 +259,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Str, false);
 			elementStrategy.IsAtomic = true; // TsStrings are atomic
+			elementStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 
 			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Binary, false);
 			elementStrategy.IsAtomic = true; // Binary properties are atomic
@@ -270,6 +287,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
 			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, SharedConstants.Objsur, false);
 			elementStrategy.IsAtomic = true; // Testing to see if atomic here, or at the prop level is better, as per https://www.pivotaltracker.com/story/show/25402673
+			elementStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 
 			// Add element for SharedConstants.Refseq
 			elementStrategy = CreateStrategyForElementKeyedByGuidInList(); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.

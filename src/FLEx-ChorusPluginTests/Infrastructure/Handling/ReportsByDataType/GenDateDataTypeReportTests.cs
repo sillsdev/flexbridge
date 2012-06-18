@@ -34,6 +34,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			base.FixtureSetup();
 
 			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
 		}
 
@@ -50,6 +51,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
+					Assert.AreEqual(NumberOfChildrenAllowed.Zero, elementStrategy.NumberOfChildren);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 					Assert.IsFalse(elementStrategy.IsImmutable);
 				}
@@ -91,12 +93,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	</RnGenericRec>
 </Anthropology>";
 
-			var results = FieldWorksTestServices.DoMerge(FileHandler,
+			FieldWorksTestServices.DoMerge(FileHandler,
 				"ntbk",
-														 commonAncestor, ours, theirs,
-														 new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
-														 0, new List<Type>(),
-														 1, new List<Type> { typeof(XmlAdditionChangeReport) });
+				commonAncestor, ours, theirs,
+				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 	}
 }

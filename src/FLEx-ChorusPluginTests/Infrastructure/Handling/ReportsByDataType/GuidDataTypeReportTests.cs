@@ -44,6 +44,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
+					Assert.AreEqual(NumberOfChildrenAllowed.Zero, elementStrategy.NumberOfChildren);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 					if (classInfo.ClassName != "CmFilter" && classInfo.ClassName != "CmResource")
 					{
