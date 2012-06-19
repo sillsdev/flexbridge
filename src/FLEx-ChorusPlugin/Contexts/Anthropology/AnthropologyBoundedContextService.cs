@@ -61,13 +61,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 					rootElement.Add(recordsElement.Elements()); // NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Records" is a collection prop.
 					recordsElement.RemoveNodes(); // Leaves empty Records element placeholder in RnResearchNbk element.
 				}
-				else
-				{
-					// Add one bogus element, so fast splitter need not be changed for optional main sequence.
-					// Restore will remove it, if found.
-					rootElement.Add(new XElement("RnGenericRec",
-												   new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
-				}
 				// Remove child objsur nodes from owning LangProg
 				langProj.Element("ResearchNotebook").RemoveNodes();
 			}
@@ -131,21 +124,19 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			var root = doc.Root;
 			var dnMainElement = root.Element(SharedConstants.Header).Element("RnResearchNbk");
 
-			// Add the chart elements (except the possible dummy one) into discourseElement.
+			// Add the record elements (except the possible dummy one) into dnMainElement.
 			var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			foreach (var recordElement in root.Elements("RnGenericRec").ToList())
+			foreach (var recordElement in root.Elements("RnGenericRec")
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
-				var recordGuid = recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				if (recordGuid == Guid.Empty.ToString().ToLowerInvariant())
-					break; // Only has dummy element.
-
 				// Add it to Records property of dnMainElement, BUT in sorted order, below, and then flatten dnMainElement.
-				sortedRecords.Add(recordGuid, recordElement);
+				sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);
 			}
 
 			if (sortedRecords.Count > 0)
 			{
-				var recordsElementOwningProp = dnMainElement.Element("Records");
+				var recordsElementOwningProp = dnMainElement.Element("Records")
+					?? CmObjectFlatteningService.AddNewPropertyElement(dnMainElement, "Records");
 				foreach (var sortedChartElement in sortedRecords.Values)
 					recordsElementOwningProp.Add(sortedChartElement);
 			}

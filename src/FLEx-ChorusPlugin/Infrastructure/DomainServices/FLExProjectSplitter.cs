@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-﻿﻿using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
-using Palaso.Progress;
-using Palaso.UI.WindowsForms.Progress;
-using Palaso.UI.WindowsForms.Progress.Commands;
+﻿﻿using Palaso.Code;
+﻿﻿using Palaso.Progress.LogBox;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -29,106 +27,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	///		B. One file for the model version
 	///		C. Various files for the CmObject data.
 	/// </summary>
-	class FLExProjectSplitter
+	internal static class FLExProjectSplitter
 	{
-		private enum SplitTasks
+		internal static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
 		{
-			DeleteOldFiles,
-			UpdateVersion,
-			SortClassXml,
-			WriteOrCacheXmlProps,
-			WriteLinguisticsFile,
-			WriteAnthopologyFile,
-			WriteScriptureFile,
-			WriteGeneralFile
-		};
+			PushHumptyOffTheWall(progress, true, mainFilePathname);
+		}
 
-		private SplitTasks _nextSplitTask = SplitTasks.DeleteOldFiles;
-
-		private readonly string _mainFilePathname;
-		private readonly MetadataCache _mdc = MetadataCache.MdCache;
-		// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
-		// The inner dictionary has a caseless guid as the key and the byte array as the value.
-		// (Only has current concrete classes.)
-		private Dictionary<string, SortedDictionary<string, XElement>> _classData;
-		private Dictionary<string, string> _guidToClassMapping;
-
-		public FLExProjectSplitter(string mainFilePathname)
+		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
+			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckFilename(mainFilePathname);
-			_mainFilePathname = mainFilePathname;
-		}
 
-		public int Steps
-		{
-			get
-			{
-				return Enum.GetValues(typeof(SplitTasks)).GetLength(0);
-			}
-		}
+			var rootDirectoryName = Path.GetDirectoryName(mainFilePathname);
+			// NB: This is strictly an ordered list of method calls.
+			// Don't even 'think' of changing any of them.
+			DeleteOldFiles(rootDirectoryName);
+			WriteVersionFile(mainFilePathname);
+			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
+			// The inner dictionary has a caseless guid as the key and the byte array as the value.
+			// (Only has current concrete classes.)
+			var classData = GenerateBasicClassData();
+			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData);
+			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, classData, guidToClassMapping);
 
-		internal void PushHumptyOffTheWall()
-		{
-			for (var subtask = 0; subtask < Steps; subtask++)
-			{
-				PushHumptyOffTheWallWatching();
-			}
-		}
-
-		/// <summary>
-		/// A state machine needed to quantize the process of tearing the *.fwdata
-		/// file apart so a progress bar can track it.
-		/// </summary>
-		internal void PushHumptyOffTheWallWatching()
-		{
-			switch (_nextSplitTask)
-			{
-				case SplitTasks.DeleteOldFiles:
-					DeleteOldFiles(Path.GetDirectoryName(_mainFilePathname));
-					_nextSplitTask = SplitTasks.UpdateVersion;
-					break;
-				case SplitTasks.UpdateVersion:
-					WriteVersionFile();
-					_nextSplitTask = SplitTasks.SortClassXml;
-					break;
-				case SplitTasks.SortClassXml:
-					GenerateBasicClassData();
-					_nextSplitTask = SplitTasks.WriteOrCacheXmlProps;
-					break;
-				case SplitTasks.WriteOrCacheXmlProps:
-					WriteOrCacheProperties();
-					_nextSplitTask = SplitTasks.WriteLinguisticsFile;
-					break;
-				case SplitTasks.WriteLinguisticsFile:
-					BaseDomainServices.WriteLinguisticsData(Path.GetDirectoryName(_mainFilePathname), _classData, _guidToClassMapping);
-					_nextSplitTask = SplitTasks.WriteAnthopologyFile;
-					break;
-				case SplitTasks.WriteAnthopologyFile:
-					BaseDomainServices.WriteAnthropologyData(Path.GetDirectoryName(_mainFilePathname), _classData, _guidToClassMapping);
-					_nextSplitTask = SplitTasks.WriteScriptureFile;
-					break;
-				case SplitTasks.WriteScriptureFile:
-					BaseDomainServices.WriteScriptureData(Path.GetDirectoryName(_mainFilePathname), _classData, _guidToClassMapping);
-					_nextSplitTask = SplitTasks.WriteGeneralFile;
-					break;
-				case SplitTasks.WriteGeneralFile:
-					BaseDomainServices.WriteGeneralData(Path.GetDirectoryName(_mainFilePathname), _classData, _guidToClassMapping);
-					_nextSplitTask = SplitTasks.DeleteOldFiles;
-					_classData = null;
-					_guidToClassMapping = null;
-					break;
-				default:
-					var badState = _nextSplitTask;
-					_nextSplitTask = SplitTasks.DeleteOldFiles;
-					throw new InvalidOperationException("Invalid state [" + badState + "] while splitting Send/Receive project file.");
-			}
 #if DEBUG
 			// Enable ONLY for testing a round trip.
-			//PutHumptyTogetherAgain(mainFilePathname, projectName);
+			// FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
 #endif
 		}
 
-		private void DeleteOldFiles(string pathRoot)
+		private static void DeleteOldFiles(string pathRoot)
 		{
 			// Wipe out custom props file, as it will be re-created, even if it only has the root element in it.
 			var customPropPathname = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
@@ -143,29 +72,27 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
-		private void WriteVersionFile()
+		private static void WriteVersionFile(string mainFilePathname)
 		{
-			var pathRoot = Path.GetDirectoryName(_mainFilePathname);
+			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			// 1. Write version number file.
-			using (var reader = XmlReader.Create(_mainFilePathname, FileWriterService.CanonicalReaderSettings))
+			using (var reader = XmlReader.Create(mainFilePathname, FileWriterService.CanonicalReaderSettings))
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
 				var version = reader.Value;
 				FileWriterService.WriteVersionNumberFile(pathRoot, version);
-				_mdc.UpgradeToVersion(Int32.Parse(version));
+				MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
 			}
 		}
 
-		private void WriteOrCacheProperties()
+		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, XElement>> classData)
 		{
-			var pathRoot = Path.GetDirectoryName(_mainFilePathname);
-
-			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
-			// The inner dictionary has a caseless guid as the key and the byte array as the value.
-			// (Only has current concrete classes.)
-			_guidToClassMapping = new Dictionary<string, string>();
-			using (var fastSplitter = new FastXmlElementSplitter(_mainFilePathname))
+			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			var mdc = MetadataCache.MdCache;
+			// Key is the guid of the object, and value is the class name.
+			var guidToClassMapping = new Dictionary<string, string>();
+			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
 			{
 				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
@@ -175,13 +102,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					if (foundOptionalFirstElement)
 					{
 						// 2. Write custom properties file with custom properties.
-						FileWriterService.WriteCustomPropertyFile(_mdc, pathRoot, record);
+						FileWriterService.WriteCustomPropertyFile(mdc, pathRoot, record);
 						foundOptionalFirstElement = false;
 						haveWrittenCustomFile = true;
 					}
 					else
 					{
-						CacheDataRecord(record);
+						CacheDataRecord(record, classData, guidToClassMapping);
 					}
 				}
 				if (!haveWrittenCustomFile)
@@ -190,24 +117,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					FileWriterService.WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), null);
 				}
 			}
+			return guidToClassMapping;
 		}
 
-		private void GenerateBasicClassData()
+		private static Dictionary<string, SortedDictionary<string, XElement>> GenerateBasicClassData()
 		{
-			_classData = _mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
+			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private void CacheDataRecord(byte[] record)
-		{
-			CacheDataRecord(SharedConstants.Utf8.GetString(record));
-		}
-
-		private void CacheDataRecord(string record)
+		private static void CacheDataRecord(string record, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var rtElement = XElement.Parse(record);
 			var className = rtElement.Attribute(SharedConstants.Class).Value;
 			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			_guidToClassMapping.Add(guid, className);
+			guidToClassMapping.Add(guid, className);
 
 			// 1. Remove 'Checksum' from wordforms.
 			if (className == "WfiWordform")
@@ -223,65 +146,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
-			_classData[className].Add(guid, rtElement);
-		}
-
-		/// <summary>
-		/// Method that is the send/receive dialog "shown" delegate which constructs the progress bar dialog
-		/// that wraps "humpty dumpty" so we can monitor him as he comes apart and make the user feel good about it.
-		/// </summary>
-		/// <param name="parentForm"></param>
-		/// <param name="origPathname"></param>
-		public static void SplitFwdataDelegate(Form parentForm, string origPathname)
-		{
-			var splitFwdataCommand = new SplitFwdataCommand(origPathname);
-			var progressHandler = new ProgressDialogHandler(parentForm, splitFwdataCommand, "Split up project file", true);
-			var state = new ProgressDialogProgressState(progressHandler);
-			progressHandler.ShowModal(state);
-			if (state.Cancel)
-			{
-				parentForm.Close();
-			}
-		}
-
-		public class SplitFwdataCommand : BasicCommand
-		{
-			public bool WasCancelled;
-
-			private readonly string _pathName;
-			private readonly FLExProjectSplitter _fps;
-			private readonly int _steps;
-
-			public SplitFwdataCommand(string pathName)
-			{
-				_pathName = pathName;
-				_fps = new FLExProjectSplitter(_pathName);
-				_steps = _fps.Steps;
-			}
-
-			protected override void DoWork(InitializeProgressCallback initializeCallback, ProgressCallback progressCallback, StatusCallback primaryStatusTextCallback, StatusCallback secondaryStatusTextCallback)
-			{
-				throw new NotSupportedException();
-			}
-
-			protected override void DoWork2(ProgressState progress)
-			{
-				var countForWork = 0;
-				progress.TotalNumberOfSteps = _steps;
-				while (countForWork < _steps)
-				{
-					if (Canceling)
-					{
-						WasCancelled = true;
-						progress.State = ProgressState.StateValue.Finished;
-						return;
-					}
-					_fps.PushHumptyOffTheWallWatching();
-					countForWork++;
-					progress.NumberOfStepsCompleted = countForWork;
-				}
-				progress.State = ProgressState.StateValue.Finished;
-			}
+			classData[className].Add(guid, rtElement);
 		}
 	}
 }

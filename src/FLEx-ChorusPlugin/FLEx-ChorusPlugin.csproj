@@ -120,6 +120,7 @@
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
@@ -219,6 +220,7 @@
 	<Compile Include="View\FLExBridge.Designer.cs">
 	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	</Compile>
+	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
 	<Compile Include="View\FwBridgeConflictView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -236,10 +238,10 @@
 	<Compile Include="View\IExistingSystemView.cs" />
 	<Compile Include="View\IFwBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
-	<Compile Include="View\IGetSharedProject.cs" />
+	<Compile Include="Infrastructure\IGetSharedProject.cs" />
 	<Compile Include="View\IProjectView.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
-	<Compile Include="View\ISynchronizeProject.cs" />
+	<Compile Include="Infrastructure\ISynchronizeProject.cs" />
 	<Compile Include="View\ObtainProjectView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -260,7 +262,7 @@
 	<Compile Include="View\StartupNewView.designer.cs">
 	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\SynchronizeProject.cs" />
+	<Compile Include="Infrastructure\SynchronizeProject.cs" />
 	<EmbeddedResource Include="View\ObtainProjectView.resx">
 	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>

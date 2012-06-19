@@ -32,13 +32,10 @@ namespace FLEx_ChorusPluginTests.Mocks
 			get { return _mockedProjectView; }
 		}
 
-		public void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
+		public void EnableSendReceiveControls(bool makeWarningsVisible)
 		{
-			EnableSendReceive = enableSendReceiveBtn;
 			WarningsAreVisible = makeWarningsVisible;
 		}
-
-		internal bool EnableSendReceive { set; get; }
 
 		internal bool WarningsAreVisible { set; get; }
 

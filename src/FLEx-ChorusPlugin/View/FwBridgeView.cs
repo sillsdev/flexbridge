@@ -26,7 +26,7 @@ namespace FLEx_ChorusPlugin.View
 		private void ProjectsSelectedIndexChanged(object sender, EventArgs e)
 		{
 			var projectIsInUse = SelectedProject.FieldWorkProjectInUse;
-			((IFwBridgeView)this).EnableSendReceiveControls(!projectIsInUse, projectIsInUse);
+			((IFwBridgeView)this).EnableSendReceiveControls(projectIsInUse);
 
 			if (SelectedProject.IsRemoteCollaborationEnabled)
 			{
@@ -44,24 +44,6 @@ namespace FLEx_ChorusPlugin.View
 			}
 		}
 
-		private void SendReceiveButtonClick(object sender, EventArgs e)
-		{
-			Cursor = Cursors.WaitCursor;
-			try
-			{
-				// Delay creation of repo, until S/R btn is clicked.
-				// The ProjectSelected call was in a selection event handler of the combo, but has been moved here.
-				if (ProjectSelected != null)
-					ProjectSelected(this, new ProjectEventArgs(SelectedProject));
-				if (SynchronizeProject != null)
-					SynchronizeProject(this, new EventArgs());
-			}
-			finally
-			{
-				Cursor = Cursors.Default;
-			}
-		}
-
 		#region Implementation of IFwBridgeView
 
 		public event ProjectSelectedEventHandler ProjectSelected;
@@ -76,7 +58,7 @@ namespace FLEx_ChorusPlugin.View
 				_cbProjects.SuspendLayout();
 
 				_cbProjects.Items.Clear();
-				var projectsCopy = _projects.ToList();
+				var projectsCopy = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
 				foreach (var project in projectsCopy)
 					_cbProjects.Items.Add(project);
 				if (projectsCopy.Any())
@@ -91,9 +73,8 @@ namespace FLEx_ChorusPlugin.View
 			get { return _projectView; }
 		}
 
-		void IFwBridgeView.EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
+		void IFwBridgeView.EnableSendReceiveControls(bool makeWarningsVisible)
 		{
-			_sendReceiveButton.Enabled = enableSendReceiveBtn;
 			_warninglabel1.Visible = makeWarningsVisible;
 			_warninglabel2.Visible = makeWarningsVisible;
 			_pictureBox.Visible = makeWarningsVisible;

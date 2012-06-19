@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -45,12 +44,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				}
 			}
 
-			if (sortedWfiWordformInstanceData.Count == 0)
-			{
-				// add one dummy one to keep fast splitter happy.
-				root.Add(new XElement("WfiWordform", new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
-			}
-			else
+			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
 				srcDataCopy = new SortedDictionary<string, XElement>(sortedWfiWordformInstanceData);
@@ -58,13 +52,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				{
 					root.Add(wordFormElement);
 					CmObjectNestingService.NestObject(false,
-						wordFormElement,
-						classData,
-						guidToClassMapping);
+													  wordFormElement,
+													  classData,
+													  guidToClassMapping);
 				}
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(inventoryDir, SharedConstants.WordformInventoryFilename), root);
+			if (root.HasElements)
+				FileWriterService.WriteNestedFile(Path.Combine(inventoryDir, SharedConstants.WordformInventoryFilename), root);
 		}
 
 		internal static void FlattenContext(
@@ -89,9 +84,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (optionalHeaderElement != null)
 				unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
 			unownedElements.AddRange(doc.Root.Elements("WfiWordform"));
-			var emptyGuid = Guid.Empty.ToString().ToLowerInvariant();
 			// Query skips the dummy WfiWordform, if it is present.
-			foreach (var unownedElement in unownedElements.Where(unownedElement => unownedElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != emptyGuid))
+			foreach (var unownedElement in unownedElements
+				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 			{
 				CmObjectFlatteningService.FlattenObject(
 					inventoryPathname,

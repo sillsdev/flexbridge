@@ -4,6 +4,7 @@ using Chorus.VcsDrivers;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.clone;
 using Chorus.UI.Clone;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.Model;
 using Palaso.Extensions;
@@ -58,9 +59,13 @@ namespace FLEx_ChorusPlugin.View
 							default:
 								return false;
 							case DialogResult.OK:
-								// It made a clone, but maybe in the wrong name.
-								FLExProjectUnifier.UnifyFwdataProgress(parent, currentBaseFieldWorksBridgePath);
-								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, currentBaseFieldWorksBridgePath);
+								// It made a clone, but maybe in the wrong name, grab the project name.
+								langProjName = Path.GetFileName(internetCloneDlg.PathToNewProject);
+								if (langProjName == noProject)
+									return false;
+								var mainFilePathName = Path.Combine(internetCloneDlg.PathToNewProject, langProjName + ".fwdata");
+								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
+								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}
 					}
@@ -100,7 +105,7 @@ namespace FLEx_ChorusPlugin.View
 								cloneFromNetworkFolderModel.SaveSettings();
 
 								var mainFilePathName = Path.Combine(cloneFromNetworkFolderModel.ActualClonedFolder, langProjName + ".fwdata");
-								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
+								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
 								// TODO: Call this, as is done for other two?
 								//PossiblyRenameFolder(actualClonedFolder, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								// TODO: Consider renaming the fwdata file (read: 'project name').
@@ -124,7 +129,7 @@ namespace FLEx_ChorusPlugin.View
 								// It made a clone, grab the project name.
 								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
 								var mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								FLExProjectUnifier.UnifyFwdataProgress(parent, mainFilePathName);
+								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
 								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
 								break;
 						}

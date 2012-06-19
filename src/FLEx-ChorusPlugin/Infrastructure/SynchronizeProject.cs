@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
+using FLEx_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal sealed class SynchronizeProject : ISynchronizeProject
 	{
@@ -37,8 +36,14 @@ namespace FLEx_ChorusPlugin.View
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
-					// Break up into smaller files after dialog is visible.
-					syncDlg.Shown += SyncDlgShown;
+					// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring now.
+					// 'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and
+					// the Synchoronizer class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit) call.
+					// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
+					// so Flex Bridge can restore the fwdata file, AND, most importantly,
+					// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
+					var syncAdjunt = new FlexBridgeSychronizerAdjunct(_origPathname);
+					syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 					// Chorus does it in ths order:
 					// local Commit
@@ -50,15 +55,9 @@ namespace FLEx_ChorusPlugin.View
 					syncDlg.SyncOptions.DoSendToOthers = true;
 					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
 					syncDlg.ShowDialog(parent);
-					syncDlg.Shown -= SyncDlgShown;
 
-					if (syncDlg.SyncResult.DidGetChangesFromOthers)
-					{
-						// Put Humpty together again.
-						// Use'parent', not 'syncDlg', since syncDlg will be closed by the time this is called.
-						FLExProjectUnifier.UnifyFwdataProgress(parent, _origPathname);
+					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.NeedToUpdateFlex)
 						othersChanges = true;
-					}
 				}
 			}
 			finally
@@ -70,11 +69,6 @@ namespace FLEx_ChorusPlugin.View
 		}
 
 		#endregion
-
-		void SyncDlgShown(object sender, EventArgs e)
-		{
-			FLExProjectSplitter.SplitFwdataDelegate((Form)sender, _origPathname);
-		}
 
 		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
 		{

@@ -71,7 +71,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// Restore scrElement ArchivedDrafts property in sorted order.
 			if (sortedDrafts.Count == 0)
 				return;
-			var draftsOwningProp = scrElement.Element(SharedConstants.ArchivedDrafts);
+			var draftsOwningProp = scrElement.Element(SharedConstants.ArchivedDrafts)
+								   ?? CmObjectFlatteningService.AddNewPropertyElement(scrElement, SharedConstants.ArchivedDrafts);
 			foreach (var sortedDraft in sortedDrafts.Values)
 				draftsOwningProp.Add(sortedDraft);
 		}

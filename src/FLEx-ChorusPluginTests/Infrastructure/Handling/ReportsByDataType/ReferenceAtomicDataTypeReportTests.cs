@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -11,15 +14,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	/// Test all expected reports (change and conflict) for the ReferenceAtomic (CmObject) data type.
 	/// </summary>
 	[TestFixture]
-	public class ReferenceAtomicDataTypeReportTests
+	public class ReferenceAtomicDataTypeReportTests : BaseFieldWorksTypeHandlerTests
 	{
 		private MetadataCache _mdc;
 		private XmlMerger _merger;
 
 		[TestFixtureSetUp]
-		public void FixtureSetup()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
 			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
 		}
 
@@ -36,6 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.IsFalse(elementStrategy.IsImmutable);
+					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrOne, elementStrategy.NumberOfChildren);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
@@ -51,6 +58,74 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.IsFalse(elementStrategy.IsImmutable);
 			Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 			Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
+		}
+
+		[Test]
+		public void BothAddingObjectsToNewAtomicReferencePropertyShouldHaveConflict()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Senses>
+			<ownseq
+				class='LexSense'
+				guid='022eeda8-429e-4f58-a850-ff7fac66319e'>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			const string ours =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Senses>
+			<ownseq
+				class='LexSense'
+				guid='022eeda8-429e-4f58-a850-ff7fac66319e'>
+				<MorphoSyntaxAnalysis>
+					<objsur guid='c1ed94cb-e382-11de-8a39-0800200c9a66' t='r' />
+				</MorphoSyntaxAnalysis>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			const string theirs =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<Senses>
+			<ownseq
+				class='LexSense'
+				guid='022eeda8-429e-4f58-a850-ff7fac66319e'>
+				<MorphoSyntaxAnalysis>
+					<objsur guid='c1edbbe4-e382-11de-8a39-0800200c9a66' t='r' />
+				</MorphoSyntaxAnalysis>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Lexicon>";
+
+			FieldWorksTestServices.DoMerge(FileHandler,
+				"lexdb",
+				commonAncestor, ours, theirs,
+				new[] { "Lexicon/LexEntry/Senses/ownseq/MorphoSyntaxAnalysis/objsur" }, null,
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 	}
 }

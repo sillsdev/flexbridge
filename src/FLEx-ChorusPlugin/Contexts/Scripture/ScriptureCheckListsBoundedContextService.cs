@@ -69,7 +69,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (sortedLists.Count == 0)
 				return;
 			// Restore LangProj CheckLists property in sorted order.
-			var checkListsProp = langProjElement.Element(CheckLists);
+			var checkListsProp = langProjElement.Element(CheckLists)
+								 ?? CmObjectFlatteningService.AddNewPropertyElement(langProjElement, CheckLists);
 			foreach (var sortedList in sortedLists.Values)
 				checkListsProp.Add(sortedList);
 		}

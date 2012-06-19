@@ -10,7 +10,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	/// <summary>
 	/// Test all expected reports (change and conflict) for the Unicode (C# strings) data type.
 	///
-	/// As of DM 7000052, String is used in many locations.
+	/// As of DM 7000052, Unicode is used in many locations.
 	/// </summary>
 	[TestFixture]
 	public class UnicodeDataTypeReportTests

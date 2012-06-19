@@ -2,7 +2,7 @@
 using Chorus;
 using FLEx_ChorusPlugin.Model;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal interface ISynchronizeProject
 	{

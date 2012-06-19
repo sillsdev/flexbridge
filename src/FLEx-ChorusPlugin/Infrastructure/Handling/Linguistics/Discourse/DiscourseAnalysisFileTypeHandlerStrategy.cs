@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
@@ -31,18 +30,25 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.DiscourseRootFolder
 					|| root.Element(SharedConstants.Header) == null
-					|| root.Element(SharedConstants.Header).Element("DsDiscourseData") == null
-					|| !root.Elements(SharedConstants.DsChart).Any())
+					|| root.Element(SharedConstants.Header).Element("DsDiscourseData") == null)
 				{
 					return "Not valid discourse file.";
 				}
 
-				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.Header).Element("DsDiscourseData"));
+				var mdc = MetadataCache.MdCache;
+				var result = CmObjectValidator.ValidateObject(mdc, root.Element(SharedConstants.Header).Element("DsDiscourseData"));
 				if (result != null)
 					return result;
 
-				return root.Elements(SharedConstants.DsChart)
-					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(res => res != null);
+				foreach (var element in root.Elements(SharedConstants.DsChart))
+				{
+					if (element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
+						return null;
+					result = CmObjectValidator.ValidateObject(mdc, element);
+					if (result != null)
+						return result;
+				}
+				return null;
 			}
 			catch (Exception e)
 			{

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -11,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	/// </summary>
 	internal static class ScriptureDomainServices
 	{
-		internal static void WriteNestedDomainData(string rootDir,
+		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -43,6 +44,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
+			if (writeVerbose)
+				progress.WriteVerbose("Writing the other data....");
+			else
+				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
 			var langProj = classData["LangProject"].Values.First();
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
@@ -62,6 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenDomain(
+			IProgress progress, bool writeVerbose,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string rootDir)
@@ -70,6 +76,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
 
+			if (writeVerbose)
+				progress.WriteVerbose("Collecting the other data....");
+			else
+				progress.WriteMessage("Collecting the other data....");
 			ScriptureReferenceSystemBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 			ScriptureCheckListsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 

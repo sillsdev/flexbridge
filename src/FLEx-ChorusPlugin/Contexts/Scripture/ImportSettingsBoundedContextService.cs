@@ -71,7 +71,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// Restore scrElement ImportSettings property in sorted order.
 			if (sortedImportSettings.Count == 0)
 				return;
-			var importSettingsOwningProp = scrElement.Element(SharedConstants.ImportSettings);
+			var importSettingsOwningProp = scrElement.Element(SharedConstants.ImportSettings)
+										   ?? CmObjectFlatteningService.AddNewPropertyElement(scrElement, SharedConstants.ImportSettings);
 			foreach (var sortedimportSettings in sortedImportSettings.Values)
 				importSettingsOwningProp.Add(sortedimportSettings);
 		}

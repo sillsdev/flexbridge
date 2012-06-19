@@ -15,6 +15,10 @@ namespace FLEx_ChorusPluginTests.Mocks
 			ChorusSys = chorusSystem;
 		}
 
+		public void UpdateDisplay(bool projectIsInUse)
+		{
+		}
+
 		#endregion
 	}
 }

@@ -86,11 +86,6 @@ namespace FLExBridge
 		/// </summary>
 		internal void SignalBridgeWorkComplete(bool changesReceived)
 		{
-			//wake up the BridgeWorkOngoing message and let it return to FLEx.
-			//This is unnecessary except to avoid an exception on the FLEx side, just trying to be nice.
-			Monitor.Enter(FLExService.WaitObject);
-			Monitor.PulseAll(FLExService.WaitObject);
-			Monitor.Exit(FLExService.WaitObject);
 			//open a channel to flex and send the message.
 			try
 			{
@@ -101,6 +96,11 @@ namespace FLExBridge
 			{
 				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
 			}
+			// Allow the _host to get the WaitObject, which will result in the WorkDoneCallback
+			// method being called in FLEx:
+			Monitor.Enter(FLExService.WaitObject);
+			Monitor.PulseAll(FLExService.WaitObject);
+			Monitor.Exit(FLExService.WaitObject);
 		}
 
 		/// <summary>

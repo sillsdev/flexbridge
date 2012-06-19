@@ -39,6 +39,7 @@
 			this._cbVerify = new System.Windows.Forms.CheckBox();
 			this._cbCheckOwnObjsur = new System.Windows.Forms.CheckBox();
 			this._cbValidate = new System.Windows.Forms.CheckBox();
+			this._restoreDataFile = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			//
 			// _openFileDialog
@@ -76,7 +77,7 @@
 			// _btnNest
 			//
 			this._btnNest.Enabled = false;
-			this._btnNest.Location = new System.Drawing.Point(7, 94);
+			this._btnNest.Location = new System.Drawing.Point(7, 125);
 			this._btnNest.Name = "_btnNest";
 			this._btnNest.Size = new System.Drawing.Size(107, 23);
 			this._btnNest.TabIndex = 8;
@@ -140,12 +141,23 @@
 			this._cbValidate.Text = "Validate Files";
 			this._cbValidate.UseVisualStyleBackColor = true;
 			//
+			// _restoreDataFile
+			//
+			this._restoreDataFile.AutoSize = true;
+			this._restoreDataFile.Location = new System.Drawing.Point(7, 89);
+			this._restoreDataFile.Name = "_restoreDataFile";
+			this._restoreDataFile.Size = new System.Drawing.Size(114, 17);
+			this._restoreDataFile.TabIndex = 17;
+			this._restoreDataFile.Text = "Restore fwdata file";
+			this._restoreDataFile.UseVisualStyleBackColor = true;
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 123);
+			this.ClientSize = new System.Drawing.Size(554, 166);
+			this.Controls.Add(this._restoreDataFile);
 			this.Controls.Add(this._cbValidate);
 			this.Controls.Add(this._cbCheckOwnObjsur);
 			this.Controls.Add(this._cbVerify);
@@ -175,5 +187,6 @@
 		private System.Windows.Forms.CheckBox _cbVerify;
 		private System.Windows.Forms.CheckBox _cbCheckOwnObjsur;
 		private System.Windows.Forms.CheckBox _cbValidate;
+		private System.Windows.Forms.CheckBox _restoreDataFile;
 	}
 }

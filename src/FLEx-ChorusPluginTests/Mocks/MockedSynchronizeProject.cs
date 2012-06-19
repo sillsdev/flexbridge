@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using Chorus;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {

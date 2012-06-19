@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
@@ -31,8 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Lexicon
 					|| root.Element(SharedConstants.Header) == null
-					|| root.Element(SharedConstants.Header).Element("LexDb") == null
-					|| !root.Elements(SharedConstants.LexEntry).Any())
+					|| root.Element(SharedConstants.Header).Element("LexDb") == null)
 				{
 					return "Not valid lexicon file";
 				}
@@ -42,8 +40,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 				if (result != null)
 					return result;
 
-				foreach (XElement entryElement in root.Elements(SharedConstants.LexEntry))
+				foreach (var entryElement in root.Elements(SharedConstants.LexEntry))
 				{
+					if (entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
+						return null;
 					result = CmObjectValidator.ValidateObject(mdc, entryElement);
 					if (result != null)
 						return result;

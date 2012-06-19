@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -12,23 +15,26 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	///
 	/// As of DM 7000052, GenDate is used in:
 	///
-	/// CmPerson		- DateOfBirth (immutable)
-	/// CmPerson		- DateOfDeath (immutable)
-	/// RnGenericRec	- DateOfEvent (immutable)
+	/// CmPerson		- DateOfBirth
+	/// CmPerson		- DateOfDeath
+	/// RnGenericRec	- DateOfEvent
 	/// Reminder		- Date
 	///
 	/// Of these, we'll go with immutable for merge purposes, even if the FLEx UI might allow a change.
 	/// </summary>
 	[TestFixture]
-	public class GenDateDataTypeReportTests
+	public class GenDateDataTypeReportTests : BaseFieldWorksTypeHandlerTests
 	{
 		private MetadataCache _mdc;
 		private XmlMerger _merger;
 
 		[TestFixtureSetUp]
-		public void FixtureSetup()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
 			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
 		}
 
@@ -45,15 +51,54 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
+					Assert.AreEqual(NumberOfChildrenAllowed.Zero, elementStrategy.NumberOfChildren);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
-					if (classInfo.ClassName != "CmPerson" && classInfo.ClassName != "RnGenericRec")
-					{
-						Assert.IsFalse(elementStrategy.IsImmutable);
-						continue;
-					}
-					Assert.IsTrue(elementStrategy.IsImmutable);
+					Assert.IsFalse(elementStrategy.IsImmutable);
 				}
 			}
+		}
+
+		[Test]
+		public void EnsureDateOfEventAddedByLoserGetsMerged()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string ours =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string theirs =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			FieldWorksTestServices.DoMerge(FileHandler,
+				"ntbk",
+				commonAncestor, ours, theirs,
+				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 	}
 }

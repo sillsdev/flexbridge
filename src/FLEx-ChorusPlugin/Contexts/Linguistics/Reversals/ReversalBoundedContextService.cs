@@ -77,15 +77,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var entriesElement = revIndexElement.Element("Entries");
 				var root = new XElement("Reversal",
 					new XElement(SharedConstants.Header, revIndexElement));
-				if (entriesElement == null || !entriesElement.Elements().Any())
+				if (entriesElement != null && entriesElement.Elements().Any())
 				{
-					// Add dummy entry, so FastXmlSplitter will have something to work with.
-					root.Add(new XElement("ReversalIndexEntry",
-												   new XAttribute(SharedConstants.GuidStr, Guid.Empty.ToString().ToLowerInvariant())));
-				}
-				else
-				{
-					root.Add(entriesElement.Elements()); // NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
+					root.Add(entriesElement.Elements());
+						// NB: These were already sorted, way up in MultipleFileServices::CacheDataRecord, since "Entries" is a collection prop.
 					entriesElement.RemoveNodes();
 				}
 
@@ -131,19 +126,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				// Put all records back in ReversalIndex, before sort and restore.
 				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
 				var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-				foreach (var recordElement in root.Elements("ReversalIndexEntry").ToList())
+				foreach (var recordElement in root.Elements("ReversalIndexEntry")
+					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 				{
-					var recordGuid = recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					if (recordGuid == Guid.Empty.ToString().ToLowerInvariant())
-						break; // Only has dummy element.
-
 					// Add it to Records property of revIdxElement, BUT in sorted order, below, and then flatten dnMainElement.
-					sortedRecords.Add(recordGuid, recordElement);
+					sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);
 				}
 
 				if (sortedRecords.Count > 0)
 				{
-					var recordsElementOwningProp = revIdxElement.Element("Entries");
+					var recordsElementOwningProp = revIdxElement.Element("Entries")
+						?? CmObjectFlatteningService.AddNewPropertyElement(revIdxElement, "Entries");
+
 					foreach (var sortedChartElement in sortedRecords.Values)
 						recordsElementOwningProp.Add(sortedChartElement);
 				}
@@ -156,7 +150,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			// Restore lexDb ReversalIndexes property in sorted order.
 			if (sortedRevs.Count == 0)
 				return;
-			var reversalsOwningProp = lexDb.Element("ReversalIndexes");
+			var reversalsOwningProp = lexDb.Element("ReversalIndexes")
+									  ?? CmObjectFlatteningService.AddNewPropertyElement(lexDb, "ReversalIndexes");
 			foreach (var sortedRev in sortedRevs.Values)
 				reversalsOwningProp.Add(sortedRev);
 		}

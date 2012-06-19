@@ -166,7 +166,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						// 7000041: Modified LexEntry
 						//			Add: RC "DoNotShowMainEntryIn"				[CmPossibility]
 						GetClassInfo("LexEntry").AddProperty(new FdoPropertyInfo("DoNotShowMainEntryIn", DataType.ReferenceCollection));
-						// NOT YET!!!	REMOVE: basic ExcludeAsHeadword				[Boolean]
+						//			Remove: basic ExcludeAsHeadword				[Boolean]
+						GetClassInfo("LexEntry").RemoveProperty("ExcludeAsHeadword");
 						break;
 					case 7000042:
 						// 7000042: No actual model change.
@@ -216,9 +217,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("BeginTimeOffset", DataType.Unicode, false));
 						newClass.AddProperty(new FdoPropertyInfo("EndTimeOffset", DataType.Unicode, false));
 						//		3. Modified Text:
-						// NOT YET!!!			Remove: SoundFilePath							[Unicode]
-						//			Add: OA "MediaFiles"							[CmMediaContainer]
 						newClass = GetClassInfo("Text");
+						//			Remove: SoundFilePath							[Unicode]
+						newClass.RemoveProperty("SoundFilePath");
+						//			Add: OA "MediaFiles"							[CmMediaContainer]
 						newClass.AddProperty(new FdoPropertyInfo("MediaFiles", DataType.OwningAtomic, false));
 						break;
 					case 7000050:
@@ -276,6 +278,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000058:
 					// 7000058: No actual model change.
 						break;
+					case 7000059:
+						// 7000058:
+						//	Modified: RnGenericRec
+						//		Modified OA to RA: RA "Text" (added in 7000046)							[Text]
+						newClass = GetClassInfo("RnGenericRec");
+						newClass.RemoveProperty("Text");
+						newClass.AddProperty(new FdoPropertyInfo("Text", DataType.ReferenceAtomic));
+						//	Modifed: LangProject
+						//		Remove: OC "Texts" property
+						GetClassInfo("LangProject").RemoveProperty("Texts");
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -284,7 +297,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000058;
+		public const int MaximumModelVersion = 7000059;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
@@ -431,6 +444,84 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				}
 			}
 			return adjustedDirPath;
+		}
+
+		private const string OC = "OC";
+		private const string OwningCollection = "OwningCollection";
+		private const string RC = "RC";
+		private const string ReferenceCollection = "ReferenceCollection";
+		private const string OS = "OS";
+		private const string OwningSequence = "OwningSequence";
+		private const string RS = "RS";
+		private const string ReferenceSequence = "ReferenceSequence";
+		private const string OA = "OA";
+		private const string OwningAtomic = "OwningAtomic";
+		private const string RA = "RA";
+		private const string ReferenceAtomic = "ReferenceAtomic";
+		internal static string AdjustedPropertyType(string rawType)
+		{
+			string adjustedType;
+			switch (rawType)
+			{
+				default:
+					adjustedType = rawType;
+					break;
+
+				case OC:
+					adjustedType = OwningCollection;
+					break;
+				case RC:
+					adjustedType = ReferenceCollection;
+					break;
+
+				case OS:
+					adjustedType = OwningSequence;
+					break;
+				case RS:
+					adjustedType = ReferenceSequence;
+					break;
+
+				case OA:
+					adjustedType = OwningAtomic;
+					break;
+				case RA:
+					adjustedType = ReferenceAtomic;
+					break;
+			}
+			return adjustedType;
+		}
+
+		internal static string RestoreAdjustedTypeValue(string storedType)
+		{
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
+
+				case OwningCollection:
+					adjustedType = OC;
+					break;
+				case ReferenceCollection:
+					adjustedType = RC;
+					break;
+
+				case OwningSequence:
+					adjustedType = OS;
+					break;
+				case ReferenceSequence:
+					adjustedType = RS;
+					break;
+
+				case OwningAtomic:
+					adjustedType = OA;
+					break;
+				case ReferenceAtomic:
+					adjustedType = RA;
+					break;
+			}
+			return adjustedType;
 		}
 
 		/// <summary>

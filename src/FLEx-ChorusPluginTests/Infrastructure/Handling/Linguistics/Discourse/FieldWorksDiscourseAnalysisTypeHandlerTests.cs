@@ -120,7 +120,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateFileWithNoCharts()
+		public void ShouldBeAbleToValidateFileWithNoCharts()
 		{
 			const string data =
 @"<Discourse>
@@ -129,7 +129,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 	</header>
 </Discourse>";
 			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
