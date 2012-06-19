@@ -233,7 +233,7 @@
 	<Compile Include="View\FwBridgeView.Designer.cs">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\GetSharedProject.cs" />
+	<Compile Include="Infrastructure\GetSharedProject.cs" />
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
 	<Compile Include="View\IFwBridgeController.cs" />

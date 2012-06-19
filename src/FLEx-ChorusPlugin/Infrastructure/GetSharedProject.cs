@@ -1,17 +1,13 @@
 ﻿using System.IO;
 using System.Windows.Forms;
-using Chorus.VcsDrivers;
-using Chorus.VcsDrivers.Mercurial;
-using Chorus.clone;
 using Chorus.UI.Clone;
-using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.View;
 using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal sealed class GetSharedProject : IGetSharedProject
 	{
