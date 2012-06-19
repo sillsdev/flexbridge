@@ -92,25 +92,17 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="LiftBridge.pdb" Name="LiftBridge.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge.pdb"/>
 		  </Component>
 
-		  <Component Id="Choruspdb" Guid="D02EA721-2F0C-4117-AB48-5CD24D08E198">
-			<File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
+		  <Component Id="ChorusMergeexe" Guid="C1EDBBE5-E382-11DE-8A39-0800200C9A66">
+			<File Id="ChorusMerge.exe" Name="ChorusMerge.exe" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.exe"/>
 		  </Component>
 
-		  <Component Id="ChorusMergepdb" Guid="051706AF-C292-43E4-9D43-6FEBB958CE2C">
+		  <Component Id="ChorusMergepdb" Guid="C1EDBBE6-E382-11DE-8A39-0800200C9A66">
 			<File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
-		  </Component>
-
-		  <Component Id="LibChoruspdb" Guid="33EBFAF5-D605-43A6-B10E-F7D23692A094">
-			<File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
-		  </Component>
-
-		  <Component Id="Autofacdll" Guid="C1EDBBDC-E382-11DE-8A39-0800200C9A66">
-			<File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
 		  </Component>
 
 		  <!-- LiftBridgeCore.dll is also required, but we'll use the one FW uses. -->
 		  <!-- Palaso.dll is also required, but we'll use the one FW uses. -->
-		  <Merge  Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\ChorusMergeModule.msm" DiskId="1" />
+		  <Merge  Id="BasicChorusMergeModule" Language="1033" SourceFile="..\..\lib\BasicChorusMergeModule.msm" DiskId="1" />
 
 		</Directory>
 	  </Directory>
@@ -120,15 +112,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LiftBridgedll"/>
 	  <ComponentRef Id="LiftBridgepdb"/>
 
-	  <ComponentRef Id="Choruspdb"/>
+	  <ComponentRef Id="ChorusMergeexe"/>
 
 	  <ComponentRef Id="ChorusMergepdb"/>
 
-	  <ComponentRef Id="LibChoruspdb"/>
-
-	  <ComponentRef Id="Autofacdll"/>
-
-	  <MergeRef Id="ChorusMergeModule" />
+	  <MergeRef Id="BasicChorusMergeModule" />
 
 	  <!-- Generated components (originally, but now stored in Mercurial). Regenerate, if the contents change, or hand-edit, for say DistFiles. -->
 	  <ComponentGroupRef Id="DistFiles"/>
