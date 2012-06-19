@@ -37,11 +37,9 @@
   </Target>
 
   <Target Name="MergeAssemblies" DependsOnTargets="CreateDirectories">
-	<Message Text="Attempting ILMerge for two assemblies" Importance="high"/>
-	<!-- Make the merged Chorus library. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\$(Configuration)\ /lib:$(teamcity_build_checkoutDir)\lib\common /target:library /out:$(teamcity_build_checkoutDir)\output\common\ChorusPlus.dll Chorus.exe LibChorus.dll Autofac.dll Palaso.dll PalasoUIWindowsForms.dll icu.net.dll Enchant.Net.dll Interop.WIA.dll Keyman7Interop.dll KeymanLink.dll" />
+	<Message Text="Attempting ILMerge for several assemblies" Importance="high"/>
 	<!-- Make a new merged ChorusMerge exe. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\$(Configuration)\ /lib:$(teamcity_build_checkoutDir)\lib\common /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Autofac.dll Palaso.dll PalasoUIWindowsForms.dll icu.net.dll Enchant.Net.dll Interop.WIA.dll Keyman7Interop.dll KeymanLink.dll" />
+	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\$(Configuration)\ /lib:$(teamcity_build_checkoutDir)\lib\common /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe Chorus.exe LibChorus.dll Autofac.dll Palaso.dll PalasoUIWindowsForms.dll icu.net.dll Enchant.Net.dll Interop.WIA.dll Keyman7Interop.dll KeymanLink.dll" />
   </Target>
 
   <ItemGroup>
