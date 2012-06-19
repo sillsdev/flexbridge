@@ -1,0 +1,1 @@
+ILMerge /lib:..\lib\Release\ /lib:..\lib\common\ /out:..\output\common\ChorusMerge.exe ChorusMerge.exe LibChorus.dll Chorus.exe Autofac.dll Palaso.dll PalasoUIWindowsForms.dll icu.net.dll Enchant.Net.dll Interop.WIA.dll Keyman7Interop.dll KeymanLink.dll
