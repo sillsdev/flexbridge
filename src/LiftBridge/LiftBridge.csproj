@@ -82,23 +82,8 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Chorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
-	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	</Reference>
-	<Reference Include="ChorusMerge, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
-	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	</Reference>
-	<Reference Include="LibChorus, Version=1.5.66.0, Culture=neutral, processorArchitecture=x86">
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="Palaso, Version=1.9.188.0, Culture=neutral, processorArchitecture=x86">
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="ChorusPlus">
+	  <HintPath>..\..\output\common\ChorusPlus.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
