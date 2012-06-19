@@ -9,7 +9,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private static void ConfigureChorusProjectFolder(ProjectFolderConfiguration projectFolderConfiguration)
 		{
 			// Exclude has precedence, but these are redundant as long as we're using the policy
-			// that we explicitly include all the files we understand.  At least someday, when these
+			// that we explicitly include all the files we understand. At least someday, when these
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include.
 			projectFolderConfiguration.ExcludePatterns.Add("*.fwdata");
@@ -22,6 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", Path.Combine("trash", "**.*")));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "idchangelog.xml"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Shares", "**.*")); // Presumed folder for future LIFT and PT-FLEx repos.
 			ProjectFolderConfiguration.AddExcludedVideoExtensions(projectFolderConfiguration);
 
