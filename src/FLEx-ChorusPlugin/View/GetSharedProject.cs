@@ -94,16 +94,6 @@ namespace FLEx_ChorusPlugin.View
 							case DialogResult.OK:
 								var fileFromDlg = cloneFromNetworkFolderModel.UserSelectedRepositoryPath;
 								langProjName = Path.GetFileNameWithoutExtension(fileFromDlg);
-								// Make a clone the hard way.
-								var target = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
-								if (Directory.Exists(target))
-								{
-									MessageBox.Show(parent, Resources.ksTargetDirectoryExistsContent, Resources.ksTargetDirectoryExistsTitle);
-									return false;
-								}
-
-								cloneFromNetworkFolderModel.SaveSettings();
-
 								var mainFilePathName = Path.Combine(cloneFromNetworkFolderModel.ActualClonedFolder, langProjName + ".fwdata");
 								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
 								// TODO: Call this, as is done for other two?
