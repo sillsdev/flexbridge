@@ -68,8 +68,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					break;
 				case ExtantRepoSource.LocalNetwork:
 					var cloneFromNetworkFolderModel = new GetCloneFromNetworkFolderModel(currentBaseFieldWorksBridgePath);
-					// TODO: Set sensible default folder. This one expands to the path of our .exe file:
-					cloneFromNetworkFolderModel.FolderPath = "home";
 					// Filter copied from usbCloneDlg.Model below:
 					cloneFromNetworkFolderModel.ProjectFilter = path =>
 					{
