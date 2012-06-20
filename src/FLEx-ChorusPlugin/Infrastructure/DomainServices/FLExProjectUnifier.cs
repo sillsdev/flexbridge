@@ -54,20 +54,32 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var pathRoot = Path.GetDirectoryName(mainFilePathname);
 					// NB: The method calls are strictly ordered.
 					// Don't even think of changing them.
-					progress.WriteMessage("Processing data model version number....");
+					if (writeVerbose)
+						progress.WriteVerbose("Processing data model version number....");
+					else
+						progress.WriteMessage("Processing data model version number....");
 					UpgradeToVersion(writer, pathRoot);
-					progress.WriteMessage("Processing custom properties....");
+					if (writeVerbose)
+						progress.WriteVerbose("Processing custom properties....");
+					else
+						progress.WriteMessage("Processing custom properties....");
 					WriteOptionalCustomProperties(writer, pathRoot);
 
 					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(progress, writeVerbose, pathRoot);
 
-					progress.WriteMessage("Writing temporary fwdata file....");
+					if (writeVerbose)
+						progress.WriteVerbose("Writing temporary fwdata file....");
+					else
+						progress.WriteMessage("Writing temporary fwdata file....");
 					foreach (var rtElement in sortedData.Values)
 						FileWriterService.WriteElement(writer, rtElement);
 					writer.WriteEndElement();
 				}
 				//Thread.Sleep(2000); In case it blows (access denied) up again on Sue's computer.
-				progress.WriteMessage("Copying temporary fwdata file to main file....");
+				if (writeVerbose)
+					progress.WriteVerbose("Copying temporary fwdata file to main file....");
+				else
+					progress.WriteMessage("Copying temporary fwdata file to main file....");
 				File.Copy(tempFile.Path, mainFilePathname, true);
 			}
 		}

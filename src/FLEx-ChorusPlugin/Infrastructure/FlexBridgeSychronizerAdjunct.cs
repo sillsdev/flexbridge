@@ -32,9 +32,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private void RestoreProjectFile(IProgress progress)
 		{
 			NeedToUpdateFlex = true;
-			progress.WriteMessage("Restore project file '{0}'", ProjectFilename);
+			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
 			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
-			progress.WriteMessage("Finished Restoring project file '{0}'", ProjectFilename);
+			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
 		}
 
 		#region Implementation of ISychronizerAdjunct
