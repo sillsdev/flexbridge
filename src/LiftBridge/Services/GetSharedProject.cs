@@ -9,14 +9,22 @@ using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.View;
 
-namespace SIL.LiftBridge.View
+namespace SIL.LiftBridge.Services
 {
 	/// <summary>
 	/// Get a teammate's shared Lift project from the specified source.
 	/// </summary>
 	internal class GetSharedProject : IGetSharedProject
 	{
+		private static bool ProjectFilter(string path)
+		{
+			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			return Directory.Exists(hgDataFolder)
+				&& Directory.GetFiles(hgDataFolder).Any(pathname => pathname.ToLowerInvariant().EndsWith(".lift.i"));
+		}
+
 		#region Implementation of IGetSharedProject
 
 		/// <summary>
@@ -72,28 +80,31 @@ namespace SIL.LiftBridge.View
 					}
 					break;
 				case ExtantRepoSource.LocalNetwork:
-					using (var getCloneFromSharedNetworkFolderdlg = new GetCloneFromSharedNetworkFolderDialog(LiftProjectServices.BasePath))
+					var cloneFromNetworkFolderModel = new GetCloneFromNetworkFolderModel(LiftProjectServices.BasePath)
 					{
-						var dlgResult = getCloneFromSharedNetworkFolderdlg.ShowDialog(parent);
-						switch (dlgResult)
+						ProjectFilter = ProjectFilter
+					};
+					using (var openFileDlg = new GetCloneFromNetworkFolderDlg())
+					{
+						// We don't have a GetCloneFromNetworkFolderDlg constructor that takes the model because
+						// it would inexplicably mess up Visual Studio's designer view of the dialog:
+						openFileDlg.LoadFromModel(cloneFromNetworkFolderModel);
+
+						switch (openFileDlg.ShowDialog(parent))
 						{
-							default: // DialogResult.Cancel
+							default:
 								return CloneResult.Cancel;
 							case DialogResult.OK:
-								var repo = new HgRepository(getCloneFromSharedNetworkFolderdlg.PathToNewProject, new NullProgress());
+								var repo = new HgRepository(cloneFromNetworkFolderModel.ActualClonedFolder, new NullProgress());
 								project.RepositoryIdentifier = repo.Identifier;
-								return CloneResult.Created;
+								break;
 						}
 					}
+					break;
 				case ExtantRepoSource.Usb:
 					using (var usbCloneDlg = new GetCloneFromUsbDialog(LiftProjectServices.BasePath))
 					{
-						usbCloneDlg.Model.ProjectFilter = path =>
-							{
-								var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-								return Directory.Exists(hgDataFolder)
-									&& Directory.GetFiles(hgDataFolder).Any(pathname => pathname.ToLowerInvariant().EndsWith(".lift.i"));
-							};
+						usbCloneDlg.Model.ProjectFilter = ProjectFilter;
 						var dlgResult = usbCloneDlg.ShowDialog(parent);
 						switch (dlgResult)
 						{

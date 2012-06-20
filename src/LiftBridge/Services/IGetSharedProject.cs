@@ -1,7 +1,8 @@
 ﻿using System.Windows.Forms;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.View;
 
-namespace SIL.LiftBridge.View
+namespace SIL.LiftBridge.Services
 {
 	/// <summary>
 	/// Interface that handles getting a teammate's shared Lift project.

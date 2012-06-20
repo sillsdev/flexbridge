@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.Services;
 using SIL.LiftBridge.View;
 
 namespace LiftBridgeTests.MockedViews
