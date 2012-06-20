@@ -100,5 +100,138 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				0, new List<Type>(),
 				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
+
+		[Test]
+		public void EnsureDateOfEventAddedByWinnerGetsMerged()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string ours =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			const string theirs =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			FieldWorksTestServices.DoMerge(FileHandler,
+				"ntbk",
+				commonAncestor, ours, theirs,
+				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
+		}
+
+		[Test]
+		public void EnsureDateOfEventRemovedByLoserGetsMerged()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			const string ours =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			const string theirs =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			FieldWorksTestServices.DoMerge(FileHandler,
+				"ntbk",
+				commonAncestor, ours, theirs,
+				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
+		}
+
+		[Test]
+		public void EnsureDateOfEventRemovedByWinnerGetsMerged()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			const string ours =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+	</RnGenericRec>
+</Anthropology>";
+
+			const string theirs =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Anthropology>
+	<header>
+		<RnResearchNbk guid='lexdb' />
+	</header>
+	<RnGenericRec guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<DateOfEvent
+			val='201206221' />
+	</RnGenericRec>
+</Anthropology>";
+
+			FieldWorksTestServices.DoMerge(FileHandler,
+				"ntbk",
+				commonAncestor, ours, theirs,
+				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
+		}
 	}
 }

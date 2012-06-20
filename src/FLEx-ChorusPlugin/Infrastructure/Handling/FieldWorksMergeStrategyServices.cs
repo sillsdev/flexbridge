@@ -182,7 +182,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						case DataType.Boolean: // Fall through
 						case DataType.GenDate:
 							// LT-13320 "Date of Event is lost after send/receive (data loss)"
-							// says these fields don;t play nice as immutable.
+							// says these fields don't play nice as immutable.
 							//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
 							//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
 							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
