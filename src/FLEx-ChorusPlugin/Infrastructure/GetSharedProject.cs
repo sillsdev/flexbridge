@@ -107,11 +107,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					break;
 			}
 
-			var mainFilePathName = Path.Combine(actualCloneLocation, langProjName + ".fwdata");
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
+			var newProjectFileName = langProjName + ".fwdata";
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(actualCloneLocation, newProjectFileName));
 			var possibleNewLocation = Path.Combine(currentBaseFlexBridgePath, langProjName);
 			var finalCloneLocation = RenameFolderIfPossible(actualCloneLocation, possibleNewLocation) ? possibleNewLocation : actualCloneLocation;
-			CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, langProjName + ".fwdata"));
+			CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, newProjectFileName));
 
 			return true;
 		}
