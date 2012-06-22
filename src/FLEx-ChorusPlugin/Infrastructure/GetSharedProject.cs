@@ -13,10 +13,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	{
 		private LanguageProject _currentProject;
 
-		private static void PossiblyRenameFolder(string newProjPath, string currentRootDataPath)
+		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
 		{
-			if (newProjPath != currentRootDataPath)
-				Directory.Move(newProjPath, currentRootDataPath);
+			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
+			{
+				Directory.Move(actualCloneLocation, possibleNewLocation);
+				return true;
+			}
+			return false;
 		}
 
 		#region Implementation of IGetSharedProject
@@ -41,13 +45,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		bool IGetSharedProject.GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectFolder)
 		{
 			// 2. Make clone from some source.
-			var currentBaseFieldWorksBridgePath = flexProjectFolder;
-			const string noProject = "NOT YET IMPLEMENTED FOR THIS SOURCE";
-			var langProjName = noProject;
+			var currentBaseFlexBridgePath = flexProjectFolder;
+			string langProjName = null;
+			string actualCloneLocation = null;
 			switch (extantRepoSource)
 			{
 				case ExtantRepoSource.Internet:
-					var cloneModel = new GetCloneFromInternetModel(currentBaseFieldWorksBridgePath) { LocalFolderName = langProjName };
+					var cloneModel = new GetCloneFromInternetModel(currentBaseFlexBridgePath) { LocalFolderName = langProjName };
 					using (var internetCloneDlg = new GetCloneFromInternetDialog(cloneModel))
 					{
 						switch (internetCloneDlg.ShowDialog(parent))
@@ -56,24 +60,17 @@ namespace FLEx_ChorusPlugin.Infrastructure
 								return false;
 							case DialogResult.OK:
 								// It made a clone, but maybe in the wrong name, grab the project name.
-								langProjName = Path.GetFileName(internetCloneDlg.PathToNewProject);
-								if (langProjName == noProject)
-									return false;
-								var mainFilePathName = Path.Combine(internetCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
-								PossiblyRenameFolder(internetCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
+								actualCloneLocation = internetCloneDlg.PathToNewProject;
+								langProjName = Path.GetFileName(actualCloneLocation); // internetCloneDlg.PathToNewProject is a folder name, not file name.
 								break;
 						}
 					}
 					break;
 				case ExtantRepoSource.LocalNetwork:
-					var cloneFromNetworkFolderModel = new GetCloneFromNetworkFolderModel(currentBaseFieldWorksBridgePath);
-					// Filter copied from usbCloneDlg.Model below:
-					cloneFromNetworkFolderModel.ProjectFilter = path =>
-					{
-						var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-						return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
-					};
+					var cloneFromNetworkFolderModel = new GetCloneFromNetworkFolderModel(currentBaseFlexBridgePath)
+														{
+															ProjectFilter = ProjectFilter
+														};
 
 					using (var openFileDlg = new GetCloneFromNetworkFolderDlg())
 					{
@@ -86,50 +83,45 @@ namespace FLEx_ChorusPlugin.Infrastructure
 							default:
 								return false;
 							case DialogResult.OK:
-								var fileFromDlg = cloneFromNetworkFolderModel.UserSelectedRepositoryPath;
-								langProjName = Path.GetFileNameWithoutExtension(fileFromDlg);
-								var mainFilePathName = Path.Combine(cloneFromNetworkFolderModel.ActualClonedFolder, langProjName + ".fwdata");
-								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
-								// TODO: Call this, as is done for other two?
-								//PossiblyRenameFolder(actualClonedFolder, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
-								// TODO: Consider renaming the fwdata file (read: 'project name').
+								actualCloneLocation = cloneFromNetworkFolderModel.ActualClonedFolder;
+								langProjName = Path.GetFileName(cloneFromNetworkFolderModel.UserSelectedRepositoryPath);
 								break;
 						}
 					}
 					break;
 				case ExtantRepoSource.Usb:
-					using (var usbCloneDlg = new GetCloneFromUsbDialog(currentBaseFieldWorksBridgePath))
+					using (var usbCloneDlg = new GetCloneFromUsbDialog(currentBaseFlexBridgePath))
 					{
-						usbCloneDlg.Model.ProjectFilter = path =>
-						{
-							var hgDataFolder = path.CombineForPath(".hg", "store", "data");
-							return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
-						};
+						usbCloneDlg.Model.ProjectFilter = ProjectFilter;
 						switch (usbCloneDlg.ShowDialog(parent))
 						{
 							default:
 								return false;
 							case DialogResult.OK:
 								// It made a clone, grab the project name.
-								langProjName = Path.GetFileName(usbCloneDlg.PathToNewProject);
-								var mainFilePathName = Path.Combine(usbCloneDlg.PathToNewProject, langProjName + ".fwdata");
-								FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
-								PossiblyRenameFolder(usbCloneDlg.PathToNewProject, Path.Combine(currentBaseFieldWorksBridgePath, langProjName));
+								actualCloneLocation = usbCloneDlg.PathToNewProject;
+								langProjName = Path.GetFileName(actualCloneLocation); // folder name, not file name.
 								break;
 						}
 					}
 					break;
 			}
-			if (langProjName != noProject)
-			{
-				var currentRootDataPath = Path.Combine(currentBaseFieldWorksBridgePath, langProjName);
-				var fwProjectPath = Path.Combine(currentRootDataPath, langProjName + ".fwdata");
-				CurrentProject = new LanguageProject(fwProjectPath);
-			}
+
+			var mainFilePathName = Path.Combine(actualCloneLocation, langProjName + ".fwdata");
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), mainFilePathName);
+			var possibleNewLocation = Path.Combine(currentBaseFlexBridgePath, langProjName);
+			var finalCloneLocation = RenameFolderIfPossible(actualCloneLocation, possibleNewLocation) ? possibleNewLocation : actualCloneLocation;
+			CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, langProjName + ".fwdata"));
 
 			return true;
 		}
 
 		#endregion
+
+		private static bool ProjectFilter(string path)
+		{
+			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+		}
 	}
 }
