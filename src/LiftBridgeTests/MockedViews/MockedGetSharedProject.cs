@@ -1,7 +1,9 @@
-﻿using System.Windows.Forms;
-using SIL.LiftBridge.Model;
-using SIL.LiftBridge.Services;
-using SIL.LiftBridge.View;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+using Chorus.UI.Clone;
+using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress.LogBox;
 
 namespace LiftBridgeTests.MockedViews
 {
@@ -11,16 +13,16 @@ namespace LiftBridgeTests.MockedViews
 
 		#region Implementation of IGetSharedProject
 
-		/// <summary>
-		/// Get a teammate's shared Lift project from the specified source.
-		/// </summary>
-		/// <returns>
-		/// One of several of the enum values.
-		/// </returns>
-		public CloneResult GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, LiftProject project)
+		public CloneResult GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, Func<string, bool> projectFilter, string baseLocalProjectDir, string preferredClonedFolderName)
 		{
 			RepoSource = extantRepoSource;
-			return CloneResult.Created;
+
+			// Create a repo.
+			var newProLocation = Path.Combine(baseLocalProjectDir, preferredClonedFolderName);
+			var repo = new HgRepository(newProLocation, new NullProgress());
+			repo.Init();
+
+			return new CloneResult(newProLocation, CloneStatus.Created);
 		}
 
 		#endregion

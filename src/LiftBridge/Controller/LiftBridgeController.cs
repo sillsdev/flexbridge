@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
+using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
+using Palaso.Extensions;
 using Palaso.Progress.LogBox;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -113,47 +116,33 @@ namespace SIL.LiftBridge.Controller
 					var newLiftPathname = Path.Combine(
 						newRepoPath,
 						Liftproject.LiftProjectName + ".lift");
-					File.WriteAllText(newLiftPathname,
-@"<?xml version='1.0' encoding='UTF-8'?>
-<lift version='0.13'>
-</lift>");
+					File.WriteAllText(newLiftPathname, Resources.kEmptyLiftFileXml);
 					HgRepository.CreateRepositoryInExistingDir(newRepoPath, new NullProgress());
-					var repo = new HgRepository(newRepoPath, new NullProgress());
-					repo.AddAndCheckinFile(newLiftPathname);
-					Liftproject.RepositoryIdentifier = repo.Identifier;
+					var newRepo = new HgRepository(newRepoPath, new NullProgress());
+					newRepo.AddAndCheckinFile(newLiftPathname);
+					Liftproject.RepositoryIdentifier = newRepo.Identifier;
 					break;
 				case SharedSystemType.Extant:
-					var results = _getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, Liftproject);
-					// CloneResult.OkToCreate
-					// CloneResult.Cancel
-					// CloneResult.UseExisting
-					// CloneResult.Created
-					// CloneResult.NotCreated
-					/*
-		OK. Created, // Used by GetSharedProject
-		OK. NotCreated, // Used by GetSharedProject
-		OK. Cancel, // Used by GetSharedProject
-		OK-Not returned OkToCreate,
-		OK. UseExisting // Used by GetSharedProject
-					*/
-					switch (results)
+					var result = _getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, LiftProjectServices.BasePath, Liftproject.LiftProjectName);
+					switch (result.CloneStatus)
 					{
 						//case CloneResult.OkToCreate: Not going to be returned.
 						// 	break;
-						case CloneResult.NotCreated:
+						case CloneStatus.NotCreated:
 							// Clone not made for some reason.
 							MessageBox.Show(MainForm, Resources.kDidNotCloneSystem, Resources.kLiftSetUp, MessageBoxButtons.OK,
 										MessageBoxIcon.Warning);
 							_liftBridgeView.Close();
 							return;
-						case CloneResult.Cancel:
-							MessageBox.Show(MainForm, "The user seems to have cancelled the sharing attempt.", "Sharing Attempt Cancelled", MessageBoxButtons.OK,
+						case CloneStatus.Cancelled:
+							MessageBox.Show(MainForm, Resources.kUserCancelledCloneOperation, Resources.kSharingAttempCancelled, MessageBoxButtons.OK,
 										MessageBoxIcon.Information);
 							_liftBridgeView.Close();
 							return;
-						case CloneResult.Created:
-						case CloneResult.UseExisting:
+						case CloneStatus.Created:
 							// Proceed
+							var clonedRepo = new HgRepository(result.ActualLocation, new NullProgress());
+							Liftproject.RepositoryIdentifier = clonedRepo.Identifier;
 							break;
 					}
 
@@ -244,6 +233,13 @@ namespace SIL.LiftBridge.Controller
 		}
 
 		#endregion
+
+		private static bool ProjectFilter(string path)
+		{
+			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			return Directory.Exists(hgDataFolder)
+				&& Directory.GetFiles(hgDataFolder).Any(pathname => pathname.ToLowerInvariant().EndsWith(".lift.i"));
+		}
 
 		#region Implementation of IDisposable
 

@@ -114,10 +114,8 @@
 	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.Designer.cs">
 	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</Compile>
-	<Compile Include="Services\GetSharedProject.cs" />
 	<Compile Include="View\IActiveView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="Services\IGetSharedProject.cs" />
 	<Compile Include="View\ILiftBridgeView.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="View\LiftBridgeDlg.cs">

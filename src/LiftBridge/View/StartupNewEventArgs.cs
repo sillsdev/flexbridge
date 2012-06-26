@@ -14,20 +14,13 @@ namespace SIL.LiftBridge.View
 	internal sealed class StartupNewEventArgs : EventArgs
 	{
 		internal SharedSystemType SystemType { get; private set; }
-		internal ExtantRepoSource ExtantRepoSource { get; private set; }
+		internal Chorus.UI.Clone.ExtantRepoSource ExtantRepoSource { get; private set; }
 
-		internal StartupNewEventArgs(SharedSystemType systemType, ExtantRepoSource extantRepoSource)
+		internal StartupNewEventArgs(SharedSystemType systemType, Chorus.UI.Clone.ExtantRepoSource extantRepoSource)
 		{
 			SystemType = systemType;
 			ExtantRepoSource = extantRepoSource;
 		}
-	}
-
-	internal enum ExtantRepoSource
-	{
-		Internet,
-		Usb,
-		LocalNetwork
 	}
 
 	internal enum SharedSystemType

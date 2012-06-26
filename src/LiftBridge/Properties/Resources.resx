@@ -259,4 +259,15 @@
   <data name="finishedSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>..\Resources\finished.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="kEmptyLiftFileXml">
+	<value xml:space="preserve">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;lift version='0.13'&gt;
+&lt;/lift&gt;</value>
+  </data>
+  <data name="kUserCancelledCloneOperation">
+	<value xml:space="preserve">The user seems to have cancelled the sharing attempt.</value>
+  </data>
+  <data name="kSharingAttempCancelled">
+	<value xml:space="preserve">Sharing Attempt Cancelled</value>
+  </data>
 </root>
