@@ -1,4 +1,5 @@
 ﻿using System;
+using Chorus.UI.Clone;
 using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.View
@@ -24,12 +25,5 @@ namespace FLEx_ChorusPlugin.View
 			pathLocatorItr.MoveNext();
 			ProjectFolder = pathLocatorItr.Current;
 		}
-	}
-
-	internal enum ExtantRepoSource
-	{
-		Internet,
-		Usb,
-		LocalNetwork
 	}
 }

@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
-using FLEx_ChorusPlugin.Infrastructure;
+using Chorus.UI.Clone;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
+using Palaso.Extensions;
+using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Controller
 {
 	internal class ObtainProjectController : IFwBridgeController, IDisposable
 	{
 		private readonly ChorusSystem _chorusSystem;
-		private readonly IGetSharedProject _getSharedProject;
 		private readonly IStartupNewView _startupNewView;
 
 		/// <summary>
@@ -21,7 +24,6 @@ namespace FLEx_ChorusPlugin.Controller
 		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
 		public ObtainProjectController(IDictionary<string, string> options)
 		{
-			_getSharedProject = new GetSharedProject();
 			MainForm = new ObtainProjectView
 						{
 							Text = Resources.ObtainProjectView_DialogTitle,
@@ -46,13 +48,36 @@ namespace FLEx_ChorusPlugin.Controller
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 
-			if (_getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, e.ProjectFolder))
+			var getSharedProject = new GetSharedProject();
+			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
+			if (result.CloneStatus == CloneStatus.Created)
 			{
-				CurrentProject = _getSharedProject.CurrentProject;
+				var langProjName = Path.GetFileName(result.ActualLocation);
+				var newProjectFileName = langProjName + ".fwdata";
+				FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(result.ActualLocation, newProjectFileName));
+				var possibleNewLocation = Path.Combine(e.ProjectFolder, langProjName);
+				var finalCloneLocation = RenameFolderIfPossible(result.ActualLocation, possibleNewLocation) ? possibleNewLocation : result.ActualLocation;
+				CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, newProjectFileName));
 				MainForm.Close();
 				return;
 			}
 			MainForm.Cursor = Cursors.Default;
+		}
+
+		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
+		{
+			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
+			{
+				Directory.Move(actualCloneLocation, possibleNewLocation);
+				return true;
+			}
+			return false;
+		}
+
+		private static bool ProjectFilter(string path)
+		{
+			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
 		}
 
 		public void Dispose()

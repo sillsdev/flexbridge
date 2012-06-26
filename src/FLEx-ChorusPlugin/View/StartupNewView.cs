@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Chorus.UI.Sync;
+using Chorus.UI.Clone;
 
 namespace FLEx_ChorusPlugin.View
 {

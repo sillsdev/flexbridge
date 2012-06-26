@@ -1,4 +1,4 @@
-﻿using Chorus.clone;
+﻿using Chorus.UI.Clone;
 
 namespace FLEx_ChorusPlugin.View
 {
