@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using FLEx_ChorusPlugin.Infrastructure;
+using Chorus.UI.Clone;
 using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {
@@ -10,31 +9,9 @@ namespace FLEx_ChorusPluginTests.Mocks
 	{
 		#region Implementation of IGetSharedProject
 
-		/// <summary>
-		/// Get a teammate's shared FieldWorks project from the specified source.
-		/// </summary>
-		/// <returns>
-		/// 'true' if the shared project was cloned, otherwsie 'false'.
-		/// </returns>
-		public bool GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, string flexProjectDir)
+		public CloneResult GetSharedProjectUsing(Form parent, ExtantRepoSource extantRepoSource, Func<string, bool> projectFilter, string baseLocalProjectDir, string preferredClonedFolderName)
 		{
 			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Access some current language project data.
-		/// Implementations may throw an exception if called before GetSharedProjectUsing().
-		/// </summary>
-		public LanguageProject CurrentProject
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
 		}
 
 		#endregion
