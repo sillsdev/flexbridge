@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Chorus.UI.Clone;
 
 namespace SIL.LiftBridge.View
 {

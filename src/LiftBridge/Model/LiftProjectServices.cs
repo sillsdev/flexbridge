@@ -93,7 +93,7 @@ namespace SIL.LiftBridge.Model
 
 		internal static void ClearRepoIdentifier(Guid langProjId)
 		{
-			// If, sor some reason, the map file has the id, but the folder does not exist, then clear the id, so it can be reset.
+			// If, for some reason, the map file has the id, but the folder does not exist, then clear the id, so it can be reset.
 			if (langProjId == Guid.Empty)
 				return; // I don't think it can be, but....
 
@@ -158,7 +158,7 @@ namespace SIL.LiftBridge.Model
 
 		internal static XElement GetMapForProject(Guid langProjId, XContainer root)
 		{
-			var childElements = root.Elements(MappingTag);
+			var childElements = root.Elements(MappingTag).ToList();
 			var mapForProject = (!childElements.Any())
 									? null
 									: (from mapping in childElements

@@ -1,4 +1,5 @@
 ﻿using System;
+using Chorus.UI.Clone;
 using SIL.LiftBridge.View;
 
 namespace LiftBridgeTests.MockedViews
