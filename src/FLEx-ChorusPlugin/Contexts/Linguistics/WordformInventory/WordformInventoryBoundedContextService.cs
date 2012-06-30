@@ -50,6 +50,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				srcDataCopy = new SortedDictionary<string, XElement>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
+					var checksumProperty = wordFormElement.Element("Checksum");
+					if (checksumProperty != null)
+						checksumProperty.Remove();
 					root.Add(wordFormElement);
 					CmObjectNestingService.NestObject(false,
 													  wordFormElement,

@@ -71,7 +71,7 @@ namespace FwdataTestApp
 			{
 				var csElement = rtElement.Element("Checksum");
 				if (csElement != null)
-					csElement.Attribute(SharedConstants.Val).Value = "0";
+					csElement.Remove();
 			}
 
 			// Theory has it the FW data is sorted.
