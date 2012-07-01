@@ -1,4 +1,5 @@
 ﻿using Chorus;
+using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.View;
 
@@ -17,6 +18,11 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		public void UpdateDisplay(bool projectIsInUse)
 		{
+		}
+
+		public SyncControlModel Model
+		{
+			get { return null; }
 		}
 
 		#endregion

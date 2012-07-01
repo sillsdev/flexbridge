@@ -14,10 +14,16 @@ namespace FLEx_ChorusPlugin.View
 	internal sealed partial class ExistingSystemView : UserControl, IExistingSystemView
 	{
 		private LanguageProject _project;
+		private SyncControlModel _model;
 
 		internal ExistingSystemView()
 		{
 			InitializeComponent();
+		}
+
+		SyncControlModel IExistingSystemView.Model
+		{
+			get { return _model; }
 		}
 
 		void IExistingSystemView.UpdateDisplay(bool projectIsInUse)
@@ -32,6 +38,7 @@ namespace FLEx_ChorusPlugin.View
 
 			if (chorusSystem == null)
 			{
+				_model = null;
 				ClearPage(_tcMain.TabPages[0]);
 				ClearPage(_tcMain.TabPages[1]);
 				ClearPage(_tcMain.TabPages[2]);
@@ -49,11 +56,11 @@ namespace FLEx_ChorusPlugin.View
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
 				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(_project.DirectoryName, _project.Name + ".fwdata"), false);
-				var syncModel = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
+				_model = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
 													 SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,
 													 new ChorusUser(chorusSystem.UserNameForHistoryAndNotes));
-				syncModel.SetSynchronizerAdjunct(synchronizerAdjunct);
-				var syncPanel = new SyncPanel(syncModel);
+				_model.SetSynchronizerAdjunct(synchronizerAdjunct);
+				var syncPanel = new SyncPanel(_model);
 				ResetPage(2, syncPanel);
 				// 3 - SettingsView
 				ResetPage(3, new SettingsView(new SettingsModel(chorusSystem.Repository)));

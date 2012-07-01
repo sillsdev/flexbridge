@@ -1,4 +1,5 @@
 using Chorus;
+using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Model;
 
 namespace FLEx_ChorusPlugin.View
@@ -7,5 +8,6 @@ namespace FLEx_ChorusPlugin.View
 	{
 		void SetSystem(ChorusSystem chorusSystem, LanguageProject project);
 		void UpdateDisplay(bool projectIsInUse);
+		SyncControlModel Model { get; }
 	}
 }

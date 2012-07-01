@@ -81,5 +81,13 @@ namespace FLEx_ChorusPlugin.View
 		}
 
 		#endregion
+
+		private void CommentChanged(object sender, EventArgs e)
+		{
+			var msg = _tbComment.Text;
+			if (string.IsNullOrEmpty(msg))
+				msg = Environment.UserName + " made some changes.";
+			((IProjectView)_projectView).ExistingSystemView.Model.SyncOptions.CheckinDescription = string.Format("[{0}: {1}] {2}", Application.ProductName, Application.ProductVersion, msg);
+		}
 	}
 }
