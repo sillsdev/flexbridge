@@ -88,6 +88,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	</header>
 
 	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>
+			<MoStemMsa guid='c1ed94cb-e382-11de-8a39-0800200c9a66'>
+			<PartOfSpeech>
+				<objsur guid='8e45de56-5105-48dc-b302-05985432e1e7' t='r' />
+			</PartOfSpeech>
+			</MoStemMsa>
+		</MorphoSyntaxAnalyses>
 		<Senses>
 			<ownseq
 				class='LexSense'
@@ -108,6 +115,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	</header>
 
 	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>
+			<MoStemMsa guid='c1edbbe4-e382-11de-8a39-0800200c9a66'>
+			<PartOfSpeech>
+				<objsur guid='8e45de56-5105-48dc-b302-05985432e1e6' t='r' />
+			</PartOfSpeech>
+			</MoStemMsa>
+		</MorphoSyntaxAnalyses>
 		<Senses>
 			<ownseq
 				class='LexSense'
@@ -120,12 +134,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	</LexEntry>
 </Lexicon>";
 
+			// Now that PosContextGenerator is smarter, adding a Pos entails a necessary addition of a MorphoSyntaxAnalyses section.
 			FieldWorksTestServices.DoMerge(FileHandler,
 				"lexdb",
 				commonAncestor, ours, theirs,
 				new[] { "Lexicon/LexEntry/Senses/ownseq/MorphoSyntaxAnalysis/objsur" }, null,
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
-				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
+				3, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlBothAddedSameChangeReport) });
 		}
 	}
 }
