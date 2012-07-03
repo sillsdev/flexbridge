@@ -109,7 +109,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string FsFeatureSystem = "FsFeatureSystem";
 		internal const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
 		internal const string MorphologyAndSyntax = "MorphologyAndSyntax";
+		internal const string Msa = "MorphoSyntaxAnalysis";
+		internal const string Msas = "MorphoSyntaxAnalyses";
+		internal const string MoDerivAffMsa = "MoDerivAffMsa";
+		internal const string PartOfSpeech = "PartOfSpeech";
 		internal const string PartsOfSpeech = "PartsOfSpeech";
+		internal const string FromPartOfSpeech = "FromPartOfSpeech";
+		internal const string ToPartOfSpeech = "ToPartOfSpeech";
 		internal const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
 		internal const string Agents = "agents";
 		internal const string AnalyzingAgents = "AnalyzingAgents";

@@ -251,7 +251,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				var elt = node as XmlNode;
 				if (elt == null)
 					continue;
-				if (elt.Name.ToLowerInvariant() != "auni" && elt.Name.ToLowerInvariant() != "astr")
+				if (elt.Name != SharedConstants.AUni && elt.Name != SharedConstants.AStr)
 					continue;
 				count++;
 				if (count > 1)
@@ -270,7 +270,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				var elt = node as XmlNode;
 				if (elt == null)
 					continue;
-				if (elt.Name.ToLowerInvariant() != "auni" && elt.Name.ToLowerInvariant()!= "astr")
+				if (elt.Name != SharedConstants.AUni && elt.Name != SharedConstants.AStr)
 					continue;
 				var ws = XmlUtilities.GetOptionalAttributeString(elt, "ws");
 				if (multiple)
@@ -302,9 +302,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private static bool IsMultiString(XmlNode mergeElement)
 		{
-			if (mergeElement.SelectSingleNode("AUni") != null)
+			if (mergeElement.SelectSingleNode(SharedConstants.AUni) != null)
 				return true;
-			if (mergeElement.SelectSingleNode("AStr") != null)
+			if (mergeElement.SelectSingleNode(SharedConstants.AStr) != null)
 				return true;
 			return false;
 		}

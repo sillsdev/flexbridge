@@ -1,3 +1,5 @@
+using System.Xml;
+using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax;
 using NUnit.Framework;
 
@@ -7,9 +9,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 	public class PosContextGeneratorTests
 	{
 		[Test]
-		public void GetPartOfSpeechLabel()
+		public void GetMoreCompletePartOfSpeechLabel()
 		{
-			const string source = @"<LexEntry guid='89942b8e-2b1e-4074-8641-1abca93982f8'>
+			const string source = @"
+			  <LexEntry guid='89942b8e-2b1e-4074-8641-1abca93982f8'>
 				<LexemeForm>
 				  <MoStemAllomorph guid='4109d3d2-faf4-4f80-b28c-f8e4e0146c11'>
 					<Form>
@@ -37,17 +40,90 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 				  </ownseq>
 				</Senses>
 			  </LexEntry>";
+			const string posList =
+			  @"<?xml version='1.0' encoding='utf-8'?>
+			  <PartsOfSpeech>
+				<CmPossibilityList guid='d7f7150c-e8cf-11d3-9764-00c04f186933'>
+				  <Abbreviation>
+					<AUni ws='en'>Pos</AUni>
+				  </Abbreviation>
+				  <ItemClsid val='5049' />
+				  <Name>
+					<AUni ws='en'>Parts Of Speech</AUni>
+				  </Name>
+				  <Possibilities>
+					<ownseq class='PartOfSpeech' guid='d7f7150d-e8cf-11d3-9764-00c04f186933'>
+					  <Abbreviation>
+						<AUni ws='en'>V</AUni>
+					  </Abbreviation>
+					  <Name>
+						<AUni ws='en'></AUni>
+					  </Name>
+					</ownseq>
+					<ownseq class='PartOfSpeech' guid='00a10735-bd2c-4bc5-9555-ef9f784a8c8c'>
+					  <Abbreviation>
+						<AUni ws='en'>Adv</AUni>
+						<AUni ws='es'>Adv</AUni>
+						<AUni ws='fr'>Adv</AUni>
+					  </Abbreviation>
+					  <Name>
+						<AUni ws='en'>Adverb</AUni>
+						<AUni ws='es'>Adverbo</AUni>
+						<AUni ws='fr'>Adverbe</AUni>
+					  </Name>
+					</ownseq>
+					<ownseq class='PartOfSpeech' guid='3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c'>
+					  <Abbreviation>
+						<AUni ws='en'>N</AUni>
+					  </Abbreviation>
+					  <Name>
+						<AUni ws='en'>Noun</AUni>
+					  </Name>
+					</ownseq>
+				  </Possibilities>
+				</CmPossibilityList>
+			  </PartsOfSpeech>";
 			var root = FieldWorksTestServices.GetNode(source);
+			var morphSynData = FieldWorksTestServices.GetNode(posList);
 			var input = root.ChildNodes[2].ChildNodes[0].ChildNodes[0]; // MorphoSyntaxAnalysis
-			var generator = new PosContextGenerator();
+			var generator = new MockPosContextGenerator(morphSynData);
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"conflict\" Grammatical Info."));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"conflict\" Noun"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "4bd15611-5a36-422e-baa6-b6edb943c4da"));
 
-			// verify the html context generation
-			Assert.That(generator.HtmlContext(input),
-				Is.EqualTo(@"<div class='guid'>Guid of part of speech: 3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c</div>"));
+			// verify the html context generation on the objsur element
+			Assert.That(generator.HtmlContext(input.ChildNodes[0]),
+				Is.EqualTo(@"<div class='PartOfSpeech'>Cat: Noun</div>"));
+		}
+	}
+
+	/// <summary>
+	/// Wrapper to allow tests to use expanded PosContextGenerator function.
+	/// </summary>
+	public class MockPosContextGenerator
+	{
+		internal PosContextGenerator m_generator;
+
+		public MockPosContextGenerator(XmlNode morphSynData)
+		{
+			m_generator = new PosContextGenerator();
+			LoadPosList(morphSynData);
+		}
+
+		internal void LoadPosList(XmlNode data)
+		{
+			m_generator.LoadPosList(data);
+		}
+
+		internal ContextDescriptor GenerateContextDescriptor(XmlNode input, string filepath)
+		{
+			return m_generator.GenerateContextDescriptor(input, filepath);
+		}
+
+		internal string HtmlContext(XmlNode input)
+		{
+			return m_generator.HtmlContext(input);
 		}
 	}
 }
