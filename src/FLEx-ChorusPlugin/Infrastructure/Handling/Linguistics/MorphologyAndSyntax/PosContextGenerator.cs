@@ -192,9 +192,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		{
 			if (IsListLoaded)
 				return;
+			// The broken-up fwdata file should have a PartsOfSpeech list stored under Linguistics/MorphologyAndSyntax.
 			var posListDir = Path.Combine(SharedConstants.Linguistics, SharedConstants.MorphologyAndSyntax);
 			if (!Directory.Exists(posListDir))
-				return;
+				return; // If we can't find the list, we'll just report "Grammatical Info."
 			var posListFullFilename = Path.Combine(posListDir, SharedConstants.PartsOfSpeechFilename);
 			var possible = File.Exists(posListFullFilename);
 			if (!possible)
@@ -207,11 +208,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		public void LoadPosList(XmlNode data)
 		{
 			m_guidPosNameDict = new Dictionary<Guid, string>();
+			// In the CmPossibilityList we want all the nodes under Possibilities. They are 'ownseq' nodes.
 			foreach (XmlNode posNode in data.SelectNodes("descendant::Possibilities/" + SharedConstants.Ownseq))
 			{
 				var guid = new Guid(posNode.GetStringAttribute("guid"));
 				var stringIdentifier = ProcessNameAndAbbrevNodes(posNode);
-				if (stringIdentifier.Length > 0)
+				if (stringIdentifier.Length > 0) // If we can't find either an Abbreviation or a Name, don't add it!
 					m_guidPosNameDict.Add(guid, stringIdentifier);
 			}
 		}
@@ -236,6 +238,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 			if (auniList == null)
 				return labels;
 
+			// If we have more than one ws, concatenate them with colons
+			// e.g. Noun:Nombre:Nom
 			foreach (XmlElement auniStr in auniList)
 			{
 				if (string.IsNullOrEmpty(auniStr.InnerText))
