@@ -99,7 +99,6 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Model\CloneFromSharedNetworkFolder.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="View\ExistingSystem.cs">
@@ -107,12 +106,6 @@
 	</Compile>
 	<Compile Include="View\ExistingSystem.Designer.cs">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="View\GetCloneFromSharedNetworkFolderDialog.Designer.cs">
-	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\IActiveView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
@@ -145,9 +138,6 @@
 	<EmbeddedResource Include="View\ExistingSystem.resx">
 	  <DependentUpon>ExistingSystem.cs</DependentUpon>
 	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\GetCloneFromSharedNetworkFolderDialog.resx">
-	  <DependentUpon>GetCloneFromSharedNetworkFolderDialog.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\LiftBridgeDlg.resx">
 	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
