@@ -13,11 +13,18 @@ namespace SIL.LiftBridge.Model
 	/// </summary>
 	internal static class LiftProjectServices
 	{
-		internal static readonly string MappingPathname = Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
 		internal const string MappingsRootTag = "Mappings";
 		private const string MappingTag = "Mapping";
 		private const string ProjectguidAttrTag = "projectguid";
 		internal const string RepositoryidentifierAttrTag = "repositoryidentifier";
+
+		internal static string MappingPathname
+		{
+			get
+			{
+				return Path.Combine(BasePath, "LanguageProject_Repository_Map.xml");
+			}
+		}
 
 		internal static string BasePath
 		{
