@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Chorus;
@@ -38,6 +37,9 @@ namespace FLEx_ChorusPlugin.Controller
 			MainForm.Controls.Add((Control)_startupNewView);
 		}
 
+		private const string s_repoProblem = "Repository Problem";
+		private const string s_emptyRepoMsg = "This repository has no data in it! Verify your URL.";
+
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
 			MainForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
@@ -59,7 +61,7 @@ namespace FLEx_ChorusPlugin.Controller
 				{
 					MainForm.Cursor = Cursors.Default;
 					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
-					MessageBox.Show("This repository has no data in it! Verify your URL.", "Repository Problem");
+					MessageBox.Show(s_emptyRepoMsg, s_repoProblem);
 					return;
 				}
 				var langProjName = Path.GetFileName(result.ActualLocation);
