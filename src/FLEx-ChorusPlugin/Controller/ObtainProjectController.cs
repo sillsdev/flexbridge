@@ -53,13 +53,13 @@ namespace FLEx_ChorusPlugin.Controller
 			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
 			if (result.CloneStatus == CloneStatus.Created)
 			{
-				var actualDir = Path.GetDirectoryName(result.ActualLocation);
-				var modelVersionPathname = Path.Combine(actualDir, SharedConstants.ModelVersionFilename);
+				// It's just possible that we get here, but the cloned repo is empty (if the source one was empty).
+				var modelVersionPathname = Path.Combine(result.ActualLocation, SharedConstants.ModelVersionFilename);
 				if (!File.Exists(modelVersionPathname))
 				{
-					Debug.Fail("Stopped because file doesn't exist.");
 					MainForm.Cursor = Cursors.Default;
-					MessageBox.Show("This repository has no data in it! Check your URL.");
+					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
+					MessageBox.Show("This repository has no data in it! Verify your URL.", "Repository Problem");
 					return;
 				}
 				var langProjName = Path.GetFileName(result.ActualLocation);
