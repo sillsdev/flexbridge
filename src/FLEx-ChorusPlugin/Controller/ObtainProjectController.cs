@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
@@ -47,11 +49,19 @@ namespace FLEx_ChorusPlugin.Controller
 			// but which have different guids.
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
-
 			var getSharedProject = new GetSharedProject();
 			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
 			if (result.CloneStatus == CloneStatus.Created)
 			{
+				var actualDir = Path.GetDirectoryName(result.ActualLocation);
+				var modelVersionPathname = Path.Combine(actualDir, SharedConstants.ModelVersionFilename);
+				if (!File.Exists(modelVersionPathname))
+				{
+					Debug.Fail("Stopped because file doesn't exist.");
+					MainForm.Cursor = Cursors.Default;
+					MessageBox.Show("This repository has no data in it! Check your URL.");
+					return;
+				}
 				var langProjName = Path.GetFileName(result.ActualLocation);
 				var newProjectFileName = langProjName + ".fwdata";
 				FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(result.ActualLocation, newProjectFileName));
