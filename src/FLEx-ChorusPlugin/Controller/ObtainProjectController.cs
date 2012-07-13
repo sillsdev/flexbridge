@@ -37,8 +37,9 @@ namespace FLEx_ChorusPlugin.Controller
 			MainForm.Controls.Add((Control)_startupNewView);
 		}
 
-		private const string s_repoProblem = "Repository Problem";
-		private const string s_emptyRepoMsg = "This repository has no data in it! Verify your URL.";
+		private const string s_repoProblem = "Empty Repository";
+		private const string s_emptyRepoMsg =
+			"This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
 
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
