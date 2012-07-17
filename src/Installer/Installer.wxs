@@ -82,9 +82,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
 			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
 			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Release\FLExBridge.exe"/>
-			  <Shortcut Id="desktopFLExBridgeShortcut" Directory="DesktopFolder" Name="FLEx Bridge" WorkingDirectory="INSTALLDIR" Target="[!FLExBridge.exe]" Icon="FLExBridge.ico"/>
+			  <!--<Shortcut Id="desktopFLExBridgeShortcut" Directory="DesktopFolder" Name="FLEx Bridge" WorkingDirectory="INSTALLDIR" Target="[!FLExBridge.exe]" Icon="FLExBridge.ico"/>
 			  <RemoveFolder Id="DesktopFolder" On="uninstall"/>
-			  <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			  <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>-->
 			</Component>
 			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
 			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7">
