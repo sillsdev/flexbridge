@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
@@ -23,30 +24,58 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
 				writer.WriteStartDocument();
-				writer.WriteStartElement(root.Name.LocalName);
-				foreach (var childNode in root.Elements().ToArray())
-				{
-					writer.WriteStartElement(childNode.Name.LocalName);
-					foreach (var attribute in childNode.Attributes())
-					{
-						writer.WriteAttributeString(attribute.Name.LocalName, attribute.Value);
-					}
-					foreach (var innerChildNode in childNode.Elements().ToArray())
-					{
-						WriteElement(writer, innerChildNode);
-						innerChildNode.Remove();
-					}
-					writer.WriteEndElement();
-					childNode.Remove();
-				}
-				writer.WriteEndElement();
+				WriteElement(writer, root);
 			}
 		}
 
 		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element.ToString()), false), CanonicalReaderSettings))
-				writer.WriteNode(nodeReader, true);
+			if (SaveSpaces(element))
+			{
+				WriteElement(writer, Encoding.UTF8.GetBytes(element.ToString()));
+			}
+			else
+			{
+				writer.WriteStartElement(element.Name.LocalName);
+				foreach (var attribute in element.Attributes())
+				{
+					writer.WriteAttributeString(attribute.Name.LocalName, attribute.Value);
+				}
+				if (element.HasElements)
+				{
+					foreach (var childNode in element.Elements().ToArray())
+					{
+						WriteElement(writer, childNode);
+						childNode.Remove();
+					}
+				}
+				else
+				{
+					if (!string.IsNullOrEmpty(element.Value))
+						writer.WriteString(element.Value);
+				}
+				writer.WriteEndElement();
+			}
+		}
+
+		private static bool SaveSpaces(XElement element)
+		{
+			var retval = false;
+			switch (element.Name.LocalName)
+			{
+				case SharedConstants.AStr:
+				case SharedConstants.Str:
+				case SharedConstants.Uni:
+				case SharedConstants.AUni:
+				//case SharedConstants.Run: // xml:
+					var str = element.ToString();
+					if (str.Contains("xml:"))
+					//var spaceAttr = element.Attribute("space");
+					//if (spaceAttr != null && spaceAttr.Value == "preserve")
+						retval = true;
+					break;
+			}
+			return retval;
 		}
 
 		internal static void WriteElement(XmlWriter writer, byte[] optionalFirstElement)

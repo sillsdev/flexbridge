@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge.xml.generic;
-using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
@@ -106,245 +106,15 @@ namespace FwdataTestApp
 			{
 				if (_cbRoundTripData.Checked)
 				{
-					File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
-					breakupTimer.Start();
-					FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
-					breakupTimer.Stop();
-					restoreTimer.Start();
-					FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
-					restoreTimer.Stop();
-
-					if (_cbVerify.Checked)
-					{
-						verifyTimer.Start();
-						// Figure out how to do this, but it needs to compare .orig with srcFwdataPathname.
-						var mdc = GetFreshMdc(); // Want it fresh.
-						var unownedObjectsSrc = new Dictionary<string, SortedDictionary<string, XElement>>(200);
-						// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
-						// The inner dictionary has a caseless guid as the key and the byte array as the value.
-						var classDataSrc = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
-						var guidToClassMappingSrc = new Dictionary<string, string>();
-						TokenizeFile(mdc, _srcFwdataPathname + ".orig", unownedObjectsSrc, classDataSrc, guidToClassMappingSrc);
-						sb.AppendFormat("Number of records: {0}", guidToClassMappingSrc.Count);
-						sb.AppendLine();
-
-						mdc = GetFreshMdc(); // Want it fresh.
-						var unownedObjectsTgt = new Dictionary<string, SortedDictionary<string, XElement>>(200);
-						// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
-						// The inner dictionary has a caseless guid as the key and the byte array as the value.
-						var classDataTgt = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
-						var guidToClassMappingTgt = new Dictionary<string, string>();
-						TokenizeFile(mdc, _srcFwdataPathname, unownedObjectsTgt, classDataTgt, guidToClassMappingTgt);
-
-						// Deal with guid+class mappings.
-						if (guidToClassMappingSrc.Count != guidToClassMappingTgt.Count)
-						{
-							sb.AppendFormat("Mismatched number of guids in guidToClassMapping. guidToClassMappingSrc: '{0}' guidToClassMappingTgt: '{1}'", guidToClassMappingSrc.Count, guidToClassMappingTgt.Count);
-							sb.AppendLine();
-						}
-						foreach (var gcKvp in guidToClassMappingSrc)
-						{
-							var srcGuid = gcKvp.Key;
-							var srcClassName = gcKvp.Value;
-							string trgClassName;
-							if (!guidToClassMappingTgt.TryGetValue(srcGuid, out trgClassName))
-							{
-								sb.AppendFormat("Guid '{0}' is not in target map.", srcGuid);
-								sb.AppendLine();
-								continue;
-							}
-							if (srcClassName == trgClassName)
-								continue;
-
-							sb.AppendFormat("Class names for guid '{0}' do no match. srcClassName: '{1}' trgClassName: '{2}'", srcGuid, srcClassName, trgClassName);
-							sb.AppendLine();
-						}
-
-						// Deal with unowned objects.
-						if (unownedObjectsSrc.Count != unownedObjectsTgt.Count)
-						{
-							sb.AppendFormat("Mismatched number of classes of unowned elements. unownedObjectsSrc: '{0}' unownedObjectsTgt: '{1}'", unownedObjectsSrc.Count, unownedObjectsTgt.Count);
-							sb.AppendLine();
-						}
-						if (unownedObjectsSrc.Values.Count != unownedObjectsTgt.Values.Count)
-						{
-							sb.AppendFormat("Mismatched number of unowned elements. unownedObjectsSrc: '{0}' unownedObjectsTgt: '{1}'", unownedObjectsSrc.Values.Count, unownedObjectsTgt.Values.Count);
-							sb.AppendLine();
-						}
-						foreach (var outerSrcKvp in unownedObjectsSrc)
-						{
-							var outerSrcClassName = outerSrcKvp.Key;
-							var outerSrcUnOwnedDict = outerSrcKvp.Value;
-							SortedDictionary<string, XElement> outerTrgUnOwnedDict;
-							if (!unownedObjectsTgt.TryGetValue(outerSrcClassName, out outerTrgUnOwnedDict))
-							{
-								sb.AppendFormat("Class name '{0}' is not in target unowned list.", outerSrcClassName);
-								sb.AppendLine();
-								continue;
-							}
-							if (outerSrcUnOwnedDict.Count != outerTrgUnOwnedDict.Count)
-							{
-								sb.AppendFormat("Wrong number of instances of unowned elements in class: '{0}'. Expected: '{1}', but was '{2}'.", outerSrcClassName, outerSrcUnOwnedDict.Count, outerTrgUnOwnedDict.Count);
-								sb.AppendLine();
-								continue;
-							}
-							foreach (var innerSrcKvp in outerSrcUnOwnedDict)
-							{
-								var srcGuid = innerSrcKvp.Key;
-								// Not to worry about the XElement Value.
-								if (!outerTrgUnOwnedDict.ContainsKey(srcGuid))
-								{
-									sb.AppendFormat("Unowned object with guid '{0}' is not in target unowned list.", srcGuid);
-									sb.AppendLine();
-								}
-							}
-						}
-
-						// Deal with actual instance data.
-						if (classDataSrc.Values.Count != classDataTgt.Values.Count)
-						{
-							sb.AppendFormat("Wrong number of instances of elements. Expected: '{0}', but was '{1}'.", classDataSrc.Values.Count, classDataTgt.Values.Count);
-							sb.AppendLine();
-						}
-						foreach (var outerSrcMainKvp in classDataSrc)
-						{
-							var outerSrcClassName = outerSrcMainKvp.Key;
-							var outerSrcDict = outerSrcMainKvp.Value;
-							SortedDictionary<string, XElement> outerTrgDict;
-							if (!classDataTgt.TryGetValue(outerSrcClassName, out outerTrgDict))
-							{
-								sb.AppendFormat("Class name '{0}' is not in target main list.", outerSrcClassName);
-								sb.AppendLine();
-								continue;
-							}
-							if (outerSrcDict.Count != outerTrgDict.Count)
-							{
-								sb.AppendFormat("Wrong number of instances of main elements in class: '{0}'. Expected: '{1}', but was '{2}'.", outerSrcClassName, outerSrcDict.Count, outerTrgDict.Count);
-								sb.AppendLine();
-								continue;
-							}
-							foreach (var innerSrcKvp in outerSrcDict)
-							{
-								var srcGuid = innerSrcKvp.Key;
-								XElement trgElement;
-								if (!outerTrgDict.TryGetValue(srcGuid, out trgElement))
-								{
-									sb.AppendFormat("Main object with guid '{0}' is not in target list.", srcGuid);
-									sb.AppendLine();
-									continue;
-								}
-								var srcElement = innerSrcKvp.Value;
-								if (!XmlUtilities.AreXmlElementsEqual(new XmlInput(trgElement.ToString()), new XmlInput(srcElement.ToString())))
-								{
-									File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), srcElement.ToString());
-									File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), trgElement.ToString());
-									sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
-									sb.AppendLine();
-								}
-							}
-						}
-						verifyTimer.Stop();
-					}
-					if (_cbValidate.Checked)
-					{
-						GetFreshMdc(); // Want it fresh.
-						// Validate all files.
-						validateTimer.Start();
-						var fbHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-									   where handler.GetType().Name == "FieldWorksCommonFileHandler"
-									   select handler).First();
-						// Custom properties file.
-						var currentPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
-						var validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
-						if (validationError != null)
-						{
-							sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
-							sb.AppendLine();
-						}
-						// Model version file.
-						currentPathname = Path.Combine(_workingDir, SharedConstants.ModelVersionFilename);
-						validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
-						if (validationError != null)
-						{
-							sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
-							sb.AppendLine();
-						}
-
-						// General
-						foreach (var generalPathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories))
-						{
-							validationError = fbHandler.ValidateFile(generalPathname, new NullProgress());
-							if (validationError == null)
-								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
-							sb.AppendLine();
-						}
-
-						// Anthropology
-						foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories))
-						{
-							validationError = fbHandler.ValidateFile(anthropologyPathname, new NullProgress());
-							if (validationError == null)
-								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
-							sb.AppendLine();
-						}
-
-						// Scripture
-						var scriptureFolder = Path.Combine(_workingDir, "Other");
-						if (Directory.Exists(scriptureFolder))
-						{
-							foreach (var scripturePathname in Directory.GetFiles(scriptureFolder, "*.*", SearchOption.AllDirectories))
-							{
-								validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
-								if (validationError == null)
-									continue;
-								sbValidation.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
-								sbValidation.AppendLine();
-								sb.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
-								sb.AppendLine();
-							}
-						}
-
-						// Linguistics
-						foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories))
-						{
-							validationError = fbHandler.ValidateFile(linguisticsPathname, new NullProgress());
-							if (validationError == null)
-								continue;
-							sbValidation.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
-							sbValidation.AppendLine();
-							sb.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
-							sb.AppendLine();
-						}
-						validateTimer.Stop();
-					}
-				}
-				if (_cbNestFile.Checked && _cbCheckOwnObjsur.Checked)
-				{
-					checkOwnObjsurTimer.Start();
-					ownObjsurFound = File.ReadAllText(_srcFwdataPathname + ".nested").Contains("t=\"o\"");
-					checkOwnObjsurTimer.Stop();
+					RoundTripData(breakupTimer, restoreTimer, validateTimer, verifyTimer, sb, sbValidation);
 				}
 				if (_cbNestFile.Checked)
 				{
-					nestTimer.Start();
-					NestFile(_srcFwdataPathname);
-					nestTimer.Stop();
+					ownObjsurFound = NestFile(nestTimer, checkOwnObjsurTimer, _cbCheckOwnObjsur.Checked);
 				}
 				if (_restoreDataFile.Checked)
 				{
-					restoreTimer.Start();
-					FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
-					restoreTimer.Stop();
+					RestoreManFileFromPeces(restoreTimer);
 				}
 			}
 			catch (Exception err)
@@ -376,6 +146,207 @@ namespace FwdataTestApp
 				Cursor = Cursors.Default;
 				Close();
 			}
+		}
+
+		private void RestoreManFileFromPeces(Stopwatch restoreTimer)
+		{
+			restoreTimer.Start();
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			restoreTimer.Stop();
+		}
+
+		private bool NestFile(Stopwatch nestTimer, Stopwatch checkOwnObjsurTimer, bool cbCheckOwnObjsurChecked)
+		{
+			var ownObjsurFound = false;
+			nestTimer.Start();
+			NestFile(_srcFwdataPathname);
+			nestTimer.Stop();
+			GC.Collect(2, GCCollectionMode.Forced);
+			if (cbCheckOwnObjsurChecked)
+			{
+				checkOwnObjsurTimer.Start();
+				ownObjsurFound = File.ReadAllText(_srcFwdataPathname + ".nested").Contains("t=\"o\"");
+				checkOwnObjsurTimer.Stop();
+			}
+			return ownObjsurFound;
+		}
+
+		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer, Stopwatch validateTimer, Stopwatch verifyTimer, StringBuilder sb, StringBuilder sbValidation)
+		{
+			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
+			breakupTimer.Start();
+			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
+			breakupTimer.Stop();
+			restoreTimer.Start();
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			restoreTimer.Stop();
+			GC.Collect(2, GCCollectionMode.Forced);
+
+			if (_cbVerify.Checked)
+				Verify(verifyTimer, sb);
+			if (_cbValidate.Checked)
+				ValidateSplitData(validateTimer, sb, sbValidation);
+		}
+
+		private void ValidateSplitData(Stopwatch validateTimer, StringBuilder sb, StringBuilder sbValidation)
+		{
+			GetFreshMdc(); // Want it fresh.
+			// Validate all files.
+			validateTimer.Start();
+			var fbHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+							 where handler.GetType().Name == "FieldWorksCommonFileHandler"
+							 select handler).First();
+			// Custom properties file.
+			var currentPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
+			var validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
+			if (validationError != null)
+			{
+				sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
+				sbValidation.AppendLine();
+				sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
+				sb.AppendLine();
+			}
+			// Model version file.
+			currentPathname = Path.Combine(_workingDir, SharedConstants.ModelVersionFilename);
+			validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
+			if (validationError != null)
+			{
+				sbValidation.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
+				sbValidation.AppendLine();
+				sb.AppendFormat("File '{1}' reported an error:{0}\t{2}", Environment.NewLine, currentPathname, validationError);
+				sb.AppendLine();
+			}
+
+			// General
+			foreach (var generalPathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories))
+			{
+				validationError = fbHandler.ValidateFile(generalPathname, new NullProgress());
+				if (validationError == null)
+					continue;
+				sbValidation.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
+				sbValidation.AppendLine();
+				sb.AppendFormat("File '{0}' reported an error:{1}", generalPathname, validationError);
+				sb.AppendLine();
+			}
+
+			// Anthropology
+			foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories))
+			{
+				validationError = fbHandler.ValidateFile(anthropologyPathname, new NullProgress());
+				if (validationError == null)
+					continue;
+				sbValidation.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
+				sbValidation.AppendLine();
+				sb.AppendFormat("File '{0}' reported an error:{1}", anthropologyPathname, validationError);
+				sb.AppendLine();
+			}
+
+			// Scripture
+			var scriptureFolder = Path.Combine(_workingDir, "Other");
+			if (Directory.Exists(scriptureFolder))
+			{
+				foreach (var scripturePathname in Directory.GetFiles(scriptureFolder, "*.*", SearchOption.AllDirectories))
+				{
+					validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
+					if (validationError == null)
+						continue;
+					sbValidation.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
+					sbValidation.AppendLine();
+					sb.AppendFormat("File '{0}' reported an error:{1}", scripturePathname, validationError);
+					sb.AppendLine();
+				}
+			}
+
+			// Linguistics
+			foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories))
+			{
+				validationError = fbHandler.ValidateFile(linguisticsPathname, new NullProgress());
+				if (validationError == null)
+					continue;
+				sbValidation.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
+				sbValidation.AppendLine();
+				sb.AppendFormat("File '{0}' reported an error:{1}", linguisticsPathname, validationError);
+				sb.AppendLine();
+			}
+			validateTimer.Stop();
+		}
+
+		private static string GetGuid(string record)
+		{
+			using (var reader = XmlReader.Create(new StringReader(record), FileWriterService.CanonicalReaderSettings))
+			{
+				reader.MoveToContent();
+				reader.MoveToAttribute("guid");
+				return reader.Value.ToLowerInvariant();
+			}
+		}
+
+		private void Verify(Stopwatch verifyTimer, StringBuilder sb)
+		{
+			verifyTimer.Start();
+			GetFreshMdc(); // Want it fresh.
+			var origData = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+			using (var fastSplitterOrig = new FastXmlElementSplitter(_srcFwdataPathname + ".orig"))
+			{
+				bool foundOrigOptionalFirstElement;
+				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOrigOptionalFirstElement))
+				{
+					if (foundOrigOptionalFirstElement)
+					{
+						origData.Add(SharedConstants.AdditionalFieldsTag, origRecord);
+						foundOrigOptionalFirstElement = false;
+						continue;
+					}
+					origData.Add(GetGuid(origRecord), origRecord);
+				}
+			}
+			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
+			{
+				bool foundNewOptionalFirstElement;
+				var newRecords = fastSplitterNew.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundNewOptionalFirstElement);
+				// NB: The main input file *does* have to deal with the optional first element.
+				foreach (var newRecord in newRecords)
+				{
+					string srcGuid = null;
+					XElement origElement;
+					var newElement = XElement.Parse(newRecord);
+					if (newElement.Name == SharedConstants.AdditionalFieldsTag)
+					{
+						origElement = XElement.Parse(origData[SharedConstants.AdditionalFieldsTag]);
+						origData.Remove(SharedConstants.AdditionalFieldsTag);
+					}
+					else
+					{
+						srcGuid = newElement.Attribute("guid").Value;
+						origElement = XElement.Parse(origData[srcGuid]);
+						origData.Remove(srcGuid);
+						if (origElement.Attribute("class").Value == "WfiWordform")
+						{
+							var csProp = origElement.Element("Checksum");
+							if (csProp != null)
+								csProp.Remove();
+						}
+					}
+
+					if (XmlUtilities.AreXmlElementsEqual(origElement.ToString(), newElement.ToString()))
+						continue;
+
+					if (srcGuid == null)
+					{
+						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origElement.ToString());
+						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-TRG.txt"), newElement.ToString());
+						sb.Append("Main src and trg custom properties are different in the resulting xml.");
+					}
+					else
+					{
+						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origElement.ToString());
+						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newElement.ToString());
+						sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
+					}
+					sb.AppendLine();
+				}
+			}
+			verifyTimer.Stop();
 		}
 
 		private void NestFile(string srcFwdataPathname)
@@ -445,6 +416,7 @@ namespace FwdataTestApp
 					}
 				}
 			}
+			GC.Collect(2, GCCollectionMode.Forced);
 		}
 	}
 }
