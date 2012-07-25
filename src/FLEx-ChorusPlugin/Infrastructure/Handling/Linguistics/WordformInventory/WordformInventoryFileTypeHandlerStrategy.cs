@@ -82,10 +82,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				SharedConstants.Header,
 				SharedConstants.WfiWordform,
-				SharedConstants.GuidStr,
-				WritePreliminaryTextCorpusInformation);
+				SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -94,12 +94,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 		}
 
 		#endregion
-
-		private static void WritePreliminaryTextCorpusInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.WordformInventoryRootFolder); // "Inventory", not SharedConstants.Inventory, which is the lc "inventory" extension. I gotta clean up thie confusion.
-			reader.Read();
-		}
 	}
 }

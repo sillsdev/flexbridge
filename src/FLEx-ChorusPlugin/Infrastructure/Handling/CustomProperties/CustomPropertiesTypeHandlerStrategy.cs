@@ -96,8 +96,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			// NB: Doesn't need the mdc updated with custom props.
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
+				true,
 				null,
-				CustomField, Key, WritePreliminaryCustomPropertyInformation);
+				CustomField, Key);
 		}
 
 		public string Extension
@@ -106,12 +107,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		}
 
 		#endregion
-
-		private static void WritePreliminaryCustomPropertyInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.AdditionalFieldsTag);
-			reader.Read();
-		}
 	}
 }

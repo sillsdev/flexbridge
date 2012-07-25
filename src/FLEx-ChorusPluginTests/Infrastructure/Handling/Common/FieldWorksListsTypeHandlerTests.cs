@@ -171,7 +171,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlTextChangedReport) });
+				0, new List<Type>());
 			Assert.IsTrue(results.Contains("My Proper names"));
 		}
 

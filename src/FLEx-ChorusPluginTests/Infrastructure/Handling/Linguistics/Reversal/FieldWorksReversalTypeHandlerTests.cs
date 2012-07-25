@@ -252,7 +252,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 				_theirFile, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -282,7 +282,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc4-e382-11de-8a39-0800200c9a66""]",
 						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc3-e382-11de-8a39-0800200c9a66""]/Subentries/ReversalIndexEntry[@guid=""c1ed6dc5-e382-11de-8a39-0800200c9a66""]" }, null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+				0, new List<Type>());
 		}
 
 		[Test]

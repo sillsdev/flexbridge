@@ -69,8 +69,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
-				CmFilter, SharedConstants.GuidStr, WritePreliminaryFiltersInformation);
+				CmFilter, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -79,12 +80,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 		}
 
 		#endregion
-
-		private static void WritePreliminaryFiltersInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.Filters);
-			reader.Read();
-		}
 	}
 }

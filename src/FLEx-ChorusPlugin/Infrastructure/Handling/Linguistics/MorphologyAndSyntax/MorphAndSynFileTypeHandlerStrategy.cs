@@ -66,10 +66,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
 				SharedConstants.MoMorphData,
-				SharedConstants.GuidStr,
-				WritePreliminaryMorphAndSynInformation);
+				SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -78,12 +78,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		}
 
 		#endregion
-
-		private static void WritePreliminaryMorphAndSynInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.MorphAndSynData);
-			reader.Read();
-		}
 	}
 }

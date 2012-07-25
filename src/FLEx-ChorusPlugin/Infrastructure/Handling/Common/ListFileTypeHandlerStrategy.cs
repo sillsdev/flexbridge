@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
@@ -55,8 +54,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
-				SharedConstants.CmPossibilityList, SharedConstants.GuidStr, WritePreliminaryListInformation);
+				SharedConstants.CmPossibilityList, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -65,12 +65,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		}
 
 		#endregion
-
-		private static void WritePreliminaryListInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(reader.LocalName);
-			reader.Read();
-		}
 	}
 }

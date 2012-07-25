@@ -68,8 +68,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				SharedConstants.Header,
-				ReversalIndexEntry, SharedConstants.GuidStr, WritePreliminaryReversalInformation);
+				ReversalIndexEntry, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -78,12 +79,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
 		}
 
 		#endregion
-
-		private static void WritePreliminaryReversalInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement("Reversal");
-			reader.Read();
-		}
 	}
 }

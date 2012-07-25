@@ -60,8 +60,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
-				Text, SharedConstants.GuidStr, WritePreliminaryTextCorpusInformation);
+				Text, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -70,12 +71,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 		}
 
 		#endregion
-
-		private static void WritePreliminaryTextCorpusInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(TextInCorpus);
-			reader.Read();
-		}
 	}
 }

@@ -74,8 +74,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				SharedConstants.Header,
-				SharedConstants.LexEntry, SharedConstants.GuidStr, WritePreliminaryLexiconInformation);
+				SharedConstants.LexEntry, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -84,12 +85,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		#endregion
-
-		private static void WritePreliminaryLexiconInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.Lexicon);
-			reader.Read();
-		}
 	}
 }

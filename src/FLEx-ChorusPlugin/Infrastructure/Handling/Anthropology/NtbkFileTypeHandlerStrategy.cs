@@ -70,8 +70,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				SharedConstants.Header,
-				RnGenericRec, SharedConstants.GuidStr, WritePreliminaryAnthropologyInformation);
+				RnGenericRec, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -80,12 +81,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 		}
 
 		#endregion
-
-		private static void WritePreliminaryAnthropologyInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement("Anthropology");
-			reader.Read();
-		}
 	}
 }

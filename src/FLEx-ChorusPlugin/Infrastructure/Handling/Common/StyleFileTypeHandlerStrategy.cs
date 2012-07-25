@@ -95,8 +95,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 			XmlMergeService.Do3WayMerge(mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
-				SharedConstants.StStyle, SharedConstants.GuidStr, WritePreliminaryStyleInformation);
+				SharedConstants.StStyle, SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -105,12 +106,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		}
 
 		#endregion
-
-		private static void WritePreliminaryStyleInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement("Styles");
-			reader.Read();
-		}
 	}
 }

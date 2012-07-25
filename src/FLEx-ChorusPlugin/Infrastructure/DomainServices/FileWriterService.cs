@@ -30,8 +30,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
-			if (SaveSpaces(element))
+			if (WriteWholeNode(element))
 			{
+				// Write entire element in one gulp, to avoid eating needed spaces in <Run> elements.
 				WriteElement(writer, Encoding.UTF8.GetBytes(element.ToString()));
 			}
 			else
@@ -45,6 +46,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				{
 					foreach (var childNode in element.Elements().ToArray())
 					{
+						// Recurse on down to the bottom.
 						WriteElement(writer, childNode);
 						childNode.Remove();
 					}
@@ -58,7 +60,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		private static bool SaveSpaces(XElement element)
+		/// <summary>
+		/// This method checks for select elements and the presence of the 'xml:'
+		/// prefix (e.g., xml:spaces="preserve") attribute.
+		///
+		/// When one of these is found, the method returns true, so the caller knows to not drill down to the bottom
+		/// in writing out the elements and attributes.
+		///
+		/// When 'true' is returned, the caller will simply write the whole xml string out (plus pay attention to the indents, etc.)
+		/// </summary>
+		/// <returns></returns>
+		private static bool WriteWholeNode(XElement element)
 		{
 			var retval = false;
 			switch (element.Name.LocalName)

@@ -98,7 +98,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlAdditionChangeReport) });
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -141,7 +141,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlAdditionChangeReport) });
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -186,7 +186,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlDeletionChangeReport) });
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -231,7 +231,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlDeletionChangeReport) });
+				0, new List<Type>());
 		}
 	}
 }

@@ -64,10 +64,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
 				SharedConstants.FsFeatureSystem,
-				SharedConstants.GuidStr,
-				WritePreliminaryFeatureSystemInformation);
+				SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -76,12 +76,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 		}
 
 		#endregion
-
-		private static void WritePreliminaryFeatureSystemInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.FeatureSystem);
-			reader.Read();
-		}
 	}
 }

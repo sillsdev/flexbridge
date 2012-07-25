@@ -66,10 +66,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
 				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				true,
 				null,
 				SharedConstants.PhPhonData,
-				SharedConstants.GuidStr,
-				WritePreliminaryPhonologyDataInformation);
+				SharedConstants.GuidStr);
 		}
 
 		public string Extension
@@ -78,12 +78,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology
 		}
 
 		#endregion
-
-		private static void WritePreliminaryPhonologyDataInformation(XmlReader reader, XmlWriter writer)
-		{
-			reader.MoveToContent();
-			writer.WriteStartElement(SharedConstants.PhonologicalData);
-			reader.Read();
-		}
 	}
 }
