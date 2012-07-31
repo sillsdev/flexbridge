@@ -221,5 +221,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			listPropElement.RemoveNodes(); // Remove the single list objsur element.
 			WriteNestedFile(listPathname, new XElement(listOwningPropertyName, listElement));
 		}
+
+		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, XElement>> buckets, SortedDictionary<string, XElement> data)
+		{
+			var bucketCount = buckets.Count;
+			foreach (var kvp in data)
+			{
+				var key = kvp.Key;
+				buckets[(int)((uint)new Guid(key).GetHashCode() % bucketCount)].Add(key, kvp.Value);
+			}
+		}
 	}
 }
