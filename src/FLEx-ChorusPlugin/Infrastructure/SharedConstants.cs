@@ -141,6 +141,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystem = "ReferenceSystem";
 		internal const string ArchivedDrafts = "ArchivedDrafts";
 		internal const string ArchivedDraft = "ArchivedDraft";
+		internal const string Draft = "Draft";
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSetting = "ImportSetting";
