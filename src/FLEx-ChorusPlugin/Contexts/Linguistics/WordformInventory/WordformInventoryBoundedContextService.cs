@@ -16,26 +16,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
 			var sortedWfiWordformInstanceData = classData["WfiWordform"];
-			if (sortedPunctuationFormInstanceData.Count == 0 && sortedWfiWordformInstanceData.Count == 0)
-				return;
 
 			var inventoryDir = Path.Combine(linguisticsBaseDir, SharedConstants.WordformInventoryRootFolder);
 			if (!Directory.Exists(inventoryDir))
 				Directory.CreateDirectory(inventoryDir);
 
-			var buckets = new Dictionary<int, SortedDictionary<string, XElement>>
-				{
-					{0, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{1, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{2, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{3, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{4, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{5, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{6, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{7, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{8, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)},
-					{9, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase)}
-				};
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
 			FileWriterService.FillBuckets(buckets, sortedWfiWordformInstanceData);
 
 			// the doc root will be "Inventory" (SharedConstants.WordformInventoryRootFolder).

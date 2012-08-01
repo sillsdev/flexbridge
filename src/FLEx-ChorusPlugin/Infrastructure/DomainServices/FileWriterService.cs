@@ -231,5 +231,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				buckets[(int)((uint)new Guid(key).GetHashCode() % bucketCount)].Add(key, kvp.Value);
 			}
 		}
+
+		internal static Dictionary<int, SortedDictionary<string, XElement>> CreateEmptyBuckets(int numberOfBucketsToCreate)
+		{
+			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>(numberOfBucketsToCreate);
+
+			for (var i = 0; i < numberOfBucketsToCreate; ++i)
+			{
+				emptyBuckets.Add(i, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase));
+			}
+
+			return emptyBuckets;
+		}
 	}
 }
