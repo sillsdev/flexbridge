@@ -48,9 +48,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Reversals", "**.reversal")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Lexicon", "Lexicon.lexdb")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Lexicon", "*.lexdb")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("TextCorpus", "*.textincorpus")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Inventory", "WordformInventory.inventory")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Inventory", "*.inventory")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Discourse", "Charting.discourse")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "**.featsys"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", "AnalyzingAgents.agents")));
@@ -62,7 +62,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Scripture
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "ReferenceSystem.srs"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Drafts.ArchivedDraft"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "*.ArchivedDraft"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Translations.trans"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Settings.ImportSetting"));
 

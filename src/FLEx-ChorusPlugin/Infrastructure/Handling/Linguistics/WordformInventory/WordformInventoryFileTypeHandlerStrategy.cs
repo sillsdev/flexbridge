@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
@@ -19,8 +18,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory) &&
-				   Path.GetFileName(pathToFile) == SharedConstants.WordformInventoryFilename;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Inventory)
+				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(SharedConstants.WordformInventory + "_");
 		}
 
 		public string ValidateFile(string pathToFile)

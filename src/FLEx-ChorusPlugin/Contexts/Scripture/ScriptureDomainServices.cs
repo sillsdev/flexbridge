@@ -86,9 +86,12 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// Have to flatten the main Scripture context before the rest, since the main context owns the other four.
 			// The main obj gets stuffed into highLevelData, so the owned stuff can have owner guid restored.
 			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-			ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-			ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-			ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			if (highLevelData.ContainsKey(SharedConstants.Scripture))
+			{
+				ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+				ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+				ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			}
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)

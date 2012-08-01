@@ -17,7 +17,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.WordformInventoryFilename, out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(string.Format("{0}_01.{1}", SharedConstants.WordformInventory, SharedConstants.Inventory), out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]

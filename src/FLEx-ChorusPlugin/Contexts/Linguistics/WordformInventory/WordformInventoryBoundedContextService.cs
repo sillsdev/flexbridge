@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -15,25 +16,24 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
 			var sortedWfiWordformInstanceData = classData["WfiWordform"];
-			if (sortedPunctuationFormInstanceData.Count == 0 && sortedWfiWordformInstanceData.Count == 0)
-				return;
 
 			var inventoryDir = Path.Combine(linguisticsBaseDir, SharedConstants.WordformInventoryRootFolder);
 			if (!Directory.Exists(inventoryDir))
 				Directory.CreateDirectory(inventoryDir);
 
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, sortedWfiWordformInstanceData);
+
 			// the doc root will be "Inventory" (SharedConstants.WordformInventoryRootFolder).
 			// This will store the PunctuationForm instances (unowned) in the header, and each PunctuationForm will be a child of header.
 			// Each WfiWordform (unowned) will then be a child of root.
-			var root = new XElement(SharedConstants.WordformInventoryRootFolder);
+			var header = new XElement(SharedConstants.Header);
 			// Work on copy, since 'classData' is changed during the loop.
 			SortedDictionary<string, XElement> srcDataCopy;
 			if (sortedPunctuationFormInstanceData.Count > 0)
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
 				srcDataCopy = new SortedDictionary<string, XElement>(sortedPunctuationFormInstanceData);
-				var header = new XElement(SharedConstants.Header);
-				root.Add(header);
 				foreach (var punctFormElement in srcDataCopy.Values)
 				{
 					header.Add(punctFormElement);
@@ -53,7 +53,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					var checksumProperty = wordFormElement.Element("Checksum");
 					if (checksumProperty != null)
 						checksumProperty.Remove();
-					root.Add(wordFormElement);
 					CmObjectNestingService.NestObject(false,
 													  wordFormElement,
 													  classData,
@@ -61,8 +60,21 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				}
 			}
 
-			if (root.HasElements)
-				FileWriterService.WriteNestedFile(Path.Combine(inventoryDir, SharedConstants.WordformInventoryFilename), root);
+			for (var i = 0; i < buckets.Count; ++i )
+			{
+				var root = new XElement(SharedConstants.WordformInventoryRootFolder);
+				if (i == 0 && header.HasElements)
+					root.Add(header);
+				var currentBucket = buckets[i];
+				foreach (var element in currentBucket.Values)
+					root.Add(element);
+				FileWriterService.WriteNestedFile(PathnameForBucket(inventoryDir, i), root);
+			}
+		}
+
+		internal static string PathnameForBucket(string inventoryDir, int bucket)
+		{
+			return Path.Combine(inventoryDir, string.Format("{0}_{1}{2}.{3}", SharedConstants.WordformInventory, bucket >= 9 ? "" : "0", bucket + 1, SharedConstants.Inventory));
 		}
 
 		internal static void FlattenContext(
@@ -74,28 +86,32 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			var inventoryDir = Path.Combine(linguisticsBaseDir, SharedConstants.WordformInventoryRootFolder);
 			if (!Directory.Exists(inventoryDir))
 				return;
-			var inventoryPathname = Path.Combine(inventoryDir, SharedConstants.WordformInventoryFilename);
-			if (!File.Exists(inventoryPathname))
-				return;
 
+			var inventoryPathnames = new List<string>(Directory.GetFiles(inventoryDir, string.Format("{0}_??.{1}", SharedConstants.WordformInventory, SharedConstants.Inventory), SearchOption.TopDirectoryOnly));
+			inventoryPathnames.Sort(StringComparer.InvariantCultureIgnoreCase);
 			// the doc root will be "Inventory" (SharedConstants.WordformInventoryRootFolder).
 			// This will store the PunctuationForm instances (unowned) in the header, and each PunctuationForm will be a child of header.
 			// Each WfiWordform (unowned) will then be a child of root.
-			var doc = XDocument.Load(inventoryPathname);
-			var unownedElements = new List<XElement>();
-			var optionalHeaderElement = doc.Root.Element(SharedConstants.Header);
-			if (optionalHeaderElement != null)
-				unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
-			unownedElements.AddRange(doc.Root.Elements("WfiWordform"));
-			// Query skips the dummy WfiWordform, if it is present.
-			foreach (var unownedElement in unownedElements
-				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
+			foreach (var inventoryPathname in inventoryPathnames)
 			{
-				CmObjectFlatteningService.FlattenObject(
-					inventoryPathname,
-					sortedData,
-					unownedElement,
-					null); // Not owned.
+				var doc = XDocument.Load(inventoryPathname);
+				var unownedElements = new List<XElement>();
+				var optionalHeaderElement = doc.Root.Element(SharedConstants.Header);
+				if (optionalHeaderElement != null)
+					unownedElements.AddRange(doc.Root.Element(SharedConstants.Header).Elements());
+				var wordformElements = doc.Root.Elements("WfiWordform").ToList();
+				if (wordformElements.Any())
+					unownedElements.AddRange(wordformElements);
+				// Query skips the dummy WfiWordform, if it is present.
+				foreach (var unownedElement in unownedElements
+					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
+				{
+					CmObjectFlatteningService.FlattenObject(
+						inventoryPathname,
+						sortedData,
+						unownedElement,
+						null); // Not owned.
+				}
 			}
 		}
 	}

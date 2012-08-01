@@ -10,8 +10,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ArchivedDraftsBoundedContextService
 	{
-		private const string DraftsFilename = "Drafts." + SharedConstants.ArchivedDraft;
-
 		internal static void NestContext(XElement archivedDraftsProperty,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, XElement>> classData,
@@ -23,9 +21,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!drafts.Any())
 				return;
 
-			var root = new XElement(SharedConstants.ArchivedDrafts);
 			foreach (var draftObjSur in drafts)
 			{
+				var root = new XElement(SharedConstants.ArchivedDrafts);
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[draftGuid];
 				var draft = classData[className][draftGuid];
@@ -34,10 +32,9 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 					classData,
 					guidToClassMapping);
 
-				root.Add(draft); // They should still be in the original sorted order, so just add them.
+				root.Add(draft);
+				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, SharedConstants.Draft + "_" + draftGuid.ToLowerInvariant() + "." + SharedConstants.ArchivedDraft), root);
 			}
-			if (root.HasElements)
-				FileWriterService.WriteNestedFile(Path.Combine(scriptureBaseDir, DraftsFilename), root);
 
 			archivedDraftsProperty.RemoveNodes();
 		}
@@ -49,18 +46,16 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		{
 			if (!Directory.Exists(scriptureBaseDir))
 				return;
-			var pathname = Path.Combine(scriptureBaseDir, DraftsFilename);
-			if (!File.Exists(pathname))
-				return;
 
 			// Owned by Scripture in ArchivedDrafts coll prop.
 			var scrElement = highLevelData[SharedConstants.Scripture];
 			var scrOwningGuid = scrElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedDrafts = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			var doc = XDocument.Load(pathname);
-			foreach (var draftElement in doc.Root.Elements("ScrDraft"))
+			foreach (var draftPathname in Directory.GetFiles(scriptureBaseDir, "*." + SharedConstants.ArchivedDraft, SearchOption.TopDirectoryOnly))
 			{
-				CmObjectFlatteningService.FlattenObject(pathname,
+				var doc = XDocument.Load(draftPathname);
+				var draftElement = doc.Root.Element("ScrDraft");
+				CmObjectFlatteningService.FlattenObject(draftPathname,
 					sortedData,
 					draftElement,
 					scrOwningGuid); // Restore 'ownerguid' to draftElement.

@@ -76,7 +76,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
 		internal const string LexEntry = "LexEntry";
-		internal const string LexiconFilename = Lexicon + "." + Lexdb;
 		internal const string TextInCorpus = "textincorpus";
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";
@@ -88,7 +87,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Inventory = "inventory";
 		internal const string WordformInventoryRootFolder = "Inventory";
 		internal const string WordformInventory = "WordformInventory";
-		internal const string WordformInventoryFilename = WordformInventory + "." + Inventory;
 		internal const string WfiWordform = "WfiWordform";
 		internal const string DiscourseRootFolder = "Discourse";
 		internal const string ConstChartTempl = "ConstChartTempl";
@@ -141,6 +139,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureReferenceSystem = "ReferenceSystem";
 		internal const string ArchivedDrafts = "ArchivedDrafts";
 		internal const string ArchivedDraft = "ArchivedDraft";
+		internal const string Draft = "Draft";
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSetting = "ImportSetting";
