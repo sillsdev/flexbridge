@@ -22,7 +22,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.LexiconFilename, out _ourFile, out _commonFile, out _theirFile);
+			FieldWorksTestServices.SetupTempFilesWithName(string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
@@ -163,8 +163,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
-				repositorySetup.AddAndCheckinFile(SharedConstants.LexiconFilename, parent);
-				repositorySetup.ChangeFileAndCommit(SharedConstants.LexiconFilename, child, "change it");
+				repositorySetup.AddAndCheckinFile(string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), parent);
+				repositorySetup.ChangeFileAndCommit(string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), child, "change it");
 				var hgRepository = repositorySetup.Repository;
 				var allRevisions = (from rev in hgRepository.GetAllRevisions()
 									orderby rev.Number.LocalRevisionNumber

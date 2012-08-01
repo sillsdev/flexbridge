@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
@@ -18,8 +17,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Lexdb) &&
-				   Path.GetFileName(pathToFile) == SharedConstants.LexiconFilename;
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Lexdb)
+				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(SharedConstants.Lexicon + "_");
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -28,23 +27,30 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.Lexicon
-					|| root.Element(SharedConstants.Header) == null
-					|| root.Element(SharedConstants.Header).Element("LexDb") == null)
+				if (root.Name.LocalName != SharedConstants.Lexicon)
 				{
 					return "Not valid lexicon file";
 				}
 
 				var mdc = MetadataCache.MdCache;
-				var result = CmObjectValidator.ValidateObject(mdc, root.Element(SharedConstants.Header).Element("LexDb"));
-				if (result != null)
-					return result;
+				var header = root.Element(SharedConstants.Header);
+				if (header != null)
+				{
+					var lexDb = header.Element("LexDb");
+					if (lexDb == null)
+					{
+						return "Not valid lexicon file";
+					}
+					var result = CmObjectValidator.ValidateObject(mdc, lexDb);
+					if (result != null)
+						return result;
+				}
 
 				foreach (var entryElement in root.Elements(SharedConstants.LexEntry))
 				{
 					if (entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
 						return null;
-					result = CmObjectValidator.ValidateObject(mdc, entryElement);
+					var result = CmObjectValidator.ValidateObject(mdc, entryElement);
 					if (result != null)
 						return result;
 				}

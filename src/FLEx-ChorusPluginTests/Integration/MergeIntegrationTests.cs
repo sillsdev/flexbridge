@@ -108,7 +108,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		type='Boolean' />
 </AdditionalFields>";
 
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.LexiconFilename, commonAncestor))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -50,28 +51,43 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			// The LexDb object will go into the <header>, and will still nest these owning props: Appendixes, Introduction, and Resources (plus its basic props).
 			// All of the lexical entries will then go in as siblings of, but after, the <header> element.
 			// At this point LexDb is ready to go into the <header>.
-			var root = new XElement(SharedConstants.Lexicon);
-			var header = new XElement(SharedConstants.Header);
-			root.Add(header);
-			header.Add(lexDb);
 			CmObjectNestingService.NestObject(false, lexDb,
 				classData,
 				guidToClassMapping);
+			var header = new XElement(SharedConstants.Header);
+			header.Add(lexDb);
 
-			var sortedInstanceData = classData[SharedConstants.LexEntry];
-			if (sortedInstanceData.Count > 0)
+			var sortedEntryInstanceData = classData[SharedConstants.LexEntry];
+
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, sortedEntryInstanceData);
+
+			if (sortedEntryInstanceData.Count > 0)
 			{
-				var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
+				var srcDataCopy = new SortedDictionary<string, XElement>(sortedEntryInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
 					CmObjectNestingService.NestObject(false, entry,
 													  classData,
 													  guidToClassMapping);
-					root.Add(entry);
 				}
 			}
 
-			FileWriterService.WriteNestedFile(Path.Combine(lexiconDir, SharedConstants.LexiconFilename), root);
+			for (var i = 0; i < buckets.Count; ++i)
+			{
+				var root = new XElement(SharedConstants.Lexicon);
+				if (i == 0 && header.HasElements)
+					root.Add(header);
+				var currentBucket = buckets[i];
+				foreach (var element in currentBucket.Values)
+					root.Add(element);
+				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
+			}
+		}
+
+		internal static string PathnameForBucket(string inventoryDir, int bucket)
+		{
+			return Path.Combine(inventoryDir, string.Format("{0}_{1}{2}.{3}", SharedConstants.Lexicon, bucket >= 9 ? "" : "0", bucket + 1, SharedConstants.Lexdb));
 		}
 
 		internal static void FlattenContext(
@@ -85,54 +101,61 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 
 			var langProjElement = highLevelData["LangProject"];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			var lexDbPathname = Path.Combine(lexiconDir, SharedConstants.LexiconFilename);
-			var lexDbDoc = XDocument.Load(lexDbPathname);
-			var rootLexDbDoc = lexDbDoc.Root;
-			var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
-			var lexDb = headerLexDbDoc.Element(LexDb);
-			highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
-			// Add LexDb <objsur> element to LP.
-			BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
-			foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
+			var lexDbPathnames = new List<string>(Directory.GetFiles(lexiconDir, string.Format("{0}_??.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), SearchOption.TopDirectoryOnly));
+			lexDbPathnames.Sort(StringComparer.InvariantCultureIgnoreCase);
+			foreach (var lexDbPathname in lexDbPathnames)
 			{
-				var listDoc = XDocument.Load(listPathname);
-				var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
-				var listFilenameSansExtension = Path.GetFileNameWithoutExtension(listPathname);
-				switch (listFilenameSansExtension)
+				var lexDbDoc = XDocument.Load(lexDbPathname);
+				var rootLexDbDoc = lexDbDoc.Root;
+				var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
+				if (headerLexDbDoc != null)
 				{
-					default:
-						// In LexDB. Just add the list to the owning prop, and let it get flattened, normally.
-						lexDb.Element(listFilenameSansExtension).Add(listElement);
-						break;
-					case "SemanticDomainList":
-					case "AffixCategories":
-						// In LP. Restore the <objsur> element in LP, and then flatten the list by itself.
-						BaseDomainServices.RestoreObjsurElement(langProjElement, listFilenameSansExtension, listElement);
-						// Flatten the LP list by itself.
-						CmObjectFlatteningService.FlattenObject(
-							listPathname,
-							sortedData,
-							listElement,
-							langProjGuid); // Restore 'ownerguid' to list.
-						break;
+					var lexDb = headerLexDbDoc.Element(LexDb);
+					highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
+					// Add LexDb <objsur> element to LP.
+					BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
+					foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
+					{
+						var listDoc = XDocument.Load(listPathname);
+						var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
+						var listFilenameSansExtension = Path.GetFileNameWithoutExtension(listPathname);
+						switch (listFilenameSansExtension)
+						{
+							default:
+								// In LexDB. Just add the list to the owning prop, and let it get flattened, normally.
+								lexDb.Element(listFilenameSansExtension).Add(listElement);
+								break;
+							case "SemanticDomainList":
+							case "AffixCategories":
+								// In LP. Restore the <objsur> element in LP, and then flatten the list by itself.
+								BaseDomainServices.RestoreObjsurElement(langProjElement, listFilenameSansExtension, listElement);
+								// Flatten the LP list by itself.
+								CmObjectFlatteningService.FlattenObject(
+									listPathname,
+									sortedData,
+									listElement,
+									langProjGuid); // Restore 'ownerguid' to list.
+								break;
+						}
+					}
+					// Flatten lexDb.
+					CmObjectFlatteningService.FlattenObject(
+						lexDbPathname,
+						sortedData,
+						lexDb,
+						langProjGuid); // Restore 'ownerguid' to LexDb.
 				}
-			}
-			// Flatten lexDb.
-			CmObjectFlatteningService.FlattenObject(
-				lexDbPathname,
-				sortedData,
-				lexDb,
-				langProjGuid); // Restore 'ownerguid' to LexDb.
 
-			// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
-			foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry)
-				.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
-			{
-				CmObjectFlatteningService.FlattenObject(
-					lexDbPathname,
-					sortedData,
-					entryElement,
-					null); // Entries are not owned.
+				// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
+				foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry)
+					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
+				{
+					CmObjectFlatteningService.FlattenObject(
+						lexDbPathname,
+						sortedData,
+						entryElement,
+						null); // Entries are not owned.
+				}
 			}
 		}
 
