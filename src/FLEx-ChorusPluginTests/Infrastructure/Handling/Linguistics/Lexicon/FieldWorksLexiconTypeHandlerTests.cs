@@ -338,6 +338,42 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
+		public void BothAddedSameNewAlternativeToSenseDefinition_HasNoReports()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+<header>
+<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</header>
+<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' >
+	<Senses>
+		<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' >
+			<Definition>
+				<AStr
+					ws='en'>
+					<Run ws='en'>EngDef</Run>
+				</AStr>
+			</Definition>
+		</ownseq>
+	</Senses>
+</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace("</Definition>", "<AStr ws='es'><Run ws='es'>newdef</Run></AStr></Definition>");
+			var theirContent = commonAncestor.Replace("</Definition>", "<AStr ws='es'><Run ws='es'>newdef</Run></AStr></Definition>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']" },
+				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
 		public void ReferenceSequenceConfusedEditsHasConflictReport()
 		{
 			const string commonAncestor =
