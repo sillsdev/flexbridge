@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -228,13 +229,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			foreach (var kvp in data)
 			{
 				var key = kvp.Key;
-				buckets[(int)((uint)new Guid(key).GetHashCode() % bucketCount)].Add(key, kvp.Value);
+				buckets[(int)UInt32.Parse(key.Substring(0, 8), NumberStyles.AllowHexSpecifier) % bucketCount].Add(key, kvp.Value);
 			}
 		}
 
 		internal static Dictionary<int, SortedDictionary<string, XElement>> CreateEmptyBuckets(int numberOfBucketsToCreate)
 		{
-			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>(numberOfBucketsToCreate);
+			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>();
 
 			for (var i = 0; i < numberOfBucketsToCreate; ++i)
 			{
