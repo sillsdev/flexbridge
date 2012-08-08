@@ -229,7 +229,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			foreach (var kvp in data)
 			{
 				var key = kvp.Key;
-				buckets[(int)UInt32.Parse(key.Substring(0, 8), NumberStyles.AllowHexSpecifier) % bucketCount].Add(key, kvp.Value);
+				buckets[(int)(UInt32.Parse(key.Substring(0, 8), NumberStyles.AllowHexSpecifier) % bucketCount)].Add(key, kvp.Value);
 			}
 		}
 
