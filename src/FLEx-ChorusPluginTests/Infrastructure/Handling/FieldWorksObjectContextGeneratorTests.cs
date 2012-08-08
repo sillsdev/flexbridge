@@ -145,7 +145,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 						<StText	guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
 							<DateModified val='2011-2-3 19:24:58.556' />
 							<Paragraphs>
-								<ownseqatomic>
+								<ownseq>
 									<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
 										<Contents>
 											<Str>
@@ -154,7 +154,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 										</Contents>
 										<ParseIsCurrent val='False' />
 									<StTxtPara />
-								</ownseqatomic>
+								</ownseq>
 							</Paragraphs>
 						</StText>
 					</Contents>
@@ -221,7 +221,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							guid='c5df83ed-1037-438a-a23a-d095cc4bd9c9'>
 							<DateModified val='2011-2-3 19:24:58.556' />
 							<Paragraphs>
-								<ownseqatomic>
+								<ownseq>
 									<StTxtPara guid='ef6c8862-5895-4068-a2ab-f9d42022cf82' />
 										<Contents>
 											<Str>
@@ -230,7 +230,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 										</Contents>
 										<ParseIsCurrent val='False' />
 									<StTxtPara />
-								</ownseqatomic>
+								</ownseq>
 							</Paragraphs>
 						</StText>
 					</Conclusions>
@@ -304,7 +304,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 							<ScrFootnote guid='002c0cdf-e486-460f-b334-505ad66c5b43'>
 								<DateModified val='2011-2-3 19:24:58.556' />
 								<Paragraphs>
-									<ownseqatomic>
+									<ownseq>
 										<StTxtPara guid='988597b0-a6fd-4956-b977-92b0992ae123' />
 											<Contents>
 												<Str>
@@ -313,7 +313,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 											</Contents>
 											<ParseIsCurrent val='False' />
 										<StTxtPara />
-									</ownseqatomic>
+									</ownseq>
 								</Paragraphs>
 								<FootnoteMarker>
 									<Str>
@@ -340,7 +340,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 									<StText guid='9e0d0f62-1c3a-4dd5-a488-fdf93471137a'>
 										<DateModified val='2011-2-3 19:24:58.556' />
 										<Paragraphs>
-											<ownseqatomic>
+											<ownseq>
 												<StTxtPara guid='43a529b9-6fed-430b-b571-26df25dff03c' />
 													<Contents>
 														<Str>
@@ -349,7 +349,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 													</Contents>
 													<ParseIsCurrent val='False' />
 												<StTxtPara />
-											</ownseqatomic>
+											</ownseq>
 										</Paragraphs>
 										<RightToLeft val='False' />
 										<Tags />
@@ -369,7 +369,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 									<StText guid='e0eec438-8a60-4586-a73e-6dfd5089becc'>
 										<DateModified val='2011-2-3 19:24:58.556' />
 										<Paragraphs>
-											<ownseqatomic>
+											<ownseq>
 												<StTxtPara guid='c83379ed-1043-4bd4-b9c1-b159c47025cf' />
 													<Contents>
 														<Str>
@@ -378,7 +378,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 													</Contents>
 													<ParseIsCurrent val='False' />
 												<StTxtPara />
-											</ownseqatomic>
+											</ownseq>
 										</Paragraphs>
 										<RightToLeft val='False' />
 										<Tags />
@@ -923,7 +923,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 
 		/// <summary>
 		/// Make sure that GenerateContextDescriptor/PathToUserUnderstandableElement returns the guid of its parent,
-		/// even if it is under and ownseqatomic node.
+		/// even if it is under an ownseq node.
 		/// </summary>
 		[Test]
 		public void FindGuidOfParentOwnseqatomic()
@@ -932,7 +932,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				 @"<StText
 						guid='b314f2f8-ea5e-11de-86b7-0013722f8dec'>
 						<Paragraphs>
-							<ownseqatomic
+							<ownseq
 								class='StTxtPara'
 								guid='b31e7c56-ea5e-11de-85d3-0013722f8dec'>
 								<Contents>
@@ -943,11 +943,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 								</Contents>
 								<ParseIsCurrent
 									val='False' />
-							</ownseqatomic>
+							</ownseq>
 						</Paragraphs>
 					</StText>";
 			var root = FieldWorksTestServices.GetNode(source);
-			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // <Paragraphs><ownseqatomic><Contents>
+			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // <Paragraphs><ownseq><Contents>
 			var generator = MakeGenerator();
 
 			// This is the focus of the test:

@@ -275,7 +275,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						return className;
 					}
 					break;
-				case SharedConstants.OwnseqAtomic: // Fall through.
 				case SharedConstants.Ownseq:
 					attribute = obj.Attribute(SharedConstants.Class);
 					if (attribute == null)
@@ -601,24 +600,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				return "Has unrecognized attribute(s)";
 			if (!propertyElement.HasElements)
 				return null; // No children.
-			// ownseq XOR ownseqatomic
-			var ownseqChildElements =
-				propertyElement.Elements().Where(childElement =>
-					childElement.Name.LocalName == SharedConstants.Ownseq ||
-					childElement.Name.LocalName == SharedConstants.OwnseqAtomic).ToList();
+			// ownseq
+			var ownseqChildElements = propertyElement.Elements().Where(childElement => childElement.Name.LocalName == SharedConstants.Ownseq).ToList();
 			if (ownseqChildElements.Count != propertyElement.Elements().Count())
 				return "Contains unrecognized child elements";
-
-			if (ownseqChildElements.Count > 1)
-			{
-				// Make sure they are all have the same element name.
-				var name = ownseqChildElements[0].Name.LocalName;
-				var otherName = (name == SharedConstants.Ownseq) ? SharedConstants.OwnseqAtomic : SharedConstants.Ownseq;
-				var otherOwnSeqElements = propertyElement.Elements().Where(childElement =>
-															 childElement.Name.LocalName == otherName).ToList();
-				if (otherOwnSeqElements.Count > 0)
-					return "Mixed owning sequence element names";
-			}
 
 			return ownseqChildElements.Select(ownseqChildElement => ValidateObject(mdc, ownseqChildElement, indentation)).FirstOrDefault(result => result != null);
 		}

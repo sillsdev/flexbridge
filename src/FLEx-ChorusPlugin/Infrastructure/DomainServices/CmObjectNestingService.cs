@@ -100,7 +100,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			XElement owningObjElement)
 		{
 			var className = (owningObjElement.Name.LocalName == SharedConstants.Ownseq
-				|| owningObjElement.Name.LocalName == SharedConstants.OwnseqAtomic // Atomic here means the whole elment is treated as effectively as if it were binary data.
 				|| owningObjElement.Name.LocalName == SharedConstants.Refseq)
 					? owningObjElement.Attribute(SharedConstants.Class).Value
 					: owningObjElement.Name.LocalName;
@@ -143,9 +142,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var className = classAttr.Value;
 			if (isOwningSeqProp)
 			{
-				obj.Name = (className == "StTxtPara" || className == "ScrTxtPara")
-					? SharedConstants.OwnseqAtomic // Atomic here means the whole elment is treated as effectively as if it were binary data.
-					: SharedConstants.Ownseq;
+				obj.Name = SharedConstants.Ownseq;
 			}
 			else
 			{

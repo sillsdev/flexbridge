@@ -20,7 +20,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 											SharedConstants.Refcol,
 											SharedConstants.Ownseq,
 											// There is no need for an OwnCol, since order in irrelevant for them.
-											SharedConstants.OwnseqAtomic,
 											SharedConstants.Refseq,
 											SharedConstants.CmAnnotation,
 											SharedConstants.DsChart,

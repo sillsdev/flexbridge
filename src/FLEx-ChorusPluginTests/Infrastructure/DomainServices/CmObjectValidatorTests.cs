@@ -105,18 +105,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
-		public void EnsureOwnseqAtomicHasClassAttribute()
-		{
-			var ownSeqElement = new XElement(SharedConstants.OwnseqAtomic, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Contains("Has no class attribute"));
-			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
-			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
-			Assert.IsNull(result);
-		}
-
-		[Test]
 		public void AbstractClassIsMostlyNotValid()
 		{
 			var obj = new XElement("CmObject", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
@@ -253,7 +241,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void TsStringHasCorrectResponses()
 		{
-			const string str = @"<ownseqatomic
+			const string str = @"<ownseq
 						class='StTxtPara'
 						guid='cf379f73-9ee5-4e45-b2e2-4b169666d83e'>
 						<Contents>
@@ -262,7 +250,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 									ws='en'>Hi there.</Run>
 							</Str>
 						</Contents>
-						</ownseqatomic>";
+						</ownseq>";
 			var element = XElement.Parse(str);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
@@ -568,14 +556,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.Contains("Contains unrecognized child elements"));
 			extraChild.Remove();
-
-			var osElement = new XElement(SharedConstants.Ownseq);
-			var osaElement = new XElement(SharedConstants.OwnseqAtomic);
-			prop.Add(osElement);
-			prop.Add(osaElement);
-			result = CmObjectValidator.ValidateObject(_mdc, element);
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Contains("Mixed owning sequence element names"));
 		}
 
 		[Test]

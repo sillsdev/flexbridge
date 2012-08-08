@@ -62,26 +62,5 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				Assert.IsTrue(ignoredAttrNames.Contains(ignoredAttrName));
 			}
 		}
-
-		[Test]
-		public void EnsureContainedOwnseqAtomicIsSetUpCorrectly()
-		{
-			var elementStrategy = _merger.MergeStrategies.ElementStrategies[SharedConstants.OwnseqAtomic];
-			Assert.IsTrue(elementStrategy.IsAtomic);
-			Assert.IsFalse(elementStrategy.IsImmutable);
-			Assert.IsTrue(elementStrategy.OrderIsRelevant);
-			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
-			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
-			Assert.AreEqual(2, elementStrategy.AttributesToIgnoreForMerging.Count);
-			var ignoredAttrNames = new HashSet<string>
-									{
-										SharedConstants.GuidStr,
-										SharedConstants.Class
-									};
-			foreach (var ignoredAttrName in elementStrategy.AttributesToIgnoreForMerging)
-			{
-				Assert.IsTrue(ignoredAttrNames.Contains(ignoredAttrName));
-			}
-		}
 	}
 }

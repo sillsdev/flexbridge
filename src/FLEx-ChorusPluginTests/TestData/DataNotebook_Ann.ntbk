@@ -52,7 +52,7 @@
 						<DateModified
 							val="2012-5-11 21:20:21.98" />
 						<Paragraphs>
-							<ownseqatomic
+							<ownseq
 								class="StTxtPara"
 								guid="378fe472-be32-43a9-a6e5-6212813050ae">
 								<Contents>
@@ -63,7 +63,7 @@
 								</Contents>
 								<ParseIsCurrent
 									val="True" />
-							</ownseqatomic>
+							</ownseq>
 						</Paragraphs>
 						<RightToLeft
 							val="False" />

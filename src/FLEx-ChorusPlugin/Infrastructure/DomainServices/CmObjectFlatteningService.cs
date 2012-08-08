@@ -55,7 +55,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 			sortedData.Add(elementGuid, element);
 
-			// The name of 'element' is the class of CmObject, or 'ownseq', or 'ownseqatomic', or....
+			// The name of 'element' is the class of CmObject, or 'ownseq', or....
 			element.Name = SharedConstants.RtTag;
 			if (!isOwnSeqNode)
 				element.Add(new XAttribute(SharedConstants.Class, className));
@@ -131,8 +131,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		private static bool GetClassInfoFromElement(MetadataCache mdc, XElement element, out FdoClassInfo classInfo,
 													out string className)
 		{
-			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq ||
-							   element.Name.LocalName == SharedConstants.OwnseqAtomic; // Atomic here means the whole elment is treated as effectively as if it were binary data.
+			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq;
 			className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
 			classInfo = mdc.GetClassInfo(className);
 			return isOwnSeqNode;

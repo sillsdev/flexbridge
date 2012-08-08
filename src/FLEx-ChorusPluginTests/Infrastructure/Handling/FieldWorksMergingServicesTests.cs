@@ -107,9 +107,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<Contents>
 		<StText guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Paragraphs>
-				<ownseqatomic class='StTxtPara' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='StTxtPara' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<ParseIsCurrent val='True' />
-				</ownseqatomic>
+				</ownseq>
 			</Paragraphs>
 		</StText>
 	</Contents>
@@ -138,9 +138,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	<Contents>
 		<StText guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
 			<Paragraphs>
-				<ownseqatomic class='StTxtPara' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+				<ownseq class='StTxtPara' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
 					<ParseIsCurrent val='True' />
-				</ownseqatomic>
+				</ownseq>
 			</Paragraphs>
 		</StText>
 	</Contents>

@@ -231,13 +231,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		<StText guid='45b78bcf-2400-48d5-a9c1-973447d36d4e'>
 		  <DateModified val='2011-2-2 19:39:28.829' />
 		  <Paragraphs>
-			<ownseqatomic class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
+			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
 			<Contents>
 			  <Str>
 				<Run ws='en'>This is the first paragraph.</Run>
 			  </Str>
 			</Contents>
-			</ownseqatomic>
+			</ownseq>
 		  </Paragraphs>
 		</StText>
 	  </Introduction>

@@ -276,12 +276,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
 
-			// Add element for "ownseqatomic" // Atomic here means the whole elment is treated as effectively as if it were binary data.
-			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
-			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
-			elementStrategy.IsAtomic = true;
-			sharedElementStrategies.Add(SharedConstants.OwnseqAtomic, elementStrategy);
-
 			// Add element for SharedConstants.Objsur.
 			// This is only good now for ref atomic.
 			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
