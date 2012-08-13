@@ -76,7 +76,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			// 1. Write version number file.
-			using (var reader = XmlReader.Create(mainFilePathname, FileWriterService.CanonicalReaderSettings))
+			using (var reader = XmlReader.Create(mainFilePathname, CanonicalXmlSettings.CreateXmlReaderSettings()))
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
@@ -128,8 +128,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		private static void CacheDataRecord(string record, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			var rtElement = XElement.Parse(record);
-			var className = rtElement.Attribute(SharedConstants.Class).Value;
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string> {SharedConstants.Class, SharedConstants.GuidStr});
+			var className = attrValues[SharedConstants.Class];
+			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
 			guidToClassMapping.Add(guid, className);
 
 			// Theory has it the FW data is sorted.

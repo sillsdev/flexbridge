@@ -13,13 +13,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{
-		private readonly static XmlReaderSettings ReaderSettings = new XmlReaderSettings { IgnoreWhitespace = true };
-
-		internal static XmlReaderSettings CanonicalReaderSettings
-		{
-			get { return ReaderSettings; }
-		}
-
 		internal static void WriteNestedFile(string newPathname, XElement root)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -93,7 +86,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		internal static void WriteElement(XmlWriter writer, byte[] optionalFirstElement)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), CanonicalReaderSettings))
+			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), CanonicalXmlSettings.CreateXmlReaderSettings(ConformanceLevel.Fragment)))
 				writer.WriteNode(nodeReader, true);
 		}
 

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge.xml.generic;
@@ -271,16 +270,6 @@ namespace FwdataTestApp
 			validateTimer.Stop();
 		}
 
-		private static string GetGuid(string record)
-		{
-			using (var reader = XmlReader.Create(new StringReader(record), FileWriterService.CanonicalReaderSettings))
-			{
-				reader.MoveToContent();
-				reader.MoveToAttribute("guid");
-				return reader.Value.ToLowerInvariant();
-			}
-		}
-
 		private void Verify(Stopwatch verifyTimer, StringBuilder sb)
 		{
 			verifyTimer.Start();
@@ -297,7 +286,7 @@ namespace FwdataTestApp
 						foundOrigOptionalFirstElement = false;
 						continue;
 					}
-					origData.Add(GetGuid(origRecord), origRecord);
+					origData.Add(XmlUtils.GetAttributes(origRecord, new HashSet<string> { SharedConstants.GuidStr })[SharedConstants.GuidStr].ToLowerInvariant(), origRecord);
 				}
 			}
 			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
