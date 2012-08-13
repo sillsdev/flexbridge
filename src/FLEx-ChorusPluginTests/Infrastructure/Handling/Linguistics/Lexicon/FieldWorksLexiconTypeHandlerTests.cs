@@ -374,6 +374,140 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
+		public void BothMadeSameChangesToBothAlternativesOfSenseDefinitionAndGloss_HasNoReports()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+<header>
+<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</header>
+<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' >
+	<Senses>
+		<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' >
+			<Definition>
+				<AStr
+					ws='en'>
+					<Run ws='en'>EngDef</Run>
+				</AStr>
+				<AStr
+					ws='es'>
+					<Run ws='es'>SpDef</Run>
+				</AStr>
+			</Definition>
+			<Gloss>
+				<AUni
+					ws='en'>EngGloss</AUni>
+				<AUni
+					ws='es'>SpGloss</AUni>
+			</Gloss>
+		</ownseq>
+	</Senses>
+</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace("EngDef", "NewEngDef").Replace("SpDef", "NewSpDef")
+				.Replace("EngGloss", "NewEngGloss").Replace("SpGloss", "NewSpGloss");
+			var theirContent = commonAncestor.Replace("EngDef", "NewEngDef").Replace("SpDef", "NewSpDef")
+				.Replace("EngGloss", "NewEngGloss").Replace("SpGloss", "NewSpGloss");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string>
+					{
+						@"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='en']/Run[@ws='en' and text() = 'NewEngDef']",
+						@"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'NewSpDef']",
+						@"Lexicon/LexEntry/Senses/ownseq/Gloss/AUni[@ws='en' and text() = 'NewEngGloss']",
+						@"Lexicon/LexEntry/Senses/ownseq/Gloss/AUni[@ws='es' and text() = 'NewSpGloss']"
+					},
+				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition_HasNoReports()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+<header>
+<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</header>
+<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' >
+	<Senses>
+		<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' >
+			<Definition>
+				<AStr
+					ws='en'>
+					<Run ws='en'>EngDef</Run>
+				</AStr>
+				<AStr
+					ws='es'>
+					<Run ws='es'></Run>
+				</AStr>
+			</Definition>
+		</ownseq>
+	</Senses>
+</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace("<Run ws='es'></Run>", "<Run ws='es'>newdef</Run>");
+			var theirContent = commonAncestor.Replace("<Run ws='es'></Run>", "<Run ws='es'>newdef</Run>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
+				new List<string>(),
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition2_HasNoReports()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+<header>
+<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+</header>
+<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' >
+	<Senses>
+		<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' >
+			<Definition>
+				<AStr
+					ws='en'>
+					<Run ws='en'>EngDef</Run>
+				</AStr>
+				<AStr
+					ws='es'>
+					<Run ws='es' />
+				</AStr>
+			</Definition>
+		</ownseq>
+	</Senses>
+</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace("<Run ws='es' />", "<Run ws='es'>newdef</Run>");
+			var theirContent = commonAncestor.Replace("<Run ws='es' />", "<Run ws='es'>newdef</Run>");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
+				new List<string>(),
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
 		public void ReferenceSequenceConfusedEditsHasConflictReport()
 		{
 			const string commonAncestor =
