@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 	internal static class WordformInventoryBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, XElement>> classData,
+			SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
@@ -29,16 +29,16 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			// Each WfiWordform (unowned) will then be a child of root.
 			var header = new XElement(SharedConstants.Header);
 			// Work on copy, since 'classData' is changed during the loop.
-			SortedDictionary<string, XElement> srcDataCopy;
+			SortedDictionary<string, string> srcDataCopy;
 			if (sortedPunctuationFormInstanceData.Count > 0)
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
-				srcDataCopy = new SortedDictionary<string, XElement>(sortedPunctuationFormInstanceData);
+				srcDataCopy = new SortedDictionary<string, string>(sortedPunctuationFormInstanceData);
 				foreach (var punctFormElement in srcDataCopy.Values)
 				{
 					header.Add(punctFormElement);
 					CmObjectNestingService.NestObject(false,
-						punctFormElement,
+						XElement.Parse(punctFormElement),
 						classData,
 						guidToClassMapping);
 				}
@@ -47,14 +47,15 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
-				srcDataCopy = new SortedDictionary<string, XElement>(sortedWfiWordformInstanceData);
+				srcDataCopy = new SortedDictionary<string, string>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var checksumProperty = wordFormElement.Element("Checksum");
+					var wfElement = XElement.Parse(wordFormElement);
+					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
 						checksumProperty.Remove();
 					CmObjectNestingService.NestObject(false,
-													  wordFormElement,
+													  wfElement,
 													  classData,
 													  guidToClassMapping);
 				}

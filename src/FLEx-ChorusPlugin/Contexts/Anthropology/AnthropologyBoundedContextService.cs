@@ -25,18 +25,18 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	internal static class AnthropologyBoundedContextService
 	{
 		internal static void NestContext(string anthropologyDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedInstanceData = classData["RnResearchNbk"];
-			var langProj = classData["LangProject"].Values.First();
+			var langProj = XElement.Parse(classData["LangProject"].Values.First());
 
 			var headerElement = new XElement(SharedConstants.Header);
 			var rootElement = new XElement(SharedConstants.Anthropology, headerElement);
 			if (sortedInstanceData.Count > 0)
 			{
 				// 1. Main RnResearchNbk element.
-				var notebookElement = sortedInstanceData.Values.First();
+				var notebookElement = XElement.Parse(sortedInstanceData.Values.First());
 				headerElement.Add(notebookElement);
 
 				CmObjectNestingService.NestObject(false, notebookElement,
@@ -111,6 +111,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProj, "TimeOfDay",
 										  Path.Combine(anthropologyDir, "TimeOfDay." + SharedConstants.List));
+			classData["LangProject"][langProj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProj.ToString();
 		}
 
 		internal static void FlattenContext(

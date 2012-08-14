@@ -48,29 +48,34 @@ namespace FwdataTestApp
 			return mdc;
 		}
 
-		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, XElement>> unownedObjects, IDictionary<string, SortedDictionary<string, XElement>> classData, IDictionary<string, string> guidToClassMapping, string record)
+		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, string>> unownedObjects, IDictionary<string, SortedDictionary<string, string>> classData, IDictionary<string, string> guidToClassMapping, string record)
 		{
-			var rtElement = XElement.Parse(record);
-			var guid = rtElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			var className = rtElement.Attribute(SharedConstants.Class).Value;
-			if (rtElement.Attribute(SharedConstants.OwnerGuid) == null)
+			//var rtElement = XElement.Parse(record);
+			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class, SharedConstants.OwnerGuid });
+			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
+			var className = attrValues[SharedConstants.Class];
+			if (attrValues[SharedConstants.OwnerGuid] == null)
 			{
-				SortedDictionary<string, XElement> unownedForCurrentClassName;
+				SortedDictionary<string, string> unownedForCurrentClassName;
 				if (!unownedObjects.TryGetValue(className, out unownedForCurrentClassName))
 				{
-					unownedForCurrentClassName = new SortedDictionary<string, XElement>();
+					unownedForCurrentClassName = new SortedDictionary<string, string>();
 					unownedObjects.Add(className, unownedForCurrentClassName);
 				}
-				unownedForCurrentClassName.Add(guid, rtElement);
+				unownedForCurrentClassName.Add(guid, record);
 			}
 			guidToClassMapping.Add(guid.ToLowerInvariant(), className);
 
 			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
-				var csElement = rtElement.Element("Checksum");
+				var wfElement = XElement.Parse(record);
+				var csElement = wfElement.Element("Checksum");
 				if (csElement != null)
+				{
 					csElement.Remove();
+					record = wfElement.ToString();
+				}
 			}
 
 			// Theory has it the FW data is sorted.
@@ -78,13 +83,13 @@ namespace FwdataTestApp
 			//DataSortingService.SortMainElement(rtElement);
 
 			// 3. Cache it.
-			SortedDictionary<string, XElement> recordData;
+			SortedDictionary<string, string> recordData;
 			if (!classData.TryGetValue(className, out recordData))
 			{
-				recordData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+				recordData = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 				classData.Add(className, recordData);
 			}
-			recordData.Add(guid, rtElement);
+			recordData.Add(guid, record);
 		}
 
 		private void RunSelected(object sender, EventArgs e)
@@ -274,11 +279,11 @@ namespace FwdataTestApp
 		{
 			verifyTimer.Start();
 			GetFreshMdc(); // Want it fresh.
-			var origData = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+			var origData = new Dictionary<string, byte[]>(StringComparer.InvariantCultureIgnoreCase);
 			using (var fastSplitterOrig = new FastXmlElementSplitter(_srcFwdataPathname + ".orig"))
 			{
 				bool foundOrigOptionalFirstElement;
-				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOrigOptionalFirstElement))
+				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOrigOptionalFirstElement))
 				{
 					if (foundOrigOptionalFirstElement)
 					{
@@ -289,50 +294,65 @@ namespace FwdataTestApp
 					origData.Add(XmlUtils.GetAttributes(origRecord, new HashSet<string> { SharedConstants.GuidStr })[SharedConstants.GuidStr].ToLowerInvariant(), origRecord);
 				}
 			}
+			GC.Collect(2, GCCollectionMode.Forced);
 			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
 			{
 				bool foundNewOptionalFirstElement;
 				var newRecords = fastSplitterNew.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundNewOptionalFirstElement);
 				// NB: The main input file *does* have to deal with the optional first element.
+				var utf8 = Encoding.UTF8;
+				var counter = 0;
 				foreach (var newRecord in newRecords)
 				{
+					var newRecCopy = newRecord;
+					byte[] origRecString;
 					string srcGuid = null;
-					XElement origElement;
-					var newElement = XElement.Parse(newRecord);
-					if (newElement.Name == SharedConstants.AdditionalFieldsTag)
+					if (newRecCopy.Contains(SharedConstants.AdditionalFieldsTag))
 					{
-						origElement = XElement.Parse(origData[SharedConstants.AdditionalFieldsTag]);
+						origRecString = origData[SharedConstants.AdditionalFieldsTag];
 						origData.Remove(SharedConstants.AdditionalFieldsTag);
 					}
 					else
 					{
-						srcGuid = newElement.Attribute("guid").Value;
-						origElement = XElement.Parse(origData[srcGuid]);
+						var attrValues = XmlUtils.GetAttributes(newRecord, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class });
+						srcGuid = attrValues[SharedConstants.GuidStr];
+						origRecString = origData[srcGuid];
 						origData.Remove(srcGuid);
-						if (origElement.Attribute("class").Value == "WfiWordform")
+						if (attrValues[SharedConstants.Class] == "WfiWordform")
 						{
-							var csProp = origElement.Element("Checksum");
+							var wfElement = XElement.Parse(utf8.GetString(origRecString));
+							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
 								csProp.Remove();
+							origRecString = utf8.GetBytes(wfElement.ToString());
 						}
 					}
 
-					if (XmlUtilities.AreXmlElementsEqual(origElement.ToString(), newElement.ToString()))
+					if (XmlUtilities.AreXmlElementsEqual(utf8.GetString(origRecString), newRecCopy))
 						continue;
 
 					if (srcGuid == null)
 					{
-						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origElement.ToString());
-						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-TRG.txt"), newElement.ToString());
+						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), utf8.GetString(origRecString));
+						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-TRG.txt"), newRecCopy);
 						sb.Append("Main src and trg custom properties are different in the resulting xml.");
 					}
 					else
 					{
-						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origElement.ToString());
-						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newElement.ToString());
+						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), utf8.GetString(origRecString));
+						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newRecCopy);
 						sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
 					}
 					sb.AppendLine();
+					if (counter == 1000)
+					{
+						GC.Collect(2, GCCollectionMode.Forced);
+						counter = 0;
+					}
+					else
+					{
+						counter++;
+					}
 				}
 			}
 			verifyTimer.Stop();
@@ -341,10 +361,10 @@ namespace FwdataTestApp
 		private void NestFile(string srcFwdataPathname)
 		{
 			var mdc = GetFreshMdc(); // Want it fresh.
-			var unownedObjects = new Dictionary<string, SortedDictionary<string, XElement>>(200);
+			var unownedObjects = new Dictionary<string, SortedDictionary<string, string>>(200);
 			// Outer dictionary has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
-			var classData = new Dictionary<string, SortedDictionary<string, XElement>>(200, StringComparer.OrdinalIgnoreCase);
+			var classData = new Dictionary<string, SortedDictionary<string, string>>(200, StringComparer.OrdinalIgnoreCase);
 			var guidToClassMapping = new Dictionary<string, string>();
 			TokenizeFile(mdc, srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
 
@@ -356,8 +376,9 @@ namespace FwdataTestApp
 				var unownedElementDict = unownedElementKvp.Value;
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
-					classElement.Add(unownedElement);
-					CmObjectNestingService.NestObject(false, unownedElement,
+					var element = XElement.Parse(unownedElement);
+					classElement.Add(element);
+					CmObjectNestingService.NestObject(false, element,
 												  classData,
 												  guidToClassMapping);
 				}
@@ -366,7 +387,7 @@ namespace FwdataTestApp
 			FileWriterService.WriteNestedFile(srcFwdataPathname + ".nested", root);
 		}
 
-		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, SortedDictionary<string, XElement>> unownedObjects, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		private static void TokenizeFile(MetadataCache mdc, string srcFwdataPathname, Dictionary<string, SortedDictionary<string, string>> unownedObjects, Dictionary<string, SortedDictionary<string, string>> classData, Dictionary<string, string> guidToClassMapping)
 		{
 			using (var fastSplitter = new FastXmlElementSplitter(srcFwdataPathname))
 			{

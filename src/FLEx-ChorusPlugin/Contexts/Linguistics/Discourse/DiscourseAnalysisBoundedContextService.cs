@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	internal static class DiscourseAnalysisBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, XElement>> classData,
+			SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				return;
 
 			// 'discourseElement' is owned by LangProj in DsDiscourseData prop (OA).
-			var discourseElement = sortedInstanceData.Values.First();
+			var discourseElement = XElement.Parse(sortedInstanceData.Values.First());
 
 			// Nest the entire object, and then pull out the owned stuff, and relocate them, as needed.
 			CmObjectNestingService.NestObject(
@@ -58,14 +58,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 
 			// NB: We will just let the normal nesting code work over discourseElement,
 			// which will put in the actual subclass name as the element tag.
-			// SO, we'll just intercept them out of the owning prop elemtent (if any exist), and patch them up here.
+			// So, we'll just intercept them out of the owning prop elemtent (if any exist), and patch them up here.
 			// NB: If there are no such charts, then do the usual of making one with the empty guid for its Id.
 			var root = new XElement(SharedConstants.DiscourseRootFolder);
 			var header = new XElement(SharedConstants.Header);
 			root.Add(header);
 			header.Add(discourseElement);
 			// Remove child objsur node from owning LangProg
-			var langProjElement = classData["LangProject"].Values.First();
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
 			langProjElement.Element("DiscourseData").RemoveNodes();
 
 			var chartElements = discourseElement.Element("Charts");
@@ -81,6 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			}
 
 			FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename), root);
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(

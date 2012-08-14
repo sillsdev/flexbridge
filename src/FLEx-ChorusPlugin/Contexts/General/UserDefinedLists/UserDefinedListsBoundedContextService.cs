@@ -4,17 +4,18 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 {
 	internal class UserDefinedListsBoundedContextService
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// Write out each user-defined list (unowned CmPossibilityList) in a separate file.
-			var userDefinedLists = classData[SharedConstants.CmPossibilityList].Values.Where(listElement => listElement.Attribute(SharedConstants.OwnerGuid) == null).ToList();
+			var userDefinedLists = classData[SharedConstants.CmPossibilityList].Values.Where(listElement => XmlUtils.GetAttributes(listElement, new HashSet<string> {SharedConstants.OwnerGuid})[SharedConstants.OwnerGuid] == null).ToList();
 			if (!userDefinedLists.Any())
 				return; // Nothing to do.
 
@@ -24,13 +25,14 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 
 			foreach (var userDefinedListElement in userDefinedLists)
 			{
+				var element = XElement.Parse(userDefinedListElement);
 				CmObjectNestingService.NestObject(
 					false,
-					userDefinedListElement,
+					element,
 					classData,
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(
-					Path.Combine(userDefinedDir, "UserList-" + userDefinedListElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List),
+					Path.Combine(userDefinedDir, "UserList-" + element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List),
 					new XElement("UserDefinedList", userDefinedListElement));
 			}
 		}

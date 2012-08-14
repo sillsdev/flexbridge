@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 /*
@@ -49,14 +49,15 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			else
 				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
-			var langProj = classData["LangProject"].Values.First();
+			var langProj = XElement.Parse(classData["LangProject"].Values.First());
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 
 			// These are intentionally out of order from the above numbering scheme.
-			var scripture = classData[SharedConstants.Scripture].Values.FirstOrDefault();
+			var scrAsString = classData[SharedConstants.Scripture].Values.FirstOrDefault();
 			// // Lela Teli-3 has null.
-			if (scripture != null)
+			if (!string.IsNullOrEmpty(scrAsString))
 			{
+				var scripture = XElement.Parse(scrAsString);
 				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
 				ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);

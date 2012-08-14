@@ -10,7 +10,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal static class GeneralDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var generalBaseDir = Path.Combine(rootDir, SharedConstants.General);

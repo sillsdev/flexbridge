@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement languageProjectElement,
 			XElement scriptureElement,
 			string baseDirectory,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
@@ -32,6 +32,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				new XElement(SharedConstants.TranslatedScripture, scriptureElement));
 
 			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
+			classData["LangProject"][languageProjectElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = languageProjectElement.ToString();
 		}
 
 		internal static void FlattenContext(

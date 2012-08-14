@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
 ﻿﻿using Palaso.Progress.LogBox;
@@ -86,7 +85,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, XElement>> classData)
+		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, string>> classData)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var mdc = MetadataCache.MdCache;
@@ -120,14 +119,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return guidToClassMapping;
 		}
 
-		private static Dictionary<string, SortedDictionary<string, XElement>> GenerateBasicClassData()
+		private static Dictionary<string, SortedDictionary<string, string>> GenerateBasicClassData()
 		{
-			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase));
+			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static void CacheDataRecord(string record, Dictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping)
+		private static void CacheDataRecord(string record, Dictionary<string, SortedDictionary<string, string>> classData, Dictionary<string, string> guidToClassMapping)
 		{
-			var rtElement = XElement.Parse(record);
 			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string> {SharedConstants.Class, SharedConstants.GuidStr});
 			var className = attrValues[SharedConstants.Class];
 			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
@@ -138,7 +136,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			//DataSortingService.SortMainElement(rtElement);
 
 			// 2. Cache it.
-			classData[className].Add(guid, rtElement);
+			classData[className].Add(guid, record);
 		}
 	}
 }

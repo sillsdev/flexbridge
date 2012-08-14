@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	{
 		internal static void NestContext(XElement importSettingsProperty,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (importSettingsProperty == null)
@@ -27,7 +27,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var styleGuid = importSettingObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var importSetting = classData[className][styleGuid];
+				var importSetting = XElement.Parse(classData[className][styleGuid]);
 
 				CmObjectNestingService.NestObject(false, importSetting,
 												  classData,

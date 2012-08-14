@@ -35,28 +35,28 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var allLexDbs = classData["LexDb"].FirstOrDefault();
 			if (allLexDbs.Value == null)
 				return; // No LexDb, then there can be no reversals.
 
-			SortedDictionary<string, XElement> sortedInstanceData = classData["ReversalIndex"];
+			SortedDictionary<string, string> sortedInstanceData = classData["ReversalIndex"];
 			if (sortedInstanceData.Count == 0)
 				return; // no reversals, as in Lela-Teli-3.
 
-			var lexDb = allLexDbs.Value;
+			var lexDb = XElement.Parse(allLexDbs.Value);
 			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
 			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				Directory.CreateDirectory(reversalDir);
 
-			var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
+			var srcDataCopy = new SortedDictionary<string, string>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndexElement = reversalIndexKvp.Value;
+				var revIndexElement = XElement.Parse(reversalIndexKvp.Value);
 				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
 				var revIndexDir = Path.Combine(reversalDir, ws);
 				if (!Directory.Exists(revIndexDir))
@@ -85,6 +85,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				}
 
 				FileWriterService.WriteNestedFile(Path.Combine(revIndexDir, reversalFilename), root);
+				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = lexDb.ToString();
 			}
 		}
 
