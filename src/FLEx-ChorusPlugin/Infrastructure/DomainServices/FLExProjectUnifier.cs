@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			using (var tempFile = new TempFile())
 			{
-				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings
+				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings // NB: These are the FW bundle of settings, not the canonical settings.
 																		{
 																			OmitXmlDeclaration = false,
 																			CheckCharacters = true,

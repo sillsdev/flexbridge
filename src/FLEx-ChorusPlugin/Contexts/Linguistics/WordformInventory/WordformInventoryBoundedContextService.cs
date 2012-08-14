@@ -21,9 +21,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (!Directory.Exists(inventoryDir))
 				Directory.CreateDirectory(inventoryDir);
 
-			var buckets = FileWriterService.CreateEmptyBuckets(10);
-			FileWriterService.FillBuckets(buckets, sortedWfiWordformInstanceData);
-
 			// the doc root will be "Inventory" (SharedConstants.WordformInventoryRootFolder).
 			// This will store the PunctuationForm instances (unowned) in the header, and each PunctuationForm will be a child of header.
 			// Each WfiWordform (unowned) will then be a child of root.
@@ -34,16 +31,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
 				srcDataCopy = new SortedDictionary<string, string>(sortedPunctuationFormInstanceData);
-				foreach (var punctFormElement in srcDataCopy.Values)
+				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					header.Add(punctFormElement);
+					var pfElement = XElement.Parse(punctFormStringData);
+					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
-						XElement.Parse(punctFormElement),
+						pfElement,
 						classData,
 						guidToClassMapping);
 				}
 			}
 
+			var nestedData = new SortedDictionary<string, string>();
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
@@ -58,8 +57,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 													  wfElement,
 													  classData,
 													  guidToClassMapping);
+					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement.ToString());
 				}
 			}
+
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, nestedData);
 
 			for (var i = 0; i < buckets.Count; ++i )
 			{
@@ -67,8 +70,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var element in currentBucket.Values)
-					root.Add(element);
+				foreach (var wordformString in currentBucket.Values)
+				{
+					var wordformElement = XElement.Parse(wordformString);
+					root.Add(wordformElement);
+				}
 				FileWriterService.WriteNestedFile(PathnameForBucket(inventoryDir, i), root);
 			}
 		}

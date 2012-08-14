@@ -23,9 +23,9 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 			if (!Directory.Exists(userDefinedDir))
 				Directory.CreateDirectory(userDefinedDir);
 
-			foreach (var userDefinedListElement in userDefinedLists)
+			foreach (var userDefinedListString in userDefinedLists)
 			{
-				var element = XElement.Parse(userDefinedListElement);
+				var element = XElement.Parse(userDefinedListString);
 				CmObjectNestingService.NestObject(
 					false,
 					element,
@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(
 					Path.Combine(userDefinedDir, "UserList-" + element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() + "." + SharedConstants.List),
-					new XElement("UserDefinedList", userDefinedListElement));
+					new XElement("UserDefinedList", element));
 			}
 		}
 

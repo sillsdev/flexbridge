@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge.xml.generic;
@@ -333,14 +334,14 @@ namespace FwdataTestApp
 
 					if (srcGuid == null)
 					{
-						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), utf8.GetString(origRecString));
-						File.WriteAllText(Path.Combine(_workingDir, "CustomProperties-TRG.txt"), newRecCopy);
+						WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origRecString);
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), utf8.GetBytes(newRecCopy));
 						sb.Append("Main src and trg custom properties are different in the resulting xml.");
 					}
 					else
 					{
-						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), utf8.GetString(origRecString));
-						File.WriteAllText(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newRecCopy);
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origRecString);
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), utf8.GetBytes(newRecCopy));
 						sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
 					}
 					sb.AppendLine();
@@ -355,7 +356,26 @@ namespace FwdataTestApp
 					}
 				}
 			}
+			if (origData.Count > 0)
+			{
+				sb.AppendFormat("Hmm, there are {0} more <rt> elements in the original than in the rebuilt fwdata file.", origData.Count);
+				sb.AppendLine();
+				foreach (var attrs in origData.Values.Select(byteData => XmlUtils.GetAttributes(byteData, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class })))
+				{
+					sb.AppendFormat("\t\t'{0}' of class '{1}' is not in rebuilt file.", attrs[SharedConstants.GuidStr], attrs[SharedConstants.Class]);
+					sb.AppendLine();
+				}
+			}
 			verifyTimer.Stop();
+		}
+
+		private static void WriteProblemDataFile(string pathname, byte[] data)
+		{
+			using (var reader = XmlReader.Create(new MemoryStream(data, false), CanonicalXmlSettings.CreateXmlReaderSettings()))
+			using (var writer = XmlWriter.Create(pathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+				writer.WriteNode(reader, true);
+			}
 		}
 
 		private void NestFile(string srcFwdataPathname)
