@@ -30,14 +30,14 @@ namespace FwdataTestApp
 
 		private void BrowseForFile(object sender, EventArgs e)
 		{
-			_btnNest.Enabled = false;
+			_btnRunSelected.Enabled = false;
 			_fwdataPathname.Text = null;
 
 			if (_openFileDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
 			_fwdataPathname.Text = _openFileDialog.FileName;
-			_btnNest.Enabled = true;
+			_btnRunSelected.Enabled = true;
 		}
 
 		private MetadataCache GetFreshMdc()
@@ -475,6 +475,16 @@ namespace FwdataTestApp
 					File.Delete(pathname);
 				File.Copy(Path.Combine(normalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
 			}
+		}
+
+		private void ClearCheckboxes(object sender, EventArgs e)
+		{
+			_cbNestFile.CheckState = CheckState.Unchecked;
+			_cbRoundTripData.CheckState = CheckState.Unchecked;
+			_cbVerify.CheckState = CheckState.Unchecked;
+			_cbCheckOwnObjsur.CheckState = CheckState.Unchecked;
+			_cbValidate.CheckState = CheckState.Unchecked;
+			_restoreDataFile.CheckState = CheckState.Unchecked;
 		}
 	}
 }
