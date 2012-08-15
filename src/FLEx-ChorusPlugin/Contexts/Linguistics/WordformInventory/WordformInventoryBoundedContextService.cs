@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 	internal static class WordformInventoryBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, XElement>> classData,
+			SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
@@ -21,44 +21,48 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (!Directory.Exists(inventoryDir))
 				Directory.CreateDirectory(inventoryDir);
 
-			var buckets = FileWriterService.CreateEmptyBuckets(10);
-			FileWriterService.FillBuckets(buckets, sortedWfiWordformInstanceData);
-
 			// the doc root will be "Inventory" (SharedConstants.WordformInventoryRootFolder).
 			// This will store the PunctuationForm instances (unowned) in the header, and each PunctuationForm will be a child of header.
 			// Each WfiWordform (unowned) will then be a child of root.
 			var header = new XElement(SharedConstants.Header);
 			// Work on copy, since 'classData' is changed during the loop.
-			SortedDictionary<string, XElement> srcDataCopy;
+			SortedDictionary<string, string> srcDataCopy;
 			if (sortedPunctuationFormInstanceData.Count > 0)
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
-				srcDataCopy = new SortedDictionary<string, XElement>(sortedPunctuationFormInstanceData);
-				foreach (var punctFormElement in srcDataCopy.Values)
+				srcDataCopy = new SortedDictionary<string, string>(sortedPunctuationFormInstanceData);
+				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					header.Add(punctFormElement);
+					var pfElement = XElement.Parse(punctFormStringData);
+					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
-						punctFormElement,
+						pfElement,
 						classData,
 						guidToClassMapping);
 				}
 			}
 
+			var nestedData = new SortedDictionary<string, string>();
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
-				srcDataCopy = new SortedDictionary<string, XElement>(sortedWfiWordformInstanceData);
+				srcDataCopy = new SortedDictionary<string, string>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var checksumProperty = wordFormElement.Element("Checksum");
+					var wfElement = XElement.Parse(wordFormElement);
+					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
 						checksumProperty.Remove();
 					CmObjectNestingService.NestObject(false,
-													  wordFormElement,
+													  wfElement,
 													  classData,
 													  guidToClassMapping);
+					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement.ToString());
 				}
 			}
+
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, nestedData);
 
 			for (var i = 0; i < buckets.Count; ++i )
 			{
@@ -66,8 +70,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var element in currentBucket.Values)
-					root.Add(element);
+				foreach (var wordformString in currentBucket.Values)
+				{
+					var wordformElement = XElement.Parse(wordformString);
+					root.Add(wordformElement);
+				}
 				FileWriterService.WriteNestedFile(PathnameForBucket(inventoryDir, i), root);
 			}
 		}

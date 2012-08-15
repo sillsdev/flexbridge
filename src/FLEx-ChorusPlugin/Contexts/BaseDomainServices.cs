@@ -10,13 +10,14 @@ using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
 		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
-			Dictionary<string, SortedDictionary<string, XElement>> classData,
+			Dictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
@@ -26,16 +27,26 @@ namespace FLEx_ChorusPlugin.Contexts
 			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
 		}
 
-		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
+		internal static SortedDictionary<string, string> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
 		{
+			var retval = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			// NB: Don't even think of changing the order these methods are called in.
 			GeneralDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			CmObjectFlatteningService.CombineData(retval, sortedData);
 			ScriptureDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			CmObjectFlatteningService.CombineData(retval, sortedData);
 			AnthropologyDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			CmObjectFlatteningService.CombineData(retval, sortedData);
 			LinguisticsDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
-			return sortedData;
+			CmObjectFlatteningService.CombineData(retval, sortedData);
+
+			foreach (var highLevelElement in highLevelData.Values)
+				retval[highLevelElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement.ToString();
+
+			return retval;
 		}
 
 		internal static void RemoveDomainData(string pathRoot)
@@ -111,7 +122,7 @@ namespace FLEx_ChorusPlugin.Contexts
 		}
 
 		internal static void NestStylesPropertyElement(
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement stylesProperty,
 			string outputPathname)
@@ -128,7 +139,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			{
 				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var style = classData[className][styleGuid];
+				var style = XElement.Parse(classData[className][styleGuid]);
 				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}

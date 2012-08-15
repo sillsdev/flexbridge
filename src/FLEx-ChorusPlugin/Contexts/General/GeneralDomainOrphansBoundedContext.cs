@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal class GeneralDomainOrphansBoundedContext
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// I know of two types of data this method needs to handle:
@@ -37,7 +37,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				foreach (var candidateElementKvp in condidatesDict)
 				{
 					var candidateGuid = candidateElementKvp.Key;
-					var candidateElement = candidateElementKvp.Value;
+					var candidateElement = XElement.Parse(candidateElementKvp.Value);
 					var ownerGuidAttr = candidateElement.Attribute(SharedConstants.OwnerGuid);
 					if (ownerGuidAttr == null)
 					{
@@ -153,7 +153,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			}
 		}
 
-		private static void TrimClassData(IDictionary<string, SortedDictionary<string, XElement>> classData)
+		private static void TrimClassData(IDictionary<string, SortedDictionary<string, string>> classData)
 		{
 			var classesWithNoData = new HashSet<string>(
 				classData.Select(mainKvp => new { mainKvp, className = mainKvp.Key }).Select(

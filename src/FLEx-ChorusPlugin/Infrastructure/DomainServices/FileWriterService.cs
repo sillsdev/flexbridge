@@ -22,6 +22,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
+		internal static void WriteElement(XmlWriter writer, string data)
+		{
+			WriteElement(writer, XElement.Parse(data));
+		}
+
 		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
 			if (WriteWholeNode(element))
@@ -198,7 +203,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		internal static void WriteNestedListFileIfItExists(IDictionary<string,
-			SortedDictionary<string, XElement>> classData,
+			SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement listOwningElement, string listOwningPropertyName,
 			string listPathname)
@@ -207,7 +212,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (listPropElement == null || !listPropElement.HasElements)
 				return;
 
-			var listElement = classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
+			var listElement = XElement.Parse(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
 			CmObjectNestingService.NestObject(false,
 											  listElement,
 											  classData,
@@ -216,7 +221,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			WriteNestedFile(listPathname, new XElement(listOwningPropertyName, listElement));
 		}
 
-		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, XElement>> buckets, SortedDictionary<string, XElement> data)
+		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, string>> buckets, SortedDictionary<string, string> data)
 		{
 			var bucketCount = buckets.Count;
 			foreach (var kvp in data)
@@ -226,13 +231,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static Dictionary<int, SortedDictionary<string, XElement>> CreateEmptyBuckets(int numberOfBucketsToCreate)
+		internal static Dictionary<int, SortedDictionary<string, string>> CreateEmptyBuckets(int numberOfBucketsToCreate)
 		{
-			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>();
+			var emptyBuckets = new Dictionary<int, SortedDictionary<string, string>>();
 
 			for (var i = 0; i < numberOfBucketsToCreate; ++i)
 			{
-				emptyBuckets.Add(i, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase));
+				emptyBuckets.Add(i, new SortedDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase));
 			}
 
 			return emptyBuckets;

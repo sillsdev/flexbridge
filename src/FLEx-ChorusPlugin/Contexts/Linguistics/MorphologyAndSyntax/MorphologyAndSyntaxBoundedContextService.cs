@@ -11,27 +11,29 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 	internal static class MorphologyAndSyntaxBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var morphAndSynDir = Path.Combine(linguisticsBaseDir, SharedConstants.MorphologyAndSyntax);
 			if (!Directory.Exists(morphAndSynDir))
 				Directory.CreateDirectory(morphAndSynDir);
 
-			var lexDb = classData["LexDb"].Values.FirstOrDefault();
+			var lexDbAsString = classData["LexDb"].Values.FirstOrDefault();
+			var lexDb = string.IsNullOrEmpty(lexDbAsString) ? null : XElement.Parse(lexDbAsString);
 			if (lexDb != null)
 			{
 				// Write out LexDb's "MorphTypes" list, as per AndyB (7 Feb 2012).
 				FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 											  lexDb, SharedConstants.MorphTypes,
 											  Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename));
+				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = lexDb.ToString();
 			}
-			var langProjElement = classData["LangProject"].Values.First();
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
 			// 1. Nest: LP's MorphologicalData(MoMorphData OA) (Also does MoMorphData's ProdRestrict(CmPossibilityList)
 			//		Remove objsur node from LP.
 			var morphologicalDataPropElement = langProjElement.Element("MorphologicalData");
 			morphologicalDataPropElement.RemoveNodes();
-			var morphDataElement = classData["MoMorphData"].Values.First();
+			var morphDataElement = XElement.Parse(classData["MoMorphData"].Values.First());
 			CmObjectNestingService.NestObject(
 				false,
 				morphDataElement,
@@ -42,7 +44,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			// 2. Nest: LP's MsFeatureSystem(FsFeatureSystem OA)
 			//		Remove objsur node from LP.
 			var morphFeatureSystemPropElement = langProjElement.Element("MsFeatureSystem");
-			var morphFeatureSystemElement = classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value];
+			var morphFeatureSystemElement = XElement.Parse(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value]);
 			morphFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,
@@ -63,7 +65,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var rootElement = new XElement(SharedConstants.AnalyzingAgents);
 			foreach (var agentGuid in BaseDomainServices.GetGuids(langProjElement, SharedConstants.AnalyzingAgents))
 			{
-				var agentElement = agents[agentGuid];
+				var agentElement = XElement.Parse(agents[agentGuid]);
 				rootElement.Add(agentElement);
 				CmObjectNestingService.NestObject(
 					false,
@@ -86,6 +88,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 
 			// B. Write: LP's MorphologicalData(MoMorphData OA) in a new extension (morphdata)
 			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement("MorphAndSynData", morphDataElement));
+
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(

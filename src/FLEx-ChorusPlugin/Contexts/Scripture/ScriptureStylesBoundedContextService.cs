@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 		internal static void NestContext(XElement stylesProperty,
 			string baseDirectory,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 

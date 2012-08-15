@@ -14,7 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		internal static void NestObject(
 			bool isOwningSeqProp,
 			XElement obj,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
@@ -95,7 +95,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		private static void NestOwnedObjects(
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
@@ -128,7 +128,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
 						continue;
 					guidToClassMapping.Remove(guid);
-					var ownedElement = classData[classOfOwnedObject][guid];
+					var ownedElement = XElement.Parse(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);

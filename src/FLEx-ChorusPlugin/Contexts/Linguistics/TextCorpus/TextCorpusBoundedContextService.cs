@@ -27,14 +27,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	internal static class TextCorpusBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var langProjElement = classData["LangProject"].Values.First();
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
 
 			// Write Genre list (owning atomic CmPossibilityList)
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
@@ -50,6 +50,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProjElement, SharedConstants.TranslationTags,
 										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
@@ -65,7 +66,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				foreach (var textGuid in textGuidsInLangProj)
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = texts[textGuid];
+					var textElement = XElement.Parse(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -78,13 +79,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				}
 				// Remove child objsur nodes from owning LangProg
 				langProjElement.Element("Texts").RemoveNodes();
+				classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 			}
 			else
 			{
 				foreach (var textGuid in texts.Keys.ToArray()) // Needs a copy, since the dictionary is changed.
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = texts[textGuid];
+					var textElement = XElement.Parse(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -96,6 +98,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 						rootElement);
 				}
 			}
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(

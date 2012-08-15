@@ -13,16 +13,16 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 		private const string LexDb = "LexDb";
 
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
 				Directory.CreateDirectory(lexiconDir);
 
-			var lexDb = classData[LexDb].First().Value; // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
+			var lexDb = XElement.Parse(classData[LexDb].First().Value); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
 			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
-			var langProjElement = classData["LangProject"].Values.First();
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
 			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
@@ -58,20 +58,22 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			header.Add(lexDb);
 
 			var sortedEntryInstanceData = classData[SharedConstants.LexEntry];
-
-			var buckets = FileWriterService.CreateEmptyBuckets(10);
-			FileWriterService.FillBuckets(buckets, sortedEntryInstanceData);
-
+			var nestedData = new SortedDictionary<string, string>();
 			if (sortedEntryInstanceData.Count > 0)
 			{
-				var srcDataCopy = new SortedDictionary<string, XElement>(sortedEntryInstanceData);
+				var srcDataCopy = new SortedDictionary<string, string>(sortedEntryInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
-					CmObjectNestingService.NestObject(false, entry,
+					var entryElement = XElement.Parse(entry);
+					CmObjectNestingService.NestObject(false, entryElement,
 													  classData,
 													  guidToClassMapping);
+					nestedData.Add(entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), entryElement.ToString());
 				}
 			}
+
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, nestedData);
 
 			for (var i = 0; i < buckets.Count; ++i)
 			{
@@ -79,10 +81,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var element in currentBucket.Values)
-					root.Add(element);
+				foreach (var entryString in currentBucket.Values)
+					root.Add(XElement.Parse(entryString));
 				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
+
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static string PathnameForBucket(string inventoryDir, int bucket)
@@ -159,9 +163,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			}
 		}
 
-		private static void NestLists(IDictionary<string, SortedDictionary<string, XElement>> classData,
+		private static void NestLists(IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			IDictionary<string, XElement> posLists,
+			IDictionary<string, string> posLists,
 			string lexiconRootDir,
 			XContainer owningElement,
 			IEnumerable<string> propNames)
@@ -173,7 +177,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					continue;
 
 				var root = new XElement(propName);
-				var listElement = posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()];
+				var listElement = XElement.Parse(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
 				CmObjectNestingService.NestObject(false,
 					listElement,
 					classData,

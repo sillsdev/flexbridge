@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			using (var tempFile = new TempFile())
 			{
-				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings
+				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings // NB: These are the FW bundle of settings, not the canonical settings.
 																		{
 																			OmitXmlDeclaration = false,
 																			CheckCharacters = true,
@@ -71,8 +71,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						progress.WriteVerbose("Writing temporary fwdata file....");
 					else
 						progress.WriteMessage("Writing temporary fwdata file....");
-					foreach (var rtElement in sortedData.Values)
-						FileWriterService.WriteElement(writer, rtElement);
+					foreach (var dataString in sortedData.Values)
+						FileWriterService.WriteElement(writer, dataString);
 					writer.WriteEndElement();
 				}
 				//Thread.Sleep(2000); In case it blows (access denied) up again on Sue's computer.

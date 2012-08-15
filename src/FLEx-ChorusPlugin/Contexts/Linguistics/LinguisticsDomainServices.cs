@@ -19,7 +19,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 	internal static class LinguisticsDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var linguisticsBaseDir = Path.Combine(rootDir, SharedConstants.Linguistics);

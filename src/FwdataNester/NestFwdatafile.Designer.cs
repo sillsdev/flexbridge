@@ -33,13 +33,15 @@
 			this._btnBrowse = new System.Windows.Forms.Button();
 			this._fwdataPathname = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this._btnNest = new System.Windows.Forms.Button();
+			this._btnRunSelected = new System.Windows.Forms.Button();
 			this._cbNestFile = new System.Windows.Forms.CheckBox();
 			this._cbRoundTripData = new System.Windows.Forms.CheckBox();
 			this._cbVerify = new System.Windows.Forms.CheckBox();
 			this._cbCheckOwnObjsur = new System.Windows.Forms.CheckBox();
 			this._cbValidate = new System.Windows.Forms.CheckBox();
 			this._restoreDataFile = new System.Windows.Forms.CheckBox();
+			this._btnRestoreProjects = new System.Windows.Forms.Button();
+			this._btnClearCheckboxes = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			//
 			// _openFileDialog
@@ -74,16 +76,16 @@
 			this.label1.TabIndex = 9;
 			this.label1.Text = "fwdata file:";
 			//
-			// _btnNest
+			// _btnRunSelected
 			//
-			this._btnNest.Enabled = false;
-			this._btnNest.Location = new System.Drawing.Point(7, 125);
-			this._btnNest.Name = "_btnNest";
-			this._btnNest.Size = new System.Drawing.Size(107, 23);
-			this._btnNest.TabIndex = 8;
-			this._btnNest.Text = "Run Selected";
-			this._btnNest.UseVisualStyleBackColor = true;
-			this._btnNest.Click += new System.EventHandler(this.RunSelected);
+			this._btnRunSelected.Enabled = false;
+			this._btnRunSelected.Location = new System.Drawing.Point(7, 125);
+			this._btnRunSelected.Name = "_btnRunSelected";
+			this._btnRunSelected.Size = new System.Drawing.Size(107, 23);
+			this._btnRunSelected.TabIndex = 8;
+			this._btnRunSelected.Text = "Run Selected";
+			this._btnRunSelected.UseVisualStyleBackColor = true;
+			this._btnRunSelected.Click += new System.EventHandler(this.RunSelected);
 			//
 			// _cbNestFile
 			//
@@ -151,12 +153,34 @@
 			this._restoreDataFile.Text = "Restore fwdata file";
 			this._restoreDataFile.UseVisualStyleBackColor = true;
 			//
+			// _btnRestoreProjects
+			//
+			this._btnRestoreProjects.Location = new System.Drawing.Point(438, 73);
+			this._btnRestoreProjects.Name = "_btnRestoreProjects";
+			this._btnRestoreProjects.Size = new System.Drawing.Size(107, 23);
+			this._btnRestoreProjects.TabIndex = 18;
+			this._btnRestoreProjects.Text = "Restore All Projects";
+			this._btnRestoreProjects.UseVisualStyleBackColor = true;
+			this._btnRestoreProjects.Click += new System.EventHandler(this.RestoreProjects);
+			//
+			// _btnClearCheckboxes
+			//
+			this._btnClearCheckboxes.Location = new System.Drawing.Point(438, 42);
+			this._btnClearCheckboxes.Name = "_btnClearCheckboxes";
+			this._btnClearCheckboxes.Size = new System.Drawing.Size(107, 23);
+			this._btnClearCheckboxes.TabIndex = 19;
+			this._btnClearCheckboxes.Text = "Clear Checkboxes";
+			this._btnClearCheckboxes.UseVisualStyleBackColor = true;
+			this._btnClearCheckboxes.Click += new System.EventHandler(this.ClearCheckboxes);
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 166);
+			this.ClientSize = new System.Drawing.Size(554, 160);
+			this.Controls.Add(this._btnClearCheckboxes);
+			this.Controls.Add(this._btnRestoreProjects);
 			this.Controls.Add(this._restoreDataFile);
 			this.Controls.Add(this._cbValidate);
 			this.Controls.Add(this._cbCheckOwnObjsur);
@@ -166,7 +190,7 @@
 			this.Controls.Add(this._btnBrowse);
 			this.Controls.Add(this._fwdataPathname);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this._btnNest);
+			this.Controls.Add(this._btnRunSelected);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "NestFwdataFile";
 			this.Text = "Test an fwdata file";
@@ -181,12 +205,14 @@
 		private System.Windows.Forms.Button _btnBrowse;
 		private System.Windows.Forms.TextBox _fwdataPathname;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button _btnNest;
+		private System.Windows.Forms.Button _btnRunSelected;
 		private System.Windows.Forms.CheckBox _cbNestFile;
 		private System.Windows.Forms.CheckBox _cbRoundTripData;
 		private System.Windows.Forms.CheckBox _cbVerify;
 		private System.Windows.Forms.CheckBox _cbCheckOwnObjsur;
 		private System.Windows.Forms.CheckBox _cbValidate;
 		private System.Windows.Forms.CheckBox _restoreDataFile;
+		private System.Windows.Forms.Button _btnRestoreProjects;
+		private System.Windows.Forms.Button _btnClearCheckboxes;
 	}
 }

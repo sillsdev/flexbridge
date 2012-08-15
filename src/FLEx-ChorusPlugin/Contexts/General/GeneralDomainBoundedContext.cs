@@ -11,10 +11,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal class GeneralDomainBoundedContext
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, XElement>> classData,
+			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var langProjElement = classData["LangProject"].Values.First();
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
 			FileWriterService.WriteNestedListFileIfItExists(classData,
@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var filterGuid = filterObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
-					var filterElement = classData[className][filterGuid];
+					var filterElement = XElement.Parse(classData[className][filterGuid]);
 					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
@@ -57,7 +57,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var annotationGuid = annotationObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
-					var annotationElement = classData[className][annotationGuid];
+					var annotationElement = XElement.Parse(classData[className][annotationGuid]);
 					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
