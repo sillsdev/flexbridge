@@ -40,6 +40,7 @@
 			this._cbCheckOwnObjsur = new System.Windows.Forms.CheckBox();
 			this._cbValidate = new System.Windows.Forms.CheckBox();
 			this._restoreDataFile = new System.Windows.Forms.CheckBox();
+			this.button1 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			//
 			// _openFileDialog
@@ -151,12 +152,23 @@
 			this._restoreDataFile.Text = "Restore fwdata file";
 			this._restoreDataFile.UseVisualStyleBackColor = true;
 			//
+			// button1
+			//
+			this.button1.Location = new System.Drawing.Point(7, 166);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(107, 23);
+			this.button1.TabIndex = 18;
+			this.button1.Text = "Restore All Projects";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.RestoreProjects);
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 166);
+			this.ClientSize = new System.Drawing.Size(554, 202);
+			this.Controls.Add(this.button1);
 			this.Controls.Add(this._restoreDataFile);
 			this.Controls.Add(this._cbValidate);
 			this.Controls.Add(this._cbCheckOwnObjsur);
@@ -188,5 +200,6 @@
 		private System.Windows.Forms.CheckBox _cbCheckOwnObjsur;
 		private System.Windows.Forms.CheckBox _cbValidate;
 		private System.Windows.Forms.CheckBox _restoreDataFile;
+		private System.Windows.Forms.Button button1;
 	}
 }

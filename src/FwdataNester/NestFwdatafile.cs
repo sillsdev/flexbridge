@@ -448,5 +448,33 @@ namespace FwdataTestApp
 			}
 			GC.Collect(2, GCCollectionMode.Forced);
 		}
+
+		private void RestoreProjects(object sender, EventArgs e)
+		{
+			// Wipe out contents of all test folders in regular FW project location,
+			// EXCEPT the real ZPI project.
+			// If there is no copy of the fwdata file in the main project folder, then skip it.
+			const string normalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
+			var backupDataFilesFullPathnames = Directory.GetFiles(normalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
+
+			foreach (var projectDirName in Directory.GetDirectories(normalUserProjectDir))
+			{
+				//var dirName = Path.GetDirectoryName(projectDirName);
+				if (projectDirName.EndsWith("ZPI"))
+					continue;
+				var currentFwdataPathname = Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault();
+				if (currentFwdataPathname == null)
+					continue;
+				var currentFilename = Path.GetFileName(currentFwdataPathname);
+				if (!backupDataFilenames.Contains(currentFilename))
+					continue;
+				foreach (var subDir in Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly))
+					Directory.Delete(subDir, true);
+				foreach (var pathname in Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly))
+					File.Delete(pathname);
+				File.Copy(Path.Combine(normalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+			}
+		}
 	}
 }

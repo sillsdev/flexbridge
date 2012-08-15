@@ -22,6 +22,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
+		internal static void WriteElement(XmlWriter writer, string data)
+		{
+			WriteElement(writer, XElement.Parse(data));
+		}
+
 		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
 			if (WriteWholeNode(element))

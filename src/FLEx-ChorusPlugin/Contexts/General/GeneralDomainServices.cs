@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.General.UserDefinedLists;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.General
@@ -42,10 +43,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			GeneralDomainOrphansBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 		}
 
-		internal static void FlattenDomain(IProgress progress, bool writeVerbose,
-			SortedDictionary<string, XElement> highLevelData,
-			SortedDictionary<string, XElement> sortedData,
-			string rootDir)
+		internal static void FlattenDomain(IProgress progress, bool writeVerbose, SortedDictionary<string, XElement> highLevelData, SortedDictionary<string, XElement> sortedData, string rootDir)
 		{
 			var generalBaseDir = Path.Combine(rootDir, SharedConstants.General);
 			if (!Directory.Exists(generalBaseDir))
