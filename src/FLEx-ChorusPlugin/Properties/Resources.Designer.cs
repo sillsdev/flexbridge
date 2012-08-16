@@ -81,6 +81,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Canonical book number is out of range..
+		/// </summary>
+		internal static string kCanonicalBookNumberOutOfRange {
+			get {
+				return ResourceManager.GetString("kCanonicalBookNumberOutOfRange", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Select a Chorus-enabled FieldWorks project to open:.
 		/// </summary>
 		internal static string kChorusEnabledFwProject {

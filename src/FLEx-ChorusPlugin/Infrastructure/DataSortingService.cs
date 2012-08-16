@@ -42,12 +42,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var sortedResult = XElement.Parse(rootData);
 
-			SortMainElement(sortedResult);
+			SortMainRtElement(sortedResult);
 
 			return sortedResult;
 		}
 
-		private static void SortMainElement(XElement rootData)
+		internal static void SortMainRtElement(XElement rootData)
 		{
 			var className = rootData.Attribute(SharedConstants.Class).Value;
 			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
@@ -147,7 +147,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, XElement restorableElement)
 		{
-			SortMainElement(restorableElement);
+			SortMainRtElement(restorableElement);
 			sortedData.Add(restorableElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), restorableElement);
 		}
 	}

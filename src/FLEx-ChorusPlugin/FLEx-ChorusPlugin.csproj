@@ -147,6 +147,7 @@
 	<Compile Include="Infrastructure\Handling\Common\PossibilityContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Common\PossibilityListContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\RnGenericRecContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrBookAnnotationsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScrBookContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
@@ -176,6 +177,7 @@
 	<Compile Include="Infrastructure\Handling\Anthropology\NtbkFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrBooksTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScrSectionContextGenerator.cs" />

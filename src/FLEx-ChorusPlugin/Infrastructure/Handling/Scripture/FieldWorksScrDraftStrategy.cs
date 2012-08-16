@@ -14,12 +14,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		{
 			//// Immutable, so common, if different.
 			return commonEntry != null
-					? commonEntry.OuterXml // We don't really care what the other two may, or may not, have done.
+				? (ourEntry == null || theirEntry == null)
+						? null // Somebody deleted it, and we don't care who.
+						: commonEntry.OuterXml // We don't really care what the other two may, or may not, have done.
 					: (ourEntry == null && theirEntry != null
 						? theirEntry.OuterXml // commonEntry and ourEntry are null, so they added it.
 						: ourEntry.OuterXml); // Looks like we added it.
 		}
-
 
 		/// <summary>
 		/// Return the ElementStrategy instance for the given <param name="element"/>, or a default instance set up like this:

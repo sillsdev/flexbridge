@@ -151,6 +151,8 @@
 	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksLintTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBookAnnotationsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBooksTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />

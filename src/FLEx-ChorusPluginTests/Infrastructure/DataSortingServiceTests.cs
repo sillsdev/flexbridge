@@ -186,12 +186,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 			Assert.AreEqual(4, rtElement.Elements().Count());
 			var sortedProp = rtElement.Elements().ElementAt(0);
-			Assert.AreEqual("en", sortedProp.Element("AUni").Attribute("ws").Value); // Make sure SortMainElement called mutli sorter.
+			Assert.AreEqual("en", sortedProp.Element("AUni").Attribute("ws").Value); // Make sure SortMainRtElement called mutli sorter.
 			Assert.AreEqual("Abbreviation", sortedProp.Name.LocalName);
 			Assert.AreEqual(SharedConstants.Custom, rtElement.Elements().ElementAt(1).Name.LocalName);
 			Assert.AreEqual("DateCreated", rtElement.Elements().ElementAt(2).Name.LocalName);
 			sortedProp = rtElement.Elements().ElementAt(3);
-			//Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainElement called coll sorter.
+			//Assert.AreEqual("595daad3-9b65-43dc-b60c-705544921559", sortedProp.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value); // Make sure SortMainRtElement called coll sorter.
 			Assert.AreEqual("Possibilities", sortedProp.Name.LocalName);
 		}
 	}
