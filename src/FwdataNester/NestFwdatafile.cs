@@ -19,6 +19,7 @@ namespace FwdataTestApp
 {
 	public partial class NestFwdataFile : Form
 	{
+		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		private string _srcFwdataPathname;
 		private string _workingDir;
@@ -96,6 +97,13 @@ namespace FwdataTestApp
 		private void RunSelected(object sender, EventArgs e)
 		{
 			_srcFwdataPathname = _openFileDialog.FileName;
+			if (!RestoreProject(_srcFwdataPathname))
+			{
+				_srcFwdataPathname = null;
+				_fwdataPathname.Text = null;
+				_btnRunSelected.Enabled = false;
+				return;
+			}
 			_workingDir = Path.GetDirectoryName(_srcFwdataPathname);
 			Cursor = Cursors.WaitCursor;
 			var sb = new StringBuilder();
@@ -457,35 +465,44 @@ namespace FwdataTestApp
 				// Wipe out contents of all test folders in regular FW project location,
 				// EXCEPT the real ZPI project.
 				// If there is no copy of the fwdata file in the main project folder, then skip it.
-				const string normalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
-				var backupDataFilesFullPathnames = Directory.GetFiles(normalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
-				var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
-
-				var allProjectDirNamesExceptZPI = Directory.GetDirectories(normalUserProjectDir).Where(projectDirname => !projectDirname.EndsWith("ZPI"));
-				foreach (var projectDirName in allProjectDirNamesExceptZPI)
+				var allProjectDirNamesExceptMine = Directory.GetDirectories(NormalUserProjectDir).Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
+				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
-					var currentFwdataPathname = Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault();
-					if (currentFwdataPathname == null)
-						continue;
-					var currentFilename = Path.GetFileName(currentFwdataPathname);
-					if (!backupDataFilenames.Contains(currentFilename))
-						continue;
-					var subDirs = Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
-					var allFiles = Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
-					if (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0])
-						continue;
-
-					foreach (var subDir in subDirs)
-						Directory.Delete(subDir, true);
-					foreach (var pathname in allFiles)
-						File.Delete(pathname);
-					File.Copy(Path.Combine(normalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+					RestoreProject(Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault());
 				}
 			}
 			finally
 			{
 				Cursor = Cursors.Default;
 			}
+		}
+
+		private static bool RestoreProject(string currentFwdataPathname)
+		{
+			if (currentFwdataPathname == null)
+				return false;
+
+			var currentFilename = Path.GetFileName(currentFwdataPathname);
+			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
+			if (currentFilename.ToLowerInvariant() == "zpi.fwdata" || projectDirName.ToLowerInvariant() == "zpi")
+				return false; // Don't even think of wiping out my ZPI folder.
+
+			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
+			if (!backupDataFilenames.Contains(currentFilename))
+				return false;
+			var subDirs = Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
+			var allFiles = Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
+			if (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0])
+				return false;
+
+			foreach (var subDir in subDirs)
+				Directory.Delete(subDir, true);
+			foreach (var pathname in allFiles)
+				File.Delete(pathname);
+			File.Copy(Path.Combine(NormalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+
+			return true;
 		}
 
 		private void ClearCheckboxes(object sender, EventArgs e)
