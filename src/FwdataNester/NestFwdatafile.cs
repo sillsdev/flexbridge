@@ -127,7 +127,7 @@ namespace FwdataTestApp
 				}
 				if (_restoreDataFile.Checked)
 				{
-					RestoreManFileFromPeces(restoreTimer);
+					RestoreMainFileFromPieces(restoreTimer);
 				}
 			}
 			catch (Exception err)
@@ -161,7 +161,7 @@ namespace FwdataTestApp
 			}
 		}
 
-		private void RestoreManFileFromPeces(Stopwatch restoreTimer)
+		private void RestoreMainFileFromPieces(Stopwatch restoreTimer)
 		{
 			restoreTimer.Start();
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);

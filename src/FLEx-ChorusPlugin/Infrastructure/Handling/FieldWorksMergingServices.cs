@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -15,7 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		internal static void PreMerge(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			PreMergeTimestamps(mdc, ourEntry, theirEntry);
-			PreMergeStTxtParaParseIsCurrent(mdc, ourEntry, theirEntry);
+			PreMergeStTxtParaParseIsCurrent(mdc, ourEntry, theirEntry, commonEntry);
 			PreMergeBooleans(mdc, ourEntry, theirEntry, commonEntry);
 		}
 
@@ -134,7 +135,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <summary>
 		/// Set any StTxtPara.ParseIsCurrent to false if either party in the merge changed the text.
 		/// </summary>
-		private static void PreMergeStTxtParaParseIsCurrent(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
+		private static void PreMergeStTxtParaParseIsCurrent(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
 			// We are only interested in StTxtPara and ScrTxtPara instances, since they have the ParseIsCurrent property.
 			// We can quit for a given set on inputs, if we do find the prop, since they do not nest paras inside of paras.
@@ -144,43 +145,91 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			const string xpath = "ParseIsCurrent";
 			var ourParseIsCurrentNode = ourEntry.SelectSingleNode(xpath);
 			var theirParseIsCurrentNode = theirEntry.SelectSingleNode(xpath);
-
-			if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
+			var commonParseIsCurrentNode = commonEntry == null ? null : commonEntry.SelectSingleNode(xpath);
+			if (ourParseIsCurrentNode == null && theirParseIsCurrentNode == null && commonParseIsCurrentNode == null)
 			{
-				// Only need to pre-merge them if they both exist,
-				var ourValue = bool.Parse(ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value);
-				var theirValue = bool.Parse(theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value);
-				if (ourValue != theirValue)
+				// Drill down on other owned stuff.
+				var classname = GetClassName(ourEntry);
+				var classInfo = mdc.GetClassInfo(classname);
+				foreach (var owningPropInfo in classInfo.AllOwningProperties)
 				{
-					// and, they are different.
-					// Set both to False.
-					ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-					theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+					var propName = owningPropInfo.PropertyName;
+					var isCustomProperty = owningPropInfo.IsCustomProperty;
+
+					var ourOwningPropElement = GetOwningPropertyElement(ourEntry, propName, isCustomProperty);
+					var theirOwningPropElement = GetOwningPropertyElement(theirEntry, propName, isCustomProperty);
+					var commonOwningPropElement = GetOwningPropertyElement(commonEntry, propName, isCustomProperty);
+					if (ourOwningPropElement == null && theirOwningPropElement == null && commonOwningPropElement == null)
+						continue; // Nobody has the current owning prop node.
+
+					foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+					{
+						var theirOwnedElement = (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
+							? null
+							: (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
+								.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+								.FirstOrDefault();
+
+						var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
+							? null
+							: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
+								.Where(commonChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+								.FirstOrDefault();
+
+						PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement, commonOwnedElement);
+					}
 				}
-				return;
 			}
-
-			// Drill down on other owned stuff.
-			var classname = GetClassName(ourEntry);
-			var classInfo = mdc.GetClassInfo(classname);
-			foreach (var owningPropInfo in classInfo.AllOwningProperties)
+			else
 			{
-				var propName = owningPropInfo.PropertyName;
-				var isCustomProperty = owningPropInfo.IsCustomProperty;
-				var ourOwningPropElement = GetOwningPropertyElement(ourEntry, propName, isCustomProperty);
-				if (ourOwningPropElement == null || !ourOwningPropElement.HasChildNodes)
-					continue;
-				var theirOwningPropElement = GetOwningPropertyElement(theirEntry, propName, isCustomProperty);
-				if (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
-					continue;
-				foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+				if (commonParseIsCurrentNode != null)
 				{
-					var theirOwnedElement = (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
-						.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-						.FirstOrDefault();
-					if (theirOwnedElement == null)
-						continue;
-					PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement);
+					if (ourParseIsCurrentNode != null)
+					{
+						var weMadeChange = !XmlUtilities.AreXmlElementsEqual(ourEntry, commonEntry);
+						ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+						if (theirParseIsCurrentNode != null)
+						{
+							// All three exist, so check equality of parent nodes.
+							if (weMadeChange)
+							{
+								theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+							}
+							else
+							{
+								var theyMadeChange = !XmlUtilities.AreXmlElementsEqual(theirEntry, commonEntry);
+								if (theyMadeChange)
+								{
+									ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+									theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+								}
+							}
+						}
+						else
+						{
+							// commonParseIsCurrentNode != null : ourParseIsCurrentNode != null : theirParseIsCurrentNode == null
+							// Not to worry.
+						}
+					}
+					else
+					{
+						// commonParseIsCurrentNode != null : ourParseIsCurrentNode == null
+						// Not to worry about theirParseIsCurrentNode or any changes.
+					}
+				}
+				else
+				{
+					// commonParseIsCurrentNode == null
+					if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
+					{
+						// Set both to False.
+						ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+						theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+					}
+					else
+					{
+						// ours or theirs is false, so the other one added it. Not to worry.
+					}
 				}
 			}
 		}
@@ -217,6 +266,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private static XmlNode GetOwningPropertyElement(XmlNode currentEntry, string propName, bool isCustomProperty)
 		{
+			if (currentEntry == null)
+				return null;
+
 			// May return null, which is fine.
 			return isCustomProperty
 				? (currentEntry.SelectNodes(SharedConstants.Custom).Cast<XmlNode>().Where(customProp => customProp.Attributes[SharedConstants.Name].Value == propName)).FirstOrDefault()
