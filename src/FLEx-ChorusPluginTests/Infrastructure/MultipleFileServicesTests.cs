@@ -1,5 +1,6 @@
 ﻿﻿using System;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+﻿using Chorus.Utilities;
+﻿using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
 using System.IO;
@@ -36,6 +37,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 			{
 				var pathname = tempFile.Path;
 				Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), pathname));
+			}
+		}
+
+		[Test]
+		public void UserCancelledBreakupShouldThrow()
+		{
+			using (var tempFile = TempFile.WithFilename("foo.fwdata"))
+			{
+				var progress = new NullProgress
+					{
+						CancelRequested = true
+					};
+				var pathname = tempFile.Path;
+				Assert.Throws<UserCancelledException>(() => FLExProjectSplitter.PushHumptyOffTheWall(progress, pathname));
 			}
 		}
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
@@ -19,6 +20,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			if (!Directory.Exists(anthropologyBaseDir))
 				Directory.CreateDirectory(anthropologyBaseDir);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing the anthropology data....");
 			else

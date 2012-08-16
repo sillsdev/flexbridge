@@ -18,6 +18,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (!Directory.Exists(generalBaseDir))
 				Directory.CreateDirectory(generalBaseDir);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 			{
 				progress.WriteVerbose("Writing the general data....");
@@ -30,12 +31,14 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			}
 			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, classData, guidToClassMapping);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing language project data....");
 			else
 				progress.WriteMessage("Writing language project data....");
 			GeneralDomainBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing problem data....");
 			else

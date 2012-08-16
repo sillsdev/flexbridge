@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress.LogBox;
 
@@ -45,12 +46,14 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing the other data....");
 			else
 				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
 			var langProj = XElement.Parse(classData["LangProject"].Values.First());
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 
 			// These are intentionally out of order from the above numbering scheme.
@@ -59,9 +62,13 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!string.IsNullOrEmpty(scrAsString))
 			{
 				var scripture = XElement.Parse(scrAsString);
+				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
+				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
+				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ImportSettingsBoundedContextService.NestContext(scripture.Element(SharedConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
+				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
 			}
 

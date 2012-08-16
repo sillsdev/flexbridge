@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Contexts.Linguistics.Reversals;
 using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics
@@ -26,6 +27,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			if (!Directory.Exists(linguisticsBaseDir))
 				Directory.CreateDirectory(linguisticsBaseDir);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 			{
 				progress.WriteVerbose("Writing the linguistics data....");
@@ -38,6 +40,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			}
 			ReversalBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing morphology and syntax data....");
 			else
@@ -45,27 +48,33 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 			MorphologyAndSyntaxBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
 			// Both ReversalBoundedContextService and MorphologyAndSyntaxBoundedContextService abscond with some stuff owned by LexDb. :-(
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing lexical data....");
 			else
 				progress.WriteMessage("Writing lexical data....");
 			LexiconBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing text corpus data....");
 			else
 				progress.WriteMessage("Writing text corpus data....");
 			TextCorpusBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing wordform and punctuation data....");
 			else
 				progress.WriteMessage("Writing wordform and punctuation data....");
 			WordformInventoryBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
+
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing discourse data....");
 			else
 				progress.WriteMessage("Writing discourse data....");
+			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			DiscourseAnalysisBoundedContextService.NestContext(linguisticsBaseDir, classData, guidToClassMapping);
 
 			if (writeVerbose)

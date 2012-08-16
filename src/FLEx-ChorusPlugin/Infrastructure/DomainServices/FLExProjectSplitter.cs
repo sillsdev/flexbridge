@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using FLEx_ChorusPlugin.Contexts;
+﻿﻿using Chorus.Utilities;
+﻿﻿using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
 ﻿﻿using Palaso.Progress.LogBox;
 using Palaso.Xml;
@@ -28,6 +29,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class FLExProjectSplitter
 	{
+		internal static void CheckForUserCancelRequested(IProgress progress)
+		{
+			if (progress.CancelRequested)
+				throw new UserCancelledException(); // the Chorus Synchorinizer class catches this and does the real cancel.
+		}
+
 		internal static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
 		{
 			PushHumptyOffTheWall(progress, true, mainFilePathname);
@@ -41,13 +48,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			var rootDirectoryName = Path.GetDirectoryName(mainFilePathname);
 			// NB: This is strictly an ordered list of method calls.
 			// Don't even 'think' of changing any of them.
+			CheckForUserCancelRequested(progress);
 			DeleteOldFiles(rootDirectoryName);
+			CheckForUserCancelRequested(progress);
 			WriteVersionFile(mainFilePathname);
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			// (Only has current concrete classes.)
 			var classData = GenerateBasicClassData();
 			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData);
+			CheckForUserCancelRequested(progress);
 			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, classData, guidToClassMapping);
 
 #if DEBUG
