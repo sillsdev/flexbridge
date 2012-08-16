@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
@@ -16,30 +18,29 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-/*
-		BC 1. ScrRefSystem (no owner)
-			Books prop owns seq of ScrBookRef (which has all basic props).
-			No other props.
-			[Put all in one file in a subfolder of Scripture?]
-			[[Nesting]]
+			/*
+					BC 1. ScrRefSystem (no owner)
+						Books prop owns seq of ScrBookRef (which has all basic props).
+						No other props.
+						[Put all in one file in a subfolder of Scripture?]
+						[[Nesting]]
 
-		BC 2. CheckLists prop on LP that holds col of CmPossibilityList items.
-			Each CmPossibilityList will hold ChkTerm (called ChkItem in model file) objects (derived from CmPossibility)
-			[Store each list in a file. Put all lists in subfolder.]
-			[[Nesting]]
+					BC 2. CheckLists prop on LP that holds col of CmPossibilityList items.
+						Each CmPossibilityList will hold ChkTerm (called ChkItem in model file) objects (derived from CmPossibility)
+						[Store each list in a file. Put all lists in subfolder.]
+						[[Nesting]]
 
-		BC 3. Scripture (owned by LP)
-			Leave in:
-				ScriptureBooks prop owns seq of ScrBook, so leave as nested.
-				BookAnnotations prop owns seq of ScrBookAnnotations. [Leave here.]
-				NoteCategories prop owns one CmPossibilityList [Leave.]
-				Resources prop owns col of CmResource. [Leave.]
-			Extract:
-		BC 4.		ArchivedDrafts prop owns col of ScrDraft. [Each ScrDraft goes in its own file.
-						Archived stuff goes into subfolder of Scripture.]
-		BC 5.		Styles props owns col of StStyle. [Put styles in subfolder and one for each style.]
-		BC 6.		ImportSettings prop owns col of ScrImportSet.  [Put sets in subfolder and one for each set.]
-*/
+					BC 3. Scripture (owned by LP)
+						Leave in:
+							Resources prop owns col of CmResource. [Leave.]
+						Extract:
+					BC 4.		ArchivedDrafts prop owns col of ScrDraft. [Each ScrDraft goes in its own file. Archived stuff goes into subfolder of Scripture.]
+					BC 5.		Styles props owns col of StStyle. [Put styles in subfolder and one for each style.]
+					BC 6.		ImportSettings prop owns col of ScrImportSet.  [Put sets in subfolder and one for each set.]
+					BC 7.		NoteCategories prop owns one CmPossibilityList [Put list in its own file.]
+					BC 8.		ScriptureBooks prop owns seq of ScrBook. [Put each book in its own folder (named for its cononical order number).]
+					BC 9.		BookAnnotations prop owns seq of ScrBookAnnotations. [Put each ScrBookAnnotations in corresponding subfolder along with optional book.]
+			*/
 			var scriptureBaseDir = Path.Combine(rootDir, SharedConstants.Other);
 			if (!Directory.Exists(scriptureBaseDir))
 				Directory.CreateDirectory(scriptureBaseDir);
@@ -65,6 +66,13 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			}
 
 			RemoveFolderIfEmpty(scriptureBaseDir);
+		}
+
+		internal static string PaddedCanonicalBookNumer(int canonicalNumber)
+		{
+			if (canonicalNumber < 1 || canonicalNumber > 66)
+				throw new ArgumentException(Resources.kCanonicalBookNumberOutOfRange, "canonicalNumber");
+			return canonicalNumber.ToString("D2");
 		}
 
 		internal static void FlattenDomain(

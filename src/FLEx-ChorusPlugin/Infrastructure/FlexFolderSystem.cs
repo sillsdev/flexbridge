@@ -65,6 +65,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "*.ArchivedDraft"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Translations.trans"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Settings.ImportSetting"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.bookannotations"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.book"));
 
 			// Leftovers
 			// Style file and user-defined lists ought to be covered, above.
@@ -77,9 +79,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		/// <param name="directoryName"></param>
-		/// <param name="user"></param>
-		/// <returns></returns>
 		public static ChorusSystem InitializeChorusSystem(string directoryName, string user)
 		{
 			var system = new ChorusSystem(directoryName, user);

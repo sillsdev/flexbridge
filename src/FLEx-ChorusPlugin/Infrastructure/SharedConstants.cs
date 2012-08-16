@@ -139,6 +139,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ArchivedDrafts = "ArchivedDrafts";
 		internal const string ArchivedDraft = "ArchivedDraft";
 		internal const string Draft = "Draft";
+		internal const string ScrDraft = "ScrDraft";
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSetting = "ImportSetting";
@@ -151,6 +152,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
 		internal const string NoteCategories = "NoteCategories";
 		internal const string NoteCategoriesListFilename = NoteCategories + "." + List;
+		internal const string bookannotations = "bookannotations";
+		internal const string book = "book";
+		internal const string Book = "Book";
+		internal const string ScrBook = "ScrBook";
+		internal const string Books = "Books";
+		internal const string ScrBookAnnotations = "ScrBookAnnotations";
+		internal const string BookAnnotations = "BookAnnotations";
+		internal const string ScriptureBooks = "ScriptureBooks";
 
 		/***** Relocate ones that get added below here. *****/
 	}

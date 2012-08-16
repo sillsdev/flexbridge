@@ -133,7 +133,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// Theory has it the FW data is sorted.
 			//// 1. Sort <rt>
-			//DataSortingService.SortMainElement(rtElement);
+			//DataSortingService.SortMainRtElement(rtElement);
 
 			// 2. Cache it.
 			classData[className].Add(guid, record);

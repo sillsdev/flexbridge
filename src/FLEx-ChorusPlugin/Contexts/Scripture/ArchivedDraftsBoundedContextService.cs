@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			foreach (var draftPathname in Directory.GetFiles(scriptureBaseDir, "*." + SharedConstants.ArchivedDraft, SearchOption.TopDirectoryOnly))
 			{
 				var doc = XDocument.Load(draftPathname);
-				var draftElement = doc.Root.Element("ScrDraft");
+				var draftElement = doc.Root.Element(SharedConstants.ScrDraft);
 				CmObjectFlatteningService.FlattenObject(draftPathname,
 					sortedData,
 					draftElement,

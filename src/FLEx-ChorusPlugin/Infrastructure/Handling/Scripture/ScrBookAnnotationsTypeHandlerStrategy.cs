@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
@@ -11,13 +10,13 @@ using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
-	internal sealed class ArchivedDraftsTypeHandlerStrategy : IFieldWorksFileHandler
+	internal sealed class ScrBookAnnotationsTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.ArchivedDraft);
+			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.bookannotations);
 		}
 
 		public string ValidateFile(string pathToFile)
@@ -26,13 +25,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.ArchivedDrafts || !root.Elements(SharedConstants.ScrDraft).Any())
-					return "Not valid archived draft file.";
+				if (root.Name.LocalName != SharedConstants.BookAnnotations || root.Element(SharedConstants.ScrBookAnnotations) == null)
+					return "Not valid Scripture book file.";
 
-				foreach (var result in root.Elements(SharedConstants.ScrDraft).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.ScrDraft))).Where(result => result != null))
-				{
+				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.ScrBookAnnotations));
+				if (result != null)
 					return result;
-				}
 			}
 			catch (Exception e)
 			{
@@ -50,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				SharedConstants.ScrDraft, SharedConstants.GuidStr);
+				SharedConstants.ScrBookAnnotations, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -61,12 +59,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 				new FieldWorksScrDraftStrategy(),
 				true,
 				null,
-				SharedConstants.ScrDraft, SharedConstants.GuidStr);
+				SharedConstants.ScrBookAnnotations, SharedConstants.GuidStr);
 		}
 
 		public string Extension
 		{
-			get { return SharedConstants.ArchivedDraft; }
+			get { return SharedConstants.bookannotations; }
 		}
 
 		#endregion

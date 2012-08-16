@@ -34,40 +34,41 @@ namespace FLEx_ChorusPluginTests
 		[Test]
 		public void EnsureAllSupportedExtensionsAreReturned()
 		{
-
 			var supportedExtensions = new HashSet<string>
 			{
 				// Common
-				SharedConstants.ModelVersion,		// Better validation done.
-				SharedConstants.CustomProperties,	// Better validation done.
-				SharedConstants.Style,
-				SharedConstants.List,
+				SharedConstants.ModelVersion,		// 'ModelVersion' Better validation done.
+				SharedConstants.CustomProperties,	// 'CustomProperties' Better validation done.
+				SharedConstants.Style,				// 'style'
+				SharedConstants.List,				// 'list'
 
 				// General
-				SharedConstants.lint,
-				SharedConstants.langproj,
-				SharedConstants.Annotation,
-				SharedConstants.Filter,
+				SharedConstants.lint,				// 'lint'
+				SharedConstants.langproj,			// 'langproj'
+				SharedConstants.Annotation,			// 'annotation'
+				SharedConstants.Filter,				// 'filter'
 
 				// Scripture
-				SharedConstants.ArchivedDraft,
-				SharedConstants.ImportSetting,
-				SharedConstants.Srs,
-				SharedConstants.Trans,
+				SharedConstants.ArchivedDraft,		// 'ArchivedDraft'
+				SharedConstants.ImportSetting,		// 'ImportSetting'
+				SharedConstants.Srs,				// 'srs'
+				SharedConstants.Trans,				// 'trans'
+				SharedConstants.bookannotations,	// 'bookannotations'
+				SharedConstants.book,				// 'book'
 
 				// Anthropology
-				SharedConstants.Ntbk,
+				SharedConstants.Ntbk,				// 'ntbk'
 
 				// Linguistics
-				SharedConstants.Reversal,
-				SharedConstants.Lexdb, // The lexicon only added one new extension "lexdb", as the lists are already taken care of.
-				SharedConstants.TextInCorpus, // Text corpus only added one new extension "textincorpus", as the list is already taken care of.
-				SharedConstants.Inventory, // inventory
-				SharedConstants.DiscourseExt, // discourse
-				SharedConstants.Featsys, // Feature structure systems (Phon and Morph & Syn)
-				SharedConstants.Phondata,
-				SharedConstants.Morphdata,
-				SharedConstants.Agents
+				SharedConstants.Reversal,			// 'reversal'
+				SharedConstants.Lexdb,				// 'lexdb' The lexicon only added one new extension "lexdb", as the lists are already taken care of.
+				SharedConstants.TextInCorpus,		// 'textincorpus' Text corpus only added one new extension "textincorpus", as the list is already taken care of.
+				SharedConstants.Inventory,			// 'inventory' inventory
+				SharedConstants.DiscourseExt,		// 'discourse' discourse
+				SharedConstants.Featsys,			// 'featsys' Feature structure systems (Phon and Morph & Syn)
+				SharedConstants.Phondata,			// 'phondata'
+				SharedConstants.Morphdata,			// 'morphdata'
+				SharedConstants.Agents				// 'agents'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());

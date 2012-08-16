@@ -81,7 +81,7 @@ namespace FwdataTestApp
 
 			// Theory has it the FW data is sorted.
 			//// 2. Sort <rt>
-			//DataSortingService.SortMainElement(rtElement);
+			//DataSortingService.SortMainRtElement(rtElement);
 
 			// 3. Cache it.
 			SortedDictionary<string, string> recordData;
@@ -451,29 +451,40 @@ namespace FwdataTestApp
 
 		private void RestoreProjects(object sender, EventArgs e)
 		{
-			// Wipe out contents of all test folders in regular FW project location,
-			// EXCEPT the real ZPI project.
-			// If there is no copy of the fwdata file in the main project folder, then skip it.
-			const string normalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
-			var backupDataFilesFullPathnames = Directory.GetFiles(normalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
-			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
-
-			foreach (var projectDirName in Directory.GetDirectories(normalUserProjectDir))
+			Cursor = Cursors.WaitCursor;
+			try
 			{
-				//var dirName = Path.GetDirectoryName(projectDirName);
-				if (projectDirName.EndsWith("ZPI"))
-					continue;
-				var currentFwdataPathname = Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault();
-				if (currentFwdataPathname == null)
-					continue;
-				var currentFilename = Path.GetFileName(currentFwdataPathname);
-				if (!backupDataFilenames.Contains(currentFilename))
-					continue;
-				foreach (var subDir in Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly))
-					Directory.Delete(subDir, true);
-				foreach (var pathname in Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly))
-					File.Delete(pathname);
-				File.Copy(Path.Combine(normalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+				// Wipe out contents of all test folders in regular FW project location,
+				// EXCEPT the real ZPI project.
+				// If there is no copy of the fwdata file in the main project folder, then skip it.
+				const string normalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
+				var backupDataFilesFullPathnames = Directory.GetFiles(normalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+				var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
+
+				var allProjectDirNamesExceptZPI = Directory.GetDirectories(normalUserProjectDir).Where(projectDirname => !projectDirname.EndsWith("ZPI"));
+				foreach (var projectDirName in allProjectDirNamesExceptZPI)
+				{
+					var currentFwdataPathname = Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault();
+					if (currentFwdataPathname == null)
+						continue;
+					var currentFilename = Path.GetFileName(currentFwdataPathname);
+					if (!backupDataFilenames.Contains(currentFilename))
+						continue;
+					var subDirs = Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
+					var allFiles = Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
+					if (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0])
+						continue;
+
+					foreach (var subDir in subDirs)
+						Directory.Delete(subDir, true);
+					foreach (var pathname in allFiles)
+						File.Delete(pathname);
+					File.Copy(Path.Combine(normalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+				}
+			}
+			finally
+			{
+				Cursor = Cursors.Default;
 			}
 		}
 
