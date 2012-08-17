@@ -120,6 +120,7 @@
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />

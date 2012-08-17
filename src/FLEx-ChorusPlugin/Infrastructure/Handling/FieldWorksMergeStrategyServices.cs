@@ -175,6 +175,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						case DataType.TextPropBinary: // Fall through - Contains one <Prop> element
 						case DataType.Unicode: // Fall through - Contains one <Uni> element
 						case DataType.String: // Fall through (TsString) - Contains one <Str> element
+							if (classInfo.ClassName == "StStyle" && propertyInfo.PropertyName == "Rules")
+							{
+								propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
+							}
 							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 							break;
 

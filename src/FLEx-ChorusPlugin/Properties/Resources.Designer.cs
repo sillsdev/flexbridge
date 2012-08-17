@@ -324,6 +324,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Style.
+		/// </summary>
+		internal static string kStyleLabel {
+			get {
+				return ResourceManager.GetString("kStyleLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Text.
 		/// </summary>
 		internal static string kTextClassLabel {
