@@ -94,6 +94,7 @@
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
+	<Reference Include="System.Data" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="System.Xml" />
@@ -102,6 +103,7 @@
 	<Compile Include="Controller\ConflictControllerTests.cs" />
 	<Compile Include="Controller\TestConflictController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
