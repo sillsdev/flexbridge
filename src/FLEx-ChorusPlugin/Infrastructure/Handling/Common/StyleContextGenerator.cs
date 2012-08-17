@@ -30,7 +30,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		{
 			var styleNode = GetStStyleNode(start);
 			var styleName = styleNode.SelectSingleNode("Name/Uni");
-			var styleRule = styleNode.SelectSingleNode("Rules/Prop");
 			// Can we tell what changed using this node or can we get to the competing node?
 			return styleName == null
 				? StyleLabel
@@ -38,11 +37,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		}
 
 		private const string Space = " ";
-		private const string Colon = ":";
 		private const string Quote = "\"";
-		private const string Unknown = "unknown";
-		private const string NotLoaded = "not loaded";
-		private const string DefaultNoName = "Style";
 
 		string StyleLabel
 		{
