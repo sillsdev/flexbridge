@@ -279,7 +279,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					// 7000058: No actual model change.
 						break;
 					case 7000059:
-						// 7000058:
+						// 7000059:
 						//	Modified: RnGenericRec
 						//		Modified OA to RA: RA "Text" (added in 7000046)							[Text]
 						newClass = GetClassInfo("RnGenericRec");
@@ -289,6 +289,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						//		Remove: OC "Texts" property
 						GetClassInfo("LangProject").RemoveProperty("Texts");
 						break;
+					case 7000060:
+						// 7000060: No actual model change.
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -297,7 +300,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000059;
+		public const int MaximumModelVersion = 7000060;
 
 		///<summary>
 		/// Get the FDO class information for the given class.

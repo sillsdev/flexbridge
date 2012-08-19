@@ -234,6 +234,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			DoMerge(fileHandler, 7000059);
 			Assert.AreEqual(DataType.ReferenceAtomic, mdc.GetClassInfo("RnGenericRec").GetProperty("Text").DataType);
 			CheckPropertyRemovedAfterUpGrade(mdc, "LangProject", "Texts");
+
+			// 7000060: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000060);
 		}
 
 		[Test]
