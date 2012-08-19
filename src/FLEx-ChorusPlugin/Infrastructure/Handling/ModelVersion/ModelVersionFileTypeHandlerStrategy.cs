@@ -39,8 +39,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			if (report is IXmlChangeReport)
-				return new FieldWorksModelVersionChangePresenter((FieldWorksModelVersionChangeReport)report);
+			var fieldWorksModelVersionChangeReport = report as FieldWorksModelVersionChangeReport;
+			if (fieldWorksModelVersionChangeReport != null)
+				return new FieldWorksModelVersionChangePresenter(fieldWorksModelVersionChangeReport);
 
 			if (report is ErrorDeterminingChangeReport)
 				return (IChangePresenter)report;
