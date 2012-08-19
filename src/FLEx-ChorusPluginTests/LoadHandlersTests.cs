@@ -68,7 +68,10 @@ namespace FLEx_ChorusPluginTests
 				SharedConstants.Featsys,			// 'featsys' Feature structure systems (Phon and Morph & Syn)
 				SharedConstants.Phondata,			// 'phondata'
 				SharedConstants.Morphdata,			// 'morphdata'
-				SharedConstants.Agents				// 'agents'
+				SharedConstants.Agents,				// 'agents'
+
+				// FW layouts
+				SharedConstants.fwlayout			// 'fwlayout'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());

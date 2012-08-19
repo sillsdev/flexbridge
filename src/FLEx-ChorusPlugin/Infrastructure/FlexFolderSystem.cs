@@ -12,17 +12,15 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// that we explicitly include all the files we understand. At least someday, when these
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include.
-			projectFolderConfiguration.ExcludePatterns.Add("*.fwdata");
-			projectFolderConfiguration.ExcludePatterns.Add("*.bak");
-			projectFolderConfiguration.ExcludePatterns.Add("*.lock");
-			projectFolderConfiguration.ExcludePatterns.Add("*.tmp");
+			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata");
+			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
+			projectFolderConfiguration.ExcludePatterns.Add("**.lock");
+			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
+			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("ConfigurationSettings", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", Path.Combine("trash", "**.*")));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "idchangelog.xml"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Shares", "**.*")); // Presumed folder for future LIFT and PT-FLEx repos.
 			ProjectFolderConfiguration.AddExcludedVideoExtensions(projectFolderConfiguration);
 
@@ -40,7 +38,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("**.style");
 
 			// Misc required files.
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("AudioVisual", "*.*")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("Others", "*.*")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("Pictures", "*.*")));

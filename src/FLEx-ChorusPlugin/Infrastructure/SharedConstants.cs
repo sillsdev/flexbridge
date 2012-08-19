@@ -51,6 +51,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LangProject = "LangProject";
 		internal const string curiosity = "curiosity";
 
+		// FW layouts
+		internal const string fwlayout = "fwlayout";
+
 		// Old style
 		internal const string RtTag = "rt";
 
