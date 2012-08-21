@@ -477,10 +477,12 @@ namespace FwdataTestApp
 			}
 		}
 
-		private static bool RestoreProject(string currentFwdataPathname)
+		private bool RestoreProject(string currentFwdataPathname)
 		{
 			if (currentFwdataPathname == null)
 				return false;
+			if (_restoreDataFile.Checked)
+				return true;
 
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);

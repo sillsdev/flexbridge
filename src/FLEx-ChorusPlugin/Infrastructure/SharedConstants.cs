@@ -7,6 +7,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	{
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
+		internal const string dupid = "dupid";
 
 		// General
 		internal const string Str = "Str";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -51,6 +52,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var conflict = new IncompatibleMoveConflict(className, GetXmlNode(element)) {Situation = new NullMergeSituation()};
 					listener.RecordContextInConflict(conflict);
 					listener.ConflictOccurred(conflict);
+					File.WriteAllText(pathname + "." + SharedConstants.dupid, "");
 				}
 			}
 			sortedData.Add(elementGuid, element);

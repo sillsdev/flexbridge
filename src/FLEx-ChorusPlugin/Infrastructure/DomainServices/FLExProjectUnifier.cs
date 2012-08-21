@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -82,6 +83,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					progress.WriteMessage("Copying temporary fwdata file to main file....");
 				File.Copy(tempFile.Path, mainFilePathname, true);
 			}
+
+			SplitFileAgainIfNeeded(progress, writeVerbose, mainFilePathname);
+		}
+
+		private static void SplitFileAgainIfNeeded(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
+			var pathRoot = Path.GetDirectoryName(mainFilePathname);
+			// Resplit mainFilePathname, if there are any temp files that mark incompatible moves exists (has 'dupid' extension).
+			var baseFoldersThatHaveNestedData = new HashSet<string>
+				{
+					"Anthropology",
+					"General",
+					"Linguistics",
+					"Other"
+				};
+			var dupidPathnames = new List<string>();
+			foreach (var nestedFolderBase in baseFoldersThatHaveNestedData)
+			{
+				var nestedFolder = Path.Combine(pathRoot, nestedFolderBase);
+				if (Directory.Exists(nestedFolder))
+					dupidPathnames.AddRange(Directory.GetFiles(nestedFolder, "*." + SharedConstants.dupid, SearchOption.AllDirectories));
+			}
+			if (dupidPathnames.Count == 0)
+				return;
+
+			foreach (var dupidPathname in dupidPathnames)
+				File.Delete(dupidPathname);
+			var projName = Path.GetFileName(mainFilePathname);
+			progress.WriteMessage("Split up project file: {0} (again)", projName);
+			FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
+			progress.WriteMessage("Finished splitting up project file: {0} (again)", projName);
 		}
 
 		private static void UpgradeToVersion(XmlWriter writer, string pathRoot)
