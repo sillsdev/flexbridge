@@ -162,21 +162,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					if (ourOwningPropElement == null && theirOwningPropElement == null && commonOwningPropElement == null)
 						continue; // Nobody has the current owning prop node.
 
-					foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+					if (ourOwningPropElement != null)
 					{
-						var theirOwnedElement = (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
-							? null
-							: (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
-								.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-								.FirstOrDefault();
+						foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+						{
+							var theirOwnedElement = (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
+								? null
+								: (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
+									.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+									.FirstOrDefault();
 
-						var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
-							? null
-							: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
-								.Where(commonChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-								.FirstOrDefault();
+							var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
+								? null
+								: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
+									.Where(commonChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+									.FirstOrDefault();
 
-						PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement, commonOwnedElement);
+							PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement, commonOwnedElement);
+						}
+					}
+					else if (theirOwningPropElement != null)
+					{
+						foreach (XmlNode theirOwnedElement in theirOwningPropElement.ChildNodes)
+						{
+							var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
+								? null
+								: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
+									.Where(commonChildNode => theirOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
+									.FirstOrDefault();
+
+							PreMergeStTxtParaParseIsCurrent(mdc, theirOwnedElement, null, commonOwnedElement);
+						}
 					}
 				}
 			}
