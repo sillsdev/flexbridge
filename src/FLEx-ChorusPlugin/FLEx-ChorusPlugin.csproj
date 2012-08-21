@@ -87,6 +87,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
+	<Reference Include="LocalizationManager, Version=1.1.4604.27709, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\LocalizationManager\Output\Debug\LocalizationManager.dll</HintPath>
+	</Reference>
 	<Reference Include="Palaso">
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
