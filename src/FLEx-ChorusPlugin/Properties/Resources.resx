@@ -228,7 +228,10 @@ You probably have a Conflict Report open. It will need to be closed before you c
 -- Receive Project from a colleague
 -- View Conflict Report (can't have two open)</value>
   </data>
-  <data name="kCanonicalBookNumberOutOfRange">
-	<value xml:space="preserve">Canonical book number is out of range.</value>
+  <data name="kCanonicalBookNumberOutOfRange" xml:space="preserve">
+	<value>Canonical book number is out of range.</value>
+  </data>
+  <data name="kStyleLabel" xml:space="preserve">
+	<value>Style</value>
   </data>
 </root>

@@ -121,6 +121,7 @@
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeService.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeStrategiesMethod.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorkCustomLayoutContextGenerator.cs" />

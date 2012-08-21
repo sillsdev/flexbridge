@@ -103,6 +103,7 @@
 	<Compile Include="Controller\TestConflictController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
