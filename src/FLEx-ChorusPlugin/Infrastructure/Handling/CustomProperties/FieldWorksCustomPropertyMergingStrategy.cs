@@ -24,7 +24,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			var strategy = new ElementStrategy(false)
 							{
 								MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> { SharedConstants.Name, SharedConstants.Class }),
-								ContextDescriptorGenerator = new FieldWorksCustomPropertyContextGenerator()
+								ContextDescriptorGenerator = new FieldWorksCustomPropertyContextGenerator(),
+								IsAtomic = true,
+								NumberOfChildren = NumberOfChildrenAllowed.Zero
 							};
 			_merger.MergeStrategies.SetStrategy(CustomField, strategy);
 		}

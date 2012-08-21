@@ -66,6 +66,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 					// Make sure 'key' attr is class+name.
 					if (customFieldElement.Attribute("class").Value + customFieldElement.Attribute("name").Value != customFieldElement.Attribute(Key).Value)
 						return "Mis-matched 'key' attribute with property class+name atributes";
+
+					if (customFieldElement.HasElements)
+						return "Contains illegal child element";
 				}
 
 				MetadataCache.MdCache.AddCustomPropInfo(pathToFile);

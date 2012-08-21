@@ -465,7 +465,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				_theirFile, theirContent,
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Binary""]" },
-				1, new List<Type> { typeof(BothEditedAttributeConflict) },
+				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 		}
 
