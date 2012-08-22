@@ -74,7 +74,7 @@
 	<Reference Include="Chorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\n$(Configuration)\Chorus.exe</HintPath>
+	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
@@ -103,10 +103,10 @@
 	<Compile Include="Controller\TestConflictController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
-	<Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />

@@ -121,7 +121,6 @@
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
-	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeService.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeStrategiesMethod.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorkCustomLayoutContextGenerator.cs" />
@@ -154,6 +153,7 @@
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\PossibilityContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Common\PossibilityListContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\RnGenericRecContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScrBookAnnotationsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ScrBookContextGenerator.cs" />
