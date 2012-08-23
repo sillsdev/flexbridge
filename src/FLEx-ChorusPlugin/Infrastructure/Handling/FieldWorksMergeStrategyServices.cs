@@ -47,7 +47,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </remarks>
 		private static void BootstrapSystem(MetadataCache metadataCache, XmlMerger merger)
 		{
-			merger.MergeStrategies.KeyFinder = new FieldWorksKeyFinder();
+			merger.MergeStrategies.ElementToMergeStrategyKeyMapper = new FieldWorksElementToMergeStrategyKeyMapper();
 
 			var sharedElementStrategies = new Dictionary<string, ElementStrategy>();
 			CreateSharedElementStrategies(sharedElementStrategies);

@@ -5,7 +5,7 @@ using Palaso.Code;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
-	internal class FieldWorksKeyFinder : IKeyFinder
+	internal class FieldWorksElementToMergeStrategyKeyMapper : IElementToMergeStrategyKeyMapper
 	{
 		#region Implementation of IKeyFinder
 
