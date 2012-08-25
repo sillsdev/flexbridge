@@ -24,10 +24,36 @@ namespace SIL.LiftBridge.View
 
 		private void RadioButtonClicked(object sender, EventArgs e)
 		{
+			UpdateDisplayStatus();
+		}
+
+		private void CheckBoxChanged(object sender, EventArgs e)
+		{
+			UpdateDisplayStatus();
+		}
+
+		private void UpdateDisplayStatus()
+		{
+			groupBox1.Enabled = _rbUseExistingSystem.Checked;
+			if (!groupBox1.Enabled)
+			{
+				_rbUsb.Checked = false;
+				_rbLocalNetwork.Checked = false;
+				_rbInternet.Checked = false;
+
+				_cbImportWarning.Checked = false;
+			}
+			_cbImportWarning.Enabled = _rbUseExistingSystem.Checked && IsOneGetFromRadioButtonChecked;
+
 			_btnContinue.Enabled = _rbFirstToUseFlexBridge.Checked
 				|| (_rbUseExistingSystem.Checked
-					&& (_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked) );
-			groupBox1.Enabled = _rbUseExistingSystem.Checked;
+						&& IsOneGetFromRadioButtonChecked
+						&& _cbImportWarning.Checked);
+		}
+
+		private bool IsOneGetFromRadioButtonChecked
+		{
+			get { return _rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked; }
 		}
 
 		private void ContinueBtnClicked(object sender, EventArgs e)
