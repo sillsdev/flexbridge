@@ -6,12 +6,21 @@ using Chorus.VcsDrivers.Mercurial;
 using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Properties;
+using Localization;
+using Palaso.IO;
 using Palaso.Reporting;
 
 namespace FLExBridge
 {
 	static class Program
 	{
+		private const string AlreadyRunning = @"There is already a copy of FLExBridge running.
+You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
+-- Send/Receive Project
+-- Receive Project from a colleague
+-- View Conflict Report (can't have two open)";
+
+		private static LocalizationManager lm;
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -35,11 +44,22 @@ namespace FLExBridge
 					ExceptionHandler.Init();
 					Application.EnableVisualStyles();
 					Application.SetCompatibleTextRenderingDefault(false);
+					{
 
+						var installedStringFileLoc = FileLocator.GetFileDistributedWithApplication("FLExBridge", "FLExBridge.tmx");
+						var installedDir = Path.GetDirectoryName(installedStringFileLoc);
+						var installedDirRoot = Path.GetDirectoryName(installedDir);
+						lm = LocalizationManager.Create("en", "FLExBridge", "FLExBridge", "0.3.69",
+														installedDirRoot,
+														Path.GetFileName(installedDir),
+														Resources.chorus, "FLExBridge", "FLEx_ChorusPlugin");
+					}
 					if (!flexCommHelper.HostOpened)
 					{
 						// display messagebox and quit
-						MessageBox.Show(Resources.kAlreadyRunning, Resources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+						MessageBox.Show(LocalizationManager.GetString("kAlreadyRunning", AlreadyRunning, "error to display when FLExBridge is found to be already running"),
+										LocalizationManager.GetString("kFLExBridge", @"FLExBridge", "title for dialog displaying FLExBridge is already running error"),
+										MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 						return;
 					}
 					// Is mercurial set up?
@@ -129,7 +149,7 @@ namespace FLExBridge
 							//This is an unparsable command line
 							Console.WriteLine("Invalid command line options. Please launch from FLEx or run the executable without arguments.");
 							//Signal FLEx or other apps
-							throw new ApplicationException("Invalid command line options.");
+							throw new ApplicationException(LocalizationManager.GetDynamicString(lm.Id, "InvalidCommandlineOption", "Invalid command line options."));
 						}
 					}
 				}
