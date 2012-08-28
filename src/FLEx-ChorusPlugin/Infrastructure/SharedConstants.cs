@@ -51,6 +51,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LintFilename = "FLExProject." + lint;
 		internal const string LangProject = "LangProject";
 		internal const string curiosity = "curiosity";
+		internal const string Label = "label";
+		internal const string Title = "Title";
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";
@@ -136,6 +138,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Ntbk = "ntbk";
 		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
 		internal const string Anthropology = "Anthropology";
+		internal const string RnGenericRec = "RnGenericRec";
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
