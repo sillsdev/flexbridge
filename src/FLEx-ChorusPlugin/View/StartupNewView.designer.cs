@@ -42,7 +42,7 @@ namespace FLEx_ChorusPlugin.View
 			//
 			this._useSharedFolderButton.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this._useSharedFolderButton, "_useSharedFolderButton");
-			this.localizer.SetLocalizableToolTip(this._useSharedFolderButton, "For user settings");
+			this.localizer.SetLocalizableToolTip(this._useSharedFolderButton, "Get project from a network folder.");
 			this.localizer.SetLocalizationComment(this._useSharedFolderButton, "Button text meaning \"Shared Network Folder\"");
 			this.localizer.SetLocalizingId(this._useSharedFolderButton, "StartupNewView._useSharedFolderButton");
 			this._useSharedFolderButton.Name = "_useSharedFolderButton";

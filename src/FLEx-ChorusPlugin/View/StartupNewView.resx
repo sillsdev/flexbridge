@@ -125,7 +125,7 @@
   <data name="_useUSBButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
 		iVBORw0KGgoAAAANSUhEUgAAACAAAAAcCAYAAAAAwr0iAAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAOBAAADgQEuv9wXAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAOAAAADgAH8+D7zAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
 		aW5rc2NhcGUub3Jnm+48GgAAB81JREFUSEutl2tMW+cdxp0pHyZtUyZNUTVpSqcp2/JhkzYti/ZhbZSp
 		BbVq0iRKu4tYQ6tES7dlE2mahHAzBKi5Q7j4gg3YYGNsg42x8QXjGwYbg4PDHYOvx8fGgUCatZ2qNX32
 		nrOmipp7lw+vjhGvz/N7n//l/ZsDgJOfz/9ua6ta29Kiil29qsw0NMjTTU3KcHW1LFhR0dlfVCR8i+z5
@@ -271,7 +271,7 @@
   <data name="_useSharedFolderButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
 		iVBORw0KGgoAAAANSUhEUgAAAB0AAAAgCAYAAADud3N8AAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAnUAAAJ1AEc1zbaAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAnTAAAJ0wFOk5ClAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
 		aW5rc2NhcGUub3Jnm+48GgAABjpJREFUSEu1l2lMVFcUx19s2g/dbNo0TZp+kA8NIdakDUgRqLKFrWAA
 		EZBFyuZgHZgZdhjWGUBZXBAYZgGGYd8UkHWAYqpIRFQYonEBsbSpxdI2tYu1op6e89I3HRYtFPvhl3fv
 		ffee/z33nnvfeUxWVtbg8ePHvyeKior0Tyov5eDBg9+lpKR4AwCzHhg0PDc2NgYDAwPQ19cH3d3d0NnZ
@@ -342,7 +342,7 @@
 	<value>localizer</value>
   </data>
   <data name="&gt;&gt;localizer.Type" xml:space="preserve">
-	<value>Localization.UI.LocalizationExtender, LocalizationManager, Version=1.1.4604.27709, Culture=neutral, PublicKeyToken=null</value>
+	<value>Localization.UI.LocalizationExtender, LocalizationManager, Version=1.1.4623.27802, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>StartupNewView</value>

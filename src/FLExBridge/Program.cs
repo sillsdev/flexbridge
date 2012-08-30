@@ -57,7 +57,7 @@ You probably have a Conflict Report open. It will need to be closed before you c
 					if (!flexCommHelper.HostOpened)
 					{
 						// display messagebox and quit
-						MessageBox.Show(LocalizationManager.GetString("kAlreadyRunning", AlreadyRunning, "error to display when FLExBridge is found to be already running"),
+						MessageBox.Show(LocalizationManager.GetString("kAlreadyRunning", Resources.kAlreadyRunning, "error to display when FLExBridge is found to be already running"),
 										LocalizationManager.GetString("kFLExBridge", @"FLExBridge", "title for dialog displaying FLExBridge is already running error"),
 										MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 						return;
