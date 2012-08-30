@@ -29,6 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
+		internal const string InitialCapitalName = "Name";
 		internal const string Ownseq = "ownseq";
 		internal const string Refseq = "refseq";
 		internal const string Refcol = "refcol";

@@ -127,5 +127,70 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				Is.EqualTo(@"<div class='StStyle'> namedStyle (Heading 2)</div>"));
 		}
 
+		[Test]
+		public void GeneralCase()
+		{
+			const string source = @"
+				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->
+					<SomeWsRules>
+						<Prop backcolor='green' fontsize='24000' forecolor='yellow' spaceAfter='9000' undercolor='blue' underline='red'>
+							<MoreRules>
+								<WsProp backcolor='beet' fontFamily='NanoPrint' fontsize='0.00002' fontsizeUnit='mi' offset='-0.003' offsetUnit='m' undercolor='yellow' underline='none' ws='aa' />
+							</MoreRules>
+							<MoreRules>
+								<WsProp backcolor='carrot' fontFamily='ReallyLarge' fontsize='98E-57' fontsizeUnit='au' offset='0.050' offsetUnit='cm' underline='tripple' ws='bb' />
+							</MoreRules>
+						</Prop>
+					</SomeWsRules>
+				</WfiWordform>";
+			var root = FieldWorksTestServices.GetNode(source);
+			var input = root.ChildNodes[1]; // SomeWsRules  - the comment is [0]
+			var generator = new StyleContextGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform//SomeWsRules"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
+
+			// verify the html context generation
+			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+				Is.EqualTo(@"<div class='StStyle'> backcolor (green) fontsize (24000) forecolor (yellow) spaceAfter (9000) undercolor (blue) underline (red) "
+					+ @"ws (aa [backcolor (beet) fontFamily (NanoPrint) fontsize (0.00002) fontsizeUnit (mi) offset (-0.003) offsetUnit (m) undercolor (yellow) underline (none)]) "
+					+ @"ws (bb [backcolor (carrot) fontFamily (ReallyLarge) fontsize (98E-57) fontsizeUnit (au) offset (0.050) offsetUnit (cm) underline (tripple)])</div>"));
+		}
+
+		[Test]
+		public void GeneralCaseWithName()
+		{
+			const string source = @"
+				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->
+					<Name>
+						<Uni>Abnormal</Uni>
+					</Name>
+					<SomeWsRules>
+						<Prop backcolor='green' fontsize='24000' forecolor='yellow' spaceAfter='9000' undercolor='blue' underline='red'>
+							<MoreRules>
+								<WsProp backcolor='beet' fontFamily='NanoPrint' fontsize='0.00002' fontsizeUnit='mi' offset='-0.003' offsetUnit='m' undercolor='yellow' underline='none' ws='aa' />
+							</MoreRules>
+							<MoreRules>
+								<WsProp backcolor='carrot' fontFamily='ReallyLarge' fontsize='98E-57' fontsizeUnit='au' offset='0.050' offsetUnit='cm' underline='tripple' ws='bb' />
+							</MoreRules>
+						</Prop>
+					</SomeWsRules>
+				</WfiWordform>";
+			var root = FieldWorksTestServices.GetNode(source);
+			var input = root.ChildNodes[2]; // SomeWsRules  - the comment is [0]
+			var generator = new StyleContextGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform \"Abnormal\""));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
+
+			// verify the html context generation
+			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+				Is.EqualTo(@"<div class='StStyle'> backcolor (green) fontsize (24000) forecolor (yellow) spaceAfter (9000) undercolor (blue) underline (red) "
+					+ @"ws (aa [backcolor (beet) fontFamily (NanoPrint) fontsize (0.00002) fontsizeUnit (mi) offset (-0.003) offsetUnit (m) undercolor (yellow) underline (none)]) "
+					+ @"ws (bb [backcolor (carrot) fontFamily (ReallyLarge) fontsize (98E-57) fontsizeUnit (au) offset (0.050) offsetUnit (cm) underline (tripple)])</div>"));
+		}
+
 	}
 }

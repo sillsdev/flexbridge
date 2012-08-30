@@ -26,52 +26,64 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		{
 			Debug.Assert(start != null, "StyleContextGenerator: GetLabel got a null merge node.");
 			var topNode = GetTopNode(start);
-			if (topNode.Name == SharedConstants.StStyle)
-			{
-				return GetStyleName(topNode);
-			}
+			Debug.Assert(topNode != null, "StyleContextGenerator found an element with no ancestor!");
+			// See if this element contains a child Name element
+			string nameText = GetIdentifierNodeInnerText(topNode, SharedConstants.InitialCapitalName + Slash + SharedConstants.Uni);
+			if (!string.IsNullOrEmpty(nameText))
+				return nameText;
 			if (topNode.ParentNode != null && topNode.ParentNode.Name == SharedConstants.RnGenericRec)
 			{	// The Custom element can have a styleRules element when a not "Normal" paragraph style is applied to the slice.
 				// text changes in these nodes are handled in RnGenericRecContextGenerator
-				string xPath = ".." + Slash + SharedConstants.Title + Slash + SharedConstants.Str + Slash + SharedConstants.Run;
-				var recordTitleNode = topNode.SelectSingleNode(xPath);
-				var recordTitle = Resources.kUnTitled;
-				if (recordTitleNode != null && !string.IsNullOrEmpty(recordTitleNode.InnerText))
-				{
-					recordTitle = recordTitleNode.InnerText;
-				}
-				var image = Resources.kRnGenericRecLabel + Space + Quote + recordTitle + Quote + Space;
-
+				const string xPath = SharedConstants.Title + Slash + SharedConstants.Str + Slash + SharedConstants.Run;
+				var recordTitle = GetIdentifierNodeInnerText(topNode.ParentNode, xPath);
+				if (string.IsNullOrEmpty(recordTitle))
+					recordTitle = Resources.kRnGenericRecLabel + Space + Resources.kUnTitled;
 				if (topNode.Name == SharedConstants.Custom)
 				{	// topNode.GetStringAttribute(SharedConstants.Name) may not be the real name of the custom field!
 					// There may be a CustomField[@name="Like"]/@label that holds the displayed name (in another file).
 					// @name acts like an identifier or index. (dangerous!)
 					var name = topNode.GetStringAttribute(SharedConstants.Name);
 					var displayName = GetDisplayName(name); // may be in another local user file
-					image += Resources.kCustomFieldLabel + Space + Quote + displayName + Quote;
+					recordTitle += Space + Resources.kCustomFieldLabel + Space + Quote + displayName + Quote;
 				}
 				else // some other data notebook field
 				{
-					image += topNode.Name;
+					recordTitle += Space + topNode.Name;
 				}
-				return image;
+				return recordTitle;
 			}
 			// Probably topNode.ParentNode == null
 			// Don't know about this one yet, so just identify it with the xPath "topNode//changedNode".
-			return topNode.Name + Slash + Slash + start.Name;
+			return topNode != start ? topNode.Name + Slash + Slash + start.Name : topNode.Name;
 		}
 
 		/// <summary>
-		/// Gets the style name of an StStyle node.
+		/// Gets the Name element inner text contained as a child of another element.
 		/// </summary>
-		/// <param name="stStyleNode">The node that changed</param>
-		/// <returns>The style name</returns>
-		private string GetStyleName(XmlNode stStyleNode)
+		/// <param name="parentNode">The node that has a Name child.</param>
+		/// <param name="xpath"> </param>
+		/// <returns>A label with the name in it or String.Empty.</returns>
+		private string GetIdentifierNodeInnerText(XmlNode parentNode, string xpath)
 		{
-			var styleName = stStyleNode.SelectSingleNode("Name/Uni");
-			return styleName == null
-					? StyleLabel
-					: StyleLabel + Space + Quote + styleName.InnerText + Quote;
+			var label = string.Empty;
+			var name = parentNode.SelectSingleNode(xpath);
+			if (name != null)
+			{
+				switch (parentNode.Name)
+				{
+					case SharedConstants.StStyle:
+						label = StyleLabel;
+						break;
+					case SharedConstants.RnGenericRec:
+						label = Resources.kRnGenericRecLabel;
+						break;
+					default:
+						label = parentNode.Name;
+						break;
+				}
+				label += Space + Quote + name.InnerText + Quote;
+			}
+			return label;
 		}
 
 		string StyleLabel
@@ -90,8 +102,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			{	// a style property changed
 				return node;
 			}
-			if (node.ParentNode != null && node.ParentNode.Name == SharedConstants.RnGenericRec)
-			{	// a Data Notebook field property changed
+			if (node.ParentNode != null
+				&& (node.ParentNode.Name == SharedConstants.RnGenericRec || node.ParentNode.Name == @"#document" ))
+			{	// a Data Notebook field property changed or this is the document element (not the document)
 				return node;
 			}
 			if (node.ParentNode != null)
@@ -117,7 +130,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 
 		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
-			MessageBox.Show("Attach to ChorusMerge Now", "Take a Debug Break!", MessageBoxButtons.OK);
 			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath,
 																			 FieldWorksMergeStrategyServices.GetGuid(mergeElement),
 																			 GetLabel(mergeElement));
@@ -234,13 +246,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		public string GetDisplayName(string name)
 		{   // The broken-up fwdata file should have a FLExProject.CustomProperties file at the top level.
 			const string customPropertiesFilename = SharedConstants.CustomPropertiesFilename;
-			if (!Directory.Exists(customPropertiesFilename) || !File.Exists(customPropertiesFilename))
+			if (!File.Exists(customPropertiesFilename))
 			{
 				return name; // can't find the custom field file; name is the best we have
 			}
 			var doc = new XmlDocument();
 			doc.Load(customPropertiesFilename);
-			var customFields = doc.DocumentElement.SelectNodes("AdditionalFields/CustomField");
+			var customFields = doc.DocumentElement.SelectNodes("CustomField");
 			foreach (XmlNode cf in customFields)
 			{	// match cf/@name to the name passed in
 				if (cf.GetStringAttribute(SharedConstants.Name) == name)
