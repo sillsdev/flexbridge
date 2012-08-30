@@ -54,6 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string curiosity = "curiosity";
 		internal const string Label = "label";
 		internal const string Title = "Title";
+		internal const string NamedStyle = "namedStyle";
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";

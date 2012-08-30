@@ -9,7 +9,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 	public class StyleContextGeneratorTests
 	{
 		[Test]
-		public void GetStyleLabel()
+		public void ContextForSimpleChangeInAStyle()
 		{
 			const string source = @"
 				<StStyle guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'>
@@ -34,7 +34,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void GetStyleHtml()
+		public void ContextForComplexChangeInAStyle()
 		{
 			const string source = @"
 				<StStyle guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'>
@@ -70,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void GetCustomLabel()
+		public void ContextForDataNotebookSliceStyleChange()
 		{
 			const string source = @"
 				<RnGenericRec guid='29fb1310-385c-46a5-9e0e-d6cdaee7db17'>
@@ -128,7 +128,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void GeneralCase()
+		public void ContextForGeneralStyleChange()
 		{
 			const string source = @"
 				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->
@@ -159,7 +159,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		}
 
 		[Test]
-		public void GeneralCaseWithName()
+		public void ContextForNamedFieldStyleChange()
 		{
 			const string source = @"
 				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->

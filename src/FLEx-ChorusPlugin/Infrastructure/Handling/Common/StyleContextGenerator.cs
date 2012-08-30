@@ -53,23 +53,23 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				return recordTitle;
 			}
 			// Probably topNode.ParentNode == null
-			// Don't know about this one yet, so just identify it with the xPath "topNode//changedNode".
+			// Not an element known to need special processing, so identify it with the xPath "topNode//changedNode".
 			return topNode != start ? topNode.Name + Slash + Slash + start.Name : topNode.Name;
 		}
 
 		/// <summary>
-		/// Gets the Name element inner text contained as a child of another element.
+		/// Gets the meaningful identifier of an element. The node containing the InnerText is specified by xpath.
 		/// </summary>
-		/// <param name="parentNode">The node that has a Name child.</param>
-		/// <param name="xpath"> </param>
-		/// <returns>A label with the name in it or String.Empty.</returns>
-		private string GetIdentifierNodeInnerText(XmlNode parentNode, string xpath)
+		/// <param name="node">The element node to find the identifier for.</param>
+		/// <param name="xpath">The xPath from the parentNode to the identifier's node.</param>
+		/// <returns>A label with the identifier in it or String.Empty.</returns>
+		private string GetIdentifierNodeInnerText(XmlNode node, string xpath)
 		{
 			var label = string.Empty;
-			var name = parentNode.SelectSingleNode(xpath);
+			var name = node.SelectSingleNode(xpath);
 			if (name != null)
 			{
-				switch (parentNode.Name)
+				switch (node.Name)
 				{
 					case SharedConstants.StStyle:
 						label = StyleLabel;
@@ -78,7 +78,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 						label = Resources.kRnGenericRecLabel;
 						break;
 					default:
-						label = parentNode.Name;
+						label = node.Name;
 						break;
 				}
 				label += Space + Quote + name.InnerText + Quote;
@@ -103,8 +103,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				return node;
 			}
 			if (node.ParentNode != null
-				&& (node.ParentNode.Name == SharedConstants.RnGenericRec || node.ParentNode.Name == @"#document" ))
-			{	// a Data Notebook field property changed or this is the document element (not the document)
+				&& (node.ParentNode.Name == SharedConstants.RnGenericRec  // a research notebook record
+					|| node.ParentNode.Name == @"#document" )) // the DOM node
+			{	// a Data Notebook field property changed or this is the document element
 				return node;
 			}
 			if (node.ParentNode != null)
@@ -154,7 +155,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				//               </WsStyles9999>
 				//             </Prop>
 			}
-			else // not sure what element this is, so try to give some context for figuring it out
+			else // not an element known to need special processing, so give some context
 			{
 				var topNode = GetTopNode(mergeElement);
 				if (topNode != null)
