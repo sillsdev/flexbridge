@@ -31,10 +31,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				if (boolPropInfo.PropertyName == "ParseIsCurrent")
 					continue; // Handled elsewhere.
 
-				var ourBoolPropElement = ourEntry.SelectSingleNode(boolPropInfo.PropertyName);
+				var query = boolPropInfo.PropertyName;
+				if (boolPropInfo.IsCustomProperty)
+					query = string.Format("Custom[@name='{0}']", boolPropInfo.PropertyName);
+
+				var ourBoolPropElement = ourEntry.SelectSingleNode(query);
 				var ourBoolPropAttr = ourBoolPropElement == null ? null : ourBoolPropElement.Attributes[SharedConstants.Val];
 				var ourBoolPropValue = ourBoolPropAttr != null && bool.Parse(ourBoolPropAttr.Value);
-				var theirBoolPropElement = theirEntry.SelectSingleNode(boolPropInfo.PropertyName);
+				var theirBoolPropElement = theirEntry.SelectSingleNode(query);
 				var theirBoolPropAttr = theirBoolPropElement == null ? null : theirBoolPropElement.Attributes[SharedConstants.Val];
 				var theirBoolPropValue = theirBoolPropAttr != null && bool.Parse(theirBoolPropAttr.Value);
 				if (ourBoolPropValue == theirBoolPropValue)

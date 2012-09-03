@@ -98,6 +98,32 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
+		public void CustomBooleanPropertyWithTrueWins()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+<WfiWordform guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+</WfiWordform>
+</Root>";
+			var ourContent = commonAncestor.Replace("</WfiWordform>", "<Custom name='Certified' val='False' /></WfiWordform>");
+			var theirContent = commonAncestor.Replace("</WfiWordform>", "<Custom name='Certified' val='True' /></WfiWordform>");
+
+			XmlNode theirNode;
+			XmlNode ancestorNode;
+			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
+
+			var mdc = MetadataCache.TestOnlyNewCache;
+			mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
+			mdc.ResetCaches();
+			FieldWorksMergingServices.PreMerge(mdc, ourNode, theirNode, ancestorNode);
+
+			Assert.IsTrue(ourNode.InnerXml.Contains("<Custom name=\"Certified\" val=\"True\" />"));
+			Assert.IsTrue(theirNode.InnerXml.Contains("<Custom name=\"Certified\" val=\"True\" />"));
+			_eventListener.AssertExpectedConflictCount(0);
+		}
+
+		[Test]
 		public void OurParseIsCurrentIsFalse()
 		{
 			const string commonAncestor =
