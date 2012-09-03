@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
+﻿using System.Xml;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
 using LibChorus.TestUtilities;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,21 +16,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	{
 		internal static void PreMerge(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
+			if (ourEntry == null || theirEntry == null)
+				return;
+
 			PreMergeTimestamps(mdc, ourEntry, theirEntry);
-			PreMergeStTxtParaParseIsCurrent(mdc, ourEntry, theirEntry, commonEntry);
 			PreMergeBooleans(mdc, ourEntry, theirEntry, commonEntry);
 		}
 
 		private static void PreMergeBooleans(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			if (ourEntry == null || theirEntry == null)
-				return;
-
-			var classInfo = mdc.GetClassInfo(GetClassName(ourEntry));
+			var classInfo = mdc.GetClassInfo("StTxtPara");
+			var stTxtClassHierarchy = new List<FdoClassInfo>(classInfo.AllSubclasses)
+				{
+					classInfo
+				};
+			classInfo = mdc.GetClassInfo(GetClassName(ourEntry));
 			foreach (var boolPropInfo in classInfo.AllProperties.Where(pi => pi.DataType == DataType.Boolean))
 			{
-				if (boolPropInfo.PropertyName == "ParseIsCurrent")
-					continue; // Handled elsewhere.
+				if (boolPropInfo.PropertyName == "ParseIsCurrent" && stTxtClassHierarchy.Contains(classInfo))
+				{
+					PreMergeStTxtParaParseIsCurrent(ourEntry, theirEntry, commonEntry);
+					continue;
+				}
 
 				var query = boolPropInfo.PropertyName;
 				if (boolPropInfo.IsCustomProperty)
@@ -87,9 +95,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		private static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
 		{
-			if (ourEntry == null || theirEntry == null)
-				return;
-
 			const string xpath = "DateModified | DateResolved | RunDate";
 			var ourDateTimeNodes = ourEntry.SelectNodes(xpath);
 			var theirDateTimeNodes = theirEntry.SelectNodes(xpath);
@@ -139,118 +144,60 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <summary>
 		/// Set any StTxtPara.ParseIsCurrent to false if either party in the merge changed the text.
 		/// </summary>
-		private static void PreMergeStTxtParaParseIsCurrent(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
+		private static void PreMergeStTxtParaParseIsCurrent(XmlNode ourEntry, XmlNode theirEntry, XmlNode commonEntry)
 		{
-			// We are only interested in StTxtPara and ScrTxtPara instances, since they have the ParseIsCurrent property.
-			// We can quit for a given set on inputs, if we do find the prop, since they do not nest paras inside of paras.
-			if (ourEntry == null || theirEntry == null)
-				return; // Nothing to do.
-
 			const string xpath = "ParseIsCurrent";
 			var ourParseIsCurrentNode = ourEntry.SelectSingleNode(xpath);
 			var theirParseIsCurrentNode = theirEntry.SelectSingleNode(xpath);
 			var commonParseIsCurrentNode = commonEntry == null ? null : commonEntry.SelectSingleNode(xpath);
-			if (ourParseIsCurrentNode == null && theirParseIsCurrentNode == null && commonParseIsCurrentNode == null)
+			if (commonParseIsCurrentNode != null)
 			{
-				// Drill down on other owned stuff.
-				var classname = GetClassName(ourEntry);
-				var classInfo = mdc.GetClassInfo(classname);
-				foreach (var owningPropInfo in classInfo.AllOwningProperties)
+				if (ourParseIsCurrentNode != null)
 				{
-					var propName = owningPropInfo.PropertyName;
-					var isCustomProperty = owningPropInfo.IsCustomProperty;
-
-					var ourOwningPropElement = GetOwningPropertyElement(ourEntry, propName, isCustomProperty);
-					var theirOwningPropElement = GetOwningPropertyElement(theirEntry, propName, isCustomProperty);
-					var commonOwningPropElement = GetOwningPropertyElement(commonEntry, propName, isCustomProperty);
-					if (ourOwningPropElement == null && theirOwningPropElement == null && commonOwningPropElement == null)
-						continue; // Nobody has the current owning prop node.
-
-					if (ourOwningPropElement != null)
+					var weMadeChange = !XmlUtilities.AreXmlElementsEqual(ourEntry, commonEntry);
+					ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+					if (theirParseIsCurrentNode != null)
 					{
-						foreach (XmlNode ourOwnedElement in ourOwningPropElement.ChildNodes)
+						// All three exist, so check equality of parent nodes.
+						if (weMadeChange)
 						{
-							var theirOwnedElement = (theirOwningPropElement == null || !theirOwningPropElement.HasChildNodes)
-								? null
-								: (theirOwningPropElement.ChildNodes.Cast<XmlNode>()
-									.Where(theirChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == theirChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-									.FirstOrDefault();
-
-							var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
-								? null
-								: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
-									.Where(commonChildNode => ourOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-									.FirstOrDefault();
-
-							PreMergeStTxtParaParseIsCurrent(mdc, ourOwnedElement, theirOwnedElement, commonOwnedElement);
-						}
-					}
-					else if (theirOwningPropElement != null)
-					{
-						foreach (XmlNode theirOwnedElement in theirOwningPropElement.ChildNodes)
-						{
-							var commonOwnedElement = (commonOwningPropElement == null || !commonOwningPropElement.HasChildNodes)
-								? null
-								: (commonOwningPropElement.ChildNodes.Cast<XmlNode>()
-									.Where(commonChildNode => theirOwnedElement.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant() == commonChildNode.Attributes[SharedConstants.GuidStr].Value.ToLowerInvariant()))
-									.FirstOrDefault();
-
-							PreMergeStTxtParaParseIsCurrent(mdc, theirOwnedElement, null, commonOwnedElement);
-						}
-					}
-				}
-			}
-			else
-			{
-				if (commonParseIsCurrentNode != null)
-				{
-					if (ourParseIsCurrentNode != null)
-					{
-						var weMadeChange = !XmlUtilities.AreXmlElementsEqual(ourEntry, commonEntry);
-						ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-						if (theirParseIsCurrentNode != null)
-						{
-							// All three exist, so check equality of parent nodes.
-							if (weMadeChange)
-							{
-								theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-							}
-							else
-							{
-								var theyMadeChange = !XmlUtilities.AreXmlElementsEqual(theirEntry, commonEntry);
-								if (theyMadeChange)
-								{
-									ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-									theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-								}
-							}
+							theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
 						}
 						else
 						{
-							// commonParseIsCurrentNode != null : ourParseIsCurrentNode != null : theirParseIsCurrentNode == null
-							// Not to worry.
+							var theyMadeChange = !XmlUtilities.AreXmlElementsEqual(theirEntry, commonEntry);
+							if (theyMadeChange)
+							{
+								ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+								theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+							}
 						}
 					}
-					else
-					{
-						// commonParseIsCurrentNode != null : ourParseIsCurrentNode == null
-						// Not to worry about theirParseIsCurrentNode or any changes.
-					}
+					//else
+					//{
+					//    // commonParseIsCurrentNode != null : ourParseIsCurrentNode != null : theirParseIsCurrentNode == null
+					//    // Not to worry.
+					//}
 				}
-				else
+				//else
+				//{
+				//    // commonParseIsCurrentNode != null : ourParseIsCurrentNode == null
+				//    // Not to worry about theirParseIsCurrentNode or any changes.
+				//}
+			}
+			else
+			{
+				// commonParseIsCurrentNode == null
+				if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
 				{
-					// commonParseIsCurrentNode == null
-					if (ourParseIsCurrentNode != null && theirParseIsCurrentNode != null)
-					{
-						// Set both to False.
-						ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-						theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
-					}
-					else
-					{
-						// ours or theirs is false, so the other one added it. Not to worry.
-					}
+					// Set both to False.
+					ourParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
+					theirParseIsCurrentNode.Attributes[SharedConstants.Val].Value = "False";
 				}
+				//else
+				//{
+				//    // ours or theirs is false, so the other one added it. Not to worry.
+				//}
 			}
 		}
 

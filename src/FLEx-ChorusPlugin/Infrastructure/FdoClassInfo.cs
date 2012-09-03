@@ -65,6 +65,22 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
+		/// Get a collection of all subclasses if this class (not including this class).
+		/// </summary>
+		internal IEnumerable<FdoClassInfo> AllSubclasses
+		{
+			get
+			{
+				var subclasses = new List<FdoClassInfo>(_allDirectSubclass);
+				foreach (var subclass in _allDirectSubclass)
+				{
+					subclasses.AddRange(subclass.AllSubclasses);
+				}
+				return subclasses;
+			}
+		}
+
+		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>
 		internal IEnumerable<FdoPropertyInfo> AllProperties
