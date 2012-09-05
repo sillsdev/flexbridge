@@ -19,3 +19,4 @@ Perf test  results/*.app6results
 DistFiles/.guidsForInstaller.xml
 Mercurial/mercurial.ini
 **.app7results
+Patches/**
