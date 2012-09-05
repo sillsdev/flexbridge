@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>8.0.30703</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>FLEx_ChorusPlugin</RootNamespace>
+	<AssemblyName>FLEx-ChorusPlugin</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<DefineConstants>TRACE;MONO</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLEx-ChorusPlugin.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLEx-ChorusPlugin.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Autofac">
+	  <HintPath>..\..\lib\$(Configuration)\Autofac.dll</HintPath>
+	</Reference>
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="icu.net">
+	  <HintPath>..\..\lib\$(Configuration)\icu.net.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Web" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="Contexts\BaseDomainServices.cs" />
+	<Compile Include="Contexts\General\GeneralDomainBoundedContext.cs" />
+	<Compile Include="Contexts\General\GeneralDomainOrphansBoundedContext.cs" />
+	<Compile Include="Contexts\General\GeneralDomainServices.cs" />
+	<Compile Include="Contexts\General\UserDefinedLists\UserDefinedListsBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\MorphologyAndSyntax\MorphologyAndSyntaxBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\Phonology\PhonologyBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ArchivedDraftsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ImportSettingsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
+	<Compile Include="Controller\FwBridgeConflictController.cs" />
+	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
+	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
+	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
+	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeService.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeStrategiesMethod.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorkCustomLayoutContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutValidator.cs" />
+	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutChangePresenter.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksElementToMergeStrategyKeyMapper.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrDraftStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FWGENERICHTMLGENERATOR.CS" />
+	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\LangProjFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\General\LintFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
+	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexEntryContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseAnalysisFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\AnalyzingAgentFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\MorphAndSynFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\PhonologyDataFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Common\PossibilityContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Common\PossibilityListContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Anthropology\RnGenericRecContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrBookAnnotationsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrBookContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
+	<Compile Include="Controller\FwBridgeController.cs" />
+	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
+	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
+	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningService.cs" />
+	<Compile Include="Infrastructure\DomainServices\CmObjectNestingService.cs" />
+	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyMergingStrategy.cs" />
+	<Compile Include="Infrastructure\DataSortingService.cs" />
+	<Compile Include="Infrastructure\DataType.cs" />
+	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
+	<Compile Include="Infrastructure\FdoClassInfo.cs" />
+	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksMergeStrategyServices.cs" />
+	<Compile Include="Infrastructure\Handling\FieldWorksMergingServices.cs" />
+	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
+	<Compile Include="Infrastructure\DomainServices\FileWriterService.cs" />
+	<Compile Include="Infrastructure\FlexFolderSystem.cs" />
+	<Compile Include="Infrastructure\Handling\IFieldWorksFileHandler.cs" />
+	<Compile Include="Infrastructure\Handling\ModelVersion\ModelVersionFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Anthropology\NtbkFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrBooksTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Scripture\ScrSectionContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextContextGenerator.cs" />
+	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WfiWordformContextGenerator.cs" />
+	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
+	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
+	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\LinguisticsDomainServices.cs" />
+	<Compile Include="Infrastructure\MetadataCache.cs" />
+	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
+	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
+	<Compile Include="Infrastructure\RegularUserProjectPathLocator.cs" />
+	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />
+	<Compile Include="Contexts\Scripture\ScriptureDomainServices.cs" />
+	<Compile Include="Contexts\Linguistics\TextCorpus\TextCorpusBoundedContextService.cs" />
+	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
+	<Compile Include="Infrastructure\SharedConstants.cs" />
+	<Compile Include="Model\LanguageProject.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	</Compile>
+	<Compile Include="View\ExistingSystemView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="View\ExistingSystemView.designer.cs">
+	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\FLExBridge.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\FLExBridge.Designer.cs">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
+	<Compile Include="View\FwBridgeConflictView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\FwBridgeConflictView.Designer.cs">
+	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\FwBridgeView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="View\FwBridgeView.Designer.cs">
+	  <DependentUpon>FwBridgeView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\IActiveProjectView.cs" />
+	<Compile Include="View\IExistingSystemView.cs" />
+	<Compile Include="View\IFwBridgeController.cs" />
+	<Compile Include="View\IFwBridgeView.cs" />
+	<Compile Include="View\IProjectView.cs" />
+	<Compile Include="View\IStartupNewView.cs" />
+	<Compile Include="Infrastructure\ISynchronizeProject.cs" />
+	<Compile Include="View\ObtainProjectView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\ObtainProjectView.Designer.cs">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\ProjectEventArgs.cs" />
+	<Compile Include="View\ProjectView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="View\ProjectView.Designer.cs">
+	  <DependentUpon>ProjectView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\StartupNewEventArgs.cs" />
+	<Compile Include="View\StartupNewView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="View\StartupNewView.designer.cs">
+	  <DependentUpon>StartupNewView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Infrastructure\SynchronizeProject.cs" />
+	<EmbeddedResource Include="View\ObtainProjectView.resx">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\StartupNewView.resx">
+	  <DependentUpon>StartupNewView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="View\ExistingSystemView.resx">
+	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\FLExBridge.resx">
+	  <DependentUpon>FLExBridge.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\FwBridgeConflictView.resx">
+	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\FwBridgeView.resx">
+	  <DependentUpon>FwBridgeView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\ProjectView.resx">
+	  <DependentUpon>ProjectView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="chorus.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
