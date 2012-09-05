@@ -4,45 +4,303 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.Properties;
+using Chorus.merge;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
 	/// <summary>
 	/// Cache to hold metadata about the CmObject classes.
 	/// </summary>
-	public sealed class MetadataCache
+	internal sealed class MetadataCache
 	{
+		private const int StartingModelVersion = 7000037;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
-		private readonly IEnumerable<FdoClassInfo> _concreteClasses;
-		private readonly Dictionary<string, FdoClassInfo> _classesWithCollectionProperties;
+		private IEnumerable<FdoClassInfo> _concreteClasses;
+		private readonly Dictionary<string, Dictionary<string, HashSet<string>>> _propertyCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+		private static MetadataCache _mdc;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MetadataCache()
+		private MetadataCache()
 		{
-			// TODO: If FW Bridge ever gets released into the wild,
-			// the MDC needs to be able to support various FW model versions.
-			// This can be introduced with some kind of 'InitializeTo(string modelVersionNumber) method.
-			// There will be a base starting model version number,
-			// and the Init method will then move up one version at a time, and add/remove props/classes,
-			// for each FW migration to bring it up to the given number.
-			// This will still require all users of a repo to be on the same version,
-			// but it will allow different sets of users to be at different levels.
-			// I expect the MDC to be available in a static variable, and accessable via a getter.
 			AddMainClassInfo();
 			SetSuperclasses();
+
+			ModelVersion = StartingModelVersion;
+
+			ResetCaches();
+		}
+
+		internal void ResetCaches()
+		{
 			_concreteClasses = new List<FdoClassInfo>(from classInfo in _classes.Values
 													  where !classInfo.IsAbstract
 													  select classInfo);
-			_classesWithCollectionProperties = new Dictionary<string, FdoClassInfo>(_concreteClasses.Count());
-			foreach (var classWithCollectionProp in from classInfo in _classes.Values
-													where classInfo.AllCollectionProperties.Count() > 0
-													select classInfo)
+
+			_classes["CmObject"].ResetCaches(new Dictionary<string, FdoClassInfo>(_classes));
+
+			CacheProperties();
+		}
+
+		private void CacheProperties()
+		{
+			_propertyCache.Clear();
+
+			foreach (var className in AllConcreteClasses.Select(ci => ci.ClassName))
 			{
-				_classesWithCollectionProperties.Add(classWithCollectionProp.ClassName, classWithCollectionProp);
+				var propTypeCache = new Dictionary<string, HashSet<string>>();
+				var currentClassInfo = GetClassInfo(className);
+
+				var currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllOwningProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllOwning", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllReferenceSequenceProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllReferenceSequence", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllOwningSequenceProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllOwningSequence", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllCollectionProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllCollection", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllReferenceCollectionProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllReferenceCollection", currentHash);
+
+				currentHash = new HashSet<string>();
+				currentHash.UnionWith(currentClassInfo.AllMultiAltProperties.Select(op => op.PropertyName));
+				propTypeCache.Add("AllMultiAlt", currentHash);
+
+				_propertyCache.Add(className, propTypeCache);
 			}
 		}
+
+		internal Dictionary<string, Dictionary<string, HashSet<string>>> PropertyCache
+		{
+			get { return _propertyCache; }
+		}
+
+		internal static MetadataCache MdCache
+		{
+			get { return _mdc ?? (_mdc = new MetadataCache()); }
+		}
+
+		internal static MetadataCache TestOnlyNewCache
+		{
+			get
+			{
+				_mdc = null;
+				return MdCache;
+			}
+		}
+
+		internal int ModelVersion { get; private set; }
+
+		internal IEnumerable<FdoClassInfo> AllClasses
+		{
+			get { return _classes.Values; }
+		}
+
+		internal int UpgradeToVersion(int newVersion)
+		{
+			if (newVersion < ModelVersion)
+				throw new InvalidOperationException("The version number cannot be downgraded.");
+			if (newVersion > MaximumModelVersion)
+				throw new ArgumentOutOfRangeException(String.Format("Upgrading to version {0} is not yet supported.", newVersion));
+			if (newVersion == ModelVersion)
+				return ModelVersion;
+
+			// 7000037: Starting point (FW 7.0.6)
+			// 7000044: FW 7.1 released.
+			// 7000051: FW 7.2 released.
+			// 700005x: FW 7.3 released.
+
+			var currentVersion = ModelVersion;
+			var cmObject = GetClassInfo("CmObject");
+			while (currentVersion < newVersion)
+			{
+				++currentVersion;
+				switch (currentVersion)
+				{
+					default:
+						throw new ArgumentOutOfRangeException(String.Format("Upgrading to version {0} is not yet supported.", newVersion));
+					case 7000038:
+						// 7000038:
+						//		1. Add CmObject::VirtualOrdering (concrete)
+						var newClass = CreateNewClass(cmObject, "VirtualOrdering", false);
+						//			Add: RA "Source"							[CmObject]
+						newClass.AddProperty(new FdoPropertyInfo("Source", DataType.ReferenceAtomic));
+						//			Add: basic "Field"							[Unicode]
+						newClass.AddProperty(new FdoPropertyInfo("Field", DataType.Unicode));
+						//			Add: RS "Items"								[CmObject]
+						newClass.AddProperty(new FdoPropertyInfo("Items", DataType.ReferenceSequence));
+						//		2. Modified LexEntry
+						//			Add: RC "DoNotPublishIn"					[CmPossibility]
+						GetClassInfo("LexEntry").AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
+						//		3. Modified LexExampleSentence
+						//			Add: RC "DoNotPublishIn"					[CmPossibility]
+						GetClassInfo("LexExampleSentence").AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
+						//		4. Modified LexDb
+						//			Add: OA "PublicationTypes"					[CmPossibilityList]
+						GetClassInfo("LexDb").AddProperty(new FdoPropertyInfo("PublicationTypes", DataType.OwningAtomic));
+						//		5. Modified LexSense
+						//			Add: RC "DoNotPublishIn"					[CmPossibility]
+						GetClassInfo("LexSense").AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
+						break;
+					case 7000039:
+						// 7000039: Modified ScrBook
+						//			Add: basic "ImportedCheckSum"				[Unicode]
+						GetClassInfo("ScrBook").AddProperty(new FdoPropertyInfo("ImportedCheckSum", DataType.Unicode));
+						break;
+					case 7000040:
+						// 7000040: Modified LexEntryRef
+						//			Add: RS "ShowComplexFormsIn"				[CmObject]
+						GetClassInfo("LexEntryRef").AddProperty(new FdoPropertyInfo("ShowComplexFormsIn", DataType.ReferenceSequence));
+						break;
+					case 7000041:
+						// 7000041: Modified LexEntry
+						//			Add: RC "DoNotShowMainEntryIn"				[CmPossibility]
+						GetClassInfo("LexEntry").AddProperty(new FdoPropertyInfo("DoNotShowMainEntryIn", DataType.ReferenceCollection));
+						//			Remove: basic ExcludeAsHeadword				[Boolean]
+						GetClassInfo("LexEntry").RemoveProperty("ExcludeAsHeadword");
+						break;
+					case 7000042:
+						// 7000042: No actual model change.
+						break;
+					case 7000043:
+						// 7000043: Modified ScrBook
+						//			Add: basic "ImportedBtCheckSum"				[MultiUnicode]
+						GetClassInfo("ScrBook").AddProperty(new FdoPropertyInfo("ImportedBtCheckSum", DataType.MultiUnicode));
+						break;
+					case 7000044:
+						// 7000044: No actual model change.
+						break;
+					case 7000045:
+						// 7000045: Modified Segment
+						//		Add: basic "Reference"								[String]
+						GetClassInfo("Segment").AddProperty(new FdoPropertyInfo("Reference", DataType.String));
+						break;
+					case 7000046:
+						// 7000046: Modified RnGenericRec
+						//		Add: OA "Text"										[Text]
+						GetClassInfo("RnGenericRec").AddProperty(new FdoPropertyInfo("Text", DataType.OwningAtomic));
+						break;
+					case 7000047: // Fall through
+					case 7000048:
+						// 7000047: No actual model change.
+						// 7000048: No actual model change.
+						// Do nothing update.
+						break;
+					case 7000049:
+						// 7000049:
+						//		1. Add CmObject::CmMediaContainer (concrete)
+						//			Add: basic "OffsetType"							[Unicode]
+						//			Add: OC "MediaURIs"								[CmMediaURI]
+						newClass = CreateNewClass(cmObject, "CmMediaContainer", false);
+						newClass.AddProperty(new FdoPropertyInfo("OffsetType", DataType.Unicode, false));
+						newClass.AddProperty(new FdoPropertyInfo("MediaURIs", DataType.OwningCollection, false));
+						//		1A. Add: CmObject::CmMediaURI classes (concrete)
+						//			Add: basic "MediaURI"							[Unicode]
+						newClass = CreateNewClass(cmObject, "CmMediaURI", false);
+						newClass.AddProperty(new FdoPropertyInfo("MediaURI", DataType.Unicode, false));
+						//		2. Modified Segment
+						//			Add: RA "MediaURI"								[CmMediaURI]
+						//			Add: basic "BeginTimeOffset"					[Unicode]
+						//			Add: basic "EndTimeOffset"						[Unicode]
+						newClass = GetClassInfo("Segment");
+						newClass.AddProperty(new FdoPropertyInfo("MediaURI", DataType.ReferenceAtomic, false));
+						newClass.AddProperty(new FdoPropertyInfo("BeginTimeOffset", DataType.Unicode, false));
+						newClass.AddProperty(new FdoPropertyInfo("EndTimeOffset", DataType.Unicode, false));
+						//		3. Modified Text:
+						newClass = GetClassInfo("Text");
+						//			Remove: SoundFilePath							[Unicode]
+						newClass.RemoveProperty("SoundFilePath");
+						//			Add: OA "MediaFiles"							[CmMediaContainer]
+						newClass.AddProperty(new FdoPropertyInfo("MediaFiles", DataType.OwningAtomic, false));
+						break;
+					case 7000050:
+						// 7000050:
+						// 1. Modified Segment
+						//		Add: RA "Speaker"									[CmPerson]
+						GetClassInfo("Segment").AddProperty(new FdoPropertyInfo("Speaker", DataType.ReferenceAtomic));
+						break;
+					case 7000051: // Fall through
+					case 7000052:
+						// 7000052: No actual model change.
+						break;
+					case 7000053:
+						// Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+						// 1. PhSegmentRule
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("PhSegmentRule").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 2. MoCompoundRule
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoCompoundRule").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 3. MoAdhocProhib
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoAdhocProhib").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						// 4. MoInflAffixTemplate
+						//		Add: basic "Disabled"								{Boolean]
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("Disabled", DataType.Boolean));
+						break;
+					case 7000054:
+						// 1. MoStemMsa
+						//		Add: Slots ref col
+						GetClassInfo("MoStemMsa").AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						// 2. MoInflAffixTemplate
+						//		Add: ProcliticSlots ref seq
+						//		Add: EncliticSlots ref seq
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("ProcliticSlots", DataType.ReferenceSequence));
+						GetClassInfo("MoInflAffixTemplate").AddProperty(new FdoPropertyInfo("EncliticSlots", DataType.ReferenceSequence));
+						break;
+					case 7000055:
+						// 1. WfiMorphBundle
+						//		Add: InflType ref atomic
+						GetClassInfo("WfiMorphBundle").AddProperty(new FdoPropertyInfo("InflType", DataType.ReferenceAtomic));
+						// 2. Add LexEntryType::LexEntryInflType (concrete)
+						newClass = CreateNewClass(GetClassInfo("LexEntryType"), "LexEntryInflType", false);
+						//		Add: GlossPrepend multi-uni
+						//		Add: GlossAppend multi-uni
+						//		Add: InflFeats own atomic
+						//		Add: Slots rel col
+						newClass.AddProperty(new FdoPropertyInfo("GlossPrepend", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("GlossAppend", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("InflFeats", DataType.OwningAtomic));
+						newClass.AddProperty(new FdoPropertyInfo("Slots", DataType.ReferenceCollection));
+						break;
+					case 7000056: // Fall through
+					case 7000057: // Fall through
+					case 7000058:
+					// 7000058: No actual model change.
+						break;
+					case 7000059:
+						// 7000059:
+						//	Modified: RnGenericRec
+						//		Modified OA to RA: RA "Text" (added in 7000046)							[Text]
+						newClass = GetClassInfo("RnGenericRec");
+						newClass.RemoveProperty("Text");
+						newClass.AddProperty(new FdoPropertyInfo("Text", DataType.ReferenceAtomic));
+						//	Modifed: LangProject
+						//		Remove: OC "Texts" property
+						GetClassInfo("LangProject").RemoveProperty("Texts");
+						break;
+					case 7000060:
+						// 7000060: No actual model change.
+						break;
+					//NB: Update MaximumModelVersion to highest supported number.
+				}
+			}
+
+			ResetCaches();
+			ModelVersion = newVersion;
+			return ModelVersion;
+		}
+		public const int MaximumModelVersion = 7000060;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
@@ -54,34 +312,43 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <exception cref="KeyNotFoundException">
 		/// Thrown if <param name="className"/> is not a recognized class name.
 		/// </exception>
-		public FdoClassInfo GetClassInfo(string className)
+		internal FdoClassInfo GetClassInfo(string className)
 		{
-			if (string.IsNullOrEmpty(className))
-				throw new ArgumentNullException("classname", AnnotationImages.kNullOrEmptyString);
+			if (String.IsNullOrEmpty(className))
+				throw new ArgumentNullException("className", AnnotationImages.kNullOrEmptyString);
 
-			return _classes[className];
+			FdoClassInfo result;
+			_classes.TryGetValue(className, out result);
+			return result; // May be null, which is fine.
 		}
 
 		/// <summary>
 		/// Return all concrete classes.
 		/// </summary>
-		public IEnumerable<FdoClassInfo> AllConcreteClasses
+		internal IEnumerable<FdoClassInfo> AllConcreteClasses
 		{
 			get { return _concreteClasses; }
 		}
 
-		/// <summary>
-		/// Return classes that have collection properties.
-		/// </summary>
-		public IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
+		///// <summary>
+		///// Return classes that have collection properties.
+		///// </summary>
+		//internal IDictionary<string, FdoClassInfo> ClassesWithCollectionProperties
+		//{
+		//    get { return _classesWithCollectionProperties; }
+		//}
+
+		private FdoClassInfo CreateNewClass(FdoClassInfo superclass, string newClassName, bool isAbtract)
 		{
-			get { return _classesWithCollectionProperties; }
+			var newClass = new FdoClassInfo(superclass, newClassName, isAbtract);
+			_classes.Add(newClass.ClassName, newClass);
+			return newClass;
 		}
 
 		/// <summary>
 		/// Add a custom property to a class.
 		/// </summary>
-		public void AddCustomPropInfo(string className, FdoPropertyInfo propInfo)
+		internal void AddCustomPropInfo(string className, FdoPropertyInfo propInfo)
 		{
 			if (!propInfo.IsCustomProperty)
 				throw new ArgumentException("Property is not custom.");
@@ -97,20 +364,71 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
+		internal void AddCustomPropInfo(MergeOrder mergeOrder)
+		{
+			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
+
+			// Add optional custom property information to MDC.
+			string mainCustomPropPathname;
+			string altCustomPropPathname;
+			switch (mergeOrder.MergeSituation.ConflictHandlingMode)
+			{
+				default:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					break;
+				case MergeOrder.ConflictHandlingModeChoices.WeWin:
+					mainCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToOurs);
+					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
+					break;
+			}
+			AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, GetMetaDataCacheOffsetFolder(mergeOrder), 1);
+		}
+
+		private static string GetMetaDataCacheOffsetFolder(MergeOrder mergeOrder)
+		{
+			var currentPathname = mergeOrder.pathToOurs;
+			if (currentPathname.Contains(SharedConstants.Other))
+				return SharedConstants.Other;
+			if (currentPathname.Contains(SharedConstants.Linguistics))
+				return SharedConstants.Linguistics;
+			if (currentPathname.Contains(SharedConstants.Anthropology))
+				return SharedConstants.Anthropology;
+			return currentPathname; // Must be a test.
+		}
+
 		internal void AddCustomPropInfo(string mainCustomPropPathname, string altCustomPropPathname, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
 		{
-			var customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
-			if (customFiles.Count == 0)
-				customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "*.CustomProperties").ToList();
-
-			if (customFiles.Count < 1)
+			var dirPath = GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
+			var customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			//var customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "FLExProject.CustomProperties").ToList();
+			if (!File.Exists(customPropPathname))
+			{
+				dirPath = GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
+				customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			}
+			if (!File.Exists(customPropPathname))
 				return;
 
-			var doc = XDocument.Load(customFiles[0]);
-// ReSharper disable PossibleNullReferenceException
-			foreach (var customFieldElement in doc.Element("AdditionalFields").Elements("CustomField"))
-				AddCustomPropInfo(customFieldElement.Attribute("class").Value, new FdoPropertyInfo(customFieldElement.Attribute("name").Value, customFieldElement.Attribute("type").Value, true));
-// ReSharper restore PossibleNullReferenceException
+			AddCustomPropInfo(customPropPathname);
+		}
+
+		internal void AddCustomPropInfo(string customPropPathname)
+		{
+			var doc = XDocument.Load(customPropPathname);
+			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
+			{
+				FdoClassInfo classInfo;
+				var className = customFieldElement.Attribute(SharedConstants.Class).Value;
+				if (_classes.TryGetValue(className, out classInfo))
+				{
+					var propertyName = customFieldElement.Attribute(SharedConstants.Name).Value;
+					var propInfo = classInfo.GetProperty(propertyName);
+					if (propInfo == null)
+						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));
+				}
+			}
+			ResetCaches();
 		}
 
 		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
@@ -129,6 +447,84 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				}
 			}
 			return adjustedDirPath;
+		}
+
+		private const string OC = "OC";
+		private const string OwningCollection = "OwningCollection";
+		private const string RC = "RC";
+		private const string ReferenceCollection = "ReferenceCollection";
+		private const string OS = "OS";
+		private const string OwningSequence = "OwningSequence";
+		private const string RS = "RS";
+		private const string ReferenceSequence = "ReferenceSequence";
+		private const string OA = "OA";
+		private const string OwningAtomic = "OwningAtomic";
+		private const string RA = "RA";
+		private const string ReferenceAtomic = "ReferenceAtomic";
+		internal static string AdjustedPropertyType(string rawType)
+		{
+			string adjustedType;
+			switch (rawType)
+			{
+				default:
+					adjustedType = rawType;
+					break;
+
+				case OC:
+					adjustedType = OwningCollection;
+					break;
+				case RC:
+					adjustedType = ReferenceCollection;
+					break;
+
+				case OS:
+					adjustedType = OwningSequence;
+					break;
+				case RS:
+					adjustedType = ReferenceSequence;
+					break;
+
+				case OA:
+					adjustedType = OwningAtomic;
+					break;
+				case RA:
+					adjustedType = ReferenceAtomic;
+					break;
+			}
+			return adjustedType;
+		}
+
+		internal static string RestoreAdjustedTypeValue(string storedType)
+		{
+			string adjustedType;
+			switch (storedType)
+			{
+				default:
+					adjustedType = storedType;
+					break;
+
+				case OwningCollection:
+					adjustedType = OC;
+					break;
+				case ReferenceCollection:
+					adjustedType = RC;
+					break;
+
+				case OwningSequence:
+					adjustedType = OS;
+					break;
+				case ReferenceSequence:
+					adjustedType = RS;
+					break;
+
+				case OwningAtomic:
+					adjustedType = OA;
+					break;
+				case ReferenceAtomic:
+					adjustedType = RA;
+					break;
+			}
+			return adjustedType;
 		}
 
 		/// <summary>
@@ -296,36 +692,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Structure", DataType.Integer));
 			clsInfo.AddProperty(new FdoPropertyInfo("Function", DataType.Integer));
 			clsInfo.AddProperty(new FdoPropertyInfo("Usage", DataType.MultiUnicode));
-
-			// Removed in DM31.
-			//clsInfo = new FdoClassInfo("UserView", "CmObject");
-			//_classes.Add("UserView", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Name", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Type", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("App", DataType.Guid));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Records", DataType.OwningCollection));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Details", DataType.Binary));
-			//clsInfo.AddProperty(new FdoPropertyInfo("System", DataType.Boolean));
-			//clsInfo.AddProperty(new FdoPropertyInfo("SubType", DataType.Integer));
-
-			//clsInfo = new FdoClassInfo("UserViewRec", "CmObject");
-			//_classes.Add("UserViewRec", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Clsid", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Level", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Fields", DataType.OwningSequence));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Details", DataType.Binary));
-
-			//clsInfo = new FdoClassInfo("UserViewField", "CmObject");
-			//_classes.Add("UserViewField", clsInfo);
-			//clsInfo.AddProperty(new FdoPropertyInfo("Label", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("HelpString", DataType.MultiUnicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Type", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Flid", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Required", DataType.Integer));
-			//clsInfo.AddProperty(new FdoPropertyInfo("Style", DataType.Unicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("PossList", DataType.ReferenceAtomic));
-			//clsInfo.AddProperty(new FdoPropertyInfo("WritingSystem", DataType.Unicode));
-			//clsInfo.AddProperty(new FdoPropertyInfo("WsSelector", DataType.Integer));
 
 			clsInfo = new FdoClassInfo("CmOverlay", "CmObject");
 			_classes.Add("CmOverlay", clsInfo);
@@ -674,10 +1040,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Diffs", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("UseChapterNumHeading", DataType.Boolean));
 			clsInfo.AddProperty(new FdoPropertyInfo("CanonicalNum", DataType.Integer));
-			// Added DM39.
-			clsInfo.AddProperty(new FdoPropertyInfo("ImportedCheckSum", DataType.Unicode));
-			// Added DM43
-			clsInfo.AddProperty(new FdoPropertyInfo("ImportedBtCheckSum", DataType.MultiUnicode));
 
 			clsInfo = new FdoClassInfo("ScrRefSystem", "CmObject");
 			_classes.Add("ScrRefSystem", clsInfo);
@@ -857,17 +1219,13 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("MainEntriesOrSenses", DataType.ReferenceSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("Comment", DataType.MultiString));
 			clsInfo.AddProperty(new FdoPropertyInfo("DoNotUseForParsing", DataType.Boolean));
-			//Removed DM41: clsInfo.AddProperty(new FdoPropertyInfo("ExcludeAsHeadword", DataType.Boolean));
+			clsInfo.AddProperty(new FdoPropertyInfo("ExcludeAsHeadword", DataType.Boolean));
 			clsInfo.AddProperty(new FdoPropertyInfo("LexemeForm", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("AlternateForms", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("Pronunciations", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("ImportResidue", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
 			clsInfo.AddProperty(new FdoPropertyInfo("EntryRefs", DataType.OwningSequence));
-			// Added DM 38
-			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
-			// Added DM41
-			clsInfo.AddProperty(new FdoPropertyInfo("DoNotShowMainEntryIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("ConstChartRow", "CmObject");
 			_classes.Add("ConstChartRow", clsInfo);
@@ -886,12 +1244,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Reference", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("Translations", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
-			// Added DM 38
-			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("LexDb", "CmMajorObject");
 			_classes.Add("LexDb", clsInfo);
-			// Went away in DM 28 clsInfo.AddProperty(new FdoPropertyInfo("Entries", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("Appendixes", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("SenseTypes", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("UsageTypes", DataType.OwningAtomic));
@@ -907,8 +1262,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Resources", DataType.OwningCollection));
 			clsInfo.AddProperty(new FdoPropertyInfo("VariantEntryTypes", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("ComplexEntryTypes", DataType.OwningAtomic));
-			// Added DM 38
-			clsInfo.AddProperty(new FdoPropertyInfo("PublicationTypes", DataType.OwningAtomic));
 
 			clsInfo = new FdoClassInfo("ConstituentChartCellPart", true, "CmObject");
 			_classes.Add("ConstituentChartCellPart", clsInfo);
@@ -980,8 +1333,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Pictures", DataType.OwningSequence));
 			clsInfo.AddProperty(new FdoPropertyInfo("ImportResidue", DataType.String));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
-			// Added DM 38
-			clsInfo.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 
 			clsInfo = new FdoClassInfo("MoAdhocProhib", true, "CmObject");
 			_classes.Add("MoAdhocProhib", clsInfo);
@@ -1518,8 +1869,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("Summary", DataType.MultiString));
 			clsInfo.AddProperty(new FdoPropertyInfo("LiftResidue", DataType.Unicode));
 			clsInfo.AddProperty(new FdoPropertyInfo("RefType", DataType.Integer));
-			// Added DM40
-			clsInfo.AddProperty(new FdoPropertyInfo("ShowComplexFormsIn", DataType.ReferenceSequence));
 
 			clsInfo = new FdoClassInfo("PhSegmentRule", "CmObject");
 			_classes.Add("PhSegmentRule", clsInfo);
@@ -1601,12 +1950,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			clsInfo.AddProperty(new FdoPropertyInfo("DiscourseData", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("TextMarkupTags", DataType.OwningAtomic));
 			clsInfo.AddProperty(new FdoPropertyInfo("PhFeatureSystem", DataType.OwningAtomic));
-			// Added in DM 38
-			clsInfo = new FdoClassInfo("VirtualOrdering", true, "CmObject");
-			_classes.Add("VirtualOrdering", clsInfo);
-			clsInfo.AddProperty(new FdoPropertyInfo("Source", DataType.ReferenceAtomic));
-			clsInfo.AddProperty(new FdoPropertyInfo("Field", DataType.Unicode));
-			clsInfo.AddProperty(new FdoPropertyInfo("Items", DataType.ReferenceSequence));
+			clsInfo.AddProperty(new FdoPropertyInfo("FilePathsInTsStrings", DataType.OwningAtomic));
 		}
 	}
 }

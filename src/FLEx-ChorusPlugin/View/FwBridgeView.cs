@@ -9,7 +9,7 @@ namespace FLEx_ChorusPlugin.View
 	internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
 	internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);
 
-	internal partial class FwBridgeView : UserControl, IFwBridgeView
+	internal sealed partial class FwBridgeView : UserControl, IFwBridgeView
 	{
 		private IEnumerable<LanguageProject> _projects;
 
@@ -25,21 +25,22 @@ namespace FLEx_ChorusPlugin.View
 
 		private void ProjectsSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (ProjectSelected != null)
-				ProjectSelected(this, new ProjectEventArgs(SelectedProject));
-		}
+			var projectIsInUse = SelectedProject.FieldWorkProjectInUse;
+			((IFwBridgeView)this).EnableSendReceiveControls(projectIsInUse);
 
-		private void SendReceiveButtonClick(object sender, EventArgs e)
-		{
-			Cursor = Cursors.WaitCursor;
-			try
+			if (SelectedProject.IsRemoteCollaborationEnabled)
 			{
-				if (SynchronizeProject != null)
-					SynchronizeProject(this, new EventArgs());
+				_projectView.Enabled = true;
+				_projectView.Visible = true;
+				if (ProjectSelected != null)
+					ProjectSelected(this, new ProjectEventArgs(SelectedProject));
+				(((IProjectView) _projectView).ExistingSystemView as Control).Enabled = true;
 			}
-			finally
+			else
 			{
-				Cursor = Cursors.Default;
+				_projectView.Enabled = false;
+				_projectView.Visible = false;
+				(((IProjectView)_projectView).ExistingSystemView as Control).Enabled = false;
 			}
 		}
 
@@ -48,7 +49,7 @@ namespace FLEx_ChorusPlugin.View
 		public event ProjectSelectedEventHandler ProjectSelected;
 		public event SynchronizeProjectEventHandler SynchronizeProject;
 
-		public IEnumerable<LanguageProject> Projects
+		IEnumerable<LanguageProject> IFwBridgeView.Projects
 		{
 			set
 			{
@@ -57,28 +58,36 @@ namespace FLEx_ChorusPlugin.View
 				_cbProjects.SuspendLayout();
 
 				_cbProjects.Items.Clear();
-				foreach (var project in _projects)
+				var projectsCopy = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
+				foreach (var project in projectsCopy)
 					_cbProjects.Items.Add(project);
-				if (_projects.Count() > 0)
+				if (projectsCopy.Any())
 					_cbProjects.SelectedIndex = 0;
 
 				_cbProjects.ResumeLayout();
 			}
 		}
 
-		public IProjectView ProjectView
+		IProjectView IFwBridgeView.ProjectView
 		{
 			get { return _projectView; }
 		}
 
-		public void EnableSendReceiveControls(bool enableSendReceiveBtn, bool makeWarningsVisible)
+		void IFwBridgeView.EnableSendReceiveControls(bool makeWarningsVisible)
 		{
-			_sendReceiveButton.Enabled = enableSendReceiveBtn;
 			_warninglabel1.Visible = makeWarningsVisible;
 			_warninglabel2.Visible = makeWarningsVisible;
-			pictureBox1.Visible = makeWarningsVisible;
+			_pictureBox.Visible = makeWarningsVisible;
 		}
 
 		#endregion
+
+		private void CommentChanged(object sender, EventArgs e)
+		{
+			var msg = _tbComment.Text;
+			if (string.IsNullOrEmpty(msg))
+				msg = Environment.UserName + " made some changes.";
+			((IProjectView)_projectView).ExistingSystemView.Model.SyncOptions.CheckinDescription = string.Format("[{0}: {1}] {2}", Application.ProductName, Application.ProductVersion, msg);
+		}
 	}
 }

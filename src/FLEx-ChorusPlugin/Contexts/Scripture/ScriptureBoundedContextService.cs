@@ -1,154 +1,158 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureBoundedContextService
 	{
-		private const string ScriptureRootFolder = "Scripture";
-
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
+		internal static void NestContext(XElement languageProjectElement,
+			XElement scriptureElement,
+			string baseDirectory,
+			IDictionary<string, SortedDictionary<string, string>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var scriptureBaseDir = Path.Combine(multiFileDirRoot, ScriptureRootFolder);
-			if (!Directory.Exists(scriptureBaseDir))
-				Directory.CreateDirectory(scriptureBaseDir);
+			// baseDirectory is root/Scripture and has already been created by caller.
+			var scriptureBaseDir = baseDirectory;
 
-			SortedDictionary<string, XElement> sortedInstanceData;
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-			classData.TryGetValue("ScrRefSystem", out sortedInstanceData);
+			// Split out the optional NoteCategories list.
+			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+										  scriptureElement, SharedConstants.NoteCategories,
+										  Path.Combine(scriptureBaseDir, SharedConstants.NoteCategoriesListFilename));
 
-			if (sortedInstanceData != null && sortedInstanceData.Count > 0)
+			// Extract all 66 required 'ScrBookAnnotations' instances from BookAnnotations property, and write to corresponding subfolder.
+			// Leave property, but emptied of <objsur elements>.
+			var booksDir = Path.Combine(scriptureBaseDir, SharedConstants.Books);
+			if (!Directory.Exists(booksDir))
+				Directory.CreateDirectory(booksDir);
+			var allAnnotations = classData[SharedConstants.ScrBookAnnotations];
+			var annotationObjSurElements = scriptureElement.Element(SharedConstants.BookAnnotations).Elements().ToList();
+			scriptureElement.Element(SharedConstants.BookAnnotations).RemoveNodes();
+			for (var canonicalBookNumber = 1; canonicalBookNumber < 67; ++canonicalBookNumber)
 			{
-				var guid = sortedInstanceData.Keys.First();
-				//var dataBytes = sortedInstanceData.Values.First();
-
-				var refDir = Path.Combine(scriptureBaseDir, "ReferenceSystem");
-				if (!Directory.Exists(refDir))
-					Directory.CreateDirectory(refDir);
-
-				// 1. Write out the Scripture reference instance in 'refDir' and all it owns.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, refDir, readerSettings, multiClassOutput,
-											  guid,
-											  new HashSet<string>());
+				var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(canonicalBookNumber);
+				var currentAnnotationElement = XElement.Parse(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(SharedConstants.GuidStr).Value]);
+				CmObjectNestingService.NestObject(false, currentAnnotationElement,
+					classData,
+					guidToClassMapping);
+				FileWriterService.WriteNestedFile(
+					Path.Combine(booksDir, paddedNumber + "." + SharedConstants.bookannotations),
+					new XElement(SharedConstants.BookAnnotations, currentAnnotationElement));
 			}
 
-			classData.TryGetValue("Scripture", out sortedInstanceData);
-
-			if (sortedInstanceData != null && sortedInstanceData.Count > 0)
+			// Extract any optional ScrBook instances from 'ScriptureBooks', and write each to corresponding subfolder.
+			var allBooks = classData[SharedConstants.ScrBook];
+			var scriptureBooksProperty = scriptureElement.Element(SharedConstants.ScriptureBooks);
+			if (scriptureBooksProperty != null && scriptureBooksProperty.HasElements)
 			{
-				var guid = sortedInstanceData.Keys.First();
-				var dataBytes = sortedInstanceData.Values.First();
-
-				// 2. Write out the Scripture instance in scriptureBaseDir, but not several things it owns.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, scriptureBaseDir, readerSettings, multiClassOutput,
-											  guid,
-											  new HashSet<string>
-												{
-													"ScriptureBooks",
-													"Styles",
-													"ImportSettings",
-													"ArchivedDrafts",
-													"BookAnnotations",
-													"NoteCategories"
-												});
-
-				var scriptureElement = dataBytes;
-				// 2. <owning num="1" id="ScriptureBooks" card="seq" sig="ScrBook"> One folder per book using Scripture\Translation\Book+guid. [NB: 3 levels down.]
-				var currentDir = Path.Combine(scriptureBaseDir, "Translation");
-				if (!Directory.Exists(currentDir))
-					Directory.CreateDirectory(currentDir);
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, currentDir,
-					scriptureElement, "ScriptureBooks", "Book_", true);
-
-				// 3. <owning num="7" id="ImportSettings" card="col" sig="ScrImportSet"> One folder per book using Scripture\ImportSettings\ImportSet+guid. [NB: 3 levels down.]
-				currentDir = Path.Combine(scriptureBaseDir, "ImportSettings");
-				if (!Directory.Exists(currentDir))
-					Directory.CreateDirectory(currentDir);
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, currentDir,
-					scriptureElement, "ImportSettings", "ImportSet_", true);
-
-				// 4. <owning num="9" id="ArchivedDrafts" card="col" sig="ScrDraft"/> One folder per draft using Scripture\OlderVersions\Draft+guid. [NB: 3 levels down.]
-				currentDir = Path.Combine(scriptureBaseDir, "OlderVersions");
-				if (!Directory.Exists(currentDir))
-					Directory.CreateDirectory(currentDir);
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, currentDir,
-					scriptureElement, "ArchivedDrafts", "Draft_", true);
-
-				// 5. <owning num="2" id="Styles" card="col" sig="StStyle"> all go into Scripture\Styles
-				// NB: Don't use ObjectFinderServices.WritePropertyInFolders, as it doesn't work on col/seq props with 'false'.
-				foreach (var styleGuid in ObjectFinderServices.GetGuids(scriptureElement, "Styles"))
+				List<XElement> bookObjSurElements = scriptureElement.Element(SharedConstants.ScriptureBooks).Elements().ToList();
+				scriptureElement.Element(SharedConstants.ScriptureBooks).RemoveNodes();
+				foreach (var objsurEl in bookObjSurElements)
 				{
-					var styleDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, styleGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																styleDataBytes,
-																new HashSet<string>());
-				}
-				if (multiClassOutput.Count > 0)
-				{
-					var stylesDir = Path.Combine(scriptureBaseDir, "Styles");
-					if (!Directory.Exists(stylesDir))
-						Directory.CreateDirectory(stylesDir);
-					foreach (var kvp in multiClassOutput)
-						FileWriterService.WriteSecondaryFile(Path.Combine(stylesDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-					multiClassOutput.Clear();
-				}
-
-				//	These two go into the same Scripture\Annotations folder
-				// 6. <owning num="24" id="BookAnnotations" card="seq" sig="ScrBookAnnotations">
-				foreach (var annGuid in ObjectFinderServices.GetGuids(scriptureElement, "BookAnnotations"))
-				{
-					var annDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, annGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																annDataBytes,
-																new HashSet<string>());
-				}
-				// 7. <owning num="25" id="NoteCategories" card="atomic" sig="CmPossibilityList">
-				foreach (var noteCatGuid in ObjectFinderServices.GetGuids(scriptureElement, "NoteCategories"))
-				{
-					var noteCatDataBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, noteCatGuid);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																noteCatDataBytes,
-																new HashSet<string>());
-				}
-				if (multiClassOutput.Count > 0)
-				{
-					var annsDir = Path.Combine(scriptureBaseDir, "Annotations");
-					if (!Directory.Exists(annsDir))
-						Directory.CreateDirectory(annsDir);
-					foreach (var kvp in multiClassOutput)
-						FileWriterService.WriteSecondaryFile(Path.Combine(annsDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-					multiClassOutput.Clear();
+					var currentBookElement = XElement.Parse(allBooks[objsurEl.Attribute(SharedConstants.GuidStr).Value]);
+					var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(Int32.Parse(currentBookElement.Element("CanonicalNum").Attribute("val").Value));
+					CmObjectNestingService.NestObject(false, currentBookElement,
+						classData,
+						guidToClassMapping);
+					FileWriterService.WriteNestedFile(
+						Path.Combine(booksDir, paddedNumber + "." + SharedConstants.book),
+						new XElement(SharedConstants.Book, currentBookElement));
 				}
 			}
 
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> {
-				"Scripture",
-				"ScrBook", "ScrSection", "ScrTxtPara", "ScrFootnote", "ScrDifference",
-				"ScrDraft",
-				"ScrImportSet", "ScrImportSource", "ScrImportP6Project", "ScrImportSFFiles", "ScrMarkerMapping",
-				"ScrBookAnnotations", "ScrScriptureNote", "ScrCheckRun",
-				"ScrRefSystem", "ScrBookRef" });
+			CmObjectNestingService.NestObject(false, scriptureElement,
+				classData,
+				guidToClassMapping);
+
+			FileWriterService.WriteNestedFile(
+				Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename),
+				new XElement(SharedConstants.TranslatedScripture, scriptureElement));
+
+			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
+			classData[SharedConstants.LangProject][languageProjectElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = languageProjectElement.ToString();
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			string scriptureBaseDir)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, ScriptureRootFolder)));
+			if (!Directory.Exists(scriptureBaseDir))
+				return;
+
+			// scriptureBaseDir is root/Scripture.
+			var pathname = Path.Combine(scriptureBaseDir, SharedConstants.ScriptureTransFilename);
+			if (!File.Exists(pathname))
+				return; // Nobody home.
+			var doc = XDocument.Load(pathname);
+			var scrElement = doc.Element(SharedConstants.TranslatedScripture).Elements().First();
+
+			// Put the NoteCategories list back in the right place.
+			pathname = Path.Combine(scriptureBaseDir, SharedConstants.NoteCategoriesListFilename);
+			if (File.Exists(pathname))
+			{
+				doc = XDocument.Load(pathname);
+				BaseDomainServices.RestoreElement(pathname, sortedData, scrElement, SharedConstants.NoteCategories, doc.Root.Element(SharedConstants.CmPossibilityList));
+			}
+
+			// Owned by LangProj in TranslatedScripture prop.
+			var langProjElement = highLevelData[SharedConstants.LangProject];
+			BaseDomainServices.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
+
+			CmObjectFlatteningService.FlattenObject(
+				pathname,
+				sortedData,
+				scrElement,
+				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
+
+			// Put the <objsur> elements back into BookAnnotations and ScriptureBooks property elements.
+			// There will always be 66 ScrBookAnnotations instances and they need go in canonical book order.
+			// There may (or may not) be ScrBook instances, but they all go in canonical book order in ScriptureBooks, if present.
+			var booksDir = Path.Combine(scriptureBaseDir, SharedConstants.Books);
+			var sortedFiles = new SortedList<int, string>(66);
+			foreach (var pathnameForAnn in Directory.GetFiles(booksDir, "*." + SharedConstants.bookannotations))
+				sortedFiles.Add(Int32.Parse(Path.GetFileNameWithoutExtension(pathnameForAnn)), pathnameForAnn);
+			var scrElementGuid = scrElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			var scriptureBooksProperty = scrElement.Element(SharedConstants.ScriptureBooks);
+			foreach (var sortedPathnameKvp in sortedFiles)
+			{
+				var sortedDoc = XDocument.Load(sortedPathnameKvp.Value);
+				var element = sortedDoc.Root.Element(SharedConstants.ScrBookAnnotations);
+				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.BookAnnotations, element);
+				CmObjectFlatteningService.FlattenObject(
+					sortedPathnameKvp.Value,
+					sortedData,
+					element,
+					scrElementGuid); // Restore 'ownerguid' to annotation.
+
+				// Deal with optional ScrBook
+				var bookPathname = sortedPathnameKvp.Value.Replace(SharedConstants.bookannotations, SharedConstants.book);
+				if (!File.Exists(bookPathname))
+					continue;
+
+				if (scriptureBooksProperty == null)
+				{
+					scriptureBooksProperty = new XElement(SharedConstants.ScriptureBooks);
+					scrElement.Add(scriptureBooksProperty);
+					// Make sure new property is sorted in correct place.
+					DataSortingService.SortMainRtElement(scrElement);
+				}
+				// Add book <objsur> element to scrElement's ScriptureBooks element.
+				sortedDoc = XDocument.Load(bookPathname);
+				element = sortedDoc.Root.Element(SharedConstants.ScrBook);
+				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.ScriptureBooks, element);
+				CmObjectFlatteningService.FlattenObject(
+					bookPathname,
+					sortedData,
+					element,
+					scrElementGuid); // Restore 'ownerguid' to book.
+			}
+
+			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);
 		}
 	}
 }

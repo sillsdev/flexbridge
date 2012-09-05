@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Chorus.UI.Clone;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -8,8 +9,11 @@ namespace FLEx_ChorusPlugin.View
 	///
 	/// The Startup event lets the controller know what the user wants to do (use extant repo or make new one).
 	/// </summary>
-	public sealed partial class StartupNewView : UserControl, IStartupNewView
+	internal sealed partial class StartupNewView : UserControl, IStartupNewView
 	{
+		private Button _useUSBButton;
+		private Button _useInternetButton;
+		private Button _useSharedFolderButton;
 		public event StartupNewEventHandler Startup;
 
 		public StartupNewView()
@@ -17,38 +21,25 @@ namespace FLEx_ChorusPlugin.View
 			InitializeComponent();
 		}
 
-		private void RadioButtonClicked(object sender, EventArgs e)
-		{
-			UpdateEnabledControls();
-		}
-
-		private void UpdateEnabledControls()
-		{
-			groupBox1.Enabled = _cbAcceptLimitation.Checked;
-			_btnGetStarted.Enabled = _cbAcceptLimitation.Checked
-									 && groupBox1.Enabled &&(_rbUsb.Checked || _rbLocalNetwork.Checked || _rbInternet.Checked);
-		}
-
-		private void AcceptLimitationsCheckChanged(object sender, EventArgs e)
-		{
-			UpdateEnabledControls();
-		}
-
-		private void ContinueBtnClicked(object sender, EventArgs e)
-		{
-			var repoSource = _rbUsb.Checked
-				? ExtantRepoSource.Usb
-				: (_rbLocalNetwork.Checked
-					? ExtantRepoSource.LocalNetwork
-					: ExtantRepoSource.Internet);
-
-			OnStartup(new StartupNewEventArgs(repoSource));
-		}
-
 		private void OnStartup(StartupNewEventArgs e)
 		{
 			if (Startup != null)
 				Startup(this, e);
+		}
+
+		private void _useUSBButton_Click(object sender, EventArgs e)
+		{
+			OnStartup(new StartupNewEventArgs(ExtantRepoSource.Usb));
+		}
+
+		private void _useInternetButton_Click(object sender, EventArgs e)
+		{
+			OnStartup(new StartupNewEventArgs(ExtantRepoSource.Internet));
+		}
+
+		private void _useSharedFolderButton_Click(object sender, EventArgs e)
+		{
+			OnStartup(new StartupNewEventArgs(ExtantRepoSource.LocalNetwork));
 		}
 	}
 }

@@ -8,7 +8,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			get
 			{
-// ReSharper disable PossibleNullReferenceException
 				return (string)Registry
 								.LocalMachine
 								.OpenSubKey("software")
@@ -16,7 +15,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 								.OpenSubKey("FieldWorks")
 								.OpenSubKey("7.0")
 								.GetValue("ProjectsDir");
-// ReSharper restore PossibleNullReferenceException
 			}
 		}
 	}

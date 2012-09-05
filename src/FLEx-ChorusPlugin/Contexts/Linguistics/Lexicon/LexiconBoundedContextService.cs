@@ -1,185 +1,192 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 {
 	internal static class LexiconBoundedContextService
 	{
-		private const string LexiconRootFolder = "Lexicon";
+		private const string LexDb = "LexDb";
 
-		public static void ExtractBoundedContexts(XmlReaderSettings readerSettings, string multiFileDirRoot,
-												  MetadataCache mdc,
-												  IDictionary<string, SortedDictionary<string, XElement>> classData, Dictionary<string, string> guidToClassMapping,
-												  HashSet<string> skipWriteEmptyClassFiles)
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, SortedDictionary<string, string>> classData,
+			Dictionary<string, string> guidToClassMapping)
 		{
-			var lexiconBaseDir = Path.Combine(multiFileDirRoot, LexiconRootFolder);
-			if (!Directory.Exists(lexiconBaseDir))
-				Directory.CreateDirectory(lexiconBaseDir);
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
+			if (!Directory.Exists(lexiconDir))
+				Directory.CreateDirectory(lexiconDir);
 
-			SortedDictionary<string, XElement> sortedInstanceData;
-			if (!classData.TryGetValue("LexDb", out sortedInstanceData))
-				return;
+			var lexDb = XElement.Parse(classData[LexDb].First().Value); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
+			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
+			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			langProjElement.Element(LexDb).RemoveNodes();
 
-			var multiClassOutput = new Dictionary<string, SortedDictionary<string, XElement>>();
-			if (sortedInstanceData.Count > 0)
+			// Nest each CmPossibilityList owned by LexDb.
+			var lists = classData[SharedConstants.CmPossibilityList];
+			NestLists(classData, guidToClassMapping, lists, lexiconDir, lexDb,
+					  new List<string>
+						{
+							"SenseTypes",
+							"UsageTypes",
+							"DomainTypes",
+							// Moved to Morph & Syn, as per AndyB. "MorphTypes",
+							"References",
+							"VariantEntryTypes",
+							"ComplexEntryTypes",
+							"PublicationTypes"
+						});
+
+			// Nest SemanticDomainList and AffixCategories props of LangProject.
+			NestLists(classData, guidToClassMapping, lists, lexiconDir, langProjElement,
+					  new List<string>
+						{
+							"SemanticDomainList",
+							"AffixCategories"
+						});
+
+			// The LexDb object will go into the <header>, and will still nest these owning props: Appendixes, Introduction, and Resources (plus its basic props).
+			// All of the lexical entries will then go in as siblings of, but after, the <header> element.
+			// At this point LexDb is ready to go into the <header>.
+			CmObjectNestingService.NestObject(false, lexDb,
+				classData,
+				guidToClassMapping);
+			var header = new XElement(SharedConstants.Header);
+			header.Add(lexDb);
+
+			var sortedEntryInstanceData = classData[SharedConstants.LexEntry];
+			var nestedData = new SortedDictionary<string, string>();
+			if (sortedEntryInstanceData.Count > 0)
 			{
-				var guid = sortedInstanceData.Keys.First();
-				var dataBytes = sortedInstanceData.Values.First();
-
-				// 1. Write out the LexDb instance in lexiconBaseDir, but not several things it owns.
-				FileWriterService.WriteObject(mdc, classData, guidToClassMapping, lexiconBaseDir, readerSettings, multiClassOutput, guid,
-					new HashSet<string> { "ReversalIndexes", "SenseTypes", "UsageTypes", "DomainTypes", "MorphTypes", "References", "VariantEntryTypes", "ComplexEntryTypes" });
-
-				var lexDbElement = dataBytes;
-
-				// 2. Write SenseTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"SenseTypes", "SenseTypes", false);
-
-				// 3. Write UsageTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"UsageTypes", "UsageTypes", false);
-
-				// 4. Write DomainTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"DomainTypes", "DomainTypes", false);
-
-				// 5. Write MorphTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"MorphTypes", "MorphTypes", false);
-
-				// 6. Write References.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"References", "References", false);
-
-				// 7. Write VariantEntryTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"VariantEntryTypes", "VariantEntryTypes", false);
-
-				// 8. Write ComplexEntryTypes.
-				ObjectFinderServices.WritePropertyInFolders(mdc,
-					classData, guidToClassMapping, multiClassOutput,
-					readerSettings, lexiconBaseDir,
-					lexDbElement,
-					"ComplexEntryTypes", "ComplexEntryTypes", false);
-
-				// 9. Entries
-				if (!classData.TryGetValue("LexEntry", out sortedInstanceData))
-					return;
-				var srcDataCopy = new SortedDictionary<string, XElement>(sortedInstanceData);
-				foreach (var entryKvp in srcDataCopy)
+				var srcDataCopy = new SortedDictionary<string, string>(sortedEntryInstanceData);
+				foreach (var entry in srcDataCopy.Values)
 				{
-					var entryEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, entryKvp.Key);
-					ObjectFinderServices.CollectAllOwnedObjects(mdc,
-																classData, guidToClassMapping, multiClassOutput,
-																entryEl,
-																new HashSet<string>());
-				}
-				var entryDir = Path.Combine(lexiconBaseDir, "Entries");
-				if (!Directory.Exists(entryDir))
-					Directory.CreateDirectory(entryDir);
-				foreach (var kvp in multiClassOutput)
-				{
-					var classname = kvp.Key;
-					switch (classname)
-					{
-						default:
-							// Only write one file.
-							FileWriterService.WriteSecondaryFile(Path.Combine(entryDir, classname + ".ClassData"), readerSettings, kvp.Value);
-							break;
-						case "LexEntry":
-						case "LexSense":
-							// Write 10 files for each high volume class.
-							FileWriterService.WriteSecondaryFiles(entryDir, classname, readerSettings, kvp.Value);
-							break;
-					}
+					var entryElement = XElement.Parse(entry);
+					CmObjectNestingService.NestObject(false, entryElement,
+													  classData,
+													  guidToClassMapping);
+					nestedData.Add(entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), entryElement.ToString());
 				}
 			}
 
-			// 10. Semantic Domain list.
-			multiClassOutput.Clear();
-			var langProjElement = classData["LangProject"].Values.First();
-			var guids = ObjectFinderServices.GetGuids(langProjElement, "SemanticDomainList");
-			if (guids.Count > 0)
+			var buckets = FileWriterService.CreateEmptyBuckets(10);
+			FileWriterService.FillBuckets(buckets, nestedData);
+
+			for (var i = 0; i < buckets.Count; ++i)
 			{
-				var semDomListEl = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															semDomListEl,
-															new HashSet<string>());
-				var semDomDir = Path.Combine(lexiconBaseDir, "SemanticDomain");
-				if (!Directory.Exists(semDomDir))
-					Directory.CreateDirectory(semDomDir);
-				foreach (var kvp in multiClassOutput)
-				{
-					var classname = kvp.Key;
-					switch (classname)
-					{
-						default:
-							// Only write one file.
-							FileWriterService.WriteSecondaryFile(Path.Combine(semDomDir, classname + ".ClassData"), readerSettings, kvp.Value);
-							break;
-						case "CmSemanticDomain":
-						case "CmDomainQ":
-							// Write 10 files for each high volume class.
-							FileWriterService.WriteSecondaryFiles(semDomDir, classname, readerSettings, kvp.Value);
-							break;
-					}
-				}
+				var root = new XElement(SharedConstants.Lexicon);
+				if (i == 0 && header.HasElements)
+					root.Add(header);
+				var currentBucket = buckets[i];
+				foreach (var entryString in currentBucket.Values)
+					root.Add(XElement.Parse(entryString));
+				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
 
-			// 11. Affix category list. LP->AffixCategories
-			multiClassOutput.Clear();
-			guids = ObjectFinderServices.GetGuids(langProjElement, "AffixCategories");
-			if (guids.Count > 0)
-			{
-				var afxCatListBytes = ObjectFinderServices.RegisterDataInBoundedContext(classData, guidToClassMapping, multiClassOutput, guids[0]);
-				ObjectFinderServices.CollectAllOwnedObjects(mdc,
-															classData, guidToClassMapping, multiClassOutput,
-															afxCatListBytes,
-															new HashSet<string>());
-				var afCatDir = Path.Combine(lexiconBaseDir, "AffixCategories");
-				if (!Directory.Exists(afCatDir))
-					Directory.CreateDirectory(afCatDir);
-				foreach (var kvp in multiClassOutput)
-				{
-					FileWriterService.WriteSecondaryFile(Path.Combine(afCatDir, kvp.Key + ".ClassData"), readerSettings, kvp.Value);
-				}
-			}
-
-			ObjectFinderServices.ProcessLists(classData, skipWriteEmptyClassFiles, new HashSet<string> { "LexDb",
-				"LexEntry", "LexSense",
-				"LexEntryRef", "LexEtymology",
-				"LexExampleSentence", "LexEntryType",
-				"MoMorphType", "LexReference", "LexRefType", "LexAppendix",
-				"CmSemanticDomain", "CmDomainQ" });
+			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
-		public static void RestoreOriginalFile(XmlWriter writer, XmlReaderSettings readerSettings, string multiFileDirRoot)
+		internal static string PathnameForBucket(string inventoryDir, int bucket)
 		{
-			FileWriterService.RestoreFiles(writer, readerSettings, Path.Combine(multiFileDirRoot, Path.Combine(multiFileDirRoot, LexiconRootFolder)));
+			return Path.Combine(inventoryDir, string.Format("{0}_{1}{2}.{3}", SharedConstants.Lexicon, bucket >= 9 ? "" : "0", bucket + 1, SharedConstants.Lexdb));
+		}
+
+		internal static void FlattenContext(
+			SortedDictionary<string, XElement> highLevelData,
+			SortedDictionary<string, XElement> sortedData,
+			string linguisticsBaseDir)
+		{
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
+			if (!Directory.Exists(lexiconDir))
+				return;
+
+			var langProjElement = highLevelData["LangProject"];
+			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			var lexDbPathnames = new List<string>(Directory.GetFiles(lexiconDir, string.Format("{0}_??.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), SearchOption.TopDirectoryOnly));
+			lexDbPathnames.Sort(StringComparer.InvariantCultureIgnoreCase);
+			foreach (var lexDbPathname in lexDbPathnames)
+			{
+				var lexDbDoc = XDocument.Load(lexDbPathname);
+				var rootLexDbDoc = lexDbDoc.Root;
+				var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
+				if (headerLexDbDoc != null)
+				{
+					var lexDb = headerLexDbDoc.Element(LexDb);
+					highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
+					// Add LexDb <objsur> element to LP.
+					BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
+					foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
+					{
+						var listDoc = XDocument.Load(listPathname);
+						var listElement = listDoc.Root.Element(SharedConstants.CmPossibilityList);
+						var listFilenameSansExtension = Path.GetFileNameWithoutExtension(listPathname);
+						switch (listFilenameSansExtension)
+						{
+							default:
+								// In LexDB. Just add the list to the owning prop, and let it get flattened, normally.
+								lexDb.Element(listFilenameSansExtension).Add(listElement);
+								break;
+							case "SemanticDomainList":
+							case "AffixCategories":
+								// In LP. Restore the <objsur> element in LP, and then flatten the list by itself.
+								BaseDomainServices.RestoreObjsurElement(langProjElement, listFilenameSansExtension, listElement);
+								// Flatten the LP list by itself.
+								CmObjectFlatteningService.FlattenObject(
+									listPathname,
+									sortedData,
+									listElement,
+									langProjGuid); // Restore 'ownerguid' to list.
+								break;
+						}
+					}
+					// Flatten lexDb.
+					CmObjectFlatteningService.FlattenObject(
+						lexDbPathname,
+						sortedData,
+						lexDb,
+						langProjGuid); // Restore 'ownerguid' to LexDb.
+				}
+
+				// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
+				foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry)
+					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
+				{
+					CmObjectFlatteningService.FlattenObject(
+						lexDbPathname,
+						sortedData,
+						entryElement,
+						null); // Entries are not owned.
+				}
+			}
+		}
+
+		private static void NestLists(IDictionary<string, SortedDictionary<string, string>> classData,
+			Dictionary<string, string> guidToClassMapping,
+			IDictionary<string, string> posLists,
+			string lexiconRootDir,
+			XContainer owningElement,
+			IEnumerable<string> propNames)
+		{
+			foreach (var propName in propNames)
+			{
+				var listPropElement = owningElement.Element(propName);
+				if (listPropElement == null || !listPropElement.HasElements)
+					continue;
+
+				var root = new XElement(propName);
+				var listElement = XElement.Parse(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
+				CmObjectNestingService.NestObject(false,
+					listElement,
+					classData,
+					guidToClassMapping);
+				listPropElement.RemoveNodes(); // Remove the single list objsur element.
+				root.Add(listElement);
+
+				FileWriterService.WriteNestedFile(Path.Combine(lexiconRootDir, propName + "." + SharedConstants.List), root);
+			}
 		}
 	}
 }

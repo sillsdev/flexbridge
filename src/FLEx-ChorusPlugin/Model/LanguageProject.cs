@@ -6,7 +6,7 @@ namespace FLEx_ChorusPlugin.Model
 {
 	/// <summary>
 	/// LanguageProject represents a FieldWorks language project
-	/// (but is not the same class as is used in FielwdWorks).
+	/// (but is not the same class as is used in FieldWorks).
 	///
 	/// A LanguageProject may, or may not, be enabled for remote collaboration use.
 	/// If it is not ready for such use, it can be made ready.
@@ -21,11 +21,17 @@ namespace FLEx_ChorusPlugin.Model
 		internal LanguageProject(string fwdataFile)
 		{
 			if (string.IsNullOrEmpty(fwdataFile))
+			{
 				throw new ArgumentNullException("fwdataFile");
+			}
 			if (!File.Exists(fwdataFile))
+			{
 				throw new FileNotFoundException("Cannot find the file.", fwdataFile);
-			if (!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata")
+			}
+			if ((!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata"))
+			{
 				throw new ArgumentException(Resources.kNotAnFwXmlFile, "fwdataFile");
+			}
 
 			_fwdataFile = fwdataFile;
 		}
@@ -40,7 +46,7 @@ namespace FLEx_ChorusPlugin.Model
 			get { return Path.GetDirectoryName(_fwdataFile); }
 		}
 
-		public bool IsRemoteCollaborationEnabled
+		internal bool IsRemoteCollaborationEnabled
 		{
 			get
 			{
@@ -48,7 +54,7 @@ namespace FLEx_ChorusPlugin.Model
 			}
 		}
 
-		public bool FieldWorkProjectInUse
+		internal bool FieldWorkProjectInUse
 		{
 			get
 			{

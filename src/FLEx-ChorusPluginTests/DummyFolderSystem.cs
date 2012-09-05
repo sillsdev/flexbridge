@@ -7,7 +7,7 @@ namespace FLEx_ChorusPluginTests
 	/// <summary>
 	/// Class used to create/delete test folders and files.
 	/// </summary>
-	internal class DummyFolderSystem : IDisposable
+	internal sealed class DummyFolderSystem : IDisposable
 	{
 		private readonly List<string> _dummyFolderPaths = new List<string>();
 

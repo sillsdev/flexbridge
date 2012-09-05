@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPluginTests.Mocks;
@@ -17,10 +18,8 @@ namespace FLEx_ChorusPluginTests.Controller
 		private MockedFwBridgeView _mockedFwBridgeView;
 		private MockedProjectView _mockedProjectView;
 		private MockedExistingSystemView _mockedExistingSystemView;
-		private MockedStartupNewView _mockedStartupNewView;
 		private MockedSynchronizeProject _mockedSynchronizeProject;
 		private DummyFolderSystem _dummyFolderSystem;
-		private MockedGetSharedProject _mockedGetSharedProject;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -29,14 +28,12 @@ namespace FLEx_ChorusPluginTests.Controller
 			_mockedProjectPathLocator = new MockedProjectPathLocator(new HashSet<string> {_dummyFolderSystem.BaseFolderPath});
 
 			_mockedSynchronizeProject = new MockedSynchronizeProject();
-			_mockedGetSharedProject = new MockedGetSharedProject();
 
 			_mockedFwBridgeView = new MockedFwBridgeView();
-			_realController = new FwBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject, _mockedGetSharedProject);
+			_realController = new FwBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject);
 
 			_mockedProjectView = (MockedProjectView)_mockedFwBridgeView.ProjectView;
 			_mockedExistingSystemView = (MockedExistingSystemView)_mockedProjectView.ExistingSystemView;
-			_mockedStartupNewView = (MockedStartupNewView)_mockedProjectView.StartupNewView;
 		}
 
 		[TestFixtureTearDown]
@@ -68,30 +65,41 @@ namespace FLEx_ChorusPluginTests.Controller
 			Assert.AreEqual(2, _mockedFwBridgeView.Projects.Count());
 		}
 
-		[Test, Ignore("Work up test.")]
-		public void EnsureSendReceiveBtnIsDisabledForUnsharableProject()
+		[Test]
+		public void EnsureWarningsAreVisibleForLockedSharableProject()
 		{
-			var unsharableProject = (from project in _mockedFwBridgeView.Projects
-									 where !project.IsRemoteCollaborationEnabled
+			var sharableButLockedProject = (from project in _mockedFwBridgeView.Projects
+									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
-			_mockedFwBridgeView.RaiseProjectSelected(unsharableProject);
-			Assert.IsFalse(_mockedFwBridgeView.EnableSendReceive);
+			// Add lock file.
+			var lockPathname = Path.Combine(sharableButLockedProject.DirectoryName, sharableButLockedProject.Name + ".fwdata.lock");
+			File.WriteAllText(lockPathname, "");
+			try
+			{
+				_mockedFwBridgeView.RaiseProjectSelected(sharableButLockedProject);
 
-			// Tests IProjectView_ActivateView
-			Assert.AreSame(_mockedStartupNewView, _mockedProjectView.ActiveView);
+				// Tests IProjectView_ActivateView
+				Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
 
-			// Tests IExistingSystemView_ChorusSys
-			Assert.IsNull(_mockedExistingSystemView.ChorusSys);
+				// Tests IExistingSystemView_ChorusSys
+				Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+
+				Assert.IsTrue(_mockedFwBridgeView.WarningsAreVisible);
+			}
+			finally
+			{
+				if (File.Exists(lockPathname))
+					File.Delete(lockPathname);
+			}
 		}
 
 		[Test]
-		public void EnsureSendReceiveBtnIsEnabledForUnsharedButSharableProject()
+		public void EnsureWarningsAreNotVisibleForUnsharedButSharableProject()
 		{
 			var unsharedButSharableProject = (from project in _mockedFwBridgeView.Projects
 									 where !project.IsRemoteCollaborationEnabled
 									 select project).First();
 			_mockedFwBridgeView.RaiseProjectSelected(unsharedButSharableProject);
-			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
@@ -103,19 +111,20 @@ namespace FLEx_ChorusPluginTests.Controller
 		}
 
 		[Test]
-		public void EnsureSendReceiveBtnIsEnabledForSharableProject()
+		public void EnsureWarningsAreNotVisibleForSharableProject()
 		{
 			var sharableProject = (from project in _mockedFwBridgeView.Projects
 									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
 			_mockedFwBridgeView.RaiseProjectSelected(sharableProject);
-			Assert.IsTrue(_mockedFwBridgeView.EnableSendReceive);
 
 			// Tests IProjectView_ActivateView
 			Assert.AreSame(_mockedExistingSystemView, _mockedProjectView.ActiveView);
 
 			// Tests IExistingSystemView_ChorusSys
 			Assert.IsNotNull(_mockedExistingSystemView.ChorusSys);
+
+			Assert.IsFalse(_mockedFwBridgeView.WarningsAreVisible);
 		}
 
 		[Test]
@@ -145,12 +154,6 @@ namespace FLEx_ChorusPluginTests.Controller
 		public void EnsureIProjectViewHasIExistingSystemView()
 		{
 			Assert.IsNotNull(_mockedProjectView.ExistingSystemView);
-		}
-
-		[Test]
-		public void EnsureIProjectViewHasIStartupNewView()
-		{
-			Assert.IsNotNull(_mockedProjectView.StartupNewView);
 		}
 
 		#endregion Ensure IProjectView is handled by controller

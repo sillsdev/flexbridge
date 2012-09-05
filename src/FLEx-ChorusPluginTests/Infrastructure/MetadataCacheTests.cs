@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
@@ -14,46 +13,72 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 	{
 		private MetadataCache _mdc;
 
-		/// <summary>
-		/// Set up the test fixture class.
-		/// </summary>
-		[TestFixtureSetUp]
-		public void FixtureSetup()
+		[SetUp]
+		public void TestSetup()
 		{
-			_mdc = new MetadataCache();
+			_mdc = MetadataCache.TestOnlyNewCache;
+		}
+
+		[TearDown]
+		public void TestTearDown()
+		{
+			_mdc = null;
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void Access_Class_Info_With_Null_ClassName_Throws()
+		public void AccessClassInfoWithNullClassNameThrows()
 		{
 			Assert.Throws<ArgumentNullException>(() => _mdc.GetClassInfo(null));
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void Access_Class_Info_With_Empty_String_For_ClassName_Throws()
+		public void AccessClassInfoWithEmptyStringForClassNameThrows()
 		{
 			Assert.Throws<ArgumentNullException>(() => _mdc.GetClassInfo(""));
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void Access_Class_Info_With_Bogus_ClassName_Throws()
+		public void AccessClassInfoWithNonExistantClassNameIsNull()
 		{
-			Assert.Throws<KeyNotFoundException>(() => _mdc.GetClassInfo("Bogus"));
+			Assert.IsNull(_mdc.GetClassInfo("Bogus"));
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void CmObject_Has_No_Properties()
+		public void DowngradeModelVersionThrows()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("CmObject").AllProperties.Count() == 0);
+			Assert.Throws<InvalidOperationException>(() => _mdc.UpgradeToVersion(_mdc.ModelVersion - 1));
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void Can_Add_Custom_Property()
+		public void UpgradeModelVersionToSameNumberKeepsOriginalVersionNumber()
+		{
+			Assert.AreEqual(_mdc.ModelVersion, _mdc.UpgradeToVersion(_mdc.ModelVersion));
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void UpgradeModelNumberResetsProperty()
+		{
+			var newVersion = _mdc.ModelVersion + 1;
+			_mdc.UpgradeToVersion(newVersion);
+			Assert.AreEqual(newVersion, _mdc.ModelVersion);
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void CmObjectHasNoProperties()
+		{
+			Assert.IsTrue(!_mdc.GetClassInfo("CmObject").AllProperties.Any());
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void CanAddCustomProperty()
 		{
 			var wordformInfo = _mdc.GetClassInfo("WfiWordform");
 			Assert.IsNull((from propInfo in wordformInfo.AllProperties
@@ -61,6 +86,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 							  select propInfo).FirstOrDefault());
 
 			_mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
+			_mdc.ResetCaches();
 
 			Assert.IsNotNull((from propInfo in wordformInfo.AllProperties
 									 where propInfo.PropertyName == "Certified"
@@ -70,16 +96,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 
 		/// <summary></summary>
 		[Test]
-		public void LexDb_Has_Collection_Properties()
+		public void LexDbHasCollectionProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Count() > 0);
+			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
 		}
 
 		/// <summary></summary>
 		[Test]
-		public void Segment_Has_No_Collection_Properties()
+		public void SegmentHasNoCollectionProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("Segment").AllCollectionProperties.Count() == 0);
+			Assert.IsTrue(!_mdc.GetClassInfo("Segment").AllCollectionProperties.Any());
 		}
 	}
 }

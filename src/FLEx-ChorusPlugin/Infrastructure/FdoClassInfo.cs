@@ -6,17 +6,25 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	///<summary>
 	/// Class that holds some basic information about FDO classes.
 	///</summary>
-	public sealed class FdoClassInfo
+	internal sealed class FdoClassInfo
 	{
 		/// <summary>
 		/// Get the class name.
 		/// </summary>
-		public string ClassName { get; private set; }
+		internal string ClassName { get; private set; }
 		/// <summary>
 		/// Check if class is abstract.
 		/// </summary>
-		public bool IsAbstract { get; private set; }
-		private readonly List<FdoPropertyInfo> _properties = new List<FdoPropertyInfo>();
+		internal bool IsAbstract { get; private set; }
+		private readonly List<FdoPropertyInfo> _directProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allReferenceSequenceProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allOwningSequenceProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoClassInfo> _allDirectSubclass = new List<FdoClassInfo>();
+		private readonly List<FdoPropertyInfo> _allCollectionProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allReferenceCollectionProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allMultiAltProperties = new List<FdoPropertyInfo>();
+		private readonly List<FdoPropertyInfo> _allOwningProperties = new List<FdoPropertyInfo>();
 
 		internal FdoClassInfo(string className, string superclassName)
 			: this(className, false, superclassName)
@@ -30,51 +38,187 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			SuperclassName = superclassName;
 		}
 
+		public FdoClassInfo(FdoClassInfo superclass, string newClassName, bool isAbstract)
+		{
+			Superclass = superclass;
+			ClassName = newClassName;
+			IsAbstract = isAbstract;
+		}
+
 		internal void AddProperty(FdoPropertyInfo propertyinfo)
 		{
-			_properties.Add(propertyinfo);
+			_directProperties.Add(propertyinfo);
+		}
+
+		internal void RemoveProperty(string propertyName)
+		{
+			_directProperties.Remove((from pi in _directProperties
+										 where pi.PropertyName == propertyName
+										 select pi).First());
+		}
+
+		internal FdoPropertyInfo GetProperty(string propertyName)
+		{
+			return (from propInfo in AllProperties
+						  where propInfo.PropertyName == propertyName
+						  select propInfo).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Get a collection of all subclasses if this class (not including this class).
+		/// </summary>
+		internal IEnumerable<FdoClassInfo> AllSubclasses
+		{
+			get
+			{
+				var subclasses = new List<FdoClassInfo>(_allDirectSubclass);
+				foreach (var subclass in _allDirectSubclass)
+				{
+					subclasses.AddRange(subclass.AllSubclasses);
+				}
+				return subclasses;
+			}
 		}
 
 		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>
-		public IEnumerable<FdoPropertyInfo> AllProperties
+		internal IEnumerable<FdoPropertyInfo> AllProperties
 		{
 			get
 			{
-				var results = new List<FdoPropertyInfo>();
-
-				if (Superclass != null)
-					results.AddRange(Superclass.AllProperties);
-
-				if (_properties.Count > 0)
-					results.AddRange(_properties);
-
-				return results;
+				return _allProperties;
 			}
 		}
 
-		///<summary>
-		/// Get a set of zero or more collection properties (reference or owning).
-		///</summary>
-		public IEnumerable<FdoPropertyInfo> AllCollectionProperties
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllReferenceSequenceProperties
 		{
 			get
 			{
-				return new List<FdoPropertyInfo>(from prop in AllProperties
-														where prop.DataType == DataType.OwningCollection || prop.DataType == DataType.ReferenceCollection
-														select prop);
+				return _allReferenceSequenceProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllOwningSequenceProperties
+		{
+			get
+			{
+				return _allOwningSequenceProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllOwningProperties
+		{
+			get
+			{
+				return _allOwningProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllCollectionProperties
+		{
+			get
+			{
+				return _allCollectionProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllReferenceCollectionProperties
+		{
+			get
+			{
+				return _allReferenceCollectionProperties;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of zero or more properties for the class.
+		/// </summary>
+		internal IEnumerable<FdoPropertyInfo> AllMultiAltProperties
+		{
+			get
+			{
+				return _allMultiAltProperties;
 			}
 		}
 
 		/// <summary>
 		/// Get the superclass name.
 		/// </summary>
-		public string SuperclassName { get; internal set; }
+		internal string SuperclassName { get; set; }
 
 		/// <summary>
 		/// Get the superclass.
 		/// </summary>
-		public FdoClassInfo Superclass { get; internal set; }
+		internal FdoClassInfo Superclass { get; set; }
+
+		public void ResetCaches(Dictionary<string, FdoClassInfo> classes)
+		{
+			// No. _directProperties.Clear();
+			_allProperties.Clear();
+			_allDirectSubclass.Clear();
+			_allCollectionProperties.Clear();
+			_allReferenceCollectionProperties.Clear();
+			_allMultiAltProperties.Clear();
+			_allOwningProperties.Clear();
+			_allReferenceSequenceProperties.Clear();
+			_allOwningSequenceProperties.Clear();
+
+			if (Superclass != null)
+				_allProperties.AddRange(Superclass._allProperties);
+			if (_directProperties.Count > 0)
+			{
+				_allProperties.AddRange(_directProperties);
+			}
+
+			if (_allProperties.Count > 0)
+			{
+				_allReferenceSequenceProperties.AddRange(from prop in _allProperties
+														 where prop.DataType == DataType.ReferenceSequence
+														 select prop);
+				_allOwningSequenceProperties.AddRange(from prop in _allProperties
+													  where prop.DataType == DataType.OwningSequence
+													  select prop);
+				_allCollectionProperties.AddRange(from prop in _allProperties
+												  where prop.DataType == DataType.OwningCollection || prop.DataType == DataType.ReferenceCollection
+												  select prop);
+				_allReferenceCollectionProperties.AddRange(from prop in _allCollectionProperties
+														   where prop.DataType == DataType.ReferenceCollection
+														   select prop);
+				_allMultiAltProperties.AddRange(from prop in _allProperties
+												where prop.DataType == DataType.MultiString || prop.DataType == DataType.MultiUnicode
+												select prop);
+				_allOwningProperties.AddRange(from prop in _allProperties
+											  where prop.DataType == DataType.OwningAtomic || prop.DataType == DataType.OwningCollection || prop.DataType == DataType.OwningSequence
+											  select prop);
+			}
+
+			classes.Remove(ClassName);
+			_allDirectSubclass.AddRange(from classInfo in classes.Values
+									where classInfo.Superclass == this
+									select classInfo);
+			foreach (var directSubclass in _allDirectSubclass)
+				directSubclass.ResetCaches(classes);
+		}
+
+		public override string ToString()
+		{
+			return ClassName + ": " + IsAbstract;
+		}
 	}
 }

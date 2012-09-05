@@ -1,29 +1,33 @@
-﻿using System;
-using FLEx_ChorusPlugin.Infrastructure;
+﻿﻿using System;
+﻿using Chorus.Utilities;
+﻿using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
+using System.IO;
+﻿using Palaso.Progress.LogBox;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
 	[TestFixture]
 	public class MultipleFileServicesTests
 	{
+
 		[Test]
 		public void NullPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), null));
 		}
 
 		[Test]
 		public void EmptyPathnameForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), ""));
 		}
 
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), "Bogus.fwdata"));
 		}
 
 		[Test]
@@ -31,34 +35,50 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		{
 			using (var tempFile = new TempFile(""))
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.BreakupMainFile(tempFile.Path, "ZPI"));
+				var pathname = tempFile.Path;
+				Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), pathname));
+			}
+		}
+
+		[Test]
+		public void UserCancelledBreakupShouldThrow()
+		{
+			using (var tempFile = TempFile.WithFilename("foo.fwdata"))
+			{
+				var progress = new NullProgress
+					{
+						CancelRequested = true
+					};
+				var pathname = tempFile.Path;
+				Assert.Throws<UserCancelledException>(() => FLExProjectSplitter.PushHumptyOffTheWall(progress, pathname));
 			}
 		}
 
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(null, "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("", "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), ""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile("Bogus.fwdata", "ZPI"));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), "Bogus.fwdata"));
 		}
 
 		[Test]
-		public void NotFwDataFileForRestoreShouldThrow()
+		public void NonExistantPathForRestoreShouldThrow()
 		{
-			using (var tempFile = new TempFile(""))
+			using (var tempFile = new TempFile())
 			{
-				Assert.Throws<ApplicationException>(() => MultipleFileServices.RestoreMainFile(tempFile.Path, "ZPI"));
+				var pathname = tempFile.Path;
+				Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(pathname, "Itaintthere")));
 			}
 		}
 	}

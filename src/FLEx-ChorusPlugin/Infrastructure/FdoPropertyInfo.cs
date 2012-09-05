@@ -5,27 +5,27 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// <summary>
 	/// Property information for an FDO property.
 	/// </summary>
-	public sealed class FdoPropertyInfo
+	internal sealed class FdoPropertyInfo
 	{
 		/// <summary>
 		/// Get the name of the property.
 		/// </summary>
-		public string PropertyName { get; private set; }
+		internal string PropertyName { get; private set; }
 
 		/// <summary>
 		/// Get the data type of the property.
 		/// </summary>
-		public DataType DataType { get; private set; }
+		internal DataType DataType { get; private set; }
 
 		/// <summary>
 		/// See if the property is custom or standard.
 		/// </summary>
-		public bool IsCustomProperty { get; private set; }
+		internal bool IsCustomProperty { get; private set; }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FdoPropertyInfo(string propertyName, DataType dataType)
+		internal FdoPropertyInfo(string propertyName, DataType dataType)
 			: this(propertyName, dataType, false)
 		{
 		}
@@ -33,7 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FdoPropertyInfo(string propertyName, DataType dataType, bool isCustomProperty)
+		internal FdoPropertyInfo(string propertyName, DataType dataType, bool isCustomProperty)
 		{
 			PropertyName = propertyName;
 			DataType = dataType;
@@ -43,7 +43,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FdoPropertyInfo(string propertyName, string dataType, bool isCustomProperty)
+		internal FdoPropertyInfo(string propertyName, string dataType, bool isCustomProperty)
 			: this(propertyName, (DataType)Enum.Parse(typeof(DataType), dataType), isCustomProperty)
 		{
 		}
@@ -51,9 +51,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public FdoPropertyInfo(string propertyName, string dataType)
+		internal FdoPropertyInfo(string propertyName, string dataType)
 			: this(propertyName, (DataType)Enum.Parse(typeof(DataType), dataType), false)
 		{
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}: {1}: {2}", PropertyName, DataType, IsCustomProperty);
 		}
 	}
 }

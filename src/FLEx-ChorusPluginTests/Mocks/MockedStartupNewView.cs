@@ -1,4 +1,5 @@
-﻿using FLEx_ChorusPlugin.View;
+﻿using Chorus.UI.Clone;
+using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {

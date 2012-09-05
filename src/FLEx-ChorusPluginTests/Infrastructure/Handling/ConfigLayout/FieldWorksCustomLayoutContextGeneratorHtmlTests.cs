@@ -1,0 +1,34 @@
+using System.Xml;
+using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout;
+using NUnit.Framework;
+
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
+{
+	/// <summary>
+	/// Tests the FieldWorksCustomLayoutContextGenerator.HtmlContext method
+	/// </summary>
+	[TestFixture]
+	public class FieldWorksCustomLayoutContextGeneratorHtmlTests
+	{
+		private XmlNode GetNode(string input)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(input);
+			return doc.DocumentElement;
+		}
+
+		[Test]
+		public void DoVeryLittle()
+		{
+			const string source =
+@"<layout class='foo' type='mytype' name='bar'>
+	<part ref='FormPub' label='Lexeme Form' before='' after=' ' visibility='never' ws='vernacular' wsType='vernacular' />
+</layout>";
+			var root = GetNode(source);
+			var generator = new FieldWorkCustomLayoutContextGenerator();
+			var html = generator.HtmlContext(root);
+			Assert.That(html, Is.EqualTo("<div>" + XmlUtilities.GetXmlForShowingInHtml(root.OuterXml) + "</div>"));
+		}
+	}
+}
