@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
-using System.Windows.Forms;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {
@@ -18,25 +19,25 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 	/// </summary>
 	internal sealed class PosContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
-		private string[] m_posGuidStrs;
-		private Dictionary<string, string> m_guidPosNameDict;
+		private string[] _posGuidStrs;
+		private Dictionary<string, string> _guidPosNameDict;
 
 		public bool IsListLoaded
 		{
-			get { return m_guidPosNameDict != null && m_guidPosNameDict.Count != 0; }
+			get { return _guidPosNameDict != null && _guidPosNameDict.Count != 0; }
 		}
 
 		private string GetLabel(XmlNode start)
 		{
 			var result = LexEntryName(start) + Space;
-			m_posGuidStrs = FindPosGuidsInMergeElement(start);
-			if (m_posGuidStrs[0] == NotLoaded || m_posGuidStrs[0] == Unknown)
+			_posGuidStrs = FindPosGuidsInMergeElement(start);
+			if (_posGuidStrs[0] == NotLoaded || _posGuidStrs[0] == Unknown)
 				return result + DefaultNoName; // missing MorphoSyntaxAnalyses section or <Not sure> category
 
-			var	hasTwoPos = SetTwoPosFlag(m_posGuidStrs);
+			var	hasTwoPos = SetTwoPosFlag(_posGuidStrs);
 			if (hasTwoPos)
-				return result + GetLabelForPos(m_posGuidStrs[0]) + "/" + GetLabelForPos(m_posGuidStrs[1]);
-			return result + GetLabelForPos(m_posGuidStrs[0]);
+				return result + GetLabelForPos(_posGuidStrs[0]) + "/" + GetLabelForPos(_posGuidStrs[1]);
+			return result + GetLabelForPos(_posGuidStrs[0]);
 		}
 
 		private bool SetTwoPosFlag(string[] posGuids)
@@ -72,7 +73,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 				return result;
 
 			string posName;
-			if (m_guidPosNameDict.TryGetValue(posGuid, out posName))
+			if (_guidPosNameDict.TryGetValue(posGuid, out posName))
 				result = posName;
 			return result;
 		}
@@ -97,9 +98,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		{
 			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null && mergeElement.ParentNode.Name == SharedConstants.Msa);
 			// We come in here once each for Ancestor, Ours and Theirs with different mergeElement,
-			// so resist the temptation to skip this step if m_posGuidStrs != null.
-			m_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
-			var hasTwoPoses = SetTwoPosFlag(m_posGuidStrs);
+			// so resist the temptation to skip this step if _posGuidStrs != null.
+			_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
+			var hasTwoPoses = SetTwoPosFlag(_posGuidStrs);
 			var posNames = ConvertGuidStringsToPosNames();
 
 			return string.Format("<div class='"+ SharedConstants.PartOfSpeech+ "'>{0}</div>",
@@ -112,12 +113,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		{
 			var result = new string[2];
 			result[0] = Unknown;
-			if (m_posGuidStrs[0] != Unknown && m_posGuidStrs[0] != NotLoaded)
-				result[0] = GetLabelForPos(m_posGuidStrs[0]);
+			if (_posGuidStrs[0] != Unknown && _posGuidStrs[0] != NotLoaded)
+				result[0] = GetLabelForPos(_posGuidStrs[0]);
 
 			result[1] = Unknown;
-			if (m_posGuidStrs[1] != Unknown && m_posGuidStrs[1] != NotLoaded)
-				result[1] = GetLabelForPos(m_posGuidStrs[1]);
+			if (_posGuidStrs[1] != Unknown && _posGuidStrs[1] != NotLoaded)
+				result[1] = GetLabelForPos(_posGuidStrs[1]);
 
 			return result;
 		}
@@ -198,17 +199,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 
 		public void LoadPosList(XmlNode data)
 		{
-			m_guidPosNameDict = new Dictionary<string, string>();
+			_guidPosNameDict = new Dictionary<string, string>();
 			// In the CmPossibilityList we want all the nodes under Possibilities. They are 'ownseq' nodes of class PartOfSpeech,
 			// even when embedded in SubPossibilities.
-			var xpathSearch = "descendant::Possibilities//" + SharedConstants.Ownseq+"[@"+SharedConstants.Class+"=\""+
-				SharedConstants.PartOfSpeech+"\"]";
+			const string xpathSearch = "descendant::Possibilities//" + SharedConstants.Ownseq+"[@"+SharedConstants.Class+"=\""+
+									   SharedConstants.PartOfSpeech+"\"]";
 			foreach (XmlNode posNode in data.SelectNodes(xpathSearch))
 			{
 				var guidStr = posNode.GetStringAttribute("guid");
 				var stringIdentifier = ProcessNameAndAbbrevNodes(posNode);
 				if (stringIdentifier.Length > 0) // If we can't find either an Abbreviation or a Name, don't add it!
-					m_guidPosNameDict.Add(guidStr, stringIdentifier);
+					_guidPosNameDict.Add(guidStr, stringIdentifier);
 			}
 		}
 
