@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {

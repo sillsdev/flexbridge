@@ -2,7 +2,6 @@ using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Palaso.Xml;
-using XmlNodeExtensions = Chorus.merge.xml.generic.XmlNodeExtensions;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {
@@ -43,7 +42,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 
 		private static void DoPostMerge(string outputPath, XmlNode mergedNode)
 		{
-			foreach (XmlNode partNode in XmlNodeExtensions.SafeSelectNodes(mergedNode, "layout/generate"))
+			foreach (XmlNode partNode in mergedNode.SafeSelectNodes("layout/generate"))
 			{
 				partNode.Attributes.Remove(partNode.Attributes["combinedkey"]);
 			}

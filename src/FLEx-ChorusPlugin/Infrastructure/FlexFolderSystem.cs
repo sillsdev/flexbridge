@@ -13,7 +13,18 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include.
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata");
+			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata-replaced");
+			projectFolderConfiguration.ExcludePatterns.Add("**.fwdb");
+			projectFolderConfiguration.ExcludePatterns.Add("**.fwbackup");
+			projectFolderConfiguration.ExcludePatterns.Add("**.zip");
+			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
+			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
+			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
+			projectFolderConfiguration.ExcludePatterns.Add("**.lift");
+			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
+
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
+			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
 			projectFolderConfiguration.ExcludePatterns.Add("**.lock");
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");

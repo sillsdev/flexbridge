@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
@@ -46,7 +47,10 @@ namespace FwdataTestApp
 			var mdc = MetadataCache.TestOnlyNewCache;
 			var modelData = File.ReadAllText(Path.Combine(_workingDir, SharedConstants.ModelVersionFilename));
 			mdc.UpgradeToVersion(Int32.Parse(modelData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries)[1]));
-			mdc.AddCustomPropInfo(Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename));
+			var customPropPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
+			mdc.AddCustomPropInfo(new MergeOrder(
+					customPropPathname, customPropPathname, customPropPathname,
+					new MergeSituation(customPropPathname, "", "", "", "", MergeOrder.ConflictHandlingModeChoices.WeWin)));
 			return mdc;
 		}
 

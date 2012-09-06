@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.Properties;
 using Chorus.merge;
+using Palaso.Code;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -118,8 +119,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// 7000037: Starting point (FW 7.0.6)
 			// 7000044: FW 7.1 released.
 			// 7000051: FW 7.2 released.
-			// 700005x: FW 7.3 released.
-
+			// 700006x: FW 7.3 released.
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");
 			while (currentVersion < newVersion)
@@ -366,7 +366,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		internal void AddCustomPropInfo(MergeOrder mergeOrder)
 		{
-			if (mergeOrder == null) throw new ArgumentNullException("mergeOrder");
+			Guard.AgainstNull(mergeOrder, "mergeOrder");
 
 			// Add optional custom property information to MDC.
 			string mainCustomPropPathname;
@@ -382,12 +382,38 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					altCustomPropPathname = Path.GetDirectoryName(mergeOrder.pathToTheirs);
 					break;
 			}
-			AddCustomPropInfo(mainCustomPropPathname, altCustomPropPathname, GetMetaDataCacheOffsetFolder(mergeOrder), 1);
+			var customPropOffsetFolder = GetMetaDataCacheOffsetFolder(mergeOrder.pathToOurs);
+			var dirPath = GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropOffsetFolder);
+			var customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			if (!File.Exists(customPropPathname))
+			{
+				dirPath = GetAdjustedCustomPropDirName(altCustomPropPathname, customPropOffsetFolder);
+				customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
+			}
+			if (!File.Exists(customPropPathname))
+				return;
+
+			var doc = XDocument.Load(customPropPathname);
+			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
+			{
+				var className = customFieldElement.Attribute(SharedConstants.Class).Value;
+				FdoClassInfo classInfo;
+				if (!_classes.TryGetValue(className, out classInfo))
+					continue;
+
+				var propertyName = customFieldElement.Attribute(SharedConstants.Name).Value;
+				var propInfo = classInfo.GetProperty(propertyName);
+				if (propInfo == null)
+					AddCustomPropInfo(className, new FdoPropertyInfo(customFieldElement));
+			}
+			ResetCaches();
 		}
 
-		private static string GetMetaDataCacheOffsetFolder(MergeOrder mergeOrder)
+		private static string GetMetaDataCacheOffsetFolder(string pathToOurs)
 		{
-			var currentPathname = mergeOrder.pathToOurs;
+			var currentPathname = pathToOurs;
+			if (currentPathname.Contains(SharedConstants.General))
+				return SharedConstants.General;
 			if (currentPathname.Contains(SharedConstants.Other))
 				return SharedConstants.Other;
 			if (currentPathname.Contains(SharedConstants.Linguistics))
@@ -397,54 +423,16 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			return currentPathname; // Must be a test.
 		}
 
-		internal void AddCustomPropInfo(string mainCustomPropPathname, string altCustomPropPathname, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
-		{
-			var dirPath = GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
-			var customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
-			//var customFiles = Directory.GetFiles(GetAdjustedCustomPropDirName(mainCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir), "FLExProject.CustomProperties").ToList();
-			if (!File.Exists(customPropPathname))
-			{
-				dirPath = GetAdjustedCustomPropDirName(altCustomPropPathname, customPropTargetDir, levelsAboveCustomPropTargetDir);
-				customPropPathname = Path.Combine(dirPath, SharedConstants.CustomPropertiesFilename);
-			}
-			if (!File.Exists(customPropPathname))
-				return;
-
-			AddCustomPropInfo(customPropPathname);
-		}
-
-		internal void AddCustomPropInfo(string customPropPathname)
-		{
-			var doc = XDocument.Load(customPropPathname);
-			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
-			{
-				FdoClassInfo classInfo;
-				var className = customFieldElement.Attribute(SharedConstants.Class).Value;
-				if (_classes.TryGetValue(className, out classInfo))
-				{
-					var propertyName = customFieldElement.Attribute(SharedConstants.Name).Value;
-					var propInfo = classInfo.GetProperty(propertyName);
-					if (propInfo == null)
-						AddCustomPropInfo(className, new FdoPropertyInfo(propertyName, customFieldElement.Attribute("type").Value, true));
-				}
-			}
-			ResetCaches();
-		}
-
-		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropTargetDir, ushort levelsAboveCustomPropTargetDir)
+		private static string GetAdjustedCustomPropDirName(string startingDirName, string customPropOffsetFolder)
 		{
 			var adjustedDirPath = startingDirName;
-			if (startingDirName.Contains(customPropTargetDir))
+			if (startingDirName.Contains(customPropOffsetFolder))
 			{
-				while (!adjustedDirPath.EndsWith(customPropTargetDir))
+				while (!adjustedDirPath.EndsWith(customPropOffsetFolder))
 				{
 					adjustedDirPath = Directory.GetParent(adjustedDirPath).FullName;
 				}
-				while (levelsAboveCustomPropTargetDir > 0)
-				{
-					adjustedDirPath = Directory.GetParent(adjustedDirPath).FullName;
-					--levelsAboveCustomPropTargetDir;
-				}
+				adjustedDirPath = Directory.GetParent(adjustedDirPath).FullName;
 			}
 			return adjustedDirPath;
 		}

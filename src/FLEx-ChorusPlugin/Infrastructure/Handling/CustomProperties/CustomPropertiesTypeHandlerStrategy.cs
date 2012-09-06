@@ -71,7 +71,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 						return "Contains illegal child element";
 				}
 
-				MetadataCache.MdCache.AddCustomPropInfo(pathToFile);
+				MetadataCache.MdCache.AddCustomPropInfo(new MergeOrder(
+					pathToFile, pathToFile, pathToFile,
+					new MergeSituation(pathToFile, "", "", "", "", MergeOrder.ConflictHandlingModeChoices.WeWin)));
 
 				return null;
 			}
