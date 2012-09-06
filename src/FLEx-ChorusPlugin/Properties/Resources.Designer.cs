@@ -117,6 +117,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Custom Field.
+		/// </summary>
+		internal static string kCustomFieldLabel {
+			get {
+				return ResourceManager.GetString("kCustomFieldLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
 		internal static string kFLExBridge {
@@ -347,6 +356,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		internal static string kUnidentifiedLabel {
 			get {
 				return ResourceManager.GetString("kUnidentifiedLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to [untitled].
+		/// </summary>
+		internal static string kUnTitled {
+			get {
+				return ResourceManager.GetString("kUnTitled", resourceCulture);
 			}
 		}
 

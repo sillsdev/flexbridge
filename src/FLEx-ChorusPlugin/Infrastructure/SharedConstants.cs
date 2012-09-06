@@ -29,6 +29,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
+		internal const string InitialCapitalName = "Name";
 		internal const string Ownseq = "ownseq";
 		internal const string Refseq = "refseq";
 		internal const string Refcol = "refcol";
@@ -51,6 +52,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LintFilename = "FLExProject." + lint;
 		internal const string LangProject = "LangProject";
 		internal const string curiosity = "curiosity";
+		internal const string Label = "label";
+		internal const string Title = "Title";
+		internal const string NamedStyle = "namedStyle";
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";
@@ -136,6 +140,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Ntbk = "ntbk";
 		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
 		internal const string Anthropology = "Anthropology";
+		internal const string RnGenericRec = "RnGenericRec";
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
