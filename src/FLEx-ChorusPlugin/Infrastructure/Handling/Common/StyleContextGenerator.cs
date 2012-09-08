@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
@@ -39,11 +39,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 				if (string.IsNullOrEmpty(recordTitle))
 					recordTitle = Resources.kRnGenericRecLabel + Space + Resources.kUnTitled;
 				if (topNode.Name == SharedConstants.Custom)
-				{	// topNode.GetStringAttribute(SharedConstants.Name) may not be the real name of the custom field!
+				{
+					string className = null;
+					var classElement = topNode.ParentNode;
+					if (classElement != null)
+					{
+						className = (classElement.Name == SharedConstants.Ownseq
+							|| classElement.Name == SharedConstants.Refseq)
+								? classElement.Attributes[SharedConstants.Class].Value
+								: classElement.Name;
+					}
 					// There may be a CustomField[@name="Like"]/@label that holds the displayed name (in another file).
-					// @name acts like an identifier or index. (dangerous!)
-					var name = topNode.GetStringAttribute(SharedConstants.Name);
-					var displayName = GetDisplayName(name); // may be in another local user file
+					// @name acts like an identifier or index.
+					var customPropertyName = topNode.GetStringAttribute(SharedConstants.Name);
+					var displayName = GetDisplayName(className, customPropertyName);
 					recordTitle += Space + Resources.kCustomFieldLabel + Space + Quote + displayName + Quote;
 				}
 				else // some other data notebook field
@@ -183,7 +192,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		private string ImageOfChildren(XmlNode xNode)
 		{
 			string image = "";
-			if (xNode.ChildNodes != null && xNode.ChildNodes.Count > 0)
+			if (xNode.ChildNodes.Count > 0)
 			{
 				image = "";
 				foreach (XmlNode xChild in xNode.ChildNodes)
@@ -239,33 +248,40 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		}
 
 		/// <summary>
-		/// Loads the custom field properties file for the user changes being documented.
-		/// IE. can't be class-level since each user project has a different location and file.
+		/// Gets the 'label' attribute of the custom property, if present, or its 'name', if not present.
 		/// </summary>
-		/// <param name="name">Name from Custom element which is an ancestor of styleRules (for a custom field)</param>
-		/// <returns>The display name of the custom field if it has one.</returns>
-		public string GetDisplayName(string name)
-		{   // The broken-up fwdata file should have a FLExProject.CustomProperties file at the top level.
-			const string customPropertiesFilename = SharedConstants.CustomPropertiesFilename;
-			if (!File.Exists(customPropertiesFilename))
+		/// <param name="classname">Class name that is supposed to contain the given custom property.</param>
+		/// <param name="customPropertyName">Name from Custom element which is an ancestor of styleRules (for a custom field)</param>
+		/// <returns>The label of the custom field if it has one. Otherwise, the custom property name.</returns>
+		public string GetDisplayName(string classname, string customPropertyName)
+		{
+			var mdc = MetadataCache.MdCache;
+			FdoClassInfo classInfo = null;
+			if (string.IsNullOrEmpty(classname))
 			{
-				return name; // can't find the custom field file; name is the best we have
-			}
-			var doc = new XmlDocument();
-			doc.Load(customPropertiesFilename);
-			var customFields = doc.DocumentElement.SelectNodes("CustomField");
-			foreach (XmlNode cf in customFields)
-			{	// match cf/@name to the name passed in
-				if (cf.GetStringAttribute(SharedConstants.Name) == name)
+				// Find it the hard way.
+				foreach (var fdoClassInfo in mdc.AllClasses
+					.Where(fdoClassInfo => fdoClassInfo.AllProperties.Any(propInf => propInf.DataType == DataType.TextPropBinary && propInf.PropertyName == customPropertyName)))
 				{
-					var displayName = cf.GetStringAttribute(SharedConstants.Label);
-					if (string.IsNullOrEmpty(displayName))
-						return name; // name is the display name
-					else
-						return displayName;
+					classInfo = fdoClassInfo;
+					break;
 				}
 			}
-			return name; // name is the display name
+			else
+			{
+				classInfo = mdc.GetClassInfo(classname);
+			}
+			if (classInfo == null)
+				return customPropertyName;
+
+			var propInfo = classInfo.GetProperty(customPropertyName);
+			if (propInfo == null || !propInfo.IsCustomProperty)
+				return customPropertyName;
+
+			var allPropInfo = propInfo.AllPropertyValues;
+			return allPropInfo.ContainsKey(SharedConstants.Label)
+					   ? allPropInfo[SharedConstants.Label]
+					   : customPropertyName;
 		}
 
 		public string HtmlContextStyles(XmlNode mergeElement)
