@@ -123,7 +123,15 @@ namespace FwdataTestApp
 			{
 				if (_cbRoundTripData.Checked)
 				{
-					RoundTripData(breakupTimer, restoreTimer, validateTimer, verifyTimer, sb, sbValidation);
+					RoundTripData(breakupTimer, restoreTimer);
+				}
+				if (_cbVerify.Checked)
+				{
+					Verify(verifyTimer, sb);
+				}
+				if (_cbValidate.Checked)
+				{
+					ValidateSplitData(validateTimer, sb, sbValidation);
 				}
 				if (_cbNestFile.Checked)
 				{
@@ -188,7 +196,7 @@ namespace FwdataTestApp
 			return ownObjsurFound;
 		}
 
-		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer, Stopwatch validateTimer, Stopwatch verifyTimer, StringBuilder sb, StringBuilder sbValidation)
+		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer)
 		{
 			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
 			breakupTimer.Start();
@@ -198,11 +206,6 @@ namespace FwdataTestApp
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();
 			GC.Collect(2, GCCollectionMode.Forced);
-
-			if (_cbVerify.Checked)
-				Verify(verifyTimer, sb);
-			if (_cbValidate.Checked)
-				ValidateSplitData(validateTimer, sb, sbValidation);
 		}
 
 		private void ValidateSplitData(Stopwatch validateTimer, StringBuilder sb, StringBuilder sbValidation)
@@ -485,7 +488,7 @@ namespace FwdataTestApp
 		{
 			if (currentFwdataPathname == null)
 				return false;
-			if (_restoreDataFile.Checked)
+			if (!_restoreDataFile.Checked)
 				return true;
 
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
