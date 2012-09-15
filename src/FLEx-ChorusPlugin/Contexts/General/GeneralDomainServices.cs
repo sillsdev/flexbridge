@@ -37,13 +37,6 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			else
 				progress.WriteMessage("Writing language project data....");
 			GeneralDomainBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
-
-			FLExProjectSplitter.CheckForUserCancelRequested(progress);
-			if (writeVerbose)
-				progress.WriteVerbose("Writing problem data....");
-			else
-				progress.WriteMessage("Writing problem data....");
-			GeneralDomainOrphansBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(IProgress progress, bool writeVerbose, SortedDictionary<string, XElement> highLevelData, SortedDictionary<string, XElement> sortedData, string rootDir)
@@ -56,19 +49,13 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (writeVerbose)
 			{
 				progress.WriteVerbose("Collecting the general data....");
-				progress.WriteVerbose("Collecting the problem data....");
+				progress.WriteVerbose("Collecting the language project data....");
 			}
 			else
 			{
 				progress.WriteMessage("Collecting the general data....");
-				progress.WriteMessage("Collecting the problem data....");
-			}
-			GeneralDomainOrphansBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
-
-			if (writeVerbose)
-				progress.WriteVerbose("Collecting the language project data....");
-			else
 				progress.WriteMessage("Collecting the language project data....");
+			}
 			GeneralDomainBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
 
 			if (writeVerbose)
@@ -80,7 +67,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.General));
+			var generalBaseDir = Path.Combine(pathRoot, SharedConstants.General);
+			BaseDomainServices.RemoveBoundedContextDataCore(generalBaseDir);
+			var oldLintPathname = Path.Combine(generalBaseDir, "FLExProject.lint");
+			if (File.Exists(oldLintPathname + ".ChorusNotes"))
+				File.Delete(oldLintPathname + ".ChorusNotes");
 		}
 	}
 }

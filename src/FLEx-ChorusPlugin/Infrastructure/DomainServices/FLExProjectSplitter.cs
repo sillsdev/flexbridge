@@ -77,7 +77,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (File.Exists(modelVersionPathname))
 				File.Delete(modelVersionPathname);
 
-			// Deletes all files in new locations, except the ChorusNotes files.
+			// Deletes all files in new locations, except the current ChorusNotes files.
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 

@@ -211,7 +211,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			// Owning collections do nothing special for the main element name;
 			var name = element.Name;
-			return (name == SharedConstants.Ownseq || name == SharedConstants.curiosity)
+			return (name == SharedConstants.Ownseq)
 				? element.Attributes[SharedConstants.Class].Value
 				: name;
 		}
@@ -226,7 +226,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			// Owning collections do nothing special for the main element name;
 			var name = element.Name.LocalName;
-			return (name == SharedConstants.Ownseq || name == SharedConstants.curiosity)
+			return (name == SharedConstants.Ownseq)
 				? element.Attribute(SharedConstants.Class).Value
 				: name;
 		}

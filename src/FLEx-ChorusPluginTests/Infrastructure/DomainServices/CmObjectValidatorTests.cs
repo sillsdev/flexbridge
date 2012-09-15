@@ -73,26 +73,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		}
 
 		[Test]
-		public void EnsureCuriosityHasCorrectAttributes()
-		{
-			var curiosityElement = new XElement(SharedConstants.curiosity, new XAttribute(SharedConstants.Class, "PartOfSpeech"), new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Contains("Has no curiositytype attribute"));
-			var ctAttr = new XAttribute("curiositytype", "notrecognized");
-			curiosityElement.Add(ctAttr);
-			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Contains("Has unrecognized curiositytype attribute value"));
-			ctAttr.Value = "lint";
-			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
-			Assert.IsNull(result);
-			ctAttr.Value = "unowned";
-			result = CmObjectValidator.ValidateObject(_mdc, curiosityElement);
-			Assert.IsNull(result);
-		}
-
-		[Test]
 		public void EnsureOwnseqHasClassAttribute()
 		{
 			var ownSeqElement = new XElement(SharedConstants.Ownseq, new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));

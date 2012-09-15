@@ -21,6 +21,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
 			projectFolderConfiguration.ExcludePatterns.Add("**.lift");
+			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
 			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
 
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
@@ -83,7 +84,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "FLExFilters.filter"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "FLExAnnotations.annotation"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "LanguageProject.langproj"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "FLExProject.lint"));
 		}
 
 		/// <summary>

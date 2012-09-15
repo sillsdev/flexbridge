@@ -26,7 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
 		internal const string OwnerGuid = "ownerguid";
-		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
 		internal const string Ownseq = "ownseq";
@@ -47,10 +46,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string langproj = "langproj";
 		internal const string LanguageProject = "LanguageProject";
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
-		internal const string lint = "lint";
-		internal const string LintFilename = "FLExProject." + lint;
 		internal const string LangProject = "LangProject";
-		internal const string curiosity = "curiosity";
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";

@@ -22,8 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 											// There is no need for an OwnCol, since order in irrelevant for them.
 											SharedConstants.Refseq,
 											SharedConstants.CmAnnotation,
-											SharedConstants.DsChart,
-											SharedConstants.curiosity
+											SharedConstants.DsChart
 										};
 			var keysList = new HashSet<string>(keys);
 			switch (key)

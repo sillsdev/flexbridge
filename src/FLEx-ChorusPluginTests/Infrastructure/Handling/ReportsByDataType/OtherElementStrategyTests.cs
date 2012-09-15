@@ -83,28 +83,5 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 			Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 		}
-
-		[Test]
-		public void CuriosityStrategyIsSetUpCorrectly()
-		{
-			var elementStrategy = _merger.MergeStrategies.ElementStrategies[SharedConstants.curiosity];
-			Assert.IsFalse(elementStrategy.IsAtomic);
-			Assert.IsFalse(elementStrategy.OrderIsRelevant);
-			Assert.IsFalse(elementStrategy.IsImmutable);
-			Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
-			Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
-			Assert.AreEqual(4, elementStrategy.AttributesToIgnoreForMerging.Count);
-			var ignoredAttrNames = new HashSet<string>
-									{
-										SharedConstants.GuidStr,
-										SharedConstants.Class,
-										"curiositytype",
-										"tempownerguid"
-									};
-			foreach (var ignoredAttrName in elementStrategy.AttributesToIgnoreForMerging)
-			{
-				Assert.IsTrue(ignoredAttrNames.Contains(ignoredAttrName));
-			}
-		}
 	}
 }

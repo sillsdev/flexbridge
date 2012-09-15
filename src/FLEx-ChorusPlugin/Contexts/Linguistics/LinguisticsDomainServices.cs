@@ -147,7 +147,20 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics
 
 		internal static void RemoveBoundedContextData(string pathRoot)
 		{
-			BaseDomainServices.RemoveBoundedContextDataCore(Path.Combine(pathRoot, SharedConstants.Linguistics));
+			var linguisticsBaseDir = Path.Combine(pathRoot, SharedConstants.Linguistics);
+			BaseDomainServices.RemoveBoundedContextDataCore(linguisticsBaseDir);
+
+			// Remove ChorusNotes files for old lexicon file and old WFI file.
+			// Lexicon.lexdb
+			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
+			var oldNotesPathname = Path.Combine(lexiconDir, "Lexicon.lexdb.ChorusNotes");
+			if (File.Exists(oldNotesPathname))
+				File.Delete(oldNotesPathname);
+			// WordformInventory.inventory
+			var inventoryDir = Path.Combine(linguisticsBaseDir, SharedConstants.WordformInventoryRootFolder);
+			oldNotesPathname = Path.Combine(inventoryDir, "WordformInventory.inventoryChorusNotes");
+			if (File.Exists(oldNotesPathname))
+				File.Delete(oldNotesPathname);
 		}
 	}
 }

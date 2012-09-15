@@ -254,27 +254,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					}
 					className = attribute.Value;
 					break;
-				case SharedConstants.curiosity:
-					attribute = obj.Attribute(SharedConstants.Class);
-					if (attribute == null)
-					{
-						result = "Has no class attribute";
-						return null;
-					}
-					className = attribute.Value;
-					attribute = obj.Attribute("curiositytype");
-					if (attribute == null)
-					{
-						result = "Has no curiositytype attribute";
-						return className;
-					}
-					var legalValues = new HashSet<string> { "unowned", "lint" };
-					if (!legalValues.Contains(attribute.Value))
-					{
-						result = "Has unrecognized curiositytype attribute value";
-						return className;
-					}
-					break;
 				case SharedConstants.Ownseq:
 					attribute = obj.Attribute(SharedConstants.Class);
 					if (attribute == null)

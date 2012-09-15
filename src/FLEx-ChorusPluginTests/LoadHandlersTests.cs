@@ -43,7 +43,6 @@ namespace FLEx_ChorusPluginTests
 				SharedConstants.List,				// 'list'
 
 				// General
-				SharedConstants.lint,				// 'lint'
 				SharedConstants.langproj,			// 'langproj'
 				SharedConstants.Annotation,			// 'annotation'
 				SharedConstants.Filter,				// 'filter'

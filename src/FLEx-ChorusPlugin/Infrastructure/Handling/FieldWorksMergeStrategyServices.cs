@@ -75,14 +75,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
 			strategiesForMerger.SetStrategy(SharedConstants.DsChart, keyedStrat);
 
-			// The lint file has a collection of odd stuff.
-			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
-			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
-			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
-			keyedStrat.AttributesToIgnoreForMerging.Add("curiositytype");
-			keyedStrat.AttributesToIgnoreForMerging.Add("tempownerguid");
-			strategiesForMerger.SetStrategy(SharedConstants.curiosity, keyedStrat);
-
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
 				var classStrat = MakeClassStrategy(ContextGen);
