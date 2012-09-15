@@ -237,6 +237,9 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000060: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000060);
+
+			// 7000061: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000061);
 		}
 
 		[Test]
