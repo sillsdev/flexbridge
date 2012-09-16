@@ -28,6 +28,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string OwnerGuid = "ownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
+		internal const string InitialCapitalName = "Name";
 		internal const string Ownseq = "ownseq";
 		internal const string Refseq = "refseq";
 		internal const string Refcol = "refcol";
@@ -47,6 +48,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LanguageProject = "LanguageProject";
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		internal const string LangProject = "LangProject";
+		internal const string Label = "label";
+		internal const string Title = "Title";
+		internal const string NamedStyle = "namedStyle";
 		internal const string Pictures = "Pictures";
 		internal const string CmPicture = "CmPicture";
 		internal const string pictures = "pictures";
@@ -83,6 +87,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
 		internal const string LexEntry = "LexEntry";
+		internal const string LexemeForm = "LexemeForm";
+		internal const string Form = "Form";
 		internal const string TextInCorpus = "textincorpus";
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";
@@ -140,6 +146,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Ntbk = "ntbk";
 		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
 		internal const string Anthropology = "Anthropology";
+		internal const string RnGenericRec = "RnGenericRec";
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
