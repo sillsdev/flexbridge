@@ -62,28 +62,30 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Lexicon", "*.lexdb")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("TextCorpus", "*.textincorpus")));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Inventory", "*.inventory")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Discourse", "Charting.discourse")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Discourse", SharedConstants.DiscourseChartFilename)));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "**.featsys"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", "AnalyzingAgents.agents")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", "MorphAndSynData.morphdata")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Phonology", "PhonologicalData.phondata")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", SharedConstants.AnalyzingAgentsFilename)));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", SharedConstants.MorphAndSynDataFilename)));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Phonology", SharedConstants.PhonologicalDataFilename)));
 
 			// Anthropology
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Anthropology", "DataNotebook.ntbk"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Anthropology", SharedConstants.DataNotebookFilename));
 
 			// Scripture
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "ReferenceSystem.srs"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", SharedConstants.ScriptureReferenceSystemFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "*.ArchivedDraft"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Translations.trans"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Settings.ImportSetting"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", SharedConstants.ScriptureTransFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", SharedConstants.ImportSettingsFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.bookannotations"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.book"));
 
 			// Leftovers
 			// Style file and user-defined lists ought to be covered, above.
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "FLExFilters.filter"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "FLExAnnotations.annotation"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", "LanguageProject.langproj"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExFiltersFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExAnnotationsFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.LanguageProjectFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExUnownedPicturesFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExVirtualOrderingFilename));
 		}
 
 		/// <summary>

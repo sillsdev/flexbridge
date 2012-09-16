@@ -29,7 +29,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedInstanceData = classData["RnResearchNbk"];
-			var langProj = XElement.Parse(classData["LangProject"].Values.First());
+			var langProj = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 
 			var headerElement = new XElement(SharedConstants.Header);
 			var rootElement = new XElement(SharedConstants.Anthropology, headerElement);
@@ -111,7 +111,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProj, "TimeOfDay",
 										  Path.Combine(anthropologyDir, "TimeOfDay." + SharedConstants.List));
-			classData["LangProject"][langProj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProj.ToString();
+			classData[SharedConstants.LangProject][langProj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProj.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -119,7 +119,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			SortedDictionary<string, XElement> sortedData,
 			string anthropologyBaseDir)
 		{
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var currentPathname = Path.Combine(anthropologyBaseDir, SharedConstants.DataNotebookFilename);
 			var doc = XDocument.Load(currentPathname);
 			var root = doc.Root;

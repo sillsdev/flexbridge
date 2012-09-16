@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Contexts.General
 {
@@ -14,7 +15,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			IDictionary<string, SortedDictionary<string, string>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
 			FileWriterService.WriteNestedListFileIfItExists(classData,
@@ -66,6 +67,37 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				owningPropElement.RemoveNodes();
 			}
 
+			// Some CmPicture instances may not be owned.
+			var rootElement = new XElement(SharedConstants.Pictures);
+			var unownedPictures = classData[SharedConstants.CmPicture].Values.Where(listElement => XmlUtils.GetAttributes(listElement, new HashSet<string> { SharedConstants.OwnerGuid })[SharedConstants.OwnerGuid] == null).ToList();
+			foreach (var unownedPictureString in unownedPictures)
+			{
+				var element = XElement.Parse(unownedPictureString);
+				CmObjectNestingService.NestObject(
+					false,
+					element,
+					classData,
+					guidToClassMapping);
+				rootElement.Add(element);
+			}
+			FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.FLExUnownedPicturesFilename), rootElement);
+
+			// No VirtualOrdering instances are owned.
+			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
+			{
+				rootElement = new XElement(SharedConstants.VirtualOrderings);
+				foreach (var element in classData[SharedConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingString => XElement.Parse(virtualOrderingString)))
+				{
+					CmObjectNestingService.NestObject(
+						false,
+						element,
+						classData,
+						guidToClassMapping);
+					rootElement.Add(element);
+				}
+				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, SharedConstants.FLExVirtualOrderingFilename), rootElement);
+			}
+
 			// Yippee!! Write LP here. :-) [LanguageProject.langproj; new ext]
 			CmObjectNestingService.NestObject(false,
 				langProjElement,
@@ -81,9 +113,9 @@ namespace FLEx_ChorusPlugin.Contexts.General
 		{
 			var langProjPathname = Path.Combine(generalBaseDir, SharedConstants.LanguageProjectFilename);
 			var langProjDoc = XDocument.Load(langProjPathname);
-			var langProjElement = langProjDoc.Root.Element("LangProject");
+			var langProjElement = langProjDoc.Root.Element(SharedConstants.LangProject);
 			// Add LP to highLevelData.
-			highLevelData.Add("LangProject", langProjElement);
+			highLevelData.Add(SharedConstants.LangProject, langProjElement);
 			// Flatten it.
 			CmObjectFlatteningService.FlattenObject(
 				langProjPathname,
@@ -179,6 +211,33 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			var owningProp = langProjElement.Element(SharedConstants.Annotations);
 			foreach (var sortedTextObjSurElement in sortedElements.Values)
 				owningProp.Add(sortedTextObjSurElement);
+
+			// No VirtualOrdering instances are owned.
+			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
+			{
+				currentPathname = Path.Combine(generalBaseDir, SharedConstants.FLExVirtualOrderingFilename);
+				doc = XDocument.Load(currentPathname);
+				foreach (var orderingElement in doc.Root.Elements(SharedConstants.VirtualOrdering))
+				{
+					CmObjectFlatteningService.FlattenObject(
+						currentPathname,
+						sortedData,
+						orderingElement,
+						null);
+				}
+			}
+
+			// Some CmPicture instances may not be owned.
+			currentPathname = Path.Combine(generalBaseDir, SharedConstants.FLExUnownedPicturesFilename);
+			doc = XDocument.Load(currentPathname);
+			foreach (var pictureElement in doc.Root.Elements(SharedConstants.CmPicture))
+			{
+				CmObjectFlatteningService.FlattenObject(
+					currentPathname,
+					sortedData,
+					pictureElement,
+					null);
+			}
 		}
 	}
 }

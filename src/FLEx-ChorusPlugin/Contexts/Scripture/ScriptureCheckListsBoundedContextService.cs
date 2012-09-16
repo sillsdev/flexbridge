@@ -47,7 +47,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))

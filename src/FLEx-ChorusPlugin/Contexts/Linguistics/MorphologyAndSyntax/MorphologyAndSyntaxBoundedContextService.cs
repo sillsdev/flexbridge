@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 											  Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename));
 				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = lexDb.ToString();
 			}
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 			// 1. Nest: LP's MorphologicalData(MoMorphData OA) (Also does MoMorphData's ProdRestrict(CmPossibilityList)
 			//		Remove objsur node from LP.
 			var morphologicalDataPropElement = langProjElement.Element("MorphologicalData");
@@ -89,7 +89,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			// B. Write: LP's MorphologicalData(MoMorphData OA) in a new extension (morphdata)
 			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement("MorphAndSynData", morphDataElement));
 
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -101,7 +101,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			if (!Directory.Exists(morphAndSynDir))
 				return;
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var lexDb = highLevelData["LexDb"];
 			var currentPathname = Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename);
 			if (lexDb != null && File.Exists(currentPathname))

@@ -52,7 +52,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			else
 				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
-			var langProj = XElement.Parse(classData["LangProject"].Values.First());
+			var langProj = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 

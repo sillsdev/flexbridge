@@ -46,6 +46,8 @@ namespace FLEx_ChorusPluginTests
 				SharedConstants.langproj,			// 'langproj'
 				SharedConstants.Annotation,			// 'annotation'
 				SharedConstants.Filter,				// 'filter'
+				SharedConstants.orderings,			// 'orderings'
+				SharedConstants.pictures,			// 'pictures'
 
 				// Scripture
 				SharedConstants.ArchivedDraft,		// 'ArchivedDraft'

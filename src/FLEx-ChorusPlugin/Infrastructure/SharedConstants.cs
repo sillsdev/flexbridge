@@ -47,6 +47,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LanguageProject = "LanguageProject";
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		internal const string LangProject = "LangProject";
+		internal const string Pictures = "Pictures";
+		internal const string CmPicture = "CmPicture";
+		internal const string pictures = "pictures";
+		internal const string FLExUnownedPicturesFilename = "UnownedPictures." + pictures;
+		internal const string orderings = "orderings";
+		internal const string VirtualOrderings = "VirtualOrderings";
+		internal const string VirtualOrdering = "VirtualOrdering";
+		internal const string FLExVirtualOrderingFilename = "VirtualOrdering." + orderings;
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";

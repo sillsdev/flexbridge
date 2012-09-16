@@ -10,7 +10,7 @@ using Palaso.Progress.LogBox;
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 {
 	[TestFixture]
-	public class FieldWorksLanguageProjectTypeHandlerTests : BaseFieldWorksTypeHandlerTests
+	public class PictureTypeHandlerTests : BaseFieldWorksTypeHandlerTests
 	{
 		private TempFile _ourFile;
 		private TempFile _theirFile;
@@ -19,7 +19,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		[SetUp]
 		public void TestSetup()
 		{
-			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.LanguageProjectFilename, out _ourFile, out _commonFile,
+			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.FLExUnownedPicturesFilename, out _ourFile, out _commonFile,
 														  out _theirFile);
 		}
 
@@ -39,11 +39,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		}
 
 		[Test]
-		public void ExtensionOfKnownFileTypesShouldBe_langproj()
+		public void ExtensionOfKnownFileTypesShouldBe_pictures()
 		{
 			var extensions = FileHandler.GetExtensionsOfKnownTextFileTypes().ToArray();
 			Assert.AreEqual(FieldWorksTestServices.ExpectedExtensionCount, extensions.Count(), "Wrong number of extensions.");
-			Assert.IsTrue(extensions.Contains(SharedConstants.langproj));
+			Assert.IsTrue(extensions.Contains(SharedConstants.pictures));
 		}
 
 		[Test]
@@ -58,13 +58,15 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 			}
 		}
 
+		// **************
+
 		[Test]
 		public void ShouldBeAbleToValidateInProperlyFormattedFile()
 		{
 			const string data =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+</Pictures>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 		}
@@ -73,9 +75,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		public void ShouldBeAbleToDoAllCanOperations()
 		{
 			const string data =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+</Pictures>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsTrue(FileHandler.CanValidateFile(_ourFile.Path));
 			Assert.IsTrue(FileHandler.CanDiffFile(_ourFile.Path));
@@ -84,7 +86,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateFile1()
+		public void ShouldNotBeAbleToValidateFile()
 		{
 			const string data = "<classdata />";
 			File.WriteAllText(_ourFile.Path, data);
@@ -92,72 +94,69 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateFile2()
+		public void ShouldNotBeAbleToValidateFileWithHeader()
 		{
 			const string data =
-@"<LanguageProject>
+@"<Pictures>
 <header>
 </header>
-</LanguageProject>";
+</Pictures>";
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
-		public void ShouldNotBeAbleToValidateFile3()
+		public void ShouldBeAbleToValidateFile()
 		{
 			const string data =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a8' />
-</LanguageProject>";
-
-			File.WriteAllText(_ourFile.Path, data);
-			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
-		}
-
-		[Test]
-		public void ShouldBeAbleToValidateFile1()
-		{
-			const string data =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+</Pictures>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
-		public void MergedLangProjectShouldOnlyHaveOneLexDbElement()
+		public void ShouldBeAbleToValidateFileWithNoPictures()
+		{
+			const string data =
+@"<Pictures>
+</Pictures>";
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void MergedCmPictureShouldOnlyHaveOneScaleFactorElement()
 		{
 			const string commonAncestor =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' >
-		<LexDb />
-</LangProject>
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+		<ScaleFactor val='1' />
+</CmPicture>
+</Pictures>";
 
 			const string ourContent =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' >
-		<LexDb />
-</LangProject>
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+		<ScaleFactor val='1' />
+</CmPicture>
+</Pictures>";
 
 			const string theirContent =
-@"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' >
-		<LexDb />
-</LangProject>
-</LanguageProject>";
+@"<Pictures>
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+		<ScaleFactor val='1' />
+</CmPicture>
+</Pictures>";
 
 			FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"LanguageProject/LangProject/LexDb" },
+				new List<string> { @"Pictures/CmPicture/ScaleFactor" },
 				new List<string>(),
 				0, new List<Type>(),
 				0, new List<Type>());

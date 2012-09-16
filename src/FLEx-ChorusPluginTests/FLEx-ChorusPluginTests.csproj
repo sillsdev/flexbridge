@@ -112,6 +112,8 @@
 	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\PictureTypeHandlerTests.cs" />
+	<Compile Include="Infrastructure\Handling\General\VirtualOrderingTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />

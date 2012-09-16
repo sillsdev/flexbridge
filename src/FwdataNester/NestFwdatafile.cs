@@ -38,7 +38,13 @@ namespace FwdataTestApp
 			if (_openFileDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
-			_fwdataPathname.Text = _openFileDialog.FileName;
+			var currentFwdataPathname = _openFileDialog.FileName;
+			var currentFilename = Path.GetFileName(currentFwdataPathname);
+			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
+			if (currentFilename.ToLowerInvariant() == "zpi.fwdata" || projectDirName.ToLowerInvariant() == "zpi")
+				return; // Don't even think of wiping out my ZPI folder.
+
+			_fwdataPathname.Text = currentFwdataPathname;
 			_btnRunSelected.Enabled = true;
 		}
 
@@ -101,13 +107,6 @@ namespace FwdataTestApp
 		private void RunSelected(object sender, EventArgs e)
 		{
 			_srcFwdataPathname = _openFileDialog.FileName;
-			if (!RestoreProject(_srcFwdataPathname))
-			{
-				_srcFwdataPathname = null;
-				_fwdataPathname.Text = null;
-				_btnRunSelected.Enabled = false;
-				return;
-			}
 			_workingDir = Path.GetDirectoryName(_srcFwdataPathname);
 			Cursor = Cursors.WaitCursor;
 			var sb = new StringBuilder();
@@ -121,25 +120,29 @@ namespace FwdataTestApp
 			var ownObjsurFound = false;
 			try
 			{
-				if (_cbRoundTripData.Checked)
-				{
-					RoundTripData(breakupTimer, restoreTimer);
-				}
-				if (_cbVerify.Checked)
-				{
-					Verify(verifyTimer, sb);
-				}
-				if (_cbValidate.Checked)
-				{
-					ValidateSplitData(validateTimer, sb, sbValidation);
-				}
-				if (_cbNestFile.Checked)
-				{
-					ownObjsurFound = NestFile(nestTimer, checkOwnObjsurTimer, _cbCheckOwnObjsur.Checked);
-				}
-				if (_restoreDataFile.Checked)
+				if (_rebuildDataFile.Checked)
 				{
 					RestoreMainFileFromPieces(restoreTimer);
+				}
+				else
+				{
+					RestoreProjectIfNeeded(_srcFwdataPathname);
+					if (_cbRoundTripData.Checked)
+					{
+						RoundTripData(breakupTimer, restoreTimer);
+					}
+					if (_cbVerify.Checked)
+					{
+						Verify(verifyTimer, sb);
+					}
+					if (_cbValidate.Checked)
+					{
+						ValidateSplitData(validateTimer, sb, sbValidation);
+					}
+					if (_cbNestFile.Checked)
+					{
+						ownObjsurFound = NestFile(nestTimer, checkOwnObjsurTimer, _cbCheckOwnObjsur.Checked);
+					}
 				}
 			}
 			catch (Exception err)
@@ -475,7 +478,7 @@ namespace FwdataTestApp
 				var allProjectDirNamesExceptMine = Directory.GetDirectories(NormalUserProjectDir).Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
-					RestoreProject(Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault());
+					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault());
 				}
 			}
 			finally
@@ -484,34 +487,38 @@ namespace FwdataTestApp
 			}
 		}
 
-		private bool RestoreProject(string currentFwdataPathname)
+		private static void RestoreProjectIfNeeded(string currentFwdataPathname)
 		{
 			if (currentFwdataPathname == null)
-				return false;
-			if (!_restoreDataFile.Checked)
-				return true;
-
+				return;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
 			if (currentFilename.ToLowerInvariant() == "zpi.fwdata" || projectDirName.ToLowerInvariant() == "zpi")
-				return false; // Don't even think of wiping out my ZPI folder.
+				return; // Don't even think of wiping out my ZPI folder.
 
 			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
-				return false;
+				return;
+
+			var backupFileInfo = backupDataFilesFullPathnames
+				.Where(pathname => Path.GetFileName(pathname).ToLowerInvariant() == currentFilename.ToLowerInvariant())
+				.Select(pathname => new FileInfo(pathname)).First();
+			var currentFileInfo = new FileInfo(currentFwdataPathname);
+			if (backupFileInfo.LastWriteTimeUtc == currentFileInfo.LastWriteTimeUtc)
+				return;
+
 			var subDirs = Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
 			var allFiles = Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
 			if (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0])
-				return false;
+				return;
 
+			// Clear it out.
 			foreach (var subDir in subDirs)
 				Directory.Delete(subDir, true);
 			foreach (var pathname in allFiles)
 				File.Delete(pathname);
 			File.Copy(Path.Combine(NormalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
-
-			return true;
 		}
 
 		private void ClearCheckboxes(object sender, EventArgs e)
@@ -521,7 +528,7 @@ namespace FwdataTestApp
 			_cbVerify.CheckState = CheckState.Unchecked;
 			_cbCheckOwnObjsur.CheckState = CheckState.Unchecked;
 			_cbValidate.CheckState = CheckState.Unchecked;
-			_restoreDataFile.CheckState = CheckState.Unchecked;
+			_rebuildDataFile.CheckState = CheckState.Unchecked;
 		}
 	}
 }

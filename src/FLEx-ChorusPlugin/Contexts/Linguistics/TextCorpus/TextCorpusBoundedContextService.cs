@@ -34,7 +34,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 
 			// Write Genre list (owning atomic CmPossibilityList)
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
@@ -50,7 +50,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProjElement, SharedConstants.TranslationTags,
 										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
@@ -79,7 +79,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				}
 				// Remove child objsur nodes from owning LangProg
 				langProjElement.Element("Texts").RemoveNodes();
-				classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+				classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 			}
 			else
 			{
@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 						rootElement);
 				}
 			}
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -110,7 +110,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (!Directory.Exists(textCorpusBaseDir))
 				return;
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 
 			// Put the Genre list back in the right place.

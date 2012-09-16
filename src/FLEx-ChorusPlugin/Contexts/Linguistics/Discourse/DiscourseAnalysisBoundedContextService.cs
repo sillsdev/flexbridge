@@ -65,7 +65,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			root.Add(header);
 			header.Add(discourseElement);
 			// Remove child objsur node from owning LangProg
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 			langProjElement.Element("DiscourseData").RemoveNodes();
 
 			var chartElements = discourseElement.Element("Charts");
@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			}
 
 			FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename), root);
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -136,7 +136,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				foreach (var sortedChartElement in sortedCharts.Values)
 					discourseElementOwningProp.Add(sortedChartElement);
 			}
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			BaseDomainServices.RestoreElement(
 				chartPathname,
 				sortedData,

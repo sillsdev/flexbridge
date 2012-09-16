@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 
 			var lexDb = XElement.Parse(classData[LexDb].First().Value); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
 			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
@@ -86,7 +86,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
 
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static string PathnameForBucket(string inventoryDir, int bucket)
@@ -103,7 +103,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			if (!Directory.Exists(lexiconDir))
 				return;
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var lexDbPathnames = new List<string>(Directory.GetFiles(lexiconDir, string.Format("{0}_??.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), SearchOption.TopDirectoryOnly));
 			lexDbPathnames.Sort(StringComparer.InvariantCultureIgnoreCase);

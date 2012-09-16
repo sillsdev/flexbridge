@@ -17,7 +17,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			if (!Directory.Exists(phonologyDir))
 				Directory.CreateDirectory(phonologyDir);
 
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
 
 			// 1. Nest: LP's PhonologicalData(PhPhonData OA) (Also does PhPhonData's PhonRuleFeats(CmPossibilityList)
 			// NB: PhPhonData is a singleton
@@ -48,7 +48,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			// C. Write: LP's PhFeatureSystem(FsFeatureSystem) in its own file with a new (shared extension of featsys).
 			FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonologyFeaturesFilename), new XElement("FeatureSystem", phonFeatureSystemElement));
 
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			if (!Directory.Exists(phonologyDir))
 				return;
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var currentPathname = Path.Combine(phonologyDir, SharedConstants.PhonologyFeaturesFilename);
 			if (File.Exists(currentPathname))
 			{

@@ -14,7 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal sealed class MetadataCache
 	{
-		private const int StartingModelVersion = 7000037;
+		internal const int StartingModelVersion = 7000037;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
 		private IEnumerable<FdoClassInfo> _concreteClasses;
 		private readonly Dictionary<string, Dictionary<string, HashSet<string>>> _propertyCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
@@ -287,7 +287,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("Text", DataType.ReferenceAtomic));
 						//	Modifed: LangProject
 						//		Remove: OC "Texts" property
-						GetClassInfo("LangProject").RemoveProperty("Texts");
+						GetClassInfo(SharedConstants.LangProject).RemoveProperty("Texts");
 						break;
 					case 7000060:
 						// 7000060: No actual model change.
