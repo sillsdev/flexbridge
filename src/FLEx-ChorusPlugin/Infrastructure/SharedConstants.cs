@@ -83,6 +83,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
 		internal const string LexEntry = "LexEntry";
+		internal const string LexemeForm = "LexemeForm";
+		internal const string Form = "Form";
 		internal const string TextInCorpus = "textincorpus";
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";

@@ -1,8 +1,8 @@
-using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Properties;
+using Palaso.Code;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
@@ -21,49 +21,69 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		private const string Quote = "\"";
 		private const string Slash = "/";
 		private const string Colon = ":";
+		private const string Star = "*";
 
 		private string GetLabel(XmlNode start)
 		{
-			Debug.Assert(start != null, "StyleContextGenerator: GetLabel got a null merge node.");
-			var topNode = GetTopNode(start);
-			Debug.Assert(topNode != null, "StyleContextGenerator found an element with no ancestor!");
-			// See if this element contains a child Name element
-			string nameText = GetIdentifierNodeInnerText(topNode, SharedConstants.InitialCapitalName + Slash + SharedConstants.Uni);
-			if (!string.IsNullOrEmpty(nameText))
-				return nameText;
-			if (topNode.ParentNode != null && topNode.ParentNode.Name == SharedConstants.RnGenericRec)
-			{	// The Custom element can have a styleRules element when a not "Normal" paragraph style is applied to the slice.
-				// text changes in these nodes are handled in RnGenericRecContextGenerator
-				const string xPath = SharedConstants.Title + Slash + SharedConstants.Str + Slash + SharedConstants.Run;
-				var recordTitle = GetIdentifierNodeInnerText(topNode.ParentNode, xPath);
-				if (string.IsNullOrEmpty(recordTitle))
-					recordTitle = Resources.kRnGenericRecLabel + Space + Resources.kUnTitled;
-				if (topNode.Name == SharedConstants.Custom)
+			Guard.AgainstNull(start, "start");
+			var metaNode = GetMetaNode(start);
+			var xPathToIdentifier = string.Empty;
+			var classElement = metaNode.ParentNode;
+			if (classElement != null) // if nothing else, #document should be the parent node
+			{
+				string containerLabel;
+				switch (classElement.Name)
 				{
-					string className = null;
-					var classElement = topNode.ParentNode;
-					if (classElement != null)
+					case SharedConstants.RnGenericRec:
+						xPathToIdentifier = SharedConstants.Title + Slash + SharedConstants.Str + Slash + SharedConstants.Run;
+						containerLabel = Resources.kRnGenericRecLabel;
+						break;
+					case SharedConstants.LexEntry:
+						xPathToIdentifier = SharedConstants.LexemeForm + Slash + Slash + SharedConstants.Form + Slash + SharedConstants.AUni;
+						containerLabel = Resources.kLexEntryClassLabel;
+						break;
+					case @"#document": // See if the document element (just below this) contains a child Name element
+						xPathToIdentifier = Star + Slash + SharedConstants.InitialCapitalName + Slash + SharedConstants.Uni;
+						containerLabel = metaNode.Name;
+						if (metaNode.Name == SharedConstants.StStyle)
+							containerLabel = Resources.kStyleLabel;
+						break;
+					default:
+						containerLabel = classElement.Name;
+						break;
+				}
+				// The Custom element can have a styleRules element when a not "Normal" paragraph style is applied to the slice.
+				// text changes in these nodes are handled in RnGenericRecContextGenerator and LexEntryContextGenerator
+				var identifier = GetIdentifierNodeInnerText(classElement, xPathToIdentifier);
+				string label;
+				if (string.IsNullOrEmpty(identifier))
+				{
+					label = containerLabel + Space + Resources.kUnTitled;
+				}
+				else
+				{
+					label = containerLabel + Space + identifier;
+				}
+				if (metaNode.Name == SharedConstants.Custom)
+				{	// metaNode.GetStringAttribute(SharedConstants.Name) gets the name property of the custom field.
+					// There may be a CustomField[@name="Like"]/@label that holds the displayed name in another file
+					// that has been read into the metadata cache.
+					var customPropertyName = metaNode.GetStringAttribute(SharedConstants.Name);
+					var displayName = GetDisplayName(classElement.Name, customPropertyName);
+					label += Space + Resources.kCustomFieldLabel + Space + Quote + displayName + Quote;
+				}
+				else if (metaNode.Name != SharedConstants.StStyle)
+				{	// could be some other data notebook or lexedit field
+					if (metaNode.Name != containerLabel)
 					{
-						className = (classElement.Name == SharedConstants.Ownseq
-							|| classElement.Name == SharedConstants.Refseq)
-								? classElement.Attributes[SharedConstants.Class].Value
-								: classElement.Name;
+						label += Space + metaNode.Name;
 					}
-					// There may be a CustomField[@name="Like"]/@label that holds the displayed name (in another file).
-					// @name acts like an identifier or index.
-					var customPropertyName = topNode.GetStringAttribute(SharedConstants.Name);
-					var displayName = GetDisplayName(className, customPropertyName);
-					recordTitle += Space + Resources.kCustomFieldLabel + Space + Quote + displayName + Quote;
 				}
-				else // some other data notebook field
-				{
-					recordTitle += Space + topNode.Name;
-				}
-				return recordTitle;
+				return label;
 			}
-			// Probably topNode.ParentNode == null
-			// Not an element known to need special processing, so identify it with the xPath "topNode//changedNode".
-			return topNode != start ? topNode.Name + Slash + Slash + start.Name : topNode.Name;
+			// metaNode.ParentNode == null
+			// Not an element known to need special processing, so identify it with the xPath "metaNode//changedNode".
+			return (metaNode != start ? metaNode.Name + Slash + Slash + start.Name : metaNode.Name);
 		}
 
 		/// <summary>
@@ -72,58 +92,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		/// <param name="node">The element node to find the identifier for.</param>
 		/// <param name="xpath">The xPath from the parentNode to the identifier's node.</param>
 		/// <returns>A label with the identifier in it or String.Empty.</returns>
-		private string GetIdentifierNodeInnerText(XmlNode node, string xpath)
+		private static string GetIdentifierNodeInnerText(XmlNode node, string xpath)
 		{
 			var label = string.Empty;
-			var name = node.SelectSingleNode(xpath);
-			if (name != null)
+			var nameNode = node.SelectSingleNode(xpath);
+			if (nameNode != null)
 			{
-				switch (node.Name)
-				{
-					case SharedConstants.StStyle:
-						label = StyleLabel;
-						break;
-					case SharedConstants.RnGenericRec:
-						label = Resources.kRnGenericRecLabel;
-						break;
-					default:
-						label = node.Name;
-						break;
-				}
-				label += Space + Quote + name.InnerText + Quote;
+				label = Quote + nameNode.InnerText + Quote;
 			}
 			return label;
 		}
 
-		string StyleLabel
-		{
-			get { return Resources.kStyleLabel; }
-		}
-
 		/// <summary>
-		/// For a DataType.TextPropBinary property, get the top node recursively,
+		/// For a DataType.TextPropBinary property, get a node that has meaningful context recursively,
 		/// </summary>
 		/// <param name="node">A lower level node that changed</param>
-		/// <returns>The topmost node relevant to digging out a good label.</returns>
-		private static XmlNode GetTopNode(XmlNode node)
+		/// <returns>The "meta" node relevant to digging out a good label.</returns>
+		private static XmlNode GetMetaNode(XmlNode node)
 		{
-			if (node.Name == SharedConstants.StStyle)
-			{	// a style property changed
-				return node;
-			}
-			if (node.ParentNode != null
-				&& (node.ParentNode.Name == SharedConstants.RnGenericRec  // a research notebook record
-					|| node.ParentNode.Name == @"#document" )) // the DOM node
-			{	// a Data Notebook field property changed or this is the document element
-				return node;
-			}
 			if (node.ParentNode != null)
-			{	// go back further
-				return GetTopNode(node.ParentNode);
+			{
+				if (node.ParentNode.Name == SharedConstants.RnGenericRec  // a research notebook record
+					|| node.ParentNode.Name == SharedConstants.LexEntry   // a lexicon entry
+					|| node.ParentNode.Name == @"#document") // the DOM node
+				{	// a Data Notebook field or Lexicon Entry style property changed or this is the document element
+					return node;
+				}
+				// go back further
+				return GetMetaNode(node.ParentNode);
 			}
 			return node; // no more parents
 		}
-
 
 		#region IGenerateContextDescriptor Members
 
@@ -153,9 +152,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		/// Generate a nice HTML representation of the data that is contained in the mergeElement.
 		/// We come in here once each for Ancestor, Ours and Theirs with different mergeElement.
 		/// </summary>
+		/// <param name="mergeElement">The element whose content is to be detailed enough to show things that can change.</param>
 		public string HtmlContext(XmlNode mergeElement)
 		{
-			Debug.Assert(mergeElement != null);
+			// mergeElement is never null since the 2 places that call it in LibChorus\merge\xml\generic\Conflicts.cs guard against it.
 			string image = "<div class='" + SharedConstants.StStyle + "'>";
 			if (mergeElement.Name == SharedConstants.Prop)
 			{   // Looks like: <Prop backcolor="white" fontsize="20000" forecolor="993300" spaceAfter="6000" etc. >
@@ -166,10 +166,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 			}
 			else // not an element known to need special processing, so give some context
 			{
-				var topNode = GetTopNode(mergeElement);
-				if (topNode != null)
+				var metaNode = GetMetaNode(mergeElement);
+				if (metaNode != null)
 				{
-					image += topNode.Name + Slash + Slash + mergeElement.Name + Colon;
+					image += metaNode.Name + Slash + Slash + mergeElement.Name + Colon;
 				}
 			}
 			image += ImageOfAttributesInTree(mergeElement);
@@ -191,10 +191,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		// This traverses the children depth-first, concatenating the attribute name, value pair images.
 		private string ImageOfChildren(XmlNode xNode)
 		{
-			string image = "";
+			string image = string.Empty;
 			if (xNode.ChildNodes.Count > 0)
 			{
-				image = "";
+				image = string.Empty;
 				foreach (XmlNode xChild in xNode.ChildNodes)
 				{
 					image += ImageOfNodeAttributes(xChild);
@@ -213,16 +213,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 		/// </summary>
 		/// <param name="xNode">The XML node with (or without) attributes to image</param>
 		/// <returns>empty string or "nameOfAttribute1 (value1ThereOf) ...nameOfAttributeN (valueNThereOf) "</returns>
-		private string ImageOfNodeAttributes (XmlNode xNode)
+		private string ImageOfNodeAttributes(XmlNode xNode)
 		{
-			string image = "";
+			string image = string.Empty;
 			bool hasWs = false;
 			if (xNode.Attributes != null && xNode.Attributes.Count > 0)
 			{
 				if (xNode.Name == "WsProp") // writing system prop change?
 				{  // want ws code to precede the other attributes like "ws [name (value)]"
 					XmlAttribute ws = xNode.Attributes["ws"];
-					if (ws != null )
+					if (ws != null)
 					{
 						image += " " + ws.Name + " (" + ws.Value + " ["; // " name (value ["
 						hasWs = true;

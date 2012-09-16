@@ -1,5 +1,3 @@
-using System.Xml;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
 using NUnit.Framework;
 
@@ -147,7 +145,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 			var input = root.ChildNodes[1]; // SomeWsRules  - the comment is [0]
 			var generator = new StyleContextGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform//SomeWsRules"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform [untitled]"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
 
