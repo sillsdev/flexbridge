@@ -84,7 +84,7 @@
   <ItemGroup>
 	<Reference Include="ChorusMerge">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\output\common\ChorusMerge.exe</HintPath>
+	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
