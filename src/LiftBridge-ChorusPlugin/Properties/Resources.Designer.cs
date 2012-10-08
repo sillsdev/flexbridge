@@ -219,6 +219,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FLEx isn&apos;t listening..
+		/// </summary>
+		public static string kFlexNotListening {
+			get {
+				return ResourceManager.GetString("kFlexNotListening", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx reported it was not able to import the changes received. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive..
 		/// </summary>
 		public static string kFlexStandardImportFailureMessage {
@@ -233,6 +242,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kImportLiftlexicon {
 			get {
 				return ResourceManager.GetString("kImportLiftlexicon", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Invalid command line options. Please launch from FLEx..
+		/// </summary>
+		public static string kInvalidCommandLine {
+			get {
+				return ResourceManager.GetString("kInvalidCommandLine", resourceCulture);
 			}
 		}
 

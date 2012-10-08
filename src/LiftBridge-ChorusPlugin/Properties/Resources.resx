@@ -270,4 +270,10 @@
   <data name="kSharingAttempCancelled">
 	<value xml:space="preserve">Sharing Attempt Cancelled</value>
   </data>
+  <data name="kInvalidCommandLine">
+	<value xml:space="preserve">Invalid command line options. Please launch from FLEx.</value>
+  </data>
+  <data name="kFlexNotListening">
+	<value xml:space="preserve">FLEx isn't listening.</value>
+  </data>
 </root>
