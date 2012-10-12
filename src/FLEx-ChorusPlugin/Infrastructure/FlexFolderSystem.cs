@@ -16,6 +16,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata-replaced");
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwdb");
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwbackup");
+			projectFolderConfiguration.ExcludePatterns.Add("**.orig");
 			projectFolderConfiguration.ExcludePatterns.Add("**.zip");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
@@ -23,12 +24,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.lift");
 			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
 			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
-
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
 			projectFolderConfiguration.ExcludePatterns.Add("**.lock");
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
+			projectFolderConfiguration.ExcludePatterns.Add("**.log");
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", Path.Combine("trash", "**.*")));

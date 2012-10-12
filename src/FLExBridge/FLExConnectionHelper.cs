@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.ServiceModel;
 using System.Threading;
 using FLEx_ChorusPlugin.Controller;
