@@ -1,10 +1,22 @@
 using System.Xml;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	internal sealed class FieldWorksScrDraftStrategy : IMergeStrategy
 	{
+		private readonly MetadataCache _mdc;
+		private readonly XmlMerger _merger;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		internal FieldWorksScrDraftStrategy(MergeOrder mergeOrder, MetadataCache mdc)
+		{
+			_mdc = mdc;
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
+		}
 		#region Implementation of IMergeStrategy
 
 		/// <summary>
@@ -29,9 +41,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		/// </summary>
 		public ElementStrategy GetElementStrategy(XmlNode element)
 		{
-			var strategy = new ElementStrategy(false);
+			return _merger.MergeStrategies.GetElementStrategy(element);
+		}
 
-			return strategy;
+		public MergeStrategies GetStrategies()
+		{
+			return _merger.MergeStrategies;
 		}
 
 		#endregion

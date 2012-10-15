@@ -63,7 +63,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics
 
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksCommonMergeStrategy(mergeOrder, mdc),
 				true,
 				null,
 				SharedConstants.FsFeatureSystem,

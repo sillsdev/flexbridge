@@ -80,7 +80,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventor
 
 			XmlMergeService.Do3WayMerge(
 				mergeOrder,
-				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
+				new FieldWorksHeaderedMergeStrategy(mergeOrder, mdc),
 				true,
 				SharedConstants.Header,
 				SharedConstants.WfiWordform,

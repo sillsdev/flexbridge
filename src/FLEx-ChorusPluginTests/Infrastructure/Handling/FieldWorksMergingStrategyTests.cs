@@ -28,7 +28,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			_mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
 			_mdc.ResetCaches();
 			_eventListener = new ListenerForUnitTests();
-			_fwCommonMergeStrategy = new FieldWorksCommonMergeStrategy(new NullMergeSituation(), _mdc);
+			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+			{
+				EventListener = _eventListener
+			};
+			_fwCommonMergeStrategy = new FieldWorksCommonMergeStrategy(mergeOrder, _mdc);
 		}
 
 		[TearDown]

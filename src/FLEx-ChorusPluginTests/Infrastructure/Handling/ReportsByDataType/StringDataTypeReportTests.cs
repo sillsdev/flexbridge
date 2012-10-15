@@ -3,6 +3,7 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
@@ -24,7 +25,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		public void FixtureSetup()
 		{
 			_mdc = MetadataCache.TestOnlyNewCache;
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
+			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+			{
+				EventListener = new ListenerForUnitTests()
+			};
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
 		}
 
 		[Test]

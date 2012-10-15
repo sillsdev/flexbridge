@@ -30,9 +30,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private const string MutableSingleton = "MutableSingleton";
 		private const string ImmutableSingleton = "ImmutableSingleton";
 
-		internal static XmlMerger CreateXmlMergerForFieldWorksData(MergeSituation mergeSituation, MetadataCache mdc)
+		internal static XmlMerger CreateXmlMergerForFieldWorksData(MergeOrder mergeOrder, MetadataCache mdc)
 		{
-			var merger = new XmlMerger(mergeSituation);
+			var merger = new XmlMerger(mergeOrder.MergeSituation)
+				{
+					EventListener = mergeOrder.EventListener
+				};
 			BootstrapSystem(mdc, merger);
 			return merger;
 		}

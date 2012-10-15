@@ -12,10 +12,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal FieldWorksCommonMergeStrategy(MergeSituation mergeSituation, MetadataCache mdc)
+		internal FieldWorksCommonMergeStrategy(MergeOrder mergeOrder, MetadataCache mdc)
 		{
 			_mdc = mdc;
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeSituation, mdc);
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
 		}
 
 		/// <summary>
@@ -47,6 +47,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		public ElementStrategy GetElementStrategy(XmlNode element)
 		{
 			return _merger.MergeStrategies.GetElementStrategy(element);
+		}
+
+		public MergeStrategies GetStrategies()
+		{
+			return _merger.MergeStrategies;
 		}
 
 		#endregion

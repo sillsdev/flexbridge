@@ -55,6 +55,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			return _merger.MergeStrategies.GetElementStrategy(element);
 		}
 
+		public MergeStrategies GetStrategies()
+		{
+			return _merger.MergeStrategies;
+		}
+
 		#endregion
 	}
 }

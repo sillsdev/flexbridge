@@ -43,7 +43,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			base.FixtureSetup();
 
 			_mdc = MetadataCache.TestOnlyNewCache;
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
+			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+			{
+				EventListener = new NullMergeEventListener()
+			};
+			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
 		}
 
 		[Test]
