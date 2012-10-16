@@ -21,8 +21,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	{
 		#region Implementation of IFieldWorksFileHandler
 
-		private const string CmFilter = "CmFilter";
-
 		public bool CanValidateFile(string pathToFile)
 		{
 			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Filter) &&
@@ -37,12 +35,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Filters
 					|| root.Element(SharedConstants.Header) != null
-					|| !root.Elements(CmFilter).Any())
+					|| !root.Elements(SharedConstants.CmFilter).Any())
 				{
 					return "Not a valid filter file.";
 				}
 
-				return root.Elements(CmFilter)
+				return root.Elements(SharedConstants.CmFilter)
 					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
@@ -60,7 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				CmFilter, SharedConstants.GuidStr);
+				SharedConstants.CmFilter, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -71,7 +69,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 				new FieldWorksCommonMergeStrategy(mergeOrder, mdc),
 				true,
 				null,
-				CmFilter, SharedConstants.GuidStr);
+				SharedConstants.CmFilter, SharedConstants.GuidStr);
 		}
 
 		public string Extension

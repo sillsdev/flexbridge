@@ -80,9 +80,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Styles = "Styles";
 		internal const string Style = "style";
 		internal const string StStyle = "StStyle";
+		internal const string CmFilter = "CmFilter";
 
 		// Linguistics
 		internal const string Linguistics = "Linguistics";
+		internal const string ReversalIndexEntry = "ReversalIndexEntry";
 		internal const string Reversal = "reversal";
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
@@ -93,6 +95,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";
 		internal const string GenreListFilename = GenreList + "." + List;
+		internal const string Text = "Text";
 		internal const string TextMarkupTags = "TextMarkupTags";
 		internal const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
 		internal const string TranslationTags = "TranslationTags";
@@ -158,6 +161,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSetting = "ImportSetting";
+		internal const string ScrImportSet = "ScrImportSet";
 		internal const string Trans = "trans";
 		internal const string Scripture = "Scripture";
 		internal const string Other = "Other";
@@ -175,6 +179,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScrBookAnnotations = "ScrBookAnnotations";
 		internal const string BookAnnotations = "BookAnnotations";
 		internal const string ScriptureBooks = "ScriptureBooks";
+		internal const string ScrRefSystem = "ScrRefSystem";
 
 		/***** Relocate ones that get added below here. *****/
 	}

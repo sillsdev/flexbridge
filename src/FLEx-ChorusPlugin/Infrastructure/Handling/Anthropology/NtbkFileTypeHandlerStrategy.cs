@@ -16,8 +16,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 	{
 		#region Implementation of IFieldWorksFileHandler
 
-		private const string RnGenericRec = "RnGenericRec";
-
 		public bool CanValidateFile(string pathToFile)
 		{
 			return FileUtils.CheckValidPathname(pathToFile, SharedConstants.Ntbk) &&
@@ -36,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("RnResearchNbk"));
 				if (result != null)
 					return result;
-				foreach (var record in root.Elements(RnGenericRec))
+				foreach (var record in root.Elements(SharedConstants.RnGenericRec))
 				{
 					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
 						return null;
@@ -61,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				SharedConstants.Header,
-				RnGenericRec, SharedConstants.GuidStr);
+				SharedConstants.RnGenericRec, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -72,7 +70,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 				new FieldWorksHeaderedMergeStrategy(mergeOrder, mdc),
 				true,
 				SharedConstants.Header,
-				RnGenericRec, SharedConstants.GuidStr);
+				SharedConstants.RnGenericRec, SharedConstants.GuidStr);
 		}
 
 		public string Extension

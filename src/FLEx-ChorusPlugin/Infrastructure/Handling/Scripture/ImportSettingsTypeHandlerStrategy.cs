@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
@@ -15,8 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	internal sealed class ImportSettingsTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		private const string ScrImportSet = "ScrImportSet";
-
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
@@ -31,10 +28,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.ImportSettings || !root.Elements(ScrImportSet).Any())
+				if (root.Name.LocalName != SharedConstants.ImportSettings || !root.Elements(SharedConstants.ScrImportSet).Any())
 					return "Not valid Scripture import settings file.";
 
-				foreach (var result in root.Elements(ScrImportSet).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(ScrImportSet))).Where(result => result != null))
+				foreach (var result in root.Elements(SharedConstants.ScrImportSet).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.ScrImportSet))).Where(result => result != null))
 				{
 					return result;
 				}
@@ -55,7 +52,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				ScrImportSet, SharedConstants.GuidStr);
+				SharedConstants.ScrImportSet, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -66,7 +63,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 				new FieldWorksCommonMergeStrategy(mergeOrder, mdc),
 				true,
 				null,
-				ScrImportSet, SharedConstants.GuidStr);
+				SharedConstants.ScrImportSet, SharedConstants.GuidStr);
 		}
 
 		public string Extension
