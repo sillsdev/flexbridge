@@ -13,6 +13,7 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FLEx_ChorusPlugin.Infrastructure.Handling;
 using Palaso.Progress.LogBox;
 using Palaso.Xml;
 
@@ -113,6 +114,7 @@ namespace FwdataTestApp
 			var sbValidation = new StringBuilder();
 			var nestTimer = new Stopwatch();
 			var breakupTimer = new Stopwatch();
+			var ambiguousTimer = new Stopwatch();
 			var restoreTimer = new Stopwatch();
 			var verifyTimer = new Stopwatch();
 			var checkOwnObjsurTimer = new Stopwatch();
@@ -129,7 +131,7 @@ namespace FwdataTestApp
 					RestoreProjectIfNeeded(_srcFwdataPathname);
 					if (_cbRoundTripData.Checked)
 					{
-						RoundTripData(breakupTimer, restoreTimer);
+						RoundTripData(breakupTimer, restoreTimer, ambiguousTimer, sbValidation);
 					}
 					if (_cbVerify.Checked)
 					{
@@ -157,7 +159,7 @@ namespace FwdataTestApp
 			finally
 			{
 				var compTxt = String.Format(
-					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}{0}{8}",
+					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}Time to check ambiguous data: {8}.{0}{0}{9}",
 					Environment.NewLine,
 					nestTimer.ElapsedMilliseconds > 0 ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					checkOwnObjsurTimer.ElapsedMilliseconds > 0 ? checkOwnObjsurTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
@@ -166,6 +168,7 @@ namespace FwdataTestApp
 					restoreTimer.ElapsedMilliseconds > 0 ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					verifyTimer.ElapsedMilliseconds > 0 ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					validateTimer.ElapsedMilliseconds > 0 ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					ambiguousTimer.ElapsedMilliseconds > 0 ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					sb);
 				File.WriteAllText(Path.Combine(_workingDir, "Comparison.log"), compTxt);
 				var validationErrors = sbValidation.ToString();
@@ -199,12 +202,133 @@ namespace FwdataTestApp
 			return ownObjsurFound;
 		}
 
-		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer)
+		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer, Stopwatch ambiguousTimer, StringBuilder sbValidation)
 		{
 			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
 			breakupTimer.Start();
 			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
 			breakupTimer.Stop();
+
+			if (_cbCheckAmbiguousElements.Checked)
+			{
+				var allDataFiles = new HashSet<string>();
+				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories)
+								 where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+									   select pathname);
+				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories)
+									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+									   select pathname);
+				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Other"), "*.*", SearchOption.AllDirectories)
+									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+									   select pathname);
+				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories)
+									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+									   select pathname);
+				var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+				{
+					EventListener = new ChangeAndConflictAccumulator()
+				};
+				var merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, MetadataCache.MdCache);
+				ambiguousTimer.Start();
+				foreach (var dataFile in allDataFiles)
+				{
+					var extension = Path.GetExtension(dataFile).Substring(1);
+					string optionalElementName = null;
+					string mainRecordName = null;
+					switch (extension)
+					{
+						case SharedConstants.Style:
+							mainRecordName = SharedConstants.StStyle;
+							break;
+						case SharedConstants.List:
+							mainRecordName = SharedConstants.CmPossibilityList;
+							break;
+						case SharedConstants.langproj:
+							mainRecordName = SharedConstants.LangProject;
+							break;
+						case SharedConstants.Annotation:
+							mainRecordName = SharedConstants.CmAnnotation;
+							break;
+						case SharedConstants.Filter:
+							mainRecordName = SharedConstants.CmFilter;
+							break;
+						case SharedConstants.orderings:
+							mainRecordName = SharedConstants.VirtualOrdering;
+							break;
+						case SharedConstants.pictures:
+							mainRecordName = SharedConstants.CmPicture;
+							break;
+						case SharedConstants.ArchivedDraft:
+							mainRecordName = SharedConstants.ScrDraft;
+							break;
+						case SharedConstants.ImportSetting:
+							mainRecordName = SharedConstants.ScrImportSet;
+							break;
+						case SharedConstants.Srs:
+							mainRecordName = SharedConstants.ScrRefSystem;
+							break;
+						case SharedConstants.Trans:
+							mainRecordName = SharedConstants.Scripture;
+							break;
+						case SharedConstants.bookannotations:
+							mainRecordName = SharedConstants.ScrBookAnnotations;
+							break;
+						case SharedConstants.book:
+							mainRecordName = SharedConstants.ScrBook;
+							break;
+						case SharedConstants.Ntbk:
+							optionalElementName = SharedConstants.Header;
+							mainRecordName = SharedConstants.RnGenericRec;
+							break;
+						case SharedConstants.Reversal:
+							optionalElementName = SharedConstants.Header;
+							mainRecordName = SharedConstants.ReversalIndexEntry;
+							break;
+						case SharedConstants.Lexdb:
+							optionalElementName = SharedConstants.Header;
+							mainRecordName = SharedConstants.LexEntry;
+							break;
+						case SharedConstants.TextInCorpus:
+							mainRecordName = SharedConstants.Text;
+							break;
+						case SharedConstants.Inventory:
+							optionalElementName = SharedConstants.Header;
+							mainRecordName = SharedConstants.WfiWordform;
+							break;
+						case SharedConstants.DiscourseExt:
+							optionalElementName = SharedConstants.Header;
+							mainRecordName = SharedConstants.DsChart;
+							break;
+						case SharedConstants.Featsys:
+							mainRecordName = SharedConstants.FsFeatureSystem;
+							break;
+						case SharedConstants.Phondata:
+							mainRecordName = SharedConstants.PhPhonData;
+							break;
+						case SharedConstants.Morphdata:
+							mainRecordName = SharedConstants.MoMorphData;
+							break;
+						case SharedConstants.Agents:
+							mainRecordName = SharedConstants.CmAgent;
+							break;
+					}
+					using (var fastSplitter = new FastXmlElementSplitter(dataFile))
+					{
+						bool foundOptionalFirstElement;
+						// NB: The main input file *does* have to deal with the optional first element.
+						foreach (var record in fastSplitter.GetSecondLevelElementStrings(optionalElementName, mainRecordName, out foundOptionalFirstElement))
+						{
+							XmlMergeService.RemoveAmbiguousChildren(merger.EventListener, merger.MergeStrategies, record);
+						}
+					}
+				}
+				ambiguousTimer.Stop();
+				foreach (var warning in ((ChangeAndConflictAccumulator)merger.EventListener).Warnings)
+				{
+					sbValidation.AppendLine(warning.Description);
+					sbValidation.AppendLine();
+				}
+			}
 			restoreTimer.Start();
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();

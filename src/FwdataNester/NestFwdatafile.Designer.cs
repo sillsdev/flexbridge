@@ -42,6 +42,7 @@
 			this._rebuildDataFile = new System.Windows.Forms.CheckBox();
 			this._btnRestoreProjects = new System.Windows.Forms.Button();
 			this._btnClearCheckboxes = new System.Windows.Forms.Button();
+			this._cbCheckAmbiguousElements = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			//
 			// _openFileDialog
@@ -79,7 +80,7 @@
 			// _btnRunSelected
 			//
 			this._btnRunSelected.Enabled = false;
-			this._btnRunSelected.Location = new System.Drawing.Point(7, 125);
+			this._btnRunSelected.Location = new System.Drawing.Point(7, 203);
 			this._btnRunSelected.Name = "_btnRunSelected";
 			this._btnRunSelected.Size = new System.Drawing.Size(107, 23);
 			this._btnRunSelected.TabIndex = 8;
@@ -146,7 +147,7 @@
 			// _rebuildDataFile
 			//
 			this._rebuildDataFile.AutoSize = true;
-			this._rebuildDataFile.Location = new System.Drawing.Point(7, 89);
+			this._rebuildDataFile.Location = new System.Drawing.Point(7, 167);
 			this._rebuildDataFile.Name = "_rebuildDataFile";
 			this._rebuildDataFile.Size = new System.Drawing.Size(200, 17);
 			this._rebuildDataFile.TabIndex = 17;
@@ -173,12 +174,25 @@
 			this._btnClearCheckboxes.UseVisualStyleBackColor = true;
 			this._btnClearCheckboxes.Click += new System.EventHandler(this.ClearCheckboxes);
 			//
+			// _cbCheckAmbiguousElements
+			//
+			this._cbCheckAmbiguousElements.AutoSize = true;
+			this._cbCheckAmbiguousElements.Checked = true;
+			this._cbCheckAmbiguousElements.CheckState = System.Windows.Forms.CheckState.Checked;
+			this._cbCheckAmbiguousElements.Location = new System.Drawing.Point(25, 82);
+			this._cbCheckAmbiguousElements.Name = "_cbCheckAmbiguousElements";
+			this._cbCheckAmbiguousElements.Size = new System.Drawing.Size(171, 17);
+			this._cbCheckAmbiguousElements.TabIndex = 20;
+			this._cbCheckAmbiguousElements.Text = "Check for ambiguous elements";
+			this._cbCheckAmbiguousElements.UseVisualStyleBackColor = true;
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 160);
+			this.ClientSize = new System.Drawing.Size(554, 238);
+			this.Controls.Add(this._cbCheckAmbiguousElements);
 			this.Controls.Add(this._btnClearCheckboxes);
 			this.Controls.Add(this._btnRestoreProjects);
 			this.Controls.Add(this._rebuildDataFile);
@@ -214,5 +228,6 @@
 		private System.Windows.Forms.CheckBox _rebuildDataFile;
 		private System.Windows.Forms.Button _btnRestoreProjects;
 		private System.Windows.Forms.Button _btnClearCheckboxes;
+		private System.Windows.Forms.CheckBox _cbCheckAmbiguousElements;
 	}
 }
