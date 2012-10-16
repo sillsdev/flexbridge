@@ -243,6 +243,12 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000062: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000062);
+
+			// 7000063: Add the LangProject HomographWs property.
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LangProject", "HomographWs");
+			DoMerge(fileHandler, 7000063);
+			classInfo = mdc.GetClassInfo("LangProject");
+			CheckNewPropertyAfterUpgrade(classInfo, "HomographWs", DataType.Unicode);
 		}
 
 		[Test]
