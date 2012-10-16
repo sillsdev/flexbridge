@@ -126,7 +126,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					string classOfOwnedObject;
 					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
+					{
+						// Dangling owning ref to non-existant object.
+						objsurElement.Remove();
 						continue;
+					}
 					guidToClassMapping.Remove(guid);
 					var ownedElement = XElement.Parse(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
