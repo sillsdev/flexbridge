@@ -168,7 +168,7 @@ namespace FwdataTestApp
 					restoreTimer.ElapsedMilliseconds > 0 ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					verifyTimer.ElapsedMilliseconds > 0 ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					validateTimer.ElapsedMilliseconds > 0 ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					ambiguousTimer.ElapsedMilliseconds > 0 ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					ambiguousTimer.ElapsedMilliseconds > 0 ? ambiguousTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
 					sb);
 				File.WriteAllText(Path.Combine(_workingDir, "Comparison.log"), compTxt);
 				var validationErrors = sbValidation.ToString();
@@ -212,18 +212,35 @@ namespace FwdataTestApp
 			if (_cbCheckAmbiguousElements.Checked)
 			{
 				var allDataFiles = new HashSet<string>();
-				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories)
-								 where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
-									   select pathname);
-				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories)
-									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
-									   select pathname);
-				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "Other"), "*.*", SearchOption.AllDirectories)
-									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
-									   select pathname);
-				allDataFiles.UnionWith(from pathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories)
-									   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
-									   select pathname);
+				var currentDir = Path.Combine(_workingDir, "Linguistics");
+				if (Directory.Exists(currentDir))
+				{
+					allDataFiles.UnionWith(from pathname in Directory.GetFiles(currentDir, "*.*", SearchOption.AllDirectories)
+										   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+										   select pathname);
+				}
+				currentDir = Path.Combine(_workingDir, "Anthropology");
+				if (Directory.Exists(currentDir))
+				{
+					allDataFiles.UnionWith(from pathname in Directory.GetFiles(currentDir, "*.*", SearchOption.AllDirectories)
+										   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+										   select pathname);
+				}
+				currentDir = Path.Combine(_workingDir, "Other");
+				if (Directory.Exists(currentDir))
+				{
+					allDataFiles.UnionWith(
+						from pathname in Directory.GetFiles(currentDir, "*.*", SearchOption.AllDirectories)
+						where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+						select pathname);
+				}
+				currentDir = Path.Combine(_workingDir, "General");
+				if (Directory.Exists(currentDir))
+				{
+					allDataFiles.UnionWith(from pathname in Directory.GetFiles(currentDir, "*.*", SearchOption.AllDirectories)
+										   where !pathname.ToLowerInvariant().EndsWith("chorusnotes")
+										   select pathname);
+				}
 				var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 				{
 					EventListener = new ChangeAndConflictAccumulator()
@@ -315,10 +332,9 @@ namespace FwdataTestApp
 					using (var fastSplitter = new FastXmlElementSplitter(dataFile))
 					{
 						bool foundOptionalFirstElement;
-						// NB: The main input file *does* have to deal with the optional first element.
-						foreach (var record in fastSplitter.GetSecondLevelElementStrings(optionalElementName, mainRecordName, out foundOptionalFirstElement))
+						foreach (var parentNode in fastSplitter.GetSecondLevelElementStrings(optionalElementName, mainRecordName, out foundOptionalFirstElement).Select(record => XmlUtilities.GetDocumentNodeFromRawXml(record, new XmlDocument())))
 						{
-							XmlMergeService.RemoveAmbiguousChildren(merger.EventListener, merger.MergeStrategies, record);
+							XmlMergeService.RemoveAmbiguousChildren(merger.EventListener, merger.MergeStrategies, parentNode);
 						}
 					}
 				}
@@ -629,12 +645,9 @@ namespace FwdataTestApp
 				.Where(pathname => Path.GetFileName(pathname).ToLowerInvariant() == currentFilename.ToLowerInvariant())
 				.Select(pathname => new FileInfo(pathname)).First();
 			var currentFileInfo = new FileInfo(currentFwdataPathname);
-			if (backupFileInfo.LastWriteTimeUtc == currentFileInfo.LastWriteTimeUtc)
-				return;
-
 			var subDirs = Directory.GetDirectories(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
 			var allFiles = Directory.GetFiles(projectDirName, "*.*", SearchOption.TopDirectoryOnly);
-			if (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0])
+			if (backupFileInfo.LastWriteTimeUtc == currentFileInfo.LastWriteTimeUtc && (subDirs.Length == 0 && allFiles.Length == 1 && currentFwdataPathname == allFiles[0]))
 				return;
 
 			// Clear it out.
