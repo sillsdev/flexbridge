@@ -21,7 +21,7 @@ namespace FwdataTestApp
 {
 	public partial class NestFwdataFile : Form
 	{
-		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\Projects";
+		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\TestProjects";
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		private string _srcFwdataPathname;
 		private string _workingDir;
@@ -36,6 +36,9 @@ namespace FwdataTestApp
 			_btnRunSelected.Enabled = false;
 			_fwdataPathname.Text = null;
 
+			//if (string.IsNullOrEmpty(_openFileDialog.InitialDirectory))
+			//	_openFileDialog.InitialDirectory = NormalUserProjectDir;
+			//_openFileDialog.RestoreDirectory = false;
 			if (_openFileDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
@@ -208,6 +211,7 @@ namespace FwdataTestApp
 			breakupTimer.Start();
 			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
 			breakupTimer.Stop();
+			GC.Collect(2, GCCollectionMode.Forced);
 
 			if (_cbCheckAmbiguousElements.Checked)
 			{
@@ -344,6 +348,7 @@ namespace FwdataTestApp
 					sbValidation.AppendLine(warning.Description);
 					sbValidation.AppendLine();
 				}
+				GC.Collect(2, GCCollectionMode.Forced);
 			}
 			restoreTimer.Start();
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
