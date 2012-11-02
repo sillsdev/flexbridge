@@ -1,4 +1,5 @@
 ﻿using System;
+using Chorus.UI.Clone;
 
 namespace SIL.LiftBridge.View
 {
@@ -14,9 +15,9 @@ namespace SIL.LiftBridge.View
 	internal sealed class StartupNewEventArgs : EventArgs
 	{
 		internal SharedSystemType SystemType { get; private set; }
-		internal Chorus.UI.Clone.ExtantRepoSource ExtantRepoSource { get; private set; }
+		internal ExtantRepoSource ExtantRepoSource { get; private set; }
 
-		internal StartupNewEventArgs(SharedSystemType systemType, Chorus.UI.Clone.ExtantRepoSource extantRepoSource)
+		internal StartupNewEventArgs(SharedSystemType systemType, ExtantRepoSource extantRepoSource)
 		{
 			SystemType = systemType;
 			ExtantRepoSource = extantRepoSource;

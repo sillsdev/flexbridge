@@ -60,6 +60,13 @@ namespace SIL.LiftBridge.Properties {
 			}
 		}
 
+		public static System.Drawing.Icon chorus {
+			get {
+				object obj = ResourceManager.GetObject("chorus", resourceCulture);
+				return ((System.Drawing.Icon)(obj));
+			}
+		}
+
 		public static System.IO.UnmanagedMemoryStream errorSound {
 			get {
 				return ResourceManager.GetStream("errorSound", resourceCulture);
@@ -69,6 +76,19 @@ namespace SIL.LiftBridge.Properties {
 		public static System.IO.UnmanagedMemoryStream finishedSound {
 			get {
 				return ResourceManager.GetStream("finishedSound", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to There is already a copy of FLExBridge running.
+		///You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
+		///-- Send/Receive Project
+		///-- Receive Project from a colleague
+		///-- View Conflict Report (can&apos;t have two open).
+		/// </summary>
+		public static string kAlreadyRunning {
+			get {
+				return ResourceManager.GetString("kAlreadyRunning", resourceCulture);
 			}
 		}
 
@@ -260,6 +280,15 @@ namespace SIL.LiftBridge.Properties {
 		public static string kLabel {
 			get {
 				return ResourceManager.GetString("kLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Lift Bridge.
+		/// </summary>
+		public static string kLiftBridge {
+			get {
+				return ResourceManager.GetString("kLiftBridge", resourceCulture);
 			}
 		}
 
@@ -521,6 +550,24 @@ namespace SIL.LiftBridge.Properties {
 		public static string lFolderAlreadyExists {
 			get {
 				return ResourceManager.GetString("lFolderAlreadyExists", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		public static string ObtainProjectView_DialogTitle {
+			get {
+				return ResourceManager.GetString("ObtainProjectView_DialogTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Send/Receive Project.
+		/// </summary>
+		public static string SendReceiveView_DialogTitle {
+			get {
+				return ResourceManager.GetString("SendReceiveView_DialogTitle", resourceCulture);
 			}
 		}
 	}

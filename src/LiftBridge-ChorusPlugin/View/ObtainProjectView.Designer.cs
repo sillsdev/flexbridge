@@ -1,8 +1,6 @@
-﻿using System.Windows.Forms;
-
-namespace SIL.LiftBridge.View
+﻿namespace SIL.LiftBridge.View
 {
-	internal partial class LiftBridgeDlg : Form
+	partial class ObtainProjectView
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -15,10 +13,9 @@ namespace SIL.LiftBridge.View
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (disposing && (components != null))
 			{
-				if (components != null)
-					components.Dispose();
+				components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -33,24 +30,17 @@ namespace SIL.LiftBridge.View
 		{
 			this.SuspendLayout();
 			//
-			// LiftBridgeDlg
+			// ObtainProjectView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(856, 520);
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(525, 490);
-			this.Name = "LiftBridgeDlg";
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.Text = "LIFT Bridge: ";
+			this.ClientSize = new System.Drawing.Size(223, 275);
+			this.Name = "ObtainProjectView";
+			this.Text = "ObtainProjectView";
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-
 	}
 }

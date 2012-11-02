@@ -84,7 +84,7 @@
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Chorus, Version=1.5.129.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="Chorus, Version=1.5.131.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <ExecutableExtension>.exe</ExecutableExtension>
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
@@ -92,7 +92,7 @@
 	<Reference Include="ChorusMerge">
 	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
 	</Reference>
-	<Reference Include="LibChorus, Version=1.5.129.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="LibChorus, Version=1.5.131.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
@@ -100,13 +100,12 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso, Version=1.9.333.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="Palaso, Version=1.9.334.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso.TestUtilities, Version=1.9.188.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="Palaso.TestUtilities">
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.TestUtilities.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
@@ -115,23 +114,12 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="ControllerTests\LiftBridgeControllerTests.cs" />
-	<Compile Include="MockedViews\MockedExistingSystem.cs" />
 	<Compile Include="MockedViews\MockedGetSharedProject.cs" />
-	<Compile Include="MockedViews\MockedLiftBridgeClient.cs" />
-	<Compile Include="MockedViews\MockedLiftBridgeView.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="MockedViews\MockedStartupNewView.cs" />
 	<Compile Include="ModelTests\LiftBridgeModelTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="ServicesTests\FileAndDirectoryServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\LiftBridgeCore\LiftBridgeCore.csproj">
-	  <Project>{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}</Project>
-	  <Name>LiftBridgeCore</Name>
-	</ProjectReference>
 	<ProjectReference Include="..\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj">
 	  <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
 	  <Name>LiftBridge-ChorusPlugin</Name>
@@ -154,7 +142,9 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<Folder Include="ControllerTests\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

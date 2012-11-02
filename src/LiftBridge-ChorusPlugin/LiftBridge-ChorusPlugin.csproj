@@ -88,8 +88,7 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso, Version=1.9.307.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="Palaso">
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
@@ -104,65 +103,58 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Controller\LiftBridgeConflictController.cs" />
+	<Compile Include="Controller\LiftBridgeSynchronizeController.cs" />
+	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Infrastructure\ISynchronizeProject.cs" />
+	<Compile Include="Infrastructure\SynchronizeProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
-	<Compile Include="View\ExistingSystem.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\ExistingSystem.Designer.cs">
-	  <DependentUpon>ExistingSystem.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\IActiveView.cs" />
-	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="View\ILiftBridgeView.cs" />
-	<Compile Include="View\IStartupNewView.cs" />
-	<Compile Include="View\LiftBridgeDlg.cs">
+	<Compile Include="View\LiftBridgeConflictView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="View\LiftBridgeDlg.Designer.cs">
-	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
+	<Compile Include="View\LiftBridgeConflictView.designer.cs">
+	  <DependentUpon>LiftBridgeConflictView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="Controller\LiftBridgeController.cs" />
+	<Compile Include="View\IActiveView.cs" />
+	<Compile Include="View\ILiftBridgeController.cs" />
+	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="Model\LiftProject.cs" />
-	<Compile Include="Model\LiftProjectServices.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="View\ObtainProjectView.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="View\ObtainProjectView.designer.cs">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</Compile>
 	<Compile Include="View\StartupNewEventArgs.cs" />
-	<Compile Include="View\StartupNew.cs">
+	<Compile Include="View\StartupNewView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\StartupNew.Designer.cs">
-	  <DependentUpon>StartupNew.cs</DependentUpon>
+	<Compile Include="View\StartupNewView.designer.cs">
+	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="View\ExistingSystem.resx">
-	  <DependentUpon>ExistingSystem.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\LiftBridgeDlg.resx">
-	  <DependentUpon>LiftBridgeDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
+	<EmbeddedResource Include="View\LiftBridgeConflictView.resx">
+	  <DependentUpon>LiftBridgeConflictView.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="View\StartupNew.resx">
-	  <DependentUpon>StartupNew.cs</DependentUpon>
-	  <SubType>Designer</SubType>
+	<EmbeddedResource Include="View\ObtainProjectView.resx">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\LiftBridgeCore\LiftBridgeCore.csproj">
-	  <Project>{F36EF339-D019-45B0-B5D5-EF0BE9DCAA8D}</Project>
-	  <Name>LiftBridgeCore</Name>
-	</ProjectReference>
+	<EmbeddedResource Include="View\StartupNewView.resx">
+	  <DependentUpon>StartupNewView.cs</DependentUpon>
+	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -187,6 +179,10 @@
   <ItemGroup>
 	<None Include="Resources\finished.wav" />
   </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\chorus.ico" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>

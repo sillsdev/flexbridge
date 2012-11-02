@@ -14,10 +14,10 @@ namespace LiftBridgeTests.ModelTests
 			return CreateNewbieProject("Newbie");
 		}
 
-		private LiftProject CreateNewbieProject(string projectName)
+		private LiftProject CreateNewbieProject(string baseDir)
 		{
-			var liftProject = new LiftProject(projectName);
-			_pathToProject = LiftProjectServices.PathToProject(liftProject);
+			var liftProject = new LiftProject(baseDir);
+			_pathToProject = liftProject.PathToProject;
 			Directory.CreateDirectory(_pathToProject);
 			return liftProject;
 		}
@@ -31,38 +31,11 @@ namespace LiftBridgeTests.ModelTests
 		}
 
 		[Test]
-		public void ProjectHasCorrectName()
-		{
-			var liftProject = new LiftProject("Newbie");
-			Assert.AreEqual("Newbie", liftProject.LiftProjectName);
-		}
-
-		[Test]
-		public void HasCorrectBasePathForProject()
-		{
-			Assert.IsTrue(LiftProjectServices.BasePath.EndsWith("LiftBridge"));
-		}
-
-		[Test]
 		public void HasCorrectPathForProject()
 		{
 			CreateNewbieProject();
-			Assert.IsTrue(_pathToProject.EndsWith("Newbie"));
-		}
-
-		[Test]
-		public void EnsureProjectIsNotShared()
-		{
-			var liftProject = CreateNewbieProject();
-			Assert.IsFalse(LiftProjectServices.ProjectIsShared(liftProject));
-		}
-
-		[Test]
-		public void EnsureProjectIsShared()
-		{
-			var liftProject = CreateNewbieProject();
-			Directory.CreateDirectory(Path.Combine(_pathToProject, ".hg"));
-			Assert.IsTrue(LiftProjectServices.ProjectIsShared(liftProject));
+			Assert.IsTrue(_pathToProject.EndsWith("LIFT"));
+			Assert.IsTrue(_pathToProject.Contains("OtherRepositories"));
 		}
 
 		[Test]

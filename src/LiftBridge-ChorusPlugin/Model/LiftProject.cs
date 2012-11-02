@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using Palaso.Extensions;
 
 namespace SIL.LiftBridge.Model
 {
@@ -7,40 +10,53 @@ namespace SIL.LiftBridge.Model
 	/// </summary>
 	internal class LiftProject
 	{
-		private readonly Guid _id;
-
-		internal LiftProject(string liftProjectName)
+		internal LiftProject(string basePath)
 		{
-			LiftProjectName = liftProjectName;
-			_id = Guid.Empty;
-		}
-
-		internal LiftProject(string liftProjectName, Guid langProjId)
-		{
-			LiftProjectName = liftProjectName;
-			_id = langProjId;
-			LiftProjectServices.StoreIdentifiers(langProjId, null);
-		}
-
-		internal Guid Id { get { return _id; } }
-
-		internal string LiftProjectName { get; private set; }
-
-		internal string RepositoryIdentifier
-		{
-			get
-			{
-				return LiftProjectServices.GetRepositoryIdentifier(_id);
-			}
-			set
-			{
-				LiftProjectServices.StoreIdentifiers(_id, value);
-			}
+			BasePath = basePath;
 		}
 
 		internal string LiftPathname
 		{
-			get { return LiftProjectServices.PathToFirstLiftFile(this); }
+			get { return PathToFirstLiftFile(this); }
+		}
+
+		private string BasePath { get; set; }
+
+		internal string PathToProject
+		{
+			get
+			{
+				return BasePath.CombineForPath("OtherRepositories", "LIFT");
+			}
+		}
+
+		internal string ProjectName
+		{
+			get { return Path.GetFileNameWithoutExtension(PathToFirstFwFile(BasePath)); }
+		}
+
+		private static string PathToFirstFwFile(string basePath)
+		{
+			var fwFiles = Directory.GetFiles(basePath, "*.fwdata").ToList();
+			if (fwFiles.Count == 0)
+				fwFiles = Directory.GetFiles(basePath, "*.fwdb").ToList();
+			return fwFiles.Count == 0 ? null : (from file in fwFiles
+												  where HasOnlyOneDot(file)
+												  select file).FirstOrDefault();
+		}
+
+		private static string PathToFirstLiftFile(LiftProject project)
+		{
+			var liftFiles = Directory.GetFiles(project.PathToProject, "*.lift").ToList();
+			return liftFiles.Count == 0 ? null : (from file in liftFiles
+												  where HasOnlyOneDot(file)
+												  select file).FirstOrDefault();
+		}
+
+		private static bool HasOnlyOneDot(string pathname)
+		{
+			var filename = Path.GetFileName(pathname);
+			return filename.IndexOf(".", StringComparison.InvariantCulture) == filename.LastIndexOf(".", StringComparison.InvariantCulture);
 		}
 	}
 }
