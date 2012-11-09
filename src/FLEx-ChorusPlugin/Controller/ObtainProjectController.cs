@@ -10,7 +10,7 @@ using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
 using Palaso.Extensions;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Controller
 {

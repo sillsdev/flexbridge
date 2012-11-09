@@ -9,7 +9,7 @@ using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {

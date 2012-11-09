@@ -6,7 +6,7 @@ using System.Xml;
 ﻿﻿using Chorus.Utilities;
 ﻿﻿using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
-﻿﻿using Palaso.Progress.LogBox;
+using Palaso.Progress;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices

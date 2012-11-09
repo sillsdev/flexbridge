@@ -7,7 +7,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 {

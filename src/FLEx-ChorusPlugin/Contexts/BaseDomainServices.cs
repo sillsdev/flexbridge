@@ -9,8 +9,7 @@ using FLEx_ChorusPlugin.Contexts.Linguistics;
 using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress.LogBox;
-using Palaso.Xml;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Contexts
 {

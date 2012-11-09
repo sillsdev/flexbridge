@@ -3,7 +3,7 @@ using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 {

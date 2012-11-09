@@ -1,7 +1,7 @@
 using System.IO;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {

@@ -94,7 +94,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// </summary>
 		public static ChorusSystem InitializeChorusSystem(string directoryName, string user)
 		{
-			var system = new ChorusSystem(directoryName, user);
+			var system = new ChorusSystem(directoryName);
+			system.Init(user);
 			ConfigureChorusProjectFolder(system.ProjectFolderConfiguration);
 			return system;
 		}

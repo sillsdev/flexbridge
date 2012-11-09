@@ -4,7 +4,7 @@
 using NUnit.Framework;
 using Palaso.IO;
 using System.IO;
-﻿using Palaso.Progress.LogBox;
+﻿using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {

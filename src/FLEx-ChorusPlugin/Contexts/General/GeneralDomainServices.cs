@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts.General.UserDefinedLists;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Contexts.General
 {
