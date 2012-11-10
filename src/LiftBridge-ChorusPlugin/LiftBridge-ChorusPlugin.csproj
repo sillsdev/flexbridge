@@ -9,7 +9,7 @@
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.LiftBridge</RootNamespace>
-	<AssemblyName>LiftBridge</AssemblyName>
+	<AssemblyName>LiftBridge-ChorusPlugin</AssemblyName>
 	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<FileUpgradeFlags>
