@@ -24,3 +24,5 @@ src/LiftBridgeTests/LiftBridgeTests.pidb
 glob:LiftBridge VS2010.6.1.ReSharper.user
 glob:LiftBridge VS2010.sln.DotSettings.user
 glob:src/LiftBridge/LiftBridge.csproj.DotSettings.user
+src/LiftBridge-ChorusPlugin/obj/*
+src/LiftBridge-ChorusPluginTests/obj/*

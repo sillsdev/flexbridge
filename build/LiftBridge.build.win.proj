@@ -31,15 +31,8 @@
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="CopyMercurialFolders"/>
-	<CallTarget Targets="MergeAssemblies"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
-  </Target>
-
-  <Target Name="MergeAssemblies" DependsOnTargets="CreateDirectories">
-	<Message Text="Attempting ILMerge for several assemblies" Importance="high"/>
-	<!-- Make a new merged ChorusMerge exe. -->
-	<Exec Command="&quot;C:\Program Files\Microsoft\ILMerge\ILMerge.exe&quot; /lib:$(teamcity_build_checkoutDir)\lib\$(Configuration)\ /lib:$(teamcity_build_checkoutDir)\lib\common /out:$(teamcity_build_checkoutDir)\output\common\ChorusMerge.exe ChorusMerge.exe Chorus.exe LibChorus.dll Autofac.dll Palaso.dll PalasoUIWindowsForms.dll icu.net.dll Enchant.Net.dll Interop.WIA.dll Keyman7Interop.dll KeymanLink.dll" />
   </Target>
 
   <ItemGroup>
@@ -83,7 +76,7 @@
 
   <!-- ***************** Installer stuff below this line. ***************** -->
 
-  <Target Name="Installer" DependsOnTargets="Test; SetAboutInfo; MakeIndex">
+  <Target Name="Installer" DependsOnTargets="Test; SetAboutInfo; LiftBridge2">
 	<!-- Copy it to a safe place first, since it gets modified. -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 
@@ -102,24 +95,32 @@
   </Target>
 
   <Target Name="Upload" DependsOnTargets="CreateDirectories">
-	<Message Text="Attempting rsync of LIFTBridgeInstaller.msi" Importance="high"/>
+	<Message Text="Attempting rsync of LIFTBridgeInstaller2.msi" Importance="high"/>
 
 	<!-- Upload the installer up to the web. -->
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller.msi"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller2.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller2.msi"/>
 
-	<!-- Upload the index.htm file up to the web. -->
-	<Message Text="Attempting rsync of Index.html" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	<!-- Upload the Index.htm file up to the web. -->
+	<Message Text="Attempting rsync of Index.htm" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+
+	<!-- Upload the LiftBridge2.html file up to the web. -->
+	<Message Text="Attempting rsync of LiftBridge2.html" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridge2.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridge2.html"/>
+
+	<!-- push up to the web so that on our downloads page, we can show the under construction gif -->
+	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>
 
   </Target>
 
-  <Target Name="MakeIndex" DependsOnTargets="VersionNumbers">
+  <Target Name="LiftBridge2" DependsOnTargets="VersionNumbers">
 
 	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
-	<Copy SourceFiles="$(RootDir)\src\Installer\Index.htm" DestinationFolder="$(RootDir)\output\Installer"/>
+	<Copy SourceFiles="$(RootDir)\src\Installer\LiftBridge2.html" DestinationFolder="$(RootDir)\output\Installer"/>
 
 	<!-- replace some parts of the file with the version number & date -->
-	<FileUpdate File="$(RootDir)\output\Installer\Index.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+	<FileUpdate File="$(RootDir)\output\Installer\LiftBridge2.html" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
   </Target>
 
   <Target Name="SetAboutInfo" DependsOnTargets="VersionNumbers">
