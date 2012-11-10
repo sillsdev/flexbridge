@@ -13,7 +13,7 @@ namespace LiftBridgeTests.ServicesTests
 		private string _baseDir;
 		private string _newBaseFolderPathname;
 		private string _newAudioDirName;
-		private string _newWSDirName;
+		private string _newWsDirName;
 		private string _newLdmlPathname;
 
 		[TestFixtureSetUp]
@@ -33,9 +33,9 @@ namespace LiftBridgeTests.ServicesTests
 			File.Create(_newBaseFolderPathname).Close();
 			_newAudioDirName = Path.Combine(_baseDir, "audio");
 			Directory.CreateDirectory(_newAudioDirName);
-			_newWSDirName = Path.Combine(_baseDir, "WritingSystems");
-			Directory.CreateDirectory(_newWSDirName);
-			_newLdmlPathname = Path.Combine(_newWSDirName, "new.ldml");
+			_newWsDirName = Path.Combine(_baseDir, "WritingSystems");
+			Directory.CreateDirectory(_newWsDirName);
+			_newLdmlPathname = Path.Combine(_newWsDirName, "new.ldml");
 			File.Create(_newLdmlPathname).Close();
 		}
 
@@ -57,7 +57,7 @@ namespace LiftBridgeTests.ServicesTests
 			Assert.IsTrue(allFilesAndDirs.Contains(_newBaseFolderPathname));
 			Assert.IsTrue(allFilesAndDirs.Contains(_newAudioDirName));
 			Assert.IsTrue(allFilesAndDirs.Contains(_newLdmlPathname));
-			Assert.IsTrue(allFilesAndDirs.Contains(_newWSDirName));
+			Assert.IsTrue(allFilesAndDirs.Contains(_newWsDirName));
 
 			EnsureOldStuffExists();
 		}
@@ -74,7 +74,7 @@ namespace LiftBridgeTests.ServicesTests
 			Directory.CreateDirectory(newDir);
 			var newFileInNewDir = Path.Combine(newDir, "newFileInNewDir.txt");
 			File.Create(newFileInNewDir).Close();
-			var newLdmlFile = Path.Combine(_newWSDirName, "reallyNew.ldml");
+			var newLdmlFile = Path.Combine(_newWsDirName, "reallyNew.ldml");
 			File.Create(newLdmlFile).Close();
 
 			var allAfterFilesAndDirs = FileAndDirectoryServices.EnumerateExtantFiles(_baseDir);
@@ -101,7 +101,7 @@ namespace LiftBridgeTests.ServicesTests
 			Assert.IsTrue(Directory.Exists(_newAudioDirName));
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, ".hg")));
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, ".hg")));
-			Assert.IsTrue(Directory.Exists(_newWSDirName));
+			Assert.IsTrue(Directory.Exists(_newWsDirName));
 		}
 	}
 }

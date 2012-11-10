@@ -14,8 +14,9 @@ namespace SIL.LiftBridge.Controller
 {
 	internal class ObtainProjectController : ILiftBridgeController, IDisposable
 	{
-		private readonly ChorusSystem _chorusSystem;
+		private ChorusSystem _chorusSystem;
 		private readonly IStartupNewView _startupNewView;
+		private readonly string _username;
 
 		/// <summary>
 		/// Constructs the ObtainProjectController with the given options.
@@ -23,6 +24,7 @@ namespace SIL.LiftBridge.Controller
 		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
 		internal ObtainProjectController(IDictionary<string, string> options)
 		{
+			_username = options["-u"];
 			MainForm = new ObtainProjectView
 						{
 							Text = Resources.ObtainProjectView_DialogTitle,
@@ -54,6 +56,7 @@ namespace SIL.LiftBridge.Controller
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 			var getSharedProject = new GetSharedProject();
 			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, CurrentProject.PathToProject, null);
+			_chorusSystem = new ChorusSystem(result.ActualLocation, _username);
 			if (result.CloneStatus == CloneStatus.Created)
 			{
 #if notdoneyet
