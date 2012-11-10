@@ -42,7 +42,8 @@ namespace SIL.LiftBridge.Controller
 		private void SetupChorusAndLanguageProject(IDictionary<string, string> options)
 		{
 			CurrentProject = new LiftProject(options["-p"]);
-			ChorusSystem = new ChorusSystem(CurrentProject.PathToProject, options["-u"]);
+			ChorusSystem = new ChorusSystem(CurrentProject.PathToProject);
+			ChorusSystem.Init(options["-u"]);
 			LiftFolder.AddLiftFileInfoToFolderConfiguration(ChorusSystem.ProjectFolderConfiguration);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 

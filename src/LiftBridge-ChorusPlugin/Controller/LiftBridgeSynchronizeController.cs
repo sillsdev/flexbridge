@@ -22,7 +22,8 @@ namespace SIL.LiftBridge.Controller
 			_projectSynchronizer = new SynchronizeProject();
 
 			_currentLanguageProject = new LiftProject(options["-p"]);
-			ChorusSystem = new ChorusSystem(_currentLanguageProject.PathToProject, options["-u"]);
+			ChorusSystem = new ChorusSystem(_currentLanguageProject.PathToProject);
+			ChorusSystem.Init(options["-u"]);
 			LiftFolder.AddLiftFileInfoToFolderConfiguration(ChorusSystem.ProjectFolderConfiguration);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 			MainForm = new Form();

@@ -56,7 +56,8 @@ namespace SIL.LiftBridge.Controller
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 			var getSharedProject = new GetSharedProject();
 			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, CurrentProject.PathToProject, null);
-			_chorusSystem = new ChorusSystem(result.ActualLocation, _username);
+			_chorusSystem = new ChorusSystem(result.ActualLocation);
+			_chorusSystem.Init(_username);
 			if (result.CloneStatus == CloneStatus.Created)
 			{
 #if notdoneyet

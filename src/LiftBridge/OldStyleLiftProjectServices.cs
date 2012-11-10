@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace LiftBridge
 {
