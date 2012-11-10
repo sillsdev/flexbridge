@@ -76,7 +76,7 @@
 
   <!-- ***************** Installer stuff below this line. ***************** -->
 
-  <Target Name="Installer" DependsOnTargets="Test; SetAboutInfo; LiftBridge1">
+  <Target Name="Installer" DependsOnTargets="Test; SetAboutInfo; LiftBridge2">
 	<!-- Copy it to a safe place first, since it gets modified. -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 
@@ -102,7 +102,7 @@
 
 	<!-- Upload the Index.htm file up to the web. -->
 	<Message Text="Attempting rsync of Index.htm" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
 
 	<!-- Upload the LiftBridge2.html file up to the web. -->
 	<Message Text="Attempting rsync of LiftBridge2.html" Importance="high"/>
