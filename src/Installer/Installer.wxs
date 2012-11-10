@@ -48,7 +48,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <DirectorySearch Id="DevFWVersion" Path="[DEVFW7BUILDDIR]">
 		<!-- 7.2.0.40926 was the actual released number,
 				but I understand one then needs to go one notch under that to find 7.2.0.40926 -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
+		<FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.0"/>
 	  </DirectorySearch>
 	</Property>
 
@@ -61,13 +61,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
-	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.2, or higher.">
+	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.3, or higher.">
 	  <![CDATA[Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION]]>
 	</Condition>
 
-	<PropertyRef Id="NETFRAMEWORK35"/>
-	<Condition Message="Before [ProductName] can install, you need to install Microsoft's free .NET Framework 3.5.">
-	  <![CDATA[Installed OR NETFRAMEWORK35]]>
+	<PropertyRef Id="NETFRAMEWORK40FULL"/>
+	<Condition Message="Before [ProductName] can install, you need to install Microsoft's free .NET Framework 4 (full).">
+	  <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
 	</Condition>
 
 	<!--because of bug, this needs to be 1 -->
@@ -109,6 +109,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="ChorusMerge.pdb" Guid="C1EDBBD5-E382-11DE-8A39-0800200C9A66">
 			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
 			</Component>
+			  <Component Id="ChorusHub.pdb" Guid="C1EDE2F4-E382-11DE-8A39-0800200C9A66">
+				  <File Id="ChorusHub.pdb" Name="ChorusHub.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusHub.pdb"/>
+			  </Component>
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
@@ -150,6 +153,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LibChorus.pdb"/>
 	  <ComponentRef Id="Chorus.pdb"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
+		<ComponentRef Id="ChorusHub.pdb"/>
 	  <ComponentRef Id="Palaso.dll"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id="icu.net.dll"/>
