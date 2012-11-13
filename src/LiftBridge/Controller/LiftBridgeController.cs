@@ -8,7 +8,7 @@ using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
 using LiftBridgeCore;
 using Palaso.Extensions;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 using SIL.LiftBridge.Services;

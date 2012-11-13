@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace LiftBridgeTests.MockedViews
 {
