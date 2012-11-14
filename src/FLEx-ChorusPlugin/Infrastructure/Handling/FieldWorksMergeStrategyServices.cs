@@ -14,6 +14,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
+using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -357,7 +358,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			var fwUrl = fwAppArgs.ToString();
 			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
 			var host = fwUrl.Substring(0, hostLength);
-			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
+			var query = HttpUtilityFromMono.UrlDecode(fwUrl.Substring(hostLength + 1));
 			var url = host + "?" + query;
 			return new ContextDescriptor(label, url);
 		}

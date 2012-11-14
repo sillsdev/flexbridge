@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Web;
+using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -288,7 +289,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
-			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
+			uriBuilder.Query = HttpUtilityFromMono.UrlEncode(query.ToString());
 
 			return uriBuilder.Uri.AbsoluteUri;
 		}
@@ -338,7 +339,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				value = value.Substring(5);
 				return bool.Parse(value);
 			}
-			return HttpUtility.UrlDecode(value);
+			return HttpUtilityFromMono.UrlDecode(value);
 		}
 		#endregion
 	}

@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
 using Chorus.UI.Notes;
+using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Controller
 {
@@ -78,7 +79,7 @@ namespace FLEx_ChorusPlugin.Controller
 				return; // can't do it, not a valid FLEx url.
 			var host = url.Substring(0, hostLength);
 			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
-			var query = HttpUtility.UrlEncode(originalQuery);
+			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
 			// the FLExConnectionHelper that we have a URL to jump to.
