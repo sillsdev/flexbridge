@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 ﻿﻿using Chorus.Utilities;
 ﻿﻿using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
@@ -84,15 +83,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		private static void WriteVersionFile(string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-			// 1. Write version number file.
-			using (var reader = XmlReader.Create(mainFilePathname, CanonicalXmlSettings.CreateXmlReaderSettings()))
-			{
-				reader.MoveToContent();
-				reader.MoveToAttribute("version");
-				var version = reader.Value;
-				FileWriterService.WriteVersionNumberFile(pathRoot, version);
-				MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
-			}
+			var version = FieldWorksProjectServices.GetVersionNumber(mainFilePathname);
+			FileWriterService.WriteVersionNumberFile(pathRoot, version);
+			MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
 		}
 
 		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, string>> classData)

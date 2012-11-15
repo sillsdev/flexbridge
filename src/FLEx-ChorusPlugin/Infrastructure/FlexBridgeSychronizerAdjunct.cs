@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
@@ -74,6 +76,24 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		public void PrepareForPostMergeCommit(IProgress progress)
 		{
 			RestoreProjectFile(progress);
+		}
+
+		/// <summary>
+		/// Maybe let the user know about the need to update, or that other team members are still using an older version.
+		/// </summary>
+		public void CheckRepositoryBranches(IEnumerable<Revision> branches)
+		{
+		}
+
+		/// <summary>
+		/// Get the data model version number of the current fwdata file.
+		/// </summary>
+		public string BranchName
+		{
+			get
+			{
+				return FieldWorksProjectServices.GetVersionNumber(_fwdataPathname);
+			}
 		}
 
 		#endregion

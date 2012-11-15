@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using System.Xml;
+using Microsoft.Win32;
+using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -15,6 +17,16 @@ namespace FLEx_ChorusPlugin.Infrastructure
 								.OpenSubKey("FieldWorks")
 								.OpenSubKey("7.0")
 								.GetValue("ProjectsDir");
+			}
+		}
+
+		internal static string GetVersionNumber(string mainDataPathname)
+		{
+			using (var reader = XmlReader.Create(mainDataPathname, CanonicalXmlSettings.CreateXmlReaderSettings()))
+			{
+				reader.MoveToContent();
+				reader.MoveToAttribute("version");
+				return reader.Value;
 			}
 		}
 	}
