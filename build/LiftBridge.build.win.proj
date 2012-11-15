@@ -115,10 +115,10 @@
 	<Message Text="Attempting rsync of LiftBridge1.html" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridge1.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridge1.html"/>
 
-	<!-- TODO: Remopve both of the next two uploads, when LB 2.0 is ready to upload. -->
+	<!-- TODO: Remove both of the next two uploads, when LB 2.0 is ready to upload. -->
 	<!-- push up to the web so that on our downloads page, we can show the under construction gif -->
 	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/webconstruction.gif"/>
 	<!-- Upload the LiftBridge2.html placeholder file up to the web. -->
 	<Message Text="Attempting rsync of LiftBridge2.html" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridge2.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridge2.html"/>
