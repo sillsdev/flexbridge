@@ -27,7 +27,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
 
 	<!-- The following will set properties A[FW7INSTALLDIR] and B[DEVFW7INSTALLDIR] to the result of two different registry searches.
-	If the search for B[DEVFW7INSTALLDIR] was successfull [sic], it overrides the value of A[FW7INSTALLDIR] with the value of B[DEVFW7INSTALLDIR].
+	If the search for B[DEVFW7INSTALLDIR] was successful, it overrides the value of A[FW7INSTALLDIR] with the value of B[DEVFW7INSTALLDIR].
 	See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-condition -->
 	<Property Id="FW7INSTALLDIR">
 	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
@@ -49,22 +49,23 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.4.40925"/>
 	  </DirectorySearch>
 	</Property>
+	<!-- Max version props -->
+	  <Property Id="FIELDWORKSMAXMUMINSTALLEDVERSION">
+		  <DirectorySearch Id="FWMaxVersion" Path="[FW7INSTALLDIR]">
+			  <FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
+		  </DirectorySearch>
+	  </Property>
+	  <Property Id="DEVFIELDWORKSMAXIMUMINSTALLEDVERSION">
+		  <DirectorySearch Id="DevFWMaxVersion" Path="[DEVFW7BUILDDIR]">
+			  <FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
+		  </DirectorySearch>
+	  </Property>
 	<!-- Use the dev entry, but only if set.
 	Ken wants it installed in RootCodeDir, but using FwExeDir to check the FieldWorks.exe version.
 	He then uses a nant script to copy stuff into his output\foo folder, which gets clobbered for every remakefw.-->
 	<SetProperty Id="FW7INSTALLDIR" Before="SetFIELDWORKSMINIMUMINSTALLEDVERSION" Value="[DEVFW7BUILDDIR]">DEVFW7BUILDDIR</SetProperty>
 	<SetProperty Id="FIELDWORKSMINIMUMINSTALLEDVERSION" Before="LaunchConditions" Value="[DEVFIELDWORKSMINIMUMINSTALLEDVERSION]">DEVFIELDWORKSMINIMUMINSTALLEDVERSION</SetProperty>
 
-	<Property Id="FIELDWORKSMAXMUMINSTALLEDVERSION">
-	  <DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
-		<FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
-	  </DirectorySearch>
-	</Property>
-	  <Property Id="DEVFIELDWORKSMAXIMUMINSTALLEDVERSION">
-		  <DirectorySearch Id="DevFWVersion" Path="[DEVFW7BUILDDIR]">
-			  <FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
-		  </DirectorySearch>
-	  </Property>
 	<!-- Use the dev entry, but only if set.
 	Ken wants it installed in RootCodeDir, but using FwExeDir to check the FieldWorks.exe version.
 	He then uses a nant script to copy stuff into his output\foo folder, which gets clobbered for every remakefw.-->
