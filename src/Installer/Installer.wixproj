@@ -1,17 +1,17 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<ProductVersion>3.0</ProductVersion>
-	<ProjectGuid>C1ECD18A-E382-11DE-8A39-0800200C9A66</ProjectGuid>
+	<ProjectGuid>{3d9bf2dd-4a25-11df-9879-0800200c9a66}</ProjectGuid>
 	<SchemaVersion>2.0</SchemaVersion>
-	<OutputName>LIFTBridgeInstaller2</OutputName>
+	<OutputName>FLExBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
 	<WixToolPath Condition=" $(ProgramW6432) != '' ">C:\Program Files (x86)\Windows Installer XML v3.5\bin\</WixToolPath>
 	<WixToolPath Condition=" $(ProgramW6432) == '' ">C:\Program Files\Windows Installer XML v3.5\bin\</WixToolPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 	<OutputPath>..\..\output\Installer\</OutputPath>
-	<IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
+	<IntermediateOutputPath>output\wixobj\$(Configuration)</IntermediateOutputPath>
 	<DefineConstants>Debug</DefineConstants>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
 	<AllowIdenticalRows>False</AllowIdenticalRows>
@@ -50,11 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 	<OutputPath>..\..\output\Installer\</OutputPath>
-	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
-	<DefineSolutionProperties>False</DefineSolutionProperties>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>..\..\output\Installer\</OutputPath>
+	<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>

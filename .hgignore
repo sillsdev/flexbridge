@@ -5,6 +5,19 @@ relre:src/LiftBridgeTests/bin/*
 relre:src/LiftBridgeTests/obj/*
 glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user
 relre:output/*
+relre:^Mercurial/
+syntax: regexp
+Perf test  results/*.*
+src/FLEx-ChorusPlugin/bin/*.*
+src/FLEx-ChorusPlugin/obj/*.*
+src/FLEx-ChorusPluginTests/bin/*.*
+src/FLEx-ChorusPluginTests/obj/*.*
+src/FwdataNester/bin/*.*
+src/FwdataNester/obj/Debug/*.*
+src/FwdataNester/obj/*.*
+_ReSharper.FLExBridge VS2010/*.*
+src/FLExBridge/obj/*.*
+src/Installer/output/*.*
 relre:src/LiftBridgeCore/bin/*
 relre:src/LiftBridgeCore/obj/*
 glob:LiftBridge VS2010.5.1.ReSharper.user
@@ -17,6 +30,13 @@ _ReSharper.LiftBridge VS2010/*
 DistFiles/Mercurial/*
 DistFiles/Mercurial/MercurialExtensions/*
 syntax: glob
+Perf test  results/*.app6results
+*.user
+*.suo
+DistFiles/.guidsForInstaller.xml
+Mercurial/mercurial.ini
+**.app7results
+Patches/**
 LiftBridge VS2010.userprefs
 src/LiftBridge/LiftBridge.pidb
 src/LiftBridgeCore/LiftBridgeCore.pidb
