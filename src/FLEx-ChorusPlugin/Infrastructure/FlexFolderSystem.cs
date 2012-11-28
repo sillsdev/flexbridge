@@ -32,9 +32,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.log");
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", Path.Combine("trash", "**.*")));
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "trash", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Shares", "**.*")); // Presumed folder for future LIFT and PT-FLEx repos.
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("OtherRepositories", "**.*")); // Folder for contined LIFT and PT-FLEx repos.
 			ProjectFolderConfiguration.AddExcludedVideoExtensions(projectFolderConfiguration);
 
 			projectFolderConfiguration.IncludePatterns.Add("FLExProject.ModelVersion"); // Hope this forces the version file to be done first.
@@ -53,21 +53,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("AudioVisual", "*.*")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("Others", "*.*")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", Path.Combine("Pictures", "*.*")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "*.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "*.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Pictures", "*.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("SupportingFiles", "*.*"));
 
 			// Linguistics
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Reversals", "**.reversal")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Lexicon", "*.lexdb")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("TextCorpus", "*.textincorpus")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Inventory", "*.inventory")));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Discourse", SharedConstants.DiscourseChartFilename)));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Reversals", "**.reversal"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Lexicon", "*.lexdb"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "TextCorpus", "*.textincorpus"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Inventory", "*.inventory"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Discourse", SharedConstants.DiscourseChartFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "**.featsys"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", SharedConstants.AnalyzingAgentsFilename)));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("MorphologyAndSyntax", SharedConstants.MorphAndSynDataFilename)));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", Path.Combine("Phonology", SharedConstants.PhonologicalDataFilename)));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "MorphologyAndSyntax", SharedConstants.AnalyzingAgentsFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "MorphologyAndSyntax", SharedConstants.MorphAndSynDataFilename));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Phonology", SharedConstants.PhonologicalDataFilename));
 
 			// Anthropology
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Anthropology", SharedConstants.DataNotebookFilename));
@@ -77,8 +77,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "*.ArchivedDraft"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", SharedConstants.ScriptureTransFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", SharedConstants.ImportSettingsFilename));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.bookannotations"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine(Path.Combine("Other", "Books"), "*.book"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Books", "*.bookannotations"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Other", "Books", "*.book"));
 
 			// Leftovers
 			// Style file and user-defined lists ought to be covered, above.

@@ -89,7 +89,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private static bool ProjectFilter(string path)
 		{
-			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			var hgDataFolder = Path.Combine(path, ".hg", "store", "data");
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
 		}
 
