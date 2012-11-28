@@ -36,7 +36,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="FWVersion" Path="[FW7INSTALLDIR]">
 		<!-- 7.2.0.40926 was the actual released number, but I understand one then needs to go one notch under that to find 7.2.0.40926 -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
+		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/> <!-- Let's Randy and Sue use Flex Bridge in stand-alone mode. Update to 7.3.something when FB goes beta. -->
 	  </DirectorySearch>
 	</Property>
 	<Property Id="DEVFW7BUILDDIR">
@@ -46,7 +46,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Property Id="DEVFIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="DevFWVersion" Path="[DEVFW7BUILDDIR]">
 		<!-- 7.2.0.40926 was the actual released number, but I understand one then needs to go one notch under that to find 7.2.0.40926 -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/>
+		<FileSearch Name="FieldWorks.exe" MinVersion="7.2.0.40925"/> <!-- Let's Randy and Sue use Flex Bridge in stand-alone mode. Update to 7.3.something when FB goes beta. -->
 	  </DirectorySearch>
 	</Property>
 
@@ -78,16 +78,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <Directory Id="ProgramFilesFolder" Name="PFiles">
 		<Directory Id="SILDIR" Name="SIL">
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
+			<!-- Main bridge assemblies -->
 			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
 			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Release\FLExBridge.exe"/>
-			  <!--<Shortcut Id="desktopFLExBridgeShortcut" Directory="DesktopFolder" Name="FLEx Bridge" WorkingDirectory="INSTALLDIR" Target="[!FLExBridge.exe]" Icon="FLExBridge.ico"/>
-			  <RemoveFolder Id="DesktopFolder" On="uninstall"/>
-			  <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\FLEX Bridge" Name="installed" Type="integer" Value="1" KeyPath="yes"/>-->
-			</Component>
-			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
-			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7">
-				<RegistryValue Id="FLExBridgeInstallationDir" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
-			  </RegistryKey>
 			</Component>
 			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExBridge.pdb" Name="FLEx-FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
@@ -98,6 +91,25 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="FLExChorusPlugin.pdb" Guid="C1EDBBD3-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
 			</Component>
+			<Component Id="LiftBridgeChorusPlugin.dll" Guid="C1EDE2FA-E382-11DE-8A39-0800200C9A66">
+			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll.dll"/>
+			</Component>
+			<Component Id="LiftBridgeChorusPlugin.pdb" Guid="C1EDE2FB-E382-11DE-8A39-0800200C9A66">
+			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll.pdb"/>
+			</Component>
+			<Component Id="TriboroughBridgeChorusPlugin.dll" Guid="C1EE09F0-E382-11DE-8A39-0800200C9A66">
+			  <File Id="TriboroughBridgeChorusPlugin.dll" Name="TriboroughBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.dll"/>
+			</Component>
+			<Component Id="TriboroughBridgeChorusPlugin.pdb" Guid="C1EE09F1-E382-11DE-8A39-0800200C9A66">
+			  <File Id="TriboroughBridgeChorusPlugin.pdb" Name="TriboroughBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.pdb"/>
+			</Component>
+			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
+			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FLEX Bridge\7">
+				<RegistryValue Id="FLExBridgeInstallationDir" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
+			  </RegistryKey>
+			</Component>
+
+			<!-- Required Chorus assemblies not in the Chorus merge module. -->
 			<Component Id="Autofac.dll" Guid="3D9BF2E0-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
 			</Component>
@@ -113,14 +125,22 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
+
+			<!-- Required Palaso assemblies not in the Chorus merge module. -->
+			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
+			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll"/>
+			</Component>
 			<Component Id="Palaso.dll" Guid="3D9BF2E4-4A25-11DF-9879-0800200C9A66">
 			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.dll"/>
+			</Component>
+			<Component Id="Palaso.pdb" Guid="C1EDE2F8-E382-11DE-8A39-0800200C9A66">
+			  <File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.pdb"/>
 			</Component>
 			<Component Id="PalasoUIWindowsForms.dll" Guid="C1EDBBDD-E382-11DE-8A39-0800200C9A66">
 			  <File Id="PalasoUIWindowsForms.dll" Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.dll"/>
 			</Component>
-			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
-			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll"/>
+			<Component Id="PalasoUIWindowsForms.pdb" Guid="C1EDE2F9-E382-11DE-8A39-0800200C9A66">
+			  <File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.pdb"/>
 			</Component>
 			<Merge Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\ChorusMergeModule.msm" DiskId="1"/>
 		  </Directory>
@@ -145,6 +165,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="FLExBridge.pdb"/>
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
+
+	  <ComponentRef Id="LiftBridge-ChorusPlugin.dll"/>
+	  <ComponentRef Id="LiftBridge-ChorusPlugin.pdb"/>
+	  <ComponentRef Id="TriboroughBridge-ChorusPlugin.dll"/>
+	  <ComponentRef Id="TriboroughBridge-ChorusPlugin.pdb"/>
+
 	  <!--<ComponentRef Id="ApplicationShortcut"/>-->
 	  <ComponentRef Id="RegInstallationDir"/>
 	  <ComponentRef Id="Autofac.dll"/>
@@ -153,7 +179,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="ChorusMerge.pdb"/>
 		<ComponentRef Id="ChorusHub.pdb"/>
 	  <ComponentRef Id="Palaso.dll"/>
+	  <ComponentRef Id="Palaso.pdb"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
+	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 	  <ComponentRef Id="icu.net.dll"/>
 
 	  <MergeRef Id="ChorusMergeModule"/>
