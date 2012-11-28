@@ -28,7 +28,7 @@ namespace LiftBridge
 
 			var options = ParseCommandLineArgs(args);
 			var fwProjectPath = options["-p"];
-			var localLiftFolder = Path.Combine(Path.Combine(fwProjectPath, "OtherRepositories"), "LIFT");
+			var localLiftFolder = Path.Combine(fwProjectPath, "OtherRepositories", "LIFT");
 			if (options.ContainsKey("-lpid"))
 			{
 				OldStyleLiftProjectServices.MoveRepositoryIfPossible(new Guid(options["-lpid"]), localLiftFolder);

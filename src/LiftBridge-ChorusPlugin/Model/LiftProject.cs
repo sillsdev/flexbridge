@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Palaso.Extensions;
 
 namespace SIL.LiftBridge.Model
 {
@@ -26,7 +25,7 @@ namespace SIL.LiftBridge.Model
 		{
 			get
 			{
-				return BasePath.CombineForPath("OtherRepositories", "LIFT");
+				return Path.Combine(BasePath, "OtherRepositories", "LIFT");
 			}
 		}
 

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
-using Palaso.Extensions;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 using SIL.LiftBridge.View;
@@ -71,7 +70,7 @@ namespace SIL.LiftBridge.Controller
 
 		private static bool ProjectFilter(string path)
 		{
-			var hgDataFolder = path.CombineForPath(".hg", "store", "data");
+			var hgDataFolder = Path.Combine(path, ".hg", "store", "data");
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder).Any(pathname => pathname.ToLowerInvariant().EndsWith(".lift.i"));
 		}
 
