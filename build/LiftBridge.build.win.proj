@@ -91,13 +91,14 @@
 	<!-- copy them back so it appears we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\output\Installer\about.htm" DestinationFolder="$(RootDir)\DistFiles"/>
 	<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
+	<Copy SourceFiles="$(RootDir)\output\Installer\LiftBridge2.html" DestinationFolder="$(RootDir)\src\Installer"/>
 
   </Target>
 
   <Target Name="Upload" DependsOnTargets="CreateDirectories">
 	<Message Text="Attempting rsync of LIFTBridgeInstaller2.msi" Importance="high"/>
 
-	<!-- Upload the installer up to the web. -->
+	<!-- Upload the installer to the web. -->
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LIFTBridgeInstaller2.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LIFTBridgeInstaller2.msi"/>
 
 	<!-- Upload the Index.htm file up to the web. -->
@@ -107,15 +108,9 @@
 	<!-- Upload the LiftBridge2.html file up to the web. -->
 	<Message Text="Attempting rsync of LiftBridge2.html" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridge2.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridge2.html"/>
-
-	<!-- push up to the web so that on our downloads page, we can show the under construction gif -->
-	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>
-
   </Target>
 
   <Target Name="LiftBridge2" DependsOnTargets="VersionNumbers">
-
 	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\LiftBridge2.html" DestinationFolder="$(RootDir)\output\Installer"/>
 

@@ -27,7 +27,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
 
 	<!-- The following will set properties A[FW7INSTALLDIR] and B[DEVFW7INSTALLDIR] to the result of two different registry searches.
-	If the search for B[DEVFW7INSTALLDIR] was successfull [sic], it overrides the value of A[FW7INSTALLDIR] with the value of B[DEVFW7INSTALLDIR].
+	If the search for B[DEVFW7INSTALLDIR] was successful, it overrides the value of A[FW7INSTALLDIR] with the value of B[DEVFW7INSTALLDIR].
 	See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-condition -->
 	<Property Id="FW7INSTALLDIR">
 	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\7.0" Name="RootCodeDir" Type="raw"/>
