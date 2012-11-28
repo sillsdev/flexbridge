@@ -92,10 +92,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.dll" Guid="C1EDE2FA-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll.dll"/>
+			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dlll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.pdb" Guid="C1EDE2FB-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll.pdb"/>
+			  <File Id="LiftBridgeChorusPlugin.pdb" Name="LiftBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="TriboroughBridgeChorusPlugin.dll" Guid="C1EE09F0-E382-11DE-8A39-0800200C9A66">
 			  <File Id="TriboroughBridgeChorusPlugin.dll" Name="TriboroughBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.dll"/>
@@ -166,10 +166,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
 
-	  <ComponentRef Id="LiftBridge-ChorusPlugin.dll"/>
-	  <ComponentRef Id="LiftBridge-ChorusPlugin.pdb"/>
-	  <ComponentRef Id="TriboroughBridge-ChorusPlugin.dll"/>
-	  <ComponentRef Id="TriboroughBridge-ChorusPlugin.pdb"/>
+	  <ComponentRef Id="LiftBridgeChorusPlugin.dll"/>
+	  <ComponentRef Id="LiftBridgeChorusPlugin.pdb"/>
+	  <ComponentRef Id="TriboroughBridgeChorusPlugin.dll"/>
+	  <ComponentRef Id="TriboroughBridgeChorusPlugin.pdb"/>
 
 	  <!--<ComponentRef Id="ApplicationShortcut"/>-->
 	  <ComponentRef Id="RegInstallationDir"/>
