@@ -109,7 +109,7 @@
 
 	<!-- Upload the Index.htm file up to the web. -->
 	<Message Text="Attempting rsync of Index.html" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/Index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/index.html"/>
 
 	<!-- Upload the LiftBridge1.html file up to the web. -->
 	<Message Text="Attempting rsync of LiftBridge1.html" Importance="high"/>
@@ -121,12 +121,14 @@
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/webconstruction.gif"/>
 	<!-- Upload the LiftBridge2.html placeholder file up to the web. -->
 	<Message Text="Attempting rsync of LiftBridge2.html" Importance="high"/>
-	<Copy SourceFiles="$(RootDir)\src\Installer\LiftBridge2.html" DestinationFolder="$(RootDir)\output\Installer"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/LiftBridge2.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/LiftBridge/LiftBridge2.html"/>
 
   </Target>
 
   <Target Name="LiftBridge1" DependsOnTargets="VersionNumbers">
+
+	<Copy SourceFiles="$(RootDir)\src\Installer\LiftBridge2.html" DestinationFolder="$(RootDir)\output\Installer"/>
+	<Copy SourceFiles="$(RootDir)\src\Installer\Index.htm" DestinationFolder="$(RootDir)\output\Installer"/>
 
 	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\LiftBridge1.html" DestinationFolder="$(RootDir)\output\Installer"/>
