@@ -301,6 +301,12 @@
   <ItemGroup>
 	<Content Include="chorus.ico" />
   </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+	  <Name>TriboroughBridge-ChorusPlugin</Name>
+	</ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

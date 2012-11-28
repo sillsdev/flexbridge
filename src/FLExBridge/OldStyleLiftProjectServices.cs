@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 
-namespace LiftBridge
+namespace FLExBridge
 {
 	/// <summary>
 	/// Provide some services needed by the model in support of the older Lift Bridge location.

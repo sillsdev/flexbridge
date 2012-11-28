@@ -107,9 +107,12 @@
 	</Reference>
 	<Reference Include="System.ServiceModel" />
 	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="FLExConnectionHelper.cs" />
+	<Compile Include="OldStyleLiftProjectServices.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<None Include="app.config" />
@@ -141,9 +144,17 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+	  <Name>TriboroughBridge-ChorusPlugin</Name>
+	</ProjectReference>
 	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
 	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
 	  <Name>FLEx-ChorusPlugin</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj">
+	  <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
+	  <Name>LiftBridge-ChorusPlugin</Name>
 	</ProjectReference>
   </ItemGroup>
   <ItemGroup>

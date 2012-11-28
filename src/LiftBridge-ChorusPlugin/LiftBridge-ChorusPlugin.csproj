@@ -183,7 +183,12 @@
   <ItemGroup>
 	<None Include="Resources\chorus.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+	  <Name>TriboroughBridge-ChorusPlugin</Name>
+	</ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>

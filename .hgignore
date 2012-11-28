@@ -46,3 +46,5 @@ glob:LiftBridge VS2010.sln.DotSettings.user
 glob:src/LiftBridge/LiftBridge.csproj.DotSettings.user
 src/LiftBridge-ChorusPlugin/obj/*
 src/LiftBridge-ChorusPluginTests/obj/*
+src/TriboroughBridge-ChorusPlugin/obj/*
+src/TriboroughBridge-ChorusPluginTests/obj/*
