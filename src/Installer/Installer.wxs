@@ -52,7 +52,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<!-- Use the dev entry, but only if set.
 	Ken wants it installed in RootCodeDir, but using FwExeDir to check the FieldWorks.exe version.
 	He then uses a nant script to copy stuff into his output\foo folder, which gets clobbered for every remakefw.-->
-	<SetProperty Id="FW7INSTALLDIR" Before="SetFIELDWORKSMINIMUMINSTALLEDVERSION" Value="[DEVFW7BUILDDIR]">DEVFW7BUILDDIR</SetProperty>-->
+	<SetProperty Id="FW7INSTALLDIR" Before="SetFIELDWORKSMINIMUMINSTALLEDVERSION" Value="[DEVFW7BUILDDIR]">DEVFW7BUILDDIR</SetProperty>
 	<SetProperty Id="FIELDWORKSMINIMUMINSTALLEDVERSION" Before="LaunchConditions" Value="[DEVFIELDWORKSMINIMUMINSTALLEDVERSION]">DEVFIELDWORKSMINIMUMINSTALLEDVERSION</SetProperty>
 
 	<Property Id="FIELDWORKSMAXMUMINSTALLEDVERSION">
@@ -60,11 +60,11 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 		<FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
 	  </DirectorySearch>
 	</Property>
-	<Property Id="DEVFIELDWORKSMAXIMUMINSTALLEDVERSION">
-	  <DirectorySearch Id="DevFWVersion" Path="[DEVFW7BUILDDIR]">
-		<FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
-	  </DirectorySearch>
-	</Property
+	  <Property Id="DEVFIELDWORKSMAXIMUMINSTALLEDVERSION">
+		  <DirectorySearch Id="DevFWVersion" Path="[DEVFW7BUILDDIR]">
+			  <FileSearch Name="FieldWorks.exe" MinVersion="7.3.0.1"/>
+		  </DirectorySearch>
+	  </Property>
 	<!-- Use the dev entry, but only if set.
 	Ken wants it installed in RootCodeDir, but using FwExeDir to check the FieldWorks.exe version.
 	He then uses a nant script to copy stuff into his output\foo folder, which gets clobbered for every remakefw.-->
