@@ -77,7 +77,7 @@ rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Condition Message="[ProductName] cannot be installed on SIL's FieldWorks 7.3, or higher.">
 	  <![CDATA[NOT FIELDWORKSMAXIMUMINSTALLEDVERSION]]>
-	</Condition
+	</Condition>
 	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 7.2.4, or higher.">
 	  <![CDATA[Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION]]>
 	</Condition>
