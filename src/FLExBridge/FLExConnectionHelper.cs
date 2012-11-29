@@ -135,6 +135,32 @@ namespace FLExBridge
 
 			[OperationContract]
 			void BridgeSentJumpUrl(string jumpUrl);
+
+			/// <summary>
+			/// FLEx should export the entire lexicon content to the specified destination. Return true if successful.
+			/// </summary>
+			/// <param name="liftPath"></param>
+			/// <returns></returns>
+			[OperationContract]
+			bool Export(string liftPath);
+
+			/// <summary>
+			/// Flex should import the entire lexicon content from the specified source. If keepBoth is true, keep
+			/// current lexicon items as well as the new ones; otherwise, replace current ones with the imported data.
+			/// </summary>
+			/// <param name="liftPath"></param>
+			/// <param name="keepBoth"></param>
+			/// <returns></returns>
+			[OperationContract]
+			bool Import(string liftPath, bool keepBoth);
+
+			/// <summary>
+			/// Flex should create a new language project and import into it the data from the specified lexicon.
+			/// </summary>
+			/// <param name="liftPath"></param>
+			/// <returns></returns>
+			[OperationContract]
+			bool Create(string liftPath);
 		}
 
 		/// <summary>
