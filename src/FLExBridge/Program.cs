@@ -62,7 +62,7 @@ namespace FLExBridge
 						switch (options["-v"])
 						{
 							case "obtain":
-								using (var controller = new ObtainProjectController(options))
+								using (var controller = new ObtainProjectController(options, flexCommHelper))
 								{
 									Application.Run(controller.MainForm);
 									if (controller.CurrentProject != null)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
@@ -18,12 +19,13 @@ namespace FLEx_ChorusPlugin.Controller
 	{
 		private readonly ChorusSystem _chorusSystem;
 		private readonly IStartupNewView _startupNewView;
+		private ICreateProjectFromLift _projectCreator;
 
 		/// <summary>
 		/// Constructs the ObtainProjectController with the given options.
 		/// </summary>
 		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
-		public ObtainProjectController(IDictionary<string, string> options)
+		public ObtainProjectController(IDictionary<string, string> options, ICreateProjectFromLift projectCreator )
 		{
 			MainForm = new ObtainProjectView
 						{
@@ -34,6 +36,7 @@ namespace FLEx_ChorusPlugin.Controller
 						};
 			_startupNewView = new StartupNewView();
 			_startupNewView.Startup += StartupHandler;
+			_projectCreator = projectCreator;
 			MainForm.Controls.Add((Control)_startupNewView);
 		}
 
@@ -58,7 +61,7 @@ namespace FLEx_ChorusPlugin.Controller
 			{
 				// It's just possible that we get here, but the cloned repo is empty (if the source one was empty).
 				var modelVersionPathname = Path.Combine(result.ActualLocation, SharedConstants.ModelVersionFilename);
-				if (!File.Exists(modelVersionPathname))
+				if (!File.Exists(modelVersionPathname) && !CreateProjectFromLift(result.ActualLocation))
 				{
 					MainForm.Cursor = Cursors.Default;
 					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
@@ -77,6 +80,13 @@ namespace FLEx_ChorusPlugin.Controller
 			MainForm.Cursor = Cursors.Default;
 		}
 
+		private bool CreateProjectFromLift(string folderPath)
+		{
+			if (!IsLiftRepo(HgDataFolder(folderPath)))
+				return false;
+			return _projectCreator.CreateProjectFromLift(folderPath);
+		}
+
 		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
 		{
 			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
@@ -89,8 +99,19 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private static bool ProjectFilter(string path)
 		{
-			var hgDataFolder = Path.Combine(path, ".hg", "store", "data");
-			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Length > 0;
+			var hgDataFolder = HgDataFolder(path);
+			return Directory.Exists(hgDataFolder) && (Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Any()
+				|| IsLiftRepo(hgDataFolder));
+		}
+
+		private static bool IsLiftRepo(string hgDataFolder)
+		{
+			return Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
+		}
+
+		private static string HgDataFolder(string path)
+		{
+			return Path.Combine(path, ".hg", "store", "data");
 		}
 
 		public void Dispose()
@@ -110,5 +131,10 @@ namespace FLEx_ChorusPlugin.Controller
 		}
 
 		public LanguageProject CurrentProject { get; set; }
+	}
+
+	internal interface ICreateProjectFromLift
+	{
+		bool CreateProjectFromLift(string liftPath);
 	}
 }

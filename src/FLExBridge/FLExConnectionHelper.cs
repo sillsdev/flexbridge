@@ -9,7 +9,7 @@ namespace FLExBridge
 	/// <summary>
 	/// This class encapsulates the code related to service communication with FLEx.
 	/// </summary>
-	class FLExConnectionHelper : IDisposable
+	class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
 	{
 		private readonly ServiceHost _host;
 		private readonly IFLExBridgeService _pipe;
@@ -77,6 +77,21 @@ namespace FLExBridge
 			{
 				Console.WriteLine("FLEx isn't listening."); //It isn't fatal if FLEx isn't listening to us.
 			}
+		}
+
+		public bool CreateProjectFromLift(string liftPath)
+		{
+			try
+			{
+				if (_pipe != null)
+					return _pipe.Create(liftPath);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("FLEx isn't listening."); //It may not be fatal if FLEx isn't listening to us, but we can't create.
+				return false;
+			}
+			return false;
 		}
 
 		/// <summary>
