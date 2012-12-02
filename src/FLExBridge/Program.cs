@@ -66,7 +66,7 @@ namespace FLExBridge
 				string currentKey = null;
 				foreach (var arg in args)
 				{
-		s			//not all options are followed by input, so just add them as a key
+					//not all options are followed by input, so just add them as a key
 					if(arg.StartsWith("-") || arg.StartsWith("/"))
 					{
 						currentKey = arg;

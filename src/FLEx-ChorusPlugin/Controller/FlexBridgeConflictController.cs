@@ -26,8 +26,6 @@ namespace FLEx_ChorusPlugin.Controller
 		protected AnnotationEditorModel _editorModel;
 		protected NotesBrowserPage _notesBrowser;
 
-		public event JumpEventHandler JumpUrlChanged;
-
 		private void JumpToFlexObject(string url)
 		{
 			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
@@ -45,7 +43,7 @@ namespace FLEx_ChorusPlugin.Controller
 				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
 		}
 
-		#region IFlexBridgeController implementation
+		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
@@ -72,15 +70,24 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
+		public ControllerType ControllerForType
+		{
+			get { return ControllerType.ViewNotes; }
+		}
+		#endregion
+
+		#region IFlexBridgeController implementation
+
 		public LanguageProject CurrentProject
 		{
 			get { return _currentLanguageProject; }
 		}
 
-		public ControllerType ControllerForType
-		{
-			get { return ControllerType.ViewNotes; }
-		}
+		#endregion
+
+		#region IConflictController implementation
+
+		public event JumpEventHandler JumpUrlChanged;
 
 		#endregion
 

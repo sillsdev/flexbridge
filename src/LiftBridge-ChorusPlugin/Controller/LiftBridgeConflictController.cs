@@ -22,8 +22,6 @@ namespace SIL.LiftBridge.Controller
 		private LiftProject _currentLiftProject;
 		private NotesBrowserPage _notesBrowser;
 
-		public event JumpEventHandler JumpUrlChanged;
-
 		private void JumpToFlexObject(string url)
 		{
 #if notdoneyet
@@ -78,6 +76,12 @@ namespace SIL.LiftBridge.Controller
 		#region ILiftBridgeController implementation
 
 		public LiftProject CurrentProject { get; private set; }
+
+		#endregion
+
+		#region IConflictController implementation
+
+		public event JumpEventHandler JumpUrlChanged;
 
 		#endregion
 

@@ -18,15 +18,6 @@ namespace FLEx_ChorusPlugin.Controller
 		private LanguageProject _currentLanguageProject;
 		private MainBridgeForm _mainBridgeForm;
 
-		#region IFlexBridgeController implementation
-
-		public LanguageProject CurrentProject
-		{
-			get { return _currentLanguageProject; }
-		}
-
-		#endregion
-
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
@@ -42,6 +33,15 @@ namespace FLEx_ChorusPlugin.Controller
 		public ControllerType ControllerForType
 		{
 			get { return ControllerType.SendReceive; }
+		}
+
+		#endregion
+
+		#region IFlexBridgeController implementation
+
+		public LanguageProject CurrentProject
+		{
+			get { return _currentLanguageProject; }
 		}
 
 		#endregion

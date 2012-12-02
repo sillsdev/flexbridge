@@ -23,7 +23,8 @@ namespace FLEx_ChorusPlugin.Controller
 		private ISynchronizeProject _projectSynchronizer;
 		private MainBridgeForm _mainBridgeForm;
 
-		internal FlexBridgeController() {}
+		internal FlexBridgeController()
+		{}
 
 		internal FlexBridgeController(IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
 		{
@@ -48,7 +49,7 @@ namespace FLEx_ChorusPlugin.Controller
 			_existingSystemView.SetSystem(ChorusSystem, CurrentProject); // May be null, which is fine.
 		}
 
-		#region IFlexBridgeController implementation
+		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
@@ -79,12 +80,16 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public LanguageProject CurrentProject { get; private set; }
-
 		public ControllerType ControllerForType
 		{
 			get { return ControllerType.StandAloneFlexBridge; }
 		}
+
+		#endregion
+
+		#region IFlexBridgeController implementation
+
+		public LanguageProject CurrentProject { get; private set; }
 
 		#endregion
 
@@ -110,7 +115,6 @@ namespace FLEx_ChorusPlugin.Controller
 			_fwBridgeView.EnableSendReceiveControls(projectInUse);
 			SetSystem(chorusSystem);
 		}
-
 
 		#region Implementation of IDisposable
 
