@@ -1,60 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Notes.Browser;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.View;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace SIL.LiftBridge.Controller
 {
-	internal class LiftBridgeConflictController : ILiftBridgeController, IDisposable
+	[Export(typeof(ILiftBridgeController))]
+	internal class LiftBridgeConflictController : ILiftBridgeController, IConflictController
 	{
+		private IChorusUser _chorusUser;
+		private MainBridgeForm _mainBridgeForm;
+		private LiftProject _currentLiftProject;
 		private NotesBrowserPage _notesBrowser;
 
-#if notdoneyet
-		public delegate void JumpEventHandler(object sender, JumpEventArgs e);
-
 		public event JumpEventHandler JumpUrlChanged;
-#endif
 
-		/// <summary>
-		/// for testing (but called by the main constructor)
-		/// </summary>
-		internal LiftBridgeConflictController(Form conflictView)
-		{
-			MainForm = conflictView;
-		}
-
-		public LiftBridgeConflictController(IDictionary<string, string> options)
-			:this(new LiftBridgeConflictView())
-		{
-			InitController(options);
-		}
-
-		internal void InitController(IDictionary<string, string> options)
-		{
-			SetupChorusAndLanguageProject(options);
-			SetViewControls();
-		}
-
-		private void SetupChorusAndLanguageProject(IDictionary<string, string> options)
-		{
-			CurrentProject = new LiftProject(options["-p"]);
-			ChorusSystem = new ChorusSystem(CurrentProject.PathToProject);
-			ChorusSystem.Init(options["-u"]);
-			LiftFolder.AddLiftFileInfoToFolderConfiguration(ChorusSystem.ProjectFolderConfiguration);
-			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
-
-#if notdoneyet
-			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
-#endif
-		}
-
-#if notdoneyet
 		private void JumpToFlexObject(string url)
 		{
+#if notdoneyet
 			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
 			var hostLength = url.IndexOf("?");
 			if (hostLength < 0)
@@ -67,23 +39,43 @@ namespace SIL.LiftBridge.Controller
 			// the LiftBridgeConnectionHelper that we have a URL to jump to.
 			if (JumpUrlChanged != null)
 				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
-		}
 #endif
+		}
 
-		internal virtual void SetViewControls()
+		#region IBridgeController implementation
+
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_mainBridgeForm = mainForm;
+			_mainBridgeForm.ClientSize = new Size(904, 510);
+
+			_chorusUser = new ChorusUser(options["-u"]);
+			_currentLiftProject = new LiftProject(options["-p"]);
+			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
+			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
+			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
+
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
-			var viewer = (MainForm as LiftBridgeConflictView);
+			var viewer = new BridgeConflictView();
+			_mainBridgeForm.Controls.Add(viewer);
+			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 
-			viewer.SetProjectName(CurrentProject.ProjectName);
+			//if (_currentLiftProject.FieldWorkProjectInUse)
+			//	viewer.EnableWarning();
+			viewer.SetProjectName(_currentLiftProject.ProjectName);
 		}
 
-		#region ILiftBridgeController implementation
-
-		public Form MainForm { get; private set; }
-
 		public ChorusSystem ChorusSystem { get; private set; }
+
+		public ControllerType ControllerForType
+		{
+			get { return ControllerType.ViewNotesLift; }
+		}
+
+		#endregion
+
+		#region ILiftBridgeController implementation
 
 		public LiftProject CurrentProject { get; private set; }
 
@@ -144,12 +136,13 @@ namespace SIL.LiftBridge.Controller
 
 			if (disposing)
 			{
-				MainForm.Dispose();
+				if (_mainBridgeForm != null)
+					_mainBridgeForm.Dispose();
 
 				if (ChorusSystem  != null)
 					ChorusSystem.Dispose();
 			}
-			MainForm = null;
+			_mainBridgeForm = null;
 			ChorusSystem = null;
 			CurrentProject = null;
 
@@ -157,20 +150,5 @@ namespace SIL.LiftBridge.Controller
 		}
 
 		#endregion
-	}
-
-	internal class JumpEventArgs : EventArgs
-	{
-		private readonly string _jumpUrl;
-
-		internal JumpEventArgs(string jumpUrl)
-		{
-			_jumpUrl = jumpUrl;
-		}
-
-		internal string JumpUrl
-		{
-			get { return _jumpUrl; }
-		}
 	}
 }

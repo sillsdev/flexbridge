@@ -1,84 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
 using Chorus.UI.Notes;
 using Palaso.Network;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	internal class FwBridgeConflictController : IFwBridgeController, IDisposable
+	[Export(typeof(IFlexBridgeController))]
+	internal class FlexBridgeConflictController : IFlexBridgeController, IConflictController
 	{
 		private IChorusUser _chorusUser;
-		private ChorusSystem _chorusSystem;
+		private MainBridgeForm _mainBridgeForm;
 		protected LanguageProject _currentLanguageProject;
 		protected NotesInProjectViewModel _notesModel;
 		protected AnnotationEditorModel _editorModel;
 		protected NotesBrowserPage _notesBrowser;
 
-		public delegate void JumpEventHandler(object sender, JumpEventArgs e);
-
 		public event JumpEventHandler JumpUrlChanged;
-
-		/// <summary>
-		/// for testing (but called by the main constructor)
-		/// </summary>
-		internal FwBridgeConflictController(Form conflictView)
-		{
-			MainForm = conflictView;
-		}
-
-		public FwBridgeConflictController(Dictionary<string, string> options)
-			:this(new FwBridgeConflictView())
-		{
-			var user = Environment.UserName;
-			if (options.ContainsKey("-u"))
-				user = options["-u"];
-
-			var filePath = String.Empty;
-			if (options.ContainsKey("-p"))
-				filePath = options["-p"];
-
-			InitController(user, filePath);
-		}
-
-		internal void InitController(string user, string filePath)
-		{
-			if (String.IsNullOrEmpty(filePath))
-			{
-				MessageBox.Show(Resources.ksNoFilePath, Resources.ksPathProblem,
-								MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			SetupChorusAndLanguageProject(user, filePath);
-			SetViewControls(filePath);
-		}
-
-		private void SetupChorusAndLanguageProject(string user, string filePath)
-		{
-			_chorusUser = new ChorusUser(user);
-			_currentLanguageProject = new LanguageProject(filePath);
-			_chorusSystem = FlexFolderSystem.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name);
-			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
-
-			_chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
-		}
 
 		private void JumpToFlexObject(string url)
 		{
 			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
-			var hostLength = url.IndexOf("?");
+			var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
 			if (hostLength < 0)
 				return; // can't do it, not a valid FLEx url.
+
 			var host = url.Substring(0, hostLength);
-			string originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
+			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
 			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
@@ -87,10 +45,24 @@ namespace FLEx_ChorusPlugin.Controller
 				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
 		}
 
-		internal virtual void SetViewControls(string filePath)
+		#region IFlexBridgeController implementation
+
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
-			var viewer = (MainForm as FwBridgeConflictView);
+			_mainBridgeForm = mainForm;
+			_mainBridgeForm.ClientSize = new Size(904, 510);
+
+			_chorusUser = new ChorusUser(options["-u"]);
+			_currentLanguageProject = new LanguageProject(options["-p"]);
+			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
+
+			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
+
+			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
+			var viewer = new BridgeConflictView();
+			_mainBridgeForm.Controls.Add(viewer);
+			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 
 			if (_currentLanguageProject.FieldWorkProjectInUse)
@@ -98,18 +70,16 @@ namespace FLEx_ChorusPlugin.Controller
 			viewer.SetProjectName(_currentLanguageProject.Name);
 		}
 
-		#region IFwBridgeController implementation
-
-		public Form MainForm { get; private set; }
-
-		public ChorusSystem ChorusSystem
-		{
-			get { return _chorusSystem; }
-		}
+		public ChorusSystem ChorusSystem { get; private set; }
 
 		public LanguageProject CurrentProject
 		{
 			get { return _currentLanguageProject; }
+		}
+
+		public ControllerType ControllerForType
+		{
+			get { return ControllerType.ViewNotes; }
 		}
 
 		#endregion
@@ -120,7 +90,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FwBridgeConflictController()
+		~FlexBridgeConflictController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -169,33 +139,19 @@ namespace FLEx_ChorusPlugin.Controller
 
 			if (disposing)
 			{
-				MainForm.Dispose();
+				if (_mainBridgeForm != null)
+					_mainBridgeForm.Dispose();
 
-				if (_chorusSystem  != null)
-					_chorusSystem.Dispose();
+				if (ChorusSystem  != null)
+					ChorusSystem.Dispose();
 			}
-			MainForm = null;
-			_chorusSystem = null;
+			_mainBridgeForm = null;
+			ChorusSystem = null;
 			_currentLanguageProject = null;
 
 			IsDisposed = true;
 		}
 
 		#endregion
-	}
-
-	internal class JumpEventArgs : EventArgs
-	{
-		private readonly string _jumpUrl;
-
-		internal JumpEventArgs(string jumpUrl)
-		{
-			_jumpUrl = jumpUrl;
-		}
-
-		internal string JumpUrl
-		{
-			get { return _jumpUrl; }
-		}
 	}
 }

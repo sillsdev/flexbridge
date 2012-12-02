@@ -1,21 +1,19 @@
 ﻿using System.Windows.Forms;
 using Chorus.UI.Notes.Browser;
-using SIL.LiftBridge.Properties;
 
-namespace SIL.LiftBridge.View
+namespace TriboroughBridge_ChorusPlugin.View
 {
 	/// <summary>
-	/// This class provides the view of the Conflicts that FLEx wants to see.
+	/// This class provides the view of the Conflicts that FLEx wants to see for both FLEx and Lift data.
 	/// </summary>
-	internal partial class LiftBridgeConflictView : Form
+	public partial class BridgeConflictView : UserControl
 	{
 		private NotesBrowserPage _notesBrowser;
 
-		internal LiftBridgeConflictView()
+		public BridgeConflictView()
 		{
 			InitializeComponent();
 			_warninglabel1.Visible = false;
-			Icon = Resources.chorus;
 		}
 
 		public void EnableWarning()

@@ -1,12 +1,11 @@
 ﻿using System.IO;
-using Chorus;
 using Chorus.sync;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
-	internal static class FlexFolderSystem
+	public static class FlexFolderSystem
 	{
-		private static void ConfigureChorusProjectFolder(ProjectFolderConfiguration projectFolderConfiguration)
+		public static void ConfigureChorusProjectFolder(ProjectFolderConfiguration projectFolderConfiguration)
 		{
 			// Exclude has precedence, but these are redundant as long as we're using the policy
 			// that we explicitly include all the files we understand. At least someday, when these
@@ -35,6 +34,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "trash", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("OtherRepositories", "**.*")); // Folder for contined LIFT and PT-FLEx repos.
+			if (!projectFolderConfiguration.ExcludePatterns.Contains("**.NewChorusNotes"))
+				projectFolderConfiguration.ExcludePatterns.Add("**.NewChorusNotes"); // Not really needed, since Chorus adds them. But, knows for how long?
 			ProjectFolderConfiguration.AddExcludedVideoExtensions(projectFolderConfiguration);
 
 			projectFolderConfiguration.IncludePatterns.Add("FLExProject.ModelVersion"); // Hope this forces the version file to be done first.
@@ -87,17 +88,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.LanguageProjectFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExUnownedPicturesFilename));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("General", SharedConstants.FLExVirtualOrderingFilename));
-		}
-
-		/// <summary>
-		/// Creates and initializes the ChorusSystem for use in FLExBridge
-		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user)
-		{
-			var system = new ChorusSystem(directoryName);
-			system.Init(user);
-			ConfigureChorusProjectFolder(system.ProjectFolderConfiguration);
-			return system;
 		}
 	}
 }

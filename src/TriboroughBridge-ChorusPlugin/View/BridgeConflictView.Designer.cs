@@ -1,6 +1,6 @@
-﻿namespace FLEx_ChorusPlugin.View
+﻿namespace TriboroughBridge_ChorusPlugin.View
 {
-	internal partial class FwBridgeConflictView
+	public partial class BridgeConflictView
 	{
 		/// <summary>
 		/// Required designer variable.

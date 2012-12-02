@@ -1,82 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Chorus;
-using Chorus.FileTypeHanders.lift;
-using SIL.LiftBridge.Infrastructure;
-using SIL.LiftBridge.Model;
+using System.Linq;
+using Chorus.sync;
 using SIL.LiftBridge.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Model;
 using TriboroughBridge_ChorusPlugin.View;
 
-namespace SIL.LiftBridge.Controller
+namespace SIL.LiftBridge.Model
 {
-	[Export(typeof(ILiftBridgeController))]
-	internal sealed class LiftBridgeSynchronizeController : ILiftBridgeController, ISynchronizeController
+	[Export(typeof(IBridgeModel))]
+	public class LiftBridgeModel : IBridgeModel
 	{
-		private ISynchronizeProject _projectSynchronizer;
-		private LiftProject _currentLiftProject;
-		private MainBridgeForm _mainBridgeForm;
+		[ImportMany]
+		internal IEnumerable<ILiftBridgeController> Controllers { get; private set; }
 
-		#region IBridgeController implementation
-
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		private ILiftBridgeController GetController(ControllerType controllerType)
 		{
-			_mainBridgeForm = mainForm;
-			_projectSynchronizer = new SynchronizeLiftProject();
-
-			_currentLiftProject = new LiftProject(options["-p"]);
-			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
-			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
+			return (from controller in Controllers
+					where controller.ControllerForType == controllerType
+					select controller).FirstOrDefault();
 		}
 
-		public ChorusSystem ChorusSystem { get; private set; }
+		#region Implementation of IBridgeModel
 
-		public ControllerType ControllerForType
+		/// <summary>
+		/// Get the complete path to the folder that contains the repository folder.
+		/// </summary>
+		public string PathToRepository { get; private set; }
+
+		/// <summary>
+		/// Get the project name.
+		/// </summary>
+		public string ProjectName { get; private set; }
+
+		/// <summary>
+		/// Do a complete Send/Receive: initial commit, pull, merge, and push.
+		/// </summary>
+		public SyncResults Synchronize(SyncOptions options)
 		{
-			get { return ControllerType.SendReceiveLift; }
+			throw new NotImplementedException();
 		}
 
-		#endregion
-
-		#region ILiftBridgeController implementation
-
-		public LiftProject CurrentProject
+		/// <summary>
+		/// Get the type of repository the model supports
+		/// </summary>
+		public BridgeModelType ModelType
 		{
-			get { return _currentLiftProject; }
+			get { return BridgeModelType.Lift; }
 		}
 
-		#endregion
+		/// <summary>
+		/// Get the current controller for the given startup options.
+		/// </summary>
+		public IBridgeController CurrentController { get; private set; }
 
-		#region ISynchronizeController implementation
-
-		public void Syncronize()
+		/// <summary>
+		/// Initialize the current instance.
+		/// </summary>
+		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			ChangesReceived = _projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLiftProject.PathToProject, _currentLiftProject.ProjectName);
+			CurrentController = GetController(controllerType);
+			CurrentController.InitializeController(mainForm, options, controllerType);
 		}
 
-		public bool ChangesReceived { get; private set; }
-
-		#endregion
+		#endregion End of IBridgeModel impl
 
 		#region Implementation of IDisposable
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// Force Dispose(false) if not already called (i.e. IsDisposed is true)
 		/// </summary>
-		~LiftBridgeSynchronizeController()
+		~LiftBridgeModel()
 		{
-			Dispose(false);
 			// The base class finalizer is called automatically.
+			Dispose(false);
 		}
 
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing,
 		/// or resetting unmanaged resources.
 		/// </summary>
-		/// <filterpriority>2</filterpriority>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -115,18 +122,11 @@ namespace SIL.LiftBridge.Controller
 
 			if (disposing)
 			{
-				if (_mainBridgeForm != null)
-					_mainBridgeForm.Dispose();
-
-				if (ChorusSystem != null)
-					ChorusSystem.Dispose();
 			}
-			_mainBridgeForm = null;
-			ChorusSystem = null;
 
 			IsDisposed = true;
 		}
 
-		#endregion
+		#endregion End of IDisposable impl
 	}
 }

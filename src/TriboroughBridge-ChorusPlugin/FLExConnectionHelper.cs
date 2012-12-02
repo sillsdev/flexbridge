@@ -1,32 +1,42 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
-using FLEx_ChorusPlugin.Controller;
+using System.Windows.Forms;
+using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace FLExBridge
+namespace TriboroughBridge_ChorusPlugin
 {
 	/// <summary>
 	/// This class encapsulates the code related to service communication with FLEx.
 	/// </summary>
-	class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
+	[Export(typeof(FLExConnectionHelper))]
+	[Export(typeof(ICreateProjectFromLift))]
+	public class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
 	{
-		private readonly ServiceHost _host;
-		private readonly IFLExBridgeService _pipe;
+		private ServiceHost _host;
+		private IFLExBridgeService _pipe;
 		private bool _hostOpened;
 
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
 		/// </summary>
-		/// <param name="fwProjectPath">The entire FieldWorks project folder path.
+		internal FLExConnectionHelper()
+		{}
+
+		/// <summary>
+		/// Initialize the helper, setting up the local service endpoint and opening.
+		/// </summary>
+		/// <param name="fwProjectPathname">The entire FieldWorks project folder path.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		internal FLExConnectionHelper(string fwProjectPath)
+		public bool Init(string fwProjectPathname)
 		{
 			_hostOpened = true;
-			string fwProjectName = ""; // will only be able to to S/R one project at a time
-			if (!String.IsNullOrEmpty(fwProjectPath)) // can S/R multiple projects simultaneously
-				fwProjectName = Path.GetFileNameWithoutExtension(fwProjectPath);
+			var fwProjectName = ""; // will only be able to to S/R one project at a time
+			if (!String.IsNullOrEmpty(fwProjectPathname)) // can S/R multiple projects simultaneously
+				fwProjectName = Path.GetFileNameWithoutExtension(fwProjectPathname);
 
 			try
 			{
@@ -51,11 +61,19 @@ namespace FLExBridge
 				//(if we failed to create the host we still want to do this so FLEx can wake up)
 				_pipe.BridgeReady();
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				Console.WriteLine("FLEx isn't listening.");
 				_pipe = null; //FLEx isn't listening.
 			}
+
+			if (!HostOpened)
+			{
+				// display messagebox and quit
+				MessageBox.Show(CommonResources.kAlreadyRunning, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+				return false;
+			}
+			return true;
 		}
 
 		public bool HostOpened { get { return _hostOpened; } }
@@ -98,7 +116,7 @@ namespace FLExBridge
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived)
+		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			//open a channel to flex and send the message.
 			try
@@ -120,7 +138,7 @@ namespace FLExBridge
 		/// <summary>
 		/// Signals FLEx that the bridge sent a jump URL to process.
 		/// </summary>
-		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
 			try
 			{
@@ -152,10 +170,10 @@ namespace FLExBridge
 			void BridgeSentJumpUrl(string jumpUrl);
 
 			/// <summary>
-			/// FLEx should export the entire lexicon content to the specified destination. Return true if successful.
+			/// FLEx should export the entire LIFT lexicon content to the specified destination. Return true if successful.
 			/// </summary>
 			/// <param name="liftPath"></param>
-			/// <returns></returns>
+			/// <returns>'true' if it was able to do the export, otherwise 'false'.</returns>
 			[OperationContract]
 			bool Export(string liftPath);
 
@@ -165,15 +183,15 @@ namespace FLExBridge
 			/// </summary>
 			/// <param name="liftPath"></param>
 			/// <param name="keepBoth"></param>
-			/// <returns></returns>
+			/// <returns>'true' if it was able to do the import, otherwise 'false'.</returns>
 			[OperationContract]
 			bool Import(string liftPath, bool keepBoth);
 
 			/// <summary>
-			/// Flex should create a new language project and import into it the data from the specified lexicon.
+			/// Flex should create a new language project and import into it the data from the specified LIFT lexicon.
 			/// </summary>
 			/// <param name="liftPath"></param>
-			/// <returns></returns>
+			/// <returns>'true' if it was able to do the import, otherwise 'false'.</returns>
 			[OperationContract]
 			bool Create(string liftPath);
 		}

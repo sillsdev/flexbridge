@@ -1,13 +1,10 @@
-﻿using System.Windows.Forms;
-using Chorus;
-using SIL.LiftBridge.Model;
+﻿using SIL.LiftBridge.Model;
+using TriboroughBridge_ChorusPlugin.Controller;
 
 namespace SIL.LiftBridge.View
 {
-	internal interface ILiftBridgeController
+	internal interface ILiftBridgeController : IBridgeController
 	{
-		Form MainForm { get; }
-		ChorusSystem ChorusSystem { get; }
 		LiftProject CurrentProject { get; }
 	}
 }

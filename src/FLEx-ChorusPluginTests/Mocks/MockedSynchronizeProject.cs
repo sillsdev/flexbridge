@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using Chorus;
-using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Model;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {
@@ -13,11 +12,11 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		#region Implementation of ISynchronizeProject
 
-		public bool SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			HasForm = (parent != null);
 			HasChorusSystem = (chorusSystem != null);
-			HasLanguageProject = (langProject != null);
+			HasLanguageProject = (!string.IsNullOrEmpty(projectPath) && !string.IsNullOrEmpty(projectName));
 			return false;
 		}
 

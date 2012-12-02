@@ -1,62 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.ComponentModel.Composition;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.View;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	internal sealed class FwBridgeSynchronizeController : IFwBridgeController, IDisposable
+	[Export(typeof(IFlexBridgeController))]
+	internal sealed class FlexBridgeSynchronizeController : IFlexBridgeController, ISynchronizeController
 	{
-		private readonly SynchronizeProject _projectSynchronizer;
-		private readonly LanguageProject _currentLanguageProject;
-		private bool _changesReceived;
+		private ISynchronizeProject _flexProjectSynchronizer;
+		private LanguageProject _currentLanguageProject;
+		private MainBridgeForm _mainBridgeForm;
 
-		public bool ChangesReceived { get { return _changesReceived; } }
-
-		public FwBridgeSynchronizeController(IDictionary<string, string> options)
-		{
-			IProjectPathLocator locator = new RegularUserProjectPathLocator();
-			_projectSynchronizer = new SynchronizeProject();
-
-			string user;
-			if (options.ContainsKey("-u"))
-			{
-				user = options["-u"];
-			}
-			else
-			{
-				throw new ArgumentException("Argument -u is missing (the user)", "options");
-			}
-			if (options.ContainsKey("-p"))
-			{
-				_currentLanguageProject = new LanguageProject(options["-p"]);
-				ChorusSystem = FlexFolderSystem.InitializeChorusSystem(_currentLanguageProject.DirectoryName, user);
-			}
-			else
-			{
-				throw new ArgumentException("Argument -p is missing (the FieldWorks project)", "options");
-			}
-			MainForm = new Form();
-		}
-
-		public void SyncronizeProjects()
-		{
-			_changesReceived = _projectSynchronizer.SynchronizeFieldWorksProject(MainForm, ChorusSystem, _currentLanguageProject);
-		}
-
-		#region IFwBridgeController implementation
-
-		public Form MainForm { get; private set; }
-
-		public ChorusSystem ChorusSystem { get; private set; }
+		#region IFlexBridgeController implementation
 
 		public LanguageProject CurrentProject
 		{
 			get { return _currentLanguageProject; }
 		}
+
+		#endregion
+
+		#region IBridgeController implementation
+
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		{
+			_mainBridgeForm = mainForm;
+			_flexProjectSynchronizer = new SynchronizeFlexProject();
+			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
+		}
+
+		public ChorusSystem ChorusSystem { get; private set; }
+
+		public ControllerType ControllerForType
+		{
+			get { return ControllerType.SendReceive; }
+		}
+
+		#endregion
+
+		#region ISynchronizeController
+
+		public void Syncronize()
+		{
+			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLanguageProject.DirectoryName, _currentLanguageProject.Name);
+		}
+
+		public bool ChangesReceived { get; private set; }
 
 		#endregion
 
@@ -66,7 +63,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FwBridgeSynchronizeController()
+		~FlexBridgeSynchronizeController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -115,12 +112,13 @@ namespace FLEx_ChorusPlugin.Controller
 
 			if (disposing)
 			{
-				MainForm.Dispose();
+				if (_mainBridgeForm != null)
+					_mainBridgeForm.Dispose();
 
 				if (ChorusSystem != null)
 					ChorusSystem.Dispose();
 			}
-			MainForm = null;
+			_mainBridgeForm = null;
 			ChorusSystem = null;
 
 			IsDisposed = true;

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,43 +10,24 @@ using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
-using Palaso.Extensions;
 using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
-	internal class ObtainProjectController : IFwBridgeController, IDisposable
+	[Export(typeof(IFlexBridgeController))]
+	internal class FlexObtainProjectController : IFlexBridgeController
 	{
-		private readonly ChorusSystem _chorusSystem;
-		private readonly IStartupNewView _startupNewView;
-		private ICreateProjectFromLift _projectCreator;
+		private IStartupNewView _startupNewView;
+		private MainBridgeForm _mainBridgeForm;
 
-		/// <summary>
-		/// Constructs the ObtainProjectController with the given options.
-		/// </summary>
-		/// <param name="options">(Not currently used, remove later if no use reveals its self.)</param>
-		public ObtainProjectController(IDictionary<string, string> options, ICreateProjectFromLift projectCreator )
-		{
-			MainForm = new ObtainProjectView
-						{
-							Text = Resources.ObtainProjectView_DialogTitle,
-							MaximizeBox = false,
-							MinimizeBox = false,
-							Icon = null
-						};
-			_startupNewView = new StartupNewView();
-			_startupNewView.Startup += StartupHandler;
-			_projectCreator = projectCreator;
-			MainForm.Controls.Add((Control)_startupNewView);
-		}
-
-		private const string s_repoProblem = "Empty Repository";
-		private const string s_emptyRepoMsg =
-			"This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
+		private const string RepoProblem = "Empty Repository";
+		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
 
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
-			MainForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
+			_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
 			// This handler can't really work (yet) in an environment where the local system has an extant project,
 			// and the local user wants to collaborate with a remote user,
 			// where the FW language project is the 'same' on both computers.
@@ -56,16 +37,16 @@ namespace FLEx_ChorusPlugin.Controller
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
 			var getSharedProject = new GetSharedProject();
-			var result = getSharedProject.GetSharedProjectUsing(MainForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
+			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
 			if (result.CloneStatus == CloneStatus.Created)
 			{
 				// It's just possible that we get here, but the cloned repo is empty (if the source one was empty).
 				var modelVersionPathname = Path.Combine(result.ActualLocation, SharedConstants.ModelVersionFilename);
-				if (!File.Exists(modelVersionPathname) && !CreateProjectFromLift(result.ActualLocation))
+				if (!File.Exists(modelVersionPathname))
 				{
-					MainForm.Cursor = Cursors.Default;
+					_mainBridgeForm.Cursor = Cursors.Default;
 					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
-					MessageBox.Show(s_emptyRepoMsg, s_repoProblem);
+					MessageBox.Show(EmptyRepoMsg, RepoProblem);
 					return;
 				}
 				var langProjName = Path.GetFileName(result.ActualLocation);
@@ -74,17 +55,10 @@ namespace FLEx_ChorusPlugin.Controller
 				var possibleNewLocation = Path.Combine(e.ProjectFolder, langProjName);
 				var finalCloneLocation = RenameFolderIfPossible(result.ActualLocation, possibleNewLocation) ? possibleNewLocation : result.ActualLocation;
 				CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, newProjectFileName));
-				MainForm.Close();
+				_mainBridgeForm.Close();
 				return;
 			}
-			MainForm.Cursor = Cursors.Default;
-		}
-
-		private bool CreateProjectFromLift(string folderPath)
-		{
-			if (!IsLiftRepo(HgDataFolder(folderPath)))
-				return false;
-			return _projectCreator.CreateProjectFromLift(folderPath);
+			_mainBridgeForm.Cursor = Cursors.Default;
 		}
 
 		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
@@ -99,42 +73,43 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private static bool ProjectFilter(string path)
 		{
-			var hgDataFolder = HgDataFolder(path);
-			return Directory.Exists(hgDataFolder) && (Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Any()
-				|| IsLiftRepo(hgDataFolder));
-		}
-
-		private static bool IsLiftRepo(string hgDataFolder)
-		{
-			return Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
-		}
-
-		private static string HgDataFolder(string path)
-		{
-			return Path.Combine(path, ".hg", "store", "data");
+			var hgDataFolder = Utilities.HgDataFolder(path);
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Any();
 		}
 
 		public void Dispose()
 		{
-			_startupNewView.Startup -= StartupHandler;
+			if (_startupNewView != null)
+				_startupNewView.Startup -= StartupHandler;
 		}
 
-		public Form MainForm
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			get;
-			set;
+			_mainBridgeForm = mainForm;
+			_mainBridgeForm.Width = 239;
+			_mainBridgeForm.Height = 313;
+			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
+			_mainBridgeForm.FormBorderStyle = FormBorderStyle.Sizable;
+			_mainBridgeForm.Text = Resources.ObtainProjectView_DialogTitle;
+			_mainBridgeForm.MaximizeBox = false;
+			_mainBridgeForm.MinimizeBox = false;
+			_mainBridgeForm.Icon = null;
+
+			_startupNewView = new StartupNewView();
+			_startupNewView.Startup += StartupHandler;
+			_mainBridgeForm.Controls.Add((Control)_startupNewView);
 		}
 
 		public ChorusSystem ChorusSystem
 		{
-			get { return _chorusSystem; }
+			get { return null; }
 		}
 
 		public LanguageProject CurrentProject { get; set; }
-	}
 
-	internal interface ICreateProjectFromLift
-	{
-		bool CreateProjectFromLift(string liftPath);
+		public ControllerType ControllerForType
+		{
+			get { return ControllerType.Obtain; }
+		}
 	}
 }

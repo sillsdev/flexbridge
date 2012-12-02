@@ -112,14 +112,11 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="kFLExBridge" xml:space="preserve">
-	<value>FLEx Bridge</value>
-  </data>
   <data name="kChorusEnabledFwProject" xml:space="preserve">
 	<value>Select a Chorus-enabled FieldWorks project to open:</value>
   </data>
@@ -221,13 +218,6 @@
   <data name="SendReceiveView_DialogTitle" xml:space="preserve">
 	<value>Send/Receive Project</value>
   </data>
-  <data name="kAlreadyRunning" xml:space="preserve">
-	<value>There is already a copy of FLExBridge running.
-You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
--- Send/Receive Project
--- Receive Project from a colleague
--- View Conflict Report (can't have two open)</value>
-  </data>
   <data name="kCanonicalBookNumberOutOfRange" xml:space="preserve">
 	<value>Canonical book number is out of range.</value>
   </data>
@@ -239,5 +229,11 @@ You probably have a Conflict Report open. It will need to be closed before you c
   </data>
   <data name="kUnTitled" xml:space="preserve">
 	<value>[untitled]</value>
+  </data>
+	<data name="kInvalidCommandLineOptions" xml:space="preserve">
+	<value>Invalid command line options. Please launch from FLEx or run the executable without arguments.</value>
+  </data>
+	<data name="kFlexBridge" xml:space="preserve">
+	<value>FLEx Bridge</value>
   </data>
 </root>

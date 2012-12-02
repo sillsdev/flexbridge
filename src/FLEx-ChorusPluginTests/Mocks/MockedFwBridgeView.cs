@@ -12,12 +12,14 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		internal void RaiseProjectSelected(LanguageProject selectedProject)
 		{
-			ProjectSelected(this, new ProjectEventArgs(selectedProject));
+			if (ProjectSelected != null)
+				ProjectSelected(this, new ProjectEventArgs(selectedProject));
 		}
 
 		internal void RaiseSynchronizeProject()
 		{
-			SynchronizeProject(this, new EventArgs());
+			if (SynchronizeProject != null)
+				SynchronizeProject(this, new EventArgs());
 		}
 
 		#region Implementation of IFwBridgeView

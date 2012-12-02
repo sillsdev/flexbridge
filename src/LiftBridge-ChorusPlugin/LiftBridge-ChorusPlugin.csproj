@@ -93,6 +93,7 @@
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
+	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
@@ -106,17 +107,11 @@
   <ItemGroup>
 	<Compile Include="Controller\LiftBridgeConflictController.cs" />
 	<Compile Include="Controller\LiftBridgeSynchronizeController.cs" />
-	<Compile Include="Controller\ObtainProjectController.cs" />
-	<Compile Include="Infrastructure\ISynchronizeProject.cs" />
-	<Compile Include="Infrastructure\SynchronizeProject.cs" />
+	<Compile Include="Controller\LiftObtainProjectController.cs" />
+	<Compile Include="Model\LiftBridgeModel.cs" />
+	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
-	<Compile Include="View\LiftBridgeConflictView.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="View\LiftBridgeConflictView.designer.cs">
-	  <DependentUpon>LiftBridgeConflictView.cs</DependentUpon>
-	</Compile>
 	<Compile Include="View\IActiveView.cs" />
 	<Compile Include="View\ILiftBridgeController.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
@@ -142,9 +137,6 @@
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="View\LiftBridgeConflictView.resx">
-	  <DependentUpon>LiftBridgeConflictView.cs</DependentUpon>
-	</EmbeddedResource>
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>

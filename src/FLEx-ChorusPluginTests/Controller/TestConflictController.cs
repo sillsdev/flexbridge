@@ -4,7 +4,8 @@ using FLEx_ChorusPluginTests.Mocks;
 
 namespace FLEx_ChorusPluginTests.Controller
 {
-	class TestConflictController : FwBridgeConflictController
+#if notyet
+	class TestConflictController : FlexBridgeConflictController
 	{
 		public TestConflictController(Form conflictView) : base(conflictView)
 		{
@@ -21,4 +22,5 @@ namespace FLEx_ChorusPluginTests.Controller
 			viewer.SetProjectName(_currentLanguageProject.Name);
 		}
 	}
+#endif
 }

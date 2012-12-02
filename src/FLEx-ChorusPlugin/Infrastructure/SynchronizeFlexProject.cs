@@ -2,13 +2,12 @@
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.View;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
-	internal sealed class SynchronizeProject : ISynchronizeProject
+	internal sealed class SynchronizeFlexProject : ISynchronizeProject
 	{
 		private string _origPathname;
 
@@ -17,21 +16,18 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// This will trigger the synchronizing of the fieldworks project with the provided system and project
 		/// </summary>
-		/// <param name="parent">Window to be the parent for the synchronize dialog</param>
-		/// <param name="chorusSystem">The ChorusSystem to use</param>
-		/// <param name="langProject">The LanguageProject to use</param>
 		/// <returns>true if changes from others were made, false otherwise</returns>
-		public bool SynchronizeFieldWorksProject(Form parent, ChorusSystem chorusSystem, LanguageProject langProject)
+		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-			var lockPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata.lock");
+			var lockPathname = Path.Combine(projectPath, projectName + ".fwdata.lock");
 			var othersChanges = false;
 
 			try
 			{
 				File.WriteAllText(lockPathname, "");
 
-				_origPathname = Path.Combine(langProject.DirectoryName, langProject.Name + ".fwdata");
+				_origPathname = Path.Combine(projectPath, projectName + ".fwdata");
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
@@ -56,7 +52,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
 					syncDlg.ShowDialog(parent);
 
-					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.NeedToUpdateFlex)
+					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
 						othersChanges = true;
 				}
 			}
@@ -69,10 +65,5 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		}
 
 		#endregion
-
-		public void SynchronizeFieldWorksProject(IFwBridgeController controller)
-		{
-			SynchronizeFieldWorksProject(controller.MainForm, controller.ChorusSystem, controller.CurrentProject);
-		}
 	}
 }

@@ -93,6 +93,7 @@
 	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
+	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
@@ -111,9 +112,9 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
-	<Compile Include="Controller\FwBridgeConflictController.cs" />
-	<Compile Include="Controller\FwBridgeSynchronizeController.cs" />
-	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Controller\FlexBridgeConflictController.cs" />
+	<Compile Include="Controller\FlexBridgeSynchronizeController.cs" />
+	<Compile Include="Controller\FlexObtainProjectController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
@@ -161,7 +162,7 @@
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
-	<Compile Include="Controller\FwBridgeController.cs" />
+	<Compile Include="Controller\FlexBridgeController.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningService.cs" />
@@ -204,6 +205,7 @@
 	<Compile Include="Contexts\Linguistics\TextCorpus\TextCorpusBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
 	<Compile Include="Infrastructure\SharedConstants.cs" />
+	<Compile Include="Model\FlexBridgeModel.cs" />
 	<Compile Include="Model\LanguageProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="Properties\Resources.resx">
@@ -229,12 +231,6 @@
 	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
-	<Compile Include="View\FwBridgeConflictView.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="View\FwBridgeConflictView.Designer.cs">
-	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
-	</Compile>
 	<Compile Include="View\FwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -243,11 +239,10 @@
 	</Compile>
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="View\IFwBridgeController.cs" />
+	<Compile Include="View\IFlexBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IProjectView.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
-	<Compile Include="Infrastructure\ISynchronizeProject.cs" />
 	<Compile Include="View\ObtainProjectView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -268,7 +263,7 @@
 	<Compile Include="View\StartupNewView.designer.cs">
 	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="Infrastructure\SynchronizeProject.cs" />
+	<Compile Include="Infrastructure\SynchronizeFlexProject.cs" />
 	<EmbeddedResource Include="View\ObtainProjectView.resx">
 	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>
@@ -285,9 +280,6 @@
 	<EmbeddedResource Include="View\FLExBridge.resx">
 	  <DependentUpon>FLExBridge.cs</DependentUpon>
 	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\FwBridgeConflictView.resx">
-	  <DependentUpon>FwBridgeConflictView.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\FwBridgeView.resx">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>
