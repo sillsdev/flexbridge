@@ -24,8 +24,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			_writeVerbose = writeVerbose;
 		}
 
-		internal bool NeedToUpdateFlex { get; private set; }
-
 		private string ProjectFilename
 		{
 			get { return Path.GetFileName(_fwdataPathname); }
@@ -33,7 +31,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		private void RestoreProjectFile(IProgress progress)
 		{
-			NeedToUpdateFlex = true;
+			WasUpdated = true;
 			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
 			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
@@ -95,6 +93,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return FieldWorksProjectServices.GetVersionNumber(_fwdataPathname);
 			}
 		}
+
+		public bool WasUpdated { get; private set; }
 
 		#endregion
 	}

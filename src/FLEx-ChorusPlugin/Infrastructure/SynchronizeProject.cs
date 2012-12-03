@@ -56,7 +56,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
 					syncDlg.ShowDialog(parent);
 
-					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.NeedToUpdateFlex)
+					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
 						othersChanges = true;
 				}
 			}
