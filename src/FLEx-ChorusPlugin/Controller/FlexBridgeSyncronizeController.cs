@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Chorus;
-using Chorus.FileTypeHanders.lift;
-using SIL.LiftBridge.Infrastructure;
-using SIL.LiftBridge.Model;
-using SIL.LiftBridge.View;
+using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
-namespace SIL.LiftBridge.Controller
+namespace FLEx_ChorusPlugin.Controller
 {
-	[Export(typeof(ILiftBridgeController))]
-	internal sealed class LiftBridgeSynchronizeController : ILiftBridgeController, ISynchronizeController
+	[Export(typeof(IFlexBridgeController))]
+	internal sealed class FlexBridgeSyncronizeController : IFlexBridgeController, ISyncronizeController
 	{
-		private ISynchronizeProject _projectSynchronizer;
-		private LiftProject _currentLiftProject;
+		private ISynchronizeProject _flexProjectSynchronizer;
+		private LanguageProject _currentLanguageProject;
 		private MainBridgeForm _mainBridgeForm;
 
 		#region IBridgeController implementation
@@ -24,10 +23,8 @@ namespace SIL.LiftBridge.Controller
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
 			_mainBridgeForm = mainForm;
-			_projectSynchronizer = new SynchronizeLiftProject();
-
-			_currentLiftProject = new LiftProject(options["-p"]);
-			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
+			_flexProjectSynchronizer = new SynchronizeFlexProject();
+			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
@@ -35,25 +32,25 @@ namespace SIL.LiftBridge.Controller
 
 		public ControllerType ControllerForType
 		{
-			get { return ControllerType.SendReceiveLift; }
+			get { return ControllerType.SendReceive; }
 		}
 
 		#endregion
 
-		#region ILiftBridgeController implementation
+		#region IFlexBridgeController implementation
 
-		public LiftProject CurrentProject
+		public LanguageProject CurrentProject
 		{
-			get { return _currentLiftProject; }
+			get { return _currentLanguageProject; }
 		}
 
 		#endregion
 
-		#region ISynchronizeController implementation
+		#region ISyncronizeController
 
 		public void Syncronize()
 		{
-			ChangesReceived = _projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLiftProject.PathToProject, _currentLiftProject.ProjectName);
+			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLanguageProject.DirectoryName, _currentLanguageProject.Name);
 		}
 
 		public bool ChangesReceived { get; private set; }
@@ -66,7 +63,7 @@ namespace SIL.LiftBridge.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~LiftBridgeSynchronizeController()
+		~FlexBridgeSyncronizeController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

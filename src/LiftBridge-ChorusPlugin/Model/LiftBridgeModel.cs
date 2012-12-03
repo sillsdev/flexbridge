@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
-using Chorus.sync;
 using SIL.LiftBridge.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -37,19 +37,26 @@ namespace SIL.LiftBridge.Model
 		public string ProjectName { get; private set; }
 
 		/// <summary>
-		/// Do a complete Send/Receive: initial commit, pull, merge, and push.
-		/// </summary>
-		public SyncResults Synchronize(SyncOptions options)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Get the type of repository the model supports
 		/// </summary>
 		public BridgeModelType ModelType
 		{
 			get { return BridgeModelType.Lift; }
+		}
+
+		/// <summary>
+		/// Do S/R on model.
+		/// </summary>
+		/// <returns>'true' if new stuff came in, otherwise 'false'.</returns>
+		public bool Syncronize()
+		{
+			var syncController = CurrentController as ISyncronizeController;
+			if (syncController != null)
+			{
+				syncController.Syncronize();
+				return syncController.ChangesReceived;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -62,6 +69,10 @@ namespace SIL.LiftBridge.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			var pOption = options["-p"];
+			PathToRepository = Path.Combine(Path.GetDirectoryName(pOption), "OtherRepositories", "LIFT");
+			ProjectName = Path.GetFileNameWithoutExtension(pOption);
+
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);
 		}

@@ -113,7 +113,7 @@
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Controller\FlexBridgeConflictController.cs" />
-	<Compile Include="Controller\FlexBridgeSynchronizeController.cs" />
+	<Compile Include="Controller\FlexBridgeSyncronizeController.cs" />
 	<Compile Include="Controller\FlexObtainProjectController.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />

@@ -70,11 +70,11 @@ namespace TriboroughBridge_ChorusPlugin
 
 						case "send_receive":
 							model.InitializeModel(MainForm, options, ControllerType.SendReceive);
-							changesReceived = DoSynchronize(model);
+							changesReceived = model.Syncronize();
 							break;
 						case "send_receive_lift":
 							model.InitializeModel(MainForm, options, ControllerType.SendReceiveLift);
-							changesReceived = DoSynchronize(model);
+							changesReceived = model.Syncronize();
 							break;
 
 						case "view_notes":
@@ -92,13 +92,6 @@ namespace TriboroughBridge_ChorusPlugin
 			{
 				ConnectionHelper.SignalBridgeWorkComplete(changesReceived);
 			}
-		}
-
-		private static bool DoSynchronize(IBridgeModel model)
-		{
-			var syncController = model.CurrentController as ISynchronizeController;
-			syncController.Syncronize();
-			return syncController.ChangesReceived;
 		}
 
 		public void EndWork(Dictionary<string, string> options)

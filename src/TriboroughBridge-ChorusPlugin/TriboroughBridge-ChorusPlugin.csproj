@@ -55,7 +55,7 @@
 	<Compile Include="ControllerType.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
-	<Compile Include="Controller\ISynchronizeController.cs" />
+	<Compile Include="Controller\ISyncronizeController.cs" />
 	<Compile Include="Controller\JumpEventHandler.cs" />
 	<Compile Include="ISynchronizeProject.cs" />
 	<Compile Include="JumpEventArgs.cs" />

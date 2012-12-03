@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Chorus.sync;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
@@ -22,14 +21,15 @@ namespace TriboroughBridge_ChorusPlugin.Model
 		string ProjectName { get; }
 
 		/// <summary>
-		/// Do a complete Send/Receive: initial commit, pull, merge, and push.
-		/// </summary>
-		SyncResults Synchronize(SyncOptions options);
-
-		/// <summary>
 		/// Get the type of repository the model supports
 		/// </summary>
 		BridgeModelType ModelType { get; }
+
+		/// <summary>
+		/// Do S/R on model.
+		/// </summary>
+		/// <returns>'true' if new stuff came in, otherwise 'false'.</returns>
+		bool Syncronize();
 
 		/// <summary>
 		/// Get the current controller for the given startup options.
