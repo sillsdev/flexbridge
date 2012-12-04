@@ -9,6 +9,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType);
 		ChorusSystem ChorusSystem { get; }
-		ControllerType ControllerForType { get; }
+		ControllerType ActionType { get; }
+		IEnumerable<BridgeModelType> SupportedModels { get; }
 	}
 }

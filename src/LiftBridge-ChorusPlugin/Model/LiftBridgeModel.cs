@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using SIL.LiftBridge.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
@@ -14,14 +12,12 @@ namespace SIL.LiftBridge.Model
 	[Export(typeof(IBridgeModel))]
 	public class LiftBridgeModel : IBridgeModel
 	{
-		[ImportMany]
-		internal IEnumerable<ILiftBridgeController> Controllers { get; private set; }
+		[Import]
+		internal ControllerRepository ControllerRepos { get; private set; }
 
-		private ILiftBridgeController GetController(ControllerType controllerType)
+		private IBridgeController GetController(ControllerType controllerType)
 		{
-			return (from controller in Controllers
-					where controller.ControllerForType == controllerType
-					select controller).FirstOrDefault();
+			return ControllerRepos.GetController(ModelType, controllerType);
 		}
 
 		#region Implementation of IBridgeModel

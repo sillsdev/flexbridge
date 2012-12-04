@@ -16,6 +16,7 @@ using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
+	[Export(typeof(IBridgeController))]
 	[Export(typeof(IFlexBridgeController))]
 	internal class FlexBridgeConflictController : IFlexBridgeController, IConflictController
 	{
@@ -70,10 +71,16 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.ViewNotes; }
 		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType> { BridgeModelType.Flex }; }
+		}
+
 		#endregion
 
 		#region IFlexBridgeController implementation

@@ -101,20 +101,7 @@ namespace TriboroughBridge_ChorusPlugin
 			try
 			{
 				if (_pipe != null)
-					_pipe.Import(liftPathname, true);
-			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
-			}
-		}
-
-		public void ImportLiftFileMercilessly(string liftPathname)
-		{
-			try
-			{
-				if (_pipe != null)
-					_pipe.Import(liftPathname, false);
+					_pipe.InformFwProjectName(liftPathname);
 			}
 			catch (Exception)
 			{
@@ -168,7 +155,7 @@ namespace TriboroughBridge_ChorusPlugin
 			try
 			{
 				if (_pipe != null)
-					return _pipe.Create(liftPath);
+					_pipe.InformFwProjectName(liftPath);
 			}
 			catch (Exception)
 			{
@@ -257,37 +244,19 @@ namespace TriboroughBridge_ChorusPlugin
 			[OperationContract]
 			void BridgeReady();
 
+			/// <summary>
+			/// FLEx will use this method to do one of three:
+			///		1. Create a new FW project from the given new fwdata file. (No FW project exists at all.)
+			///		2. Create a new FW project from the given lift file. (No FW project exists at all.)
+			///		3. Do safe import of the given lift file. (FW project does exist, but is now sharing Lift data.
+			/// FLEx waits until FLEx Bridge tells FLEx it has finished, before doing the creation, or safe import.
+			/// </summary>
+			/// <param name="fwProjectName">Pathname to a file with an extension of 'fwdata' of 'lift'.</param>
 			[OperationContract]
 			void InformFwProjectName(string fwProjectName);
 
 			[OperationContract]
 			void BridgeSentJumpUrl(string jumpUrl);
-
-			/// <summary>
-			/// FLEx should export the entire LIFT lexicon content to the specified destination. Return true if successful.
-			/// </summary>
-			/// <param name="liftPath"></param>
-			/// <returns>'true' if it was able to do the export, otherwise 'false'.</returns>
-			[OperationContract]
-			bool Export(string liftPath);
-
-			/// <summary>
-			/// Flex should import the entire lexicon content from the specified source. If keepBoth is true, keep
-			/// current lexicon items as well as the new ones; otherwise, replace current ones with the imported data.
-			/// </summary>
-			/// <param name="liftPath"></param>
-			/// <param name="keepBoth"></param>
-			/// <returns>'true' if it was able to do the import, otherwise 'false'.</returns>
-			[OperationContract]
-			bool Import(string liftPath, bool keepBoth);
-
-			/// <summary>
-			/// Flex should create a new language project and import into it the data from the specified LIFT lexicon.
-			/// </summary>
-			/// <param name="liftPath"></param>
-			/// <returns>'true' if it was able to do the import, otherwise 'false'.</returns>
-			[OperationContract]
-			bool Create(string liftPath);
 		}
 
 		/// <summary>

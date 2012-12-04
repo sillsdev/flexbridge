@@ -5,13 +5,13 @@ using Chorus;
 using Chorus.FileTypeHanders.lift;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Model;
-using SIL.LiftBridge.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
 namespace SIL.LiftBridge.Controller
 {
+	[Export(typeof(IBridgeController))]
 	[Export(typeof(ILiftBridgeController))]
 	internal sealed class LiftBridgeSyncronizeController : ILiftBridgeController, ISyncronizeController
 	{
@@ -33,9 +33,14 @@ namespace SIL.LiftBridge.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.SendReceiveLift; }
+		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType> { BridgeModelType.Lift }; }
 		}
 
 		#endregion

@@ -41,7 +41,9 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase))));
+				catalog.Catalogs.Add(new DirectoryCatalog(
+					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase)),
+					"*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))

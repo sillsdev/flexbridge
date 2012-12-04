@@ -14,14 +14,12 @@ namespace FLEx_ChorusPlugin.Model
 	[Export(typeof(IBridgeModel))]
 	public class FlexBridgeModel : IBridgeModel
 	{
-		[ImportMany]
-		internal IEnumerable<IFlexBridgeController> Controllers { get; private set; }
+		[Import]
+		internal ControllerRepository ControllerRepos { get; private set; }
 
-		private IFlexBridgeController GetController(ControllerType controllerType)
+		private IBridgeController GetController(ControllerType controllerType)
 		{
-			return (from controller in Controllers
-					where controller.ControllerForType == controllerType
-					select controller).FirstOrDefault();
+			return ControllerRepos.GetController(ModelType, controllerType);
 		}
 
 		#region Implementation of IBridgeModel

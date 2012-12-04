@@ -53,6 +53,7 @@
   <ItemGroup>
 	<Compile Include="BridgeTrafficCop.cs" />
 	<Compile Include="ControllerType.cs" />
+	<Compile Include="Controller\ControllerRepository.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
 	<Compile Include="Controller\IObtainNewProjectController.cs" />

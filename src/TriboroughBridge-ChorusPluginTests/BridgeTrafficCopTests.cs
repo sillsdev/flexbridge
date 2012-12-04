@@ -18,8 +18,9 @@ namespace TriboroughBridge_ChorusPluginTests
 			//An aggregate catalog that combines multiple catalogs
 			_catalog = new AggregateCatalog();
 			_catalog.Catalogs.Add(
-				new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase)),
-				"*-ChorusPlugin.dll"));
+				new DirectoryCatalog(
+					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase)),
+					"*-ChorusPlugin.dll"));
 
 			//Create the CompositionContainer with the parts in the catalog
 			_container = new CompositionContainer(_catalog);

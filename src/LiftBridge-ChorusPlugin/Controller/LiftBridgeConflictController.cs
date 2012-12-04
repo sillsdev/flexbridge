@@ -7,13 +7,13 @@ using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Notes.Browser;
 using SIL.LiftBridge.Model;
-using SIL.LiftBridge.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
 namespace SIL.LiftBridge.Controller
 {
+	[Export(typeof(IBridgeController))]
 	[Export(typeof(ILiftBridgeController))]
 	internal class LiftBridgeConflictController : ILiftBridgeController, IConflictController
 	{
@@ -66,9 +66,14 @@ namespace SIL.LiftBridge.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.ViewNotesLift; }
+		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType> { BridgeModelType.Lift }; }
 		}
 
 		#endregion

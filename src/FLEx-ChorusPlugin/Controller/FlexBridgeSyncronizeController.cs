@@ -11,12 +11,14 @@ using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
+	[Export(typeof(IBridgeController))]
 	[Export(typeof(IFlexBridgeController))]
 	internal sealed class FlexBridgeSyncronizeController : IFlexBridgeController, ISyncronizeController
 	{
 		private ISynchronizeProject _flexProjectSynchronizer;
 		private LanguageProject _currentLanguageProject;
 		private MainBridgeForm _mainBridgeForm;
+		private IEnumerable<BridgeModelType> _supportedModels;
 
 		#region IBridgeController implementation
 
@@ -30,9 +32,14 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.SendReceive; }
+		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType>{ BridgeModelType.Flex }; }
 		}
 
 		#endregion

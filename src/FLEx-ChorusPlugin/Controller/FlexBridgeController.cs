@@ -9,10 +9,12 @@ using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using FLEx_ChorusPlugin.View;
 using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Controller
 {
+	[Export(typeof(IBridgeController))]
 	[Export(typeof(IFlexBridgeController))]
 	internal sealed class FlexBridgeController : IFlexBridgeController
 	{
@@ -80,9 +82,14 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.StandAloneFlexBridge; }
+		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType> { BridgeModelType.Flex }; }
 		}
 
 		#endregion

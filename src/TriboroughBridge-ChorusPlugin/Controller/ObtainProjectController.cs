@@ -13,7 +13,7 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace TriboroughBridge_ChorusPlugin.Controller
 {
 	[Export(typeof(IBridgeController))]
-	internal class ObtainProjectController : IBridgeController, IObtainNewProjectController
+	internal class ObtainProjectController : IObtainNewProjectController
 	{
 		[ImportMany]
 		public IEnumerable<IObtainProjectStrategy> Strategies { get; private set; }
@@ -103,9 +103,14 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			get { return null; }
 		}
 
-		public ControllerType ControllerForType
+		public ControllerType ActionType
 		{
 			get { return ControllerType.Obtain; }
+		}
+
+		public IEnumerable<BridgeModelType> SupportedModels
+		{
+			get { return new List<BridgeModelType> { BridgeModelType.Flex, BridgeModelType.Lift }; }
 		}
 
 		#endregion
@@ -114,7 +119,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		public void EndWork()
 		{
-			if (_currentStrategy != null);
+			if (_currentStrategy != null)
 				_currentStrategy.TellFlexAboutIt();
 		}
 

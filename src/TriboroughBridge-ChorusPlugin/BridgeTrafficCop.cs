@@ -97,37 +97,30 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public void EndWork(Dictionary<string, string> options)
 		{
-			IBridgeModel model;
 			string vOption;
 			options.TryGetValue("-v", out vOption);
 			if (vOption == null)
-			{
-				model = GetModel(BridgeModelType.Flex);
-				model.InitializeModel(MainForm, options, ControllerType.StandAloneFlexBridge);
-			}
-			else
-			{
-				model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
-				switch (vOption)
-				{
-					case "obtain": // Get new repo (FW or lift), so FLEx creates it all.
-						//	1) Got new fwdata project (does ConnectionHelper.CreateProjectFromFlex(fwProjectName) call)
-						//	2) Got new lift project, so FLEx needs to create new Lang proj from it using (CreateProjectFromLift method in ICreateProjectFromLift interface.
-						(model.CurrentController as IObtainNewProjectController).EndWork();
-						break;
-					case "obtain_lift": // For Lift S/R, where main FW project exists.
-						(model.CurrentController as IObtainNewProjectController).EndWork();
-						break;
+				return;
 
-					case "view_notes":
-					case "view_notes_lift":
-						(model.CurrentController as IConflictController).JumpUrlChanged -= ConnectionHelper.SendJumpUrlToFlex;
-						break;
-				}
-				// This is only really for regular S/R purposes.
-				// Should it be called for obtain or notes?
-				ConnectionHelper.SignalBridgeWorkComplete(_changesReceived);
+			var model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
+			switch (vOption)
+			{
+				case "obtain": // Get new repo (FW or lift), so FLEx creates it all.
+					//	1) Got new fwdata project (does ConnectionHelper.CreateProjectFromFlex(fwProjectName) call)
+					//	2) Got new lift project, so FLEx needs to create new Lang proj from it using (CreateProjectFromLift method in ICreateProjectFromLift interface.
+					(model.CurrentController as IObtainNewProjectController).EndWork();
+					break;
+				case "obtain_lift": // For Lift S/R, where main FW project exists.
+					(model.CurrentController as IObtainNewProjectController).EndWork();
+					break;
+
+				case "view_notes":
+				case "view_notes_lift":
+					(model.CurrentController as IConflictController).JumpUrlChanged -= ConnectionHelper.SendJumpUrlToFlex;
+					break;
 			}
+			// This is only really for regular S/R or obtain purposes.			// Should it be called for obtain or notes?
+			ConnectionHelper.SignalBridgeWorkComplete(_changesReceived);
 		}
 
 		#region Implementation of IDisposable

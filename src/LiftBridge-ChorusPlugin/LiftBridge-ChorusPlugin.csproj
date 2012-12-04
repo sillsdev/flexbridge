@@ -113,7 +113,7 @@
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="View\IActiveView.cs" />
-	<Compile Include="View\ILiftBridgeController.cs" />
+	<Compile Include="Controller\ILiftBridgeController.cs" />
 	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="Model\LiftProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
@@ -121,12 +121,6 @@
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="View\ObtainProjectView.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="View\ObtainProjectView.designer.cs">
-	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\StartupNewEventArgs.cs" />
 	<Compile Include="View\StartupNewView.cs">
@@ -141,9 +135,6 @@
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\ObtainProjectView.resx">
-	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\StartupNewView.resx">
 	  <DependentUpon>StartupNewView.cs</DependentUpon>
