@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.Linq;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
@@ -16,11 +15,13 @@ namespace TriboroughBridge_ChorusPlugin
 	public class BridgeTrafficCop : IDisposable
 	{
 		[ImportMany]
-		public IEnumerable<IBridgeModel> Models { get; private set; }
+		public IEnumerable<IBridgeModel> Models { get; set; }
 		[Import]
-		public FLExConnectionHelper ConnectionHelper { get; private set; }
+		private FLExConnectionHelper ConnectionHelper { get; set; }
 		[Import]
 		public MainBridgeForm MainForm { get; private set; }
+
+		private bool _changesReceived;
 
 		public IBridgeModel GetModel(BridgeModelType modelType)
 		{
@@ -37,60 +38,60 @@ namespace TriboroughBridge_ChorusPlugin
 			if (!ConnectionHelper.Init(fwProjectPathname))
 				return;
 
-			var changesReceived = false;
-			try
+			_changesReceived = false;
+			IBridgeModel model;
+			string vOption;
+			options.TryGetValue("-v", out vOption);
+			if (vOption == null)
 			{
-				IBridgeModel model;
-				string vOption;
-				options.TryGetValue("-v", out vOption);
-				if (vOption == null)
-				{
-					model = GetModel(BridgeModelType.Flex);
-					model.InitializeModel(MainForm, options, ControllerType.StandAloneFlexBridge);
-				}
-				else
-				{
-					model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
-					switch (vOption)
-					{
-						case "rollback": // Not supported
-							return;
-						case "rollback_lift":
-							model.InitializeModel(MainForm, options, ControllerType.RollbackLift);
-							model.CurrentController.ChorusSystem.Repository.RollbackWorkingDirectoryToLastCheckin();
-							// TODO: display message
-							return;
-
-						case "obtain":
-							model.InitializeModel(MainForm, options, ControllerType.Obtain);
-							break;
-						case "obtain_lift":
-							model.InitializeModel(MainForm, options, ControllerType.ObtainLift);
-							break;
-
-						case "send_receive":
-							model.InitializeModel(MainForm, options, ControllerType.SendReceive);
-							changesReceived = model.Syncronize();
-							break;
-						case "send_receive_lift":
-							model.InitializeModel(MainForm, options, ControllerType.SendReceiveLift);
-							changesReceived = model.Syncronize();
-							break;
-
-						case "view_notes":
-							model.InitializeModel(MainForm, options, ControllerType.ViewNotes);
-							(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
-							break;
-						case "view_notes_lift":
-							model.InitializeModel(MainForm, options, ControllerType.ViewNotesLift);
-							(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
-							break;
-					}
-				}
+				model = GetModel(BridgeModelType.Flex);
+				model.InitializeModel(MainForm, options, ControllerType.StandAloneFlexBridge);
 			}
-			finally
+			else
 			{
-				ConnectionHelper.SignalBridgeWorkComplete(changesReceived);
+				model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
+				switch (vOption)
+				{
+					case "undo_export": // Not supported
+						return;
+					case "undo_export_lift":
+						model.InitializeModel(MainForm, options, ControllerType.UndoExportLift);
+						model.CurrentController.ChorusSystem.Repository.Update();
+						// TODO: Delete any new files. Use some Hg commend to find any new untracked files, and zap them.
+
+						// TODO: display message
+						return;
+
+					case "obtain": // Get new repo (FW or lift)
+						model.InitializeModel(MainForm, options, ControllerType.Obtain);
+						break;
+					case "obtain_lift": // Get new lift repro, whch gets imported (safely) into FLEx.
+						model.InitializeModel(MainForm, options, ControllerType.ObtainLift);
+						break;
+
+					//case "send_receive_all": // Future: Any and all repos.
+					//	break;
+					case "send_receive": // Only for main FW repo.
+						model.InitializeModel(MainForm, options, ControllerType.SendReceive);
+						_changesReceived = model.Syncronize();
+						break;
+					case "send_receive_lift": // Only for lift repo.
+						model.InitializeModel(MainForm, options, ControllerType.SendReceiveLift);
+						_changesReceived = model.Syncronize();
+						break;
+
+					// TODO: Sort out what happens.
+					//	Q: Does Chorus collect up all notes files (main+nested), or just the ones in the given repo?
+					//	Q: How to process the URL in regular lift notes files?
+					case "view_notes":
+						model.InitializeModel(MainForm, options, ControllerType.ViewNotes);
+						(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
+						break;
+					case "view_notes_lift":
+						model.InitializeModel(MainForm, options, ControllerType.ViewNotesLift);
+						(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
+						break;
+				}
 			}
 		}
 
@@ -109,12 +110,13 @@ namespace TriboroughBridge_ChorusPlugin
 				model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
 				switch (vOption)
 				{
-					case "obtain":
-						var fwProjectName = Path.Combine(model.PathToRepository, model.ProjectName + ".fwdata");
-						ConnectionHelper.SendFwProjectName(fwProjectName);
+					case "obtain": // Get new repo (FW or lift), so FLEx creates it all.
+						//	1) Got new fwdata project (does ConnectionHelper.CreateProjectFromFlex(fwProjectName) call)
+						//	2) Got new lift project, so FLEx needs to create new Lang proj from it using (CreateProjectFromLift method in ICreateProjectFromLift interface.
+						(model.CurrentController as IObtainNewProjectController).EndWork();
 						break;
-					case "obtain_lift":
-						// TODO: Do anything?
+					case "obtain_lift": // For Lift S/R, where main FW project exists.
+						(model.CurrentController as IObtainNewProjectController).EndWork();
 						break;
 
 					case "view_notes":
@@ -122,6 +124,9 @@ namespace TriboroughBridge_ChorusPlugin
 						(model.CurrentController as IConflictController).JumpUrlChanged -= ConnectionHelper.SendJumpUrlToFlex;
 						break;
 				}
+				// This is only really for regular S/R purposes.
+				// Should it be called for obtain or notes?
+				ConnectionHelper.SignalBridgeWorkComplete(_changesReceived);
 			}
 		}
 

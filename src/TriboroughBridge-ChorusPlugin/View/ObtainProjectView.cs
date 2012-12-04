@@ -2,21 +2,21 @@
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 
-namespace FLEx_ChorusPlugin.View
+namespace TriboroughBridge_ChorusPlugin.View
 {
 	/// <summary>
 	/// This control is used by the FieldWorks Bridge when there is no extant Hg repo for some FW language project.
 	///
 	/// The Startup event lets the controller know what the user wants to do (use extant repo or make new one).
 	/// </summary>
-	internal sealed partial class StartupNewView : UserControl, IStartupNewView
+	internal sealed partial class ObtainProjectView : UserControl, IObtainNewProjectView
 	{
 		private Button _useUSBButton;
 		private Button _useInternetButton;
 		private Button _useSharedFolderButton;
 		public event StartupNewEventHandler Startup;
 
-		public StartupNewView()
+		public ObtainProjectView()
 		{
 			InitializeComponent();
 		}

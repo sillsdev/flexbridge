@@ -114,7 +114,7 @@
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Controller\FlexBridgeConflictController.cs" />
 	<Compile Include="Controller\FlexBridgeSyncronizeController.cs" />
-	<Compile Include="Controller\FlexObtainProjectController.cs" />
+	<Compile Include="Controller\FlexObtainProjectStrategy.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
@@ -242,7 +242,6 @@
 	<Compile Include="View\IFlexBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IProjectView.cs" />
-	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="View\ObtainProjectView.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -256,20 +255,9 @@
 	<Compile Include="View\ProjectView.Designer.cs">
 	  <DependentUpon>ProjectView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\StartupNewEventArgs.cs" />
-	<Compile Include="View\StartupNewView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\StartupNewView.designer.cs">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
-	</Compile>
 	<Compile Include="Infrastructure\SynchronizeFlexProject.cs" />
 	<EmbeddedResource Include="View\ObtainProjectView.resx">
 	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\StartupNewView.resx">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

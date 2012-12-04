@@ -1,9 +1,9 @@
 ﻿using Chorus.UI.Clone;
-using FLEx_ChorusPlugin.View;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {
-	internal class MockedStartupNewView : IStartupNewView
+	internal class MockedObtainNewProjectView : IObtainNewProjectView
 	{
 		#region Implementation of IStartupNewView
 

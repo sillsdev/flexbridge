@@ -48,11 +48,16 @@ namespace FLExBridge
 				{
 					var options = ParseCommandLineArgs(args);
 					var bridgeTrafficCop = container.GetExportedValue<BridgeTrafficCop>();
-					bridgeTrafficCop.StartWorking(options);
+					try
+					{
+						bridgeTrafficCop.StartWorking(options);
+						Application.Run(bridgeTrafficCop.MainForm);
+					}
+					finally
+					{
+						bridgeTrafficCop.EndWork(options);
+					}
 
-					Application.Run(bridgeTrafficCop.MainForm);
-
-					bridgeTrafficCop.EndWork(options);
 				}
 			}
 			Settings.Default.Save();

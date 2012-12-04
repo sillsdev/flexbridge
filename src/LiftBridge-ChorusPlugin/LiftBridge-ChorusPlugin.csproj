@@ -107,7 +107,7 @@
   <ItemGroup>
 	<Compile Include="Controller\LiftBridgeConflictController.cs" />
 	<Compile Include="Controller\LiftBridgeSyncronizeController.cs" />
-	<Compile Include="Controller\LiftObtainProjectController.cs" />
+	<Compile Include="Controller\LiftObtainProjectStrategy.cs" />
 	<Compile Include="Model\LiftBridgeModel.cs" />
 	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />

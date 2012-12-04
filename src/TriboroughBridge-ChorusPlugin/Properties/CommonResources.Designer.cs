@@ -81,5 +81,23 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 				return ResourceManager.GetString("kFLExBridge", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to FLEx isn&apos;t listening..
+		/// </summary>
+		public static string kFlexNotListening {
+			get {
+				return ResourceManager.GetString("kFlexNotListening", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Receive project.
+		/// </summary>
+		public static string ObtainProjectView_DialogTitle {
+			get {
+				return ResourceManager.GetString("ObtainProjectView_DialogTitle", resourceCulture);
+			}
+		}
 	}
 }

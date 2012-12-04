@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -16,7 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			{
 				return new HashSet<string>
 								{
-									FieldWorksProjectServices.ProjectsPath
+									Utilities.ProjectsPath
 								};
 			}
 		}

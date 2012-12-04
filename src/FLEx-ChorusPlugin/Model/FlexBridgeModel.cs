@@ -69,9 +69,12 @@ namespace FLEx_ChorusPlugin.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			var pOption = options["-p"];
-			PathToRepository = Path.GetDirectoryName(pOption);
-			ProjectName = Path.GetFileNameWithoutExtension(pOption);
+			if (controllerType != ControllerType.StandAloneFlexBridge)
+			{
+				var pOption = options["-p"];
+				PathToRepository = Path.GetDirectoryName(pOption);
+				ProjectName = Path.GetFileNameWithoutExtension(pOption);
+			}
 
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);

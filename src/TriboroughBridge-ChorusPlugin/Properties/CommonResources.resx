@@ -127,4 +127,10 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <data name="kFLExBridge" xml:space="preserve">
 	<value>FLEx Bridge</value>
   </data>
+  <data name="ObtainProjectView_DialogTitle" xml:space="preserve">
+	<value>Receive project</value>
+  </data>
+	<data name="kFlexNotListening" xml:space="preserve">
+	<value>FLEx isn't listening.</value>
+  </data>
 </root>

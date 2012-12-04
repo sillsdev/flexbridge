@@ -55,8 +55,11 @@
 	<Compile Include="ControllerType.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
+	<Compile Include="Controller\IObtainNewProjectController.cs" />
+	<Compile Include="Controller\IObtainProjectStrategy.cs" />
 	<Compile Include="Controller\ISyncronizeController.cs" />
 	<Compile Include="Controller\JumpEventHandler.cs" />
+	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="ISynchronizeProject.cs" />
 	<Compile Include="JumpEventArgs.cs" />
 	<Compile Include="ICreateProjectFromLift.cs" />
@@ -76,12 +79,20 @@
 	<Compile Include="View\BridgeConflictView.designer.cs">
 	  <DependentUpon>BridgeConflictView.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\IObtainNewProjectView.cs" />
 	<Compile Include="View\MainBridgeForm.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="View\MainBridgeForm.Designer.cs">
 	  <DependentUpon>MainBridgeForm.cs</DependentUpon>
 	</Compile>
+	<Compile Include="View\ObtainProjectView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="View\ObtainProjectView.designer.cs">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="View\StartupNewEventArgs.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -94,6 +105,9 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\MainBridgeForm.resx">
 	  <DependentUpon>MainBridgeForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="View\ObtainProjectView.resx">
+	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

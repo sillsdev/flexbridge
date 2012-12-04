@@ -17,7 +17,6 @@ namespace TriboroughBridge_ChorusPlugin
 	{
 		private ServiceHost _host;
 		private IFLExBridgeService _pipe;
-		private bool _hostOpened;
 
 		/// <summary>
 		/// Constructs the helper setting up the local service endpoint and opening
@@ -33,7 +32,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Empty is OK if not send_receive command.</param>
 		public bool Init(string fwProjectPathname)
 		{
-			_hostOpened = true;
+			HostOpened = true;
 			var fwProjectName = ""; // will only be able to to S/R one project at a time
 			if (!String.IsNullOrEmpty(fwProjectPathname)) // can S/R multiple projects simultaneously
 				fwProjectName = Path.GetFileNameWithoutExtension(fwProjectPathname);
@@ -49,7 +48,7 @@ namespace TriboroughBridge_ChorusPlugin
 			catch (AddressAlreadyInUseException)
 			{
 				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
-				_hostOpened = false;
+				HostOpened = false;
 			}
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
 													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint" + fwProjectName + "/FLExPipe"));
@@ -63,7 +62,7 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 			catch (Exception)
 			{
-				Console.WriteLine("FLEx isn't listening.");
+				Console.WriteLine(CommonResources.kFlexNotListening);
 				_pipe = null; //FLEx isn't listening.
 			}
 
@@ -76,7 +75,7 @@ namespace TriboroughBridge_ChorusPlugin
 			return true;
 		}
 
-		public bool HostOpened { get { return _hostOpened; } }
+		public bool HostOpened { get; private set; }
 
 		/// <summary>
 		/// Sends the entire FieldWorks project folder path (must include the
@@ -84,7 +83,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// to FieldWorks.
 		/// </summary>
 		/// <param name="fwProjectName">The whole fw project path</param>
-		public void SendFwProjectName(string fwProjectName)
+		public void CreateProjectFromFlex(string fwProjectName)
 		{
 			try
 			{
@@ -93,23 +92,34 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 			catch (Exception)
 			{
-				Console.WriteLine("FLEx isn't listening."); //It isn't fatal if FLEx isn't listening to us.
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 			}
 		}
 
-		public bool CreateProjectFromLift(string liftPath)
+		public void ImportLiftFileSafely(string liftPathname)
 		{
 			try
 			{
 				if (_pipe != null)
-					return _pipe.Create(liftPath);
+					_pipe.Import(liftPathname, true);
 			}
 			catch (Exception)
 			{
-				Console.WriteLine("FLEx isn't listening."); //It may not be fatal if FLEx isn't listening to us, but we can't create.
-				return false;
+				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
 			}
-			return false;
+		}
+
+		public void ImportLiftFileMercilessly(string liftPathname)
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.Import(liftPathname, false);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
+			}
 		}
 
 		/// <summary>
@@ -118,7 +128,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
-			//open a channel to flex and send the message.
+			// open a channel to flex and send the message.
 			try
 			{
 				if(_pipe != null)
@@ -126,7 +136,7 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 			catch (Exception)
 			{
-				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+				Console.WriteLine(CommonResources.kFlexNotListening);//It isn't fatal if FLEx isn't listening to us.
 			}
 			// Allow the _host to get the WaitObject, which will result in the WorkDoneCallback
 			// method being called in FLEx:
@@ -147,9 +157,93 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 			catch(Exception)
 			{
-				Console.WriteLine("FLEx isn't listening.");//It isn't fatal if FLEx isn't listening to us.
+				Console.WriteLine(CommonResources.kFlexNotListening);//It isn't fatal if FLEx isn't listening to us.
 			}
 		}
+
+		#region ICreateProjectFromLift impl
+
+		public bool CreateProjectFromLift(string liftPath)
+		{
+			try
+			{
+				if (_pipe != null)
+					return _pipe.Create(liftPath);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
+				return false;
+			}
+			return false;
+		}
+
+		#endregion
+
+		#region IDisposable impl
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. IsDisposed is true)
+		/// </summary>
+		~FLExConnectionHelper()
+		{
+			// The base class finalizer is called automatically.
+			Dispose(false);
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing,
+		/// or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		private bool IsDisposed { get; set; }
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the issue.
+		/// </remarks>
+		private void Dispose(bool disposing)
+		{
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				if (HostOpened)
+					_host.Close();
+			}
+
+			IsDisposed = true;
+		}
+
+		#endregion
+
+		#region private interfaces and classes
 
 		/// <summary>
 		/// Interface for the service which FLEx implements
@@ -237,10 +331,6 @@ namespace TriboroughBridge_ChorusPlugin
 			void BridgeWorkOngoing();
 		}
 
-		public void Dispose()
-		{
-			if (_hostOpened)
-				_host.Close();
-		}
+		#endregion
 	}
 }

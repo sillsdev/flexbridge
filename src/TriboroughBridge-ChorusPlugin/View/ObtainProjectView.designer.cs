@@ -1,12 +1,12 @@
 ﻿using Chorus.UI.Clone;
 
-namespace FLEx_ChorusPlugin.View
+namespace TriboroughBridge_ChorusPlugin.View
 {
-	internal sealed partial class StartupNewView
+	internal sealed partial class ObtainProjectView
 	{
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartupNewView));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObtainProjectView));
 			this._useUSBButton = new System.Windows.Forms.Button();
 			this._useInternetButton = new System.Windows.Forms.Button();
 			this._useSharedFolderButton = new System.Windows.Forms.Button();
@@ -57,12 +57,12 @@ namespace FLEx_ChorusPlugin.View
 			this._useSharedFolderButton.UseVisualStyleBackColor = false;
 			this._useSharedFolderButton.Click += new System.EventHandler(this._useSharedFolderButton_Click);
 			//
-			// StartupNewView
+			// ObtainProjectView
 			//
 			this.Controls.Add(this._useUSBButton);
 			this.Controls.Add(this._useInternetButton);
 			this.Controls.Add(this._useSharedFolderButton);
-			this.Name = "StartupNewView";
+			this.Name = "ObtainProjectView";
 			this.Size = new System.Drawing.Size(201, 247);
 			this.ResumeLayout(false);
 		}

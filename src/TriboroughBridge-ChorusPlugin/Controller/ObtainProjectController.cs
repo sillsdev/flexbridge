@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
-using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.View;
-using Palaso.Progress;
-using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.Controller
+namespace TriboroughBridge_ChorusPlugin.Controller
 {
-	[Export(typeof(IFlexBridgeController))]
-	internal class FlexObtainProjectController : IFlexBridgeController
+	[Export(typeof(IBridgeController))]
+	internal class ObtainProjectController : IBridgeController, IObtainNewProjectController
 	{
-		private IStartupNewView _startupNewView;
+		[ImportMany]
+		public IEnumerable<IObtainProjectStrategy> Strategies { get; private set; }
+		private IObtainNewProjectView _startupNewView;
 		private MainBridgeForm _mainBridgeForm;
+		private string _baseDir;
+		private ActualCloneResult _actualCloneResult;
+		private IObtainProjectStrategy _currentStrategy;
 
 		private const string RepoProblem = "Empty Repository";
 		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
@@ -37,62 +37,63 @@ namespace FLEx_ChorusPlugin.Controller
 			// but which have different guids.
 			// (Consider G & J Andersen's case, where each has an FW 6 system.
 			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
+			var tempFolderForOs = Path.GetTempPath();
+			var tempCloneHolder = Path.Combine(tempFolderForOs, "TempCloneHolder");
+			if (Directory.Exists(tempCloneHolder))
+				Directory.Delete(tempCloneHolder, true);
+			var tempCloneDirInfo = Directory.CreateDirectory(tempCloneHolder);
+
 			var getSharedProject = new GetSharedProject();
-			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, e.ProjectFolder, null);
+			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, tempCloneDirInfo.FullName, null);
+
 			if (result.CloneStatus == CloneStatus.Created)
 			{
-				// It's just possible that we get here, but the cloned repo is empty (if the source one was empty).
-				var modelVersionPathname = Path.Combine(result.ActualLocation, SharedConstants.ModelVersionFilename);
-				if (!File.Exists(modelVersionPathname))
+				_currentStrategy = GetCurrentStrategy(result.ActualLocation);
+				if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 				{
 					_mainBridgeForm.Cursor = Cursors.Default;
 					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 					MessageBox.Show(EmptyRepoMsg, RepoProblem);
 					return;
 				}
-				var langProjName = Path.GetFileName(result.ActualLocation);
-				var newProjectFileName = langProjName + ".fwdata";
-				FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), Path.Combine(result.ActualLocation, newProjectFileName));
-				var possibleNewLocation = Path.Combine(e.ProjectFolder, langProjName);
-				var finalCloneLocation = RenameFolderIfPossible(result.ActualLocation, possibleNewLocation) ? possibleNewLocation : result.ActualLocation;
-				CurrentProject = new LanguageProject(Path.Combine(finalCloneLocation, newProjectFileName));
+
+				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation);
+				_actualCloneResult.CloneResult = result;
+				if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+				{
+					// TODO: Show some message saying it couldn't be done.
+				}
 				_mainBridgeForm.Close();
 				return;
 			}
 			_mainBridgeForm.Cursor = Cursors.Default;
 		}
 
-		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
+		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
-			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
-			{
-				Directory.Move(actualCloneLocation, possibleNewLocation);
-				return true;
-			}
-			return false;
+			return Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
 		}
 
-		private static bool ProjectFilter(string path)
+		private bool ProjectFilter(string path)
 		{
-			var hgDataFolder = Utilities.HgDataFolder(path);
-			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*_custom_properties.i").Any();
+			return Strategies.Any(strategy => strategy.ProjectFilter(path));
 		}
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_baseDir = options["-p"];
 			_mainBridgeForm = mainForm;
-			_mainBridgeForm.Width = 239;
-			_mainBridgeForm.Height = 313;
+			_mainBridgeForm.ClientSize = new Size(239, 313);
 			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
 			_mainBridgeForm.FormBorderStyle = FormBorderStyle.Sizable;
-			_mainBridgeForm.Text = Resources.ObtainProjectView_DialogTitle;
+			_mainBridgeForm.Text = CommonResources.ObtainProjectView_DialogTitle;
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
 			_mainBridgeForm.Icon = null;
 
-			_startupNewView = new StartupNewView();
+			_startupNewView = new ObtainProjectView();
 			_startupNewView.Startup += StartupHandler;
 			_mainBridgeForm.Controls.Add((Control)_startupNewView);
 		}
@@ -109,9 +110,13 @@ namespace FLEx_ChorusPlugin.Controller
 
 		#endregion
 
-		#region IFlexBridgeController implementation
+		#region IObtainNewProjectController impl
 
-		public LanguageProject CurrentProject { get; set; }
+		public void EndWork()
+		{
+			if (_currentStrategy != null);
+				_currentStrategy.TellFlexAboutIt();
+		}
 
 		#endregion
 
@@ -121,7 +126,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FlexObtainProjectController()
+		~ObtainProjectController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

@@ -3,6 +3,7 @@
 	public enum BridgeModelType
 	{
 		Lift,
-		Flex
+		Flex,
+		Unsupported
 	}
 }

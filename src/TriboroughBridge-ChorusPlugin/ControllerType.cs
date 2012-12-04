@@ -11,8 +11,8 @@
 		ViewNotes,
 		ViewNotesLift,
 
-		// Rollback,
-		RollbackLift,
+		// UndoExport,
+		UndoExportLift,
 
 		StandAloneFlexBridge
 	}

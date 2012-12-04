@@ -2,6 +2,7 @@
 using System.IO;
 using Chorus;
 using Chorus.sync;
+using Microsoft.Win32;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -70,6 +71,45 @@ namespace TriboroughBridge_ChorusPlugin
 		public static string HgDataFolder(string path)
 		{
 			return Path.Combine(path, ".hg", "store", "data");
+		}
+
+		public static string LiftOffset(string path)
+		{
+			return Path.Combine(path, "OtherRepositories", "LIFT");
+		}
+
+		/// <summary>
+		/// Move a repository (.hg folder and local workspace) from one location to another, even to another device).
+		/// </summary>
+		/// <remarks>After the move, the original location will not exist.</remarks>
+		public static void MoveRepository(string sourceFolder, string targetFolder)
+		{
+			Directory.CreateDirectory(targetFolder);
+
+			foreach (var dir in Directory.GetDirectories(sourceFolder, "*", SearchOption.AllDirectories))
+			{
+				Directory.CreateDirectory(dir.Replace(sourceFolder, targetFolder));
+			}
+
+			foreach (var pathname in Directory.GetFiles(sourceFolder, "*.*", SearchOption.AllDirectories))
+			{
+				File.Copy(pathname, pathname.Replace(sourceFolder, targetFolder));
+			}
+
+			Directory.Delete(Directory.GetParent(sourceFolder).FullName, true);
+		}
+
+		public static string ProjectsPath
+		{
+			get
+			{
+				return (string)Registry.LocalMachine
+								   .OpenSubKey("software")
+								   .OpenSubKey("SIL")
+								   .OpenSubKey("FieldWorks")
+								   .OpenSubKey("7.0")
+								   .GetValue("ProjectsDir");
+			}
 		}
 	}
 }

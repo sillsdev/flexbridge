@@ -8,6 +8,7 @@ namespace LiftBridgeTests.ModelTests
 	public class LiftBridgeModelTests
 	{
 		private string _pathToProject;
+		private string _baseDir;
 
 		private LiftProject CreateNewbieProject()
 		{
@@ -16,6 +17,7 @@ namespace LiftBridgeTests.ModelTests
 
 		private LiftProject CreateNewbieProject(string baseDir)
 		{
+			_baseDir = baseDir;
 			var liftProject = new LiftProject(baseDir);
 			_pathToProject = liftProject.PathToProject;
 			Directory.CreateDirectory(_pathToProject);
@@ -25,8 +27,10 @@ namespace LiftBridgeTests.ModelTests
 		[TearDown]
 		public void TearDown()
 		{
-			if (_pathToProject != null && Directory.Exists(_pathToProject))
-				Directory.Delete(_pathToProject, true);
+			if (_pathToProject != null && Directory.Exists(_baseDir))
+			{
+				Directory.Delete(_baseDir, true);
+			}
 			_pathToProject = null;
 		}
 
