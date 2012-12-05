@@ -33,6 +33,11 @@ namespace TriboroughBridge_ChorusPluginTests
 			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy.lift");
 			File.WriteAllText(tempDataPathname, "dummy data");
 			repo.AddAndCheckinFile(tempDataPathname);
+
+			// Add import failure file, but don't add it to the repo.
+			var roadblockPathname = Path.Combine(tempCloneDir.Path, Utilities.FailureFilename);
+			File.WriteAllText(roadblockPathname, "standard");
+
 			var tempNewHomeDir = Path.Combine(tempFolderForOs, "FinalCloneHolder");
 
 			try
@@ -41,6 +46,7 @@ namespace TriboroughBridge_ChorusPluginTests
 				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy.lift")));
+				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, Utilities.FailureFilename)));
 			}
 			finally
 			{

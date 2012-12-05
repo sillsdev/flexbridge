@@ -28,12 +28,6 @@ namespace TriboroughBridge_ChorusPlugin
 
 			var guidToLiftFolderMap = CacheLiftProjectInfo(basePath);
 			TryCloningLiftRepoIntoFlexland(guidToLiftFolderMap);
-			//var flexGuidToFolderMap = CacheFlexProjectInfo(guidToLiftFolderMap);
-			//foreach (var oldLiftKvp in guidToLiftFolderMap.Where(oldLiftKvp => flexGuidToFolderMap.ContainsKey(oldLiftKvp.Key)))
-			//{
-			//    var actualNewHome = Directory.CreateDirectory(Utilities.LiftOffset(flexGuidToFolderMap[oldLiftKvp.Key]));
-			//    DirectoryCopy(oldLiftKvp.Value, actualNewHome.FullName);
-			//}
 
 			Directory.Delete(basePath, true);
 		}

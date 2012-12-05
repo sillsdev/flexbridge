@@ -10,6 +10,8 @@ namespace TriboroughBridge_ChorusPlugin
 {
 	public static class Utilities
 	{
+		public const string FailureFilename = "FLExImportFailure.notice";
+
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
 		/// a beginning slash if in Linux.
@@ -116,6 +118,11 @@ namespace TriboroughBridge_ChorusPlugin
 			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
 			var newRepo = new HgRepository(targetFolder, new NullProgress());
 			newRepo.Update();
+
+			// Move the import failure notification file
+			var roadblock = Path.Combine(sourceFolder, FailureFilename);
+			if (File.Exists(roadblock))
+				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
+using TriboroughBridge_ChorusPlugin;
 
 namespace SIL.LiftBridge.Services
 {
@@ -10,8 +11,6 @@ namespace SIL.LiftBridge.Services
 	/// </summary>
 	internal static class ImportFailureServices
 	{
-		private const string FailureFilename = "FLExImportFailure.notice";
-
 		internal static void RegisterStandardImportFailure(Form parentWindow, LiftProject liftProject)
 		{
 			// The results (of the FLEx import failure) will be that Lift Bridge will store the fact of the import failure,
@@ -61,7 +60,7 @@ namespace SIL.LiftBridge.Services
 
 		private static string GetNoticePathname(LiftProject liftProject)
 		{
-			return Path.Combine(Path.GetDirectoryName(liftProject.LiftPathname), FailureFilename);
+			return Path.Combine(Path.GetDirectoryName(liftProject.LiftPathname), Utilities.FailureFilename);
 		}
 	}
 
