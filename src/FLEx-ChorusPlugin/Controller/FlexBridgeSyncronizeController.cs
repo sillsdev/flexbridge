@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
@@ -12,29 +11,30 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace FLEx_ChorusPlugin.Controller
 {
 	[Export(typeof(IBridgeController))]
-	[Export(typeof(IFlexBridgeController))]
-	internal sealed class FlexBridgeSyncronizeController : IFlexBridgeController, ISyncronizeController
+	internal sealed class FlexBridgeSyncronizeController : ISyncronizeController
 	{
 		private ISynchronizeProject _flexProjectSynchronizer;
-		private LanguageProject _currentLanguageProject;
 		private MainBridgeForm _mainBridgeForm;
-		private IEnumerable<BridgeModelType> _supportedModels;
+		private string _projectDir;
+		private string _projectName;
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_projectDir = Path.GetDirectoryName(options["-p"]);
+			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 			_mainBridgeForm = mainForm;
 			_flexProjectSynchronizer = new SynchronizeFlexProject();
-			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.SendReceive; }
+			get { return new List<ControllerType> { ControllerType.SendReceive }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
@@ -44,20 +44,11 @@ namespace FLEx_ChorusPlugin.Controller
 
 		#endregion
 
-		#region IFlexBridgeController implementation
-
-		public LanguageProject CurrentProject
-		{
-			get { return _currentLanguageProject; }
-		}
-
-		#endregion
-
 		#region ISyncronizeController
 
 		public void Syncronize()
 		{
-			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLanguageProject.DirectoryName, _currentLanguageProject.Name);
+			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _projectDir, _projectName);
 		}
 
 		public bool ChangesReceived { get; private set; }

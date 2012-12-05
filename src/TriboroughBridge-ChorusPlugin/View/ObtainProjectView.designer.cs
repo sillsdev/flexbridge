@@ -15,9 +15,9 @@ namespace TriboroughBridge_ChorusPlugin.View
 			// _useUSBButton
 			//
 			this._useUSBButton.BackColor = System.Drawing.Color.White;
+			this._useUSBButton.Enabled = false;
 			this._useUSBButton.Image = ((System.Drawing.Image)(resources.GetObject("_useUSBButton.Image")));
 			this._useUSBButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this._useUSBButton.Enabled = new CloneFromUsb().GetHaveOneOrMoreUsbDrives();
 			this._useUSBButton.Location = new System.Drawing.Point(17, 45);
 			this._useUSBButton.Name = "_useUSBButton";
 			this._useUSBButton.Size = new System.Drawing.Size(167, 39);
@@ -33,7 +33,6 @@ namespace TriboroughBridge_ChorusPlugin.View
 			this._useInternetButton.Image = ((System.Drawing.Image)(resources.GetObject("_useInternetButton.Image")));
 			this._useInternetButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this._useInternetButton.Location = new System.Drawing.Point(17, 120);
-			this._useInternetButton.Enabled = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
 			this._useInternetButton.Name = "_useInternetButton";
 			this._useInternetButton.Size = new System.Drawing.Size(167, 39);
 			this._useInternetButton.TabIndex = 2;
@@ -45,7 +44,6 @@ namespace TriboroughBridge_ChorusPlugin.View
 			// _useSharedFolderButton
 			//
 			this._useSharedFolderButton.BackColor = System.Drawing.Color.White;
-			this._useSharedFolderButton.Enabled = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
 			this._useSharedFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("_useSharedFolderButton.Image")));
 			this._useSharedFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this._useSharedFolderButton.Location = new System.Drawing.Point(17, 199);
@@ -59,12 +57,14 @@ namespace TriboroughBridge_ChorusPlugin.View
 			//
 			// ObtainProjectView
 			//
+			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.Controls.Add(this._useUSBButton);
 			this.Controls.Add(this._useInternetButton);
 			this.Controls.Add(this._useSharedFolderButton);
 			this.Name = "ObtainProjectView";
 			this.Size = new System.Drawing.Size(201, 247);
 			this.ResumeLayout(false);
+
 		}
 
 	}

@@ -15,8 +15,7 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace FLEx_ChorusPlugin.Controller
 {
 	[Export(typeof(IBridgeController))]
-	[Export(typeof(IFlexBridgeController))]
-	internal sealed class FlexBridgeController : IFlexBridgeController
+	internal sealed class FlexBridgeController : IBridgeController
 	{
 		private IFwBridgeView _fwBridgeView;
 		private IProjectView _projectView;
@@ -39,6 +38,8 @@ namespace FLEx_ChorusPlugin.Controller
 			// NB: Setting the property should fire the ProjectSelected event.
 			_fwBridgeView.Projects = _repository.AllLanguageProjects;
 		}
+
+		private LanguageProject CurrentProject { get; set; }
 
 		private void SetSystem(ChorusSystem system)
 		{
@@ -82,21 +83,15 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.StandAloneFlexBridge; }
+			get { return new List<ControllerType> {ControllerType.StandAloneFlexBridge}; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
 		{
 			get { return new List<BridgeModelType> { BridgeModelType.Flex }; }
 		}
-
-		#endregion
-
-		#region IFlexBridgeController implementation
-
-		public LanguageProject CurrentProject { get; private set; }
 
 		#endregion
 

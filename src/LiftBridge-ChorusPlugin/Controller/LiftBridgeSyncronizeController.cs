@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using SIL.LiftBridge.Infrastructure;
@@ -12,12 +13,11 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace SIL.LiftBridge.Controller
 {
 	[Export(typeof(IBridgeController))]
-	[Export(typeof(ILiftBridgeController))]
-	internal sealed class LiftBridgeSyncronizeController : ILiftBridgeController, ISyncronizeController
+	internal sealed class LiftBridgeSyncronizeController : ISyncronizeController
 	{
 		private ISynchronizeProject _projectSynchronizer;
-		private LiftProject _currentLiftProject;
 		private MainBridgeForm _mainBridgeForm;
+		private LiftProject CurrentProject { get; set; }
 
 		#region IBridgeController implementation
 
@@ -26,16 +26,16 @@ namespace SIL.LiftBridge.Controller
 			_mainBridgeForm = mainForm;
 			_projectSynchronizer = new SynchronizeLiftProject();
 
-			_currentLiftProject = new LiftProject(options["-p"]);
+			CurrentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.SendReceiveLift; }
+			get { return new List<ControllerType> { ControllerType.SendReceiveLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
@@ -45,20 +45,11 @@ namespace SIL.LiftBridge.Controller
 
 		#endregion
 
-		#region ILiftBridgeController implementation
-
-		public LiftProject CurrentProject
-		{
-			get { return _currentLiftProject; }
-		}
-
-		#endregion
-
 		#region ISyncronizeController implementation
 
 		public void Syncronize()
 		{
-			ChangesReceived = _projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _currentLiftProject.PathToProject, _currentLiftProject.ProjectName);
+			ChangesReceived = _projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, CurrentProject.PathToProject, Path.GetFileNameWithoutExtension(CurrentProject.LiftPathname));
 		}
 
 		public bool ChangesReceived { get; private set; }

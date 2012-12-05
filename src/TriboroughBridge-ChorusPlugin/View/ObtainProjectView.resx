@@ -112,16 +112,16 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_useUSBButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
 		iVBORw0KGgoAAAANSUhEUgAAACAAAAAcCAYAAAAAwr0iAAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAODAAADgwFRQR+eAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAOCAAADggGDBv16AAAAGXRFWHRTb2Z0d2FyZQB3d3cu
 		aW5rc2NhcGUub3Jnm+48GgAAB81JREFUSEutl2tMW+cdxp0pHyZtUyZNUTVpSqcp2/JhkzYti/ZhbZSp
 		BbVq0iRKu4tYQ6tES7dlE2mahHAzBKi5Q7j4gg3YYGNsg42x8QXjGwYbg4PDHYOvx8fGgUCatZ2qNX32
 		nrOmipp7lw+vjhGvz/N7n//l/ZsDgJOfz/9ua6ta29Kiil29qsw0NMjTTU3KcHW1LFhR0dlfVCR8i+z5
@@ -203,7 +203,7 @@
   <data name="_useSharedFolderButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
 		iVBORw0KGgoAAAANSUhEUgAAAB0AAAAgCAYAAADud3N8AAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAnWAAAJ1gFjKfVTAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+		HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAAnVAAAJ1QHOkNQ+AAAAGXRFWHRTb2Z0d2FyZQB3d3cu
 		aW5rc2NhcGUub3Jnm+48GgAABjpJREFUSEu1l2lMVFcUx19s2g/dbNo0TZp+kA8NIdakDUgRqLKFrWAA
 		EZBFyuZgHZgZdhjWGUBZXBAYZgGGYd8UkHWAYqpIRFQYonEBsbSpxdI2tYu1op6e89I3HRYtFPvhl3fv
 		ffee/z33nnvfeUxWVtbg8ePHvyeKior0Tyov5eDBg9+lpKR4AwCzHhg0PDc2NgYDAwPQ19cH3d3d0NnZ

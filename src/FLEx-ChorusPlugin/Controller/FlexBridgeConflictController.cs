@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.View;
 using Chorus.UI.Notes;
 using Palaso.Network;
 using TriboroughBridge_ChorusPlugin;
@@ -17,15 +16,15 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace FLEx_ChorusPlugin.Controller
 {
 	[Export(typeof(IBridgeController))]
-	[Export(typeof(IFlexBridgeController))]
-	internal class FlexBridgeConflictController : IFlexBridgeController, IConflictController
+	internal class FlexBridgeConflictController : IConflictController
 	{
 		private IChorusUser _chorusUser;
 		private MainBridgeForm _mainBridgeForm;
-		protected LanguageProject _currentLanguageProject;
 		protected NotesInProjectViewModel _notesModel;
 		protected AnnotationEditorModel _editorModel;
 		protected NotesBrowserPage _notesBrowser;
+		private string _projectDir;
+		private string _projectName;
 
 		private void JumpToFlexObject(string url)
 		{
@@ -35,7 +34,7 @@ namespace FLEx_ChorusPlugin.Controller
 				return; // can't do it, not a valid FLEx url.
 
 			var host = url.Substring(0, hostLength);
-			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _currentLanguageProject.Name);
+			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _projectName);
 			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
@@ -48,12 +47,13 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_projectDir = Path.GetDirectoryName(options["-p"]);
+			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(904, 510);
 
 			_chorusUser = new ChorusUser(options["-u"]);
-			_currentLanguageProject = new LanguageProject(options["-p"]);
-			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
@@ -64,30 +64,22 @@ namespace FLEx_ChorusPlugin.Controller
 			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 
-			if (_currentLanguageProject.FieldWorkProjectInUse)
-				viewer.EnableWarning();
-			viewer.SetProjectName(_currentLanguageProject.Name);
+			// Only used by FLEx, so how can it not be in use?
+			//if (_currentLanguageProject.FieldWorkProjectInUse)
+			//	viewer.EnableWarning();
+			viewer.SetProjectName(_projectName);
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.ViewNotes; }
+			get { return new List<ControllerType> {ControllerType.ViewNotes}; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
 		{
 			get { return new List<BridgeModelType> { BridgeModelType.Flex }; }
-		}
-
-		#endregion
-
-		#region IFlexBridgeController implementation
-
-		public LanguageProject CurrentProject
-		{
-			get { return _currentLanguageProject; }
 		}
 
 		#endregion
@@ -161,7 +153,6 @@ namespace FLEx_ChorusPlugin.Controller
 			}
 			_mainBridgeForm = null;
 			ChorusSystem = null;
-			_currentLanguageProject = null;
 
 			IsDisposed = true;
 		}

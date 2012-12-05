@@ -233,7 +233,6 @@
 	</Compile>
 	<Compile Include="View\IActiveProjectView.cs" />
 	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="View\IFlexBridgeController.cs" />
 	<Compile Include="View\IFwBridgeView.cs" />
 	<Compile Include="View\IProjectView.cs" />
 	<Compile Include="View\ProjectEventArgs.cs" />

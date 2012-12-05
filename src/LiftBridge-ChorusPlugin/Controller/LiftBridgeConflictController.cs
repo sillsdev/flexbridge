@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
@@ -14,12 +15,10 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace SIL.LiftBridge.Controller
 {
 	[Export(typeof(IBridgeController))]
-	[Export(typeof(ILiftBridgeController))]
-	internal class LiftBridgeConflictController : ILiftBridgeController, IConflictController
+	internal class LiftBridgeConflictController : IConflictController
 	{
 		private IChorusUser _chorusUser;
 		private MainBridgeForm _mainBridgeForm;
-		private LiftProject _currentLiftProject;
 		private NotesBrowserPage _notesBrowser;
 
 		private void JumpToFlexObject(string url)
@@ -48,7 +47,7 @@ namespace SIL.LiftBridge.Controller
 			_mainBridgeForm.ClientSize = new Size(904, 510);
 
 			_chorusUser = new ChorusUser(options["-u"]);
-			_currentLiftProject = new LiftProject(options["-p"]);
+			CurrentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
@@ -61,14 +60,14 @@ namespace SIL.LiftBridge.Controller
 
 			//if (_currentLiftProject.FieldWorkProjectInUse)
 			//	viewer.EnableWarning();
-			viewer.SetProjectName(_currentLiftProject.ProjectName);
+			viewer.SetProjectName(CurrentProject.ProjectName);
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.ViewNotesLift; }
+			get { return new List<ControllerType> { ControllerType.ViewNotesLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels

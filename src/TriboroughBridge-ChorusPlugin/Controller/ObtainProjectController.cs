@@ -87,15 +87,14 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(239, 313);
 			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
-			_mainBridgeForm.FormBorderStyle = FormBorderStyle.Sizable;
+			_mainBridgeForm.FormBorderStyle = FormBorderStyle.FixedDialog;
 			_mainBridgeForm.Text = CommonResources.ObtainProjectView_DialogTitle;
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
-			_mainBridgeForm.Icon = null;
 
 			_startupNewView = new ObtainProjectView();
-			_startupNewView.Startup += StartupHandler;
 			_mainBridgeForm.Controls.Add((Control)_startupNewView);
+			_startupNewView.Startup += StartupHandler;
 		}
 
 		public ChorusSystem ChorusSystem
@@ -103,9 +102,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			get { return null; }
 		}
 
-		public ControllerType ActionType
+		public IEnumerable<ControllerType> SupportedActionTypes
 		{
-			get { return ControllerType.Obtain; }
+			get { return new List<ControllerType> { ControllerType.Obtain, ControllerType.ObtainLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels

@@ -50,8 +50,7 @@ namespace SIL.LiftBridge.Controller
 				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 			};
 
-			var liftFolderName = Path.GetDirectoryName(cloneLocation); // May not match the lift file name.
-			var clonedLiftPathname = PathToFirstLiftFile(liftFolderName);
+			var clonedLiftPathname = PathToFirstLiftFile(cloneLocation);
 			var liftFilename = Path.GetFileNameWithoutExtension(clonedLiftPathname);
 			var newHomeBaseDir = Path.Combine(fwrootBaseDir, liftFilename);
 			if (_createdMainProjectFolder && Directory.Exists(newHomeBaseDir))

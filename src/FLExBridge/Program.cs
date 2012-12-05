@@ -48,16 +48,20 @@ namespace FLExBridge
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
+					var wantEndCall = false;
 					var options = ParseCommandLineArgs(args);
 					var bridgeTrafficCop = container.GetExportedValue<BridgeTrafficCop>();
 					try
 					{
-						bridgeTrafficCop.StartWorking(options);
-						Application.Run(bridgeTrafficCop.MainForm);
+						bool showWindow;
+						wantEndCall = bridgeTrafficCop.StartWorking(options, out showWindow);
+						if (showWindow)
+							Application.Run(bridgeTrafficCop.MainForm);
 					}
 					finally
 					{
-						bridgeTrafficCop.EndWork(options);
+						if (wantEndCall)
+							bridgeTrafficCop.EndWork(options);
 					}
 
 				}

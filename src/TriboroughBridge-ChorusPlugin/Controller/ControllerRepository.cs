@@ -13,7 +13,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		public IBridgeController GetController(BridgeModelType modelType, ControllerType controllerType)
 		{
 			return (from controller in Controllers
-				where controller.SupportedModels.Contains(modelType) && controller.ActionType == controllerType
+				where controller.SupportedModels.Contains(modelType) && controller.SupportedActionTypes.Contains(controllerType)
 				select controller).FirstOrDefault();
 		}
 	}
