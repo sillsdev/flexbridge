@@ -12,7 +12,8 @@ namespace FLEx_ChorusPlugin.Controller
 	[Export(typeof(IObtainProjectStrategy))]
 	public class FlexObtainProjectStrategy : IObtainProjectStrategy
 	{
-		private string _newProjectPathname;
+		private string _newProjectFilename;
+		private string _newFwProjectPathname;
 		[Import]
 		public FLExConnectionHelper ConnectionHelper;
 
@@ -34,8 +35,8 @@ namespace FLEx_ChorusPlugin.Controller
 			// This may not be a really great name for the project, but it can't get any better,
 			// since the real lang proj name is not available in the FW data.
 			var langProjName = Path.GetDirectoryName(cloneLocation);
-			_newProjectPathname = langProjName + ".fwdata";
-			var newHomeDir = Path.Combine(fwrootBaseDir, _newProjectPathname);
+			_newProjectFilename = langProjName + ".fwdata";
+			var newHomeDir = Path.Combine(fwrootBaseDir, langProjName);
 
 			var retVal = new ActualCloneResult
 				{
@@ -57,6 +58,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), newHomeDir);
 
+			_newFwProjectPathname = Path.Combine(newHomeDir, _newProjectFilename);
 			retVal.ActualCloneFolder = newHomeDir;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;
 			return retVal;
@@ -64,7 +66,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void TellFlexAboutIt()
 		{
-			ConnectionHelper.CreateProjectFromFlex(_newProjectPathname);
+			ConnectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
 		}
 
 		#endregion

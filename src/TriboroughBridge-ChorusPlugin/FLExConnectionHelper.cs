@@ -82,7 +82,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// project folder and project name with "fwdata" extension) across the pipe
 		/// to FieldWorks.
 		/// </summary>
-		/// <param name="fwProjectName">The whole fw project path</param>
+		/// <param name="fwProjectName">The whole FW project path, or null, if nothing was created.</param>
 		public void CreateProjectFromFlex(string fwProjectName)
 		{
 			try
@@ -150,6 +150,11 @@ namespace TriboroughBridge_ChorusPlugin
 
 		#region ICreateProjectFromLift impl
 
+		/// <summary>
+		/// Sends the entire Lift pathname across the pipe
+		/// to FieldWorks.
+		/// </summary>
+		/// <param name="liftPath">The whole LIFT pathname, or null, if nothing was created.</param>
 		public bool CreateProjectFromLift(string liftPath)
 		{
 			try

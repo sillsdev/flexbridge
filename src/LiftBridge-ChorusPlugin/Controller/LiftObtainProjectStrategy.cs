@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Text;
-using SIL.LiftBridge.Model;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 
@@ -80,7 +77,10 @@ namespace SIL.LiftBridge.Controller
 		public void TellFlexAboutIt()
 		{
 			if (_newLiftPathname == null)
+			{
+				LiftprojectCreator.CreateProjectFromLift(_newLiftPathname);
 				return;
+			}
 			if (_createdMainProjectFolder)
 			{
 				LiftprojectCreator.CreateProjectFromLift(_newLiftPathname);
