@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.Composition.Hosting;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
+using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -49,6 +52,38 @@ namespace TriboroughBridge_ChorusPluginTests
 			var trafficCop = _container.GetExportedValue<BridgeTrafficCop>();
 			Assert.IsNotNull(trafficCop.GetModel(BridgeModelType.Lift));
 			Assert.IsNotNull(trafficCop.GetModel(BridgeModelType.Flex));
+		}
+
+		[Test]
+		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFIles_AndLeavesTombstone()
+		{
+			using (var repo = new RepositorySetup("Rollback", true))
+			{
+				var repoFile = Path.Combine(repo.ProjectFolder.Path, "keeper.lift");
+				repo.AddAndCheckinFile(repoFile, "original stuff");
+				File.WriteAllText(repoFile, "changed stuff");
+
+				var newFile = Path.Combine(repo.ProjectFolder.Path, "new.txt");
+				File.WriteAllText(newFile, "new stuff");
+
+				var failureNotificationFile = Path.Combine(repo.ProjectFolder.Path, Utilities.FailureFilename);
+				File.WriteAllText(failureNotificationFile, "standard");
+
+				var options = new Dictionary<string, string>
+					{
+						{"-v", "undo_export_lift"},
+						{"-u", "Randy"},
+						{"-p", Path.Combine(repo.ProjectFolder.Path, repoFile) }
+					};
+				var trafficCop = _container.GetExportedValue<BridgeTrafficCop>();
+				bool showWindow;
+				var result = trafficCop.StartWorking(options, out showWindow);
+				Assert.IsFalse(result);
+				Assert.IsFalse(showWindow);
+				Assert.AreEqual("original stuff", File.ReadAllText(repoFile));
+				Assert.IsFalse(File.Exists(newFile));
+				Assert.IsTrue(File.Exists(failureNotificationFile));
+			}
 		}
 	}
 }

@@ -68,7 +68,8 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			var system = new ChorusSystem(directoryName);
 			system.Init(user);
-			configure(system.ProjectFolderConfiguration);
+			if (configure != null)
+				configure(system.ProjectFolderConfiguration);
 			return system;
 		}
 

@@ -11,7 +11,7 @@
 		ViewNotes,
 		ViewNotesLift,
 
-		// UndoExport,
+		UndoExport,
 		UndoExportLift,
 
 		StandAloneFlexBridge

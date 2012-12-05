@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
@@ -61,7 +62,12 @@ namespace TriboroughBridge_ChorusPlugin
 				case "undo_export_lift":
 					model.InitializeModel(MainForm, options, ControllerType.UndoExportLift);
 					model.CurrentController.ChorusSystem.Repository.Update();
-					// TODO: Delete any new files. Use some Hg commend to find any new untracked files, and zap them.
+					// Delete any new files (except import failure notifier file).
+					var newbies = model.CurrentController.ChorusSystem.Repository.GetChangedFiles();
+					foreach (var goner in newbies.Where(newFile => newFile.Trim() != Utilities.FailureFilename ))
+					{
+						File.Delete(Path.Combine(Path.GetDirectoryName(options["-p"]), goner.Trim()));
+					}
 					return false;
 
 				case "obtain": // Get new repo (FW or lift)

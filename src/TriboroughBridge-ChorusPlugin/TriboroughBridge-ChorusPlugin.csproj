@@ -64,6 +64,7 @@
 	<Compile Include="Controller\ISyncronizeController.cs" />
 	<Compile Include="Controller\JumpEventHandler.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
+	<Compile Include="Controller\UndoExportController.cs" />
 	<Compile Include="ISynchronizeProject.cs" />
 	<Compile Include="JumpEventArgs.cs" />
 	<Compile Include="ICreateProjectFromLift.cs" />
