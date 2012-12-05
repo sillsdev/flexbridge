@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Chorus.VcsDrivers.Mercurial;
 using NUnit.Framework;
+using Palaso.Progress;
+using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -23,32 +26,26 @@ namespace TriboroughBridge_ChorusPluginTests
 		public void MoveRepositoryRemovesSourceFolder()
 		{
 			var tempFolderForOs = Path.GetTempPath();
-			var tempCloneHolder = Path.Combine(tempFolderForOs, "TempCloneHolder");
-			Directory.CreateDirectory(tempCloneHolder);
-			var tempCloneDir = Path.Combine(tempCloneHolder, "TempClone");
-			Directory.CreateDirectory(tempCloneDir);
-			var tempCloneHgDir = Path.Combine(tempCloneDir, ".hg");
-			Directory.CreateDirectory(tempCloneHgDir);
-			var tempHgrcPathname = Path.Combine(tempCloneHgDir, "hgrc");
-			File.WriteAllText(tempHgrcPathname, "dummy data");
-			var tempDataPathname = Path.Combine(tempCloneDir, "dummy.lift");
+			var tempCloneHolder = new TemporaryFolder("TempCloneHolder");
+			var tempCloneDir = new TemporaryFolder(tempCloneHolder, "TempClone");
+			var repo = new HgRepository(tempCloneDir.Path, new NullProgress());
+			repo.Init();
+			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy.lift");
 			File.WriteAllText(tempDataPathname, "dummy data");
-
+			repo.AddAndCheckinFile(tempDataPathname);
 			var tempNewHomeDir = Path.Combine(tempFolderForOs, "FinalCloneHolder");
-			Directory.CreateDirectory(tempNewHomeDir);
-
 
 			try
 			{
-				Utilities.MoveRepository(tempCloneDir, tempNewHomeDir);
-				Assert.IsFalse(Directory.Exists(tempCloneHolder));
+				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir);
+				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy.lift")));
 			}
 			finally
 			{
-				if (Directory.Exists(tempCloneHolder))
-					Directory.Delete(tempCloneHolder, true);
+				if (Directory.Exists(tempCloneHolder.Path))
+					Directory.Delete(tempCloneHolder.Path, true);
 				if (Directory.Exists(tempNewHomeDir))
 					Directory.Delete(tempNewHomeDir, true);
 			}

@@ -112,7 +112,6 @@
 	<Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="OldStyleLiftProjectServices.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<None Include="app.config" />

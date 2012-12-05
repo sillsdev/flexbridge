@@ -50,6 +50,9 @@ namespace TriboroughBridge_ChorusPlugin
 				return true;
 			}
 
+			// No need to do this, before running the stand-alone FB. :-)
+			OldStyleLiftProjectServices.MoveRepositories();
+
 			model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
 			switch (vOption)
 			{

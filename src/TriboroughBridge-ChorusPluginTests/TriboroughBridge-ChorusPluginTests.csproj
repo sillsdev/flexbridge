@@ -34,8 +34,17 @@
 	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="LibChorus">
+	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	</Reference>
 	<Reference Include="nunit.framework">
 	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.TestUtilities">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.TestUtilities.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />

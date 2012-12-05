@@ -67,8 +67,8 @@ namespace SIL.LiftBridge.Controller
 
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
-			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MoveRepository aims to do all of it.
-			Utilities.MoveRepository(cloneLocation, newHomeDir);
+			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
+			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir);
 			_newLiftPathname = PathToFirstLiftFile(newHomeDir);
 
 			retVal.ActualCloneFolder = newHomeDir;

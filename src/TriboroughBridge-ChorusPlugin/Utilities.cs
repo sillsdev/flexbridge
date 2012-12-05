@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using Chorus;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using Microsoft.Win32;
+using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -82,19 +84,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Move a repository (.hg folder and local workspace) from one location to another, even to another device).
 		/// </summary>
 		/// <remarks>After the move, the original location will not exist.</remarks>
-		public static void MoveRepository(string sourceFolder, string targetFolder)
+		public static void MakeLocalCloneAndRemoveSourceParentFolder(string sourceFolder, string targetFolder)
 		{
-			Directory.CreateDirectory(targetFolder);
-
-			foreach (var dir in Directory.GetDirectories(sourceFolder, "*", SearchOption.AllDirectories))
-			{
-				Directory.CreateDirectory(dir.Replace(sourceFolder, targetFolder));
-			}
-
-			foreach (var pathname in Directory.GetFiles(sourceFolder, "*.*", SearchOption.AllDirectories))
-			{
-				File.Copy(pathname, pathname.Replace(sourceFolder, targetFolder));
-			}
+			MakeLocalClone(sourceFolder, targetFolder);
 
 			Directory.Delete(Directory.GetParent(sourceFolder).FullName, true);
 		}
@@ -110,6 +102,20 @@ namespace TriboroughBridge_ChorusPlugin
 								   .OpenSubKey("7.0")
 								   .GetValue("ProjectsDir");
 			}
+		}
+
+		public static void MakeLocalClone(string sourceFolder, string targetFolder)
+		{
+			if (!Directory.Exists(targetFolder))
+				Directory.CreateDirectory(targetFolder);
+
+			// Do a clone of the lift repo into the new home.
+			var oldRepo = new HgRepository(sourceFolder, new NullProgress());
+			oldRepo.CloneLocalWithoutUpdate(targetFolder);
+			// Now copy the original hgrc file into the new location.
+			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
+			var newRepo = new HgRepository(targetFolder, new NullProgress());
+			newRepo.Update();
 		}
 	}
 }
