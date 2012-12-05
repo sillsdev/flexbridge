@@ -6,6 +6,7 @@ using System.Reflection;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
+using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using Palaso.IO;
@@ -107,6 +108,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				MetadataCache.MdCache.UpgradeToVersion(desiredModelNumber);
 			}
 
+			XmlMergeService.RemoveAmbiguousChildNodes = false; // Live on the edge. Opt out of that expensive code.
 			GetHandlerfromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 
