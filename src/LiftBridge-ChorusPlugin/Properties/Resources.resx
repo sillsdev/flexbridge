@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="kLabel" xml:space="preserve">
 	<value>LIFT Collaboration</value>
@@ -207,9 +207,6 @@
   <data name="kRepoIdNotNull" xml:space="preserve">
 	<value>Value for RepositoryIdentifier may not be null or an empty string.</value>
   </data>
-  <data name="kBasicMapFleContents" xml:space="preserve">
-	<value>&lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;Mappings&gt;&lt;/Mappings&gt;</value>
-  </data>
   <data name="kFlexExportProblemMessage" xml:space="preserve">
 	<value>FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue.</value>
   </data>
@@ -294,5 +291,10 @@ You probably have a Conflict Report open. It will need to be closed before you c
   </data>
   <data name="SendReceiveView_DialogTitle" xml:space="preserve">
 	<value>Send/Receive Project</value>
+  </data>
+  <data name="kEmptyLiftRangesFileXml" xml:space="preserve">
+	<value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;lift-ranges&gt;
+&lt;/lift-ranges&gt;</value>
   </data>
 </root>

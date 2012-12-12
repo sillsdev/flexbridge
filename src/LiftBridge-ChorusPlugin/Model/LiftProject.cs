@@ -19,6 +19,9 @@ namespace SIL.LiftBridge.Model
 			get { return PathToFirstLiftFile(this); }
 		}
 
+		/// <summary>
+		/// NOTE: BasePath is the main FLEx project folder, not the lift folder.
+		/// </summary>
 		private string BasePath { get; set; }
 
 		internal string PathToProject

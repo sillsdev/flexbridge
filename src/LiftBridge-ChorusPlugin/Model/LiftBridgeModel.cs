@@ -65,8 +65,13 @@ namespace SIL.LiftBridge.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			// As per the API, -p will be the main FW data file.
+			// REVIEW (RandyR): What if it is the DB4o file?
+			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			var pOption = options["-p"];
 			PathToRepository = Path.Combine(Path.GetDirectoryName(pOption), "OtherRepositories", "LIFT");
+			if (!Directory.Exists(PathToRepository))
+				Directory.CreateDirectory(PathToRepository);
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 
 			CurrentController = GetController(controllerType);

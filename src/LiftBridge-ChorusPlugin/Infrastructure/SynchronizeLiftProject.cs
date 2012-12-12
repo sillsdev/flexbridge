@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
+using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 
@@ -39,6 +43,8 @@ namespace SIL.LiftBridge.Infrastructure
 				syncDlg.SyncOptions.DoMergeWithOthers = true;
 				syncDlg.SyncOptions.DoSendToOthers = true;
 				syncDlg.Text = Resources.SendReceiveView_DialogTitle;
+				syncDlg.StartPosition = FormStartPosition.CenterScreen;
+				syncDlg.BringToFront();
 				syncDlg.ShowDialog(parent);
 
 				if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)

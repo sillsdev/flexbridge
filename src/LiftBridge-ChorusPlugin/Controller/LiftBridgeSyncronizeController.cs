@@ -6,6 +6,7 @@ using Chorus;
 using Chorus.FileTypeHanders.lift;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Model;
+using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
@@ -23,10 +24,20 @@ namespace SIL.LiftBridge.Controller
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			// As per the API, -p will be the main FW data file.
+			// REVIEW (RandyR): What if it is the DB4o file?
+			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			_mainBridgeForm = mainForm;
 			_projectSynchronizer = new SynchronizeLiftProject();
 
 			CurrentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
+			if (CurrentProject.LiftPathname == null)
+			{
+				// The tmp file should be there.
+				var newLiftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + ".lift");
+				File.WriteAllText(newLiftPathname, Resources.kEmptyLiftFileXml);
+				LiftFileServices.PrettyPrintFile(newLiftPathname, newLiftPathname + ".tmp");
+			}
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}

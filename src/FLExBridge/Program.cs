@@ -80,7 +80,7 @@ namespace FLExBridge
 					//not all options are followed by input, so just add them as a key
 					if(arg.StartsWith("-") || arg.StartsWith("/"))
 					{
-						currentKey = arg;
+						currentKey = arg.Trim();
 						options[currentKey] = null;
 					}
 					else //this is input which apparently follows an option, added it as the value in the dictionary
@@ -88,7 +88,7 @@ namespace FLExBridge
 						if (currentKey != null && options[currentKey] == null)
 						{
 							//this option goes with the flag that came before it
-							options[currentKey] = arg;
+							options[currentKey] = arg.Trim();
 						}
 						else //there was no flag before this option.
 						{
