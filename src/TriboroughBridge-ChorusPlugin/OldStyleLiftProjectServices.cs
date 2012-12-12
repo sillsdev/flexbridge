@@ -27,23 +27,26 @@ namespace TriboroughBridge_ChorusPlugin
 				return;
 
 			var guidToLiftFolderMap = CacheLiftProjectInfo(basePath);
-			TryCloningLiftRepoIntoFlexland(guidToLiftFolderMap);
+			if (guidToLiftFolderMap.Count > 0)
+				TryCloningLiftRepoIntoFlexland(guidToLiftFolderMap);
 
 			Directory.Delete(basePath, true);
 		}
 
 		private static void TryCloningLiftRepoIntoFlexland(Dictionary<string, string> guidToLiftFolderMap)
 		{
-			if (guidToLiftFolderMap.Count == 0)
-				return;
 			var flexProjectsFolder = Utilities.ProjectsPath;
 			if (!Directory.Exists(flexProjectsFolder))
 				return;
 
 			foreach (var flexProjectPath in Directory.GetDirectories(flexProjectsFolder))
 			{
+				if (guidToLiftFolderMap.Count == 0)
+					break;
+
 				var newHome = Utilities.LiftOffset(flexProjectPath);
-				if (Directory.Exists(newHome))
+				var safeLocation = MoveTempFileToSafetyIfNeeded(newHome);
+				if (Directory.Exists(Path.Combine(newHome, ".hg")))
 					continue; // Already has a lift repo.
 
 				var fwDataFiles = Directory.GetFiles(flexProjectPath, "*.fwdata");
@@ -53,6 +56,7 @@ namespace TriboroughBridge_ChorusPlugin
 					continue; // Odd case where there is no file at all, or it is a DB4o system.
 
 				// Have to do it the hard way.
+				string liftFolder = null;
 				using (var fastSplitter = new FastXmlElementSplitter(fwDataFiles[0]))
 				{
 					var searchedForAttrs = new HashSet<string> { "guid", "class" };
@@ -69,15 +73,47 @@ namespace TriboroughBridge_ChorusPlugin
 							continue;
 
 						var fwLangProjGuid = classAndGuidData["guid"].ToLowerInvariant();
-						string liftFolder;
-						if (!guidToLiftFolderMap.TryGetValue(fwLangProjGuid, out liftFolder))
-							continue;
-
-						Utilities.MakeLocalClone(liftFolder, newHome);
-						break;
+						if (guidToLiftFolderMap.TryGetValue(fwLangProjGuid, out liftFolder))
+						{
+							guidToLiftFolderMap.Remove(fwLangProjGuid);
+							break;
+						}
 					}
 				}
+
+				if (liftFolder == null)
+					continue;
+
+				Utilities.MakeLocalClone(liftFolder, newHome);
+				MoveTempFileBackIfNeeded(safeLocation, newHome);
 			}
+		}
+
+		private static string MoveTempFileToSafetyIfNeeded(string liftBaseFolder)
+		{
+			if (Directory.Exists(Path.Combine(liftBaseFolder, ".hg")))
+				return null;
+
+			string newTempPathname = null;
+			var tempFile = Directory.GetFiles(liftBaseFolder, "*.tmp").FirstOrDefault();
+			if (tempFile != null)
+			{
+				newTempPathname = Path.Combine(Path.GetTempPath(), Path.GetFileName(tempFile));
+				File.Copy(tempFile, newTempPathname, true);
+				Directory.Delete(Directory.GetParent(liftBaseFolder).FullName, true);
+			}
+
+			return newTempPathname;
+		}
+
+		private static void MoveTempFileBackIfNeeded(string tempPathname, string newHome)
+		{
+			if (tempPathname == null)
+				return;
+
+			var newPathname = Path.Combine(newHome, Path.GetFileName(tempPathname));
+			File.Copy(tempPathname, newPathname, true);
+			File.Delete(tempPathname);
 		}
 
 		private static Dictionary<string, string> CacheLiftProjectInfo(string basePath)
