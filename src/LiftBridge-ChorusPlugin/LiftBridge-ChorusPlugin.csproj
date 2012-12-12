@@ -92,6 +92,9 @@
 	<Reference Include="Palaso">
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
+	<Reference Include="Palaso.Lift">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.Lift.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core">
