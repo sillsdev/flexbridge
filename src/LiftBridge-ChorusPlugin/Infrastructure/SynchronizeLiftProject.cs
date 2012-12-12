@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
-using Chorus.VcsDrivers.Mercurial;
-using Palaso.Progress;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 

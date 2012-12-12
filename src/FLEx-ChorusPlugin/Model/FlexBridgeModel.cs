@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using FLEx_ChorusPlugin.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
