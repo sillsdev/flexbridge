@@ -59,6 +59,7 @@
 	<Compile Include="Controller\ControllerRepository.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
+	<Compile Include="Controller\IMoveOldLiftRepositorController.cs" />
 	<Compile Include="Controller\IObtainNewProjectController.cs" />
 	<Compile Include="Controller\IObtainProjectStrategy.cs" />
 	<Compile Include="Controller\ISyncronizeController.cs" />
@@ -70,7 +71,6 @@
 	<Compile Include="ICreateProjectFromLift.cs" />
 	<Compile Include="FLExConnectionHelper.cs" />
 	<Compile Include="Model\IBridgeModel.cs" />
-	<Compile Include="OldStyleLiftProjectServices.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="BridgeModelType.cs" />
 	<Compile Include="Properties\CommonResources.Designer.cs">

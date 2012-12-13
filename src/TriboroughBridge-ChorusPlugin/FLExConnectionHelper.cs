@@ -109,6 +109,19 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 		}
 
+		public void SendLiftPathnameToFlex(string liftPathname)
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.InformFwProjectName(liftPathname); // May be null, which is fine.
+			}
+			catch (Exception)
+			{
+				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
+			}
+		}
+
 		/// <summary>
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete

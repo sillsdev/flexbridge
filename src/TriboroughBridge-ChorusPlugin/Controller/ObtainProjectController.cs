@@ -102,7 +102,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			get { return null; }
 		}
 
-		public IEnumerable<ControllerType> SupportedActionTypes
+		public IEnumerable<ControllerType> SupportedControllerActions
 		{
 			get { return new List<ControllerType> { ControllerType.Obtain, ControllerType.ObtainLift }; }
 		}
