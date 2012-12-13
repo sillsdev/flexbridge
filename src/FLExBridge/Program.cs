@@ -7,6 +7,8 @@ using Chorus.VcsDrivers.Mercurial;
 using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
+using Palaso.UI.WindowsForms.HotSpot;
+using Palaso.UI.WindowsForms.Reporting;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
@@ -26,6 +28,12 @@ namespace FLExBridge
 			// -v kind of S/R operation: obtain, start, send_receive, send_receive_lift, view_notes
 			// No args at all: Use regular UI. FW app must not be running on S/R project.
 
+			// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
+			// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
+			// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
+			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
+			// exception handler.
+			new HotSpotProvider();
 			ExceptionHandler.Init();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
