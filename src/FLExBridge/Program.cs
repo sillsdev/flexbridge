@@ -8,7 +8,6 @@ using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
-using Palaso.UI.WindowsForms.Reporting;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
@@ -34,6 +33,7 @@ namespace FLExBridge
 			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
 			// exception handler.
 			new HotSpotProvider();
+
 			ExceptionHandler.Init();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
