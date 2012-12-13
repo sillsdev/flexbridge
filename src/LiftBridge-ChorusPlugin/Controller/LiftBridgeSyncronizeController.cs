@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
+using Chorus.merge.xml.generic;
+using Chorus.sync;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
@@ -31,20 +34,34 @@ namespace SIL.LiftBridge.Controller
 			_projectSynchronizer = new SynchronizeLiftProject();
 
 			CurrentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
-			if (CurrentProject.LiftPathname == null)
+			var liftPathname = CurrentProject.LiftPathname;
+			if (liftPathname == null)
 			{
-				// The tmp file should be there.
-				var newLiftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + ".lift");
-				File.WriteAllText(newLiftPathname, Resources.kEmptyLiftFileXml);
-				LiftFileServices.PrettyPrintFile(newLiftPathname, newLiftPathname + ".tmp");
+				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
+				liftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + ".lift");
+				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
 			}
+			var tmpFile = Directory.GetFiles(CurrentProject.PathToProject, "*.tmp").FirstOrDefault();
+			if (tmpFile != null)
+			{
+				LiftFileServices.PrettyPrintFile(liftPathname, tmpFile);
+			}
+
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
+			if (ChorusSystem.Repository.Identifier == null)
+			{
+				// First do a commit, since the repo is brand new.
+				var projectConfig = ChorusSystem.ProjectFolderConfiguration;
+				ProjectFolderConfiguration.EnsureCommonPatternsArePresent(projectConfig);
+				projectConfig.IncludePatterns.Add("**.ChorusRescuedFile");
+				ChorusSystem.Repository.AddAndCheckinFiles(projectConfig.IncludePatterns, projectConfig.ExcludePatterns, "Initial commit");
+			}
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public IEnumerable<ControllerType> SupportedActionTypes
+		public IEnumerable<ControllerType> SupportedControllerActions
 		{
 			get { return new List<ControllerType> { ControllerType.SendReceiveLift }; }
 		}

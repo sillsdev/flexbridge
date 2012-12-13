@@ -14,6 +14,8 @@
 		UndoExport,
 		UndoExportLift,
 
+		MoveLift,
+
 		StandAloneFlexBridge
 	}
 }

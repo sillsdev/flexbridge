@@ -10,8 +10,7 @@ namespace SIL.LiftBridge.Controller
 	[Export(typeof(IObtainProjectStrategy))]
 	public class LiftObtainProjectStrategy : IObtainProjectStrategy
 	{
-		private string _newProjectPathname;
-		private bool _createdMainProjectFolder = false;
+		private bool _createdMainProjectFolder;
 		private string _newLiftPathname;
 		[Import]
 		public FLExConnectionHelper ConnectionHelper;

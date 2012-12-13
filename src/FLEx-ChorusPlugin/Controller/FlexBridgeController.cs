@@ -83,7 +83,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public IEnumerable<ControllerType> SupportedActionTypes
+		public IEnumerable<ControllerType> SupportedControllerActions
 		{
 			get { return new List<ControllerType> {ControllerType.StandAloneFlexBridge}; }
 		}

@@ -23,6 +23,18 @@ namespace TriboroughBridge_ChorusPlugin
 		public MainBridgeForm MainForm { get; private set; }
 		private bool _changesReceived;
 
+// ReSharper disable InconsistentNaming
+		private const string obtain = "obtain";
+		private const string obtain_lift = "obtain_lift";
+		private const string send_receive = "send_receive";
+		private const string send_receive_lift = "send_receive_lift";
+		private const string view_notes = "view_notes";
+		private const string view_notes_lift = "view_notes_lift";
+		private const string undo_export = "undo_export";
+		private const string undo_export_lift = "undo_export_lift";
+		private const string move_lift = "move_lift";
+// ReSharper restore InconsistentNaming
+
 		public IBridgeModel GetModel(BridgeModelType modelType)
 		{
 			return (from model in Models
@@ -51,15 +63,12 @@ namespace TriboroughBridge_ChorusPlugin
 				return true;
 			}
 
-			// No need to do this, before running the stand-alone FB. :-)
-			OldStyleLiftProjectServices.MoveRepositories();
-
 			model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
 			switch (vOption)
 			{
-				case "undo_export": // Not supported
+				case undo_export: // Not supported
 					return false;
-				case "undo_export_lift":
+				case undo_export_lift:
 					model.InitializeModel(MainForm, options, ControllerType.UndoExportLift);
 					model.CurrentController.ChorusSystem.Repository.Update();
 					// Delete any new files (except import failure notifier file).
@@ -70,22 +79,22 @@ namespace TriboroughBridge_ChorusPlugin
 					}
 					return false;
 
-				case "obtain": // Get new repo (FW or lift)
+				case obtain: // Get new repo (FW or lift)
 					model.InitializeModel(MainForm, options, ControllerType.Obtain);
 					showWindow = true;
 					break;
-				case "obtain_lift": // Get new lift repro, whch gets imported (safely) into FLEx.
+				case obtain_lift: // Get new lift repro, whch gets imported (safely) into FLEx.
 					model.InitializeModel(MainForm, options, ControllerType.ObtainLift);
 					showWindow = true;
 					break;
 
 				//case "send_receive_all": // Future: Any and all repos.
 				//	break;
-				case "send_receive": // Only for main FW repo.
+				case send_receive: // Only for main FW repo.
 					model.InitializeModel(MainForm, options, ControllerType.SendReceive);
 					_changesReceived = model.Syncronize();
 					break;
-				case "send_receive_lift": // Only for lift repo.
+				case send_receive_lift: // Only for lift repo.
 					model.InitializeModel(MainForm, options, ControllerType.SendReceiveLift);
 					_changesReceived = model.Syncronize();
 					break;
@@ -93,15 +102,23 @@ namespace TriboroughBridge_ChorusPlugin
 				// TODO: Sort out what happens.
 				//	Q: Does Chorus collect up all notes files (main+nested), or just the ones in the given repo?
 				//	Q: How to process the URL in regular lift notes files?
-				case "view_notes":
+				case view_notes:
 					model.InitializeModel(MainForm, options, ControllerType.ViewNotes);
 					(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
 					showWindow = true;
 					break;
-				case "view_notes_lift":
+				case view_notes_lift:
 					model.InitializeModel(MainForm, options, ControllerType.ViewNotesLift);
 					(model.CurrentController as IConflictController).JumpUrlChanged += ConnectionHelper.SendJumpUrlToFlex;
 					showWindow = true;
+					break;
+
+				case move_lift:
+					// uses optional (but required here) -g arg that has the FLEx lang project guid.
+					// -p is the regular fwdata file's pathname.
+					// Return the lift pathname, if the repo got moved, otherwise null.
+					model.InitializeModel(MainForm, options, ControllerType.MoveLift);
+					(model.CurrentController as IMoveOldLiftRepositorController).MoveRepoIfPresent();
 					break;
 			}
 			return true;
@@ -119,26 +136,32 @@ namespace TriboroughBridge_ChorusPlugin
 			var model = GetModel(vOption.Trim().EndsWith("lift") ? BridgeModelType.Lift : BridgeModelType.Flex);
 			switch (vOption)
 			{
-				case "undo_export": // Not supported, but it does no harm here.
-				case "undo_export_lift":
-				case "send_receive":
-				case "send_receive_lift":
+				case undo_export: // Not supported, but it does no harm here.
+				case undo_export_lift:
+				case send_receive:
+				case send_receive_lift:
 					notifyFlex = true;
 					break;
-				case "obtain": // Get new repo (FW or lift), so FLEx creates it all.
+				case obtain: // Get new repo (FW or lift), so FLEx creates it all.
 					//	1) Got new fwdata project (does ConnectionHelper.CreateProjectFromFlex(fwProjectName) call)
 					//	2) Got new lift project, so FLEx needs to create new Lang proj from it using (CreateProjectFromLift method in ICreateProjectFromLift interface.
 					notifyFlex = true;
 					(model.CurrentController as IObtainNewProjectController).EndWork();
 					break;
-				case "obtain_lift": // For Lift S/R, where main FW project exists.
+				case obtain_lift: // For Lift S/R, where main FW project exists.
 					notifyFlex = true;
 					(model.CurrentController as IObtainNewProjectController).EndWork();
 					break;
 
-				case "view_notes":
-				case "view_notes_lift":
+				case view_notes:
+				case view_notes_lift:
 					(model.CurrentController as IConflictController).JumpUrlChanged -= ConnectionHelper.SendJumpUrlToFlex;
+					break;
+
+				case move_lift:
+					_changesReceived = false;
+					(model.CurrentController as IMoveOldLiftRepositorController).EndWork();
+					notifyFlex = true;
 					break;
 			}
 
