@@ -49,12 +49,12 @@
 	<Message Text="Build Complete"/>
   </Target>
 
-	<Target Name="UnzipMercurial" DependsOnTargets="">
-		<!-- Extract a zip file-->
-		<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)"/>
-	</Target>
+  <Target Name="UnzipMercurial" DependsOnTargets="">
+	<!-- Extract a zip file-->
+	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)"/>
+  </Target>
 
-  <Target Name="Compile" >
+  <Target Name="Compile">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
@@ -83,7 +83,7 @@
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version
 	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>-->
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p - -chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/> -->
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
