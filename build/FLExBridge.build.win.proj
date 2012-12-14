@@ -78,20 +78,20 @@
 	<FileUpdate File="$(RootDir)\Installer\index.html" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/> -->
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
-	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
+	<Message Text="Attempting rsync of index.html" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/index.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.html"/>
 
-	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
+	<!-- push up to the web so that on our downloads page, we can give a link to the latest version
 	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../artwork/webconstruction.gif&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/webconstruction.gif"/>-->
   </Target>
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer">
-	<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
 
+	<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/FLExBridgeInstaller.msi"/>
 
-	<CallTarget Targets="MakeIndex"/>
+	<!-- <CallTarget Targets="MakeIndex"/> -->
   </Target>
 
   <Target Name="SetAboutInfo" DependsOnTargets="VersionNumbers">
@@ -106,7 +106,7 @@
 
   </Target>
 
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; CreateDirectories; Build; SetAboutInfo">
+  <Target Name="Installer" DependsOnTargets="VersionNumbers; CreateDirectories; Test; SetAboutInfo">
 
 	<!-- Copy it to a safe place first, since it gets modified. -->
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
