@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLExBridge.Properties;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
