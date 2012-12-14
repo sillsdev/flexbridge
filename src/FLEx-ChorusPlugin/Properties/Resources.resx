@@ -230,10 +230,13 @@
   <data name="kUnTitled" xml:space="preserve">
 	<value>[untitled]</value>
   </data>
-	<data name="kInvalidCommandLineOptions" xml:space="preserve">
+  <data name="kInvalidCommandLineOptions" xml:space="preserve">
 	<value>Invalid command line options. Please launch from FLEx or run the executable without arguments.</value>
   </data>
-	<data name="kFlexBridge" xml:space="preserve">
+  <data name="kFlexBridge" xml:space="preserve">
 	<value>FLEx Bridge</value>
+  </data>
+  <data name="ksOtherRevisionWarning" xml:space="preserve">
+	<value>Other users of this repository (most recently {0}) are using a different version of FieldWorks. Changes from users with more recent versions will not be merged into projects using older versions. We strongly recommend that all users upgrade to the same version as soon as possible.</value>
   </data>
 </root>

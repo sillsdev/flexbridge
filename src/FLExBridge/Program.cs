@@ -74,7 +74,7 @@ namespace FLExBridge
 
 				}
 			}
-			Settings.Default.Save();
+			FLEx_ChorusPlugin.Properties.Settings.Default.Save();
 		}
 
 		static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
