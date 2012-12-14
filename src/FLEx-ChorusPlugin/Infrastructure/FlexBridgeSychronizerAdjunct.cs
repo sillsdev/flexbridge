@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
+using Chorus.FileTypeHanders.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure
@@ -79,8 +81,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Maybe let the user know about the need to update, or that other team members are still using an older version.
 		/// </summary>
-		public void CheckRepositoryBranches(IEnumerable<Revision> branches)
+		public void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress)
 		{
+			string savedSettings = Settings.Default.OtherBranchRevisions;
+			string conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, BranchName, ref savedSettings);
+			Settings.Default.OtherBranchRevisions = savedSettings;
+			Settings.Default.Save();
+			if (!string.IsNullOrEmpty(conflictingUser))
+				progress.WriteWarning(string.Format(Resources.ksOtherRevisionWarning, conflictingUser));
 		}
 
 		/// <summary>
