@@ -77,9 +77,9 @@
 	<!-- replace some parts of the file with the version number & date
 	<FileUpdate File="$(RootDir)\Installer\index.html" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/> -->
 
-	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
+	<!-- push up to the web so that on our downloads page, we can give a link to the latest version
 	<Message Text="Attempting rsync of index.html" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/index.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.html"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p - -chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/index.html&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.html"/> -->
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version
 	<Message Text="Attempting rsync of webconstruction.gif" Importance="high"/>
