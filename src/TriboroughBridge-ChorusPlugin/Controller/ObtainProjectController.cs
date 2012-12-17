@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
+using Palaso.UI.WindowsForms.Progress;
 using TriboroughBridge_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin.View;
 
@@ -53,17 +54,27 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				{
 					_mainBridgeForm.Cursor = Cursors.Default;
 					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
-					MessageBox.Show(EmptyRepoMsg, RepoProblem);
+					MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
+					_mainBridgeForm.Close();
 					return;
 				}
 
-				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation);
-				_actualCloneResult.CloneResult = result;
-				if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+				using (var log = new LogBox())
 				{
-					// TODO: Show some message saying it couldn't be done.
+					_mainBridgeForm.SuspendLayout();
+					_mainBridgeForm.Controls.Clear();
+					_mainBridgeForm.Controls.Add(log);
+					log.Dock = DockStyle.Fill;
+					_mainBridgeForm.ResumeLayout(true);
+
+					_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, log);
+					_actualCloneResult.CloneResult = result;
+					if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+					{
+						MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					}
+					_mainBridgeForm.Close();
 				}
-				_mainBridgeForm.Close();
 				return;
 			}
 			_mainBridgeForm.Cursor = Cursors.Default;

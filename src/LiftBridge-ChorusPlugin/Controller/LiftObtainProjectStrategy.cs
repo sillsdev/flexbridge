@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 
@@ -30,7 +31,7 @@ namespace SIL.LiftBridge.Controller
 			return !Directory.GetFiles(repositoryLocation, "*.lift").Any();
 		}
 
-		public ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation)
+		public ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation, IProgress progress)
 		{
 			// "obtain"
 			//		'fwrootBaseDir' will be $fwroot.
@@ -64,7 +65,7 @@ namespace SIL.LiftBridge.Controller
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
 			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
-			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir);
+			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir, progress);
 			_newLiftPathname = PathToFirstLiftFile(newHomeDir);
 
 			retVal.ActualCloneFolder = newHomeDir;

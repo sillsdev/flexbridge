@@ -92,6 +92,33 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Could not obtain the new project, because one with the same name already exists..
+		/// </summary>
+		public static string kFlexProjectExists {
+			get {
+				return ResourceManager.GetString("kFlexProjectExists", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Moving obtained project to final location..
+		/// </summary>
+		public static string kMovingRepo {
+			get {
+				return ResourceManager.GetString("kMovingRepo", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Obtain project.
+		/// </summary>
+		public static string kObtainProject {
+			get {
+				return ResourceManager.GetString("kObtainProject", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Receive project.
 		/// </summary>
 		public static string ObtainProjectView_DialogTitle {

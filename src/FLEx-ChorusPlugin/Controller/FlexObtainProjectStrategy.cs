@@ -30,7 +30,7 @@ namespace FLEx_ChorusPlugin.Controller
 			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.ModelVersionFilename));
 		}
 
-		public ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation)
+		public ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation, IProgress progress)
 		{
 			// This may not be a really great name for the project, but it can't get any better,
 			// since the real lang proj name is not available in the FW data.
@@ -54,11 +54,12 @@ namespace FLEx_ChorusPlugin.Controller
 			// Move the repo from its temp home in cloneLocation into new home, before doing the call to 'PutHumptyTogetherAgain'.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
 			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
-			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir);
-
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), newHomeDir);
+			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir, progress);
 
 			_newFwProjectPathname = Path.Combine(newHomeDir, _newProjectFilename);
+			File.WriteAllText(_newFwProjectPathname, "");
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _newFwProjectPathname);
+
 			retVal.ActualCloneFolder = newHomeDir;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;
 			return retVal;

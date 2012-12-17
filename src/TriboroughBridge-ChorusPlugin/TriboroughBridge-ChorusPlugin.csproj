@@ -43,6 +43,9 @@
 	<Reference Include="Palaso">
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
 	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />

@@ -42,7 +42,7 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			try
 			{
-				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir);
+				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir, new NullProgress());
 				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy.lift")));
