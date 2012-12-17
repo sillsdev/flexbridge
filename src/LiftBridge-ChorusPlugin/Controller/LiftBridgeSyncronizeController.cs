@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
-using Chorus.merge.xml.generic;
 using Chorus.sync;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Model;
@@ -44,7 +43,8 @@ namespace SIL.LiftBridge.Controller
 			var tmpFile = Directory.GetFiles(CurrentProject.PathToProject, "*.tmp").FirstOrDefault();
 			if (tmpFile != null)
 			{
-				LiftFileServices.PrettyPrintFile(liftPathname, tmpFile);
+				File.Copy(tmpFile, liftPathname, true);
+				File.Delete(tmpFile);
 			}
 
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
