@@ -48,3 +48,4 @@ src/LiftBridge-ChorusPlugin/obj/*
 src/LiftBridge-ChorusPluginTests/obj/*
 src/TriboroughBridge-ChorusPlugin/obj/*
 src/TriboroughBridge-ChorusPluginTests/obj/*
+**.pdb
