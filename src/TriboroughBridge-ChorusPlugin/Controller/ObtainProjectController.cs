@@ -23,6 +23,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private string _baseDir;
 		private ActualCloneResult _actualCloneResult;
 		private IObtainProjectStrategy _currentStrategy;
+		private LogBox _logBox;
 
 		private const string RepoProblem = "Empty Repository";
 		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
@@ -59,23 +60,15 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					return;
 				}
 
-				using (var log = new LogBox())
+				(_startupNewView as Control).Visible = false;
+				_logBox.Visible = true;
+				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, _logBox);
+				_actualCloneResult.CloneResult = result;
+				if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
 				{
-					_mainBridgeForm.SuspendLayout();
-					_mainBridgeForm.Controls.Clear();
-					_mainBridgeForm.Controls.Add(log);
-					log.Dock = DockStyle.Fill;
-					_mainBridgeForm.ResumeLayout(true);
-					_mainBridgeForm.Update();
-
-					_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, log);
-					_actualCloneResult.CloneResult = result;
-					if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
-					{
-						MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					}
-					_mainBridgeForm.Close();
+					MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
+				_mainBridgeForm.Close();
 				return;
 			}
 			_mainBridgeForm.Cursor = Cursors.Default;
@@ -104,8 +97,22 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
 
+			_logBox = new LogBox
+				{
+					GetDiagnosticsMethod = null,
+					ProgressIndicator = null,
+					CancelRequested = false,
+					ShowCopyToClipboardMenuItem = false,
+					ShowDetailsMenuItem = false,
+					ShowDiagnosticsMenuItem = false,
+					ShowFontMenuItem = false,
+					ShowMenu = true,
+					Visible = false,
+					Dock = DockStyle.Fill
+				};
 			_startupNewView = new ObtainProjectView();
 			_mainBridgeForm.Controls.Add((Control)_startupNewView);
+			_mainBridgeForm.Controls.Add(_logBox);
 			_startupNewView.Startup += StartupHandler;
 		}
 
