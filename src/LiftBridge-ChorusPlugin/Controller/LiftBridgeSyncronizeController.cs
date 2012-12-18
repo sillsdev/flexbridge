@@ -54,6 +54,8 @@ namespace SIL.LiftBridge.Controller
 				var projectConfig = ChorusSystem.ProjectFolderConfiguration;
 				ProjectFolderConfiguration.EnsureCommonPatternsArePresent(projectConfig);
 				projectConfig.IncludePatterns.Add("**.ChorusRescuedFile");
+				Palaso.Lift.LiftSorter.SortLiftFile(liftPathname);
+				Palaso.Lift.LiftSorter.SortLiftRangesFile(liftPathname + "-ranges");
 				ChorusSystem.Repository.AddAndCheckinFiles(projectConfig.IncludePatterns, projectConfig.ExcludePatterns, "Initial commit");
 			}
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
