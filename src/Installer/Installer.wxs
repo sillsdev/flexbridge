@@ -128,6 +128,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
+			<Component Id="Vulcan.Uczniowie.HelpProvider.dll" Guid="C1EE09F5-E382-11DE-8A39-0800200C9A66">
+			  <File Id="Vulcan.Uczniowie.HelpProvider.dll" Name="Vulcan.Uczniowie.HelpProvider.dll" KeyPath="yes" Source="..\..\output\Release\Vulcan.Uczniowie.HelpProvider.dll"/>
+			</Component>
 
 			<!-- Required Palaso assemblies not in the Chorus merge module. -->
 			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
@@ -196,6 +199,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 	  <ComponentRef Id="icu.net.dll"/>
+	  <ComponentRef Id="Vulcan.Uczniowie.HelpProvider.dll"/>
 
 	  <MergeRef Id="ChorusMergeModule"/>
 
