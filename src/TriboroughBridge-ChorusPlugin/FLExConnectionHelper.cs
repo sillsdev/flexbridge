@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.ServiceModel;
@@ -27,15 +28,15 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Initialize the helper, setting up the local service endpoint and opening.
 		/// </summary>
-		/// <param name="fwProjectPathname">The entire FieldWorks project folder path.
+		/// <param name="options">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		public bool Init(string fwProjectPathname)
+		public bool Init(Dictionary<string, string> options)
 		{
 			HostOpened = true;
-			var fwProjectName = ""; // will only be able to to S/R one project at a time
-			if (!String.IsNullOrEmpty(fwProjectPathname)) // can S/R multiple projects simultaneously
-				fwProjectName = Path.GetFileNameWithoutExtension(fwProjectPathname);
+
+			// 'obtain' will send in the $fwroot, which is where FW holds its projects, so it won't be a pathname to a file.
+			var fwProjectName = GetFlexPathnameFromOption(options["-p"]); // will only be able to to S/R one project at a time
 
 			try
 			{
@@ -73,6 +74,13 @@ namespace TriboroughBridge_ChorusPlugin
 				return false;
 			}
 			return true;
+		}
+
+		private static string GetFlexPathnameFromOption(string pOption)
+		{
+			return pOption.EndsWith("fwdata") || pOption.EndsWith("fdbo")
+					   ? Path.GetFileNameWithoutExtension(pOption)
+					   : string.Empty;
 		}
 
 		public bool HostOpened { get; private set; }

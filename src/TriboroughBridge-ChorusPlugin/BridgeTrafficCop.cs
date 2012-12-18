@@ -48,7 +48,7 @@ namespace TriboroughBridge_ChorusPlugin
 			string fwProjectPathname;
 			options.TryGetValue("-p", out fwProjectPathname);
 
-			if (!ConnectionHelper.Init(fwProjectPathname))
+			if (!ConnectionHelper.Init(options))
 				return false;
 
 			_changesReceived = false;
