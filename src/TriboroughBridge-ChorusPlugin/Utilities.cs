@@ -110,9 +110,6 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static void MakeLocalClone(string sourceFolder, string targetFolder, IProgress progress)
 		{
-			if (!Directory.Exists(targetFolder))
-				Directory.CreateDirectory(targetFolder);
-
 			progress.WriteMessage(CommonResources.kMovingRepo);
 
 			// Do a clone of the lift repo into the new home.

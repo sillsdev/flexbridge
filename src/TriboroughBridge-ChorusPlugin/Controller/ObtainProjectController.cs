@@ -53,7 +53,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 				{
 					_mainBridgeForm.Cursor = Cursors.Default;
-					Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
+					Directory.Delete(Directory.GetParent(result.ActualLocation).FullName, true); // Don't want the newly created empty folder to hang around and mess us up!
 					MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
 					_mainBridgeForm.Close();
 					return;
@@ -66,6 +66,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					_mainBridgeForm.Controls.Add(log);
 					log.Dock = DockStyle.Fill;
 					_mainBridgeForm.ResumeLayout(true);
+					_mainBridgeForm.Update();
 
 					_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, log);
 					_actualCloneResult.CloneResult = result;

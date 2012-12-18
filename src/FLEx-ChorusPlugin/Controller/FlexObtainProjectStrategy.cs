@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
@@ -34,7 +36,8 @@ namespace FLEx_ChorusPlugin.Controller
 		{
 			// This may not be a really great name for the project, but it can't get any better,
 			// since the real lang proj name is not available in the FW data.
-			var langProjName = Path.GetDirectoryName(cloneLocation);
+			var dirInfo = new DirectoryInfo(cloneLocation);
+			var langProjName = dirInfo.Name;
 			_newProjectFilename = langProjName + ".fwdata";
 			var newHomeDir = Path.Combine(fwrootBaseDir, langProjName);
 
@@ -47,7 +50,7 @@ namespace FLEx_ChorusPlugin.Controller
 				};
 			if (Directory.Exists(newHomeDir))
 			{
-				Directory.Delete(cloneLocation, true);
+				Directory.Delete(Directory.GetParent(cloneLocation).FullName, true);
 				return retVal;
 			}
 
@@ -62,6 +65,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 			retVal.ActualCloneFolder = newHomeDir;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;
+
 			return retVal;
 		}
 
