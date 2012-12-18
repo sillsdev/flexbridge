@@ -36,7 +36,7 @@ namespace TriboroughBridge_ChorusPlugin
 			HostOpened = true;
 
 			// 'obtain' will send in the $fwroot, which is where FW holds its projects, so it won't be a pathname to a file.
-			var fwProjectName = GetFlexPathnameFromOption(options["-p"]); // will only be able to to S/R one project at a time
+			var fwProjectName = options.Keys.Count == 0 ? "" : GetFlexPathnameFromOption(options["-p"]); // will only be able to to S/R one project at a time
 
 			try
 			{
