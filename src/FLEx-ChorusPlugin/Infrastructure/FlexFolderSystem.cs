@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Chorus.sync;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -11,21 +12,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// that we explicitly include all the files we understand. At least someday, when these
 			// affect what happens in a more persistent way (e.g. be stored in the hgrc), these would protect
 			// us a bit from other apps that might try to do a *.* include.
-			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata");
-			projectFolderConfiguration.ExcludePatterns.Add("**.fwdata-replaced");
-			projectFolderConfiguration.ExcludePatterns.Add("**.fwdb");
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension);
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension + "-replaced");
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwDB4oExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwbackup");
 			projectFolderConfiguration.ExcludePatterns.Add("**.orig");
 			projectFolderConfiguration.ExcludePatterns.Add("**.zip");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
-			projectFolderConfiguration.ExcludePatterns.Add("**.lift");
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.LiftExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
 			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
-			projectFolderConfiguration.ExcludePatterns.Add("**.lock");
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlLockExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("**.log");

@@ -30,7 +30,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			var tempCloneDir = new TemporaryFolder(tempCloneHolder, "TempClone");
 			var repo = new HgRepository(tempCloneDir.Path, new NullProgress());
 			repo.Init();
-			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy.lift");
+			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy" + Utilities.LiftExtension);
 			File.WriteAllText(tempDataPathname, "dummy data");
 			repo.AddAndCheckinFile(tempDataPathname);
 
@@ -45,7 +45,7 @@ namespace TriboroughBridge_ChorusPluginTests
 				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir, new NullProgress());
 				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy.lift")));
+				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy" + Utilities.LiftExtension)));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, Utilities.FailureFilename)));
 			}
 			finally

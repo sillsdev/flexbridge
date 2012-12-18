@@ -12,6 +12,14 @@ namespace TriboroughBridge_ChorusPlugin
 	public static class Utilities
 	{
 		public const string FailureFilename = "FLExImportFailure.notice";
+		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
+		public const string FwXmlExtensionNoPeriod = "fwdata";
+		public const string FwLockExtension = ".lock";
+		public const string FwXmlLockExtension = FwXmlExtension + FwLockExtension;
+		public const string FwDB4oExtension = "." + FwDB4oExtensionNoPeriod;
+		public const string FwDB4oExtensionNoPeriod = "fwdb";
+		public const string LiftExtension = ".lift";
+		public const string LiftRangesExtension = ".lift-ranges";
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps

@@ -3,6 +3,7 @@ using System.IO;
 using FLEx_ChorusPlugin.Model;
 using NUnit.Framework;
 using Palaso.IO;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Model
 {
@@ -42,7 +43,7 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void FwFileHasFolderPath()
 		{
-			using (var tempFile = TempFile.WithExtension(".fwdata"))
+			using (var tempFile = TempFile.WithExtension(Utilities.FwXmlExtension))
 			{
 				var lp = new LanguageProject(tempFile.Path);
 				Assert.AreEqual(Path.GetDirectoryName(tempFile.Path), lp.DirectoryName);
@@ -52,7 +53,7 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void ProjectHasCorrectName()
 		{
-			using (var tempFile = TempFile.WithExtension(".fwdata"))
+			using (var tempFile = TempFile.WithExtension(Utilities.FwXmlExtension))
 			{
 				var lp = new LanguageProject(tempFile.Path);
 				Assert.AreEqual(Path.GetDirectoryName(tempFile.Path), lp.DirectoryName);
@@ -69,12 +70,12 @@ namespace FLEx_ChorusPluginTests.Model
 			var tempDir = Directory.CreateDirectory(Path.Combine(tempFolder, "FWBTest"));
 			try
 			{
-				var fwdataFile = Path.Combine(tempDir.FullName, "test.fwdata");
+				var fwdataFile = Path.Combine(tempDir.FullName, "test" + Utilities.FwXmlExtension);
 				File.WriteAllText(fwdataFile, "");
 
 				var lp = new LanguageProject(fwdataFile);
 				Assert.IsFalse(lp.FieldWorkProjectInUse);
-				var lockedFwdataFile = fwdataFile + ".lock";
+				var lockedFwdataFile = fwdataFile + Utilities.FwLockExtension;
 				File.WriteAllText(lockedFwdataFile, "");
 				Assert.IsTrue(lp.FieldWorkProjectInUse);
 			}
@@ -88,7 +89,7 @@ namespace FLEx_ChorusPluginTests.Model
 		[Test]
 		public void NameIsSameAsToString()
 		{
-			using (var tempFile = TempFile.WithExtension(".fwdata"))
+			using (var tempFile = TempFile.WithExtension(Utilities.FwXmlExtension))
 			{
 				var lp = new LanguageProject(tempFile.Path);
 				Assert.AreEqual(Path.GetFileNameWithoutExtension(tempFile.Path), lp.ToString());

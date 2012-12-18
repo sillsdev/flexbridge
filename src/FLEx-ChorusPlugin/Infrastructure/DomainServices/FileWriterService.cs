@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -183,7 +184,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,
-				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
+				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == Utilities.FwXmlExtension)
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");

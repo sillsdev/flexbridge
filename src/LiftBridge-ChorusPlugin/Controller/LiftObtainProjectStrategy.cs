@@ -23,12 +23,12 @@ namespace SIL.LiftBridge.Controller
 		public bool ProjectFilter(string repositoryLocation)
 		{
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
 		}
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{
-			return !Directory.GetFiles(repositoryLocation, "*.lift").Any();
+			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
 		}
 
 		public ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation, IProgress progress)
@@ -95,7 +95,7 @@ namespace SIL.LiftBridge.Controller
 
 		private static string PathToFirstLiftFile(string cloneLocation)
 		{
-			var liftFiles = Directory.GetFiles(cloneLocation, "*.lift").ToList();
+			var liftFiles = Directory.GetFiles(cloneLocation, "*" + Utilities.LiftExtension).ToList();
 			return liftFiles.Count == 0 ? null : (from file in liftFiles
 												  where HasOnlyOneDot(file)
 												  select file).FirstOrDefault();

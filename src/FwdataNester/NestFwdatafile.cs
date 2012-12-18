@@ -16,6 +16,7 @@ using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
 using Palaso.Progress;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FwdataTestApp
 {
@@ -45,7 +46,7 @@ namespace FwdataTestApp
 			var currentFwdataPathname = _openFileDialog.FileName;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi.fwdata" || projectDirName.ToLowerInvariant() == "zpi")
+			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
 				return; // Don't even think of wiping out my ZPI folder.
 
 			_fwdataPathname.Text = currentFwdataPathname;
@@ -623,7 +624,7 @@ namespace FwdataTestApp
 				var allProjectDirNamesExceptMine = Directory.GetDirectories(NormalUserProjectDir).Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
-					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*.fwdata").FirstOrDefault());
+					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" + Utilities.FwXmlExtension).FirstOrDefault());
 				}
 			}
 			finally
@@ -638,10 +639,10 @@ namespace FwdataTestApp
 				return;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi.fwdata" || projectDirName.ToLowerInvariant() == "zpi")
+			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
 				return; // Don't even think of wiping out my ZPI folder.
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;

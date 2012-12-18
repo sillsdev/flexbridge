@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using SIL.LiftBridge.Model;
+using TriboroughBridge_ChorusPlugin;
 
 namespace LiftBridgeTests.ModelTests
 {
@@ -47,7 +48,7 @@ namespace LiftBridgeTests.ModelTests
 		public void ProjectHasLiftFile()
 		{
 			var liftProject = CreateNewbieProject();
-			var liftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			var liftPathname = Path.Combine(_pathToProject, "Newbie" + Utilities.LiftExtension);
 			File.WriteAllText(liftPathname, "");
 			Assert.AreEqual(liftPathname, liftProject.LiftPathname);
 		}
@@ -57,9 +58,9 @@ namespace LiftBridgeTests.ModelTests
 		public void ProjectReturnsCorrectLiftFile()
 		{
 			var liftProject = CreateNewbieProject();
-			var badLiftPathname = Path.Combine(_pathToProject, "Newbie.0.12.lift");
+			var badLiftPathname = Path.Combine(_pathToProject, "Newbie.0.12" + Utilities.LiftExtension);
 			File.WriteAllText(badLiftPathname, "");
-			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie" + Utilities.LiftExtension);
 			File.WriteAllText(goodLiftPathname, "");
 			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
 		}
@@ -69,7 +70,7 @@ namespace LiftBridgeTests.ModelTests
 		public void ProjectReturnsOnlyLiftFileWhereFullPathnameHasAPeriodInIt()
 		{
 			var liftProject = CreateNewbieProject("With.Period");
-			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie.lift");
+			var goodLiftPathname = Path.Combine(_pathToProject, "Newbie" + Utilities.LiftExtension);
 			File.WriteAllText(goodLiftPathname, "");
 			Assert.AreEqual(goodLiftPathname, liftProject.LiftPathname);
 		}

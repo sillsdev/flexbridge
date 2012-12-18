@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests
 {
@@ -21,17 +22,17 @@ namespace FLEx_ChorusPluginTests
 			var projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "ZPI")).FullName;
 			Directory.CreateDirectory(Path.Combine(projectPath, ".hg"));
 			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "ZPI.fwdata"), "");
+			File.WriteAllText(Path.Combine(projectPath, "ZPI" + Utilities.FwXmlExtension), "");
 
 			// Remote collaboration not enabled project
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "NotEnabled")).FullName;
 			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "NotEnabled.fwdata"), "");
+			File.WriteAllText(Path.Combine(projectPath, "NotEnabled" + Utilities.FwXmlExtension), "");
 
 			// Client-Server DB4o project
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "DB4o")).FullName;
 			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "DB4o.fwdb"), "");
+			File.WriteAllText(Path.Combine(projectPath, "DB4o" + Utilities.FwDB4oExtension), "");
 
 			// Random non-FW folder
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "RandomFolder")).FullName;

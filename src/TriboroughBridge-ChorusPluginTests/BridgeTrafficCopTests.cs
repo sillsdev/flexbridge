@@ -59,7 +59,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			using (var repo = new RepositorySetup("Rollback", true))
 			{
-				var repoFile = Path.Combine(repo.ProjectFolder.Path, "keeper.lift");
+				var repoFile = Path.Combine(repo.ProjectFolder.Path, "keeper" + Utilities.LiftExtension);
 				repo.AddAndCheckinFile(repoFile, "original stuff");
 				File.WriteAllText(repoFile, "changed stuff");
 

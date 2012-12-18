@@ -125,6 +125,10 @@
 	  <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
 	  <Name>LiftBridge-ChorusPlugin</Name>
 	</ProjectReference>
+	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+	  <Name>TriboroughBridge-ChorusPlugin</Name>
+	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

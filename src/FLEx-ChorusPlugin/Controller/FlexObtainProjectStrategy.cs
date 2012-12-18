@@ -38,7 +38,7 @@ namespace FLEx_ChorusPlugin.Controller
 			// since the real lang proj name is not available in the FW data.
 			var dirInfo = new DirectoryInfo(cloneLocation);
 			var langProjName = dirInfo.Name;
-			_newProjectFilename = langProjName + ".fwdata";
+			_newProjectFilename = langProjName + Utilities.FwXmlExtension;
 			var newHomeDir = Path.Combine(fwrootBaseDir, langProjName);
 
 			var retVal = new ActualCloneResult

@@ -20,14 +20,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-			var lockPathname = Path.Combine(projectPath, projectName + ".fwdata.lock");
+			var lockPathname = Path.Combine(projectPath, projectName + Utilities.FwXmlLockExtension);
 			var othersChanges = false;
 
 			try
 			{
 				File.WriteAllText(lockPathname, "");
 
-				_origPathname = Path.Combine(projectPath, projectName + ".fwdata");
+				_origPathname = Path.Combine(projectPath, projectName + Utilities.FwXmlExtension);
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))

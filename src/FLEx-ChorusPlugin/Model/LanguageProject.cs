@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using FLEx_ChorusPlugin.Properties;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Model
 {
@@ -28,7 +29,7 @@ namespace FLEx_ChorusPlugin.Model
 			{
 				throw new FileNotFoundException("Cannot find the file.", fwdataFile);
 			}
-			if ((!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != ".fwdata"))
+			if ((!Path.HasExtension(fwdataFile) || Path.GetExtension(fwdataFile) != Utilities.FwXmlExtension))
 			{
 				throw new ArgumentException(Resources.kNotAnFwXmlFile, "fwdataFile");
 			}
@@ -58,7 +59,7 @@ namespace FLEx_ChorusPlugin.Model
 		{
 			get
 			{
-				var lockPathname = Path.Combine(DirectoryName, Name + ".fwdata.lock");
+				var lockPathname = Path.Combine(DirectoryName, Name + Utilities.FwXmlLockExtension);
 				return File.Exists(lockPathname);
 			}
 		}

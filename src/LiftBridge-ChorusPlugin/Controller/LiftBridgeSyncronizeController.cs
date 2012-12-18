@@ -37,7 +37,7 @@ namespace SIL.LiftBridge.Controller
 			if (liftPathname == null)
 			{
 				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
-				liftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + ".lift");
+				liftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + Utilities.LiftExtension);
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
 			}
 			var tmpFile = Directory.GetFiles(CurrentProject.PathToProject, "*.tmp").FirstOrDefault();

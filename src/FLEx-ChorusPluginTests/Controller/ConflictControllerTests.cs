@@ -31,7 +31,7 @@ namespace FLEx_ChorusPluginTests.Controller
 		private string GetDummyFilePath()
 		{
 			var path = Path.Combine(_dummyFolderSystem.BaseFolderPath, "ZPI");
-			return Path.Combine(path, "ZPI.fwdata");
+			return Path.Combine(path, "ZPI" + Utilities.FwXmlExtension);
 		}
 
 		[TestFixtureTearDown]

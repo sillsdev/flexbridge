@@ -22,7 +22,7 @@ namespace SIL.LiftBridge.Infrastructure
 		{
 			var othersChanges = false;
 
-			_origPathname = Path.Combine(projectPath, projectName + ".lift");
+			_origPathname = Path.Combine(projectPath, projectName + Utilities.LiftExtension);
 
 			// Do the Chorus business.
 			using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))

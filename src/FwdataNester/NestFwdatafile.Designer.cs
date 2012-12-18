@@ -1,4 +1,6 @@
-﻿namespace FwdataTestApp
+﻿using TriboroughBridge_ChorusPlugin;
+
+namespace FwdataTestApp
 {
 	partial class NestFwdataFile
 	{
@@ -47,7 +49,7 @@
 			//
 			// _openFileDialog
 			//
-			this._openFileDialog.Filter = "Fwdata Files|*.fwdata";
+			this._openFileDialog.Filter = "Fwdata Files|*" + Utilities.FwXmlExtension;
 			//
 			// _btnBrowse
 			//

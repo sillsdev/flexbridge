@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using SIL.LiftBridge.Services;
+using TriboroughBridge_ChorusPlugin;
 
 namespace LiftBridgeTests.ServicesTests
 {
@@ -29,7 +30,7 @@ namespace LiftBridgeTests.ServicesTests
 			Directory.CreateDirectory(Path.Combine(_baseDir, ".git"));
 
 			// Create 'old' files and folders.
-			_newBaseFolderPathname = Path.Combine(_baseDir, "somefile.lift");
+			_newBaseFolderPathname = Path.Combine(_baseDir, "somefile" + Utilities.LiftExtension);
 			File.Create(_newBaseFolderPathname).Close();
 			_newAudioDirName = Path.Combine(_baseDir, "audio");
 			Directory.CreateDirectory(_newAudioDirName);

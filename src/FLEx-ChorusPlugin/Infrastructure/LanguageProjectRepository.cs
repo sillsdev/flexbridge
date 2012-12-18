@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -29,7 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				_baseFolderPaths.SelectMany(baseFolderPath => Directory.
 					GetDirectories(baseFolderPath).
 					Select(dir => Directory.
-						GetFiles(dir, "*.fwdata")).
+						GetFiles(dir, "*" + Utilities.FwXmlExtension)).
 						Where(fwdataFiles => fwdataFiles.Length > 0)))
 			{
 				_projects.Add(new LanguageProject(fwdataFiles[0]));

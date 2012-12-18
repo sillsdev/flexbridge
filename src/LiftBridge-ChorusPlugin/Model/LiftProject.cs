@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using TriboroughBridge_ChorusPlugin;
 
 namespace SIL.LiftBridge.Model
 {
@@ -39,9 +40,9 @@ namespace SIL.LiftBridge.Model
 
 		private static string PathToFirstFwFile(string basePath)
 		{
-			var fwFiles = Directory.GetFiles(basePath, "*.fwdata").ToList();
+			var fwFiles = Directory.GetFiles(basePath, "*" + Utilities.FwXmlExtension).ToList();
 			if (fwFiles.Count == 0)
-				fwFiles = Directory.GetFiles(basePath, "*.fwdb").ToList();
+				fwFiles = Directory.GetFiles(basePath, "*" + Utilities.FwDB4oExtension).ToList();
 			return fwFiles.Count == 0 ? null : (from file in fwFiles
 												  where HasOnlyOneDot(file)
 												  select file).FirstOrDefault();
@@ -49,7 +50,7 @@ namespace SIL.LiftBridge.Model
 
 		private static string PathToFirstLiftFile(LiftProject project)
 		{
-			var liftFiles = Directory.GetFiles(project.PathToProject, "*.lift").ToList();
+			var liftFiles = Directory.GetFiles(project.PathToProject, "*" + Utilities.LiftExtension).ToList();
 			return liftFiles.Count == 0 ? null : (from file in liftFiles
 												  where HasOnlyOneDot(file)
 												  select file).FirstOrDefault();

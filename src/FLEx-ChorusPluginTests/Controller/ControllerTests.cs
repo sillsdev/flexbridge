@@ -4,6 +4,7 @@ using System.Linq;
 using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPluginTests.Mocks;
 using NUnit.Framework;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Controller
 {
@@ -66,7 +67,7 @@ namespace FLEx_ChorusPluginTests.Controller
 									 where project.IsRemoteCollaborationEnabled
 									 select project).First();
 			// Add lock file.
-			var lockPathname = Path.Combine(sharableButLockedProject.DirectoryName, sharableButLockedProject.Name + ".fwdata.lock");
+			var lockPathname = Path.Combine(sharableButLockedProject.DirectoryName, sharableButLockedProject.Name + Utilities.FwXmlLockExtension);
 			File.WriteAllText(lockPathname, "");
 			try
 			{

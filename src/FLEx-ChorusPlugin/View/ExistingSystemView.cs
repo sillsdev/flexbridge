@@ -8,6 +8,7 @@ using Chorus.UI.Settings;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.View
 {
@@ -55,7 +56,7 @@ namespace FLEx_ChorusPlugin.View
 				_tcMain.Enabled = true;
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
-				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(_project.DirectoryName, _project.Name + ".fwdata"), false);
+				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(_project.DirectoryName, _project.Name + Utilities.FwXmlExtension), false);
 				_model = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
 													 SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,
 													 new ChorusUser(chorusSystem.UserNameForHistoryAndNotes));
