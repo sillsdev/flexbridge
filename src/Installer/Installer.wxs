@@ -95,7 +95,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.dll" Guid="C1EDE2FA-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dlll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll"/>
+			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.pdb" Guid="C1EDE2FB-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LiftBridgeChorusPlugin.pdb" Name="LiftBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.pdb"/>
