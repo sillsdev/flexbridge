@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -50,8 +49,8 @@ namespace TriboroughBridge_ChorusPluginTests
 		public void HasAllSupportedModels()
 		{
 			var trafficCop = _container.GetExportedValue<BridgeTrafficCop>();
-			Assert.IsNotNull(trafficCop.GetModel(BridgeModelType.Lift));
-			Assert.IsNotNull(trafficCop.GetModel(BridgeModelType.Flex));
+			Assert.IsNotNull(trafficCop.Models.Select(model => model.ModelType == BridgeModelType.Flex).First());
+			Assert.IsNotNull(trafficCop.Models.Select(model => model.ModelType == BridgeModelType.Lift).First());
 		}
 
 		[Test]

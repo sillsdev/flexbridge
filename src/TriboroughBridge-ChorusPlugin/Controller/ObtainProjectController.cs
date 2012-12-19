@@ -18,11 +18,12 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		[ImportMany]
 		public IEnumerable<IObtainProjectStrategy> Strategies { get; private set; }
-		private IObtainNewProjectView _startupNewView;
-		private MainBridgeForm _mainBridgeForm;
 		private string _baseDir;
 		private ActualCloneResult _actualCloneResult;
 		private IObtainProjectStrategy _currentStrategy;
+
+		private MainBridgeForm _mainBridgeForm;
+		private IObtainNewProjectView _obtainProjectView;
 		private LogBox _logBox;
 
 		private const string RepoProblem = "Empty Repository";
@@ -60,7 +61,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					return;
 				}
 
-				(_startupNewView as Control).Visible = false;
+				(_obtainProjectView as Control).Visible = false;
 				_logBox.Visible = true;
 				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, _logBox);
 				_actualCloneResult.CloneResult = result;
@@ -110,10 +111,10 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					Visible = false,
 					Dock = DockStyle.Fill
 				};
-			_startupNewView = new ObtainProjectView();
-			_mainBridgeForm.Controls.Add((Control)_startupNewView);
+			_obtainProjectView = new ObtainProjectView();
+			_mainBridgeForm.Controls.Add((Control)_obtainProjectView);
 			_mainBridgeForm.Controls.Add(_logBox);
-			_startupNewView.Startup += StartupHandler;
+			_obtainProjectView.Startup += StartupHandler;
 		}
 
 		public ChorusSystem ChorusSystem
@@ -201,8 +202,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				if (_mainBridgeForm != null)
 					_mainBridgeForm.Dispose();
 
-				if (_startupNewView != null)
-					_startupNewView.Startup -= StartupHandler;
+				if (_obtainProjectView != null)
+					_obtainProjectView.Startup -= StartupHandler;
 			}
 			_mainBridgeForm = null;
 

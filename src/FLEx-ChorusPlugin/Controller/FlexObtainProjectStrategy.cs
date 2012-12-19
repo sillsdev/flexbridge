@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
@@ -14,10 +13,10 @@ namespace FLEx_ChorusPlugin.Controller
 	[Export(typeof(IObtainProjectStrategy))]
 	public class FlexObtainProjectStrategy : IObtainProjectStrategy
 	{
+		[Import]
+		private FLExConnectionHelper _connectionHelper;
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
-		[Import]
-		public FLExConnectionHelper ConnectionHelper;
 
 		#region IObtainProjectStrategy impl
 
@@ -71,7 +70,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void TellFlexAboutIt()
 		{
-			ConnectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
 		}
 
 		#endregion

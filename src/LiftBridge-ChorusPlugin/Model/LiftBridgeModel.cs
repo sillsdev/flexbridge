@@ -12,12 +12,11 @@ namespace SIL.LiftBridge.Model
 	[Export(typeof(IBridgeModel))]
 	public class LiftBridgeModel : IBridgeModel
 	{
-		[Import]
-		internal ControllerRepository ControllerRepos { get; private set; }
+		[Import] private ControllerRepository _controllerRepos;
 
 		private IBridgeController GetController(ControllerType controllerType)
 		{
-			return ControllerRepos.GetController(ModelType, controllerType);
+			return _controllerRepos.GetController(ModelType, controllerType);
 		}
 
 		#region Implementation of IBridgeModel

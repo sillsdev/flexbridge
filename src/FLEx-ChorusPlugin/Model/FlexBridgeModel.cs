@@ -13,11 +13,11 @@ namespace FLEx_ChorusPlugin.Model
 	public class FlexBridgeModel : IBridgeModel
 	{
 		[Import]
-		internal ControllerRepository ControllerRepos { get; private set; }
+		private ControllerRepository _controllerRepos;
 
 		private IBridgeController GetController(ControllerType controllerType)
 		{
-			return ControllerRepos.GetController(ModelType, controllerType);
+			return _controllerRepos.GetController(ModelType, controllerType);
 		}
 
 		#region Implementation of IBridgeModel

@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
 using FLEx_ChorusPlugin.Infrastructure;
-using Chorus.UI.Notes;
 using Palaso.Network;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -20,9 +19,7 @@ namespace FLEx_ChorusPlugin.Controller
 	{
 		private IChorusUser _chorusUser;
 		private MainBridgeForm _mainBridgeForm;
-		protected NotesInProjectViewModel _notesModel;
-		protected AnnotationEditorModel _editorModel;
-		protected NotesBrowserPage _notesBrowser;
+		private NotesBrowserPage _notesBrowser;
 		private string _projectDir;
 		private string _projectName;
 
@@ -61,6 +58,7 @@ namespace FLEx_ChorusPlugin.Controller
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
 			var viewer = new BridgeConflictView();
 			_mainBridgeForm.Controls.Add(viewer);
+			_mainBridgeForm.Text = viewer.Text;
 			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 

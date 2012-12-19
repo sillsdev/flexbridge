@@ -55,6 +55,7 @@ namespace SIL.LiftBridge.Controller
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
 			var viewer = new BridgeConflictView();
 			_mainBridgeForm.Controls.Add(viewer);
+			_mainBridgeForm.Text = viewer.Text;
 			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 

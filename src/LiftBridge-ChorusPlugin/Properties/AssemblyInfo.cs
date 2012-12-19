@@ -37,4 +37,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.5.2.0")]
 
 [assembly: InternalsVisibleTo("LiftBridge-ChorusPluginTests")]
-[assembly: InternalsVisibleTo("LiftBridge")]

@@ -17,7 +17,7 @@ namespace SIL.LiftBridge.Controller
 	internal class MoveLiftRepositoryController : IMoveOldLiftRepositorController
 	{
 		[Import]
-		public FLExConnectionHelper ConnectionHelper;
+		private FLExConnectionHelper _connectionHelper;
 		private string _baseLiftDir;
 		private string _fwLangProjGuid;
 		private const string MappingTag = "Mapping";
@@ -127,7 +127,7 @@ namespace SIL.LiftBridge.Controller
 			var liftPathname = Directory.Exists(_baseLiftDir)
 				? Directory.GetFiles(_baseLiftDir, "*" + Utilities.LiftExtension).FirstOrDefault()
 				: null;
-			ConnectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
+			_connectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
 		}
 
 		private static void RemoveElementAndSaveDoc(XDocument mappingDoc, XElement goner, string mappingDocPathname)

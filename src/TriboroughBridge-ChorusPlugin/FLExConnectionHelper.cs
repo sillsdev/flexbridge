@@ -20,18 +20,12 @@ namespace TriboroughBridge_ChorusPlugin
 		private IFLExBridgeService _pipe;
 
 		/// <summary>
-		/// Constructs the helper setting up the local service endpoint and opening
-		/// </summary>
-		internal FLExConnectionHelper()
-		{}
-
-		/// <summary>
 		/// Initialize the helper, setting up the local service endpoint and opening.
 		/// </summary>
 		/// <param name="options">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		public bool Init(Dictionary<string, string> options)
+		internal bool Init(Dictionary<string, string> options)
 		{
 			HostOpened = true;
 
@@ -83,7 +77,7 @@ namespace TriboroughBridge_ChorusPlugin
 					   : string.Empty;
 		}
 
-		public bool HostOpened { get; private set; }
+		private bool HostOpened { get; set; }
 
 		/// <summary>
 		/// Sends the entire FieldWorks project folder path (must include the
@@ -134,7 +128,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		public void SignalBridgeWorkComplete(bool changesReceived)
+		internal void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			// open a channel to flex and send the message.
 			try
@@ -156,7 +150,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Signals FLEx that the bridge sent a jump URL to process.
 		/// </summary>
-		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
 			try
 			{

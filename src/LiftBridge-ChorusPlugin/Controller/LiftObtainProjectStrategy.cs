@@ -14,9 +14,9 @@ namespace SIL.LiftBridge.Controller
 		private bool _createdMainProjectFolder;
 		private string _newLiftPathname;
 		[Import]
-		public FLExConnectionHelper ConnectionHelper;
+		private FLExConnectionHelper _connectionHelper;
 		[Import]
-		public ICreateProjectFromLift LiftprojectCreator;
+		private ICreateProjectFromLift _liftprojectCreator;
 
 		#region IObtainProjectStrategy impl
 
@@ -78,16 +78,16 @@ namespace SIL.LiftBridge.Controller
 		{
 			if (_newLiftPathname == null)
 			{
-				LiftprojectCreator.CreateProjectFromLift(_newLiftPathname);
+				_liftprojectCreator.CreateProjectFromLift(_newLiftPathname);
 				return;
 			}
 			if (_createdMainProjectFolder)
 			{
-				LiftprojectCreator.CreateProjectFromLift(_newLiftPathname);
+				_liftprojectCreator.CreateProjectFromLift(_newLiftPathname);
 			}
 			else
 			{
-				ConnectionHelper.ImportLiftFileSafely(_newLiftPathname);
+				_connectionHelper.ImportLiftFileSafely(_newLiftPathname);
 			}
 		}
 
