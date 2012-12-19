@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 			_newFwProjectPathname = Path.Combine(newHomeDir, _newProjectFilename);
 			File.WriteAllText(_newFwProjectPathname, "");
-			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _newFwProjectPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, false, _newFwProjectPathname);
 
 			retVal.ActualCloneFolder = newHomeDir;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;

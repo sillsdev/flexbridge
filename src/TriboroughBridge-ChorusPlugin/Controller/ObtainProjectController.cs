@@ -17,7 +17,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	internal class ObtainProjectController : IObtainNewProjectController
 	{
 		[ImportMany]
-		public IEnumerable<IObtainProjectStrategy> Strategies { get; private set; }
+		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private string _baseDir;
 		private ActualCloneResult _actualCloneResult;
 		private IObtainProjectStrategy _currentStrategy;
@@ -61,14 +61,22 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					return;
 				}
 
+				_mainBridgeForm.SuspendLayout();
 				(_obtainProjectView as Control).Visible = false;
+				_mainBridgeForm.ClientSize = new Size(293, 353);
+				_logBox.Location = (_obtainProjectView as Control).Location;
+				_logBox.Dock = DockStyle.Fill;
 				_logBox.Visible = true;
+				_mainBridgeForm.ResumeLayout(true);
+
 				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, _logBox);
 				_actualCloneResult.CloneResult = result;
+
 				if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
 				{
 					MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
+
 				_mainBridgeForm.Close();
 				return;
 			}
@@ -100,16 +108,18 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 			_logBox = new LogBox
 				{
+					AutoSizeMode = AutoSizeMode.GrowAndShrink,
+					CancelRequested = false,
+					Dock = DockStyle.Fill,
+					ErrorEncountered = false,
 					GetDiagnosticsMethod = null,
 					ProgressIndicator = null,
-					CancelRequested = false,
-					ShowCopyToClipboardMenuItem = false,
-					ShowDetailsMenuItem = false,
+					ShowDetailsMenuItem = true,
+					ShowCopyToClipboardMenuItem = true,
 					ShowDiagnosticsMenuItem = false,
 					ShowFontMenuItem = false,
 					ShowMenu = true,
-					Visible = false,
-					Dock = DockStyle.Fill
+					Visible = false
 				};
 			_obtainProjectView = new ObtainProjectView();
 			_mainBridgeForm.Controls.Add((Control)_obtainProjectView);

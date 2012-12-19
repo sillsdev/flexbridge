@@ -127,6 +127,7 @@ namespace TriboroughBridge_ChorusPlugin
 			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
 			var newRepo = new HgRepository(targetFolder, progress);
 			newRepo.Update();
+			progress.WriteMessage("Moved to new location in: '" + targetFolder + "'.");
 
 			// Move the import failure notification file
 			var roadblock = Path.Combine(sourceFolder, FailureFilename);
