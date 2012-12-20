@@ -1,8 +1,11 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
+using Chorus.UI.Clone;
 using Chorus.UI.Sync;
+using Chorus.VcsDrivers;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 
@@ -43,6 +46,21 @@ namespace SIL.LiftBridge.Infrastructure
 				syncDlg.BringToFront();
 				syncDlg.ShowDialog(parent);
 
+				foreach (var hgDir in syncDlg.SyncOptions.RepositorySourcesToTry
+						.OfType<UsbKeyRepositorySource>().Select(usbAddress => new CloneFromUsb
+							{
+								ProjectFilter = repositoryLocation =>
+									{
+										var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
+										return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
+									}})
+						.SelectMany(usbCloner => usbCloner.GetDirectoriesWithMecurialRepos()
+						.Where(hgDir => hgDir.EndsWith("LIFT") && !hgDir.Contains("_LIFT"))))
+				{
+					// Try to rename the cloned repo on the USB drive to something that matches the project name.
+					RenameFolderIfPossible(hgDir, hgDir.Replace("LIFT", projectName + "_LIFT"));
+				}
+
 				if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
 					othersChanges = true;
 			}
@@ -51,5 +69,15 @@ namespace SIL.LiftBridge.Infrastructure
 		}
 
 		#endregion
+
+		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
+		{
+			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
+			{
+				Directory.Move(actualCloneLocation, possibleNewLocation);
+				return true;
+			}
+			return false;
+		}
 	}
 }
