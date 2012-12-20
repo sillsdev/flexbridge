@@ -572,5 +572,14 @@ namespace SIL.LiftBridge.Properties {
 				return ResourceManager.GetString("SendReceiveView_DialogTitle", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Send/Receive Lexicon (LIFT).
+		/// </summary>
+		public static string SendReceiveView_DialogTitleLift {
+			get {
+				return ResourceManager.GetString("SendReceiveView_DialogTitleLift", resourceCulture);
+			}
+		}
 	}
 }

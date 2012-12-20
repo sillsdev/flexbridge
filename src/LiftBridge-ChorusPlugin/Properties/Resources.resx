@@ -297,4 +297,7 @@ You probably have a Conflict Report open. It will need to be closed before you c
 &lt;lift-ranges&gt;
 &lt;/lift-ranges&gt;</value>
   </data>
+  <data name="SendReceiveView_DialogTitleLift" xml:space="preserve">
+	<value>Send/Receive Lexicon (LIFT)</value>
+  </data>
 </root>

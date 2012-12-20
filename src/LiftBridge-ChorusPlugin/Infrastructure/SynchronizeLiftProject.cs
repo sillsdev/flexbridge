@@ -38,7 +38,7 @@ namespace SIL.LiftBridge.Infrastructure
 				syncDlg.SyncOptions.DoPullFromOthers = true;
 				syncDlg.SyncOptions.DoMergeWithOthers = true;
 				syncDlg.SyncOptions.DoSendToOthers = true;
-				syncDlg.Text = Resources.SendReceiveView_DialogTitle;
+				syncDlg.Text = Resources.SendReceiveView_DialogTitleLift;
 				syncDlg.StartPosition = FormStartPosition.CenterScreen;
 				syncDlg.BringToFront();
 				syncDlg.ShowDialog(parent);

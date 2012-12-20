@@ -49,7 +49,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					syncDlg.SyncOptions.DoPullFromOthers = true;
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
 					syncDlg.SyncOptions.DoSendToOthers = true;
-					syncDlg.Text = Resources.SendReceiveView_DialogTitle;
+					syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
 					syncDlg.ShowDialog(parent);
 
 					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
