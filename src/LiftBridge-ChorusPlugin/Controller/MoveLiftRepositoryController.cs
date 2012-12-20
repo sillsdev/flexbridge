@@ -19,6 +19,7 @@ namespace SIL.LiftBridge.Controller
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 		private string _baseLiftDir;
+		private string _otherRepoDir;
 		private string _fwLangProjGuid;
 		private const string MappingTag = "Mapping";
 		private const string ProjectguidAttrTag = "projectguid";
@@ -32,6 +33,7 @@ namespace SIL.LiftBridge.Controller
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			_otherRepoDir = Directory.GetParent(_baseLiftDir).FullName;
 			_fwLangProjGuid = options["-g"];
 		}
 
@@ -114,12 +116,17 @@ namespace SIL.LiftBridge.Controller
 			if (oldLiftFolder == null)
 				return;
 
+			if (!Directory.Exists(_otherRepoDir))
+				Directory.CreateDirectory(_otherRepoDir);
+
 			Utilities.MakeLocalClone(oldLiftFolder, _baseLiftDir, new NullProgress());
 
 			var folderToZap = mappingDoc.Root.HasElements || Directory.GetDirectories(basePathForOldLiftRepos).Length > 1
 								  ? oldLiftFolder
 								  : basePathForOldLiftRepos;
 			Directory.Delete(folderToZap, true);
+			if (!Directory.Exists(_baseLiftDir) && Directory.GetDirectories(_baseLiftDir).Length == 0)
+				Directory.Delete(_otherRepoDir);
 		}
 
 		public void EndWork()
