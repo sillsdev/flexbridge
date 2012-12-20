@@ -104,7 +104,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 			if (vOption != null && vOption == about_flex_bridge)
 			{
-				// Do this before fretting about a controller. (Or, make a soecial controller for it?)
+				// Do this before fretting about a controller. (Or, make a special controller for it?)
 				Process.Start(Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
 				return false;
 			}
