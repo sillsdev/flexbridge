@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
 using TriboroughBridge_ChorusPlugin.View;
@@ -35,6 +37,7 @@ namespace TriboroughBridge_ChorusPlugin
 		private const string undo_export = "undo_export";
 		private const string undo_export_lift = "undo_export_lift";
 		private const string move_lift = "move_lift";
+		private const string about_flex_bridge = "about_flex_bridge";
 // ReSharper restore InconsistentNaming
 
 		public IBridgeModel InitializeCurrentModel(Dictionary<string, string> options)
@@ -96,6 +99,15 @@ namespace TriboroughBridge_ChorusPlugin
 
 			if (!_connectionHelper.Init(options))
 				return false;
+			string vOption;
+			options.TryGetValue("-v", out vOption);
+
+			if (vOption != null && vOption == about_flex_bridge)
+			{
+				// Do this before fretting about a controller. (Or, make a soecial controller for it?)
+				Process.Start(Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
+				return false;
+			}
 
 			_changesReceived = false;
 			InitializeCurrentModel(options);

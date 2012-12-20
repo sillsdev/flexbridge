@@ -150,7 +150,16 @@
 	</Compile>
 	<Compile Include="View\StartupNewEventArgs.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+	<None Include="..\..\DistFiles\about.htm">
+	  <Link>about.htm</Link>
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\DistFiles\LogoForAbout.png">
+	  <Link>LogoForAbout.png</Link>
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="Properties\CommonResources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
