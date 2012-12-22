@@ -20,6 +20,8 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string FwDB4oExtensionNoPeriod = "fwdb";
 		public const string LiftExtension = ".lift";
 		public const string LiftRangesExtension = ".lift-ranges";
+		public const string OtherRepositories = "OtherRepositories";
+		public const string LIFT = "LIFT";
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -89,7 +91,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string LiftOffset(string path)
 		{
-			return Path.Combine(path, "OtherRepositories", "LIFT");
+			return Path.Combine(path, OtherRepositories, LIFT);
 		}
 
 		/// <summary>
@@ -119,6 +121,10 @@ namespace TriboroughBridge_ChorusPlugin
 		public static void MakeLocalClone(string sourceFolder, string targetFolder, IProgress progress)
 		{
 			progress.WriteMessage(CommonResources.kMovingRepo);
+
+			var parentFolder = Directory.GetParent(targetFolder).FullName;
+			if (!Directory.Exists(parentFolder))
+				Directory.CreateDirectory(parentFolder);
 
 			// Do a clone of the lift repo into the new home.
 			var oldRepo = new HgRepository(sourceFolder, progress);

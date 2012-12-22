@@ -55,10 +55,10 @@ namespace SIL.LiftBridge.Infrastructure
 										return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
 									}})
 						.SelectMany(usbCloner => usbCloner.GetDirectoriesWithMecurialRepos()
-						.Where(hgDir => hgDir.EndsWith("LIFT") && !hgDir.Contains("_LIFT"))))
+						.Where(hgDir => hgDir.EndsWith(Utilities.LIFT) && !hgDir.Contains("_" + Utilities.LIFT))))
 				{
 					// Try to rename the cloned repo on the USB drive to something that matches the project name.
-					RenameFolderIfPossible(hgDir, hgDir.Replace("LIFT", projectName + "_LIFT"));
+					RenameFolderIfPossible(hgDir, hgDir.Replace(Utilities.LIFT, projectName + "_" + Utilities.LIFT));
 				}
 
 				if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)

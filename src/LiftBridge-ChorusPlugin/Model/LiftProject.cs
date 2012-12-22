@@ -29,7 +29,7 @@ namespace SIL.LiftBridge.Model
 		{
 			get
 			{
-				return Path.Combine(BasePath, "OtherRepositories", "LIFT");
+				return Path.Combine(BasePath, Utilities.OtherRepositories, Utilities.LIFT);
 			}
 		}
 

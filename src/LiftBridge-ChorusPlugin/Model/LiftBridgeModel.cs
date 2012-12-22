@@ -68,7 +68,7 @@ namespace SIL.LiftBridge.Model
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			var pOption = options["-p"];
-			PathToRepository = Path.Combine(Path.GetDirectoryName(pOption), "OtherRepositories", "LIFT");
+			PathToRepository = Path.Combine(Path.GetDirectoryName(pOption), Utilities.OtherRepositories, Utilities.LIFT);
 			if (!Directory.Exists(PathToRepository))
 				Directory.CreateDirectory(PathToRepository);
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);

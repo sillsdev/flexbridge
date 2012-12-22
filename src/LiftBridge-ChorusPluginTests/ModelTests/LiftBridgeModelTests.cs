@@ -39,8 +39,8 @@ namespace LiftBridgeTests.ModelTests
 		public void HasCorrectPathForProject()
 		{
 			CreateNewbieProject();
-			Assert.IsTrue(_pathToProject.EndsWith("LIFT"));
-			Assert.IsTrue(_pathToProject.Contains("OtherRepositories"));
+			Assert.IsTrue(_pathToProject.EndsWith(Utilities.LIFT));
+			Assert.IsTrue(_pathToProject.Contains(Utilities.OtherRepositories));
 		}
 
 		[Test]

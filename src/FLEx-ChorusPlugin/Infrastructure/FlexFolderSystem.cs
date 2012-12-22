@@ -34,7 +34,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "trash", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "WritingSystemsToIgnore.xml.ChorusNotes"));
-			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("OtherRepositories", "**.*")); // Folder for contined LIFT and PT-FLEx repos.
+			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine(Utilities.OtherRepositories, "**.*")); // Folder for contined LIFT and PT-FLEx repos.
 			if (!projectFolderConfiguration.ExcludePatterns.Contains("**.NewChorusNotes"))
 				projectFolderConfiguration.ExcludePatterns.Add("**.NewChorusNotes"); // Not really needed, since Chorus adds them. But, knows for how long?
 			ProjectFolderConfiguration.AddExcludedVideoExtensions(projectFolderConfiguration);
