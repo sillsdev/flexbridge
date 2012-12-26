@@ -142,12 +142,6 @@
 	<Compile Include="View\LocalCloneDlg.Designer.cs">
 	  <DependentUpon>LocalCloneDlg.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\LogControl.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\LogControl.Designer.cs">
-	  <DependentUpon>LogControl.cs</DependentUpon>
-	</Compile>
 	<Compile Include="View\MainBridgeForm.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -182,9 +176,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\LocalCloneDlg.resx">
 	  <DependentUpon>LocalCloneDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\LogControl.resx">
-	  <DependentUpon>LogControl.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\MainBridgeForm.resx">
 	  <DependentUpon>MainBridgeForm.cs</DependentUpon>

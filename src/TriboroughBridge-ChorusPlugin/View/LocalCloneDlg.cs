@@ -10,8 +10,13 @@ namespace TriboroughBridge_ChorusPlugin.View
 			InitializeComponent();
 		}
 
-		public IProgress ProgressLog { get { return logControl1.ProgressLog; } }
+		public IProgress ProgressLog { get { return _logBox; } }
 
-		public bool EnableCloseButton {set { logControl1.EnableCloseButton = value; }}
+		public bool EnableCloseButton {set { _btnClose.Enabled = value; }}
+
+		private void OkClicked(object sender, System.EventArgs e)
+		{
+			Close();
+		}
 	}
 }
