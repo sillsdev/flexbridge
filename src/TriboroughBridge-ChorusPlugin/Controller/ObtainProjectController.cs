@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
-using Palaso.UI.WindowsForms.Progress;
 using TriboroughBridge_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin.View;
 
@@ -24,7 +24,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private MainBridgeForm _mainBridgeForm;
 		private IObtainNewProjectView _obtainProjectView;
-		private LogBox _logBox;
+		private LocalCloneDlg _localCloneDlg;
+		private BackgroundWorker _backgroundWorker;
 
 		private const string RepoProblem = "Empty Repository";
 		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
@@ -32,6 +33,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
 			_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
+
 			// This handler can't really work (yet) in an environment where the local system has an extant project,
 			// and the local user wants to collaborate with a remote user,
 			// where the FW language project is the 'same' on both computers.
@@ -61,26 +63,42 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					return;
 				}
 
-				_mainBridgeForm.SuspendLayout();
-				(_obtainProjectView as Control).Visible = false;
-				_mainBridgeForm.ClientSize = new Size(293, 353);
-				_logBox.Location = (_obtainProjectView as Control).Location;
-				_logBox.Dock = DockStyle.Fill;
-				_logBox.Visible = true;
-				_mainBridgeForm.ResumeLayout(true);
 
-				_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, _logBox);
-				_actualCloneResult.CloneResult = result;
+				_localCloneDlg = new LocalCloneDlg();
+				_localCloneDlg.Closed += LocalCloneDlgOnClosed;
+				_backgroundWorker = new BackgroundWorker();
+				_localCloneDlg.Show(_mainBridgeForm);
 
-				if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
-				{
-					MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
+				_backgroundWorker.WorkerSupportsCancellation = false;
+				_backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
+				_backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
 
-				_mainBridgeForm.Close();
-				return;
+				_backgroundWorker.RunWorkerAsync(new object[] { result, _localCloneDlg, _currentStrategy, _actualCloneResult });
 			}
+		}
+
+		private void LocalCloneDlgOnClosed(object sender, EventArgs eventArgs)
+		{
+			if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+			{
+				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
+
 			_mainBridgeForm.Cursor = Cursors.Default;
+			_mainBridgeForm.Close();
+		}
+
+		void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			_localCloneDlg.EnableCloseButton = true;
+		}
+
+		private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs doWorkEventArgs)
+		{
+			var args = doWorkEventArgs.Argument as object[];
+			var result = (CloneResult)args[0];
+			_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, (args[1] as LocalCloneDlg).ProgressLog);
+			_actualCloneResult.CloneResult = result;
 		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
@@ -106,24 +124,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
 
-			_logBox = new LogBox
-				{
-					AutoSizeMode = AutoSizeMode.GrowAndShrink,
-					CancelRequested = false,
-					Dock = DockStyle.Fill,
-					ErrorEncountered = false,
-					GetDiagnosticsMethod = null,
-					ProgressIndicator = null,
-					ShowDetailsMenuItem = true,
-					ShowCopyToClipboardMenuItem = true,
-					ShowDiagnosticsMenuItem = false,
-					ShowFontMenuItem = false,
-					ShowMenu = true,
-					Visible = false
-				};
 			_obtainProjectView = new ObtainProjectView();
 			_mainBridgeForm.Controls.Add((Control)_obtainProjectView);
-			_mainBridgeForm.Controls.Add(_logBox);
 			_obtainProjectView.Startup += StartupHandler;
 		}
 

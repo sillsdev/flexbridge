@@ -134,11 +134,6 @@ namespace TriboroughBridge_ChorusPlugin
 			var newRepo = new HgRepository(targetFolder, progress);
 			newRepo.Update();
 			progress.WriteMessage("Moved to new location in: '" + targetFolder + "'.");
-
-			// Move the import failure notification file
-			var roadblock = Path.Combine(sourceFolder, FailureFilename);
-			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
 		}
 	}
 }

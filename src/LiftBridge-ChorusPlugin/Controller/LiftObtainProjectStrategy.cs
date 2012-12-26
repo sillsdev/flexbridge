@@ -68,11 +68,21 @@ namespace SIL.LiftBridge.Controller
 				Directory.CreateDirectory(Path.Combine(newHomeBaseDir, Utilities.OtherRepositories));
 			}
 
+			// Move roadblock to safety, if needed.
+			var roadblock = Path.Combine(cloneLocation, Utilities.FailureFilename);
+			if (File.Exists(roadblock))
+				File.Copy(roadblock, Path.Combine(Path.GetTempPath(), Utilities.FailureFilename), true);
+
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
 			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
 			Utilities.MakeLocalCloneAndRemoveSourceParentFolder(cloneLocation, newHomeDir, progress);
 			_newLiftPathname = PathToFirstLiftFile(newHomeDir);
+
+			// Move the import failure notification file
+			roadblock = Path.Combine(Path.GetTempPath(), Utilities.FailureFilename);
+			if (File.Exists(roadblock))
+				File.Copy(roadblock, Path.Combine(newHomeDir, Utilities.FailureFilename), true);
 
 			retVal.ActualCloneFolder = newHomeDir;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;

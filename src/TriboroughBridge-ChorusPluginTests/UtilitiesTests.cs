@@ -46,7 +46,6 @@ namespace TriboroughBridge_ChorusPluginTests
 				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
 				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy" + Utilities.LiftExtension)));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, Utilities.FailureFilename)));
 			}
 			finally
 			{
