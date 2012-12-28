@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
-using FLEx_ChorusPlugin.Infrastructure;
-using Palaso.Network;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.Controller
+namespace TriboroughBridge_ChorusPlugin.Controller
 {
 	[Export(typeof(IBridgeController))]
-	internal class FlexBridgeConflictController : IConflictController
+	internal class BridgeConflictController : IConflictController
 	{
+		[ImportMany]
+		private IEnumerable<IConflictStrategy> Strategies { get; set; }
+		private IConflictStrategy _currentStrategy;
 		private IChorusUser _chorusUser;
 		private MainBridgeForm _mainBridgeForm;
 		private NotesBrowserPage _notesBrowser;
@@ -25,32 +24,43 @@ namespace FLEx_ChorusPlugin.Controller
 
 		private void JumpToFlexObject(string url)
 		{
-			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
-			var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
-			if (hostLength < 0)
-				return; // can't do it, not a valid FLEx url.
+			// Original FLEx URL processing code.
+			//// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
+			//var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
+			//if (hostLength < 0)
+			//    return; // can't do it, not a valid FLEx url.
 
-			var host = url.Substring(0, hostLength);
-			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _projectName);
-			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
+			//var host = url.Substring(0, hostLength);
+			//var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _projectName);
+			//var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
-			// Instead of closing the conflict viewer we now need to fire this event to notify
-			// the FLExConnectionHelper that we have a URL to jump to.
+			//// Instead of closing the conflict viewer we now need to fire this event to notify
+			//// the FLExConnectionHelper that we have a URL to jump to.
+			//if (JumpUrlChanged != null)
+			//    JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
+
+			// Just let FLEx sort out both of them.
 			if (JumpUrlChanged != null)
-				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
+				JumpUrlChanged(this, new JumpEventArgs(url));
+		}
+
+		private IConflictStrategy GetCurrentStrategy(ControllerType controllerType)
+		{
+			return Strategies.FirstOrDefault(strategy => strategy.SupportedControllerAction == controllerType);
 		}
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			_projectDir = Path.GetDirectoryName(options["-p"]);
-			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
+			_currentStrategy = GetCurrentStrategy(controllerType);
+			_projectDir = _currentStrategy.GetProjectDir(options["-p"]);
+			_projectName = _currentStrategy.GetProjectName(options["-p"]);
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(904, 510);
 
 			_chorusUser = new ChorusUser(options["-u"]);
-			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, _chorusUser.Name, _currentStrategy.ConfigureProjectFolders);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
@@ -72,12 +82,12 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public IEnumerable<ControllerType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> {ControllerType.ViewNotes}; }
+			get { return new List<ControllerType> { ControllerType.ViewNotes, ControllerType.ViewNotesLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
 		{
-			get { return new List<BridgeModelType> { BridgeModelType.Flex }; }
+			get { return new List<BridgeModelType> { BridgeModelType.Flex, BridgeModelType.Lift }; }
 		}
 
 		#endregion
@@ -94,7 +104,7 @@ namespace FLEx_ChorusPlugin.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FlexBridgeConflictController()
+		~BridgeConflictController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -143,9 +153,6 @@ namespace FLEx_ChorusPlugin.Controller
 
 			if (disposing)
 			{
-				if (_mainBridgeForm != null)
-					_mainBridgeForm.Dispose();
-
 				if (ChorusSystem  != null)
 					ChorusSystem.Dispose();
 			}

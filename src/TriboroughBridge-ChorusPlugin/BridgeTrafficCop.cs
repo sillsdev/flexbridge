@@ -28,16 +28,16 @@ namespace TriboroughBridge_ChorusPlugin
 		internal IBridgeModel CurrentModel { get; private set; }
 
 // ReSharper disable InconsistentNaming
-		private const string obtain = "obtain";
-		private const string obtain_lift = "obtain_lift";
-		private const string send_receive = "send_receive";
-		private const string send_receive_lift = "send_receive_lift";
-		private const string view_notes = "view_notes";
-		private const string view_notes_lift = "view_notes_lift";
-		private const string undo_export = "undo_export";
-		private const string undo_export_lift = "undo_export_lift";
-		private const string move_lift = "move_lift";
-		private const string about_flex_bridge = "about_flex_bridge";
+		internal const string obtain = "obtain";
+		internal const string obtain_lift = "obtain_lift";
+		internal const string send_receive = "send_receive";
+		internal const string send_receive_lift = "send_receive_lift";
+		internal const string view_notes = "view_notes";
+		internal const string view_notes_lift = "view_notes_lift";
+		internal const string undo_export = "undo_export";
+		internal const string undo_export_lift = "undo_export_lift";
+		internal const string move_lift = "move_lift";
+		internal const string about_flex_bridge = "about_flex_bridge";
 // ReSharper restore InconsistentNaming
 
 		public IBridgeModel InitializeCurrentModel(Dictionary<string, string> options)

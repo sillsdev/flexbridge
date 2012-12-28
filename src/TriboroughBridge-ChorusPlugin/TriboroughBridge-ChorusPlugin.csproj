@@ -107,8 +107,10 @@
 	<Compile Include="BridgeTrafficCop.cs" />
 	<Compile Include="ControllerType.cs" />
 	<Compile Include="Controller\ControllerRepository.cs" />
+	<Compile Include="Controller\BridgeConflictController.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
+	<Compile Include="Controller\IConflictStrategy.cs" />
 	<Compile Include="Controller\IMoveOldLiftRepositorController.cs" />
 	<Compile Include="Controller\IObtainNewProjectController.cs" />
 	<Compile Include="Controller\IObtainProjectStrategy.cs" />
@@ -170,6 +172,7 @@
 	<EmbeddedResource Include="Properties\CommonResources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\BridgeConflictView.resx">
 	  <DependentUpon>BridgeConflictView.cs</DependentUpon>
