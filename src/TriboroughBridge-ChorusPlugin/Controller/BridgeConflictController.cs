@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Notes.Browser;
+using Palaso.Network;
 using TriboroughBridge_ChorusPlugin.View;
 
 namespace TriboroughBridge_ChorusPlugin.Controller
@@ -24,24 +25,22 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private void JumpToFlexObject(string url)
 		{
-			// Original FLEx URL processing code.
 			//// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
-			//var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
-			//if (hostLength < 0)
-			//    return; // can't do it, not a valid FLEx url.
+			var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
+			if (hostLength < 0)
+				return; // can't do it, not a valid FLEx url.
 
-			//var host = url.Substring(0, hostLength);
-			//var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _projectName);
-			//var query = HttpUtilityFromMono.UrlEncode(originalQuery);
+			var host = url.Substring(0, hostLength);
+			// This should be fairly safe for a lift URL, since it won't have the "database=current" string in the query.
+			// A lift URL will be something like:
+			//		lift://foo.lift?type=entry&id=someguid&label=formforentry
+			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _projectName);
+			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
-			//// Instead of closing the conflict viewer we now need to fire this event to notify
-			//// the FLExConnectionHelper that we have a URL to jump to.
-			//if (JumpUrlChanged != null)
-			//    JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
-
-			// Just let FLEx sort out both of them.
+			// Instead of closing the conflict viewer we now need to fire this event to notify
+			// the FLExConnectionHelper that we have a URL to jump to.
 			if (JumpUrlChanged != null)
-				JumpUrlChanged(this, new JumpEventArgs(url));
+				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
 		}
 
 		private IConflictStrategy GetCurrentStrategy(ControllerType controllerType)
