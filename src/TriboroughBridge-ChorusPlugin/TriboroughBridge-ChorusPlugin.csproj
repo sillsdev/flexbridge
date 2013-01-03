@@ -134,7 +134,7 @@
 	<Compile Include="View\BridgeConflictView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\BridgeConflictView.designer.cs">
+	<Compile Include="View\BridgeConflictView.Designer.cs">
 	  <DependentUpon>BridgeConflictView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\IObtainNewProjectView.cs" />
@@ -153,7 +153,7 @@
 	<Compile Include="View\ObtainProjectView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\ObtainProjectView.designer.cs">
+	<Compile Include="View\ObtainProjectView.Designer.cs">
 	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="View\StartupNewEventArgs.cs" />
