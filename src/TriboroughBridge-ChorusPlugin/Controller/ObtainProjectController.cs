@@ -85,6 +85,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			}
 
 			_mainBridgeForm.Cursor = Cursors.Default;
+			_localCloneDlg.Closed -= LocalCloneDlgOnClosed; //we've done our bit, and closing the parent form will call close on the child dialog
 			_mainBridgeForm.Close();
 		}
 
