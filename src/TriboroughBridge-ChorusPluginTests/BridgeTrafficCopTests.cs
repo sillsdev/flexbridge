@@ -53,7 +53,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			Assert.IsNotNull(trafficCop.Models.Select(model => model.ModelType == BridgeModelType.Lift).First());
 		}
 
-		[Test]
+		[Test, Category("UnknownMonoIssue")]
 		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFIles_AndLeavesTombstone()
 		{
 			using (var repo = new RepositorySetup("Rollback", true))
