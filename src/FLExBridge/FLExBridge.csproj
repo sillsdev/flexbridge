@@ -132,23 +132,6 @@
 	</Compile>
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
 	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
 	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
