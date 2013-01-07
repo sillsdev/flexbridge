@@ -74,6 +74,11 @@ namespace FLEx_ChorusPlugin.Controller
 			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
 		}
 
+		public BridgeModelType SupportedModelType
+		{
+			get { return BridgeModelType.Flex; }
+		}
+
 		#endregion
 	}
 }

@@ -9,6 +9,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		bool IsRepositoryEmpty(string repositoryLocation);
 		ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation, IProgress progress);
 		void TellFlexAboutIt();
+		BridgeModelType SupportedModelType { get; }
 	}
 
 	public class ActualCloneResult

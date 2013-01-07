@@ -107,6 +107,11 @@ namespace SIL.LiftBridge.Controller
 			}
 		}
 
+		public BridgeModelType SupportedModelType
+		{
+			get { return BridgeModelType.Lift; }
+		}
+
 		#endregion
 
 		private static string PathToFirstLiftFile(string cloneLocation)

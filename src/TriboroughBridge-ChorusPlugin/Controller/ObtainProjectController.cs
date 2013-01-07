@@ -19,9 +19,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private string _baseDir;
+		private string _vOption;
 		private ActualCloneResult _actualCloneResult;
 		private IObtainProjectStrategy _currentStrategy;
-
 		private MainBridgeForm _mainBridgeForm;
 		private IObtainNewProjectView _obtainProjectView;
 		private LocalCloneDlg _localCloneDlg;
@@ -51,30 +51,28 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			var getSharedProject = new GetSharedProject();
 			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, tempCloneDirInfo.FullName, null);
 
-			if (result.CloneStatus == CloneStatus.Created)
+			if (result.CloneStatus != CloneStatus.Created)
+				return;
+
+			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
+			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
-				_currentStrategy = GetCurrentStrategy(result.ActualLocation);
-				if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
-				{
-					_mainBridgeForm.Cursor = Cursors.Default;
-					Directory.Delete(Directory.GetParent(result.ActualLocation).FullName, true); // Don't want the newly created empty folder to hang around and mess us up!
-					MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
-					_mainBridgeForm.Close();
-					return;
-				}
-
-
-				_localCloneDlg = new LocalCloneDlg();
-				_localCloneDlg.Closed += LocalCloneDlgOnClosed;
-				_backgroundWorker = new BackgroundWorker();
-				_localCloneDlg.Show(_mainBridgeForm);
-
-				_backgroundWorker.WorkerSupportsCancellation = false;
-				_backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
-				_backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
-
-				_backgroundWorker.RunWorkerAsync(new object[] { result, _localCloneDlg, _currentStrategy, _actualCloneResult });
+				_mainBridgeForm.Cursor = Cursors.Default;
+				Directory.Delete(Directory.GetParent(result.ActualLocation).FullName, true); // Don't want the newly created empty folder to hang around and mess us up!
+				MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
+				_mainBridgeForm.Close();
+				return;
 			}
+
+			_localCloneDlg = new LocalCloneDlg();
+			_localCloneDlg.Closed += LocalCloneDlgOnClosed;
+			_backgroundWorker = new BackgroundWorker();
+			_localCloneDlg.Show(_mainBridgeForm);
+
+			_backgroundWorker.WorkerSupportsCancellation = false;
+			_backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
+			_backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
+			_backgroundWorker.RunWorkerAsync(new object[] { result, _localCloneDlg, _currentStrategy, _actualCloneResult });
 		}
 
 		private void LocalCloneDlgOnClosed(object sender, EventArgs eventArgs)
@@ -104,7 +102,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
-			return Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
+			return (_vOption == BridgeTrafficCop.obtain_lift)
+				? Strategies.FirstOrDefault(strategy => strategy.SupportedModelType == BridgeModelType.Lift)
+				: Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
 		}
 
 		private bool ProjectFilter(string path)
@@ -112,11 +112,31 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			return Strategies.Any(strategy => strategy.ProjectFilter(path));
 		}
 
+		private void CheckOptionCompatibility(Dictionary<string, string> options)
+		{
+			// "-p" will be $fwroot (for get either type of repo) or $fwroot\foo to only get a lift repo for an extant project.
+			// If "-p" is $fwroot, then the "-v" option *must* be "obtain".
+			// If "-p" is $fwroot\foo, then the "-v" option *must* be "obtain_lift".
+			var vOption = options["-v"];
+			var pOption = options["-p"];
+			var fwrootDir = Utilities.ProjectsPath.ToLowerInvariant();
+
+			if (((pOption.ToLowerInvariant() == fwrootDir) && (vOption == BridgeTrafficCop.obtain_lift))
+				|| ((pOption.ToLowerInvariant() != fwrootDir) && (vOption == BridgeTrafficCop.obtain)))
+			{
+				throw new ApplicationException("Incompatible options for '-p' and '-v'");
+			}
+
+			_vOption = vOption;
+			_baseDir = pOption;
+		}
+
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			_baseDir = options["-p"];
+			CheckOptionCompatibility(options);
+
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(239, 313);
 			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
