@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
@@ -47,6 +48,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		public MergeStrategies GetStrategies()
 		{
 			return _merger.MergeStrategies;
+		}
+
+		/// <summary>
+		/// FieldWorks never mixes elements and text in the same parent, so there is no need to suppress indenting.
+		/// </summary>
+		/// <returns></returns>
+		public HashSet<string> SuppressIndentingChildren()
+		{
+			return new HashSet<string>();
 		}
 
 		#endregion

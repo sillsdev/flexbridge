@@ -60,6 +60,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 			return _merger.MergeStrategies;
 		}
 
+		/// <summary>
+		/// FieldWorks never mixes elements and text in the same parent, so there is no need to suppress indenting.
+		/// </summary>
+		/// <returns></returns>
+		public HashSet<string> SuppressIndentingChildren()
+		{
+			return new HashSet<string>();
+		}
+
 		#endregion
 	}
 }
