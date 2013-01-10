@@ -229,6 +229,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		private string PullOutStrings(XmlNode nameOrAbbrev)
 		{
 			var labels = string.Empty;
+			if (nameOrAbbrev == null)
+				return labels; // maybe there is no Name node at all.
 			var auniList = nameOrAbbrev.SelectNodes(SharedConstants.AUni);
 			if (auniList == null)
 				return labels;
