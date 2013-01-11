@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
@@ -22,6 +24,39 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
+		private static HashSet<string> _extantRepoIdentifiers;
+
+		internal static void ClearCacheForTests()
+		{
+			_extantRepoIdentifiers = null;
+		}
+
+		public static bool AlreadyHasLocalRepository(string fwProjectBaseDir, string repositoryLocation)
+		{
+			if (_extantRepoIdentifiers == null)
+			{
+				CacheExtantRepositoryIdentifiers(fwProjectBaseDir);
+			}
+			var repo = new HgRepository(repositoryLocation, new NullProgress());
+			var identifier = repo.Identifier;
+
+			// We don't really want to clone an empty repo (identifier == null).
+			return identifier == null || _extantRepoIdentifiers.Contains(identifier);
+		}
+
+		private static void CacheExtantRepositoryIdentifiers(string fwProjectBaseDir)
+		{
+			_extantRepoIdentifiers = new HashSet<string>();
+			var repoContainingFolders = Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.AllDirectories)
+				.Where(folder => Directory.Exists(Path.Combine(folder, BridgeTrafficCop.hg)));
+			foreach (var repoParentFolder in repoContainingFolders)
+			{
+				var repo = new HgRepository(repoParentFolder, new NullProgress());
+				var identifier = repo.Identifier;
+				if (identifier != null)
+					_extantRepoIdentifiers.Add(identifier);
+			}
+		}
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -86,12 +121,28 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string HgDataFolder(string path)
 		{
-			return Path.Combine(path, ".hg", "store", "data");
+			return Path.Combine(path, BridgeTrafficCop.hg, "store", "data");
 		}
 
 		public static string LiftOffset(string path)
 		{
 			return Path.Combine(path, OtherRepositories, LIFT);
+		}
+
+		public static string ProjectsPath
+		{
+			get
+			{
+				var rootDir = ((string) Registry.LocalMachine
+												.OpenSubKey("software")
+												.OpenSubKey("SIL")
+												.OpenSubKey("FieldWorks")
+												.OpenSubKey("7.0")
+												.GetValue("ProjectsDir")).Trim();
+				if (rootDir.Length > 3)
+					rootDir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				return rootDir;
+			}
 		}
 
 		/// <summary>
@@ -103,19 +154,6 @@ namespace TriboroughBridge_ChorusPlugin
 			MakeLocalClone(sourceFolder, targetFolder, progress);
 
 			Directory.Delete(Directory.GetParent(sourceFolder).FullName, true);
-		}
-
-		public static string ProjectsPath
-		{
-			get
-			{
-				return (string)Registry.LocalMachine
-								   .OpenSubKey("software")
-								   .OpenSubKey("SIL")
-								   .OpenSubKey("FieldWorks")
-								   .OpenSubKey("7.0")
-								   .GetValue("ProjectsDir");
-			}
 		}
 
 		public static void MakeLocalClone(string sourceFolder, string targetFolder, IProgress progress)
@@ -130,7 +168,7 @@ namespace TriboroughBridge_ChorusPlugin
 			var oldRepo = new HgRepository(sourceFolder, progress);
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
 			var newRepo = new HgRepository(targetFolder, progress);
 			newRepo.Update();
 			progress.WriteMessage("Moved to new location in: '" + targetFolder + "'.");

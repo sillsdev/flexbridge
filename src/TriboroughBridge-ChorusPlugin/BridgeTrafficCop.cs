@@ -38,6 +38,8 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string undo_export_lift = "undo_export_lift";
 		internal const string move_lift = "move_lift";
 		internal const string about_flex_bridge = "about_flex_bridge";
+		public const string hg = ".hg";
+		public const string git = ".git";
 // ReSharper restore InconsistentNaming
 
 		public IBridgeModel InitializeCurrentModel(Dictionary<string, string> options)

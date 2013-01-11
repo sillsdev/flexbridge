@@ -20,7 +20,7 @@ namespace FLEx_ChorusPluginTests
 
 			// Remote collaboration enabled project
 			var projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "ZPI")).FullName;
-			Directory.CreateDirectory(Path.Combine(projectPath, ".hg"));
+			Directory.CreateDirectory(Path.Combine(projectPath, BridgeTrafficCop.hg));
 			_dummyFolderPaths.Add(projectPath);
 			File.WriteAllText(Path.Combine(projectPath, "ZPI" + Utilities.FwXmlExtension), "");
 

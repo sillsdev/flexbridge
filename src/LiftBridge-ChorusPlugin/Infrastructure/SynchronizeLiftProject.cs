@@ -52,7 +52,7 @@ namespace SIL.LiftBridge.Infrastructure
 								ProjectFilter = repositoryLocation =>
 									{
 										var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
-										return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
+										return Directory.Exists(hgDataFolder) && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
 									}})
 						.SelectMany(usbCloner => usbCloner.GetDirectoriesWithMecurialRepos()
 						.Where(hgDir => hgDir.EndsWith(Utilities.LIFT) && !hgDir.Contains("_" + Utilities.LIFT))))
