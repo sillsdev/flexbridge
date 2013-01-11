@@ -70,7 +70,8 @@
 	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
 	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
 	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
@@ -85,7 +86,8 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus, Version=1.5.131.0, Culture=neutral, processorArchitecture=x86">
@@ -100,6 +102,10 @@
 	<Reference Include="LibChorus, Version=1.5.131.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\$(Configuration)\LibChorus.TestUtilities.dll</HintPath>
 	</Reference>
 	<Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -120,6 +126,7 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="ControllerTests\LiftObtainProjectStrategyTests.cs" />
 	<Compile Include="MockedViews\MockedGetSharedProject.cs" />
 	<Compile Include="ModelTests\LiftBridgeModelTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
@@ -134,9 +141,6 @@
 	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
 	</ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-	<Folder Include="ControllerTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

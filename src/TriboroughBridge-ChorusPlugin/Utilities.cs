@@ -25,6 +25,12 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
 		private static HashSet<string> _extantRepoIdentifiers;
+		private static string _testingProjectsPath = null;
+
+		internal static void SetProjectsPathForTests(string testProjectsPath)
+		{
+			_testingProjectsPath = testProjectsPath;
+		}
 
 		internal static void ClearCacheForTests()
 		{
@@ -47,15 +53,36 @@ namespace TriboroughBridge_ChorusPlugin
 		private static void CacheExtantRepositoryIdentifiers(string fwProjectBaseDir)
 		{
 			_extantRepoIdentifiers = new HashSet<string>();
-			var repoContainingFolders = Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.AllDirectories)
-				.Where(folder => Directory.Exists(Path.Combine(folder, BridgeTrafficCop.hg)));
-			foreach (var repoParentFolder in repoContainingFolders)
+
+			foreach (var mainFwProjectFolder in Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.TopDirectoryOnly))
 			{
-				var repo = new HgRepository(repoParentFolder, new NullProgress());
-				var identifier = repo.Identifier;
-				if (identifier != null)
-					_extantRepoIdentifiers.Add(identifier);
+				var hgfolder = Path.Combine(mainFwProjectFolder, BridgeTrafficCop.hg);
+				if (Directory.Exists(hgfolder))
+				{
+					CheckForMatchingRepo(mainFwProjectFolder);
+				}
+
+				var otherRepoFolder = Path.Combine(mainFwProjectFolder, OtherRepositories);
+				if (!Directory.Exists(otherRepoFolder))
+					continue;
+
+				foreach (var sharedFolder in Directory.GetDirectories(otherRepoFolder, "*", SearchOption.TopDirectoryOnly))
+				{
+					hgfolder = Path.Combine(sharedFolder, BridgeTrafficCop.hg);
+					if (Directory.Exists(hgfolder))
+					{
+						CheckForMatchingRepo(sharedFolder);
+					}
+				}
 			}
+		}
+
+		private static void CheckForMatchingRepo(string repoContainingFolder)
+		{
+			var repo = new HgRepository(repoContainingFolder, new NullProgress());
+			var identifier = repo.Identifier;
+			if (identifier != null)
+				_extantRepoIdentifiers.Add(identifier);
 		}
 
 		/// <summary>
@@ -133,6 +160,9 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			get
 			{
+				if (_testingProjectsPath != null)
+					return _testingProjectsPath;
+
 				var rootDir = ((string) Registry.LocalMachine
 												.OpenSubKey("software")
 												.OpenSubKey("SIL")
