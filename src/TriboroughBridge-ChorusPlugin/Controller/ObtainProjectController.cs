@@ -119,12 +119,12 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			// If "-p" is $fwroot\foo, then the "-v" option *must* be "obtain_lift".
 			var vOption = options["-v"];
 			var pOption = options["-p"];
-			var fwrootDir = Utilities.ProjectsPath.ToLowerInvariant();
+			var fwrootDir = Utilities.ProjectsPath;
 
-			if (((pOption.ToLowerInvariant() == fwrootDir) && (vOption == BridgeTrafficCop.obtain_lift))
-				|| ((pOption.ToLowerInvariant() != fwrootDir) && (vOption == BridgeTrafficCop.obtain)))
+			if (((pOption == fwrootDir) && (vOption == BridgeTrafficCop.obtain_lift))
+				|| ((pOption != fwrootDir) && (vOption == BridgeTrafficCop.obtain)))
 			{
-				throw new ApplicationException("Incompatible options for '-p' and '-v'");
+				throw new ApplicationException(String.Format("Incompatible options for '-p' : '{0}' and '-v' : '{1}'.", pOption, vOption));
 			}
 
 			_vOption = vOption;
