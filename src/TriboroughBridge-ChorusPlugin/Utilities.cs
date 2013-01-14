@@ -109,12 +109,15 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			get
 			{
-				return (string)Registry.LocalMachine
-								   .OpenSubKey("software")
-								   .OpenSubKey("SIL")
-								   .OpenSubKey("FieldWorks")
-								   .OpenSubKey("7.0")
-								   .GetValue("ProjectsDir");
+				var rootDir = ((string)Registry.LocalMachine
+												.OpenSubKey("software")
+												.OpenSubKey("SIL")
+												.OpenSubKey("FieldWorks")
+												.OpenSubKey("7.0")
+												.GetValue("ProjectsDir")).Trim();
+				if (rootDir.Length > 3)
+					rootDir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				return rootDir;
 			}
 		}
 
