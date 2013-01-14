@@ -297,5 +297,59 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 			Assert.IsTrue(results.Contains("20"));
 			Assert.IsFalse(results.Contains("combinedkey"));
 		}
+
+		[Test]
+		public void SampleMergeWithMissingAncestor()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='CmLocation' type='jtview' name='publishStemLocation#Stem-612' version='19'>
+	<generate class='LexExampleSentence' fieldType='mlstring' restrictions='customOnly' />
+  </layout>
+</LayoutInventory>";
+
+			var ourContent = commonAncestor.Replace("19", "20");
+			var theirContent = commonAncestor.Replace("19", "21");
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				null, "",
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(BothAddedAttributeConflict) },
+				4, new List<Type> { typeof(XmlAttributeBothAddedReport), typeof(XmlAttributeBothAddedReport), typeof(XmlAttributeBothAddedReport), typeof(XmlBothAddedSameChangeReport) });
+			Assert.IsTrue(results.Contains("20"));
+			Assert.IsFalse(results.Contains("combinedkey"));
+
+		}
+
+		[Test]
+		public void SampleMergeWithEmptyAncestor()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='CmLocation' type='jtview' name='publishStemLocation#Stem-612' version='19'>
+	<generate class='LexExampleSentence' fieldType='mlstring' restrictions='customOnly' />
+  </layout>
+</LayoutInventory>";
+
+			var ourContent = commonAncestor.Replace("19", "20");
+			var theirContent = commonAncestor.Replace("19", "21");
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, "",
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(BothAddedAttributeConflict) },
+				4, new List<Type> { typeof(XmlAttributeBothAddedReport), typeof(XmlAttributeBothAddedReport), typeof(XmlAttributeBothAddedReport), typeof(XmlBothAddedSameChangeReport) });
+			Assert.IsTrue(results.Contains("20"));
+			Assert.IsFalse(results.Contains("combinedkey"));
+
+		}
 	}
 }
