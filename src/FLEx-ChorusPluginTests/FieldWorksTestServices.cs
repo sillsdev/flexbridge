@@ -98,11 +98,12 @@ namespace FLEx_ChorusPluginTests
 			int expectedChangesCount, List<Type> changeTypes)
 		{
 			File.WriteAllText(ourFile.Path, ourContent);
-			File.WriteAllText(commonFile.Path, commonAncestor);
+			if (commonFile != null)
+				File.WriteAllText(commonFile.Path, commonAncestor);
 			File.WriteAllText(theirFile.Path, theirContent);
 
 			var situation = new NullMergeSituation();
-			var mergeOrder = new MergeOrder(ourFile.Path, commonFile.Path, theirFile.Path, situation);
+			var mergeOrder = new MergeOrder(ourFile.Path, (commonFile == null ? null : commonFile.Path), theirFile.Path, situation);
 			var eventListener = new ListenerForUnitTests();
 			mergeOrder.EventListener = eventListener;
 
