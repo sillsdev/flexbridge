@@ -23,9 +23,6 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private MainBridgeForm _mainBridgeForm;
 		private IObtainNewProjectView _obtainProjectView;
 
-		private const string RepoProblem = "Empty Repository";
-		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
-
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
 			_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
@@ -39,7 +36,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
 				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
-				MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
+				MessageBox.Show(_mainBridgeForm, CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
 				_mainBridgeForm.Cursor = Cursors.Default;
 				_mainBridgeForm.Close();
 				return;

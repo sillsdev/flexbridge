@@ -142,4 +142,10 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <data name="kMovingRepo" xml:space="preserve">
 	<value>Moving obtained project to final location.</value>
   </data>
+	<data name="kEmptyRepoMsg" xml:space="preserve">
+	<value>This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.</value>
+  </data>
+	<data name="kRepoProblem" xml:space="preserve">
+	<value>Empty Repository</value>
+  </data>
 </root>

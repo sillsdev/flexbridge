@@ -74,6 +74,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository..
+		/// </summary>
+		public static string kEmptyRepoMsg {
+			get {
+				return ResourceManager.GetString("kEmptyRepoMsg", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
 		public static string kFLExBridge {
@@ -115,6 +124,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		public static string kObtainProject {
 			get {
 				return ResourceManager.GetString("kObtainProject", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Empty Repository.
+		/// </summary>
+		public static string kRepoProblem {
+			get {
+				return ResourceManager.GetString("kRepoProblem", resourceCulture);
 			}
 		}
 
