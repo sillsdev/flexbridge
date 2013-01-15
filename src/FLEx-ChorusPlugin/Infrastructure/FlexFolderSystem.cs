@@ -30,6 +30,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("**.log");
+			projectFolderConfiguration.ExcludePatterns.Add("**." + SharedConstants.dupid);
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("WritingSystemStore", "trash", "**.*"));
