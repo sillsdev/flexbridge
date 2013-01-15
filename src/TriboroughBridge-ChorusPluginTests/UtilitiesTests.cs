@@ -21,39 +21,5 @@ namespace TriboroughBridge_ChorusPluginTests
 			var reducedPathname = Utilities.StripFilePrefix(fullPathname);
 			Assert.IsFalse(reducedPathname.StartsWith(prefix));
 		}
-
-		[Test]
-		public void MoveRepositoryRemovesSourceFolder()
-		{
-			var tempFolderForOs = Path.GetTempPath();
-			var tempCloneHolder = new TemporaryFolder("TempCloneHolder");
-			var tempCloneDir = new TemporaryFolder(tempCloneHolder, "TempClone");
-			var repo = new HgRepository(tempCloneDir.Path, new NullProgress());
-			repo.Init();
-			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy" + Utilities.LiftExtension);
-			File.WriteAllText(tempDataPathname, "dummy data");
-			repo.AddAndCheckinFile(tempDataPathname);
-
-			// Add import failure file, but don't add it to the repo.
-			var roadblockPathname = Path.Combine(tempCloneDir.Path, Utilities.FailureFilename);
-			File.WriteAllText(roadblockPathname, "standard");
-
-			var tempNewHomeDir = Path.Combine(tempFolderForOs, "FinalCloneHolder");
-
-			try
-			{
-				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir, new NullProgress());
-				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, ".hg", "hgrc")));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy" + Utilities.LiftExtension)));
-			}
-			finally
-			{
-				if (Directory.Exists(tempCloneHolder.Path))
-					Directory.Delete(tempCloneHolder.Path, true);
-				if (Directory.Exists(tempNewHomeDir))
-					Directory.Delete(tempNewHomeDir, true);
-			}
-		}
 	}
 }

@@ -94,17 +94,6 @@ namespace TriboroughBridge_ChorusPlugin
 			return Path.Combine(path, OtherRepositories, LIFT);
 		}
 
-		/// <summary>
-		/// Move a repository (.hg folder and local workspace) from one location to another, even to another device).
-		/// </summary>
-		/// <remarks>After the move, the original location will not exist.</remarks>
-		public static void MakeLocalCloneAndRemoveSourceParentFolder(string sourceFolder, string targetFolder, IProgress progress)
-		{
-			MakeLocalClone(sourceFolder, targetFolder, progress);
-
-			Directory.Delete(Directory.GetParent(sourceFolder).FullName, true);
-		}
-
 		public static string ProjectsPath
 		{
 			get
@@ -121,22 +110,26 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 		}
 
-		public static void MakeLocalClone(string sourceFolder, string targetFolder, IProgress progress)
+		public static void MakeLocalClone(string sourceFolder, string targetFolder)
 		{
-			progress.WriteMessage(CommonResources.kMovingRepo);
-
 			var parentFolder = Directory.GetParent(targetFolder).FullName;
 			if (!Directory.Exists(parentFolder))
 				Directory.CreateDirectory(parentFolder);
 
 			// Do a clone of the lift repo into the new home.
-			var oldRepo = new HgRepository(sourceFolder, progress);
+			var oldRepo = new HgRepository(sourceFolder, new NullProgress());
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
+
 			// Now copy the original hgrc file into the new location.
 			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
-			var newRepo = new HgRepository(targetFolder, progress);
+
+			// Move the import failure notification file, if it exists.
+			var roadblock = Path.Combine(sourceFolder, FailureFilename);
+			if (File.Exists(roadblock))
+				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
+
+			var newRepo = new HgRepository(targetFolder, new NullProgress());
 			newRepo.Update();
-			progress.WriteMessage("Moved to new location in: '" + targetFolder + "'.");
 		}
 	}
 }

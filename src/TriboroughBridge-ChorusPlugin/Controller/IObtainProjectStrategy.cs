@@ -1,5 +1,4 @@
 ﻿using Chorus.UI.Clone;
-using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin.Controller
 {
@@ -7,7 +6,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		bool ProjectFilter(string repositoryLocation);
 		bool IsRepositoryEmpty(string repositoryLocation);
-		ActualCloneResult FinishCloning(string fwrootBaseDir, string cloneLocation, IProgress progress);
+		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation);
 		void TellFlexAboutIt();
 		BridgeModelType SupportedModelType { get; }
 	}

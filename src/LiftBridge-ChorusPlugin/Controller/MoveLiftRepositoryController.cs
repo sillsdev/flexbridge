@@ -114,7 +114,7 @@ namespace SIL.LiftBridge.Controller
 			if (oldLiftFolder == null)
 				return;
 
-			Utilities.MakeLocalClone(oldLiftFolder, _baseLiftDir, new NullProgress());
+			Utilities.MakeLocalClone(oldLiftFolder, _baseLiftDir);
 
 			var folderToZap = mappingDoc.Root.HasElements || Directory.GetDirectories(basePathForOldLiftRepos).Length > 1
 								  ? oldLiftFolder

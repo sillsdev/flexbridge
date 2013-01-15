@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
@@ -19,13 +18,10 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private string _baseDir;
-		private string _vOption;
-		private ActualCloneResult _actualCloneResult;
+		private ControllerType _controllerActionType;
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
 		private IObtainNewProjectView _obtainProjectView;
-		private LocalCloneDlg _localCloneDlg;
-		private BackgroundWorker _backgroundWorker;
 
 		private const string RepoProblem = "Empty Repository";
 		private const string EmptyRepoMsg = "This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.";
@@ -33,23 +29,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private void StartupHandler(object sender, StartupNewEventArgs e)
 		{
 			_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
-
-			// This handler can't really work (yet) in an environment where the local system has an extant project,
-			// and the local user wants to collaborate with a remote user,
-			// where the FW language project is the 'same' on both computers.
-			// That is, we don't (yet) support merging the two, since they have no common ancestor.
-			// Odds are they each have crucial objects, such as LangProject or LexDb, that need to be singletons,
-			// but which have different guids.
-			// (Consider G & J Andersen's case, where each has an FW 6 system.
-			// They likely want to be able to merge the two systems they have, but that is not (yet) supported.)
-			var tempFolderForOs = Path.GetTempPath();
-			var tempCloneHolder = Path.Combine(tempFolderForOs, "TempCloneHolder");
-			if (Directory.Exists(tempCloneHolder))
-				Directory.Delete(tempCloneHolder, true);
-			var tempCloneDirInfo = Directory.CreateDirectory(tempCloneHolder);
-
 			var getSharedProject = new GetSharedProject();
-			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, tempCloneDirInfo.FullName, null);
+			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, _baseDir, null);
 
 			if (result.CloneStatus != CloneStatus.Created)
 				return;
@@ -57,52 +38,26 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
 			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
-				_mainBridgeForm.Cursor = Cursors.Default;
-				Directory.Delete(Directory.GetParent(result.ActualLocation).FullName, true); // Don't want the newly created empty folder to hang around and mess us up!
+				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 				MessageBox.Show(_mainBridgeForm, EmptyRepoMsg, RepoProblem);
+				_mainBridgeForm.Cursor = Cursors.Default;
 				_mainBridgeForm.Close();
 				return;
 			}
 
-			_localCloneDlg = new LocalCloneDlg();
-			_localCloneDlg.Closed += LocalCloneDlgOnClosed;
-			_backgroundWorker = new BackgroundWorker();
-			_localCloneDlg.Show(_mainBridgeForm);
-
-			_backgroundWorker.WorkerSupportsCancellation = false;
-			_backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
-			_backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
-			_backgroundWorker.RunWorkerAsync(new object[] { result, _localCloneDlg, _currentStrategy, _actualCloneResult });
-		}
-
-		private void LocalCloneDlgOnClosed(object sender, EventArgs eventArgs)
-		{
-			if (_actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation);
+			if (actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
 			{
 				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 
 			_mainBridgeForm.Cursor = Cursors.Default;
-			_localCloneDlg.Closed -= LocalCloneDlgOnClosed; //we've done our bit, and closing the parent form will call close on the child dialog
 			_mainBridgeForm.Close();
-		}
-
-		void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			_localCloneDlg.EnableCloseButton = true;
-		}
-
-		private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs doWorkEventArgs)
-		{
-			var args = doWorkEventArgs.Argument as object[];
-			var result = (CloneResult)args[0];
-			_actualCloneResult = _currentStrategy.FinishCloning(_baseDir, result.ActualLocation, (args[1] as LocalCloneDlg).ProgressLog);
-			_actualCloneResult.CloneResult = result;
 		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
-			return (_vOption == BridgeTrafficCop.obtain_lift)
+			return (_controllerActionType == ControllerType.ObtainLift)
 				? Strategies.FirstOrDefault(strategy => strategy.SupportedModelType == BridgeModelType.Lift)
 				: Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
 		}
@@ -127,8 +82,26 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				throw new ApplicationException(String.Format("Incompatible options for '-p' : '{0}' and '-v' : '{1}'.", pOption, vOption));
 			}
 
-			_vOption = vOption;
-			_baseDir = pOption;
+			switch (vOption)
+			{
+				case BridgeTrafficCop.obtain:
+					_baseDir = pOption; // fwroot: main FW project folder.
+					_controllerActionType = ControllerType.Obtain;
+					break;
+				case BridgeTrafficCop.obtain_lift:
+					var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
+					if (!Directory.Exists(otherReposDir))
+						Directory.CreateDirectory(otherReposDir);
+					// fwroot\foo\OtherRepositories\LIFT\
+					_baseDir = Path.Combine(pOption, Utilities.OtherRepositories, Utilities.LIFT);
+					if (Directory.Exists(_baseDir))
+					{
+						_baseDir = null;
+						throw new InvalidOperationException("Lift repository folder already exists.");
+					}
+					_controllerActionType = ControllerType.ObtainLift;
+					break;
+			}
 		}
 
 		#region IBridgeController implementation

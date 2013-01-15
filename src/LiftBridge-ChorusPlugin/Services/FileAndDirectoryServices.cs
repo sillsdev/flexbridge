@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TriboroughBridge_ChorusPlugin;
 
 namespace SIL.LiftBridge.Services
 {
@@ -40,6 +42,23 @@ namespace SIL.LiftBridge.Services
 				else if (Directory.Exists(pathname))
 					Directory.Delete(pathname, true); // A new folder has to have new files, so just wipe them all out.
 			}
+		}
+
+		internal static string GetPathToFirstLiftFile(string liftFolder)
+		{
+			var liftFiles = Directory.GetFiles(liftFolder, "*" + Utilities.LiftExtension).ToList();
+			return liftFiles.Count == 0
+					   ? null
+					   : (from file in liftFiles
+						  where HasOnlyOneDot(file)
+						  select file).FirstOrDefault();
+		}
+
+		private static bool HasOnlyOneDot(string pathname)
+		{
+			var filename = Path.GetFileName(pathname);
+			return filename.IndexOf(".", StringComparison.InvariantCulture) ==
+				   filename.LastIndexOf(".", StringComparison.InvariantCulture);
 		}
 	}
 }

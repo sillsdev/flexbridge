@@ -300,4 +300,7 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <data name="SendReceiveView_DialogTitleLift" xml:space="preserve">
 	<value>Send/Receive Lexicon (LIFT)</value>
   </data>
+	<data name="kUnsupportedControllerActionForLiftObtain" xml:space="preserve">
+	<value>The Lift obtain strategy does not support the giving controller action.</value>
+  </data>
 </root>

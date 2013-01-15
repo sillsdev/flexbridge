@@ -484,6 +484,15 @@ namespace SIL.LiftBridge.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to The Lift obtain strategy does not support the giving controller action..
+		/// </summary>
+		public static string kUnsupportedControllerActionForLiftObtain {
+			get {
+				return ResourceManager.GetString("kUnsupportedControllerActionForLiftObtain", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Unsupported LIFT file.
 		/// </summary>
 		public static string kUnsupportedLiftFile {
