@@ -73,12 +73,12 @@
 	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Chorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="Chorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <ExecutableExtension>.exe</ExecutableExtension>
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
