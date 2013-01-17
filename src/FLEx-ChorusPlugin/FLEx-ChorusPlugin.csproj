@@ -76,7 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\$(Configuration)\Autofac.dll</HintPath>
+	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
 	</Reference>
 	<Reference Include="Chorus">
 	  <SpecificVersion>False</SpecificVersion>
@@ -89,7 +89,7 @@
 	<Reference Include="icu.net">
 	  <HintPath>..\..\lib\$(Configuration)\icu.net.dll</HintPath>
 	</Reference>
-	<Reference Include="LibChorus, Version=1.3.353.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
