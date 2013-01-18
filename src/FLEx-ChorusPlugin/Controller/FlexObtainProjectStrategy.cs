@@ -40,7 +40,7 @@ namespace FLEx_ChorusPlugin.Controller
 					FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 				};
 
-			_newProjectFilename = Path.GetDirectoryName(cloneLocation) + Utilities.FwXmlExtension;
+			_newProjectFilename = Path.GetFileName(cloneLocation) + Utilities.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
