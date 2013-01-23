@@ -83,8 +83,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// </summary>
 		public void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress)
 		{
-			string savedSettings = Settings.Default.OtherBranchRevisions;
-			string conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, BranchName, ref savedSettings);
+			var savedSettings = Settings.Default.OtherBranchRevisions;
+			//note: change the "" back to BranchName when branching is added back to Chorus
+			var conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, "", ref savedSettings);
 			Settings.Default.OtherBranchRevisions = savedSettings;
 			Settings.Default.Save();
 			if (!string.IsNullOrEmpty(conflictingUser))
