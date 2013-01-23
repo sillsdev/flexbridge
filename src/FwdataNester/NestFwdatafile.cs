@@ -128,6 +128,10 @@ namespace FwdataTestApp
 			{
 				if (_rebuildDataFile.Checked)
 				{
+					if(!String.IsNullOrWhiteSpace(revisionBox.Text))
+					{
+						Chorus.VcsDrivers.Mercurial.HgRunner.Run("hg update -r " + revisionBox.Text, _workingDir, 300, new NullProgress());
+					}
 					RestoreMainFileFromPieces(restoreTimer);
 				}
 				else

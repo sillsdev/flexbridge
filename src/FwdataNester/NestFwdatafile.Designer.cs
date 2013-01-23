@@ -30,6 +30,7 @@ namespace FwdataTestApp
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NestFwdataFile));
 			this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this._btnBrowse = new System.Windows.Forms.Button();
@@ -45,11 +46,17 @@ namespace FwdataTestApp
 			this._btnRestoreProjects = new System.Windows.Forms.Button();
 			this._btnClearCheckboxes = new System.Windows.Forms.Button();
 			this._cbCheckAmbiguousElements = new System.Windows.Forms.CheckBox();
+			this.revisionBox = new System.Windows.Forms.TextBox();
+			this.revisionlabel = new System.Windows.Forms.Label();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip.InitialDelay = 100;
+			this.toolTip.SetToolTip(this.revisionBox, "Set and check Rebuild data file to recover a revision from a repository.");
+			this.toolTip.SetToolTip(this.revisionlabel, "Set and check Rebuild data file to recover a revision from a repository.");
 			this.SuspendLayout();
 			//
 			// _openFileDialog
 			//
-			this._openFileDialog.Filter = "Fwdata Files|*" + Utilities.FwXmlExtension;
+			this._openFileDialog.Filter = "Fwdata Files|*.fwdata";
 			//
 			// _btnBrowse
 			//
@@ -188,12 +195,30 @@ namespace FwdataTestApp
 			this._cbCheckAmbiguousElements.Text = "Check for ambiguous elements";
 			this._cbCheckAmbiguousElements.UseVisualStyleBackColor = true;
 			//
+			// revisionBox
+			//
+			this.revisionBox.Location = new System.Drawing.Point(70, 122);
+			this.revisionBox.Name = "revisionBox";
+			this.revisionBox.Size = new System.Drawing.Size(100, 20);
+			this.revisionBox.TabIndex = 21;
+			//
+			// revisionlabel
+			//
+			this.revisionlabel.AutoSize = true;
+			this.revisionlabel.Location = new System.Drawing.Point(7, 125);
+			this.revisionlabel.Name = "revisionlabel";
+			this.revisionlabel.Size = new System.Drawing.Size(61, 13);
+			this.revisionlabel.TabIndex = 22;
+			this.revisionlabel.Text = "Revision #:";
+			//
 			// NestFwdataFile
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.ClientSize = new System.Drawing.Size(554, 238);
+			this.Controls.Add(this.revisionlabel);
+			this.Controls.Add(this.revisionBox);
 			this.Controls.Add(this._cbCheckAmbiguousElements);
 			this.Controls.Add(this._btnClearCheckboxes);
 			this.Controls.Add(this._btnRestoreProjects);
@@ -231,5 +256,8 @@ namespace FwdataTestApp
 		private System.Windows.Forms.Button _btnRestoreProjects;
 		private System.Windows.Forms.Button _btnClearCheckboxes;
 		private System.Windows.Forms.CheckBox _cbCheckAmbiguousElements;
+		private System.Windows.Forms.TextBox revisionBox;
+		private System.Windows.Forms.Label revisionlabel;
+		private System.Windows.Forms.ToolTip toolTip;
 	}
 }
