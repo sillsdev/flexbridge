@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.sync;
-using Palaso.Lift;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
-using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 
 namespace SIL.LiftBridge.Controller
 {
@@ -42,12 +39,6 @@ namespace SIL.LiftBridge.Controller
 				liftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + Utilities.LiftExtension);
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
 			}
-			var tmpFile = Directory.GetFiles(CurrentProject.PathToProject, "*.tmp").FirstOrDefault();
-			if (tmpFile != null)
-			{
-				File.Copy(tmpFile, liftPathname, true);
-				File.Delete(tmpFile);
-			}
 
 			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			if (ChorusSystem.Repository.Identifier == null)
@@ -56,9 +47,6 @@ namespace SIL.LiftBridge.Controller
 				var projectConfig = ChorusSystem.ProjectFolderConfiguration;
 				ProjectFolderConfiguration.EnsureCommonPatternsArePresent(projectConfig);
 				projectConfig.IncludePatterns.Add("**.ChorusRescuedFile");
-
-				LiftSorter.SortLiftFile(liftPathname);
-				LiftSorter.SortLiftRangesFile(liftPathname + "-ranges");
 
 				ChorusSystem.Repository.AddAndCheckinFiles(projectConfig.IncludePatterns, projectConfig.ExcludePatterns, "Initial commit");
 			}
