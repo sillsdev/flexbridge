@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Palaso.IO;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -13,6 +15,18 @@ namespace SIL.LiftBridge.Controller
 		[Import] private ICreateProjectFromLift _liftprojectCreator;
 		private string _liftFolder;
 
+		private string RemoveAppendedLiftIfNeeded(string cloneLocation)
+		{
+			cloneLocation = cloneLocation.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (!cloneLocation.EndsWith("_LIFT"))
+				return cloneLocation;
+
+			var cloneLocationSansSuffix = cloneLocation.Substring(0, cloneLocation.LastIndexOf("_LIFT", StringComparison.InvariantCulture));
+			var possiblyAdjustedCloneLocation = DirectoryUtilities.GetUniqueFolderPath(cloneLocationSansSuffix);
+			DirectoryUtilities.MoveDirectorySafely(cloneLocation, possiblyAdjustedCloneLocation);
+			return possiblyAdjustedCloneLocation;
+		}
+
 		#region IObtainProjectStrategy impl
 
 		public ActualCloneResult FinishCloning(string cloneLocation)
@@ -24,6 +38,8 @@ namespace SIL.LiftBridge.Controller
 				ActualCloneFolder = null,
 				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 			};
+
+			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
 
 			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
