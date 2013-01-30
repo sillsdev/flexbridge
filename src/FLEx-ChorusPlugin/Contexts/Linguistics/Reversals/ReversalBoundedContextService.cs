@@ -105,47 +105,52 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				var dirInfo = new DirectoryInfo(revIndexDirectoryName);
 				var ws = dirInfo.Name;
 				var reversalPathname = Path.Combine(revIndexDirectoryName, ws + "." + SharedConstants.Reversal);
-				var reversalDoc = XDocument.Load(reversalPathname);
-
-				// Put entries back into index's Entries element.
-				var root = reversalDoc.Element("Reversal");
-				var header = root.Element(SharedConstants.Header);
-				var revIdxElement = header.Element("ReversalIndex");
-
-				// Restore POS list, if it exists.
-				var catPathname = Path.Combine(revIndexDirectoryName, ws + "-" + SharedConstants.PartsOfSpeechFilename);
-				if (File.Exists(catPathname))
+				//If a reversal is deleted but there were ChorusNotes associated with it the directory might be
+				//here without any reversal files inside it.
+				if(File.Exists(reversalPathname))
 				{
-					var catListDoc = XDocument.Load(catPathname);
-					BaseDomainServices.RestoreElement(
-						catPathname,
-						sortedData,
-						revIdxElement, SharedConstants.PartsOfSpeech,
-						catListDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
+					var reversalDoc = XDocument.Load(reversalPathname);
+
+					// Put entries back into index's Entries element.
+					var root = reversalDoc.Element("Reversal");
+					var header = root.Element(SharedConstants.Header);
+					var revIdxElement = header.Element("ReversalIndex");
+
+					// Restore POS list, if it exists.
+					var catPathname = Path.Combine(revIndexDirectoryName, ws + "-" + SharedConstants.PartsOfSpeechFilename);
+					if (File.Exists(catPathname))
+					{
+						var catListDoc = XDocument.Load(catPathname);
+						BaseDomainServices.RestoreElement(
+							catPathname,
+							sortedData,
+							revIdxElement, SharedConstants.PartsOfSpeech,
+							catListDoc.Root.Element(SharedConstants.CmPossibilityList)); // Owned elment.
+					}
+
+					// Put all records back in ReversalIndex, before sort and restore.
+					// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
+					var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+					foreach (var recordElement in root.Elements("ReversalIndexEntry")
+						.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
+					{
+						// Add it to Records property of revIdxElement, BUT in sorted order, below, and then flatten dnMainElement.
+						sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);
+					}
+
+					if (sortedRecords.Count > 0)
+					{
+						var recordsElementOwningProp = revIdxElement.Element("Entries")
+							?? CmObjectFlatteningService.AddNewPropertyElement(revIdxElement, "Entries");
+
+						foreach (var sortedChartElement in sortedRecords.Values)
+							recordsElementOwningProp.Add(sortedChartElement);
+					}
+					CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdxElement, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
+
+					var revIdxGuid = revIdxElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+					sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
 				}
-
-				// Put all records back in ReversalIndex, before sort and restore.
-				// EXCEPT, if there is only one of them and it is guid.Empty, then skip it
-				var sortedRecords = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-				foreach (var recordElement in root.Elements("ReversalIndexEntry")
-					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
-				{
-					// Add it to Records property of revIdxElement, BUT in sorted order, below, and then flatten dnMainElement.
-					sortedRecords.Add(recordElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), recordElement);
-				}
-
-				if (sortedRecords.Count > 0)
-				{
-					var recordsElementOwningProp = revIdxElement.Element("Entries")
-						?? CmObjectFlatteningService.AddNewPropertyElement(revIdxElement, "Entries");
-
-					foreach (var sortedChartElement in sortedRecords.Values)
-						recordsElementOwningProp.Add(sortedChartElement);
-				}
-				CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdxElement, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
-
-				var revIdxGuid = revIdxElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
 			}
 
 			// Restore lexDb ReversalIndexes property in sorted order.
