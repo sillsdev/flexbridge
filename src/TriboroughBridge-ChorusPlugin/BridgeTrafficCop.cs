@@ -61,6 +61,7 @@ namespace TriboroughBridge_ChorusPlugin
 				case undo_export_lift:
 					controllerType = ControllerType.UndoExportLift;
 					break;
+
 				case obtain: // Get new repo (FW or lift)
 					controllerType = ControllerType.Obtain;
 					break;
@@ -135,7 +136,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case obtain: // Get new repo (FW or lift)
 				case obtain_lift: // Get new lift repro, whch gets imported (safely) into FLEx.
-					showWindow = true;
+					CurrentModel.ObtainRepository();
 					break;
 
 				//case "send_receive_all": // Future: Any and all repos.

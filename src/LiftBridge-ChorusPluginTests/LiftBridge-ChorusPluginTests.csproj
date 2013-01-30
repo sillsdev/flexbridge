@@ -70,7 +70,8 @@
 	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
 	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
 	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
@@ -85,7 +86,8 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus">
@@ -118,7 +120,6 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="MockedViews\MockedGetSharedProject.cs" />
 	<Compile Include="ModelTests\LiftBridgeModelTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="ServicesTests\FileAndDirectoryServicesTests.cs" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="ControllerTests\" />
+	<Folder Include="MockedViews\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

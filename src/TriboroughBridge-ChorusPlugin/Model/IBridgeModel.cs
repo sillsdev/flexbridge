@@ -32,6 +32,11 @@ namespace TriboroughBridge_ChorusPlugin.Model
 		bool Syncronize();
 
 		/// <summary>
+		/// Get a clone of a repository.
+		/// </summary>
+		void ObtainRepository();
+
+		/// <summary>
 		/// Get the current controller for the given startup options.
 		/// </summary>
 		IBridgeController CurrentController { get; }

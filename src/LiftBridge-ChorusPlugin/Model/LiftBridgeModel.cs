@@ -54,6 +54,15 @@ namespace SIL.LiftBridge.Model
 			return false;
 		}
 
+		public void ObtainRepository()
+		{
+			var obtainController = CurrentController as IObtainNewProjectController;
+			if (obtainController != null)
+			{
+				obtainController.ObtainRepository();
+			}
+		}
+
 		/// <summary>
 		/// Get the current controller for the given startup options.
 		/// </summary>

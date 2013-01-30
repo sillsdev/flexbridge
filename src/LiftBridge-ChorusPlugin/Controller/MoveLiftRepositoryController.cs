@@ -133,6 +133,11 @@ namespace SIL.LiftBridge.Controller
 			_connectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
 		}
 
+		public void ObtainRepository()
+		{
+			throw new NotSupportedException();
+		}
+
 		private static void RemoveElementAndSaveDoc(XDocument mappingDoc, XElement goner, string mappingDocPathname)
 		{
 			goner.Remove();

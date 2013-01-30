@@ -135,20 +135,12 @@
 	<Compile Include="View\BridgeConflictView.Designer.cs">
 	  <DependentUpon>BridgeConflictView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\IObtainNewProjectView.cs" />
 	<Compile Include="View\MainBridgeForm.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="View\MainBridgeForm.Designer.cs">
 	  <DependentUpon>MainBridgeForm.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\ObtainProjectView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\ObtainProjectView.Designer.cs">
-	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="View\StartupNewEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="..\..\DistFiles\about.htm">
@@ -171,9 +163,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="View\MainBridgeForm.resx">
 	  <DependentUpon>MainBridgeForm.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\ObtainProjectView.resx">
-	  <DependentUpon>ObtainProjectView.cs</DependentUpon>
 	</EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

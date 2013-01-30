@@ -41,7 +41,8 @@
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLEx-ChorusPluginTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -59,7 +60,8 @@
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLEx-ChorusPluginTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -177,10 +179,8 @@
 	<Compile Include="Mocks\MockedFwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="Mocks\MockedGetSharedProject.cs" />
 	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
 	<Compile Include="Mocks\MockedProjectView.cs" />
-	<Compile Include="Mocks\MockedObtainNewProjectView.cs" />
 	<Compile Include="Mocks\MockedSynchronizeProject.cs" />
 	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
 	<Compile Include="Model\LanguageProjectTests.cs" />

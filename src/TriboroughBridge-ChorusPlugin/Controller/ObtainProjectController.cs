@@ -21,36 +21,6 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private ControllerType _controllerActionType;
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
-		private IObtainNewProjectView _obtainProjectView;
-
-		private void StartupHandler(object sender, StartupNewEventArgs e)
-		{
-			_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
-			var getSharedProject = new GetSharedProject();
-			var result = getSharedProject.GetSharedProjectUsing(_mainBridgeForm, e.ExtantRepoSource, ProjectFilter, _baseDir, null);
-
-			if (result.CloneStatus != CloneStatus.Created)
-				return;
-
-			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
-			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
-			{
-				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
-				MessageBox.Show(_mainBridgeForm, CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
-				_mainBridgeForm.Cursor = Cursors.Default;
-				_mainBridgeForm.Close();
-				return;
-			}
-
-			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation);
-			if (actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
-			{
-				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
-
-			_mainBridgeForm.Cursor = Cursors.Default;
-			_mainBridgeForm.Close();
-		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
@@ -114,10 +84,6 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm.Text = CommonResources.ObtainProjectView_DialogTitle;
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
-
-			_obtainProjectView = new ObtainProjectView();
-			_mainBridgeForm.Controls.Add((Control)_obtainProjectView);
-			_obtainProjectView.Startup += StartupHandler;
 		}
 
 		public ChorusSystem ChorusSystem
@@ -139,10 +105,46 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		#region IObtainNewProjectController impl
 
+		/// <summary>
+		/// Do whatever is needed to finalize the obtaining of a project.
+		/// </summary>
 		public void EndWork()
 		{
 			if (_currentStrategy != null)
 				_currentStrategy.TellFlexAboutIt();
+		}
+
+		/// <summary>
+		/// Get a clone of a repository.
+		/// </summary>
+		public void ObtainRepository()
+		{
+			//_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
+
+			var getSharedProjectModel = new GetSharedProjectModel();
+			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, new HashSet<string>(), ProjectFilter, _baseDir, null);
+
+			if (result.CloneStatus != CloneStatus.Created)
+				return;
+
+			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
+			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
+			{
+				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
+				MessageBox.Show(_mainBridgeForm, CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
+				_mainBridgeForm.Cursor = Cursors.Default;
+				_mainBridgeForm.Close();
+				return;
+			}
+
+			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation);
+			if (actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+			{
+				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
+
+			//_mainBridgeForm.Cursor = Cursors.Default;
+			//_mainBridgeForm.Close();
 		}
 
 		#endregion
@@ -204,9 +206,6 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			{
 				if (_mainBridgeForm != null)
 					_mainBridgeForm.Dispose();
-
-				if (_obtainProjectView != null)
-					_obtainProjectView.Startup -= StartupHandler;
 			}
 			_mainBridgeForm = null;
 
