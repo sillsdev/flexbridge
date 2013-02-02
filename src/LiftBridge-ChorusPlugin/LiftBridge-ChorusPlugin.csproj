@@ -104,7 +104,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\Palaso.Lift.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms" >
+	<Reference Include="PalasoUIWindowsForms">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
@@ -132,8 +132,6 @@
 	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
-	<Compile Include="View\IActiveView.cs" />
-	<Compile Include="View\IStartupNewView.cs" />
 	<Compile Include="Model\LiftProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
@@ -141,22 +139,12 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
-	<Compile Include="View\StartupNewEventArgs.cs" />
-	<Compile Include="View\StartupNewView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="View\StartupNewView.designer.cs">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
-	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>PublicResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="View\StartupNewView.resx">
-	  <DependentUpon>StartupNewView.cs</DependentUpon>
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +162,7 @@
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
 	</ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PostBuildEvent>
