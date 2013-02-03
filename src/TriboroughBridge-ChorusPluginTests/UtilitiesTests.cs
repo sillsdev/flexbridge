@@ -29,40 +29,6 @@ namespace TriboroughBridge_ChorusPluginTests
 		}
 
 		[Test]
-		public void MoveRepositoryRemovesSourceFolder()
-		{
-			var tempFolderForOs = Path.GetTempPath();
-			var tempCloneHolder = new TemporaryFolder("TempCloneHolder");
-			var tempCloneDir = new TemporaryFolder(tempCloneHolder, "TempClone");
-			var repo = new HgRepository(tempCloneDir.Path, new NullProgress());
-			repo.Init();
-			var tempDataPathname = Path.Combine(tempCloneDir.Path, "dummy" + Utilities.LiftExtension);
-			File.WriteAllText(tempDataPathname, "dummy data");
-			repo.AddAndCheckinFile(tempDataPathname);
-
-			// Add import failure file, but don't add it to the repo.
-			var roadblockPathname = Path.Combine(tempCloneDir.Path, Utilities.FailureFilename);
-			File.WriteAllText(roadblockPathname, "standard");
-
-			var tempNewHomeDir = Path.Combine(tempFolderForOs, "FinalCloneHolder");
-
-			try
-			{
-				Utilities.MakeLocalCloneAndRemoveSourceParentFolder(tempCloneDir.Path, tempNewHomeDir, new NullProgress());
-				Assert.IsFalse(Directory.Exists(tempCloneHolder.Path));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, BridgeTrafficCop.hg, "hgrc")));
-				Assert.IsTrue(File.Exists(Path.Combine(tempNewHomeDir, "dummy" + Utilities.LiftExtension)));
-			}
-			finally
-			{
-				if (Directory.Exists(tempCloneHolder.Path))
-					Directory.Delete(tempCloneHolder.Path, true);
-				if (Directory.Exists(tempNewHomeDir))
-					Directory.Delete(tempNewHomeDir, true);
-			}
-		}
-
-		[Test]
 		public void DoesNotHaveMatchingProjectWhenNoneExist()
 		{
 			using (var hasProject = new TemporaryFolder("hasProject"))
@@ -127,6 +93,50 @@ namespace TriboroughBridge_ChorusPluginTests
 					repo.CloneLocalWithoutUpdate(mainProjectDir.FullName);
 
 					Assert.IsTrue(Utilities.AlreadyHasLocalRepository(hasNonmatchingProject.Path, hasProject.Path));
+				}
+			}
+		}
+
+		[Test]
+		public void HasNoExtantRepositories()
+		{
+			using (var hasProject = new TemporaryFolder("hasRepo"))
+			{
+				Utilities.SetProjectsPathForTests(hasProject.Path);
+				try
+				{
+					var newFile = Path.Combine(hasProject.Path, "test.txt");
+					File.WriteAllText(newFile, "some stuff");
+					Assert.AreEqual(0, Utilities.ExtantRepoIdentifiers.Count);
+				}
+				finally
+				{
+					Utilities.SetProjectsPathForTests(null);
+				}
+			}
+		}
+
+		[Test]
+		public void HasExtantRepositories()
+		{
+			using (var parentFolder = new TemporaryFolder("parentFolder"))
+			using (var childFolder = new TemporaryFolder(parentFolder, "childFolder"))
+			{
+				Utilities.SetProjectsPathForTests(parentFolder.Path);
+				try
+				{
+					var newFile = Path.Combine(childFolder.Path, "test.txt");
+					File.WriteAllText(newFile, "some stuff");
+					var repo = new HgRepository(childFolder.Path, new NullProgress());
+					repo.Init();
+					repo.AddAndCheckinFile(newFile);
+
+					Assert.AreEqual(1, Utilities.ExtantRepoIdentifiers.Count);
+					Assert.IsTrue(Utilities.ExtantRepoIdentifiers.Contains(repo.Identifier));
+				}
+				finally
+				{
+					Utilities.SetProjectsPathForTests(null);
 				}
 			}
 		}

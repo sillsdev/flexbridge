@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using Microsoft.Win32;
 using Palaso.Progress;
-using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -26,6 +24,16 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LIFT = "LIFT";
 		private static HashSet<string> _extantRepoIdentifiers;
 		private static string _testingProjectsPath = null;
+
+		public static HashSet<string> ExtantRepoIdentifiers
+		{
+			get
+			{
+				if (_extantRepoIdentifiers == null)
+					CacheExtantRepositoryIdentifiers(ProjectsPath);
+				return _extantRepoIdentifiers;
+			}
+		}
 
 		internal static void SetProjectsPathForTests(string testProjectsPath)
 		{

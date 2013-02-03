@@ -25,7 +25,9 @@ namespace SIL.LiftBridge.Controller
 		public bool ProjectFilter(string repositoryLocation)
 		{
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder) && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
+			return Directory.Exists(hgDataFolder)
+				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
+				&& Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
 		}
 
 		public bool IsRepositoryEmpty(string repositoryLocation)

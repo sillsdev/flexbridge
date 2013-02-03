@@ -15,7 +15,7 @@ namespace FLEx_ChorusPluginTests.Controller
 	[TestFixture]
 	public class FlexObtainProjectStrategyTests
 	{
-		[Test]
+		[Test, Ignore("Not doing it with the filter for now.")]
 		public void AlreadyHaveProjectFiltersOutAttemptToCloneAgain()
 		{
 			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
