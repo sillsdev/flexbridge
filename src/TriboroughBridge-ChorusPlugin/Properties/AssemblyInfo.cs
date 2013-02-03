@@ -36,3 +36,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.5.2.0")]
 
 [assembly: InternalsVisibleTo("TriboroughBridge-ChorusPluginTests")]
+[assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
+[assembly: InternalsVisibleTo("LiftBridge-ChorusPluginTests")]

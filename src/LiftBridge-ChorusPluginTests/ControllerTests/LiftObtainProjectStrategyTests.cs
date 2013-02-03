@@ -1,24 +1,23 @@
 ﻿using System;
 using System.IO;
-using FLEx_ChorusPlugin.Controller;
-using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.TestUtilities;
+using SIL.LiftBridge.Controller;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPluginTests.Controller
+namespace LiftBridgeTests.ControllerTests
 {
 	/// <summary>
-	/// Test the FlexObtainProjectStrategy.
+	/// Test the LiftObtainProjectStrategy.
 	/// </summary>
 	[TestFixture]
-	public class FlexObtainProjectStrategyTests
+	public class LiftObtainProjectStrategyTests
 	{
 		[Test]
 		public void AlreadyHaveProjectFiltersOutAttemptToCloneAgain()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
+			using (var sueRepo = new RepositoryWithFilesSetup("SueForLift", "Sue.lift", "contents"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Utilities.SetProjectsPathForTests(fakeProjectDir);
@@ -27,11 +26,11 @@ namespace FLEx_ChorusPluginTests.Controller
 					using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
 					{
 						var sue = sueRepo.GetRepository();
-						var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
+						var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo", Utilities.OtherRepositories, Utilities.LIFT);
 						Directory.CreateDirectory(extantDir);
 						Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
 						sue.CloneLocalWithoutUpdate(extantDir);
-						var strat = new FlexObtainProjectStrategy();
+						var strat = new LiftObtainProjectStrategy();
 						Assert.IsFalse(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
 					}
 				}
@@ -45,7 +44,7 @@ namespace FLEx_ChorusPluginTests.Controller
 		[Test]
 		public void DoNotHaveProjectDoesNotFilterOutRepo()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
+			using (var sueRepo = new RepositoryWithFilesSetup("SueForLift", "Sue.lift", "contents"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Utilities.SetProjectsPathForTests(fakeProjectDir);
@@ -53,10 +52,11 @@ namespace FLEx_ChorusPluginTests.Controller
 				{
 					using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
 					{
-						var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
+						var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo", Utilities.OtherRepositories, Utilities.LIFT);
 						Directory.CreateDirectory(extantDir);
-						Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-						var strat = new FlexObtainProjectStrategy();
+						Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepowithoffset", Utilities.OtherRepositories, Utilities.LIFT));
+						Directory.CreateDirectory(Path.Combine(fakeProjectDir, "noreposansoffset"));
+						var strat = new LiftObtainProjectStrategy();
 						Assert.IsTrue(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
 					}
 				}

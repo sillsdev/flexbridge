@@ -20,7 +20,7 @@ namespace SIL.LiftBridge.Services
 
 			foreach (var dirName in Directory.GetDirectories(baseDirPath))
 			{
-				if (dirName.EndsWith(".hg") || dirName.EndsWith(".git"))
+				if (dirName.EndsWith(BridgeTrafficCop.hg) || dirName.EndsWith(BridgeTrafficCop.git))
 					continue; // Skip the repo file (for Hg or Git, if it becomes an option).
 
 				results.UnionWith(EnumerateExtantFiles(dirName));

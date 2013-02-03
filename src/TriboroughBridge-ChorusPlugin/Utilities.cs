@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
@@ -22,6 +24,66 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
+		private static HashSet<string> _extantRepoIdentifiers;
+		private static string _testingProjectsPath = null;
+
+		internal static void SetProjectsPathForTests(string testProjectsPath)
+		{
+			_testingProjectsPath = testProjectsPath;
+		}
+
+		internal static void ClearCacheForTests()
+		{
+			_extantRepoIdentifiers = null;
+		}
+
+		public static bool AlreadyHasLocalRepository(string fwProjectBaseDir, string repositoryLocation)
+		{
+			if (_extantRepoIdentifiers == null)
+			{
+				CacheExtantRepositoryIdentifiers(fwProjectBaseDir);
+			}
+			var repo = new HgRepository(repositoryLocation, new NullProgress());
+			var identifier = repo.Identifier;
+
+			// We don't really want to clone an empty repo (identifier == null).
+			return identifier == null || _extantRepoIdentifiers.Contains(identifier);
+		}
+
+		private static void CacheExtantRepositoryIdentifiers(string fwProjectBaseDir)
+		{
+			_extantRepoIdentifiers = new HashSet<string>();
+
+			foreach (var mainFwProjectFolder in Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.TopDirectoryOnly))
+			{
+				var hgfolder = Path.Combine(mainFwProjectFolder, BridgeTrafficCop.hg);
+				if (Directory.Exists(hgfolder))
+				{
+					CheckForMatchingRepo(mainFwProjectFolder);
+				}
+
+				var otherRepoFolder = Path.Combine(mainFwProjectFolder, OtherRepositories);
+				if (!Directory.Exists(otherRepoFolder))
+					continue;
+
+				foreach (var sharedFolder in Directory.GetDirectories(otherRepoFolder, "*", SearchOption.TopDirectoryOnly))
+				{
+					hgfolder = Path.Combine(sharedFolder, BridgeTrafficCop.hg);
+					if (Directory.Exists(hgfolder))
+					{
+						CheckForMatchingRepo(sharedFolder);
+					}
+				}
+			}
+		}
+
+		private static void CheckForMatchingRepo(string repoContainingFolder)
+		{
+			var repo = new HgRepository(repoContainingFolder, new NullProgress());
+			var identifier = repo.Identifier;
+			if (identifier != null)
+				_extantRepoIdentifiers.Add(identifier);
+		}
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -86,7 +148,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string HgDataFolder(string path)
 		{
-			return Path.Combine(path, ".hg", "store", "data");
+			return Path.Combine(path, BridgeTrafficCop.hg, "store", "data");
 		}
 
 		public static string LiftOffset(string path)
@@ -98,7 +160,10 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			get
 			{
-				var rootDir = ((string)Registry.LocalMachine
+				if (_testingProjectsPath != null)
+					return _testingProjectsPath;
+
+				var rootDir = ((string) Registry.LocalMachine
 												.OpenSubKey("software")
 												.OpenSubKey("SIL")
 												.OpenSubKey("FieldWorks")
@@ -121,7 +186,7 @@ namespace TriboroughBridge_ChorusPlugin
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, ".hg", "hgrc"), Path.Combine(targetFolder, ".hg", "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
 			var roadblock = Path.Combine(sourceFolder, FailureFilename);
