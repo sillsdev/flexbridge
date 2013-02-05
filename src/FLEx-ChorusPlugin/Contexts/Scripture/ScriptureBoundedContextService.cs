@@ -101,13 +101,13 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData[SharedConstants.LangProject];
-			BaseDomainServices.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnedObject(
 				pathname,
 				sortedData,
 				scrElement,
-				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
+				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(),
+				langProjElement, SharedConstants.TranslatedScripture); // Restore 'ownerguid' to scrElement.
 
 			// Put the <objsur> elements back into BookAnnotations and ScriptureBooks property elements.
 			// There will always be 66 ScrBookAnnotations instances and they need go in canonical book order.
@@ -122,12 +122,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var sortedDoc = XDocument.Load(sortedPathnameKvp.Value);
 				var element = sortedDoc.Root.Element(SharedConstants.ScrBookAnnotations);
-				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.BookAnnotations, element);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					sortedPathnameKvp.Value,
 					sortedData,
 					element,
-					scrElementGuid); // Restore 'ownerguid' to annotation.
+					scrElementGuid, scrElement, SharedConstants.BookAnnotations); // Restore 'ownerguid' to annotation.
 
 				// Deal with optional ScrBook
 				var bookPathname = sortedPathnameKvp.Value.Replace(SharedConstants.bookannotations, SharedConstants.book);
@@ -144,12 +143,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				// Add book <objsur> element to scrElement's ScriptureBooks element.
 				sortedDoc = XDocument.Load(bookPathname);
 				element = sortedDoc.Root.Element(SharedConstants.ScrBook);
-				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.ScriptureBooks, element);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					bookPathname,
 					sortedData,
 					element,
-					scrElementGuid); // Restore 'ownerguid' to book.
+					scrElementGuid, scrElement, SharedConstants.ScriptureBooks); // Restore 'ownerguid' to book.
 			}
 
 			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);

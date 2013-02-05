@@ -231,6 +231,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		public string HtmlContextStyles(XmlNode mergeElement)
 		{
+			return DefaultHtmlContextStyles(mergeElement);
+		}
+
+		public static string DefaultHtmlContextStyles(XmlNode mergeElement)
+		{
 			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
 		}
 

@@ -116,8 +116,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				{
 					var lexDb = headerLexDbDoc.Element(LexDb);
 					highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
-					// Add LexDb <objsur> element to LP.
-					BaseDomainServices.RestoreObjsurElement(langProjElement, LexDb, lexDb);
 					foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
 					{
 						var listDoc = XDocument.Load(listPathname);
@@ -131,34 +129,31 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 								break;
 							case "SemanticDomainList":
 							case "AffixCategories":
-								// In LP. Restore the <objsur> element in LP, and then flatten the list by itself.
-								BaseDomainServices.RestoreObjsurElement(langProjElement, listFilenameSansExtension, listElement);
-								// Flatten the LP list by itself.
-								CmObjectFlatteningService.FlattenObject(
+								// Flatten the LP list by itself, and add an appropriate surrogate.
+								CmObjectFlatteningService.FlattenOwnedObject(
 									listPathname,
 									sortedData,
 									listElement,
-									langProjGuid); // Restore 'ownerguid' to list.
+									langProjGuid, langProjElement, listFilenameSansExtension); // Restore 'ownerguid' to list.
 								break;
 						}
 					}
 					// Flatten lexDb.
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnedObject(
 						lexDbPathname,
 						sortedData,
 						lexDb,
-						langProjGuid); // Restore 'ownerguid' to LexDb.
+						langProjGuid, langProjElement, LexDb); // Restore 'ownerguid' to LexDb.
 				}
 
 				// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
 				foreach (var entryElement in rootLexDbDoc.Elements(SharedConstants.LexEntry)
 					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 				{
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						lexDbPathname,
 						sortedData,
-						entryElement,
-						null); // Entries are not owned.
+						entryElement);
 				}
 			}
 		}

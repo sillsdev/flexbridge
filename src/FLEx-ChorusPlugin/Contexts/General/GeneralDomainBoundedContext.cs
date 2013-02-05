@@ -117,11 +117,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// Add LP to highLevelData.
 			highLevelData.Add(SharedConstants.LangProject, langProjElement);
 			// Flatten it.
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnerlessObject(
 				langProjPathname,
 				sortedData,
-				langProjElement,
-				null); // No owner.
+				langProjElement);
 
 			// Add stuff LP owns that is here, then flatten it.
 			// LP AnnotationDefs (OA-CmPossibilityList).
@@ -148,13 +147,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				foreach (var styleElement in doc.Root.Elements(SharedConstants.StStyle))
 				{
 					// Put style back into LP's Styles element.
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnedObject(
 						currentPathname,
 						sortedData,
 						styleElement,
-						langProjGuid); // Restore 'ownerguid' to style.
-					var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					sortedElements.Add(styleGuid, BaseDomainServices.CreateObjSurElement(styleGuid));
+						langProjGuid, sortedElements); // Restore 'ownerguid' to style.
 				}
 				// Restore LP Styles property in sorted order.
 				var langProjOwningProp = langProjElement.Element(SharedConstants.Styles);
@@ -171,13 +168,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				foreach (var filterElement in doc.Root.Elements("CmFilter"))
 				{
 					// Put CmFilter back into LP's Filters element.
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnedObject(
 						currentPathname,
 						sortedData,
 						filterElement,
-						langProjGuid); // Restore 'ownerguid' to style.
-					var filterGuid = filterElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					sortedElements.Add(filterGuid, BaseDomainServices.CreateObjSurElement(filterGuid));
+						langProjGuid, sortedElements); // Restore 'ownerguid' to style.
 				}
 				// Restore LP Filters property in sorted order.
 				var langProjOwningProp = langProjElement.Element(SharedConstants.Filters);
@@ -198,14 +193,11 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				var classAttr = annotationElement.Attribute(SharedConstants.Class);
 				annotationElement.Name = classAttr.Value;
 				classAttr.Remove();
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					currentPathname,
 					sortedData,
 					annotationElement,
-					langProjGuid); // Restore 'ownerguid' to style.
-				// Restore the right main element name from the class attribute.
-				var annotationGuid = annotationElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedElements.Add(annotationGuid, BaseDomainServices.CreateObjSurElement(annotationGuid));
+					langProjGuid, sortedElements); // Restore 'ownerguid' to style.
 			}
 			// Restore LP Annotations property in sorted order.
 			var owningProp = langProjElement.Element(SharedConstants.Annotations);
@@ -219,11 +211,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				doc = XDocument.Load(currentPathname);
 				foreach (var orderingElement in doc.Root.Elements(SharedConstants.VirtualOrdering))
 				{
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						currentPathname,
 						sortedData,
-						orderingElement,
-						null);
+						orderingElement);
 				}
 			}
 
@@ -232,11 +223,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			doc = XDocument.Load(currentPathname);
 			foreach (var pictureElement in doc.Root.Elements(SharedConstants.CmPicture))
 			{
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					currentPathname,
 					sortedData,
-					pictureElement,
-					null);
+					pictureElement);
 			}
 		}
 	}
