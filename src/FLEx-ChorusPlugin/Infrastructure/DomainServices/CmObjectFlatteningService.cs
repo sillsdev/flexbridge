@@ -32,11 +32,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		/// <summary>
 		/// Flatten an owned object and put an appropriate objsur in the list. //AND RETURN THE OBJSUR which should replace it.
 		/// </summary>
-		/// <param name="pathname"></param>
-		/// <param name="sortedData"></param>
-		/// <param name="element"></param>
-		/// <param name="ownerguid"></param>
-		/// <returns></returns>
 		internal static void FlattenOwnedObject(string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid, SortedDictionary<string, XElement> sortedSurrogates)
@@ -50,11 +45,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		/// <summary>
 		/// Flatten an owned object and add an appropriate objsur to the specified property of the owning object.
 		/// </summary>
-		/// <param name="pathname"></param>
-		/// <param name="sortedData"></param>
-		/// <param name="element"></param>
-		/// <param name="ownerguid"></param>
-		/// <returns></returns>
 		internal static void FlattenOwnedObject(string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid, XContainer owningElement, string propertyName)
