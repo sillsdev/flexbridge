@@ -57,13 +57,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element(SharedConstants.CmPossibilityList);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					listPathname,
 					sortedData,
 					listElement,
-					langProjGuid); // Restore 'ownerguid' to list.
-				var listGuid = listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedLists.Add(listGuid, BaseDomainServices.CreateObjSurElement(listGuid));
+					langProjGuid, sortedLists); // Restore 'ownerguid' to list.
 			}
 
 			if (sortedLists.Count == 0)

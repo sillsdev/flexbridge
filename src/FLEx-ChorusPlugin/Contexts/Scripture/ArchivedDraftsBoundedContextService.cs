@@ -55,12 +55,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var doc = XDocument.Load(draftPathname);
 				var draftElement = doc.Root.Element(SharedConstants.ScrDraft);
-				CmObjectFlatteningService.FlattenObject(draftPathname,
+				CmObjectFlatteningService.FlattenOwnedObject(draftPathname,
 					sortedData,
 					draftElement,
-					scrOwningGuid); // Restore 'ownerguid' to draftElement.
-				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedDrafts.Add(draftGuid, BaseDomainServices.CreateObjSurElement(draftGuid));
+					scrOwningGuid, sortedDrafts); // Restore 'ownerguid' to draftElement.
 			}
 
 			// Restore scrElement ArchivedDrafts property in sorted order.

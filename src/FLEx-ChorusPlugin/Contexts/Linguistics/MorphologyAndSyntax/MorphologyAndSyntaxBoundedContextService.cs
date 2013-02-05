@@ -144,13 +144,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var agentDoc = XDocument.Load(currentPathname);
 			foreach (var agentElement in agentDoc.Root.Elements())
 			{
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					currentPathname,
 					sortedData,
 					agentElement,
-					langProjGuid); // Restore 'ownerguid' to agent.
-				var agentGuid = agentElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedAgents.Add(agentGuid, BaseDomainServices.CreateObjSurElement(agentGuid));
+					langProjGuid, sortedAgents); // Restore 'ownerguid' to agent.
 			}
 			// Restore LP AnalyzingAgents property in sorted order.
 			if (sortedAgents.Count > 0)
