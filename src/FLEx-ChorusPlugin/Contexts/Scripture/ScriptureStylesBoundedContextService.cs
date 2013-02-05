@@ -44,13 +44,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var sortedStyles = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var styleElement in doc.Root.Elements("StStyle"))
 			{
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					stylePathname,
 					sortedData,
 					styleElement,
-					scrOwningGuid); // Restore 'ownerguid' to styleElement.
-				var styleGuid = styleElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedStyles.Add(styleGuid, BaseDomainServices.CreateObjSurElement(styleGuid));
+					scrOwningGuid, sortedStyles); // Restore 'ownerguid' to styleElement.
 			}
 
 			// Restore scrElement Styles property in sorted order.

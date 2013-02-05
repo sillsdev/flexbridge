@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts;
+using FLEx_ChorusPlugin.Infrastructure.Handling;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -16,7 +18,54 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class CmObjectFlatteningService
 	{
-		internal static void FlattenObject(
+		internal static void FlattenOwnerlessObject(
+			string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element, string ownerguid)
+		{
+			if (element == null) throw new ArgumentNullException("element");
+			if (element.Attribute("ownerguid") != null)
+				throw new ArgumentException("FlattenOwnerlessObject cannot be safely used to flatten owned objects");
+			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+		}
+
+		/// <summary>
+		/// Flatten an owned object and put an appropriate objsur in the list. //AND RETURN THE OBJSUR which should replace it.
+		/// </summary>
+		/// <param name="pathname"></param>
+		/// <param name="sortedData"></param>
+		/// <param name="element"></param>
+		/// <param name="ownerguid"></param>
+		/// <returns></returns>
+		internal static void FlattenOwnedObject(string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element, string ownerguid, SortedDictionary<string, XElement> sortedSurrogates)
+		{
+			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
+			var guid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			sortedSurrogates.Add(guid, BaseDomainServices.CreateObjSurElement(guid));
+		}
+
+		/// <summary>
+		/// Flatten an owned object and add an appropriate objsur to the specified property of the owning object.
+		/// </summary>
+		/// <param name="pathname"></param>
+		/// <param name="sortedData"></param>
+		/// <param name="element"></param>
+		/// <param name="ownerguid"></param>
+		/// <returns></returns>
+		internal static void FlattenOwnedObject(string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element, string ownerguid, XContainer owningElement, string propertyName)
+		{
+			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
+			var guid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			BaseDomainServices.RestoreObjsurElement(owningElement, propertyName, BaseDomainServices.CreateObjSurElement(guid));
+		}
+
+		private static void FlattenObjectCore(
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid)
@@ -45,12 +94,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				// The owned stuff will also be dup, so the idea is to also change their guids right now. [ChangeGuids is recursive down the owning tree.]
 				// Just be sure to change 'elementGuid' to the new one. :-)
 				// The first item added to sortedData has been flattened by this point, but not any following ones.
+				var oldGuid = elementGuid;
 				elementGuid = ChangeGuids(mdc, classInfo, element);
 				using (var listener = new ChorusNotesMergeEventListener(ChorusNotesMergeEventListener.GetChorusNotesFilePath(pathname)))
 				{
+					// Don't try to use something like this:
+					// var contextGenerator = new FieldWorkObjectContextGenerator();
+					// contextGenerator.GenerateContextDescriptor(element.ToString(), pathname)
+					// it will fail for elements in an owning sequence because in the unflattened form
+					// the object representing a sequence item has element name <ownseq> which won't generate a useful label.
+					var context = FieldWorksMergeStrategyServices.GenerateContextDescriptor(pathname, elementGuid, className);
+					listener.EnteringContext(context);
 					// Adding the conflict to the listener, will result in the ChorusNotes file being updated (created if need be.)
 					var conflict = new IncompatibleMoveConflict(className, GetXmlNode(element)) {Situation = new NullMergeSituation()};
+					// The order of the next three lines is critical. Each prepares state that the following lines use.
 					listener.RecordContextInConflict(conflict);
+					conflict.HtmlDetails = MakeHtmlForIncompatibleMove(conflict, oldGuid, elementGuid, element);
 					listener.ConflictOccurred(conflict);
 					File.WriteAllText(pathname + "." + SharedConstants.dupid, "");
 				}
@@ -113,21 +172,46 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					// Do before the removal call, so we know the parent, and thus, the property name.
 					if (isCustomProperty)
 					{
-						BaseDomainServices.RestoreObjsurElement((element.Elements().Where(
-							customNode =>
-							customNode.Name.LocalName == SharedConstants.Custom
-							&& customNode.Attribute(SharedConstants.Name) != null
-							&& customNode.Attribute(SharedConstants.Name).Value == propertyElement.Attribute(SharedConstants.Name).Value)).First(), ownedElement);
+						var owningPropertyElement = (element.Elements().Where(customNode => customNode.Name.LocalName == SharedConstants.Custom && customNode.Attribute(SharedConstants.Name) != null && customNode.Attribute(SharedConstants.Name).Value == propertyElement.Attribute(SharedConstants.Name).Value)).First();
+						ownedElement.Remove();
+						FlattenObjectCore(pathname, sortedData, ownedElement, elementGuid); // BEFORE we make the objsur!
+						BaseDomainServices.RestoreObjsurElement(owningPropertyElement, ownedElement);
 					}
 					else
 					{
-						BaseDomainServices.RestoreObjsurElement(element, ownedElement.Parent.Name.LocalName, ownedElement);
+						var propertyName = ownedElement.Parent.Name.LocalName;
+						ownedElement.Remove();
+						// Move down the nested set of owned objects, and do the same.
+						FlattenOwnedObject(pathname, sortedData, ownedElement, elementGuid, element, propertyName);
 					}
-					ownedElement.Remove();
-					// Move down the nested set of owned objects, and do the same.
-					FlattenObject(pathname, sortedData, ownedElement, elementGuid);
 				}
 			}
+		}
+
+		private static string MakeHtmlForIncompatibleMove(IncompatibleMoveConflict conflict, string oldGuid, string elementGuid, XElement element)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(element.ToString());
+			var sb = new StringBuilder("<head><style type='text/css'>");
+			sb.Append(FieldWorkObjectContextGenerator.DefaultHtmlContextStyles(doc.DocumentElement));
+			sb.Append("</style></head><body><div class='description'>");
+			sb.Append(conflict.GetFullHumanReadableDescription());
+			sb.Append(string.Format("</div><div> The object that was copied is a {0}:", element.Attribute("class").Value));
+			sb.Append("</div><div class=\"description\">");
+			sb.Append(new FwGenericHtmlGenerator().MakeHtml(doc.DocumentElement));
+			sb.Append("</div><div>The original is ");
+			MakeSilfwLink(oldGuid, sb);
+			sb.Append("</div><div>The copy is ");
+			MakeSilfwLink(elementGuid, sb);
+			sb.Append("</div></body>");
+			return sb.ToString();
+		}
+
+		private static void MakeSilfwLink(string guid, StringBuilder sb)
+		{
+			sb.Append("<a href=\"silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=");
+			sb.Append(guid);
+			sb.Append("&amp;tag=\">here</a>");
 		}
 
 		private static bool GetClassInfoFromElement(MetadataCache mdc, XElement element, out FdoClassInfo classInfo,

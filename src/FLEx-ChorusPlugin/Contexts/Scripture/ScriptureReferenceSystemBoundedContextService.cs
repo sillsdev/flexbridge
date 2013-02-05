@@ -46,7 +46,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!File.Exists(pathname))
 				return; // Nobody home.
 			var doc = XDocument.Load(pathname);
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnerlessObject(
 				pathname,
 				sortedData,
 				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),

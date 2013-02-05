@@ -137,13 +137,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					// Put texts back into index's Entries element.
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnedObject(
 						textPathname,
 						sortedData,
 						textElement,
-						langProjGuid); // Restore 'ownerguid' to text.
-					var textGuid = textElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					sortedTexts.Add(textGuid, BaseDomainServices.CreateObjSurElement(textGuid));
+						langProjGuid, sortedTexts); // Restore 'ownerguid' to text.
 				}
 				// Restore LP Texts property in sorted order.
 				if (sortedTexts.Count == 0)
@@ -160,7 +158,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					var textDoc = XDocument.Load(textPathname);
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						textPathname,
 						sortedData,
 						textElement,

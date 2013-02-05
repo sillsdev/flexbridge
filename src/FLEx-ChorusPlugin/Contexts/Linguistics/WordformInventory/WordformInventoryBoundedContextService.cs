@@ -113,7 +113,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				foreach (var unownedElement in unownedElements
 					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 				{
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						inventoryPathname,
 						sortedData,
 						unownedElement,

@@ -52,7 +52,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void NullPathnameThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
+			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 				null,
 				new SortedDictionary<string, XElement>(),
 				new XElement("junk"),
@@ -62,7 +62,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void EmptyPathnameThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
+			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 				"",
 				new SortedDictionary<string, XElement>(),
 				new XElement("junk"),
@@ -75,7 +75,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
+				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					null,
 					new XElement("junk"),
@@ -89,7 +89,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenObject(
+				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					new SortedDictionary<string, XElement>(),
 					null,
@@ -103,7 +103,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenObject(
+				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					new SortedDictionary<string, XElement>(),
 					new XElement("junk"),
@@ -118,7 +118,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			{
 				var tempPath = tempFile.Path;
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					sortedData,
 					_reversalIndexElement,
@@ -135,7 +135,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
@@ -150,7 +150,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
@@ -169,7 +169,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
@@ -200,7 +200,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
 											new XElement(SharedConstants.Refseq,
 													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
 					segment,
@@ -223,7 +223,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
 											new XElement(SharedConstants.Refcol,
 													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
 					possibilityElement,
@@ -264,16 +264,33 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 					var reversalIndexElement = XElement.Parse(nestedReversal);
 					var sortedDict = new SortedDictionary<string, XElement>();
 					Assert.IsFalse(File.Exists(notesPathname));
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						tempFile.Path,
 						sortedDict,
 						reversalIndexElement,
 						null);
 					Assert.IsTrue(File.Exists(notesPathname));
 					var doc = XDocument.Load(notesPathname);
-					var msgElement = doc.Root.Element("annotation").Element("message");
+					var annotation = doc.Root.Element("annotation");
+					string refLeadIn =
+						"silfw://localhost/link?app=flex&database=current&server=&tool=default&guid=";
+					var refAttr = annotation.Attribute("ref").Value;
+					string refTrail = "&tag=&label=ReversalIndexEntry";
+					Assert.That(refAttr.Substring(0,refLeadIn.Length), Is.EqualTo(refLeadIn));
+					Assert.That(refAttr.Substring(refAttr.Length - refTrail.Length, refTrail.Length), Is.EqualTo(refTrail));
+					var guidNewRie = refAttr.Substring(refLeadIn.Length, refAttr.Length - refLeadIn.Length - refTrail.Length);
+					Assert.DoesNotThrow(() => new Guid(guidNewRie), "guid in ref link should parse as a guid");
+
+					var msgElement = annotation.Element("message");
 					Assert.IsTrue(msgElement.LastNode.ToString().Contains("Chorus.merge.xml.generic.IncompatibleMoveConflict"));
+					Assert.That(msgElement.LastNode, Is.InstanceOf<XCData>());
+					var doc2 = XDocument.Parse(((XCData)msgElement.LastNode).Value);
+					var conflictElement = doc2.Root;
+					Assert.That(conflictElement.Attribute("contextPath").Value, Is.EqualTo(refAttr));
 					Assert.AreEqual("FLExBridge", msgElement.Attribute("author").Value);
+					var html = conflictElement.Attribute("htmlDetails").Value;
+					Assert.That(html, Is.StringContaining(guidNewRie), "The HTML should contain a link to the changed-guid object");
+					Assert.That(html, Is.StringContaining("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"), "The HTML should contain a link to conflicting object");
 
 					// Make sure the duplicate guids were changed in both levels.
 					var ries = from rie in sortedDict.Values
@@ -283,6 +300,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 					Assert.IsTrue(sortedDict.ContainsKey("0039739a-7fcf-4838-8b75-566b8815a29f"));
 					Assert.IsTrue(sortedDict.ContainsKey("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"));
 					Assert.IsTrue(sortedDict.ContainsKey("c1ed6dc9-e382-11de-8a39-0800200c9a66"));
+					Assert.IsTrue(sortedDict.ContainsKey(guidNewRie));
+
+					var parent = sortedDict["0039739a-7fcf-4838-8b75-566b8815a29f"];
+					var modSurrogate = parent.Element("Subentries").Elements("objsur").Last();
+					Assert.That(modSurrogate.Attribute("guid").Value, Is.EqualTo(guidNewRie),
+						"the objsur for the item with the new ID should match");
 				}
 				finally
 				{

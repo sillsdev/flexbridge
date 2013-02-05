@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Chorus;
+using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
 using Palaso.Network;
 using TriboroughBridge_ChorusPlugin.View;
@@ -65,6 +67,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			ChorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
 
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
+			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>()
+						 .First();
+			conflictHandler.HtmlAdjuster = AdjustConflctHtml;
 			var viewer = new BridgeConflictView();
 			_mainBridgeForm.Controls.Add(viewer);
 			_mainBridgeForm.Text = viewer.Text;
@@ -75,6 +80,17 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			//if (_currentLanguageProject.FieldWorkProjectInUse)
 			//	viewer.EnableWarning();
 			viewer.SetProjectName(_projectName);
+		}
+
+		/// <summary>
+		/// This method receives the HtmlDetails stored in a conflict, and returns adjusted HTML.
+		/// Specifically it fixes URLs containing "database=current" to contain the real project name
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public string AdjustConflctHtml(string input)
+		{
+			return input.Replace(@"&amp;database=current&amp;", @"&amp;database=" + _projectName + @"&amp;");
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }

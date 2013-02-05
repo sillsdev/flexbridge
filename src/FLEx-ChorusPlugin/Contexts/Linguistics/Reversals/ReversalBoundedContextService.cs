@@ -146,10 +146,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 						foreach (var sortedChartElement in sortedRecords.Values)
 							recordsElementOwningProp.Add(sortedChartElement);
 					}
-					CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdxElement, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
-
-					var revIdxGuid = revIdxElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
+				CmObjectFlatteningService.FlattenOwnedObject(reversalPathname, sortedData, revIdxElement,
+					lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), sortedRevs); // Restore 'ownerguid' to indices.
 				}
 			}
 
