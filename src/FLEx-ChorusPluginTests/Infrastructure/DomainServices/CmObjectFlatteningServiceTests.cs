@@ -55,8 +55,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 				null,
 				new SortedDictionary<string, XElement>(),
-				new XElement("junk"),
-				null));
+				new XElement("junk")));
 		}
 
 		[Test]
@@ -65,8 +64,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 				"",
 				new SortedDictionary<string, XElement>(),
-				new XElement("junk"),
-				null));
+				new XElement("junk")));
 		}
 
 		[Test]
@@ -78,8 +76,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					null,
-					new XElement("junk"),
-					null));
+					new XElement("junk")));
 			}
 		}
 
@@ -92,7 +89,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					new SortedDictionary<string, XElement>(),
-					null,
 					null));
 			}
 		}
@@ -103,11 +99,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
+				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenOwnedObject(
 					tempPath,
 					new SortedDictionary<string, XElement>(),
 					new XElement("junk"),
-					string.Empty));
+					string.Empty, new SortedDictionary<string, XElement>()));
 			}
 		}
 
@@ -121,8 +117,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempPath,
 					sortedData,
-					_reversalIndexElement,
-					null);
+					_reversalIndexElement);
 				Assert.IsTrue(_reversalIndexElement.Name.LocalName == SharedConstants.RtTag);
 				var classAttr = _reversalIndexElement.Attribute(SharedConstants.Class);
 				Assert.IsNotNull(classAttr);
@@ -135,11 +130,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
-					ReversalOwnerGuid);
+					ReversalOwnerGuid, new SortedDictionary<string, XElement>());
 				Assert.IsTrue(_reversalIndexElement.Attribute(SharedConstants.OwnerGuid).Value == ReversalOwnerGuid);
 			}
 		}
@@ -153,8 +148,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
-					_reversalIndexElement,
-					null);
+					_reversalIndexElement);
 				Assert.AreEqual(7, sortedData.Count());
 				Assert.AreEqual(1, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex"));
 				Assert.AreEqual(3, sortedData.Values.Count(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndexEntry"));
@@ -172,8 +166,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
-					_reversalIndexElement,
-					null);
+					_reversalIndexElement);
 				var revIdx = sortedData.Values.First(rt => rt.Attribute(SharedConstants.Class).Value == "ReversalIndex");
 				var owningProp = revIdx.Element("Entries");
 				CheckOwningProperty(owningProp, 2);
@@ -203,8 +196,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
-					segment,
-					null);
+					segment);
 				var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
 				Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
 			}
@@ -226,8 +218,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 				CmObjectFlatteningService.FlattenOwnerlessObject(
 					tempFile.Path,
 					sortedData,
-					possibilityElement,
-					null);
+					possibilityElement);
 				var restored = sortedData["c1ed6dc8-e382-11de-8a39-0800200c9a66"];
 				Assert.IsTrue(restored.ToString().Contains(SharedConstants.Objsur));
 			}
@@ -267,8 +258,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 					CmObjectFlatteningService.FlattenOwnerlessObject(
 						tempFile.Path,
 						sortedDict,
-						reversalIndexElement,
-						null);
+						reversalIndexElement);
 					Assert.IsTrue(File.Exists(notesPathname));
 					var doc = XDocument.Load(notesPathname);
 					var annotation = doc.Root.Element("annotation");

@@ -78,12 +78,11 @@ namespace FLEx_ChorusPlugin.Contexts
 			XElement owningElement, string owningPropertyName,
 			XElement ownedElement)
 		{
-			RestoreObjsurElement(owningElement, owningPropertyName, ownedElement);
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnedObject(
 				pathname,
 				sortedData,
 				ownedElement,
-				owningElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to ownedElement.
+				owningElement.Attribute(SharedConstants.GuidStr).Value, owningElement, owningPropertyName); // Restore 'ownerguid' to ownedElement.
 		}
 
 		internal static void RestoreObjsurElement(XElement owningPropertyElement, XElement ownedElement)

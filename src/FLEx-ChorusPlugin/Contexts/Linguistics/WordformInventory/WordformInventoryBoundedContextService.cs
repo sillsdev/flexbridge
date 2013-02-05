@@ -116,8 +116,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					CmObjectFlatteningService.FlattenOwnerlessObject(
 						inventoryPathname,
 						sortedData,
-						unownedElement,
-						null); // Not owned.
+						unownedElement);
 				}
 			}
 		}

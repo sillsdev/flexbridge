@@ -49,8 +49,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			CmObjectFlatteningService.FlattenOwnerlessObject(
 				pathname,
 				sortedData,
-				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
-				null); // Not owned.
+				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"));
 		}
 	}
 }

@@ -161,8 +161,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					CmObjectFlatteningService.FlattenOwnerlessObject(
 						textPathname,
 						sortedData,
-						textElement,
-						null); // No owner.
+						textElement);
 				}
 			}
 		}

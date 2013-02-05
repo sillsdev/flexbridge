@@ -50,10 +50,9 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 			{
 				// These are un-owned lists.
 				var userDefinedListDoc = XDocument.Load(userDefinedListPathname);
-				CmObjectFlatteningService.FlattenObject(userDefinedListPathname,
+				CmObjectFlatteningService.FlattenOwnerlessObject(userDefinedListPathname,
 					sortedData,
-					userDefinedListDoc.Root.Element(SharedConstants.CmPossibilityList),
-					null); // No owner.
+					userDefinedListDoc.Root.Element(SharedConstants.CmPossibilityList));
 			}
 		}
 	}

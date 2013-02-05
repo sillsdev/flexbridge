@@ -21,12 +21,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		internal static void FlattenOwnerlessObject(
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
-			XElement element, string ownerguid)
+			XElement element)
 		{
 			if (element == null) throw new ArgumentNullException("element");
 			if (element.Attribute("ownerguid") != null)
 				throw new ArgumentException("FlattenOwnerlessObject cannot be safely used to flatten owned objects");
-			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			FlattenObjectCore(pathname, sortedData, element, null);
 		}
 
 		/// <summary>
@@ -196,7 +196,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			sb.Append(FieldWorkObjectContextGenerator.DefaultHtmlContextStyles(doc.DocumentElement));
 			sb.Append("</style></head><body><div class='description'>");
 			sb.Append(conflict.GetFullHumanReadableDescription());
-			sb.Append(string.Format("</div><div> The object that was copied is a {0}:", element.Attribute("class").Value));
+			string className = element.Name.LocalName;
+			var classAttr = element.Attribute("class");
+			if (classAttr != null)
+				className = classAttr.Value;
+			sb.Append(string.Format("</div><div> The object that was copied is a {0}:", className));
 			sb.Append("</div><div class=\"description\">");
 			sb.Append(new FwGenericHtmlGenerator().MakeHtml(doc.DocumentElement));
 			sb.Append("</div><div>The original is ");
