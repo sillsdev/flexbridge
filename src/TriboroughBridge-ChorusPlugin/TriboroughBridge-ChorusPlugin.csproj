@@ -96,6 +96,8 @@
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.ServiceModel" />
 	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="Vulcan.Uczniowie.HelpProvider">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>

@@ -91,6 +91,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 				switch (classInfo.ClassName)
 				{
+					case "LangProject":
+						classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
+						break;
 					case "LexEntry":
 						classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
 						break;

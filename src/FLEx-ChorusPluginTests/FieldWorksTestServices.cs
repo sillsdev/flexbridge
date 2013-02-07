@@ -97,6 +97,25 @@ namespace FLEx_ChorusPluginTests
 			int expectedConflictCount, List<Type> conflictTypes,
 			int expectedChangesCount, List<Type> changeTypes)
 		{
+			List<IConflict> resultingConflicts;
+			return DoMerge(chorusFileHandler,
+				ourFile, ourContent,
+				commonFile, commonAncestor,
+				theirFile, theirContent,
+				matchesExactlyOne, isNull,
+				expectedConflictCount, conflictTypes,
+				expectedChangesCount, changeTypes, out resultingConflicts);
+		}
+
+		internal static string DoMerge(
+			IChorusFileTypeHandler chorusFileHandler,
+			TempFile ourFile, string ourContent,
+			TempFile commonFile, string commonAncestor,
+			TempFile theirFile, string theirContent,
+			IEnumerable<string> matchesExactlyOne, IEnumerable<string> isNull,
+			int expectedConflictCount, List<Type> conflictTypes,
+			int expectedChangesCount, List<Type> changeTypes, out List<IConflict> resultingConflicts)
+		{
 			File.WriteAllText(ourFile.Path, ourContent);
 			if (commonFile != null)
 				File.WriteAllText(commonFile.Path, commonAncestor);
@@ -127,6 +146,7 @@ namespace FLEx_ChorusPluginTests
 			Assert.AreEqual(changeTypes.Count, eventListener.Changes.Count);
 			for (var idx = 0; idx < changeTypes.Count; ++idx)
 				Assert.AreSame(changeTypes[idx], eventListener.Changes[idx].GetType());
+			resultingConflicts = eventListener.Conflicts;
 			return result;
 		}
 

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using Chorus;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
@@ -83,6 +86,17 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		}
 
 		/// <summary>
+		/// A minimal init sufficient for testing AdjustConflctHtml.
+		/// </summary>
+		/// <param name="projectName"></param>
+		/// <param name="projectDir"></param>
+		internal void InitForAdjustConflict(string projectName, string projectDir)
+		{
+			_projectName = projectName;
+			_projectDir = projectDir;
+		}
+
+		/// <summary>
 		/// This method receives the HtmlDetails stored in a conflict, and returns adjusted HTML.
 		/// Specifically it fixes URLs containing "database=current" to contain the real project name
 		/// </summary>
@@ -90,7 +104,62 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		/// <returns></returns>
 		public string AdjustConflctHtml(string input)
 		{
-			return input.Replace(@"&amp;database=current&amp;", @"&amp;database=" + _projectName + @"&amp;");
+			return FixWsRuns(input).Replace(@"&amp;database=current&amp;", @"&amp;database=" + _projectName + @"&amp;");
+		}
+
+		/// <summary>
+		/// Looks for something like <span class="ws">en-fonipa</span>,
+		/// and we can find a corresponding writing system in the project and extract its user-friendly name,
+		/// replace the run content with the user-friendly name.
+		/// There may be another span wrapped around the name inside it, for example,
+		/// <span class='ws'><span style='background: Yellow'>en-fonipa</span></span>
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		string FixWsRuns(string input)
+		{
+			var pattern = new Regex("<span class=\"ws\">(<span[^>]*>)?([^<]+)</span>");
+			string current = input;
+			if (_projectDir == null)
+				return input;
+			var wspath = Path.Combine(_projectDir, @"WritingSystemStore");
+			if (!Directory.Exists(wspath))
+				return input; // can't translate.
+			Match match;
+			int startAt = 0;
+			while (startAt < current.Length && (match = pattern.Match(current, startAt)).Success)
+			{
+				var targetGroup = match.Groups[2];
+				string ws = targetGroup.Value;
+				startAt = match.Index + match.Length; // don't match this again, even if we can't improve it.
+				string ldmlpath = Path.ChangeExtension(Path.Combine(wspath, ws), "ldml");
+				if (!File.Exists(ldmlpath))
+					continue; // can't improve this one
+				try
+				{
+					var ldmlElt = XDocument.Load(ldmlpath).Root;
+					var special = ldmlElt.Element(@"special");
+					if (special == null)
+						continue;
+					XNamespace palaso = @"urn://palaso.org/ldmlExtensions/v1";
+					var abbr = special.Element(palaso + "abbreviation");
+					if (abbr == null)
+						continue;
+					var beforeMatch = targetGroup.Index;
+					var matchLength = targetGroup.Length;
+					var valueAttr = abbr.Attribute("value");
+					if (valueAttr == null)
+						continue;
+					var niceName = valueAttr.Value;
+					current = current.Substring(0, beforeMatch) + niceName + current.Substring(beforeMatch + matchLength);
+					startAt += niceName.Length - matchLength;
+				}
+				catch (XmlException)
+				{
+					continue; // ignore any parsing errors, just can't improve this one
+				}
+			}
+			return current;
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }

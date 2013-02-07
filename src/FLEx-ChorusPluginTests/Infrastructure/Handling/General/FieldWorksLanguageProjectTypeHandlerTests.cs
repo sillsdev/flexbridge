@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Chorus.merge;
+using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
@@ -161,6 +163,44 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 				new List<string>(),
 				0, new List<Type>(),
 				0, new List<Type>());
+		}
+
+		public const string conflictMarker = "<span style=\"background: Yellow\">";
+
+		[Test]
+		public void MergeUnicodePropWithConflicts()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LanguageProject>
+<LangProject guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+	<AnalysisWss>
+	<Uni>en-fonipa</Uni>
+	</AnalysisWss>
+</LangProject>
+</LanguageProject>";
+
+			var ourContent = commonAncestor.Replace("en-fonipa", "en-fonipa en-Zxxx-x-audio");
+			var theirContent = commonAncestor.Replace("en-fonipa", "en en-fonipa");
+
+			List<IConflict> resultingConflicts;
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				1, new List<Type> { typeof(XmlTextBothEditedTextConflict) },
+				0, new List<Type>(), out resultingConflicts);
+			Assert.IsTrue(results.Contains("en-fonipa en-Zxxx-x-audio"));
+			var conflict = (XmlTextBothEditedTextConflict)resultingConflicts[0];
+			Assert.That(conflict.Context, Is.Not.Null);
+			var context = conflict.Context;
+			Assert.That(context.DataLabel, Is.StringContaining("AnalysisWss"));
+			var html = conflict.HtmlDetails;
+			Assert.That(html, Is.StringContaining("<span class=\"ws\">en-fonipa</span>"));
+			Assert.That(html, Is.StringContaining("<span class=\"ws\">" + conflictMarker + "en-Zxxx-x-audio</span></span>"));
+			Assert.That(html, Is.StringContaining("<span class=\"ws\">" + conflictMarker + "en</span></span>"));
 		}
 	}
 }

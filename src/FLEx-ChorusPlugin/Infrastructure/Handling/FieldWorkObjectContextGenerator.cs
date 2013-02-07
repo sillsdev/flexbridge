@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -99,7 +100,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		private static XmlNode GetTargetNode(XmlNode start)
 		{
-			if (IsMultiStringChild(start) || IsMultiRunStringChild(start))
+			if (IsMultiStringChild(start) || IsMultiRunStringChild(start) || IsUnicodeStringChild(start))
 				return start.ParentNode;
 			return start; // Enhance JohnT: may eventually be other exceptions.
 		}
@@ -107,6 +108,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static bool IsMultiRunStringChild(XmlNode start)
 		{
 			return start.Name.ToLowerInvariant() == "str";
+		}
+
+		private static bool IsUnicodeStringChild(XmlNode start)
+		{
+			return start.Name.ToLowerInvariant() == SharedConstants.Uni.ToLowerInvariant();
 		}
 
 		// If the start node is a child of current, generate a path from current to start, with a leading space.
@@ -225,8 +231,42 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return HtmlForMultiString(mergeElement);
 			if (IsMultiStringChild(mergeElement))
 				return HtmlForMultiString(mergeElement.ParentNode);
+			if (IsUnicodeStringChild(mergeElement))
+				return HtmlContextForUnicodeString(mergeElement);
+			if (IsUnicodeStringParent(mergeElement))
+				return HtmlContextForUnicodeString(mergeElement.SelectSingleNode(SharedConstants.Uni));
 			// last resort
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
+		}
+
+		private static string HtmlContextForUnicodeString(XmlNode mergeElement)
+		{
+			var result = mergeElement.InnerText; // default
+			if (mergeElement.ParentNode == null)
+				return result; // paranoia
+			// If it is one of the special strings that contain lists of writing systems, mark them
+			// so the user-friendly names can be substituted.
+			switch (mergeElement.ParentNode.Name)
+			{
+				case @"AnalysisWss":
+				case @"CurAnalysisWss":
+				case @"CurPronunWss":
+				case @"CurVernWss":
+				case @"VernWss":
+					var sb = new StringBuilder();
+					foreach (var ws in result.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries))
+					{
+						if (sb.Length > 0)
+							sb.Append(" ");
+						sb.Append("<span class=\"ws\">");
+						sb.Append(ws);
+						sb.Append("</span>");
+					}
+					return sb.ToString();
+					break;
+				default:
+					return result;
+			}
 		}
 
 		public string HtmlContextStyles(XmlNode mergeElement)
@@ -302,6 +342,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return "***ownseq messup***"; // not worth crashing?, but this is totally bizarre
 		}
 
+		private static bool IsUnicodeStringParent(XmlNode mergeElement)
+		{
+			return mergeElement.SelectSingleNode(SharedConstants.Uni) != null;
+		}
+
 		private static bool IsMultiString(XmlNode mergeElement)
 		{
 			if (mergeElement.SelectSingleNode(SharedConstants.AUni) != null)
@@ -310,6 +355,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return true;
 			return false;
 		}
-
 	}
 }

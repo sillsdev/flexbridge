@@ -98,6 +98,7 @@
 	<Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="BridgeConflictControllerTests.cs" />
 	<Compile Include="BridgeTrafficCopTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="UtilitiesTests.cs" />
