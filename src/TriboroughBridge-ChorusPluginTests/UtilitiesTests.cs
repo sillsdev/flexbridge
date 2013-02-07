@@ -50,7 +50,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			using (var hasProject = new TemporaryFolder("hasProject"))
 			{
 				var newFile = Path.Combine(hasProject.Path, "test.txt");
-				File.WriteAllText(newFile, "some stuff");
+				File.WriteAllText(newFile, "some hasProject stuff");
 				var repo = new HgRepository(hasProject.Path, new NullProgress());
 				repo.Init();
 				repo.AddAndCheckinFile(newFile);
@@ -59,14 +59,14 @@ namespace TriboroughBridge_ChorusPluginTests
 				{
 					var mainProjectDir = Directory.CreateDirectory(Path.Combine(hasNonmatchingProject.Path, "mainfwdir"));
 					newFile = Path.Combine(mainProjectDir.FullName, "test.txt");
-					File.WriteAllText(newFile, "some stuff");
+					File.WriteAllText(newFile, "some mainfwdir stuff");
 					repo = new HgRepository(mainProjectDir.FullName, new NullProgress());
 					repo.Init();
 					repo.AddAndCheckinFile(newFile);
 
 					var nestedLiftDir = Directory.CreateDirectory(Path.Combine(mainProjectDir.FullName, Utilities.OtherRepositories, Utilities.LIFT));
 					newFile = Path.Combine(nestedLiftDir.FullName, "test.txt");
-					File.WriteAllText(newFile, "some stuff");
+					File.WriteAllText(newFile, "some lifty stuff");
 					repo = new HgRepository(nestedLiftDir.FullName, new NullProgress());
 					repo.Init();
 					repo.AddAndCheckinFile(newFile);
