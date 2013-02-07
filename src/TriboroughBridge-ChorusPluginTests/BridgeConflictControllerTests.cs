@@ -38,21 +38,29 @@ namespace TriboroughBridge_ChorusPluginTests
 			// One for which input file is missing.
 			// One for which replacement is unchanged (verifies we don't get into infinite replace loop).
 			// One where the wsID is further wrapped in conflict-marker span
+			// Special case for Zxxx
 			var input =
-				@"some irrelevant stuff <span class='ws'><span style='background: Yellow'>en-fonipa</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>es-fonipa</span>".Replace("'", "\"");
+				@"some irrelevant <span class='ws'>en-Zxxx-x-audio</span> stuff <span class='ws'><span style='background: Yellow'>en-fonipa</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>es-fonipa</span>".Replace("'", "\"");
 
 			var ldmlContent1 = @"<?xml version='1.0' encoding='utf-8'?>
 <ldml>
 	<special xmlns:palaso='urn://palaso.org/ldmlExtensions/v1'>
-		<palaso:abbreviation
-			value='Eng (IPA)' />
+		<palaso:languageName
+			value='English' />
 	</special>
-
+	<special xmlns:fw='urn://fieldworks.sil.org/ldmlExtensions/v1'>
+		<fw:regionName
+			value='Australia' />
+		<fw:scriptName
+			value='Cherokee' />
+		<fw:variantName
+			value='International Phonetic Alphabet' />
+	</special>
 </ldml>".Replace("'", "\"");
 			var ldmlContent2 = @"<?xml version='1.0' encoding='utf-8'?>
 <ldml>
 	<special xmlns:palaso='urn://palaso.org/ldmlExtensions/v1'>
-		<palaso:abbreviation
+		<palaso:languageName
 			value='en' />
 	</special>
 
@@ -60,10 +68,23 @@ namespace TriboroughBridge_ChorusPluginTests
 			var ldmlContent3 = @"<?xml version='1.0' encoding='utf-8'?>
 <ldml>
 	<special xmlns:palaso='urn://palaso.org/ldmlExtensions/v1'>
-		<palaso:abbreviation
+		<palaso:languageName
 			value='Spn (IPA)' />
 	</special>
 
+</ldml>".Replace("'", "\"");
+			var ldmlContent4 = @"<?xml version='1.0' encoding='utf-8'?>
+<ldml>
+	<special xmlns:palaso='urn://palaso.org/ldmlExtensions/v1'>
+		<palaso:languageName
+			value='English' />
+	</special>
+	<special xmlns:fw='urn://fieldworks.sil.org/ldmlExtensions/v1'>
+		<fw:scriptName
+			value='Code for unwritten documents' />
+		<fw:variantName
+			value='Audio' />
+	</special>
 </ldml>".Replace("'", "\"");
 
 			// Create matching dummy writing system files.
@@ -75,6 +96,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			File.WriteAllText(Path.Combine(wsFolder, "en-fonipa.ldml"), ldmlContent1);
 			File.WriteAllText(Path.Combine(wsFolder, "en.ldml"), ldmlContent2);
 			File.WriteAllText(Path.Combine(wsFolder, "es-fonipa.ldml"), ldmlContent3);
+			File.WriteAllText(Path.Combine(wsFolder, "en-Zxxx-x-audio.ldml"), ldmlContent4);
 
 			var controller = new BridgeConflictController();
 			controller.InitForAdjustConflict(null, projFolder);
@@ -82,7 +104,7 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			Directory.Delete(projFolder, true);
 
-			Assert.That(result, Is.EqualTo(@"some irrelevant stuff <span class='ws'><span style='background: Yellow'>Eng (IPA)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span>".Replace("'", "\"")));
+			Assert.That(result, Is.EqualTo(@"some irrelevant <span class='ws'>English (Audio)</span> stuff <span class='ws'><span style='background: Yellow'>English (Cherokee, Australia, International Phonetic Alphabet)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span>".Replace("'", "\"")));
 		}
 	}
 }

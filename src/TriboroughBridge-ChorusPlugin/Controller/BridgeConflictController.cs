@@ -142,15 +142,24 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					if (special == null)
 						continue;
 					XNamespace palaso = @"urn://palaso.org/ldmlExtensions/v1";
-					var abbr = special.Element(palaso + "abbreviation");
-					if (abbr == null)
+					var langName = GetSpecialValue(ldmlElt, palaso, "languageName");
+					if (langName == null)
 						continue;
+					var mods = new List<string>();
+					XNamespace fw = @"urn://fieldworks.sil.org/ldmlExtensions/v1";
+					if (!targetGroup.Value.Contains("Zxxx")) // suppress "Code for unwritten documents"
+						AddSpecialValue(ldmlElt, fw, "scriptName", mods);
+					AddSpecialValue(ldmlElt, fw, "regionName", mods);
+					AddSpecialValue(ldmlElt, fw, "variantName", mods);
+					string niceName = langName;
+					if (mods.Count > 0)
+					{
+						niceName += " (";
+						niceName += string.Join(", ", mods.ToArray());
+						niceName += ")";
+					}
 					var beforeMatch = targetGroup.Index;
 					var matchLength = targetGroup.Length;
-					var valueAttr = abbr.Attribute("value");
-					if (valueAttr == null)
-						continue;
-					var niceName = valueAttr.Value;
 					current = current.Substring(0, beforeMatch) + niceName + current.Substring(beforeMatch + matchLength);
 					startAt += niceName.Length - matchLength;
 				}
@@ -160,6 +169,28 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				}
 			}
 			return current;
+		}
+
+		void AddSpecialValue(XElement root, XNamespace ns, string eltName, List<string> collector)
+		{
+			var item = GetSpecialValue(root, ns, eltName);
+			if (item != null)
+				collector.Add(item);
+		}
+
+		string GetSpecialValue(XElement root, XNamespace ns, string eltName)
+		{
+			foreach (var elt in root.Elements("special"))
+			{
+				var targetElt = elt.Element(ns + eltName);
+				if (targetElt == null)
+					continue;
+				var valueAttr = targetElt.Attribute("value");
+				if (valueAttr == null)
+					continue;
+				return valueAttr.Value;
+			}
+			return null;
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }

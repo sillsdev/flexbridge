@@ -257,7 +257,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					foreach (var ws in result.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries))
 					{
 						if (sb.Length > 0)
-							sb.Append(" ");
+							sb.Append("; "); // Makes it a little more readable than just putting the space back in
 						sb.Append("<span class=\"ws\">");
 						sb.Append(ws);
 						sb.Append("</span>");
