@@ -15,13 +15,13 @@ namespace TriboroughBridge_ChorusPluginTests
 	public class BridgeConflictControllerTests
 	{
 		[Test]
-		public void AdjustConflctHtml_ReplacesDatabaseCurrent()
+		public void AdjustConflictHtml_ReplacesDatabaseCurrent()
 		{
 			var input =
 				@"silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni";
 			var controller = new BridgeConflictController();
 			controller.InitForAdjustConflict("MyProject", null);
-			var result = controller.AdjustConflctHtml(input);
+			var result = controller.AdjustConflictHtml(input);
 			Assert.That(result, Is.EqualTo(@"silfw://localhost/link?app=flex&amp;database=MyProject&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni"));
 		}
 
@@ -31,7 +31,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		/// replace the run content with the user-friendly name.
 		/// </summary>
 		[Test]
-		public void AdjustConflctHtml_ReplacesWsRuns()
+		public void AdjustConflictHtml_ReplacesWsRuns()
 		{
 			// Input contains:
 			// Two strings that will be replaced (verifies we can do more than one substitution correctly)
@@ -78,7 +78,7 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			var controller = new BridgeConflictController();
 			controller.InitForAdjustConflict(null, projFolder);
-			var result = controller.AdjustConflctHtml(input);
+			var result = controller.AdjustConflictHtml(input);
 
 			Directory.Delete(projFolder, true);
 

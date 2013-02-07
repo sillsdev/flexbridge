@@ -72,7 +72,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
 			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>()
 						 .First();
-			conflictHandler.HtmlAdjuster = AdjustConflctHtml;
+			conflictHandler.HtmlAdjuster = AdjustConflictHtml;
 			var viewer = new BridgeConflictView();
 			_mainBridgeForm.Controls.Add(viewer);
 			_mainBridgeForm.Text = viewer.Text;
@@ -86,7 +86,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		}
 
 		/// <summary>
-		/// A minimal init sufficient for testing AdjustConflctHtml.
+		/// A minimal init sufficient for testing AdjustConflictHtml.
 		/// </summary>
 		/// <param name="projectName"></param>
 		/// <param name="projectDir"></param>
@@ -102,7 +102,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public string AdjustConflctHtml(string input)
+		public string AdjustConflictHtml(string input)
 		{
 			return FixWsRuns(input).Replace(@"&amp;database=current&amp;", @"&amp;database=" + _projectName + @"&amp;");
 		}
