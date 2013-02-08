@@ -129,6 +129,7 @@
 	<Compile Include="Controller\FlexBridgeSyncronizeController.cs" />
 	<Compile Include="Controller\FlexConflictStrategy.cs" />
 	<Compile Include="Controller\FlexObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\DomainServices\CheckForDuplicateElementMethod.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
