@@ -37,7 +37,12 @@ namespace TriboroughBridge_ChorusPlugin
 				_host = new ServiceHost(typeof(FLExService),
 									   new[] { new Uri("net.pipe://localhost/FLExEndpoint" + fwProjectName) });
 				//open host ready for business
-				_host.AddServiceEndpoint(typeof(IFLExService), new NetNamedPipeBinding(), "FLExPipe");
+
+				var hostPipeBinding = new NetNamedPipeBinding
+										  {
+											  ReceiveTimeout = TimeSpan.MaxValue
+										  };
+				_host.AddServiceEndpoint(typeof(IFLExService), hostPipeBinding, "FLExPipe");
 				_host.Open();
 			}
 			catch (AddressAlreadyInUseException)
@@ -45,8 +50,12 @@ namespace TriboroughBridge_ChorusPlugin
 				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
 				HostOpened = false;
 			}
-			var pipeFactory = new ChannelFactory<IFLExBridgeService>(new NetNamedPipeBinding(),
-													   new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint" + fwProjectName + "/FLExPipe"));
+			var pipeBinding = new NetNamedPipeBinding
+								  {
+									  ReceiveTimeout = TimeSpan.MaxValue
+								  };
+			var pipeFactory = new ChannelFactory<IFLExBridgeService>(pipeBinding, new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint"
+																									  + fwProjectName + "/FLExPipe"));
 			_pipe = pipeFactory.CreateChannel();
 			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
 			try
