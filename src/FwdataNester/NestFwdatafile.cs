@@ -391,7 +391,8 @@ namespace FwdataTestApp
 			}
 
 			// General
-			foreach (var generalPathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories))
+			foreach (var generalPathname in Directory.GetFiles(Path.Combine(_workingDir, "General"), "*.*", SearchOption.AllDirectories)
+					.Where(pathname => !pathname.ToLowerInvariant().EndsWith("chorusnotes")))
 			{
 				validationError = fbHandler.ValidateFile(generalPathname, new NullProgress());
 				if (validationError == null)
@@ -403,7 +404,8 @@ namespace FwdataTestApp
 			}
 
 			// Anthropology
-			foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories))
+			foreach (var anthropologyPathname in Directory.GetFiles(Path.Combine(_workingDir, "Anthropology"), "*.*", SearchOption.AllDirectories)
+					.Where(pathname => !pathname.ToLowerInvariant().EndsWith("chorusnotes")))
 			{
 				validationError = fbHandler.ValidateFile(anthropologyPathname, new NullProgress());
 				if (validationError == null)
@@ -418,7 +420,8 @@ namespace FwdataTestApp
 			var scriptureFolder = Path.Combine(_workingDir, "Other");
 			if (Directory.Exists(scriptureFolder))
 			{
-				foreach (var scripturePathname in Directory.GetFiles(scriptureFolder, "*.*", SearchOption.AllDirectories))
+				foreach (var scripturePathname in Directory.GetFiles(scriptureFolder, "*.*", SearchOption.AllDirectories)
+						.Where(pathname => !pathname.ToLowerInvariant().EndsWith("chorusnotes")))
 				{
 					validationError = fbHandler.ValidateFile(scripturePathname, new NullProgress());
 					if (validationError == null)
@@ -431,7 +434,8 @@ namespace FwdataTestApp
 			}
 
 			// Linguistics
-			foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories))
+			foreach (var linguisticsPathname in Directory.GetFiles(Path.Combine(_workingDir, "Linguistics"), "*.*", SearchOption.AllDirectories)
+					.Where(pathname => !pathname.ToLowerInvariant().EndsWith("chorusnotes")))
 			{
 				validationError = fbHandler.ValidateFile(linguisticsPathname, new NullProgress());
 				if (validationError == null)
