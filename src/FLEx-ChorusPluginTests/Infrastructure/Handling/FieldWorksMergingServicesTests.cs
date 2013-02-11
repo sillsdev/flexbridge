@@ -96,6 +96,78 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
+		public void NoTimestampInTheirsEndsUpSameAsOurs()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+<ReversalIndex guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+	<PartsOfSpeech>
+		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
+			<Possibilities>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+					<DateModified val='2000-1-1 23:59:59.000' />
+					<Name>
+						<AUni
+							ws='en'>commonName</AUni>
+					</Name>
+				</ownseq>
+			</Possibilities>
+		</CmPossibilityList>
+	</PartsOfSpeech>
+</ReversalIndex>
+</Root>";
+			const string ourContent = commonAncestor;
+			var theirContent = commonAncestor.Replace("<DateModified val='2000-1-1 23:59:59.000' />", "");
+
+			XmlNode theirNode;
+			XmlNode ancestorNode;
+			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
+
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
+
+			Assert.IsTrue(ourNode.InnerXml.Contains("2000-1-1 23:59:59.000"));
+			Assert.IsTrue(theirNode.InnerXml.Contains("2000-1-1 23:59:59.000"));
+			_eventListener.AssertExpectedConflictCount(0);
+		}
+
+		[Test]
+		public void NoTimestampInOursEndsUpSameAsTheirs()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+<ReversalIndex guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+	<PartsOfSpeech>
+		<CmPossibilityList guid ='c1ed46bb-e382-11de-8a39-0800200c9a66' >
+			<Possibilities>
+				<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
+					<DateModified val='2000-1-1 23:59:59.000' />
+					<Name>
+						<AUni
+							ws='en'>commonName</AUni>
+					</Name>
+				</ownseq>
+			</Possibilities>
+		</CmPossibilityList>
+	</PartsOfSpeech>
+</ReversalIndex>
+</Root>";
+			const string theirContent = commonAncestor;
+			var ourContent = commonAncestor.Replace("<DateModified val='2000-1-1 23:59:59.000' />", "");
+
+			XmlNode theirNode;
+			XmlNode ancestorNode;
+			var ourNode = FieldWorksTestServices.CreateNodes(commonAncestor, ourContent, theirContent, out theirNode, out ancestorNode);
+
+			FieldWorksMergingServices.PreMerge(MetadataCache.MdCache, ourNode, theirNode, ancestorNode);
+
+			Assert.IsTrue(ourNode.InnerXml.Contains("2000-1-1 23:59:59.000"));
+			Assert.IsTrue(theirNode.InnerXml.Contains("2000-1-1 23:59:59.000"));
+			_eventListener.AssertExpectedConflictCount(0);
+		}
+
+		[Test]
 		public void CustomBooleanPropertyWithTrueWins()
 		{
 			const string commonAncestor =

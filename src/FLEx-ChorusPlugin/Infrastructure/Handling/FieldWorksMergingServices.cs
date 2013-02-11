@@ -96,25 +96,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static void PreMergeTimestamps(MetadataCache mdc, XmlNode ourEntry, XmlNode theirEntry)
 		{
 			const string xpath = "DateModified | DateResolved | RunDate";
-			var ourDateTimeNodes = ourEntry.SelectNodes(xpath);
-			var theirDateTimeNodes = theirEntry.SelectNodes(xpath);
 
-			for (var i = 0; i < ourDateTimeNodes.Count; ++i)
-			{
-				var ourNode = ourDateTimeNodes[i];
-				var asUtcOurs = GetTimestamp(ourNode);
-
-				var theirNode = theirDateTimeNodes[i];
-				var asUtcTheirs = GetTimestamp(theirNode);
-
-				if (asUtcOurs == asUtcTheirs)
-					return;
-
-				if (asUtcOurs > asUtcTheirs)
-					theirNode.Attributes[SharedConstants.Val].Value = ourNode.Attributes[SharedConstants.Val].Value;
-				else
-					ourNode.Attributes[SharedConstants.Val].Value = theirNode.Attributes[SharedConstants.Val].Value;
-			}
+			PreMergeTimstamps(ourEntry.SelectNodes(xpath), theirEntry);
+			PreMergeTimstamps(theirEntry.SelectNodes(xpath), ourEntry);
 
 			// Drill down and do all owned objects
 			var classname = GetClassName(ourEntry);
@@ -137,6 +121,36 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					if (theirOwnedElement == null)
 						continue;
 					PreMergeTimestamps(mdc, ourOwnedElement, theirOwnedElement);
+				}
+			}
+		}
+
+		private static void PreMergeTimstamps(XmlNodeList primaryNodes, XmlNode secondaryEntry)
+		{
+			foreach (XmlNode primaryNode in primaryNodes)
+			{
+				var secondaryNode = secondaryEntry.SelectSingleNode(primaryNode.Name);
+				if (secondaryNode == null)
+				{
+					secondaryNode = secondaryEntry.OwnerDocument.CreateElement(primaryNode.Name);
+					secondaryEntry.AppendChild(secondaryNode);
+					var newAttr = secondaryEntry.OwnerDocument.CreateAttribute(SharedConstants.Val);
+					secondaryNode.Attributes.Append(newAttr);
+					newAttr.Value = primaryNode.Attributes[SharedConstants.Val].Value;
+				}
+
+				var asUtcPrimary = GetTimestamp(primaryNode);
+				var asUtcSecondary = GetTimestamp(secondaryNode);
+				if (asUtcPrimary == asUtcSecondary)
+					continue;
+
+				if (asUtcPrimary > asUtcSecondary)
+				{
+					secondaryNode.Attributes[SharedConstants.Val].Value = primaryNode.Attributes[SharedConstants.Val].Value;
+				}
+				else
+				{
+					primaryNode.Attributes[SharedConstants.Val].Value = secondaryNode.Attributes[SharedConstants.Val].Value;
 				}
 			}
 		}
