@@ -34,11 +34,21 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			foreach (var classInfo in _mdc.AllConcreteClasses)
 			{
 				var clsInfo = classInfo;
-				foreach (var elementStrategy in classInfo.AllProperties
-					.Where(pi => pi.DataType == DataType.ReferenceSequence)
-					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
+				foreach (var refSeqPropInfo in classInfo.AllProperties.Where(pi => pi.DataType == DataType.ReferenceSequence))
 				{
-					Assert.IsFalse(elementStrategy.IsAtomic);
+					var key = string.Format("{0}{1}_{2}",
+											refSeqPropInfo.IsCustomProperty ? "Custom_" : "",
+											clsInfo.ClassName,
+											refSeqPropInfo.PropertyName);
+					var elementStrategy = _merger.MergeStrategies.ElementStrategies[key];
+					if (clsInfo.ClassName == "Segment" && refSeqPropInfo.PropertyName == "Analyses")
+					{
+						Assert.IsTrue(elementStrategy.IsAtomic);
+					}
+					else
+					{
+						Assert.IsFalse(elementStrategy.IsAtomic);
+					}
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.IsFalse(elementStrategy.IsImmutable);
 					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);

@@ -153,7 +153,6 @@ namespace TriboroughBridge_ChorusPlugin
 				//	Q: How to process the URL in regular lift notes files?
 				case view_notes:
 				case view_notes_lift:
-					(CurrentModel.CurrentController as IConflictController).JumpUrlChanged += _connectionHelper.SendJumpUrlToFlex;
 					showWindow = true;
 					break;
 
@@ -195,7 +194,6 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case view_notes:
 				case view_notes_lift:
-					(CurrentModel.CurrentController as IConflictController).JumpUrlChanged -= _connectionHelper.SendJumpUrlToFlex;
 					break;
 
 				case move_lift:

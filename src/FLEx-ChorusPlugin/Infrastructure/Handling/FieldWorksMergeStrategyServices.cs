@@ -156,14 +156,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var propStrategy = isCustom
 										? CreateStrategyForKeyedElement(SharedConstants.Name, false)
 										: CreateSingletonElementStrategy();
-					// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
-					// we get a conflict report if it fails.
-					if (propertyInfo.PropertyName == "Analyses")
-						propStrategy.IsAtomic = true;
 					switch (propertyInfo.DataType)
 					{
 						//default:
 						//	break;
+						case DataType.ReferenceSequence:
+							// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
+							// we get a conflict report if it fails.
+							if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
+								propStrategy.IsAtomic = true;
+							break;
 						case DataType.ReferenceAtomic:
 							if(classInfo.ClassName ==  "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
 							{
