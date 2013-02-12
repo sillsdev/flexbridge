@@ -57,23 +57,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		[Test]
 		public void LexEntryPartsFindLexemeForm()
 		{
-			const string source = @"<LexEntry
-					guid='01efa516-1749-4b60-b43d-00089269e7c5'>
-					<HomographNumber
-						val='0' />
+			const string source =
+				@"<LexEntry guid='01efa516-1749-4b60-b43d-00089269e7c5'>
+					<HomographNumber val='0' />
 					<LexemeForm>
-						<MoStemAllomorph
-							guid='8e982d88-0111-43b9-a25c-420bb5c84cf0'>
+						<MoStemAllomorph guid='8e982d88-0111-43b9-a25c-420bb5c84cf0'>
 							<Form>
-								<AUni
-									ws='en'>abcdefghijk</AUni>
+								<AUni ws='en'>abcdefghijk</AUni>
 							</Form>
-							<IsAbstract
-								val='False' />
+							<IsAbstract val='False' />
 							<MorphType>
-								<objsur
-									guid='d7f713e4-e8cf-11d3-9764-00c04f186933'
-									t='r' />
+								<objsur guid='d7f713e4-e8cf-11d3-9764-00c04f186933' t='r' />
 							</MorphType>
 						</MoStemAllomorph>
 					</LexemeForm>
@@ -109,16 +103,66 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		[Test]
+		public void ReversalSubEntryFindName()
+		{
+			const string source =
+				@"<ReversalIndexEntry guid='cdfe2b07-765b-4ebf-b453-ba5f93387773'>
+					<PartOfSpeech>
+						<objsur guid='a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5' t='r' />
+					</PartOfSpeech>
+					<ReversalForm>
+						<AUni ws='en'>cat</AUni>
+					</ReversalForm>
+					<Subentries>
+						<ReversalIndexEntry guid='0373eec0-940d-4794-9cfc-8ef351e5699f'>
+							<PartOfSpeech>
+								<objsur guid='a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5' t='r' />
+							</PartOfSpeech>
+							<ReversalForm>
+								<AUni ws='en'>cat-o-ten-tails</AUni>
+							</ReversalForm>
+						</ReversalIndexEntry>
+					</Subentries>
+				</ReversalIndexEntry>";
+			var root = FieldWorksTestServices.GetNode(source);
+			var input = root.ChildNodes[2].ChildNodes[0].ChildNodes[1]; // Subentry ReversalForm
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"cat\" ReversalForm"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+
+			// Try a node that is not part of the LexemeForm.
+			input = root.ChildNodes[0];
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" HomographNumber"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "01efa516-1749-4b60-b43d-00089269e7c5"));
+
+			// Try a bit deeper
+			input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the <Form>
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+
+			// Don't want the AUni level.
+			input = input.ChildNodes[0]; // the <AUni>
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+		}
+
+		[Test]
 		public void WfiWordformPartsFindForm()
 		{
-			const string source = @"<WfiWordform
-					guid='2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653'>
+			const string source =
+				@"<WfiWordform guid='2a3ccd4f-a2cd-43e5-bd4d-76a84ce00653'>
 					<Form>
-						<AUni
-							ws='jit'>jitWord</AUni>
+						<AUni ws='jit'>jitWord</AUni>
 					</Form>
-					<SpellingStatus
-						val='0' />
+					<SpellingStatus val='0' />
 				</WfiWordform>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root; // WfiWordform
