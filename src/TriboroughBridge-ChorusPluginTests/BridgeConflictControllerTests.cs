@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using TriboroughBridge_ChorusPlugin.Controller;
 
@@ -104,7 +105,47 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			Directory.Delete(projFolder, true);
 
-			Assert.That(result, Is.EqualTo(@"some irrelevant <span class='ws'>English (Audio)</span> stuff <span class='ws'><span style='background: Yellow'>English (Cherokee, Australia, International Phonetic Alphabet)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span>".Replace("'", "\"")));
+
+			Assert.That(result, Is.EqualTo((@"some irrelevant <span class='ws'>English (Audio)</span> stuff <span class='ws'><span style='"
+				+ SharedConstants.ConflictInsertStyle + @"'>English (Cherokee, Australia, International Phonetic Alphabet)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span>").Replace("'", "\"")));
+		}
+
+		[Test]
+		public void AdjustConflictHtml_FixesChecksums()
+		{
+			var input =
+				(@"<body>
+				<div class='property'>Root:
+					<div class='property'>Child: SomeText
+					</div>
+					<div class='checksum'>SomeAtomic: abcdefg</div>
+					<div class='checksum'>SomeCol: <span style='" + SharedConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
+					<div class='checksum'>SomeSeq: <span style='" + SharedConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
+				</div>
+				<div class='property'>anotherParent:
+					<div class='checksum'>SomeAtomic: abcdefg</div>
+					<div class='checksum'>SomeCol: <span style='" + SharedConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
+					<div class='checksum'>SomeSeq: <span style='" + SharedConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
+				</div>
+				<div class='property'>yetAnother:<div class='checksum'>SomeAtomic: abcdefg</div>
+					<div class='checksum'>SomeCol: abcdefgh</div>
+					<div class='checksum'>SomeSeq: qwxyz</div>
+				</div>
+			</body>").Replace("'", "\"");
+			var controller = new BridgeConflictController();
+			var result = controller.AdjustConflictHtml(input);
+			Assert.That(result, Is.EqualTo((@"<body>
+				<div class='property'>Root:
+					<div class='property'>Child: SomeText
+					</div>
+					<div class='checksum'>There were changes to related objects in SomeCol, SomeSeq</div>
+				</div>
+				<div class='property'>anotherParent:
+					<div class='checksum'>There were changes to related objects in SomeCol, SomeSeq</div>
+				</div>
+				<div class='property'>yetAnother:
+				</div>
+			</body>").Replace("'", "\"")));
 		}
 	}
 }
