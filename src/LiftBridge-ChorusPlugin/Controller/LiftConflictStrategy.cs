@@ -44,6 +44,16 @@ namespace SIL.LiftBridge.Controller
 			return _liftProject.PathToProject;
 		}
 
+		/// <summary>
+		/// Currently no adjustments required for LIFT.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public string AdjustConflictHtml(string input)
+		{
+			return input;
+		}
+
 		#endregion IConflictStrategy impl
 	}
 }

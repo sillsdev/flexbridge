@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
-	public static class SharedConstants
+	internal static class SharedConstants
 	{
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
@@ -82,8 +82,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string StStyle = "StStyle";
 		internal const string CmFilter = "CmFilter";
 		// The style applied to spans of added text by diff tool
-		public const string ConflictInsertStyle = "background: Yellow";
-		public const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
+		internal const string ConflictInsertStyle = "background: Yellow";
+		internal const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
 
 		// Linguistics
 		internal const string Linguistics = "Linguistics";
