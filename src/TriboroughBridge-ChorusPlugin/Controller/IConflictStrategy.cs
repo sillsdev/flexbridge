@@ -22,7 +22,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	/// <summary>
 	/// Optional interface an IConflictStrategy may implement if it wants this information.
 	/// </summary>
-	public interface IInitConflictStratey
+	public interface IInitConflictStrategy
 	{
 		void SetProjectName(string name);
 		void SetProjectDir(string name);

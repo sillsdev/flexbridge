@@ -14,7 +14,7 @@ using TriboroughBridge_ChorusPlugin.Controller;
 namespace FLEx_ChorusPlugin.Controller
 {
 	[Export(typeof(IConflictStrategy))]
-	public class FlexConflictStrategy : IConflictStrategy, IInitConflictStratey
+	public class FlexConflictStrategy : IConflictStrategy, IInitConflictStrategy
 	{
 		#region IConflictStrategy impl
 

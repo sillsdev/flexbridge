@@ -89,7 +89,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private void InitStrategy()
 		{
-			var initStrategy = _currentStrategy as IInitConflictStratey;
+			var initStrategy = _currentStrategy as IInitConflictStrategy;
 			if (initStrategy != null)
 			{
 				initStrategy.SetProjectDir(_projectDir);
