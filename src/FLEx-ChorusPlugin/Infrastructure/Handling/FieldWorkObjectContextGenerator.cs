@@ -263,7 +263,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						sb.Append("</span>");
 					}
 					return sb.ToString();
-					break;
 				default:
 					return result;
 			}
