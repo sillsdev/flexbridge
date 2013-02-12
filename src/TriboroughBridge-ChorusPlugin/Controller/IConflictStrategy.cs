@@ -1,4 +1,5 @@
 ﻿using System;
+using Chorus.UI.Notes;
 using Chorus.sync;
 
 namespace TriboroughBridge_ChorusPlugin.Controller
@@ -16,6 +17,13 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		/// <param name="input"></param>
 		/// <returns></returns>
 		string AdjustConflictHtml(string input);
+
+		/// <summary>
+		/// This allows the strategy to do any required initialization of the chorus conflict handler
+		/// (typically installing an HtmlAdjuster).
+		/// </summary>
+		/// <param name="handler"></param>
+		void InitConflictHandler(MergeConflictEmbeddedMessageContentHandler handler);
 
 	}
 

@@ -74,7 +74,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
 			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>()
 						 .First();
-			conflictHandler.HtmlAdjuster = AdjustConflictHtml;
+			_currentStrategy.InitConflictHandler(conflictHandler);
 			var viewer = new BridgeConflictView();
 			_mainBridgeForm.Controls.Add(viewer);
 			_mainBridgeForm.Text = viewer.Text;
@@ -108,17 +108,6 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_projectDir = projectDir;
 			_currentStrategy = strategy;
 			InitStrategy();
-		}
-
-		/// <summary>
-		/// This method receives the HtmlDetails stored in a conflict, and returns adjusted HTML.
-		/// Specifically it fixes URLs containing "database=current" to contain the real project name
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		public string AdjustConflictHtml(string input)
-		{
-			return _currentStrategy.AdjustConflictHtml(input);
 		}
 
 		public ChorusSystem ChorusSystem { get; private set; }

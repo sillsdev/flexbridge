@@ -20,9 +20,9 @@ namespace FLEx_ChorusPluginTests.Controller
 		{
 			var input =
 				@"<root>silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni</root>";
-			var controller = new BridgeConflictController();
-			controller.InitForAdjustConflict("MyProject", null, new FlexConflictStrategy());
-			var result = controller.AdjustConflictHtml(input);
+			var strategy = new FlexConflictStrategy();
+			strategy.SetProjectName("MyProject");
+			var result = strategy.AdjustConflictHtml(input);
 			Assert.That(result, Is.EqualTo(@"<root>silfw://localhost/link?app=flex&amp;database=MyProject&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni</root>"));
 		}
 
@@ -99,9 +99,9 @@ namespace FLEx_ChorusPluginTests.Controller
 			File.WriteAllText(Path.Combine(wsFolder, "es-fonipa.ldml"), ldmlContent3);
 			File.WriteAllText(Path.Combine(wsFolder, "en-Zxxx-x-audio.ldml"), ldmlContent4);
 
-			var controller = new BridgeConflictController();
-			controller.InitForAdjustConflict(null, projFolder, new FlexConflictStrategy());
-			var result = controller.AdjustConflictHtml(input);
+			var strategy = new FlexConflictStrategy();
+			strategy.SetProjectDir(projFolder);
+			var result = strategy.AdjustConflictHtml(input); var controller = new BridgeConflictController();
 
 			Directory.Delete(projFolder, true);
 
@@ -132,9 +132,8 @@ namespace FLEx_ChorusPluginTests.Controller
 					<div class='checksum'>SomeSeq: qwxyz</div>
 				</div>
 			</body>").Replace("'", "\"");
-			var controller = new BridgeConflictController();
-			controller.InitForAdjustConflict(null, null, new FlexConflictStrategy());
-			var result = controller.AdjustConflictHtml(input);
+			var strategy = new FlexConflictStrategy();
+			var result = strategy.AdjustConflictHtml(input); var controller = new BridgeConflictController();
 			Assert.That(result, Is.EqualTo((@"<body>
 				<div class='property'>Root:
 					<div class='property'>Child: SomeText

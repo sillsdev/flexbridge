@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using Chorus.FileTypeHanders.lift;
+using Chorus.UI.Notes;
 using Chorus.sync;
 using SIL.LiftBridge.Model;
 using TriboroughBridge_ChorusPlugin;
@@ -52,6 +53,14 @@ namespace SIL.LiftBridge.Controller
 		public string AdjustConflictHtml(string input)
 		{
 			return input;
+		}
+
+		/// <summary>
+		/// Lift does not need to do any special init at present.
+		/// </summary>
+		/// <param name="handler"></param>
+		public void InitConflictHandler(MergeConflictEmbeddedMessageContentHandler handler)
+		{
 		}
 
 		#endregion IConflictStrategy impl

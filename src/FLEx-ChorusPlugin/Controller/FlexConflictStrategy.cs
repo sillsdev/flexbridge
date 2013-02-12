@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Chorus.UI.Notes;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin;
@@ -49,6 +50,15 @@ namespace FLEx_ChorusPlugin.Controller
 		public string AdjustConflictHtml(string input)
 		{
 			return FixChecksums(FixWsRuns(input)).Replace(@"&amp;database=current&amp;", @"&amp;database=" + _projectName + @"&amp;");
+		}
+
+		/// <summary>
+		/// Tell the conflict handler that we want to adjust the HTML before presenting it to the user.
+		/// </summary>
+		/// <param name="conflictHandler"></param>
+		public void InitConflictHandler(MergeConflictEmbeddedMessageContentHandler conflictHandler)
+		{
+			conflictHandler.HtmlAdjuster = AdjustConflictHtml;
 		}
 
 		/// <summary>
