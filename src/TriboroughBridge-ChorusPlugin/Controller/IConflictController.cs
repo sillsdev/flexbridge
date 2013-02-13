@@ -2,6 +2,5 @@
 {
 	public interface IConflictController : IBridgeController
 	{
-		event JumpEventHandler JumpUrlChanged;
 	}
 }

@@ -34,9 +34,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			foreach (var classInfo in _mdc.AllConcreteClasses)
 			{
 				var clsInfo = classInfo;
-				foreach (var elementStrategy in classInfo.AllProperties
-					.Where(pi => pi.DataType == DataType.OwningCollection)
-					.Select(propertyInfo => _merger.MergeStrategies.ElementStrategies[string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName, propertyInfo.PropertyName)]))
+				var list = classInfo.AllProperties
+									.Where(pi => pi.DataType == DataType.OwningCollection)
+									.Select(
+										propertyInfo =>
+										_merger.MergeStrategies.ElementStrategies[
+											string.Format("{0}{1}_{2}", propertyInfo.IsCustomProperty ? "Custom_" : "", clsInfo.ClassName,
+														  propertyInfo.PropertyName)]).ToList();
+				foreach (var elementStrategy in list)
 				{
 					Assert.IsFalse(elementStrategy.IsAtomic);
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);

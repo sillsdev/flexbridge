@@ -160,6 +160,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					{
 						//default:
 						//	break;
+						case DataType.ReferenceSequence:
+							// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
+							// we get a conflict report if it fails.
+							if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
+								propStrategy.IsAtomic = true;
+							break;
 						case DataType.ReferenceAtomic:
 							if(classInfo.ClassName ==  "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
 							{
