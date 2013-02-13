@@ -34,9 +34,9 @@ namespace FLEx_ChorusPlugin.Controller
 			get { return FlexFolderSystem.ConfigureChorusProjectFolder; }
 		}
 
-		public string ProjectName { get; set; }
+		public string ProjectName { get; internal set; }
 
-		public string ProjectDir { get; set; }
+		public string ProjectDir { get; internal set; }
 
 		public void PreInitializeStrategy(Dictionary<string, string> options)
 		{

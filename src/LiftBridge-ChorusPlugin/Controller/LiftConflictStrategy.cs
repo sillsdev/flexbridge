@@ -71,13 +71,11 @@ namespace SIL.LiftBridge.Controller
 		public string ProjectName
 		{
 			get { return _liftProject.ProjectName; }
-			set { throw new NotSupportedException(); }
 		}
 
 		public string ProjectDir
 		{
 			get { return _liftProject.PathToProject; }
-			set { throw new NotSupportedException(); }
 		}
 
 		public void PreInitializeStrategy(Dictionary<string, string> options)

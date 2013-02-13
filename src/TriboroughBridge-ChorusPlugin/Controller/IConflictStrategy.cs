@@ -10,8 +10,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		ControllerType SupportedControllerAction { get; }
 		Action<ProjectFolderConfiguration> ConfigureProjectFolders { get; }
-		string ProjectName { get; set; }
-		string ProjectDir { get; set; }
+		string ProjectName { get; }
+		string ProjectDir { get; }
 		void PreInitializeStrategy(Dictionary<string, string> options);
 		void InitializeStrategy(ChorusSystem chorusSystem, MergeConflictEmbeddedMessageContentHandler conflictHandler);
 		event JumpEventHandler JumpUrlChanged;
