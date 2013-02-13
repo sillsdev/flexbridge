@@ -926,7 +926,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='moneybags']" },
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
 				0, new List<Type>(), out resultingConflicts);
-			var context = resultingConflicts[0].Context;
+			var conflict = resultingConflicts[0];
+			Assert.That(conflict.HtmlDetails, Is.Not.StringContaining("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
+			Assert.That(conflict.HtmlDetails, Is.StringContaining("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");
+			var context = conflict.Context;
 			Assert.That(context.DataLabel, Is.StringContaining("Entry"));
 			Assert.That(context.PathToUserUnderstandableElement, Is.StringStarting("silfw"));
 			Assert.That(context.PathToUserUnderstandableElement, Is.StringContaining("Entry"));
