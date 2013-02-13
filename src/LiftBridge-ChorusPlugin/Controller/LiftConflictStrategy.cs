@@ -36,7 +36,7 @@ namespace SIL.LiftBridge.Controller
 
 		private void JumpToLiftObject(string url)
 		{
-			// TODO REVIEW JohnT(RandyR): This one needs to be modified for use by lift data, but for use ib FLEx.
+			// TODO REVIEW JohnT(RandyR): This one needs to be modified for use by lift data, but for use by FLEx.
 
 			//// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
 			var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
