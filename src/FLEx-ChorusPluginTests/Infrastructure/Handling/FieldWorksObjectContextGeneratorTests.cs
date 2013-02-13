@@ -6,6 +6,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
@@ -22,6 +23,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var strategies = new MergeStrategies();
 			result.MergeStrategies = strategies;
 			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
+			strategies.SetStrategy("ReversalIndexEntry", MakeClassStrategy(new ReversalEntryContextGenerator(), strategies));
 			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
 			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
@@ -119,7 +121,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 								<objsur guid='a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5' t='r' />
 							</PartOfSpeech>
 							<ReversalForm>
-								<AUni ws='en'>cat-o-ten-tails</AUni>
+								<AUni ws='en'>kitty</AUni>
 							</ReversalForm>
 						</ReversalIndexEntry>
 					</Subentries>
@@ -128,30 +130,30 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			var input = root.ChildNodes[2].ChildNodes[0].ChildNodes[1]; // Subentry ReversalForm
 			var generator = MakeGenerator();
 			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"cat\" ReversalForm"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"kitty\" ReversalForm"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "0373eec0-940d-4794-9cfc-8ef351e5699f"));
 
-			// Try a node that is not part of the LexemeForm.
+			// Try a node that is not part of the Subentry.
 			input = root.ChildNodes[0];
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" HomographNumber"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"cat\" PartOfSpeech"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "01efa516-1749-4b60-b43d-00089269e7c5"));
-
-			// Try a bit deeper
-			input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the <Form>
-			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "cdfe2b07-765b-4ebf-b453-ba5f93387773"));
 
 			// Don't want the AUni level.
-			input = input.ChildNodes[0]; // the <AUni>
+			input = root.ChildNodes[1].ChildNodes[0]; // the <AUni> in main ReversalForm
 			descriptor = generator.GenerateContextDescriptor(input, "myfile");
-			Assert.That(descriptor.DataLabel, Is.EqualTo("Entry \"abcdefghijk\" LexemeForm Form"));
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"cat\" ReversalForm"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
-			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "8e982d88-0111-43b9-a25c-420bb5c84cf0"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "cdfe2b07-765b-4ebf-b453-ba5f93387773"));
+
+			// Don't want the Subentry AUni level either.
+			input = root.ChildNodes[2].ChildNodes[0].ChildNodes[1].ChildNodes[0]; // the <AUni> of the subentry
+			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Reversal Entry \"kitty\" ReversalForm"));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
+			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "0373eec0-940d-4794-9cfc-8ef351e5699f"));
 		}
 
 		[Test]

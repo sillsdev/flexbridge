@@ -11,6 +11,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Phonology;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
@@ -99,6 +100,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						break;
 					case "WfiWordform":
 						classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
+						break;
+					case "ReversalIndexEntry":
+						classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
 						break;
 					case "Text":
 						classStrat.ContextDescriptorGenerator = new TextContextGenerator();
