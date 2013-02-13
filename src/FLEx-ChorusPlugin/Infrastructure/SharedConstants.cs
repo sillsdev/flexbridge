@@ -81,6 +81,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Style = "style";
 		internal const string StStyle = "StStyle";
 		internal const string CmFilter = "CmFilter";
+		// The style applied to spans of added text by diff tool
+		internal const string ConflictInsertStyle = "background: Yellow";
+		internal const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
 
 		// Linguistics
 		internal const string Linguistics = "Linguistics";

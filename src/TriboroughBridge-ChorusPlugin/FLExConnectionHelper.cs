@@ -159,7 +159,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Signals FLEx that the bridge sent a jump URL to process.
 		/// </summary>
-		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
 			try
 			{
