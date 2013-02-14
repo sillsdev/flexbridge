@@ -106,8 +106,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var ws = XmlUtilities.GetOptionalAttributeString(input, SharedConstants.Ws);
 					if (!string.IsNullOrEmpty(ws))
 					{
+						sb.Append("<span class=\"ws\">");
 						sb.Append(ws);
-						sb.Append(": ");
+						sb.Append("</span>: ");
 					}
 					sb.Append(input.InnerText);
 					sb.Append("</div>");
