@@ -14,6 +14,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{
+		internal static void WriteNestedFile(string newPathname, XmlNode root)
+		{
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+				XmlUtils.WriteNode(writer, root.OuterXml, new HashSet<string>());
+			}
+		}
+
 		internal static void WriteNestedFile(string newPathname, XElement root)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))

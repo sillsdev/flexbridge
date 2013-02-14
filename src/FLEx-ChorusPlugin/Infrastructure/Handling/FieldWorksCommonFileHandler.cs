@@ -45,6 +45,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return _handlers.FirstOrDefault(handlerCandidate => handlerCandidate.Extension == extension) ?? _unknownFileTypeHandler;
 		}
 
+		internal static void Do3WayMerge(MergeOrder mergeOrder, MetadataCache mdc, bool addcustomPropertyInformation)
+		{
+			if (addcustomPropertyInformation)
+				mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
+
+			var merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
+			merger.EventListener = mergeOrder.EventListener;
+			var mergeResults = merger.MergeFiles(mergeOrder.pathToOurs, mergeOrder.pathToTheirs, mergeOrder.pathToCommonAncestor);
+			// Write out merged data.
+			FileWriterService.WriteNestedFile(mergeOrder.pathToOurs, mergeResults.MergedNode);
+		}
+
 		#region Implementation of IChorusFileTypeHandler
 
 		public bool CanDiffFile(string pathToFile)
@@ -109,6 +121,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			}
 
 			XmlMergeService.RemoveAmbiguousChildNodes = false; // Live on the edge. Opt out of that expensive code.
+
 			GetHandlerfromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 
