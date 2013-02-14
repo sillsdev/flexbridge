@@ -112,10 +112,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  </RegistryKey>
 			</Component>
 
-			<!-- Required Chorus assemblies not in the Chorus merge module. -->
-			<Component Id="Autofac.dll" Guid="3D9BF2E0-4A25-11DF-9879-0800200C9A66">
-			  <File Id="Autofac.dll" Name="Autofac.dll" KeyPath="yes" Source="..\..\output\Release\Autofac.dll"/>
-			</Component>
+			<!-- Desired Chorus pdb files not in the Chorus merge module. -->
 			<Component Id="Chorus.pdb" Guid="C1EDBBD4-E382-11DE-8A39-0800200C9A66">
 			  <File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
 			</Component>
@@ -128,28 +125,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
-			<Component Id="Vulcan.Uczniowie.HelpProvider.dll" Guid="C1EE09F5-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Vulcan.Uczniowie.HelpProvider.dll" Name="Vulcan.Uczniowie.HelpProvider.dll" KeyPath="yes" Source="..\..\output\Release\Vulcan.Uczniowie.HelpProvider.dll"/>
-			</Component>
 
-			<!-- Required Palaso assemblies not in the Chorus merge module. -->
-			<Component Id="icu.net.dll" Guid="3D9BF2E5-4A25-11DF-9879-0800200C9A66">
-			  <File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\Release\icu.net.dll"/>
-			</Component>
-			<Component Id="Palaso.dll" Guid="3D9BF2E4-4A25-11DF-9879-0800200C9A66">
-			  <File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.dll"/>
-			</Component>
+			<!-- Desired Palaso pdb files not in the Chorus merge module. -->
 			<Component Id="Palaso.pdb" Guid="C1EDE2F8-E382-11DE-8A39-0800200C9A66">
 			  <File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.pdb"/>
 			</Component>
-			<Component Id="PalasoUIWindowsForms.dll" Guid="C1EDBBDD-E382-11DE-8A39-0800200C9A66">
-			  <File Id="PalasoUIWindowsForms.dll" Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.dll"/>
-			</Component>
 			<Component Id="PalasoUIWindowsForms.pdb" Guid="C1EDE2F9-E382-11DE-8A39-0800200C9A66">
 			  <File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.pdb"/>
-			</Component>
-			<Component Id="Palaso.Lift.dll" Guid="C1EE09F2-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Palaso.Lift.dll" Name="Palaso.Lift.dll" KeyPath="yes" Source="..\..\output\Release\Palaso.Lift.dll"/>
 			</Component>
 			<Component Id="Palaso.Lift.pdb" Guid="C1EE09F3-E382-11DE-8A39-0800200C9A66">
 			  <File Id="Palaso.Lift.pdb" Name="Palaso.Lift.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.Lift.pdb"/>
@@ -191,19 +173,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	  <!--<ComponentRef Id="ApplicationShortcut"/>-->
 	  <ComponentRef Id="RegInstallationDir"/>
-	  <ComponentRef Id="Autofac.dll"/>
 	  <ComponentRef Id="LibChorus.pdb"/>
 	  <ComponentRef Id="Chorus.pdb"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
 	  <ComponentRef Id="ChorusHub.pdb"/>
-	  <ComponentRef Id="Palaso.dll"/>
 	  <ComponentRef Id="Palaso.pdb"/>
-	  <ComponentRef Id="Palaso.Lift.dll"/>
 	  <ComponentRef Id="Palaso.Lift.pdb"/>
-	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
-	  <ComponentRef Id="icu.net.dll"/>
-	  <ComponentRef Id="Vulcan.Uczniowie.HelpProvider.dll"/>
 
 	  <MergeRef Id="ChorusMergeModule"/>
 	  <MergeRef Id="CRT90"/>
