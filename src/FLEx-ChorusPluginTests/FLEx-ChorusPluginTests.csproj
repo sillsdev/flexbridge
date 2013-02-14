@@ -148,7 +148,6 @@
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\UnicodeDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />

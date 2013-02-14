@@ -147,9 +147,7 @@
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksHeaderedMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksElementToMergeStrategyKeyMapper.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrDraftStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FWGENERICHTMLGENERATOR.CS" />
 	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />
@@ -174,7 +172,6 @@
 	<Compile Include="Infrastructure\Handling\Scripture\ScrBookContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksCommonMergeStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
@@ -184,7 +181,6 @@
 	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningService.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectNestingService.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyMergingStrategy.cs" />
 	<Compile Include="Infrastructure\DataSortingService.cs" />
 	<Compile Include="Infrastructure\DataType.cs" />
 	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />

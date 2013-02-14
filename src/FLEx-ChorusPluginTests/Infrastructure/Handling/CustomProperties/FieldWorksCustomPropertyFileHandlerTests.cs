@@ -6,9 +6,11 @@ using System.Text;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
@@ -581,6 +583,97 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 					Assert.IsNotNull(customPropertyDeclaration.Attribute("key"));
 				}
 			}
+		}
+
+		[Test]
+		public void MultiStrCustomPropertyMergesRight()
+		{
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
+			const string sue =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='qaa-x-ezpi'>
+						<Run
+							ws='qaa-x-ezpi'>saglo, yzaglo, rzaglo, wzaglo, nzaglo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
+			const string randy =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
+		<Senses>
+			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
+				<Custom
+					name='Paradigm'>
+					<AStr
+						ws='zpi'>
+						<Run
+							ws='zpi'>saklo, yzaklo, rzaklo, wzaklo, nzaklo, -</Run>
+					</AStr>
+				</Custom>
+			</ownseq>
+		</Senses>
+	</LexEntry>
+</Root>";
+
+			File.WriteAllText(_ourFile.Path, randy);
+			File.WriteAllText(_theirFile.Path, sue);
+			File.WriteAllText(_commonFile.Path, commonAncestor);
+			var mdc = MetadataCache.TestOnlyNewCache;
+			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			mdc.ResetCaches();
+			var eventListener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation())
+			{
+				EventListener = eventListener
+			};
+			var handlerStrat = new CustomPropertiesTypeHandlerStrategy();
+			handlerStrat.Do3WayMerge(mdc, mergeOrder);
+
+			var doc = XDocument.Load(_ourFile.Path);
+			var entryElement = doc.Root.Element("LexEntry");
+			var ownseqElement = entryElement.Element("Senses").Element(SharedConstants.Ownseq);
+			Assert.IsTrue(ownseqElement.Elements(SharedConstants.Custom).Count() == 1);
+			var aStrNodes = ownseqElement.Element(SharedConstants.Custom).Elements("AStr").ToList();
+			Assert.IsTrue(aStrNodes.Count == 2);
+			var aStrNode = aStrNodes.ElementAt(0);
+			Assert.IsTrue(aStrNode.Attribute("ws").Value == "qaa-x-ezpi");
+			Assert.AreEqual("saglo, yzaglo, rzaglo, wzaglo, nzaglo, -", aStrNode.Element("Run").Value);
+			aStrNode = aStrNodes.ElementAt(1);
+			Assert.IsTrue(aStrNode.Attribute("ws").Value == "zpi");
+			Assert.AreEqual("saklo, yzaklo, rzaklo, wzaklo, nzaklo, -", aStrNode.Element("Run").Value);
+
+			eventListener.AssertExpectedConflictCount(1);
+			eventListener.AssertFirstConflictType<RemovedVsEditedElementConflict>();
+			eventListener.AssertExpectedChangesCount(1);
+			eventListener.AssertFirstChangeType<XmlAdditionChangeReport>();
 		}
 	}
 }

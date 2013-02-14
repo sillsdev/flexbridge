@@ -6,6 +6,7 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
+using FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Discourse;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax;
@@ -61,9 +62,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
-			var keyedStrat = ElementStrategy.CreateForKeyedElement("key", false);
-			keyedStrat.IsAtomic = true;
-			strategiesForMerger.SetStrategy(SharedConstants.CustomField, keyedStrat);
+			var customPropDefnStrat = new ElementStrategy(false)
+							{
+								MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> { SharedConstants.Name, SharedConstants.Class }),
+								ContextDescriptorGenerator = new FieldWorksCustomPropertyContextGenerator(),
+								IsAtomic = true,
+								NumberOfChildren = NumberOfChildrenAllowed.Zero
+							};
+			strategiesForMerger.SetStrategy(SharedConstants.CustomField, customPropDefnStrat);
 
 			var headerStrategy = CreateSingletonElementType(false);
 			headerStrategy.ContextDescriptorGenerator = ContextGen;
@@ -72,7 +78,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// There are two abstract class names used: CmAnnotation and DsChart.
 			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
 			// So, add two keyed strategies for each of them.
-			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			var keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
 			strategiesForMerger.SetStrategy(SharedConstants.CmAnnotation, keyedStrat);
