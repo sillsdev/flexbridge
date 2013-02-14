@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders.xml;
+using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
@@ -884,6 +885,55 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
+		}
+
+		[Test]
+		public void EditedLexemeFormVsDeleteEntryHasConflictReport()
+		{
+			const string pattern =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<LexemeForm>
+			<MoStemAllomorph
+				guid='0d7458f8-eb01-416b-930a-02b5ecb98f98'>
+				<Form>
+					<AUni
+						ws='fr'>{0}</AUni>
+				</Form>
+			</MoStemAllomorph>
+		</LexemeForm>
+	</LexEntry>
+</Lexicon>";
+			string commonAncestor = string.Format(pattern, "bank");
+			string ourContent = string.Format(pattern, "institute");
+			string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+</Lexicon>";
+			List<IConflict> resultingConflicts;
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='institute']" },
+				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='moneybags']" },
+				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
+				0, new List<Type>(), out resultingConflicts);
+			var conflict = resultingConflicts[0];
+			Assert.That(conflict.HtmlDetails, Is.Not.StringContaining("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
+			Assert.That(conflict.HtmlDetails, Is.StringContaining("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");
+			var context = conflict.Context;
+			Assert.That(context.DataLabel, Is.StringContaining("Entry"));
+			Assert.That(context.PathToUserUnderstandableElement, Is.StringStarting("silfw"));
+			Assert.That(context.PathToUserUnderstandableElement, Is.StringContaining("Entry"));
+			Assert.That(context.PathToUserUnderstandableElement, Is.StringContaining("institute"));
 		}
 
 		[Test]
