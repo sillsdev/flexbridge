@@ -14,7 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 	{
 		#region Implementation of IFieldWorksFileHandler
 
-		private const string CustomField = "CustomField";
 		private const string Key = "key";
 
 		public bool CanValidateFile(string pathToFile)
@@ -49,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 											"listRoot",
 											"label"
 										};
-				foreach (var customFieldElement in root.Elements(CustomField))
+				foreach (var customFieldElement in root.Elements(SharedConstants.CustomField))
 				{
 					if (requiredAttrs
 						.Any(requiredAttr => customFieldElement.Attribute(requiredAttr) == null))
@@ -91,7 +90,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				CustomField, Key);
+				SharedConstants.CustomField, Key);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)

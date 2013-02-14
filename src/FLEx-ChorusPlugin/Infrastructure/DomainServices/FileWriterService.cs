@@ -156,7 +156,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// Not this one, since it leaves out the temporary "key' attr. var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			var hasCustomProperties = false;
-			foreach (var propElement in cpElement.Elements("CustomField"))
+			foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
 			{
 				hasCustomProperties = true;
 				var className = propElement.Attribute(SharedConstants.Class).Value;

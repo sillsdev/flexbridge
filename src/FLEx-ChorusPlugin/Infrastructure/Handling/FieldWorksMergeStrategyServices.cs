@@ -61,6 +61,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
 
+			var keyedStrat = ElementStrategy.CreateForKeyedElement("key", false);
+			keyedStrat.IsAtomic = true;
+			strategiesForMerger.SetStrategy(SharedConstants.CustomField, keyedStrat);
+
 			var headerStrategy = CreateSingletonElementType(false);
 			headerStrategy.ContextDescriptorGenerator = ContextGen;
 			strategiesForMerger.SetStrategy(SharedConstants.Header, headerStrategy);
@@ -68,7 +72,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			// There are two abstract class names used: CmAnnotation and DsChart.
 			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
 			// So, add two keyed strategies for each of them.
-			var keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
+			keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
 			strategiesForMerger.SetStrategy(SharedConstants.CmAnnotation, keyedStrat);

@@ -592,7 +592,7 @@ namespace FwdataTestApp
 						// Cache custom prop file for later write.
 						var cpElement = DataSortingService.SortCustomPropertiesRecord(record);
 						// Add custom property info to MDC, since it may need to be sorted in the data files.
-						foreach (var propElement in cpElement.Elements("CustomField"))
+						foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
 						{
 							var className = propElement.Attribute(SharedConstants.Class).Value;
 							var propName = propElement.Attribute(SharedConstants.Name).Value;

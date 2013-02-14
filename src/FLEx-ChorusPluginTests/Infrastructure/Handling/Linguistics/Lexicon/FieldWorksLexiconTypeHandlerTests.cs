@@ -214,7 +214,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
 			Assert.IsFalse(results.Contains("True"));
 			Assert.IsTrue(results.Contains("False"));
 		}
@@ -338,7 +338,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToSenseDefinition_HasNoReports()
+		public void BothAddedSameNewAlternativeToSenseDefinition_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -370,11 +370,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']" },
 				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 
 		[Test]
-		public void BothMadeSameChangesToBothAlternativesOfSenseDefinitionAndGloss_HasNoReports()
+		public void BothMadeSameChangesToBothAlternativesOfSenseDefinitionAndGloss_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -424,11 +424,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 					},
 				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				4, new List<Type> { typeof(BothChangedAtomicElementReport), typeof(BothChangedAtomicElementReport), typeof(XmlTextBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) });
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToEmptySenseDefinition_HasNoReports()
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -464,11 +464,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
 				new List<string>(),
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(BothChangedAtomicElementReport) });
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToEmptySenseDefinition2_HasNoReports()
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition2_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -504,7 +504,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
 				new List<string>(),
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(BothChangedAtomicElementReport) });
 		}
 
 		[Test]

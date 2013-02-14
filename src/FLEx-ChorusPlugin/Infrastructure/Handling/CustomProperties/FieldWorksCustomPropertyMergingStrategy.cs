@@ -10,7 +10,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 	/// </summary>
 	internal sealed class FieldWorksCustomPropertyMergingStrategy : IMergeStrategy
 	{
-		private const string CustomField = "CustomField";
 		private readonly XmlMerger _merger;
 
 		/// <summary>
@@ -28,7 +27,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 								IsAtomic = true,
 								NumberOfChildren = NumberOfChildrenAllowed.Zero
 							};
-			_merger.MergeStrategies.SetStrategy(CustomField, strategy);
+			_merger.MergeStrategies.SetStrategy(SharedConstants.CustomField, strategy);
 		}
 
 		#region Implementation of IMergeStrategy

@@ -309,7 +309,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 					},
 				null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -331,7 +331,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -353,7 +353,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]", @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -376,7 +376,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -399,7 +399,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -422,7 +422,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformCertified""]" },
 				new List<string> { @"AdditionalFields/CustomField[@key=""WfiWordformAttested""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlBothDeletionChangeReport) });
 		}
 
 		[Test]
@@ -444,11 +444,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				new List<string> { @"AdditionalFields/CustomField[@type=""Boolean""]" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(BothChangedAtomicElementReport) });
 		}
 
 		[Test]
-		public void WinnerAndLoserBothChangedAttributeButInDifferentWays()
+		public void WinnerAndLoserBothChangedAttributeInAtomicElementButInDifferentWays()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -488,7 +488,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
 		}
 
 		[Test]
@@ -510,7 +510,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 				new List<string> { @"AdditionalFields/CustomField[@type=""Integer""]" },
 				null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
 		}
 
 		[Test]
