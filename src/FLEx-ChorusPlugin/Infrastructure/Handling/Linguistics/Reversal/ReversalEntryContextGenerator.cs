@@ -1,0 +1,30 @@
+﻿using System.Xml;
+using FLEx_ChorusPlugin.Properties;
+
+namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal
+{
+	/// <summary>
+	/// Context generator for Reversal Index entry elements. These are a root element, so we generate a label directly,
+	/// without needing to look further up the chain.
+	/// </summary>
+	class ReversalEntryContextGenerator : FieldWorkObjectContextGenerator
+	{
+		protected override string GetLabel(XmlNode start)
+		{
+			return GetLabelForReversalEntry(start);
+		}
+
+		string ReversalEntryLabel
+		{
+			get { return Resources.kReversalEntryClassLabel; }
+		}
+
+		private string GetLabelForReversalEntry(XmlNode entry)
+		{
+			var form = entry.SelectSingleNode("ReversalForm/AUni");
+			return form == null
+				? ReversalEntryLabel
+				: ReversalEntryLabel + Space + Quote + form.InnerText + Quote;
+		}
+	}
+}

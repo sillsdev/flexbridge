@@ -159,7 +159,8 @@ namespace FLEx_ChorusPlugin.Controller
 		/// </summary>
 		private static string FixChecksums(string input)
 		{
-			var root = XElement.Parse(input, LoadOptions.PreserveWhitespace);
+			// XML parser won't handle this obsolete html entity.
+			var root = XElement.Parse(input.Replace("&nbsp;", "&#160;"), LoadOptions.PreserveWhitespace);
 			foreach (var parentDiv in DivisionsWithChecksumChildren(root))
 			{
 				var checksumChildren = (from child in parentDiv.Elements("div")

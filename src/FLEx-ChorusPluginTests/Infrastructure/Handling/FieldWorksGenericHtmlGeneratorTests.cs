@@ -221,7 +221,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			string input = @"<Root><Child><AUni ws='en'>SomeText</AUni></Child><Child>More text</Child></Root>";
 			var root = GetNode(input);
 			string result = new FwGenericHtmlGenerator().MakeHtml(root);
-			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws' and text()='en: SomeText']");
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws']/span[@class='ws' and text()='en']");
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws' and contains(text(),': SomeText')]");
 			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div/div[text()='Child: More text']");
 			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[text()='Root: ']");
 		}
@@ -232,7 +233,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 			string input = @"<Root><Child><AStr ws='en'><Run ws='en'>SomeText</Run></AStr></Child><Child>More text</Child></Root>";
 			var root = GetNode(input);
 			string result = new FwGenericHtmlGenerator().MakeHtml(root);
-			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws' and text()='en: SomeText']");
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws']/span[@class='ws' and text()='en']");
+			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[@class='property']/div[@class='property' and text()='Child: ']/div[@class='ws' and contains(text(),': SomeText')]");
 			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div/div[text()='Child: More text']");
 			XmlTestHelper.AssertXPathMatchesExactlyOne(result, @"div[text()='Root: ']");
 		}

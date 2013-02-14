@@ -316,8 +316,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				var ws = XmlUtilities.GetOptionalAttributeString(elt, "ws");
 				if (multiple)
 					sb.Append("<div>");
+				sb.Append("<span class=\"ws\">");
 				sb.Append(ws);
-				sb.Append(": ");
+				sb.Append("</span>: ");
 				sb.Append(elt.InnerText); // enhance JohnT: possibly indicate WS and style if AStr and relevant?
 				if (multiple)
 					sb.Append("</div>");

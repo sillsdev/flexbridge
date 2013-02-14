@@ -230,6 +230,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Reversal Entry.
+		/// </summary>
+		internal static string kReversalEntryClassLabel {
+			get {
+				return ResourceManager.GetString("kReversalEntryClassLabel", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Data Notebook Record.
 		/// </summary>
 		internal static string kRnGenericRecLabel {
