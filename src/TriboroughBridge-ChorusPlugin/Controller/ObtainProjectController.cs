@@ -122,7 +122,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			//_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
 
 			var getSharedProjectModel = new GetSharedProjectModel();
-			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, Utilities.ExtantRepoIdentifiers, ProjectFilter, _baseDir, null);
+			var existingProjects = new HashSet<string>(
+				from dir in Directory.GetDirectories(_baseDir) select Path.GetFileName(dir));
+			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, Utilities.ExtantRepoIdentifiers, existingProjects, ProjectFilter, _baseDir, null);
 
 			if (result.CloneStatus != CloneStatus.Created)
 				return;

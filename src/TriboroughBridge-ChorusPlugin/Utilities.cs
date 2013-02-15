@@ -22,10 +22,10 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
-		private static HashSet<string> _extantRepoIdentifiers;
+		private static Dictionary<string, string> _extantRepoIdentifiers;
 		private static string _testingProjectsPath = null;
 
-		public static HashSet<string> ExtantRepoIdentifiers
+		public static Dictionary<string, string> ExtantRepoIdentifiers
 		{
 			get
 			{
@@ -55,12 +55,12 @@ namespace TriboroughBridge_ChorusPlugin
 			var identifier = repo.Identifier;
 
 			// We don't really want to clone an empty repo (identifier == null).
-			return identifier == null || _extantRepoIdentifiers.Contains(identifier);
+			return identifier == null || _extantRepoIdentifiers.ContainsKey(identifier);
 		}
 
 		private static void CacheExtantRepositoryIdentifiers(string fwProjectBaseDir)
 		{
-			_extantRepoIdentifiers = new HashSet<string>();
+			_extantRepoIdentifiers = new Dictionary<string, string>();
 
 			foreach (var mainFwProjectFolder in Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.TopDirectoryOnly))
 			{
@@ -89,8 +89,9 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			var repo = new HgRepository(repoContainingFolder, new NullProgress());
 			var identifier = repo.Identifier;
+			// Pathologically we may already have a duplicate. If so we can only record one name; just keep the last encountered.
 			if (identifier != null)
-				_extantRepoIdentifiers.Add(identifier);
+				_extantRepoIdentifiers[identifier] = Path.GetFileName(repoContainingFolder);
 		}
 
 		/// <summary>

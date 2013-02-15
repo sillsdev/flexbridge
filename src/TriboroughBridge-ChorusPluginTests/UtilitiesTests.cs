@@ -132,7 +132,8 @@ namespace TriboroughBridge_ChorusPluginTests
 					repo.AddAndCheckinFile(newFile);
 
 					Assert.AreEqual(1, Utilities.ExtantRepoIdentifiers.Count);
-					Assert.IsTrue(Utilities.ExtantRepoIdentifiers.Contains(repo.Identifier));
+					Assert.IsTrue(Utilities.ExtantRepoIdentifiers.ContainsKey(repo.Identifier));
+					Assert.That(Utilities.ExtantRepoIdentifiers[repo.Identifier], Is.EqualTo("childFolder"));
 				}
 				finally
 				{
