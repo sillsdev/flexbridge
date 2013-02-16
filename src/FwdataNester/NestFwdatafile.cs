@@ -13,7 +13,6 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
 using Palaso.Progress;
 using Palaso.Xml;
 using TriboroughBridge_ChorusPlugin;
@@ -254,7 +253,7 @@ namespace FwdataTestApp
 				{
 					EventListener = new ChangeAndConflictAccumulator()
 				};
-				var merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, MetadataCache.MdCache);
+				var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, MetadataCache.MdCache);
 				ambiguousTimer.Start();
 				foreach (var dataFile in allDataFiles)
 				{

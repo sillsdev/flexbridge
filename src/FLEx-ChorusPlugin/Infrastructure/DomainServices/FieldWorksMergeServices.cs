@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Web;
 using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.Handling;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Common;
 using FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties;
@@ -18,13 +18,15 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
 using Palaso.Network;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling
+namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	/// <summary>
-	/// Services class used by FieldWorksMergingStrategy to create ElementStrategy instances
-	/// (some shared and some not shared).
+	/// Services class used to support various merge tasks.
+	///		1. Create an XmlMerger and the ElementStrategy instances it will use,
+	///		2. Getting a Guid from an element,
+	///		3. createing a context descriptor
 	/// </summary>
-	internal static class FieldWorksMergeStrategyServices
+	internal static class FieldWorksMergeServices
 	{
 		private static readonly FindByKeyAttribute WsKey = new FindByKeyAttribute(SharedConstants.Ws);
 		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
@@ -201,6 +203,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							break;
 
 						case DataType.Integer: // Fall through
+							if (propertyInfo.PropertyName == "HomographNumber")
+							{
+								// Don't fret about conflicts in merging the homograph numbers.
+								propStrategy.AttributesToIgnoreForMerging.Add("val");
+							}
+							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+							break;
 						case DataType.Boolean: // Fall through
 						case DataType.GenDate:
 							// LT-13320 "Date of Event is lost after send/receive (data loss)"
@@ -210,7 +219,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 							break;
 						case DataType.Time:
-							propStrategy.IsImmutable = true; // Immutable, because some of them are immutable leagally (date created), and we have pre-merged the rest to be so.
+							if (propertyInfo.PropertyName == "DateCreated")
+							{
+								propStrategy.IsImmutable = true;
+							}
+							else
+							{
+								// Don't fret about conflicts in merging the other DataType.Time properties.
+								propStrategy.AttributesToIgnoreForMerging.Add("val");
+							}
 							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 							break;
 						case DataType.Guid:
@@ -353,12 +370,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		internal static string GetGuid(XmlNode element)
 		{
 			var elt = element;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(FieldWorksMergingServices.GetClassName(elt)) == null
+			while (elt != null && MetadataCache.MdCache.GetClassInfo(GetClassName(elt)) == null
 				   && elt.Name != SharedConstants.Ownseq)
 				elt = elt.ParentNode;
 			return elt.Attributes[SharedConstants.GuidStr] == null
 				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
 				: elt.Attributes[SharedConstants.GuidStr].Value;
+		}
+
+		private static string GetClassName(XmlNode element)
+		{
+			// Owning collections do nothing special for the main element name;
+			var name = element.Name;
+			return (name == SharedConstants.Ownseq)
+				? element.Attributes[SharedConstants.Class].Value
+				: name;
 		}
 
 		/// <summary>

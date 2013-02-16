@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
 
@@ -175,8 +176,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
 			LoadPosList();
-			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath,
-																			 FieldWorksMergeStrategyServices.GetGuid(mergeElement),
+			return FieldWorksMergeServices.GenerateContextDescriptor(filePath,
+																			 FieldWorksMergeServices.GetGuid(mergeElement),
 																			 GetLabel(mergeElement));
 		}
 

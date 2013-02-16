@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			{
 				EventListener = new ListenerForUnitTests()
 			};
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
+			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
 		}
 
 		[Test]

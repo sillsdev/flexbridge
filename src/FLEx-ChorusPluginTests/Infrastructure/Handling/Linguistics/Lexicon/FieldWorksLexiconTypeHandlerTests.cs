@@ -262,7 +262,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void MergeHasNoReportsForDeepDateModifiedChanges()
+		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsOurs()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -295,7 +295,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				0, new List<Type>());
-			Assert.IsTrue(results.Contains("2013-2-2 19:39:28.829"));
+			Assert.IsTrue(results.Contains("2012-2-2 19:39:28.829"));
 		}
 
 		[Test]
@@ -908,9 +908,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		</LexemeForm>
 	</LexEntry>
 </Lexicon>";
-			string commonAncestor = string.Format(pattern, "bank");
-			string ourContent = string.Format(pattern, "institute");
-			string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
+			var commonAncestor = string.Format(pattern, "bank");
+			var ourContent = string.Format(pattern, "institute");
+			const string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
 <Lexicon>
 	<header>
 		<LexDb guid='lexdb' />
@@ -925,7 +925,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='institute']" },
 				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='moneybags']" },
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
-				0, new List<Type>(), out resultingConflicts);
+				0, new List<Type>(),
+				out resultingConflicts);
 			var conflict = resultingConflicts[0];
 			Assert.That(conflict.HtmlDetails, Is.Not.StringContaining("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
 			Assert.That(conflict.HtmlDetails, Is.StringContaining("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");

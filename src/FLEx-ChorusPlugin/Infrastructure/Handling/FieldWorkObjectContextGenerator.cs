@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
@@ -13,7 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// Also responsible for generating (and including as a label in the descriptor) a human-readable description of the context element,
 	/// and (through the HtmlDetails method) an HTML representation of a conflicting node that can be diff'd to show the differences.
 	///
-	/// Subclasses should be created (and registered in the appropriate strategies, in FieldWorksMergeStrategyServices.BootstrapSystem)
+	/// Subclasses should be created (and registered in the appropriate strategies, in FieldWorksMergeServices.BootstrapSystem)
 	/// for elements which have non-standard behavior.
 	/// </summary>
 	internal class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
@@ -45,12 +46,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				//    guid = element.Attributes[SharedConstants.GuidStr].Value;
 				//    break;
 				default:
-					guid = FieldWorksMergeStrategyServices.GetGuid(element);
+					guid = FieldWorksMergeServices.GetGuid(element);
 					label = GetLabel(element);
 					break;
 			}
 
-			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath, guid, label);
+			return FieldWorksMergeServices.GenerateContextDescriptor(filePath, guid, label);
 		}
 
 		protected virtual string GetLabel(XmlNode start)

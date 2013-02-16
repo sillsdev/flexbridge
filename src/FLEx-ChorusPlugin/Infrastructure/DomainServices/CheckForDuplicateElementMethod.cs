@@ -55,7 +55,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				// contextGenerator.GenerateContextDescriptor(element.ToString(), pathname)
 				// it will fail for elements in an owning sequence because in the unflattened form
 				// the object representing a sequence item has element name <ownseq> which won't generate a useful label.
-				var context = FieldWorksMergeStrategyServices.GenerateContextDescriptor(pathname, elementGuid, className);
+				var context = FieldWorksMergeServices.GenerateContextDescriptor(pathname, elementGuid, className);
 				listener.EnteringContext(context);
 				// Adding the conflict to the listener, will result in the ChorusNotes file being updated (created if need be.)
 				var conflict = new IncompatibleMoveConflict(className, CmObjectFlatteningService.GetXmlNode(element)) { Situation = new NullMergeSituation() };

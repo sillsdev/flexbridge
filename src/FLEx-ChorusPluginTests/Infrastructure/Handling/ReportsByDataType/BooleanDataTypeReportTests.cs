@@ -1,11 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
 using Palaso.IO;
 
@@ -47,7 +46,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			{
 				EventListener = new NullMergeEventListener()
 			};
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
+			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
 		}
 
 		[Test]
@@ -99,8 +98,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"MorphTypes/CmPossibilityList/IsClosed[@val='True']" }, null,
-				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
+				1, new List<Type> { typeof(BothAddedAttributeConflict) },
+				0, new List<Type>());
 		}
 
 		[Test]
@@ -131,9 +130,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"MorphTypes/CmPossibilityList/IsClosed[@val='True']" }, null,
-				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
+				new List<string> { @"MorphTypes/CmPossibilityList/IsClosed[@val='False']" }, null,
+				1, new List<Type> {typeof(BothAddedAttributeConflict)},
+				0, new List<Type>());
 		}
 	}
 }
