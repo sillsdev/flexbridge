@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using Palaso.IO;
+using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -40,13 +41,13 @@ namespace SIL.LiftBridge.Controller
 			};
 
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
-
+			var liftProj = new LiftProject(cloneLocation);
 			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 			{
 				Directory.CreateDirectory(otherReposDir);
 			}
-			_liftFolder = Path.Combine(otherReposDir, Utilities.LIFT);
+			_liftFolder = liftProj.PathToProject;
 
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.

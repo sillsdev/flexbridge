@@ -29,7 +29,8 @@ namespace SIL.LiftBridge.Model
 		{
 			get
 			{
-				return Path.Combine(BasePath, Utilities.OtherRepositories, Utilities.LIFT);
+				var flexProjName = Path.GetFileName(BasePath);
+				return Path.Combine(BasePath, Utilities.OtherRepositories, flexProjName + '_' + Utilities.LIFT);
 			}
 		}
 
