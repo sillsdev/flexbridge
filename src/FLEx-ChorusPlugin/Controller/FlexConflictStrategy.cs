@@ -148,7 +148,8 @@ namespace FLEx_ChorusPlugin.Controller
 		/// </summary>
 		internal string AdjustConflictHtml(string input)
 		{
-			return FixChecksums(FixWsRuns(input)).Replace(@"&amp;database=current&amp;", @"&amp;database=" + ProjectName + @"&amp;");
+			var projectNameForUrl = HttpUtilityFromMono.UrlEncode(ProjectName);
+			return FixChecksums(FixWsRuns(input)).Replace(@"&amp;database=current&amp;", @"&amp;database=" + projectNameForUrl + @"&amp;");
 		}
 
 		/// <summary>
