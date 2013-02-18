@@ -215,7 +215,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				1, new List<Type> { typeof(XmlAttributeChangedReport) });
+				0, new List<Type>());
+				// Originally this produced one change of type XmlAttributeChangedReport.
+				// This is now suppressed by the special handling of ParseIsCurrent.
+				//1, new List<Type> { typeof(XmlAttributeChangedReport) });
 			Assert.IsFalse(results.Contains("True"));
 			Assert.IsTrue(results.Contains("False"));
 		}

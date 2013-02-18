@@ -94,7 +94,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
-				var classStrat = MakeClassStrategy(ContextGen);
+				var classStrat = MakeClassStrategy(classInfo, ContextGen);
 				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
 				classStrat.IsImmutable = classInfo.ClassName == "ScrDraft";
 				// Didn't work, since the paras are actually in an 'ownseq' element.
@@ -244,14 +244,21 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		private static ElementStrategy MakeClassStrategy(IGenerateContextDescriptor descriptor)
+		private static ElementStrategy MakeClassStrategy(FdoClassInfo classInfo,IGenerateContextDescriptor descriptor)
 		{
-			var classStrat = new ElementStrategy(false)
-								{
-									MergePartnerFinder = GuidKey,
-									ContextDescriptorGenerator = descriptor,
-									IsAtomic = false
-								};
+			ElementStrategy classStrat;
+			switch (classInfo.ClassName)
+			{
+				case "StTxtPara":
+					classStrat = new StTxtParaStrategy();
+					break;
+				default:
+					classStrat = new ElementStrategy(false);
+					break;
+			}
+			classStrat.MergePartnerFinder = GuidKey;
+			classStrat.ContextDescriptorGenerator = descriptor;
+			classStrat.IsAtomic = false;
 			if (ContextGen != null && descriptor is FieldWorkObjectContextGenerator)
 				((FieldWorkObjectContextGenerator) descriptor).MergeStrategies = ContextGen.MergeStrategies;
 			return classStrat;
@@ -311,7 +318,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AUni, false, false); // final parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
-			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
+			elementStrategy = new OwnSeqStrategy();
+			elementStrategy.ContextDescriptorGenerator = ContextGen;
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
 
