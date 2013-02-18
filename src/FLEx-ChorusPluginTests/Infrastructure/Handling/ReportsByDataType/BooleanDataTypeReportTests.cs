@@ -70,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		}
 
 		[Test]
-		public void NullAncestorEndsWithTrueIfWeAddedTrueAndTheyAddedFalseAndhasNoConflictReport()
+		public void NullAncestorEndsWithTrueIfWeAddedTrueAndTheyAddedFalseHasConflictReport()
 		{
 			// Be sure to test ancestor being null, and ours and theirs not being the same
 			const string commonAncestor =
@@ -103,7 +103,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		}
 
 		[Test]
-		public void NullAncestorEndsWithTrueIfOneAddedTrueAndTheOtherAddedFalseAndhasNoConflictReport()
+		public void NullAncestorEndsWithTrueIfOneAddedTrueAndTheOtherAddedFalseHasConflictReport()
 		{
 			// Be sure to test ancestor being null, and ours and theirs not being the same
 			const string commonAncestor =

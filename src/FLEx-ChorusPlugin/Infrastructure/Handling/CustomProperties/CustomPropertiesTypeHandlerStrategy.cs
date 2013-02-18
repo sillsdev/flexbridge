@@ -95,7 +95,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, false);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc,
+				false); // We don't want (or even need) the custom properties to be added to the MDC, while merging the custom props file itself.
+						// We won't even know what they are until after the merge is done.
 		}
 
 		public string Extension

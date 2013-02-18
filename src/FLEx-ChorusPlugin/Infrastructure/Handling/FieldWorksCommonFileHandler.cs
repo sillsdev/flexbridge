@@ -45,10 +45,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return _handlers.FirstOrDefault(handlerCandidate => handlerCandidate.Extension == extension) ?? _unknownFileTypeHandler;
 		}
 
+		/// <summary>
+		/// All callers merging FieldWorks data need to pass 'true', so the MDC will know about  any custom properties for their classes.
+		///
+		/// Non-object callers (currently only the merge of the custom property definitions themselves) shoudl pass 'false'.
+		/// </summary>
 		internal static void Do3WayMerge(MergeOrder mergeOrder, MetadataCache mdc, bool addcustomPropertyInformation)
 		{
+			// Skip doing this for the Custom property definiton file, since it has no real need for the custom prop definitions,
+			// which are being merged (when 'false' is provided).
 			if (addcustomPropertyInformation)
-				mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
+				mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created. since it used the MDC.
 
 			var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
 			merger.EventListener = mergeOrder.EventListener;
