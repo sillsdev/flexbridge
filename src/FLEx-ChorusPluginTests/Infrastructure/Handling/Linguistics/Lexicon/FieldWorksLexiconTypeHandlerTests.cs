@@ -926,7 +926,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='institute']" },
-				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='moneybags']" },
+				null,
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
 				0, new List<Type>(),
 				out resultingConflicts);
