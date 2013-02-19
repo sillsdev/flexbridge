@@ -106,6 +106,7 @@
 	<Compile Include="Controller\ConflictControllerTests.cs" />
 	<Compile Include="Controller\FlexObtainProjectStrategyTests.cs" />
 	<Compile Include="Controller\TestConflictController.cs" />
+	<Compile Include="Infrastructure\DateTimeMergingTests.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />

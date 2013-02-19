@@ -253,8 +253,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						}
 						else
 						{
-							// Don't fret about conflicts in merging the other DataType.Time properties.
-							propStrategy.AttributesToIgnoreForMerging.Add("val");
+							// Suppress conflicts and change reports for other date time properties, which currently are all
+							// some variation on modify time, or most recent run time.
+							// For all of them, it is appropriate to just keep the most recent.
+							propStrategy.Premerger = new PreferMostRecentTimePreMerger();
 						}
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 						break;

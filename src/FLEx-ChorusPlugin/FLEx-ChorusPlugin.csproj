@@ -141,6 +141,7 @@
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutValidator.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutChangePresenter.cs" />
+	<Compile Include="Infrastructure\Handling\PreferMostRecentTimePreMerger.cs" />
 	<Compile Include="Infrastructure\Handling\General\PictureFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\General\VirtualOrderingFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />

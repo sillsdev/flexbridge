@@ -265,7 +265,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsOurs()
+		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsMostRecent()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -298,7 +298,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				0, new List<Type>());
-			Assert.IsTrue(results.Contains("2012-2-2 19:39:28.829"));
+			Assert.IsTrue(results.Contains("2013-2-2 19:39:28.829"));
 		}
 
 		[Test]
