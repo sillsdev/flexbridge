@@ -145,8 +145,8 @@
 	<Compile Include="Infrastructure\Handling\General\VirtualOrderingFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalEntryContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\OwnSeqStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\StTxtParaStrategy.cs" />
+	<Compile Include="Infrastructure\Handling\OwnSeqPremerger.cs" />
+	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\StTxtParaPremerger.cs" />
 	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />

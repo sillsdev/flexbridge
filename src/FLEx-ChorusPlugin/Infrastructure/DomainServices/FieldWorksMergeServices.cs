@@ -16,6 +16,7 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
+using Palaso.Code;
 using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
@@ -28,9 +29,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class FieldWorksMergeServices
 	{
-		private static readonly FindByKeyAttribute WsKey = new FindByKeyAttribute(SharedConstants.Ws);
-		private static readonly FindByKeyAttribute GuidKey = new FindByKeyAttribute(SharedConstants.GuidStr);
-		private static readonly FindFirstElementWithSameName SameName = new FindFirstElementWithSameName();
+		private static readonly FindByKeyAttribute WsKeyFinder = new FindByKeyAttribute(SharedConstants.Ws);
+		private static readonly FindByKeyAttribute GuidKeyFinder = new FindByKeyAttribute(SharedConstants.GuidStr);
+		private static readonly FindFirstElementWithSameName SameNameFinder = new FindFirstElementWithSameName();
 		private static readonly FieldWorkObjectContextGenerator ContextGen = new FieldWorkObjectContextGenerator();
 		private const string MutableSingleton = "MutableSingleton";
 		private const string ImmutableSingleton = "ImmutableSingleton";
@@ -81,7 +82,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			// There are two abstract class names used: CmAnnotation and DsChart.
 			// Chorus knows how to find the matching element for these, as they use <CmAnnotation class='concreteClassname'.
-			// So, add two keyed strategies for each of them.
+			// So, add a keyed strategy for each of them.
 			var keyedStrat = ElementStrategy.CreateForKeyedElement(SharedConstants.GuidStr, false);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.Class);
 			keyedStrat.AttributesToIgnoreForMerging.Add(SharedConstants.GuidStr);
@@ -94,174 +95,181 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
-				var classStrat = MakeClassStrategy(classInfo, ContextGen);
-				// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
-				classStrat.IsImmutable = classInfo.ClassName == "ScrDraft";
-				// Didn't work, since the paras are actually in an 'ownseq' element.
-				// So, use a new ownseatomic element tag.
-				// classStrat.IsAtomic = classInfo.ClassName == "StTxtPara" || classInfo.ClassName == "ScrTxtPara";
-				strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
-
-				switch (classInfo.ClassName)
-				{
-					case "LangProject":
-						classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
-						break;
-					case "LexEntry":
-						classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
-						break;
-					case "WfiWordform":
-						classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
-						break;
-					case "ReversalIndexEntry":
-						classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
-						break;
-					case "Text":
-						classStrat.ContextDescriptorGenerator = new TextContextGenerator();
-						break;
-					case "RnGenericRec":
-						classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
-						break;
-					case "ScrBook":
-						classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
-						break;
-					case "ScrSection":
-						classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
-						break;
-					case "CmPossibilityList":
-						classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
-						break;
-						// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
-						// OTOH, if we ever want special handling for any of them, we can easily add a special generator.
-						// Note that these will not usually be found as strategies, since they are owned in owning sequences
-						// and ownseq has its own item. However, they can be found by the default object context generator code,
-						// which has a special case for ownseq.
-					case "MoMorphType":
-					case "PartOfSpeech":
-					case "ChkTerm":
-					case "PhPhonRuleFeat":
-					case "CmCustomItem":
-					case "CmLocation":
-					case "CmAnnotationDefn":
-					case "CmPerson":
-					case "CmAnthroItem":
-					case "CmSemanticDomain":
-					case "LexEntryType":
-					case "LexRefType":
-					case "CmPossibility":
-						classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator();
-						break;
-					case "PhEnvironment":
-						classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
-						break;
-					case "DsConstChart":
-					case "ConstChartRow":
-					case "ConstChartWordGroup":
-						classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator();
-						break;
-					case "PhNCSegments":
-						classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
-						break;
-					case "FsClosedFeature":
-						classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
-						break;
-				}
-				foreach (var propertyInfo in classInfo.AllProperties)
-				{
-					var isCustom = propertyInfo.IsCustomProperty;
-					var propStrategy = isCustom
-										? CreateStrategyForKeyedElement(SharedConstants.Name, false)
-										: CreateSingletonElementStrategy();
-					switch (propertyInfo.DataType)
-					{
-						//default:
-						//	break;
-						case DataType.ReferenceSequence:
-							// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
-							// we get a conflict report if it fails.
-							if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
-								propStrategy.IsAtomic = true;
-							break;
-						case DataType.ReferenceAtomic:
-							if(classInfo.ClassName ==  "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
-							{
-								propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
-							}
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
-							break;
-						case DataType.OwningAtomic:
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
-							break;
-
-						case DataType.TextPropBinary:
-							propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
-							break;
-						case DataType.Unicode: // Fall through - Contains one <Uni> element
-						case DataType.String: // Fall through (TsString) - Contains one <Str> element
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
-							break;
-
-						case DataType.Integer: // Fall through
-							if (propertyInfo.PropertyName == "HomographNumber")
-							{
-								// Don't fret about conflicts in merging the homograph numbers.
-								propStrategy.AttributesToIgnoreForMerging.Add("val");
-							}
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
-							break;
-						case DataType.Boolean: // Fall through
-						case DataType.GenDate:
-							// LT-13320 "Date of Event is lost after send/receive (data loss)"
-							// says these fields don't play nice as immutable.
-							//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
-							//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
-							break;
-						case DataType.Time:
-							if (propertyInfo.PropertyName == "DateCreated")
-							{
-								propStrategy.IsImmutable = true;
-							}
-							else
-							{
-								// Don't fret about conflicts in merging the other DataType.Time properties.
-								propStrategy.AttributesToIgnoreForMerging.Add("val");
-							}
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
-							break;
-						case DataType.Guid:
-							if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
-								propStrategy.IsImmutable = true;
-							propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
-							break;
-						case DataType.Binary:
-							propStrategy.IsAtomic = true;
-							break;
-					}
-					strategiesForMerger.SetStrategy(String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
-				}
+				MakeClassStrategy(strategiesForMerger, classInfo, ContextGen);
+				AddPropertyStrategiesForClass(strategiesForMerger, classInfo);
 			}
 		}
 
-		private static ElementStrategy MakeClassStrategy(FdoClassInfo classInfo,IGenerateContextDescriptor descriptor)
+		private static void MakeClassStrategy(MergeStrategies strategiesForMerger, FdoClassInfo classInfo, FieldWorkObjectContextGenerator defaultDescriptor)
 		{
-			ElementStrategy classStrat;
+			Guard.AgainstNull(defaultDescriptor, "defaultDescriptor");
+
+			var classStrat = new ElementStrategy(false)
+				{
+					ContextDescriptorGenerator = defaultDescriptor,
+					MergePartnerFinder = GuidKeyFinder,
+					IsAtomic = false
+				};
+
+			strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
+
 			switch (classInfo.ClassName)
 			{
-				case "StTxtPara":
-					classStrat = new StTxtParaStrategy();
+				case "ScrDraft":
+					// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
+					classStrat.IsImmutable = true;
 					break;
-				default:
-					classStrat = new ElementStrategy(false);
+				case "ScrTxtPara": // Fall through.
+				case "StTxtPara":
+					// This will never be used, since StTxtParas & ScrTxtParas are actually in an 'ownseq' element.
+					classStrat.Premerger = new StTxtParaPremerger();
+					// Didn't work, since StTxtParas & ScrTxtParas are actually in an 'ownseq' element.
+					// classStrat.IsAtomic = true;
+					break;
+				case "LangProject":
+					classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
+					break;
+				case "LexEntry":
+					classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
+					break;
+				case "WfiWordform":
+					classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
+					break;
+				case "ReversalIndexEntry":
+					classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
+					break;
+				case "Text":
+					classStrat.ContextDescriptorGenerator = new TextContextGenerator();
+					break;
+				case "RnGenericRec":
+					classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
+					break;
+				case "ScrBook":
+					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
+					break;
+				case "ScrSection":
+					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
+					break;
+				case "CmPossibilityList":
+					classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
+					break;
+				// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
+				// OTOH, if we ever want special handling for any of them, we can easily add a special generator.
+				// Note that these will not usually be found as strategies, since they are owned in owning sequences
+				// and ownseq has its own item. However, they can be found by the default object context generator code,
+				// which has a special case for ownseq.
+				case "MoMorphType":
+				case "PartOfSpeech":
+				case "ChkTerm":
+				case "PhPhonRuleFeat":
+				case "CmCustomItem":
+				case "CmLocation":
+				case "CmAnnotationDefn":
+				case "CmPerson":
+				case "CmAnthroItem":
+				case "CmSemanticDomain":
+				case "LexEntryType":
+				case "LexRefType":
+				case "CmPossibility":
+					classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator();
+					break;
+				case "PhEnvironment":
+					classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
+					break;
+				case "DsConstChart":
+				case "ConstChartRow":
+				case "ConstChartWordGroup":
+					classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator();
+					break;
+				case "PhNCSegments":
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
+					break;
+				case "FsClosedFeature":
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
 					break;
 			}
-			classStrat.MergePartnerFinder = GuidKey;
-			classStrat.ContextDescriptorGenerator = descriptor;
-			classStrat.IsAtomic = false;
-			if (ContextGen != null && descriptor is FieldWorkObjectContextGenerator)
-				((FieldWorkObjectContextGenerator) descriptor).MergeStrategies = ContextGen.MergeStrategies;
-			return classStrat;
+
+			((FieldWorkObjectContextGenerator)classStrat.ContextDescriptorGenerator).MergeStrategies = strategiesForMerger;
+		}
+
+		private static void AddPropertyStrategiesForClass(MergeStrategies strategiesForMerger, FdoClassInfo classInfo)
+		{
+			foreach (var propertyInfo in classInfo.AllProperties)
+			{
+				var isCustom = propertyInfo.IsCustomProperty;
+				var propStrategy = isCustom
+									   ? CreateStrategyForKeyedElement(SharedConstants.Name, false)
+									   : CreateSingletonElementStrategy();
+				switch (propertyInfo.DataType)
+				{
+					//default:
+					//	break;
+					case DataType.ReferenceSequence:
+						// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
+						// we get a conflict report if it fails.
+						if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
+							propStrategy.IsAtomic = true;
+						break;
+					case DataType.ReferenceAtomic:
+						if (classInfo.ClassName == "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
+						{
+							propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
+						}
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+						break;
+					case DataType.OwningAtomic:
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+						break;
+
+					case DataType.TextPropBinary:
+						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+						break;
+					case DataType.Unicode: // Fall through - Contains one <Uni> element
+					case DataType.String: // Fall through (TsString) - Contains one <Str> element
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+						break;
+
+					case DataType.Integer: // Fall through
+						if (propertyInfo.PropertyName == "HomographNumber")
+						{
+							// Don't fret about conflicts in merging the homograph numbers.
+							propStrategy.AttributesToIgnoreForMerging.Add("val");
+						}
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					case DataType.Boolean: // Fall through
+					case DataType.GenDate:
+						// LT-13320 "Date of Event is lost after send/receive (data loss)"
+						// says these fields don't play nice as immutable.
+						//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+						//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					case DataType.Time:
+						if (propertyInfo.PropertyName == "DateCreated")
+						{
+							propStrategy.IsImmutable = true;
+						}
+						else
+						{
+							// Don't fret about conflicts in merging the other DataType.Time properties.
+							propStrategy.AttributesToIgnoreForMerging.Add("val");
+						}
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					case DataType.Guid:
+						if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
+							propStrategy.IsImmutable = true;
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					case DataType.Binary:
+						propStrategy.IsAtomic = true;
+						break;
+				}
+				strategiesForMerger.SetStrategy(
+					String.Format("{0}{1}_{2}", isCustom ? "Custom_" : "", classInfo.ClassName, propertyInfo.PropertyName), propStrategy);
+			}
 		}
 
 		private static ElementStrategy CreateSingletonElementStrategy()
@@ -288,7 +296,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
-								MergePartnerFinder = SameName,
+								MergePartnerFinder = SameNameFinder,
 								ContextDescriptorGenerator = ContextGen
 							};
 			return strategy;
@@ -318,7 +326,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AUni, false, false); // final parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
-			elementStrategy = new OwnSeqStrategy();
+			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true); ;
+			elementStrategy.Premerger = new OwnSeqPremerger();
 			elementStrategy.ContextDescriptorGenerator = ContextGen;
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
 			sharedElementStrategies.Add(SharedConstants.Ownseq, elementStrategy);
@@ -358,7 +367,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
 		{
-			AddKeyedElementType(sharedElementStrategies, elementName, WsKey, orderOfTheseIsRelevant, isAtomic);
+			AddKeyedElementType(sharedElementStrategies, elementName, WsKeyFinder, orderOfTheseIsRelevant, isAtomic);
 		}
 
 		private static void AddKeyedElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, IFindNodeToMerge findBykeyAttribute, bool orderOfTheseIsRelevant, bool isAtomic)
