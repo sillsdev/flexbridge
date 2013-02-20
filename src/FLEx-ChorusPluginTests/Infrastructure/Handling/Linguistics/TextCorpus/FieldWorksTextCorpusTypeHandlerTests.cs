@@ -100,6 +100,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 			const string data =
 @"<TextInCorpus>
 <Text guid='0bd1fdbc-bedf-43d1-8d6a-c1766b556028' >
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
+<IsTranslated val='True' />
 </Text>
 </TextInCorpus>";
 			File.WriteAllText(_ourFile.Path, data);

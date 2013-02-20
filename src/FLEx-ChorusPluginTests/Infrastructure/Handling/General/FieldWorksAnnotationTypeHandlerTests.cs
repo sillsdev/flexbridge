@@ -120,7 +120,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<Annotations>
-<CmAnnotation guid='fff03918-9674-4401-8bb1-efe6502985a7' class='CmBaseAnnotation' />
+<CmAnnotation guid='fff03918-9674-4401-8bb1-efe6502985a7' class='CmBaseAnnotation' >
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
+<BeginOffset val='1' />
+<Flid val='1' />
+<EndOffset val='1' />
+<WsSelector val='1' />
+<BeginRef val='1' />
+<EndRef val='1' />
+</CmAnnotation>
 </Annotations>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

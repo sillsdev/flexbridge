@@ -115,9 +115,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 <Anthropology>
 <header>
 <RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
 </RnResearchNbk>
 </header>
 <RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
+<DateOfEvent val='gendatestuff' />
 </RnGenericRec>
 </Anthropology>";
 			File.WriteAllText(_ourFile.Path, data);

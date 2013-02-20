@@ -107,7 +107,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		{
 			const string data =
 @"<AnalyzingAgents>
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<Human val='True' />
+</CmAgent>
 </AnalyzingAgents>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -118,8 +120,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		{
 			const string data =
 @"<AnalyzingAgents>
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a8' />
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<Human val='True' />
+</CmAgent>
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a8' >
+<Human val='True' />
+</CmAgent>
 </AnalyzingAgents>";
 
 			File.WriteAllText(_ourFile.Path, data);

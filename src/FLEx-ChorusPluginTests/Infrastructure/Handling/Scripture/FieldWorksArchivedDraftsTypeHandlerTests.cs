@@ -86,7 +86,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <ArchivedDrafts>
-<ScrDraft guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
+<ScrDraft guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
+	<DateCreated val='2012-12-10 6:29:17.117' />
+	<Type val='1' />
+	<Protected val='True' />
+</ScrDraft>
 </ArchivedDrafts>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

@@ -107,8 +107,20 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<Filters>
-<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a8' />
+<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<ClassId val='1' />
+<FieldId val='1' />
+<App val='c1ee09fb-e382-11de-8a39-0800200c9a66' />
+<Type val='1' />
+<ShowPrompt val='1' />
+</CmFilter>
+<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a8' >
+<ClassId val='1' />
+<FieldId val='1' />
+<App val='c1ee09fb-e382-11de-8a39-0800200c9a66' />
+<Type val='1' />
+<ShowPrompt val='1' />
+</CmFilter>
 </Filters>";
 
 			File.WriteAllText(_ourFile.Path, data);
@@ -120,7 +132,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<Filters>
-<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<CmFilter guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<ClassId val='1' />
+<FieldId val='1' />
+<App val='c1ee09fb-e382-11de-8a39-0800200c9a66' />
+<Type val='1' />
+<ShowPrompt val='1' />
+</CmFilter>
 </Filters>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

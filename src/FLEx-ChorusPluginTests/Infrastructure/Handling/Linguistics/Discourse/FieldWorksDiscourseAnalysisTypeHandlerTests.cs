@@ -140,7 +140,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 	<header>
 		<DsDiscourseData guid='79ec6390-51e8-4543-a439-6d6f12ae7d50' />
 	</header>
-	<DsChart class='DsConstChart' guid='0a8ef515-0355-48d0-bd39-7f2249b17703' />
+	<DsChart class='DsConstChart' guid='0a8ef515-0355-48d0-bd39-7f2249b17703' >
+		<DateCreated val='2012-12-10 6:29:17.117' />
+		<DateModified val='2012-12-10 6:29:17.117' />
+	</DsChart>
 </Discourse>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

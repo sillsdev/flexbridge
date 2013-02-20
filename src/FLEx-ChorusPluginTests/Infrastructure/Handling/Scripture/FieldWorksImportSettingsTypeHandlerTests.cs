@@ -92,7 +92,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
+<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
+	<ImportType val='1' />
+</ScrImportSet>
 </ImportSettings>";
 
 			File.WriteAllText(_ourFile.Path, data);

@@ -11,14 +11,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 	{
 		private MetadataCache _mdc;
 
-		[TestFixtureSetUp]
-		public void FixtureSetup()
+		[SetUp]
+		public void TestSetup()
 		{
-			_mdc = MetadataCache.MdCache;
+			_mdc = MetadataCache.TestOnlyNewCache;
 		}
 
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
+		[TearDown]
+		public void TestTearDown()
 		{
 			_mdc = null;
 		}
@@ -38,7 +38,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void EnsureValidObjectReturnsNull()
 		{
-			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, new XElement("PartOfSpeech", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()))));
+			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, new XElement("Reminder", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()),
+				new XElement("Date", new XAttribute(SharedConstants.Val, "SomeGenDataData")))));
 		}
 
 		[Test]
@@ -79,7 +80,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.Contains("Has no class attribute"));
+
 			ownSeqElement.Add(new XAttribute(SharedConstants.Class, "PartOfSpeech"));
+			AddBasicPropertyElementsToPoss(ownSeqElement);
 			result = CmObjectValidator.ValidateObject(_mdc, ownSeqElement);
 			Assert.IsNull(result);
 		}
@@ -91,12 +94,22 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			var result = CmObjectValidator.ValidateObject(_mdc, obj);
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.Contains("Abstract class"));
+
 			obj.Name = SharedConstants.DsChart;
 			var classAttr = new XAttribute(SharedConstants.Class, "DsConstChart");
 			obj.Add(classAttr);
+			obj.Add(new XElement("DateCreated", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
+			obj.Add(new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
 			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
+
 			obj.Name = SharedConstants.CmAnnotation;
 			classAttr.Value = "CmBaseAnnotation";
+			obj.Add(new XElement("BeginOffset", new XAttribute(SharedConstants.Val, 1)));
+			obj.Add(new XElement("Flid", new XAttribute(SharedConstants.Val, 1)));
+			obj.Add(new XElement("EndOffset", new XAttribute(SharedConstants.Val, 1)));
+			obj.Add(new XElement("WsSelector", new XAttribute(SharedConstants.Val, 1)));
+			obj.Add(new XElement("BeginRef", new XAttribute(SharedConstants.Val, 1)));
+			obj.Add(new XElement("EndRef", new XAttribute(SharedConstants.Val, 1)));
 			Assert.IsNull(CmObjectValidator.ValidateObject(_mdc, obj));
 		}
 
@@ -112,67 +125,136 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void GuidPropertyHasCorrectResponses()
 		{
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var prop = new XElement("ListVersion");
-			var attr = new XAttribute(SharedConstants.Val, "badvalue");
-			prop.Add(attr);
-			element.Add(prop);
+			AddBasicPropertyElementsToPossList(element);
+
+			var prop = element.Element("ListVersion");
+			var attr = prop.Attribute(SharedConstants.Val);
+			attr.Value = "badvalue";
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
+
 			attr.Value = Guid.NewGuid().ToString();
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
+
+			prop.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("ListVersion"));
 		}
 
 		[Test]
 		public void TimePropertyHasCorrectResponses()
 		{
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var element = new XElement("CmPossibilityList", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var prop = new XElement("DateCreated");
-			var attr = new XAttribute(SharedConstants.Val, "badvalue");
-			prop.Add(attr);
-			element.Add(prop);
+			AddBasicPropertyElementsToPossList(element);
+
+			var prop = element.Element("DateCreated"); // new XElement("DateCreated");
+			var attr = prop.Attribute(SharedConstants.Val); // new XAttribute(SharedConstants.Val, "badvalue");
+			attr.Value = "badvalue";
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
+
 			attr.Value = DateTime.Now.ToString();
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
+
+			prop.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("DateCreated"));
 		}
 
 		[Test]
 		public void BooleanPropertyHasCorrectResponses()
 		{
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var prop = new XElement("IsProtected");
-			var attr = new XAttribute(SharedConstants.Val, "badvalue");
-			prop.Add(attr);
-			element.Add(prop);
+			AddBasicPropertyElementsToPoss(element);
+
+			var prop = element.Element("IsProtected");
+			var attr = prop.Attribute(SharedConstants.Val); // new XAttribute(SharedConstants.Val, "badvalue");
+			attr.Value = "badvalue";
+
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
 			attr.Value = "True";
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
+
+			prop.Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("IsProtected"));
 		}
 
 		[Test]
 		public void IntegerPropertyHasCorrectResponses()
 		{
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var prop = new XElement("ForeColor");
-			var attr = new XAttribute(SharedConstants.Val, "badvalue");
-			prop.Add(attr);
-			element.Add(prop);
+			AddBasicPropertyElementsToPoss(element);
+
+			var prop = element.Element("ForeColor");
+			var attr = prop.Attribute(SharedConstants.Val);// new XAttribute(SharedConstants.Val, "badvalue");
+			attr.Value = "badvalue";
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
+
 			attr.Value = "25";
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
+
+			element.Element("ForeColor").Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("ForeColor"));
+		}
+
+		[Test]
+		public void IntegerPropertyForOptionalBasicDataTypesHasCorrectResponses()
+		{
+			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			AddBasicPropertyElementsToPoss(element);
+
+			var prop = element.Element("ForeColor");
+			var attr = prop.Attribute(SharedConstants.Val);// new XAttribute(SharedConstants.Val, "badvalue");
+			attr.Value = "badvalue";
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+
+			attr.Value = "25";
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+
+			element.Element("ForeColor").Remove();
+			result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNull(result);
+		}
+
+		[Test]
+		public void NullGenDatePropertyHasCorrectResponses()
+		{
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
+			var element = new XElement("Reminder", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var result = CmObjectValidator.ValidateObject(_mdc, element);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Contains("Date"));
 		}
 
 		[Test]
 		public void UnicodePropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmFilter", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			element.Add(new XElement("ClassId", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("FieldId", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("App", new XAttribute(SharedConstants.Val, Guid.NewGuid().ToString())));
+			element.Add(new XElement("Type", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("ShowPrompt", new XAttribute(SharedConstants.Val, 1)));
+
 			var prop = new XElement("Name");
 			var attr = new XAttribute(SharedConstants.Val, "badvalue");
 			prop.Add(attr);
@@ -232,6 +314,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 						</Contents>
 						</ownseq>";
 			var element = XElement.Parse(str);
+			element.Add(new XElement("ParseIsCurrent", new XAttribute(SharedConstants.Val, "True")));
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 
@@ -266,6 +349,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		</Description>
 						</CmPossibilityList>";
 			var element = XElement.Parse(str);
+			AddBasicPropertyElementsToPossList(element);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 
@@ -298,6 +382,37 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			badAttr.Remove();
 		}
 
+		private static void AddBasicPropertyElementsToPossList(XElement element)
+		{
+			element.Add(new XElement("DateCreated", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
+			element.Add(new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
+			element.Add(new XElement("Depth", new XAttribute(SharedConstants.Val, 0)));
+			element.Add(new XElement("PreventChoiceAboveLevel", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("IsSorted", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("IsClosed", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("PreventDuplicates", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("PreventNodeChoices", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("UseExtendedFields", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("DisplayOption", new XAttribute(SharedConstants.Val, 2)));
+			element.Add(new XElement("ItemClsid", new XAttribute(SharedConstants.Val, 25)));
+			element.Add(new XElement("IsVernacular", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("WsSelector", new XAttribute(SharedConstants.Val, 5)));
+			element.Add(new XElement("ListVersion", new XAttribute(SharedConstants.Val, Guid.NewGuid().ToString())));
+		}
+
+		private static void AddBasicPropertyElementsToPoss(XElement element)
+		{
+			element.Add(new XElement("SortSpec", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("DateCreated", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
+			element.Add(new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now.ToString())));
+			element.Add(new XElement("ForeColor", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("BackColor", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("UnderColor", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("UnderStyle", new XAttribute(SharedConstants.Val, 1)));
+			element.Add(new XElement("Hidden", new XAttribute(SharedConstants.Val, "True")));
+			element.Add(new XElement("IsProtected", new XAttribute(SharedConstants.Val, "True")));
+		}
+
 		[Test]
 		public void MultiUnicodeHasCorrectRepsonses()
 		{
@@ -311,6 +426,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		</Name>
 						</CmPossibilityList>";
 			var element = XElement.Parse(str);
+			AddBasicPropertyElementsToPossList(element);
 			var result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 
@@ -359,6 +475,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void ReferenceAtomicPropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			AddBasicPropertyElementsToPoss(element);
 			var prop = new XElement("Confidence");
 			element.Add(prop);
 			var objsurElement = new XElement(SharedConstants.Objsur);
@@ -421,7 +538,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void ReferenceSequencePropertyHasCorrectResponses()
 		{
-			var element = new XElement("Segment", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var element = new XElement("Segment", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("BeginOffset", new XAttribute(SharedConstants.Val, 1)));
 			var prop = new XElement("Analyses");
 			element.Add(prop);
 
@@ -453,6 +570,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void ReferenceCollectionPropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			AddBasicPropertyElementsToPoss(element);
 			var prop = new XElement("Restrictions");
 			element.Add(prop);
 
@@ -484,6 +602,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void OwningAtomicPropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			AddBasicPropertyElementsToPoss(element);
 			var prop = new XElement("Discussion");
 			element.Add(prop);
 
@@ -494,9 +613,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			Assert.IsTrue(result.Contains("Has unrecognized attribute(s)"));
 			extraAttr.Remove();
 
-			var stText1 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var stText1 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now)), new XElement("RightToLeft", new XAttribute(SharedConstants.Val, "True")));
 			prop.Add(stText1);
-			var stText2 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var stText2 = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now)), new XElement("RightToLeft", new XAttribute(SharedConstants.Val, "True")));
 			prop.Add(stText2);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
@@ -516,6 +635,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		public void OwningSequencePropertyHasCorrectResponses()
 		{
 			var element = new XElement("CmPossibility", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			AddBasicPropertyElementsToPoss(element);
 			var prop = new XElement("SubPossibilities");
 			element.Add(prop);
 
@@ -541,7 +661,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 		[Test]
 		public void OwningCollectionPropertyHasCorrectResponses()
 		{
-			var element = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var element = new XElement("StText", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("DateModified", new XAttribute(SharedConstants.Val, DateTime.Now)), new XElement("RightToLeft", new XAttribute(SharedConstants.Val, "True")));
 			var prop = new XElement("Tags");
 			element.Add(prop);
 
@@ -558,8 +678,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.DomainServices
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNull(result);
 
-			var ttElement1 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
-			var ttElement2 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()));
+			var ttElement1 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("BeginAnalysisIndex", new XAttribute(SharedConstants.Val, 1)), new XElement("EndAnalysisIndex", new XAttribute(SharedConstants.Val, 1)));
+			var ttElement2 = new XElement("TextTag", new XAttribute(SharedConstants.GuidStr, Guid.NewGuid()), new XElement("BeginAnalysisIndex", new XAttribute(SharedConstants.Val, 1)), new XElement("EndAnalysisIndex", new XAttribute(SharedConstants.Val, 1)));
 			prop.Add(ttElement1);
 			prop.Add(ttElement2);
 			result = CmObjectValidator.ValidateObject(_mdc, element);

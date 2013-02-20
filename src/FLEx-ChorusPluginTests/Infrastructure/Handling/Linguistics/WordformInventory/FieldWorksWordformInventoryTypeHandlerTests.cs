@@ -17,6 +17,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 		[SetUp]
 		public void TestSetup()
 		{
+			var mdc = MetadataCache.TestOnlyNewCache;
 			FieldWorksTestServices.SetupTempFilesWithName(string.Format("{0}_01.{1}", SharedConstants.WordformInventory, SharedConstants.Inventory), out _ourFile, out _commonFile, out _theirFile);
 		}
 
@@ -130,7 +131,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 <header>
 <PunctuationForm guid='02f88cf5-c15f-4af3-935e-352b35b9b83c' />
 </header>
-<WfiWordform guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<WfiWordform guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<SpellingStatus val='1' />
+<Checksum val='1' />
+</WfiWordform>
 </Inventory>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -141,7 +145,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.WordformInv
 		{
 			const string data =
 @"<Inventory>
-<WfiWordform guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<WfiWordform guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+<SpellingStatus val='1' />
+<Checksum val='1' />
+</WfiWordform>
 </Inventory>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

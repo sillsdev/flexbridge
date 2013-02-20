@@ -92,7 +92,23 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <TranslatedScripture>
-<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
+	<DateCreated val='2012-12-10 6:29:17.117' />
+	<DateModified val='2012-12-10 6:29:17.117' />
+	<DisplayFootnoteReference val='True' />
+	<RestartFootnoteSequence val='True' />
+	<RestartFootnoteBoundary val='1' />
+	<UseScriptDigits val='True' />
+	<ScriptDigitZero val='1' />
+	<ConvertCVDigitsOnExport val='True' />
+	<Versification val='1' />
+	<FootnoteMarkerType val='1' />
+	<DisplayCrossRefReference val='True' />
+	<CrossRefMarkerType val='1' />
+	<CrossRefsCombinedWithFootnotes val='True' />
+	<DisplaySymbolInFootnote val='True' />
+	<DisplaySymbolInCrossRef val='True' />
+</Scripture>
 </TranslatedScripture>";
 
 			File.WriteAllText(_ourFile.Path, data);

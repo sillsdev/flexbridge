@@ -101,6 +101,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 <Reversal>
 <header>
 <ReversalIndex guid='c1ed46b8-e382-11de-8a39-0800200c9a66'>
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
 </ReversalIndex>
 </header>
 <ReversalIndexEntry guid='c1ed46b9-e382-11de-8a39-0800200c9a66'>

@@ -124,7 +124,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<LanguageProject>
-<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+	<DateCreated val='2012-12-10 6:29:17.117' />
+	<DateModified val='2012-12-10 6:29:17.117' />
+</LangProject>
 </LanguageProject>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

@@ -111,7 +111,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			const string data =
 @"<Pictures>
-<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+	<LayoutPos val='1' />
+	<ScaleFactor val='1' />
+	<LocationRangeType val='1' />
+	<LocationMin val='1' />
+	<LocationMax val='1' />
+</CmPicture>
 </Pictures>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using Palaso.Code;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -10,6 +12,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class CmObjectValidator
 	{
+		private static readonly HashSet<DataType> DataTypesForValueTypeData = new HashSet<DataType>
+			{
+				DataType.Boolean,
+				DataType.GenDate,
+				DataType.Guid,
+				DataType.Integer,
+				DataType.Time
+			};
 		/// <summary>
 		/// Validate a CmObject instance, as represented by an XElement.
 		///
@@ -19,6 +29,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		/// <exception cref="ArgumentNullException">Thrown is either <paramref name="mdc"/> of <paramref name="obj"/> are null.</exception>
 		internal static string ValidateObject(MetadataCache mdc, XElement obj)
 		{
+			Guard.AgainstNull(mdc, "mdc");
+			Guard.AgainstNull(obj, "obj");
+
 			return ValidateObject(mdc, obj, "");
 		}
 
@@ -31,11 +44,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		/// <exception cref="ArgumentNullException">Thrown is either <paramref name="mdc"/> of <paramref name="obj"/> are null.</exception>
 		private static string ValidateObject(MetadataCache mdc, XElement obj, string indentation)
 		{
-			if (mdc == null)
-				throw new ArgumentNullException("mdc");
-			if (obj == null)
-				throw new ArgumentNullException("obj");
-
 			try
 			{
 				var attribute = obj.Attribute(SharedConstants.GuidStr);
@@ -57,15 +65,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				if (attribute != null)
 					return GetFormattedResult(indentation, null, null, className, guid, "Has 'ownerguid' attribute");
 
-				if (!obj.Elements().Any())
-					return null; // No property nodes at all, which is fine.
-
 				// Check each property
 				var allProperties = classInfo.AllProperties.ToList();
 				var allPropertyNames = new HashSet<string>(from prop in allProperties select prop.PropertyName);
 
 				foreach (var propertyElement in obj.Elements())
 				{
+					if (propertyElement.NodeType != XmlNodeType.Element)
+						return GetFormattedResult(indentation, null, propertyElement.Name.LocalName, className, guid, "Not a property element child");
+
 					// Deal with custom properties.
 					var isCustomProperty = propertyElement.Name.LocalName == SharedConstants.Custom;
 					var propertyName = isCustomProperty ? propertyElement.Attribute(SharedConstants.Name).Value : propertyElement.Name.LocalName;
@@ -196,10 +204,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							}
 							else
 							{
-								return GetFormattedResult(nextPropertyLevel, "v", propertyName, className, guid, result);
+								return GetFormattedResult(nextPropertyLevel, "Guid", propertyName, className, guid, result);
 							}
 							break;
 					}
+				}
+
+				// Ensure that all value type data property elements exist.
+				if (!EnsureBasicValueTypePropertyElementsExist(mdc, classInfo, obj,
+															   new HashSet<string>(from prop in allProperties
+																				   where DataTypesForValueTypeData.Contains(prop.DataType)
+																				   select prop.PropertyName), out result))
+				{
+					return GetFormattedResult(indentation, null, null, className, guid, result);
 				}
 			}
 			catch (Exception err)
@@ -611,13 +628,33 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return false;
 		}
 
+		private static bool EnsureBasicValueTypePropertyElementsExist(MetadataCache mdc, FdoClassInfo classInfo, XElement element, IEnumerable<string> basicPropertyNames, out string result)
+		{
+			result = null;
+
+			if (mdc.ModelVersion < 7000064)
+				return true; // The value type data types are only required at DM 7000064, and higher.
+
+			foreach (var basicPropertyName in basicPropertyNames)
+			{
+				var currentPropName = basicPropertyName;
+				var isCustomProperty = classInfo.GetProperty(basicPropertyName).IsCustomProperty;
+				var propertyElement = isCustomProperty
+					? element.Elements("Custom").FirstOrDefault(propElement => propElement.Attribute(SharedConstants.Name).Value == currentPropName)
+					: element.Element(currentPropName);
+				if (propertyElement != null)
+					continue;
+
+				result = string.Format("Required basic property element '{0}' of class '{1}' is missing.", currentPropName, classInfo.ClassName);
+				return false;
+			}
+			return true;
+		}
+
 		private static bool BasicValueTypeAttributeCheckIsValid(XElement element, bool isCustomProperty, out string value)
 		{
-			if (element == null)
-			{
-				value = null;
-				return true;
-			}
+			Guard.AgainstNull(element, "element");
+
 			if (isCustomProperty)
 			{
 				if (element.Attributes().Count() != 2)
