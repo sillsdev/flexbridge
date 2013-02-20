@@ -202,5 +202,96 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("My Proper names"));
 		}
+
+		[Test]
+		public void MergeList_HasAmbiguousInsertConflict_OnlyIfUnsorted()
+		{
+			const string pattern =
+@"<?xml version='1.0' encoding='utf-8'?>
+<CheckList>
+	<CmPossibilityList guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
+		<Name>
+			<AUni
+				ws='en'>Proper names</AUni>
+		</Name>
+		{0}
+		<Possibilities>
+			<ownseq
+				class='CmAnnotationDefn'
+				guid='7ffc4eab-856a-43cc-bc11-0db55738c15b'>
+				<Abbreviation>
+					<AUni
+						ws='en'>Nt</AUni>
+				</Abbreviation>
+				<SubPossibilities>
+					<ownseq
+						class='CmAnnotationDefn'
+						guid='56de9b1a-1ce7-42a1-aa76-512ebeff0dda'>
+						<Abbreviation>
+							<AUni
+								ws='en'>ConsNt</AUni>
+						</Abbreviation>
+
+					</ownseq>
+					{1}
+				</SubPossibilities>
+			</ownseq>
+			{2}
+		</Possibilities>
+	</CmPossibilityList>
+</CheckList>";
+			string newItemPattern = @"<ownseq
+						class='CmAnnotationDefn'
+						guid='{0}'>
+						<Abbreviation>
+							<AUni
+								ws='en'>{1}</AUni>
+						</Abbreviation>
+					</ownseq>";
+			var notSorted = @"<IsSorted
+			val='False' />";
+			var commonAncestor = string.Format(pattern, notSorted, "", "");
+
+			var ourContent = string.Format(pattern, notSorted,
+				string.Format(newItemPattern, "F0466D25-5CAF-438D-B081-9F91CF3E0FB8", "newSub"),
+				string.Format(newItemPattern, "DE3308B2-0647-4529-84B0-C8312DC11760", "newMain"));
+			var theirContent = string.Format(pattern, notSorted,
+				string.Format(newItemPattern, "71A29427-06AF-4AA1-90AC-366DBF8C2629", "newSub2"),
+				string.Format(newItemPattern, "FEA55F2D-1C9E-4CE0-AE1B-03C3685E5523", "newMain2"));
+
+			// When the list is unsorted, we want ambiguous insert conflicts, because the user is in control of the order,
+			// and it really might matter what order the new items are in.
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				2, new List<Type> { typeof(AmbiguousInsertConflict), typeof(AmbiguousInsertConflict) },
+				4, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+
+			var sorted = @"<IsSorted
+			val='True' />";
+			commonAncestor = string.Format(pattern, sorted, "", "");
+
+			ourContent = string.Format(pattern, sorted,
+				string.Format(newItemPattern, "F0466D25-5CAF-438D-B081-9F91CF3E0FB8", "newSub"),
+				string.Format(newItemPattern, "DE3308B2-0647-4529-84B0-C8312DC11760", "newMain"));
+			theirContent = string.Format(pattern, sorted,
+				string.Format(newItemPattern, "71A29427-06AF-4AA1-90AC-366DBF8C2629", "newSub2"),
+				string.Format(newItemPattern, "FEA55F2D-1C9E-4CE0-AE1B-03C3685E5523", "newMain2"));
+
+			// When the list is sorted, we want to suppress ambiguous insert conflicts, because the list will be automatically
+			// sorted into the right order eventually.
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				0, new List<Type>(),
+				4, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
+
+		}
 	}
 }
