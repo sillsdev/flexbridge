@@ -53,17 +53,16 @@ namespace FLEx_ChorusPluginTests
 
 		internal static void SetupTempFilesWithName(string filename, int modelVersion, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
-			var counter = 1;
-			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
-			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
-			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter));
+			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
+			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
+			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
 		}
 
-		private static string CreateTempFileWithName(string filename, int modelVersion, int counter)
+		private static string CreateTempFileWithName(string filename, int modelVersion)
 		{
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
-			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
+			var newDirName = Path.Combine(tempPath, Path.GetRandomFileName());
 			if (Directory.Exists(newDirName))
 				Directory.Delete(newDirName, true);
 			Directory.CreateDirectory(newDirName);

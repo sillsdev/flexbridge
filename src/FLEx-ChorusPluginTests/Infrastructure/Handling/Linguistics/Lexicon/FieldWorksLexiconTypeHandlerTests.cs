@@ -216,6 +216,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				0, new List<Type>());
+				// Originally this produced one change of type XmlAttributeChangedReport.
+				// This is now suppressed by the special handling of ParseIsCurrent.
+				//1, new List<Type> { typeof(XmlAttributeChangedReport) });
 			Assert.IsFalse(results.Contains("True"));
 			Assert.IsTrue(results.Contains("False"));
 		}
@@ -262,7 +265,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void MergeHasNoReportsForDeepDateModifiedChanges()
+		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsOurs()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -295,7 +298,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				0, new List<Type>());
-			Assert.IsTrue(results.Contains("2013-2-2 19:39:28.829"));
+			Assert.IsTrue(results.Contains("2012-2-2 19:39:28.829"));
 		}
 
 		[Test]
@@ -339,7 +342,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToSenseDefinition_HasNoReports()
+		public void BothAddedSameNewAlternativeToSenseDefinition_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -371,11 +374,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']" },
 				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
 
 		[Test]
-		public void BothMadeSameChangesToBothAlternativesOfSenseDefinitionAndGloss_HasNoReports()
+		public void BothMadeSameChangesToBothAlternativesOfSenseDefinitionAndGloss_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -425,11 +428,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 					},
 				new List<string>(), // new List<string> { @"classdata/rt/SubFolders/objsur[@guid='original1']", @"classdata/rt/SubFolders/objsur[@guid='original2']", @"classdata/rt/SubFolders/objsur[@guid='original3']" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				4, new List<Type> { typeof(BothChangedAtomicElementReport), typeof(BothChangedAtomicElementReport), typeof(XmlTextBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) });
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToEmptySenseDefinition_HasNoReports()
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -465,11 +468,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
 				new List<string>(),
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(BothChangedAtomicElementReport) });
 		}
 
 		[Test]
-		public void BothAddedSameNewAlternativeToEmptySenseDefinition2_HasNoReports()
+		public void BothAddedSameNewAlternativeToEmptySenseDefinition2_HasNoConflictReports()
 		{
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -505,7 +508,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Senses/ownseq/Definition/AStr[@ws='es']/Run[@ws='es' and text() = 'newdef']" },
 				new List<string>(),
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(BothChangedAtomicElementReport) });
 		}
 
 		[Test]
@@ -908,9 +911,9 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		</LexemeForm>
 	</LexEntry>
 </Lexicon>";
-			string commonAncestor = string.Format(pattern, "bank");
-			string ourContent = string.Format(pattern, "institute");
-			string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
+			var commonAncestor = string.Format(pattern, "bank");
+			var ourContent = string.Format(pattern, "institute");
+			const string theirContent = @"<?xml version='1.0' encoding='utf-8'?>
 <Lexicon>
 	<header>
 		<LexDb guid='lexdb' />
@@ -923,9 +926,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
 				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='institute']" },
-				new List<string> { @"Lexicon/LexEntry/LexemeForm/MoStemAllomorph/Form/AUni[@ws='fr' and text()='moneybags']" },
+				null,
 				1, new List<Type> { typeof(EditedVsRemovedElementConflict) },
-				0, new List<Type>(), out resultingConflicts);
+				0, new List<Type>(),
+				out resultingConflicts);
 			var conflict = resultingConflicts[0];
 			Assert.That(conflict.HtmlDetails, Is.Not.StringContaining("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
 			Assert.That(conflict.HtmlDetails, Is.StringContaining("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");

@@ -148,7 +148,6 @@
 	<Compile Include="Infrastructure\Handling\ReportsByDataType\UnicodeDataTypeReportTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksMergingStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
 	<Compile Include="Controller\ControllerTests.cs" />
@@ -158,7 +157,6 @@
 	<Compile Include="Infrastructure\DomainServices\CmObjectNestingServiceTests.cs" />
 	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
 	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksMergingServicesTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBookAnnotationsTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBooksTypeHandlerTests.cs" />

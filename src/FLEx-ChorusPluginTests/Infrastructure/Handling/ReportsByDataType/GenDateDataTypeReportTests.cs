@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 
@@ -40,7 +40,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 			{
 				EventListener = new ListenerForUnitTests()
 			};
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
+			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
 		}
 
 		[Test]
@@ -103,7 +103,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -146,7 +146,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				new[] { "Anthropology/RnGenericRec/DateOfEvent" }, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -191,7 +191,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 
 		[Test]
@@ -236,7 +236,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				commonAncestor, ours, theirs,
 				null, new[] { "Anthropology/RnGenericRec/DateOfEvent" },
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
 		}
 	}
 }

@@ -33,6 +33,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Refseq = "refseq";
 		internal const string Refcol = "refcol";
 		internal const string Custom = "Custom";
+		internal const string CustomField = "CustomField";
 		internal const string General = "General";
 		internal const string CmPossibilityList = "CmPossibilityList";
 		internal const string AnnotationDefs = "AnnotationDefs";

@@ -136,7 +136,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
 			var optionalCustomPropFile = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
 			var doc = XDocument.Load(optionalCustomPropFile);
-			var customFieldElements = doc.Root.Elements("CustomField").ToList();
+			var customFieldElements = doc.Root.Elements(SharedConstants.CustomField).ToList();
 			if (!customFieldElements.Any())
 				return;
 

@@ -172,7 +172,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlTextChangedReport) });
 			Assert.IsTrue(results.Contains("Line4"));
 		}
 

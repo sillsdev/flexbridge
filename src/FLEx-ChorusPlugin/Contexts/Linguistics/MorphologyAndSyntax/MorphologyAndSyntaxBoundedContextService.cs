@@ -51,7 +51,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				morphFeatureSystemElement,
 				classData,
 				guidToClassMapping);
-			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynFeaturesFilename), new XElement("FeatureSystem", morphFeatureSystemElement));
+			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynFeaturesFilename), new XElement(SharedConstants.FeatureSystem, morphFeatureSystemElement));
 
 			// 3. Nest: LP's PartsOfSpeech(CmPossibilityList OA)
 			//		Remove objsur node from LP.
@@ -87,7 +87,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			}
 
 			// B. Write: LP's MorphologicalData(MoMorphData OA) in a new extension (morphdata)
-			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement("MorphAndSynData", morphDataElement));
+			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement(SharedConstants.MorphAndSynData, morphDataElement));
 
 			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}

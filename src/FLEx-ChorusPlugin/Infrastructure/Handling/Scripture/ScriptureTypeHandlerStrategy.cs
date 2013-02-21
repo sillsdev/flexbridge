@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
@@ -52,13 +51,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
-
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder, mdc),
-				true,
-				null,
-				SharedConstants.Scripture, SharedConstants.GuidStr);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
 		public string Extension

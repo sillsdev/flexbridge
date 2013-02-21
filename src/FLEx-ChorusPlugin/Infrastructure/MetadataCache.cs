@@ -302,6 +302,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						// 7000063: Add the LangProject HomographWs property.
 						GetClassInfo(SharedConstants.LangProject).AddProperty(new FdoPropertyInfo("HomographWs", DataType.Unicode));
 						break;
+					case 7000064:
+						// 7000064: No actual model change.
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -310,7 +313,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000063;
+		public const int MaximumModelVersion = 7000064;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
@@ -404,7 +407,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return;
 
 			var doc = XDocument.Load(customPropPathname);
-			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements("CustomField"))
+			foreach (var customFieldElement in doc.Element(SharedConstants.AdditionalFieldsTag).Elements(SharedConstants.CustomField))
 			{
 				var className = customFieldElement.Attribute(SharedConstants.Class).Value;
 				FdoClassInfo classInfo;

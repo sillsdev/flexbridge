@@ -191,7 +191,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 						@"Anthropology/RnGenericRec[@guid=""newbieTheirs""]"
 					}, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test, Category("UnknownMonoIssue")]
