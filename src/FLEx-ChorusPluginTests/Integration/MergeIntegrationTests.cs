@@ -88,18 +88,9 @@ namespace FLEx_ChorusPluginTests.Integration
 <Lexicon>
 	<header>
 		<LexDb guid='2d23f428-83a9-44ba-90f1-9e3264b5b982' >
-			<DateCreated val='2012-12-10 6:29:17.117' />
-			<DateModified val='2012-12-10 6:29:17.117' />
-			<IsHeadwordCitationForm val='True' />
-			<IsBodyInSeparateSubentry val='True' />
 		</LexDb>
 	</header>
 	<LexEntry guid='ffdc58c9-5cc3-469f-9118-9f18c0138d02'>
-		<DateCreated val='2012-12-10 6:29:17.117' />
-		<DateModified val='2012-12-10 6:29:17.117' />
-		<HomographNumber val='1' />
-		<DoNotUseForParsing val='True' />
-		<ExcludeAsHeadword val='True' />
 		<Senses>
 			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
 				<Custom
@@ -138,6 +129,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		type='Boolean' />
 </AdditionalFields>";
 
+			var mdc = MetadataCache.TestOnlyNewCache;
 			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;

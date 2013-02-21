@@ -23,12 +23,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.LanguageProjectFilename, out _ourFile, out _commonFile,
 														  out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -126,7 +128,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 @"<LanguageProject>
 <LangProject guid='fff03918-9674-4401-8bb1-efe6502985a7' >
 	<DateCreated val='2012-12-10 6:29:17.117' />
-	<DateModified val='2012-12-10 6:29:17.117' />
 </LangProject>
 </LanguageProject>";
 			File.WriteAllText(_ourFile.Path, data);

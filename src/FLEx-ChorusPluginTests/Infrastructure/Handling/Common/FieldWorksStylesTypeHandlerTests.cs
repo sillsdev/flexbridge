@@ -23,12 +23,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.Style, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -105,14 +107,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 @"<?xml version='1.0' encoding='utf-8'?>
 <Styles>
 <StStyle guid='06425922-3258-4094-a9ec-3c2fe5b52b39'>
-		<Type val='1' />
-		<IsPublishedTextStyle val='True' />
-		<IsBuiltIn val='True' />
-		<IsModified val='True' />
-		<UserLevel val='1' />
-		<Context val='1' />
-		<Structure val='1' />
-		<Function val='1' />
 		<Name>
 			<Uni>Line3</Uni>
 		</Name>

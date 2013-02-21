@@ -23,12 +23,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ScriptureTransFilename, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -93,21 +95,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 @"<?xml version='1.0' encoding='utf-8'?>
 <TranslatedScripture>
 <Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
-	<DateCreated val='2012-12-10 6:29:17.117' />
-	<DateModified val='2012-12-10 6:29:17.117' />
-	<DisplayFootnoteReference val='True' />
-	<RestartFootnoteSequence val='True' />
-	<RestartFootnoteBoundary val='1' />
-	<UseScriptDigits val='True' />
-	<ScriptDigitZero val='1' />
-	<ConvertCVDigitsOnExport val='True' />
-	<Versification val='1' />
-	<FootnoteMarkerType val='1' />
-	<DisplayCrossRefReference val='True' />
-	<CrossRefMarkerType val='1' />
-	<CrossRefsCombinedWithFootnotes val='True' />
-	<DisplaySymbolInFootnote val='True' />
-	<DisplaySymbolInCrossRef val='True' />
 </Scripture>
 </TranslatedScripture>";
 

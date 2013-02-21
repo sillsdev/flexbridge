@@ -19,12 +19,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DiscourseChartFilename, out _ourFile, out _commonFile,
 															   out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -142,7 +144,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 	</header>
 	<DsChart class='DsConstChart' guid='0a8ef515-0355-48d0-bd39-7f2249b17703' >
 		<DateCreated val='2012-12-10 6:29:17.117' />
-		<DateModified val='2012-12-10 6:29:17.117' />
 	</DsChart>
 </Discourse>";
 			File.WriteAllText(_ourFile.Path, data);

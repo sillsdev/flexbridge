@@ -19,12 +19,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.AnalyzingAgentsFilename, out _ourFile,
 														  out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -108,7 +110,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 			const string data =
 @"<AnalyzingAgents>
 <CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
-<Human val='True' />
 </CmAgent>
 </AnalyzingAgents>";
 			File.WriteAllText(_ourFile.Path, data);
@@ -121,10 +122,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 			const string data =
 @"<AnalyzingAgents>
 <CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
-<Human val='True' />
 </CmAgent>
 <CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a8' >
-<Human val='True' />
 </CmAgent>
 </AnalyzingAgents>";
 

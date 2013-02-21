@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Chorus.FileTypeHanders.xml;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
@@ -22,12 +21,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.TextInCorpus, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -100,9 +101,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 			const string data =
 @"<TextInCorpus>
 <Text guid='0bd1fdbc-bedf-43d1-8d6a-c1766b556028' >
-<DateCreated val='2012-12-10 6:29:17.117' />
-<DateModified val='2012-12-10 6:29:17.117' />
-<IsTranslated val='True' />
 </Text>
 </TextInCorpus>";
 			File.WriteAllText(_ourFile.Path, data);

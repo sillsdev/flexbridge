@@ -23,12 +23,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.List, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -106,19 +108,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 <CheckList>
 <CmPossibilityList guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
 <DateCreated val='2012-12-10 6:29:17.117' />
-<DateModified val='2012-12-10 6:29:17.117' />
-<Depth val='1' />
-<PreventChoiceAboveLevel val='1' />
-<IsSorted val='True' />
-<IsClosed val='True' />
-<PreventDuplicates val='True' />
-<PreventNodeChoices val='True' />
-<UseExtendedFields val='True' />
-<DisplayOption val='1' />
-<ItemClsid val='1' />
-<IsVernacular val='True' />
-<WsSelector val='5' />
-<ListVersion val='c1ee09fc-e382-11de-8a39-0800200c9a66' />
 </CmPossibilityList>
 </CheckList>";
 

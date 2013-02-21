@@ -21,12 +21,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.FLExUnownedPicturesFilename, out _ourFile, out _commonFile,
 														  out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -113,10 +115,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 @"<Pictures>
 <CmPicture guid='fff03918-9674-4401-8bb1-efe6502985a7' >
 	<LayoutPos val='1' />
-	<ScaleFactor val='1' />
-	<LocationRangeType val='1' />
-	<LocationMin val='1' />
-	<LocationMax val='1' />
 </CmPicture>
 </Pictures>";
 			File.WriteAllText(_ourFile.Path, data);

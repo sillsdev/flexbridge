@@ -20,12 +20,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.ArchivedDraft, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -87,9 +89,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 @"<?xml version='1.0' encoding='utf-8'?>
 <ArchivedDrafts>
 <ScrDraft guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-	<DateCreated val='2012-12-10 6:29:17.117' />
-	<Type val='1' />
-	<Protected val='True' />
 </ScrDraft>
 </ArchivedDrafts>";
 			File.WriteAllText(_ourFile.Path, data);

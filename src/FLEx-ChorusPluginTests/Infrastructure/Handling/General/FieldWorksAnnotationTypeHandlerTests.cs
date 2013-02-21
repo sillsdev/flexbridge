@@ -19,12 +19,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 		{
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.FLExAnnotationsFilename, out _ourFile, out _commonFile,
 														  out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -122,13 +124,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 @"<Annotations>
 <CmAnnotation guid='fff03918-9674-4401-8bb1-efe6502985a7' class='CmBaseAnnotation' >
 <DateCreated val='2012-12-10 6:29:17.117' />
-<DateModified val='2012-12-10 6:29:17.117' />
-<BeginOffset val='1' />
-<Flid val='1' />
-<EndOffset val='1' />
-<WsSelector val='1' />
-<BeginRef val='1' />
-<EndRef val='1' />
 </CmAnnotation>
 </Annotations>";
 			File.WriteAllText(_ourFile.Path, data);

@@ -18,12 +18,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		public void TestSetup()
 		{
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.book, out _ourFile, out _commonFile, out _theirFile);
+			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
+			Mdc = null;
 		}
 
 		[Test]
@@ -85,8 +87,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 @"<?xml version='1.0' encoding='utf-8'?>
 <Book>
 <ScrBook guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-	<UseChapterNumHeading val='True' />
-	<CanonicalNum val='1' />
 </ScrBook>
 </Book>";
 			File.WriteAllText(_ourFile.Path, data);

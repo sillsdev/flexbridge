@@ -68,6 +68,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				// Check each property
 				var allProperties = classInfo.AllProperties.ToList();
 				var allPropertyNames = new HashSet<string>(from prop in allProperties select prop.PropertyName);
+				var allValueTypeProperties = new HashSet<string>(from prop in allProperties
+																 where DataTypesForValueTypeData.Contains(prop.DataType)
+																 select prop.PropertyName);
+				if (allValueTypeProperties.Count == 0 && !obj.HasElements)
+					return null; // It is fine for objects that have no value type data props to not have any other properties.
 
 				foreach (var propertyElement in obj.Elements())
 				{
@@ -211,10 +216,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				}
 
 				// Ensure that all value type data property elements exist.
-				if (!EnsureBasicValueTypePropertyElementsExist(mdc, classInfo, obj,
-															   new HashSet<string>(from prop in allProperties
-																				   where DataTypesForValueTypeData.Contains(prop.DataType)
-																				   select prop.PropertyName), out result))
+				if (!EnsureBasicValueTypePropertyElementsExist(mdc, classInfo, obj, allValueTypeProperties, out result))
 				{
 					return GetFormattedResult(indentation, null, null, className, guid, result);
 				}
