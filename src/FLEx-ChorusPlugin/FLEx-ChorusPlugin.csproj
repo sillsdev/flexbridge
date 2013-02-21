@@ -133,6 +133,7 @@
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
+	<Compile Include="Infrastructure\DomainServices\PossibilityListOrderPolicy.cs" />
 	<Compile Include="Infrastructure\Handling\Common\LanguageProjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeService.cs" />
