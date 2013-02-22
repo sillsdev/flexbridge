@@ -177,11 +177,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 		{
 			string pattern =
 @"<?xml version='1.0' encoding='utf-8'?>
-<ScrBook guid='4836797B-5ADE-4C1C-94F7-8C1104236A94'>
+<ScrBook guid='4836797b-5ade-4c1c-94f7-8c1104236a94'>
 	<Sections>
-		<ownseq class='ScrSection' guid='4D86FB53-CB4E-44D9-9FBD-AC7E1CBEA766'>
+		<ownseq class='ScrSection' guid='4d86fb53-cb4e-44d9-9fbd-ac7e1cbea766'>
 			<Content>
-				<StText>
+				<StText guid='c1ee3114-e382-11de-8a39-0800200c9a66'>
 					<Paragraphs>
 						<ownseq class='ScrTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
 							<Contents>
