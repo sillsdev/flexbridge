@@ -6,7 +6,13 @@ using Chorus.merge.xml.generic;
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
 	/// <summary>
-	/// Premerger for modify times. We keep the latest and suppress all conflicts and most change reports by putting it in all three nodes.
+	/// Premerger for modify times. We keep the latest and suppress all conflicts and most change reports by keeping ours and theirs at the same timestamp.
+	/// If present, ancestor remains unchanged.
+	///
+	/// This class also supresses top-level timestamp only changes.
+	/// It will not yet detect that a root element has only timestamp changes,
+	/// if it has timestamp changes in child elements as well as the root itself.
+	///
 	/// (The various null tests are probably redundant, (a) because we always output some version of basic properties like time,
 	/// and (b) because if one is missing, premerge probably won't be called; it will just be processed as an add or delete.
 	/// But it seems more robust to leave the tests in.)
