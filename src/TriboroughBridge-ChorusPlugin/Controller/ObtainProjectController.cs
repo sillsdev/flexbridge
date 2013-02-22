@@ -122,7 +122,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			//_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
 
 			var getSharedProjectModel = new GetSharedProjectModel();
-			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, Utilities.ExtantRepoIdentifiers, ProjectFilter, _baseDir, null);
+			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, ProjectFilter, _baseDir, Utilities.OtherRepositories, null,
+				"To Send/Receive that project, open it and user File > Send/Receive.");
 
 			if (result.CloneStatus != CloneStatus.Created)
 				return;

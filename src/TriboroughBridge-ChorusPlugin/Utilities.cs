@@ -22,75 +22,12 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
-		private static HashSet<string> _extantRepoIdentifiers;
+		private static Dictionary<string, string> _extantRepoIdentifiers;
 		private static string _testingProjectsPath = null;
-
-		public static HashSet<string> ExtantRepoIdentifiers
-		{
-			get
-			{
-				if (_extantRepoIdentifiers == null)
-					CacheExtantRepositoryIdentifiers(ProjectsPath);
-				return _extantRepoIdentifiers;
-			}
-		}
 
 		internal static void SetProjectsPathForTests(string testProjectsPath)
 		{
 			_testingProjectsPath = testProjectsPath;
-		}
-
-		internal static void ClearCacheForTests()
-		{
-			_extantRepoIdentifiers = null;
-		}
-
-		public static bool AlreadyHasLocalRepository(string fwProjectBaseDir, string repositoryLocation)
-		{
-			if (_extantRepoIdentifiers == null)
-			{
-				CacheExtantRepositoryIdentifiers(fwProjectBaseDir);
-			}
-			var repo = new HgRepository(repositoryLocation, new NullProgress());
-			var identifier = repo.Identifier;
-
-			// We don't really want to clone an empty repo (identifier == null).
-			return identifier == null || _extantRepoIdentifiers.Contains(identifier);
-		}
-
-		private static void CacheExtantRepositoryIdentifiers(string fwProjectBaseDir)
-		{
-			_extantRepoIdentifiers = new HashSet<string>();
-
-			foreach (var mainFwProjectFolder in Directory.GetDirectories(fwProjectBaseDir, "*", SearchOption.TopDirectoryOnly))
-			{
-				var hgfolder = Path.Combine(mainFwProjectFolder, BridgeTrafficCop.hg);
-				if (Directory.Exists(hgfolder))
-				{
-					CheckForMatchingRepo(mainFwProjectFolder);
-				}
-
-				var otherRepoFolder = Path.Combine(mainFwProjectFolder, OtherRepositories);
-				if (!Directory.Exists(otherRepoFolder))
-					continue;
-
-				foreach (var sharedFolder in Directory.GetDirectories(otherRepoFolder, "*", SearchOption.TopDirectoryOnly))
-				{
-					hgfolder = Path.Combine(sharedFolder, BridgeTrafficCop.hg);
-					if (Directory.Exists(hgfolder))
-					{
-						CheckForMatchingRepo(sharedFolder);
-					}
-				}
-			}
-		}
-
-		private static void CheckForMatchingRepo(string repoContainingFolder)
-		{
-			var repo = new HgRepository(repoContainingFolder, new NullProgress());
-			var identifier = repo.Identifier;
-			if (identifier != null)
-				_extantRepoIdentifiers.Add(identifier);
 		}
 
 		/// <summary>
