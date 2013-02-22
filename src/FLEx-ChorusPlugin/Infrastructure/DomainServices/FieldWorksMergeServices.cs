@@ -220,6 +220,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					case DataType.OwningAtomic:
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
+					case DataType.OwningSequence:
+						if ((classInfo.ClassName == "CmPossibilityList" && propertyInfo.PropertyName == "Possibilities")
+							|| (propertyInfo.PropertyName == "SubPossibilities" && classInfo.IsOrInheritsFrom("CmPossibility")))
+						{
+							// Order may or may not be significant in possibility lists and sublists, depending on whether the list is sorted.
+							propStrategy.ChildOrderPolicy = new PossibilityListOrderPolicy();
+						}
+						else
+						{
+							// Normally order is significant in owning sequences; no need to ask each child.
+							propStrategy.ChildOrderPolicy = new SignificantOrderPolicy();
+						}
+						break;
 
 					case DataType.TextPropBinary:
 						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
