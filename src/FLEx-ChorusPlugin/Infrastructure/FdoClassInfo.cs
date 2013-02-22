@@ -80,6 +80,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 		}
 
+		internal bool IsOrInheritsFrom(string name)
+		{
+			for (var info = this; info != null; info = info.Superclass)
+				if (info.ClassName == name)
+					return true;
+			return false;
+		}
+
 		/// <summary>
 		/// Get a set of zero or more properties for the class.
 		/// </summary>
