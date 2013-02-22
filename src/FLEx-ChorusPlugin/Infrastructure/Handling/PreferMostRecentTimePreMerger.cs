@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using Chorus.merge.xml.generic;
 
@@ -14,39 +11,64 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// and (b) because if one is missing, premerge probably won't be called; it will just be processed as an add or delete.
 	/// But it seems more robust to leave the tests in.)
 	/// </summary>
-	class PreferMostRecentTimePreMerger : IPremerger
+	internal class PreferMostRecentTimePreMerger : IPremerger
 	{
-		public void Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
+		public void Premerge(IMergeEventListener listener, ref XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
 		{
+			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, ourDateTimeNode);
+			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, theirDateTimeNode);
+
 			var newest = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
-			newest = GetMostRecentVal(newest, ours);
-			newest = GetMostRecentVal(newest, theirs);
-			newest = GetMostRecentVal(newest, ancestor);
-			UpdateDateTimeVal(newest, ours);
-			UpdateDateTimeVal(newest, theirs);
-			UpdateDateTimeVal(newest, ancestor);
+			newest = GetMostRecentVal(newest, ourDateTimeNode);
+			newest = GetMostRecentVal(newest, theirDateTimeNode);
+			UpdateDateTimeVal(newest, ourDateTimeNode);
+			UpdateDateTimeVal(newest, theirDateTimeNode);
 		}
 
-		private void UpdateDateTimeVal(string newest, XmlNode node)
+		private static void RestoreOriginalIfTimestampIsTheOnlyChange(XmlNode ancestorDateTimeNode, XmlNode otherDateTimeNode)
 		{
-			var elt = node as XmlElement;
+			if (ancestorDateTimeNode == null || otherDateTimeNode == null)
+				return;
+
+			// Values that are are the same are not of interest.
+			var ancestorAttr = ancestorDateTimeNode.Attributes["val"];
+			var otherAttr = otherDateTimeNode.Attributes["val"];
+			if (ancestorAttr.Value == otherAttr.Value)
+				return;
+
+			// Get parents of both nodes
+			var ancestorDateTimeNodeParent = ancestorDateTimeNode.ParentNode;
+			var otherDateTimeNodeParent = otherDateTimeNode.ParentNode;
+
+			// Restore the value to the ancestor
+			var originalOtherValue = otherAttr.Value;
+			otherAttr.Value = ancestorAttr.Value;
+
+			if (XmlUtilities.AreXmlElementsEqual(ancestorDateTimeNodeParent, otherDateTimeNodeParent))
+				return; // Only change was the timestamp, so keep it.
+
+			// Restore the original value.
+			otherAttr.Value = originalOtherValue;
+		}
+
+		private static void UpdateDateTimeVal(string newest, XmlNode currentDateTimeNode)
+		{
+			var elt = currentDateTimeNode as XmlElement;
 			if (elt == null)
 				return;
 			elt.SetAttribute("val", newest);
 		}
 
-		private string GetMostRecentVal(string newest, XmlNode node)
+		private static string GetMostRecentVal(string newest, XmlNode currentDateTimeNode)
 		{
-			if (node == null)
+			if (currentDateTimeNode == null)
 				return newest;
 			DateTime date1;
-			var date1String = XmlUtilities.GetStringAttribute(node, "val");
+			var date1String = XmlUtilities.GetStringAttribute(currentDateTimeNode, "val");
 			if (!DateTime.TryParse(date1String, out date1))
 				return newest;
 			var date2 = DateTime.Parse(newest);
-			if (date1 > date2)
-				return date1String;
-			return newest;
+			return (date1 > date2) ? date1String : newest;
 		}
 
 

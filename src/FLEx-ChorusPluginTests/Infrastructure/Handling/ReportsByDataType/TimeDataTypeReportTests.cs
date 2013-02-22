@@ -44,14 +44,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					if (propertyInfo.PropertyName == "DateCreated")
 					{
 						Assert.IsTrue(elementStrategy.IsImmutable);
-						Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					}
 					else
 					{
 						Assert.IsFalse(elementStrategy.IsImmutable);
-						Assert.AreEqual(1, elementStrategy.AttributesToIgnoreForMerging.Count);
 
 					}
+					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.AreEqual(NumberOfChildrenAllowed.Zero, elementStrategy.NumberOfChildren);
 					Assert.IsInstanceOf<FindFirstElementWithSameName>(elementStrategy.MergePartnerFinder);
 				}
