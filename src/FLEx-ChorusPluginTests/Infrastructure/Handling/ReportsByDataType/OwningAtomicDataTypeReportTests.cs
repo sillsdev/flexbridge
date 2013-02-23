@@ -17,27 +17,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	[TestFixture]
 	public class OwningAtomicDataTypeReportTests : BaseFieldWorksTypeHandlerTests
 	{
-		private MetadataCache _mdc;
 		private XmlMerger _merger;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		[SetUp]
+		public override void TestSetup()
 		{
-			base.FixtureSetup();
-
-			_mdc = MetadataCache.TestOnlyNewCache;
-			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
+			base.TestSetup();
+			Mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 			{
 				EventListener = new ListenerForUnitTests()
 			};
-			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, _mdc);
+			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, Mdc);
+		}
+
+		[TearDown]
+		public override void TestTearDown()
+		{
+			base.TestTearDown();
+			_merger = null;
 		}
 
 		[Test]
 		public void EnsureAllOwningAtomicPropertiesAreSetUpCorrectly()
 		{
-			foreach (var classInfo in _mdc.AllConcreteClasses)
+			foreach (var classInfo in Mdc.AllConcreteClasses)
 			{
 				var clsInfo = classInfo;
 				foreach (var elementStrategy in classInfo.AllProperties

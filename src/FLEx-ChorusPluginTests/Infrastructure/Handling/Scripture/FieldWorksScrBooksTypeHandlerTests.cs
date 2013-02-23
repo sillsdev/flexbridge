@@ -15,17 +15,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.book, out _ourFile, out _commonFile, out _theirFile);
-			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
-			Mdc = null;
 		}
 
 		[Test]

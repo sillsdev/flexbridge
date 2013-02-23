@@ -22,19 +22,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			_eventListener = new ListenerForUnitTests();
 			FieldWorksTestServices.SetupTempFilesWithExtension(".reversal", out _ourFile, out _commonFile, out _theirFile);
-			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			_eventListener = null;
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
-			Mdc = null;
 		}
 
 		[Test]

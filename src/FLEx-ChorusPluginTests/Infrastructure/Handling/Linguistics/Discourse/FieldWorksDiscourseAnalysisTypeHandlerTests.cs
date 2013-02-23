@@ -15,18 +15,19 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Discourse
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DiscourseChartFilename, out _ourFile, out _commonFile,
 															   out _theirFile);
 			Mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
-			Mdc = null;
 		}
 
 		[Test]

@@ -23,5 +23,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		{
 			FileHandler = null;
 		}
+
+		[SetUp]
+		public virtual void TestSetup()
+		{
+			Mdc = MetadataCache.TestOnlyNewCache;
+		}
+
+		[TearDown]
+		public virtual void TestTearDown()
+		{
+			Mdc = null;
+		}
 	}
 }
