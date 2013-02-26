@@ -4,9 +4,12 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Windows.Forms;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
+using TriboroughBridge_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin.View;
 
 namespace TriboroughBridge_ChorusPlugin
@@ -34,9 +37,10 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string send_receive_lift = "send_receive_lift";
 		internal const string view_notes = "view_notes";
 		internal const string view_notes_lift = "view_notes_lift";
-		internal const string undo_export = "undo_export";
+		internal const string undo_export = "undo_export"; // Not supported.
 		internal const string undo_export_lift = "undo_export_lift";
 		internal const string move_lift = "move_lift";
+		internal const string check_for_updates = "check_for_updates";
 		internal const string about_flex_bridge = "about_flex_bridge";
 		public const string hg = ".hg";
 		public const string git = ".git";
@@ -112,6 +116,50 @@ namespace TriboroughBridge_ChorusPlugin
 				return false;
 			}
 
+			if (vOption != null && vOption == check_for_updates)
+			{
+				// Do this before fretting about a controller. (Or, make a special controller for it?)
+				var tempFile = Path.Combine(Path.GetTempPath(), "CurrentVersion.txt");
+				if (File.Exists(tempFile))
+				{
+					File.Delete(tempFile);
+				}
+
+				using (var client = new WebClient())
+				{
+					client.DownloadFile("http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
+				}
+
+				var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
+				var currentVersion = new Version(File.ReadAllText(tempFile));
+				if (currentVersion > myVersion)
+				{
+					var result = MessageBox.Show(MainForm,
+						string.Format(CommonResources.kNewerVersionAvailablePattern, myVersion, currentVersion),
+						CommonResources.KFlexBridgeVersion,
+						MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+					if (result == DialogResult.OK)
+					{
+						var installerPathname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads",
+															 "FLExBridgeInstaller.msi");
+						using (var client = new WebClient())
+						{
+							client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);
+						}
+						if (File.Exists(installerPathname))
+						{
+							Process.Start(installerPathname);
+						}
+					}
+				}
+				else
+				{
+					MessageBox.Show(MainForm, CommonResources.kYourVersionIsCurrent, CommonResources.KFlexBridgeVersion, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+
+				return false;
+			}
+
 			_changesReceived = false;
 			InitializeCurrentModel(options);
 
@@ -124,7 +172,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 			switch (options["-v"])
 			{
-				case undo_export: // Not supported
+				case undo_export: // Not supported.
 					return false;
 				case undo_export_lift:
 					CurrentModel.CurrentController.ChorusSystem.Repository.Update();
@@ -148,8 +196,8 @@ namespace TriboroughBridge_ChorusPlugin
 					_changesReceived = CurrentModel.Syncronize();
 					break;
 
-				// TODO: Sort out what happens.
 				//	Q: Does Chorus collect up all notes files (main+nested), or just the ones in the given repo?
+				//		A: Only the ones in a given repo (now that is).
 				//	Q: How to process the URL in regular lift notes files?
 				case view_notes:
 				case view_notes_lift:

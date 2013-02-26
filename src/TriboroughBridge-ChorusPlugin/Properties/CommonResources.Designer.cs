@@ -92,6 +92,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FLEx Bridge Version.
+		/// </summary>
+		public static string KFlexBridgeVersion {
+			get {
+				return ResourceManager.GetString("KFlexBridgeVersion", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx isn&apos;t listening..
 		/// </summary>
 		public static string kFlexNotListening {
@@ -119,6 +128,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Your version is &apos;{0}&apos;. A newer version &apos;{1}&apos; exists. Do you want to download it?.
+		/// </summary>
+		public static string kNewerVersionAvailablePattern {
+			get {
+				return ResourceManager.GetString("kNewerVersionAvailablePattern", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Obtain project.
 		/// </summary>
 		public static string kObtainProject {
@@ -133,6 +151,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		public static string kRepoProblem {
 			get {
 				return ResourceManager.GetString("kRepoProblem", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Your version is current..
+		/// </summary>
+		public static string kYourVersionIsCurrent {
+			get {
+				return ResourceManager.GetString("kYourVersionIsCurrent", resourceCulture);
 			}
 		}
 

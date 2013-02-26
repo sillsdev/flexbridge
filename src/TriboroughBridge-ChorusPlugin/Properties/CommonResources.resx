@@ -148,4 +148,13 @@ You probably have a Conflict Report open. It will need to be closed before you c
 	<data name="kRepoProblem" xml:space="preserve">
 	<value>Empty Repository</value>
   </data>
+	<data name="kYourVersionIsCurrent" xml:space="preserve">
+	<value>Your version is current.</value>
+  </data>
+	<data name="KFlexBridgeVersion" xml:space="preserve">
+	<value>FLEx Bridge Version</value>
+  </data>
+	<data name="kNewerVersionAvailablePattern" xml:space="preserve">
+	<value>Your version is '{0}'. A newer version '{1}' exists. Do you want to download it?</value>
+  </data>
 </root>
