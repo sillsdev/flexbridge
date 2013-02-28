@@ -157,4 +157,13 @@ You probably have a Conflict Report open. It will need to be closed before you c
 	<data name="kNewerVersionAvailablePattern" xml:space="preserve">
 	<value>Your version is '{0}'. A newer version '{1}' exists. Do you want to download it?</value>
   </data>
+	<data name="kHowToSendReceiveExtantRepository" xml:space="preserve">
+	<value>To Send/Receive that project, open it and use Send/Receive &gt; Project (or Lexicon).</value>
+  </data>
+	<data name="kCannotCheckForUpdateNow" xml:space="preserve">
+	<value>Sorry. FLEx Bridge was not able to check for an update right now.</value>
+  </data>
+	<data name="kCheckForUpdateFailure" xml:space="preserve">
+	<value>Check for Update Failure</value>
+  </data>
 </root>

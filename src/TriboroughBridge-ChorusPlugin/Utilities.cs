@@ -141,5 +141,10 @@ namespace TriboroughBridge_ChorusPlugin
 			var newRepo = new HgRepository(targetFolder, new NullProgress());
 			newRepo.Update();
 		}
+
+		public static bool FolderIsEmpty(string folder)
+		{
+			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
+		}
 	}
 }

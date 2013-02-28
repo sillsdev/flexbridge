@@ -33,7 +33,7 @@ namespace FLExBridge
 			// exception handler.
 			new HotSpotProvider();
 
-			ExceptionHandler.Init();
+			SetUpErrorHandling();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
@@ -73,7 +73,14 @@ namespace FLExBridge
 
 				}
 			}
-			FLEx_ChorusPlugin.Properties.Settings.Default.Save();
+			Settings.Default.Save();
+		}
+
+		private static void SetUpErrorHandling()
+		{
+			ErrorReport.EmailAddress = "fieldworksbridge@gmail.com";
+			ErrorReport.AddStandardProperties();
+			ExceptionHandler.Init();
 		}
 
 		static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)

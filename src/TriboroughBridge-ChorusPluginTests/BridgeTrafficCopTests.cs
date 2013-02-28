@@ -54,7 +54,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		}
 
 		[Test, Category("UnknownMonoIssue")]
-		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFIles_AndLeavesTombstone()
+		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFiles_AndLeavesTombstone()
 		{
 			using (var repo = new RepositorySetup("Rollback", true))
 			{

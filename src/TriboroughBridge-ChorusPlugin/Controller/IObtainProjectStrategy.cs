@@ -6,7 +6,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		bool ProjectFilter(string repositoryLocation);
 		bool IsRepositoryEmpty(string repositoryLocation);
-		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation);
+		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		BridgeModelType SupportedModelType { get; }
 	}

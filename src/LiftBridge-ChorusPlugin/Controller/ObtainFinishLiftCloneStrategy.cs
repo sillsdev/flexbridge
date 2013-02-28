@@ -30,7 +30,7 @@ namespace SIL.LiftBridge.Controller
 
 		#region IObtainProjectStrategy impl
 
-		public ActualCloneResult FinishCloning(string cloneLocation)
+		public ActualCloneResult FinishCloning(string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var retVal = new ActualCloneResult
 			{

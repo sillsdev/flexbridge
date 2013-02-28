@@ -35,8 +35,8 @@ namespace SIL.LiftBridge.Controller
 			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
 		}
 
-		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation)
-			{
+		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		{
 			if (actionType != ControllerType.Obtain && actionType != ControllerType.ObtainLift)
 			{
 				throw new ArgumentException(Resources.kUnsupportedControllerActionForLiftObtain, "actionType");
@@ -44,13 +44,16 @@ namespace SIL.LiftBridge.Controller
 
 			// "obtain"
 			//		'cloneLocation' will be a new folder at the $fwroot main project location, such as $fwroot\foo.
-			//		Move the lift repo down into $fwroot\foo\OtherRepositories\LIFT folder
+			//		Move the lift repo down into $fwroot\foo\OtherRepositories\foo_LIFT folder
 			// "obtain_lift"
-			//		'cloneLocation' will be a new folder at the $fwroot\foo\OtherRepositories\LIFT folder.
-			//		Nothing more need be done in this case, other than notifing FLEx to do the merciful import, if FLEx ever uses the 'obtain_lift' option.
+			//		'cloneLocation' wants to be a new folder at the $fwroot\foo\OtherRepositories\foo_LIFT folder,
+			//		but Chorus may put it in $fwroot\foo\OtherRepositories\bar.
+			//		So, it might need to be moved or the containing folder renamed,
+			//		as we have no real control over the actual folder of 'cloneLocation' from Chorus.
+			//		'expectedPathToClonedRepository' is where it is supposed to be.
 			_currentFinishStrategy = GetCurrentFinishStrategy(actionType);
 
-			return _currentFinishStrategy.FinishCloning(cloneLocation);
+			return _currentFinishStrategy.FinishCloning(cloneLocation, expectedPathToClonedRepository);
 		}
 
 		public void TellFlexAboutIt()

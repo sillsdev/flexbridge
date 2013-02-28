@@ -46,7 +46,7 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string git = ".git";
 // ReSharper restore InconsistentNaming
 
-		public IBridgeModel InitializeCurrentModel(Dictionary<string, string> options)
+		private void InitializeCurrentModel(Dictionary<string, string> options)
 		{
 			var vOption = options.Count == 0 ? null : options["-v"].Trim();
 			var modelType = options.Count == 0
@@ -96,8 +96,6 @@ namespace TriboroughBridge_ChorusPlugin
 					break;
 			}
 			CurrentModel.InitializeModel(MainForm, options, controllerType);
-
-			return CurrentModel;
 		}
 
 		public bool StartWorking(Dictionary<string, string> options, out bool showWindow)
@@ -106,17 +104,18 @@ namespace TriboroughBridge_ChorusPlugin
 
 			if (!_connectionHelper.Init(options))
 				return false;
+
 			string vOption;
 			options.TryGetValue("-v", out vOption);
 
-			if (vOption != null && vOption == about_flex_bridge)
+			if (vOption == about_flex_bridge)
 			{
 				// Do this before fretting about a controller. (Or, make a special controller for it?)
 				Process.Start(Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
 				return false;
 			}
 
-			if (vOption != null && vOption == check_for_updates)
+			if (vOption == check_for_updates)
 			{
 				// Do this before fretting about a controller. (Or, make a special controller for it?)
 				var tempFile = Path.Combine(Path.GetTempPath(), "CurrentVersion.txt");
@@ -125,36 +124,54 @@ namespace TriboroughBridge_ChorusPlugin
 					File.Delete(tempFile);
 				}
 
-				using (var client = new WebClient())
+				try
 				{
-					client.DownloadFile("http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
-				}
-
-				var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
-				var currentVersion = new Version(File.ReadAllText(tempFile));
-				if (currentVersion > myVersion)
-				{
-					var result = MessageBox.Show(MainForm,
-						string.Format(CommonResources.kNewerVersionAvailablePattern, myVersion, currentVersion),
-						CommonResources.KFlexBridgeVersion,
-						MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-					if (result == DialogResult.OK)
+					using (var client = new WebClient())
 					{
-						var installerPathname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads",
-															 "FLExBridgeInstaller.msi");
-						using (var client = new WebClient())
+						client.DownloadFile("http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
+					}
+
+					var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
+					var currentVersion = new Version(File.ReadAllText(tempFile));
+					if (currentVersion > myVersion)
+					{
+						var result = MessageBox.Show(MainForm,
+													 string.Format(CommonResources.kNewerVersionAvailablePattern, myVersion,
+																   currentVersion),
+													 CommonResources.KFlexBridgeVersion,
+													 MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+						if (result == DialogResult.OK)
 						{
-							client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);
-						}
-						if (File.Exists(installerPathname))
-						{
-							Process.Start(installerPathname);
+							var installerPathname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+																 "Downloads",
+																 "FLExBridgeInstaller.msi");
+							using (var client = new WebClient())
+							{
+								client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);
+							}
+							if (File.Exists(installerPathname))
+							{
+								Process.Start(installerPathname);
+							}
 						}
 					}
+					else
+					{
+						MessageBox.Show(MainForm, CommonResources.kYourVersionIsCurrent, CommonResources.KFlexBridgeVersion,
+										MessageBoxButtons.OK, MessageBoxIcon.Information);
+					}
 				}
-				else
+				catch (WebException)
 				{
-					MessageBox.Show(MainForm, CommonResources.kYourVersionIsCurrent, CommonResources.KFlexBridgeVersion, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(MainForm, CommonResources.kCannotCheckForUpdateNow, CommonResources.kCheckForUpdateFailure,
+									MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+				finally
+				{
+					if (File.Exists(tempFile))
+					{
+						File.Delete(tempFile);
+					}
 				}
 
 				return false;

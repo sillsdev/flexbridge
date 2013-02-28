@@ -60,7 +60,7 @@ namespace FLEx_ChorusPlugin.Model
 			var obtainController = CurrentController as IObtainNewProjectController;
 			if (obtainController != null)
 			{
-				obtainController.ObtainRepository();
+				obtainController.ObtainRepository(null);
 			}
 		}
 

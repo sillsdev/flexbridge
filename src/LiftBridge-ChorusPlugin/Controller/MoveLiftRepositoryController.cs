@@ -133,7 +133,7 @@ namespace SIL.LiftBridge.Controller
 			_connectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
 		}
 
-		public void ObtainRepository()
+		public void ObtainRepository(string expectedPathToClonedRepository)
 		{
 			throw new NotSupportedException();
 		}

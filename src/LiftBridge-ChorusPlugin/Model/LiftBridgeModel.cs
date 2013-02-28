@@ -59,7 +59,7 @@ namespace SIL.LiftBridge.Model
 			var obtainController = CurrentController as IObtainNewProjectController;
 			if (obtainController != null)
 			{
-				obtainController.ObtainRepository();
+				obtainController.ObtainRepository(PathToRepository);
 			}
 		}
 
@@ -73,15 +73,19 @@ namespace SIL.LiftBridge.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			// As per the API, -p will be the main FW data file.
-			// REVIEW (RandyR): What if it is the DB4o file?
-			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
-			var pOption = options["-p"];
-			ProjectName = Path.GetFileNameWithoutExtension(pOption);
+			if (controllerType != ControllerType.UndoExportLift)
+			{
+				// As per the API, -p will be: $fwroot\[foo] without the file name.
+				var pOption = options["-p"];
+				ProjectName = Path.GetFileNameWithoutExtension(pOption);
 
-			PathToRepository = Path.Combine(Path.GetDirectoryName(pOption), Utilities.OtherRepositories, ProjectName + '_' + Utilities.LIFT);
-			if (!Directory.Exists(PathToRepository))
-				Directory.CreateDirectory(PathToRepository);
+				var otherPath = Path.Combine(pOption, Utilities.OtherRepositories);
+				if (!Directory.Exists(otherPath))
+					Directory.CreateDirectory(otherPath);
+				PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT);
+				if (!Directory.Exists(PathToRepository))
+					Directory.CreateDirectory(PathToRepository);
+			}
 
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);

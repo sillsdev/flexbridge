@@ -32,7 +32,7 @@ namespace FLEx_ChorusPlugin.Controller
 			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.ModelVersionFilename));
 		}
 
-		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation)
+		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var retVal = new ActualCloneResult
 				{

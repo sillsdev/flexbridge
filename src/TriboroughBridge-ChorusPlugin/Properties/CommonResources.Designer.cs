@@ -74,6 +74,24 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Sorry. FLEx Bridge was not able to check for an update right now..
+		/// </summary>
+		public static string kCannotCheckForUpdateNow {
+			get {
+				return ResourceManager.GetString("kCannotCheckForUpdateNow", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Check for Update Failure.
+		/// </summary>
+		public static string kCheckForUpdateFailure {
+			get {
+				return ResourceManager.GetString("kCheckForUpdateFailure", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository..
 		/// </summary>
 		public static string kEmptyRepoMsg {
@@ -115,6 +133,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		public static string kFlexProjectExists {
 			get {
 				return ResourceManager.GetString("kFlexProjectExists", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to To Send/Receive that project, open it and use Send/Receive &gt; Project (or Lexicon)..
+		/// </summary>
+		public static string kHowToSendReceiveExtantRepository {
+			get {
+				return ResourceManager.GetString("kHowToSendReceiveExtantRepository", resourceCulture);
 			}
 		}
 

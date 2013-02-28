@@ -5,7 +5,7 @@ namespace SIL.LiftBridge.Controller
 {
 	internal interface IFinishLiftCloneStrategy
 	{
-		ActualCloneResult FinishCloning(string cloneLocation);
+		ActualCloneResult FinishCloning(string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		ControllerType SuppportedControllerAction { get; }
 	}

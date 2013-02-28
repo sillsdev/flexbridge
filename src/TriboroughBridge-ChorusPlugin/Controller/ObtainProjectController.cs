@@ -31,7 +31,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private bool ProjectFilter(string path)
 		{
-			return Strategies.Any(strategy => strategy.ProjectFilter(path));
+			return _controllerActionType == ControllerType.Obtain
+				? Strategies.Any(strategy => strategy.ProjectFilter(path))
+				: Strategies.First(strategy => strategy.SupportedModelType == BridgeModelType.Lift).ProjectFilter(path);
 		}
 
 		private void CheckOptionCompatibility(Dictionary<string, string> options)
@@ -56,12 +58,13 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 					_controllerActionType = ControllerType.Obtain;
 					break;
 				case BridgeTrafficCop.obtain_lift:
+					// "-p" is: $fwroot\[foo] without the file name.
 					var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
 					if (!Directory.Exists(otherReposDir))
 						Directory.CreateDirectory(otherReposDir);
-					// fwroot\foo\OtherRepositories\LIFT\
-					_baseDir = Path.Combine(pOption, Utilities.OtherRepositories, Utilities.LIFT);
-					if (Directory.Exists(_baseDir))
+					_baseDir = Path.Combine(pOption, Utilities.OtherRepositories); // , Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT
+					var repoDir = Path.Combine(_baseDir, Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT);
+					if (Directory.Exists(repoDir) && !Utilities.FolderIsEmpty(repoDir))
 					{
 						_baseDir = null;
 						throw new InvalidOperationException("Lift repository folder already exists.");
@@ -117,13 +120,11 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		/// <summary>
 		/// Get a clone of a repository.
 		/// </summary>
-		public void ObtainRepository()
+		public void ObtainRepository(string expectedPathToClonedRepository)
 		{
-			//_mainBridgeForm.Cursor = Cursors.WaitCursor; // this doesn't seem to work
-
 			var getSharedProjectModel = new GetSharedProjectModel();
-			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, ProjectFilter, _baseDir, Utilities.OtherRepositories, null,
-				"To Send/Receive that project, open it and user File > Send/Receive.");
+			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, _baseDir, null, ProjectFilter,
+				Utilities.ProjectsPath, Utilities.OtherRepositories, CommonResources.kHowToSendReceiveExtantRepository);
 
 			if (result.CloneStatus != CloneStatus.Created)
 				return;
@@ -138,14 +139,11 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				return;
 			}
 
-			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation);
+			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation, expectedPathToClonedRepository);
 			if (actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
 			{
 				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
-
-			//_mainBridgeForm.Cursor = Cursors.Default;
-			//_mainBridgeForm.Close();
 		}
 
 		#endregion

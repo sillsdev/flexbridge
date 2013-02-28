@@ -10,6 +10,6 @@
 		/// <summary>
 		/// Get a clone of a repository.
 		/// </summary>
-		void ObtainRepository();
+		void ObtainRepository(string expectedPathToClonedRepository);
 	}
 }
