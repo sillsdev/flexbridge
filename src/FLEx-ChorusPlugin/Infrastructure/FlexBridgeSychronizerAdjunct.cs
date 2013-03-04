@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Chorus.FileTypeHanders.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
+using Microsoft.Win32;
 using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure
@@ -76,6 +78,52 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		public void PrepareForPostMergeCommit(IProgress progress)
 		{
 			RestoreProjectFile(progress);
+			progress.WriteMessage("Checking project for merge problems");
+			if (RunFixFwData())
+			{
+				progress.WriteWarning("Fixed some merge problems");
+				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
+			}
+		}
+
+		/// <summary>
+		/// Run FixUp.exe, a program to clean up any bad problems with the FLEx database.
+		/// </summary>
+		/// <returns>true if problems were fixed</returns>
+		private bool RunFixFwData()
+		{
+			const string fixerName = @"FixFwData.exe";
+			// This should work on user machines.
+			var codeDir = (string) Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"RootCodeDir");
+			var fixupPath = Path.Combine(codeDir, fixerName);
+			if (!File.Exists(fixupPath))
+			{
+				// This should work on developer machines.
+				codeDir = (string) Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"FwExeDir");
+				fixupPath = Path.Combine(codeDir, fixerName);
+			}
+			if (!File.Exists(fixupPath))
+			{
+				// Most developers have it here...
+				codeDir = @"C:\fwrepo\fw\Output\Debug";
+				fixupPath = Path.Combine(codeDir, fixerName);
+			}
+			if (!File.Exists(fixupPath))
+			{
+				// Or maybe a release build?
+				codeDir = @"C:\fwrepo\fw\Output\Release";
+				fixupPath = Path.Combine(codeDir, fixerName);
+			}
+			if (!File.Exists(fixupPath))
+				return false; // give up.
+			ProcessStartInfo startInfo = new ProcessStartInfo(fixupPath, _fwdataPathname);
+			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
+			startInfo.UseShellExecute = false;
+			startInfo.WorkingDirectory = Path.GetDirectoryName(fixupPath) ?? string.Empty;
+			// Enhance JohnT: should we redirect stdout (which has all the messages about what was fixed) and do something with it? What?
+			var process = Process.Start(startInfo);
+			process.WaitForExit();
+			return process.ExitCode != 0;
 		}
 
 		/// <summary>
