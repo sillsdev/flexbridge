@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using Chorus.FileTypeHanders.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
@@ -79,7 +80,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			RestoreProjectFile(progress);
 			progress.WriteMessage("Checking project for merge problems");
-			if (RunFixFwData())
+			if (RunFixFwData(progress))
 			{
 				progress.WriteWarning("Fixed some merge problems");
 				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
@@ -90,7 +91,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// Run FixUp.exe, a program to clean up any bad problems with the FLEx database.
 		/// </summary>
 		/// <returns>true if problems were fixed</returns>
-		private bool RunFixFwData()
+		private bool RunFixFwData(IProgress progress)
 		{
 			const string fixerName = @"FixFwData.exe";
 			// This should work on user machines.
@@ -116,13 +117,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 			if (!File.Exists(fixupPath))
 				return false; // give up.
-			ProcessStartInfo startInfo = new ProcessStartInfo(fixupPath, _fwdataPathname);
+			var process = new Process();
+			var startInfo = process.StartInfo;
+			startInfo.FileName = fixupPath;
+			startInfo.Arguments = "\"" + _fwdataPathname + "\"";
 			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
 			startInfo.UseShellExecute = false;
 			startInfo.WorkingDirectory = Path.GetDirectoryName(fixupPath) ?? string.Empty;
-			// Enhance JohnT: should we redirect stdout (which has all the messages about what was fixed) and do something with it? What?
-			var process = Process.Start(startInfo);
+			startInfo.RedirectStandardOutput = true;
+			process.Start();
+			var mergeOutput = process.StandardOutput.ReadToEnd();
 			process.WaitForExit();
+			// If the user requests verbose output they can see all the fixup reports.
+			// Unfortunately this includes sequences of dots intended to show progress on the console.
+			// They always occur at the start of a line. The Replace gets rid of them.
+			progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
 			return process.ExitCode != 0;
 		}
 
