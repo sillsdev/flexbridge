@@ -98,7 +98,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string LiftOffset(string path)
 		{
-			return Path.Combine(path, OtherRepositories, LIFT);
+			return Path.Combine(path, OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
 		}
 
 		public static string ProjectsPath

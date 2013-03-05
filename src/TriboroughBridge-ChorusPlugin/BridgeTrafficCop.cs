@@ -31,17 +31,17 @@ namespace TriboroughBridge_ChorusPlugin
 		internal IBridgeModel CurrentModel { get; private set; }
 
 // ReSharper disable InconsistentNaming
-		internal const string obtain = "obtain";
-		internal const string obtain_lift = "obtain_lift";
-		internal const string send_receive = "send_receive";
-		internal const string send_receive_lift = "send_receive_lift";
-		internal const string view_notes = "view_notes";
-		internal const string view_notes_lift = "view_notes_lift";
-		internal const string undo_export = "undo_export"; // Not supported.
-		internal const string undo_export_lift = "undo_export_lift";
-		internal const string move_lift = "move_lift";
-		internal const string check_for_updates = "check_for_updates";
-		internal const string about_flex_bridge = "about_flex_bridge";
+		internal const string obtain = "obtain";						// -p <$fwroot>
+		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
+		internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata
+		internal const string view_notes = "view_notes";				// -p <$fwroot>\foo\foo.fwdata
+		internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata
+		internal const string undo_export = "undo_export";				// Not supported.
+		internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
+		internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
 		public const string hg = ".hg";
 		public const string git = ".git";
 // ReSharper restore InconsistentNaming
@@ -140,11 +140,16 @@ namespace TriboroughBridge_ChorusPlugin
 																   currentVersion),
 													 CommonResources.KFlexBridgeVersion,
 													 MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-						if (result == DialogResult.OK)
+						if (result == DialogResult.Yes)
 						{
 							var installerPathname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
 																 "Downloads",
 																 "FLExBridgeInstaller.msi");
+							if (File.Exists(installerPathname))
+							{
+								// We don't want the downloader to append some dumb number, and then us end up trying to intall the older one.
+								File.Delete(installerPathname);
+							}
 							using (var client = new WebClient())
 							{
 								client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);

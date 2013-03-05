@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Chorus.VcsDrivers.Mercurial;
 using NUnit.Framework;
-using Palaso.Progress;
-using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -20,6 +17,16 @@ namespace TriboroughBridge_ChorusPluginTests
 			Assert.IsTrue(fullPathname.StartsWith(prefix));
 			var reducedPathname = Utilities.StripFilePrefix(fullPathname);
 			Assert.IsFalse(reducedPathname.StartsWith(prefix));
+		}
+
+		[Test]
+		public void LiftOffsetUsesNewLiftFolder()
+		{
+			const string baseProjectsDir = "Projects";
+			const string foo = "foo";
+			var fooProjectDir = Path.Combine(baseProjectsDir, foo);
+			var expectedResult = Path.Combine(fooProjectDir, Utilities.OtherRepositories, foo + "_LIFT");
+			Assert.AreEqual(expectedResult, Utilities.LiftOffset(fooProjectDir));
 		}
 	}
 }

@@ -73,19 +73,40 @@ namespace SIL.LiftBridge.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			if (controllerType != ControllerType.UndoExportLift && controllerType != ControllerType.MoveLift)
-			{
-				// As per the API, -p will be: $fwroot\[foo] without the file name.
-				var pOption = options["-p"];
-				ProjectName = Path.GetFileNameWithoutExtension(pOption);
+			// No folders to create:
+			// 1. "send_receive_lift": Flex creates the folders on a normal lift S/R,
+			//		since it writes out the lift and lift_ranges files in them.
+			//			-p <$fwroot>\foo\foo.fwdata
+			// 2. "view_notes_lift": Nothing to do for folder creation.
+			//			-p <$fwroot>\foo\foo.fwdata
+			// 3. "undo_export_lift": Nothing to do for folder creation.
+			//			-p <$fwroot>\foo where 'foo' is the project folder name
 
-				var otherPath = Path.Combine(pOption, Utilities.OtherRepositories);
-				if (!Directory.Exists(otherPath))
-					Directory.CreateDirectory(otherPath);
-				PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT);
-				if (!Directory.Exists(PathToRepository))
-					Directory.CreateDirectory(PathToRepository);
+			// May need to add "OtherRepositories" folder:
+			// 4. "obtain_lift": May need to create the "OtherRepositories" folder,
+			//		and then Chorus will put a new repo in a new folder it makes, which the controller will then rename.
+			//			-p <$fwroot>\foo where 'foo' is the project folder name
+			// 5. "move_lift": May need to create OtherRepositories. Move controller should worry about the final lift folder.
+			//			-p <$fwroot>\foo\foo.fwdata
+			var pOption = options["-p"];
+			ProjectName = Path.GetFileNameWithoutExtension(pOption); // Works for "-p <$fwroot>\foo" or "p <$fwroot>\foo\foo.fwdata" to get "foo".
+			var otherPath = Path.Combine(pOption, Utilities.OtherRepositories); // Will be <$fwroot>\foo\foo.fwdata\OtherRepositories for some cases, but those are changed, below.
+
+			switch (controllerType)
+			{
+				case ControllerType.SendReceiveLift: // Fall through. Uses: LiftBridgeSyncronizeController
+				case ControllerType.ViewNotesLift: // Fall through.	Uses: LiftConflictStrategy of the common BridgeConflictController
+				case ControllerType.UndoExportLift: // Nothing to create. Uses: UndoExportController is probably created, but not used.
+					otherPath = Path.GetDirectoryName(pOption); // pOption Is <$fwroot>\foo\foo.fwdata, and we want the 'foo' containing direcotry path.
+					break;
+
+				case ControllerType.MoveLift: // Uses: MoveLiftRepositoryController
+				case ControllerType.ObtainLift: // Uses: one of two inner strategies of LiftObtainProjectStrategy of ObtainProjectController
+					if (!Directory.Exists(otherPath))
+						Directory.CreateDirectory(otherPath); // Default for 'otherPath' is fine here.
+					break;
 			}
+			PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT); // May, or may not, exist.
 
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);
