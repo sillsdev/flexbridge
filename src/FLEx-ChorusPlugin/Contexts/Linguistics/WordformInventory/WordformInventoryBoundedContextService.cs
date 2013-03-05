@@ -52,7 +52,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 					var wfElement = XElement.Parse(wordFormElement);
 					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
-						checksumProperty.Remove();
+					{
+						// Can be null, for DMs less than 64.
+						checksumProperty.Attribute(SharedConstants.Val).Value = "0";
+					}
 					CmObjectNestingService.NestObject(false,
 													  wfElement,
 													  classData,

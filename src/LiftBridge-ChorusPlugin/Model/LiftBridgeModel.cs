@@ -73,7 +73,7 @@ namespace SIL.LiftBridge.Model
 		/// </summary>
 		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
-			if (controllerType != ControllerType.UndoExportLift)
+			if (controllerType != ControllerType.UndoExportLift && controllerType != ControllerType.MoveLift)
 			{
 				// As per the API, -p will be: $fwroot\[foo] without the file name.
 				var pOption = options["-p"];
