@@ -19,6 +19,7 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string FwDB4oExtension = "." + FwDB4oExtensionNoPeriod;
 		public const string FwDB4oExtensionNoPeriod = "fwdb";
 		public const string LiftExtension = ".lift";
+		public const string FlexExtension = "_model_version";
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
