@@ -35,28 +35,28 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var allLexDbs = classData["LexDb"].FirstOrDefault();
 			if (allLexDbs.Value == null)
 				return; // No LexDb, then there can be no reversals.
 
-			SortedDictionary<string, string> sortedInstanceData = classData["ReversalIndex"];
+			SortedDictionary<string, byte[]> sortedInstanceData = classData["ReversalIndex"];
 			if (sortedInstanceData.Count == 0)
 				return; // no reversals, as in Lela-Teli-3.
 
-			var lexDb = XElement.Parse(allLexDbs.Value);
+			var lexDb = XElement.Parse(SharedConstants.Utf8.GetString(allLexDbs.Value));
 			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
 			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				Directory.CreateDirectory(reversalDir);
 
-			var srcDataCopy = new SortedDictionary<string, string>(sortedInstanceData);
+			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndexElement = XElement.Parse(reversalIndexKvp.Value);
+				var revIndexElement = XElement.Parse(SharedConstants.Utf8.GetString(reversalIndexKvp.Value));
 				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
 				var revIndexDir = Path.Combine(reversalDir, ws);
 				if (!Directory.Exists(revIndexDir))
@@ -85,7 +85,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				}
 
 				FileWriterService.WriteNestedFile(Path.Combine(revIndexDir, reversalFilename), root);
-				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = lexDb.ToString();
+				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(lexDb.ToString());
 			}
 		}
 

@@ -12,7 +12,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	{
 		internal static void NestContext(XElement archivedDraftsProperty,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (archivedDraftsProperty == null)
@@ -26,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var root = new XElement(SharedConstants.ArchivedDrafts);
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[draftGuid];
-				var draft = XElement.Parse(classData[className][draftGuid]);
+				var draft = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][draftGuid]));
 
 				CmObjectNestingService.NestObject(false, draft,
 					classData,

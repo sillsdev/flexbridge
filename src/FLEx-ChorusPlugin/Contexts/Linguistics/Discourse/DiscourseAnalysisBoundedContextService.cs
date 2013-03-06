@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	internal static class DiscourseAnalysisBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, string>> classData,
+			SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
@@ -28,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				return;
 
 			// 'discourseElement' is owned by LangProj in DsDiscourseData prop (OA).
-			var discourseElement = XElement.Parse(sortedInstanceData.Values.First());
+			var discourseElement = XElement.Parse(SharedConstants.Utf8.GetString(sortedInstanceData.Values.First()));
 
 			// Nest the entire object, and then pull out the owned stuff, and relocate them, as needed.
 			CmObjectNestingService.NestObject(
@@ -65,7 +65,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			root.Add(header);
 			header.Add(discourseElement);
 			// Remove child objsur node from owning LangProg
-			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
+			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
 			langProjElement.Element("DiscourseData").RemoveNodes();
 
 			var chartElements = discourseElement.Element("Charts");
@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			}
 
 			FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename), root);
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static void FlattenContext(

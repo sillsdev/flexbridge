@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 	internal class UserDefinedListsBoundedContextService
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// Write out each user-defined list (unowned CmPossibilityList) in a separate file.
@@ -25,7 +25,7 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 
 			foreach (var userDefinedListString in userDefinedLists)
 			{
-				var element = XElement.Parse(userDefinedListString);
+				var element = XElement.Parse(SharedConstants.Utf8.GetString(userDefinedListString));
 				CmObjectNestingService.NestObject(
 					false,
 					element,

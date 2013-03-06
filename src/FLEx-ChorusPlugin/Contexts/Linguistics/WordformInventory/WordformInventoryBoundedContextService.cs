@@ -11,7 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 	internal static class WordformInventoryBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, string>> classData,
+			SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
@@ -26,14 +26,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			// Each WfiWordform (unowned) will then be a child of root.
 			var header = new XElement(SharedConstants.Header);
 			// Work on copy, since 'classData' is changed during the loop.
-			SortedDictionary<string, string> srcDataCopy;
+			SortedDictionary<string, byte[]> srcDataCopy;
 			if (sortedPunctuationFormInstanceData.Count > 0)
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
-				srcDataCopy = new SortedDictionary<string, string>(sortedPunctuationFormInstanceData);
+				srcDataCopy = new SortedDictionary<string, byte[]>(sortedPunctuationFormInstanceData);
 				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					var pfElement = XElement.Parse(punctFormStringData);
+					var pfElement = XElement.Parse(SharedConstants.Utf8.GetString(punctFormStringData));
 					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
 						pfElement,
@@ -46,10 +46,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
-				srcDataCopy = new SortedDictionary<string, string>(sortedWfiWordformInstanceData);
+				srcDataCopy = new SortedDictionary<string, byte[]>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var wfElement = XElement.Parse(wordFormElement);
+					var wfElement = XElement.Parse(SharedConstants.Utf8.GetString(wordFormElement));
 					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
 					{

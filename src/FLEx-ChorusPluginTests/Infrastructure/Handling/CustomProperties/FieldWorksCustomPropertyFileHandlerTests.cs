@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.FileTypeHanders.xml;
@@ -574,7 +573,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.CustomProperties
 </AdditionalFields>";
 
 			var tempPathname = Path.Combine(Path.GetTempPath(), SharedConstants.CustomPropertiesFilename);
-			FileWriterService.WriteCustomPropertyFile(MetadataCache.TestOnlyNewCache, Path.GetTempPath(), Encoding.UTF8.GetBytes(originalCustomData));
+			FileWriterService.WriteCustomPropertyFile(MetadataCache.TestOnlyNewCache, Path.GetTempPath(), SharedConstants.Utf8.GetBytes(originalCustomData));
 			using (var tempFile = TempFile.TrackExisting(tempPathname))
 			{
 				var doc = XDocument.Load(tempFile.Path);

@@ -13,16 +13,16 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 		private const string LexDb = "LexDb";
 
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var lexiconDir = Path.Combine(linguisticsBaseDir, SharedConstants.Lexicon);
 			if (!Directory.Exists(lexiconDir))
 				Directory.CreateDirectory(lexiconDir);
 
-			var lexDb = XElement.Parse(classData[LexDb].First().Value); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
+			var lexDb = XElement.Parse(SharedConstants.Utf8.GetString(classData[LexDb].First().Value)); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
 			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
-			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
+			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
 			langProjElement.Element(LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
@@ -61,10 +61,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			var nestedData = new SortedDictionary<string, string>();
 			if (sortedEntryInstanceData.Count > 0)
 			{
-				var srcDataCopy = new SortedDictionary<string, string>(sortedEntryInstanceData);
+				var srcDataCopy = new SortedDictionary<string, byte[]>(sortedEntryInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
-					var entryElement = XElement.Parse(entry);
+					var entryElement = XElement.Parse(SharedConstants.Utf8.GetString(entry));
 					CmObjectNestingService.NestObject(false, entryElement,
 													  classData,
 													  guidToClassMapping);
@@ -86,7 +86,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
 
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
+			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static string PathnameForBucket(string inventoryDir, int bucket)
@@ -158,9 +158,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			}
 		}
 
-		private static void NestLists(IDictionary<string, SortedDictionary<string, string>> classData,
+		private static void NestLists(IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
-			IDictionary<string, string> posLists,
+			IDictionary<string, byte[]> posLists,
 			string lexiconRootDir,
 			XContainer owningElement,
 			IEnumerable<string> propNames)
@@ -172,7 +172,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					continue;
 
 				var root = new XElement(propName);
-				var listElement = XElement.Parse(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
+				var listElement = XElement.Parse(SharedConstants.Utf8.GetString(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]));
 				CmObjectNestingService.NestObject(false,
 					listElement,
 					classData,

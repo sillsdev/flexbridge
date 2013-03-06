@@ -88,7 +88,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, string>> classData)
+		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, byte[]>> classData)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var mdc = MetadataCache.MdCache;
@@ -99,7 +99,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				var haveWrittenCustomFile = false;
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
 				{
 					if (foundOptionalFirstElement)
 					{
@@ -122,14 +122,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return guidToClassMapping;
 		}
 
-		private static Dictionary<string, SortedDictionary<string, string>> GenerateBasicClassData()
+		private static Dictionary<string, SortedDictionary<string, byte[]>> GenerateBasicClassData()
 		{
-			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static void CacheDataRecord(string record, Dictionary<string, SortedDictionary<string, string>> classData, Dictionary<string, string> guidToClassMapping)
+		private static void CacheDataRecord(byte[] record, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping)
 		{
-			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string> {SharedConstants.Class, SharedConstants.GuidStr});
+			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string>
+				{
+					SharedConstants.Class,
+					SharedConstants.GuidStr
+				});
 			var className = attrValues[SharedConstants.Class];
 			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
 			guidToClassMapping.Add(guid, className);

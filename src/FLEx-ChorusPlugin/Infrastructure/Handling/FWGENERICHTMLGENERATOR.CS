@@ -169,7 +169,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			string guid = XmlUtilities.GetOptionalAttributeString(input, "guid");
 			if (!string.IsNullOrEmpty(guid))
 			{
-				var bytes = Encoding.UTF8.GetBytes(guid);
+				var bytes = SharedConstants.Utf8.GetBytes(guid);
 				s.Write(bytes, 0, bytes.Length);
 			}
 		}

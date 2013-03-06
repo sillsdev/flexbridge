@@ -41,7 +41,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (WriteWholeNode(element))
 			{
 				// Write entire element in one gulp, to avoid eating needed spaces in <Run> elements.
-				WriteElement(writer, Encoding.UTF8.GetBytes(element.ToString()));
+				WriteElement(writer, SharedConstants.Utf8.GetBytes(element.ToString()));
 			}
 			else
 			{
@@ -212,7 +212,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		internal static void WriteNestedListFileIfItExists(IDictionary<string,
-			SortedDictionary<string, string>> classData,
+			SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement listOwningElement, string listOwningPropertyName,
 			string listPathname)
@@ -221,7 +221,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (listPropElement == null || !listPropElement.HasElements)
 				return;
 
-			var listElement = XElement.Parse(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
+			var listElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]));
 			CmObjectNestingService.NestObject(false,
 											  listElement,
 											  classData,

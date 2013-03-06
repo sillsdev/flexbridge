@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Contexts
 	internal static class BaseDomainServices
 	{
 		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
-			Dictionary<string, SortedDictionary<string, string>> classData,
+			Dictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
@@ -120,7 +120,7 @@ namespace FLEx_ChorusPlugin.Contexts
 		}
 
 		internal static void NestStylesPropertyElement(
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement stylesProperty,
 			string outputPathname)
@@ -137,7 +137,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			{
 				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var style = XElement.Parse(classData[className][styleGuid]);
+				var style = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][styleGuid]));
 				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}

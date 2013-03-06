@@ -12,10 +12,10 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal class GeneralDomainBoundedContext
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var langProjElement = XElement.Parse(classData[SharedConstants.LangProject].Values.First());
+			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
 			FileWriterService.WriteNestedListFileIfItExists(classData,
@@ -39,7 +39,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var filterGuid = filterObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
-					var filterElement = XElement.Parse(classData[className][filterGuid]);
+					var filterElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][filterGuid]));
 					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var annotationGuid = annotationObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
-					var annotationElement = XElement.Parse(classData[className][annotationGuid]);
+					var annotationElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][annotationGuid]));
 					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
@@ -70,9 +70,9 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			// Some CmPicture instances may not be owned.
 			var rootElement = new XElement(SharedConstants.Pictures);
 			var unownedPictures = classData[SharedConstants.CmPicture].Values.Where(listElement => XmlUtils.GetAttributes(listElement, new HashSet<string> { SharedConstants.OwnerGuid })[SharedConstants.OwnerGuid] == null).ToList();
-			foreach (var unownedPictureString in unownedPictures)
+			foreach (var unownedPictureBytes in unownedPictures)
 			{
-				var element = XElement.Parse(unownedPictureString);
+				var element = XElement.Parse(SharedConstants.Utf8.GetString(unownedPictureBytes));
 				CmObjectNestingService.NestObject(
 					false,
 					element,
@@ -86,7 +86,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
 			{
 				rootElement = new XElement(SharedConstants.VirtualOrderings);
-				foreach (var element in classData[SharedConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingString => XElement.Parse(virtualOrderingString)))
+				foreach (var element in classData[SharedConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => XElement.Parse(SharedConstants.Utf8.GetString(virtualOrderingBytes))))
 				{
 					CmObjectNestingService.NestObject(
 						false,

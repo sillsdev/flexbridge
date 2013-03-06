@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement languageProjectElement,
 			XElement scriptureElement,
 			string baseDirectory,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
@@ -35,7 +35,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			for (var canonicalBookNumber = 1; canonicalBookNumber < 67; ++canonicalBookNumber)
 			{
 				var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(canonicalBookNumber);
-				var currentAnnotationElement = XElement.Parse(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(SharedConstants.GuidStr).Value]);
+				var currentAnnotationElement = XElement.Parse(SharedConstants.Utf8.GetString(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(SharedConstants.GuidStr).Value]));
 				CmObjectNestingService.NestObject(false, currentAnnotationElement,
 					classData,
 					guidToClassMapping);
@@ -53,7 +53,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				scriptureElement.Element(SharedConstants.ScriptureBooks).RemoveNodes();
 				foreach (var objsurEl in bookObjSurElements)
 				{
-					var currentBookElement = XElement.Parse(allBooks[objsurEl.Attribute(SharedConstants.GuidStr).Value]);
+					var currentBookElement = XElement.Parse(SharedConstants.Utf8.GetString(allBooks[objsurEl.Attribute(SharedConstants.GuidStr).Value]));
 					var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(Int32.Parse(currentBookElement.Element("CanonicalNum").Attribute("val").Value));
 					CmObjectNestingService.NestObject(false, currentBookElement,
 						classData,
@@ -73,7 +73,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				new XElement(SharedConstants.TranslatedScripture, scriptureElement));
 
 			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
-			classData[SharedConstants.LangProject][languageProjectElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = languageProjectElement.ToString();
+			classData[SharedConstants.LangProject][languageProjectElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(languageProjectElement.ToString());
 		}
 
 		internal static void FlattenContext(

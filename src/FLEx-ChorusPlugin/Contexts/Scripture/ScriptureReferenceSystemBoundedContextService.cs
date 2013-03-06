@@ -16,7 +16,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureReferenceSystemBoundedContextService
 	{
 		internal static void NestContext(string baseDirectory,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedInstanceData = classData["ScrRefSystem"];
@@ -25,7 +25,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(baseDirectory))
 				Directory.CreateDirectory(baseDirectory);
 
-			var refSystem = XElement.Parse(sortedInstanceData.First().Value);
+			var refSystem = XElement.Parse(SharedConstants.Utf8.GetString(sortedInstanceData.First().Value));
 
 			CmObjectNestingService.NestObject(false, refSystem,
 				classData,

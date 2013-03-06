@@ -1,5 +1,4 @@
 ﻿using System.Xml;
-using Microsoft.Win32;
 using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure

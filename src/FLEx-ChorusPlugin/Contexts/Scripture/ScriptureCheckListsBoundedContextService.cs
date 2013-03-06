@@ -13,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 		internal static void NestContext(XElement langProj,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -27,7 +27,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var checkListGuid = checkListObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[checkListGuid];
-				var checkList = XElement.Parse(classData[className][checkListGuid]);
+				var checkList = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][checkListGuid]));
 
 				CmObjectNestingService.NestObject(false, checkList,
 					classData,
