@@ -9,15 +9,18 @@ using TriboroughBridge_ChorusPlugin.Controller;
 
 namespace SIL.LiftBridge.Controller
 {
-	[Export(typeof (IObtainProjectStrategy))]
+	[Export(typeof(IObtainProjectStrategy))]
 	public class LiftObtainProjectStrategy : IObtainProjectStrategy
 	{
-		[ImportMany] private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
+		[ImportMany]
+		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
+
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
 
 		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ControllerType actionType)
 		{
-			return FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedControllerAction == actionType);
+			return
+				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedControllerAction == actionType);
 		}
 
 		#region IObtainProjectStrategy impl
@@ -26,8 +29,8 @@ namespace SIL.LiftBridge.Controller
 		{
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder)
-				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
-				&& Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
+				   /* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
+				   && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
 		}
 
 		public bool IsRepositoryEmpty(string repositoryLocation)

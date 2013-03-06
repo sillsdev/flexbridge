@@ -22,6 +22,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
 
+		private string JointBridgeHubQuery =
+			"fileExtension=" + Utilities.LiftExtension + "|" + Utilities.FlexExtension;
+
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
 			return (_controllerActionType == ControllerType.ObtainLift)
@@ -124,7 +127,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		{
 			var getSharedProjectModel = new GetSharedProjectModel();
 			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, _baseDir, null, ProjectFilter,
-				Utilities.ProjectsPath, Utilities.OtherRepositories, CommonResources.kHowToSendReceiveExtantRepository);
+				JointBridgeHubQuery, Utilities.ProjectsPath, Utilities.OtherRepositories,
+				CommonResources.kHowToSendReceiveExtantRepository);
 
 			if (result.CloneStatus != CloneStatus.Created)
 				return;
