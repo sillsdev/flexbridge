@@ -24,8 +24,10 @@ namespace FLEx_ChorusPlugin.Controller
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder)
 				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
-				&& Directory.GetFiles(hgDataFolder, "*" + Utilities.FlexExtension + ".i").Any();
+				&& Directory.GetFiles(hgDataFolder, "*" + HubQuery + ".i").Any();
 		}
+
+		public string HubQuery { get { return "_custom_properties"; } }
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{

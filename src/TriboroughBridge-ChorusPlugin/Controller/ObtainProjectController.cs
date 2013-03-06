@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Clone;
@@ -17,19 +18,35 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	{
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
+
 		private string _baseDir;
 		private ControllerType _controllerActionType;
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
+		private const char SepChar = '|';
 
-		private string JointBridgeHubQuery =
-			"fileExtension=" + Utilities.LiftExtension + "|" + Utilities.FlexExtension;
+		internal string ChorusHubQuery
+		{
+			get { return "fileExtension=" + PasteTogetherQueryParts(); }
+		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
 			return (_controllerActionType == ControllerType.ObtainLift)
 				? Strategies.FirstOrDefault(strategy => strategy.SupportedModelType == BridgeModelType.Lift)
 				: Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
+		}
+
+		private string PasteTogetherQueryParts()
+		{
+			var sb = new StringBuilder();
+			foreach (var strategy in Strategies)
+			{
+				if (sb.Length != 0)
+					sb.Append(SepChar);
+				sb.Append(strategy.HubQuery);
+			}
+			return sb.ToString();
 		}
 
 		private bool ProjectFilter(string path)
@@ -127,7 +144,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		{
 			var getSharedProjectModel = new GetSharedProjectModel();
 			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, _baseDir, null, ProjectFilter,
-				JointBridgeHubQuery, Utilities.ProjectsPath, Utilities.OtherRepositories,
+				ChorusHubQuery, Utilities.ProjectsPath, Utilities.OtherRepositories,
 				CommonResources.kHowToSendReceiveExtantRepository);
 
 			if (result.CloneStatus != CloneStatus.Created)

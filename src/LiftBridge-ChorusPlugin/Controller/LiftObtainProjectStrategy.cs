@@ -30,8 +30,10 @@ namespace SIL.LiftBridge.Controller
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder)
 				   /* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
-				   && Directory.GetFiles(hgDataFolder, "*" + Utilities.LiftExtension + ".i").Any();
+				   && Directory.GetFiles(hgDataFolder, "*" + HubQuery + ".i").Any();
 		}
+
+		public string HubQuery { get { return "lift"; } }
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{
