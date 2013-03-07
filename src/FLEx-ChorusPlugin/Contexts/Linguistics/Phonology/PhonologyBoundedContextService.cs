@@ -4,12 +4,14 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 {
 	internal static class PhonologyBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -17,12 +19,12 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			if (!Directory.Exists(phonologyDir))
 				Directory.CreateDirectory(phonologyDir);
 
-			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 
 			// 1. Nest: LP's PhonologicalData(PhPhonData OA) (Also does PhPhonData's PhonRuleFeats(CmPossibilityList)
 			// NB: PhPhonData is a singleton
 			var phonDataPropElement = langProjElement.Element("PhonologicalData");
-			var phonDataElement = XElement.Parse(SharedConstants.Utf8.GetString(classData["PhPhonData"].Values.First()));
+			var phonDataElement = Utilities.CreateFromBytes(classData["PhPhonData"].Values.First());
 			// 1.A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If it exists, but *before* nesting "PhPhonData".)
 			FileWriterService.WriteNestedListFileIfItExists(
 				classData, guidToClassMapping,
@@ -36,7 +38,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 				guidToClassMapping);
 			// 2. Nest: LP's PhFeatureSystem(FsFeatureSystem OA)
 			var phonFeatureSystemPropElement = langProjElement.Element("PhFeatureSystem");
-			var phonFeatureSystemElement = XElement.Parse(SharedConstants.Utf8.GetString(classData["FsFeatureSystem"][phonFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value]));
+			var phonFeatureSystemElement = Utilities.CreateFromBytes(classData["FsFeatureSystem"][phonFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value]);
 			phonFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,
@@ -47,8 +49,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Phonology
 			FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonologicalDataFilename), new XElement("PhonologicalData", phonDataElement));
 			// C. Write: LP's PhFeatureSystem(FsFeatureSystem) in its own file with a new (shared extension of featsys).
 			FileWriterService.WriteNestedFile(Path.Combine(phonologyDir, SharedConstants.PhonologyFeaturesFilename), new XElement(SharedConstants.FeatureSystem, phonFeatureSystemElement));
-
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static void FlattenContext(

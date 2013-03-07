@@ -5,13 +5,15 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 {
 	internal static class WordformInventoryBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, byte[]>> classData,
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
@@ -33,7 +35,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				srcDataCopy = new SortedDictionary<string, byte[]>(sortedPunctuationFormInstanceData);
 				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					var pfElement = XElement.Parse(SharedConstants.Utf8.GetString(punctFormStringData));
+					var pfElement = Utilities.CreateFromBytes(punctFormStringData);
 					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
 						pfElement,
@@ -49,7 +51,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				srcDataCopy = new SortedDictionary<string, byte[]>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var wfElement = XElement.Parse(SharedConstants.Utf8.GetString(wordFormElement));
+					var wfElement = Utilities.CreateFromBytes(wordFormElement);
 					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
 					{

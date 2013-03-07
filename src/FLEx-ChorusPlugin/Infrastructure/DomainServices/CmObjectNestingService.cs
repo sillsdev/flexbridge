@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -132,7 +133,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						continue;
 					}
 					guidToClassMapping.Remove(guid);
-					var ownedElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[classOfOwnedObject][guid]));
+					var ownedElement = Utilities.CreateFromBytes(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);

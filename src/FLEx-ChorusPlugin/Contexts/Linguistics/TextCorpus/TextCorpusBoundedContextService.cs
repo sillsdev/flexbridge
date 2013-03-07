@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 {
@@ -27,6 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	internal static class TextCorpusBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -34,7 +36,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 
 			// Write Genre list (owning atomic CmPossibilityList)
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
@@ -50,7 +52,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProjElement, SharedConstants.TranslationTags,
 										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
@@ -66,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				foreach (var textGuid in textGuidsInLangProj)
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = XElement.Parse(SharedConstants.Utf8.GetString(texts[textGuid]));
+					var textElement = Utilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -79,14 +80,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				}
 				// Remove child objsur nodes from owning LangProg
 				langProjElement.Element("Texts").RemoveNodes();
-				classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 			}
 			else
 			{
 				foreach (var textGuid in texts.Keys.ToArray()) // Needs a copy, since the dictionary is changed.
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = XElement.Parse(SharedConstants.Utf8.GetString(texts[textGuid]));
+					var textElement = Utilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -98,7 +98,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 						rootElement);
 				}
 			}
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static void FlattenContext(

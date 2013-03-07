@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 /*
 BC 1. ScrRefSystem (no owner)
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(baseDirectory))
 				Directory.CreateDirectory(baseDirectory);
 
-			var refSystem = XElement.Parse(SharedConstants.Utf8.GetString(sortedInstanceData.First().Value));
+			var refSystem = Utilities.CreateFromBytes(sortedInstanceData.First().Value);
 
 			CmObjectNestingService.NestObject(false, refSystem,
 				classData,

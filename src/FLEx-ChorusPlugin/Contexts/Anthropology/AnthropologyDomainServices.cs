@@ -13,6 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	internal static class AnthropologyDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				progress.WriteVerbose("Writing the anthropology data....");
 			else
 				progress.WriteMessage("Writing the anthropology data....");
-			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, classData, guidToClassMapping);
+			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(

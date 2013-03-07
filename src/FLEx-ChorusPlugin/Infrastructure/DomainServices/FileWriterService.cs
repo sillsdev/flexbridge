@@ -221,7 +221,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (listPropElement == null || !listPropElement.HasElements)
 				return;
 
-			var listElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]));
+			var listElement = Utilities.CreateFromBytes(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
 			CmObjectNestingService.NestObject(false,
 											  listElement,
 											  classData,

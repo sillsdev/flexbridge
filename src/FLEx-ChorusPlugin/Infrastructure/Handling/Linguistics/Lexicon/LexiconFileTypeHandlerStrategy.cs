@@ -35,7 +35,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Lexicon
 				var header = root.Element(SharedConstants.Header);
 				if (header != null)
 				{
-					var lexDb = header.Element("LexDb");
+					var lexDb = header.Element(SharedConstants.LexDb);
 					if (lexDb == null)
 					{
 						return "Not valid lexicon file";

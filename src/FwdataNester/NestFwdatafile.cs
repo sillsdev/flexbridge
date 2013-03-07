@@ -65,8 +65,12 @@ namespace FwdataTestApp
 
 		private static void CacheDataRecord(IDictionary<string, SortedDictionary<string, byte[]>> unownedObjects, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping, byte[] record)
 		{
-			//var rtElement = XElement.Parse(record);
-			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class, SharedConstants.OwnerGuid });
+			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string>
+				{
+					SharedConstants.GuidStr,
+					SharedConstants.Class,
+					SharedConstants.OwnerGuid
+				});
 			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
 			var className = attrValues[SharedConstants.Class];
 			if (attrValues[SharedConstants.OwnerGuid] == null)
@@ -84,11 +88,11 @@ namespace FwdataTestApp
 			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
-				var wfElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
+				var wfElement = Utilities.CreateFromBytes(record);
 				var csElement = wfElement.Element("Checksum");
 				if (csElement != null)
 				{
-					csElement.Remove();
+					csElement.Attribute(SharedConstants.Val).Value = "0";
 					record = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 				}
 			}
@@ -490,10 +494,12 @@ namespace FwdataTestApp
 						origData.Remove(srcGuid);
 						if (attrValues[SharedConstants.Class] == "WfiWordform")
 						{
-							var wfElement = XElement.Parse(SharedConstants.Utf8.GetString(origRecString));
+							var wfElement = Utilities.CreateFromBytes(origRecString);
 							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
-								csProp.Remove();
+							{
+								csProp.Attribute(SharedConstants.Val).Value = "0";
+							}
 							origRecString = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 						}
 					}
@@ -565,7 +571,7 @@ namespace FwdataTestApp
 				var unownedElementDict = unownedElementKvp.Value;
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
-					var element = XElement.Parse(SharedConstants.Utf8.GetString(unownedElement));
+					var element = Utilities.CreateFromBytes(unownedElement);
 					classElement.Add(element);
 					CmObjectNestingService.NestObject(false, element,
 												  classData,

@@ -5,12 +5,14 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 {
 	internal static class MorphologyAndSyntaxBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -18,22 +20,20 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			if (!Directory.Exists(morphAndSynDir))
 				Directory.CreateDirectory(morphAndSynDir);
 
-			var lexDbAsBytes = classData["LexDb"].Values.FirstOrDefault();
-			var lexDb = lexDbAsBytes == null ? null : XElement.Parse(SharedConstants.Utf8.GetString(lexDbAsBytes));
+			var lexDb = wellUsedElements[SharedConstants.LexDb];
 			if (lexDb != null)
 			{
 				// Write out LexDb's "MorphTypes" list, as per AndyB (7 Feb 2012).
 				FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 											  lexDb, SharedConstants.MorphTypes,
 											  Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename));
-				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(lexDb.ToString());
 			}
-			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 			// 1. Nest: LP's MorphologicalData(MoMorphData OA) (Also does MoMorphData's ProdRestrict(CmPossibilityList)
 			//		Remove objsur node from LP.
 			var morphologicalDataPropElement = langProjElement.Element("MorphologicalData");
 			morphologicalDataPropElement.RemoveNodes();
-			var morphDataElement = XElement.Parse(SharedConstants.Utf8.GetString(classData["MoMorphData"].Values.First()));
+			var morphDataElement = Utilities.CreateFromBytes(classData["MoMorphData"].Values.First());
 			CmObjectNestingService.NestObject(
 				false,
 				morphDataElement,
@@ -44,7 +44,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			// 2. Nest: LP's MsFeatureSystem(FsFeatureSystem OA)
 			//		Remove objsur node from LP.
 			var morphFeatureSystemPropElement = langProjElement.Element("MsFeatureSystem");
-			var morphFeatureSystemElement = XElement.Parse(SharedConstants.Utf8.GetString(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value]));
+			var morphFeatureSystemElement = Utilities.CreateFromBytes(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(SharedConstants.Objsur).Attribute(SharedConstants.GuidStr).Value]);
 			morphFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,
@@ -65,7 +65,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var rootElement = new XElement(SharedConstants.AnalyzingAgents);
 			foreach (var agentGuid in BaseDomainServices.GetGuids(langProjElement, SharedConstants.AnalyzingAgents))
 			{
-				var agentElement = XElement.Parse(SharedConstants.Utf8.GetString(agents[agentGuid]));
+				var agentElement = Utilities.CreateFromBytes(agents[agentGuid]);
 				rootElement.Add(agentElement);
 				CmObjectNestingService.NestObject(
 					false,
@@ -88,8 +88,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 
 			// B. Write: LP's MorphologicalData(MoMorphData OA) in a new extension (morphdata)
 			FileWriterService.WriteNestedFile(Path.Combine(morphAndSynDir, SharedConstants.MorphAndSynDataFilename), new XElement(SharedConstants.MorphAndSynData, morphDataElement));
-
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static void FlattenContext(
@@ -102,7 +100,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				return;
 
 			var langProjElement = highLevelData[SharedConstants.LangProject];
-			var lexDb = highLevelData["LexDb"];
+			var lexDb = highLevelData[SharedConstants.LexDb];
 			var currentPathname = Path.Combine(morphAndSynDir, SharedConstants.MorphTypesListFilename);
 			if (lexDb != null && File.Exists(currentPathname))
 			{

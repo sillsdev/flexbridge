@@ -92,6 +92,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Reversal = "reversal";
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
+		internal const string LexDb = "LexDb";
 		internal const string LexEntry = "LexEntry";
 		internal const string LexemeForm = "LexemeForm";
 		internal const string Form = "Form";

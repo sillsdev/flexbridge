@@ -11,6 +11,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 	internal static class GeneralDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -29,14 +30,14 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				progress.WriteMessage("Writing the general data....");
 				progress.WriteMessage("Writing user-defined list data....");
 			}
-			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, classData, guidToClassMapping);
+			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, wellUsedElements, classData, guidToClassMapping);
 
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing language project data....");
 			else
 				progress.WriteMessage("Writing language project data....");
-			GeneralDomainBoundedContext.NestContext(generalBaseDir, classData, guidToClassMapping);
+			GeneralDomainBoundedContext.NestContext(generalBaseDir, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(IProgress progress, bool writeVerbose, SortedDictionary<string, XElement> highLevelData, SortedDictionary<string, XElement> sortedData, string rootDir)

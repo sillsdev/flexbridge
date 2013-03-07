@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
@@ -25,18 +26,18 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	internal static class AnthropologyBoundedContextService
 	{
 		internal static void NestContext(string anthropologyDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedInstanceData = classData["RnResearchNbk"];
-			var langProj = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
-
+			var langProj = wellUsedElements[SharedConstants.LangProject];
 			var headerElement = new XElement(SharedConstants.Header);
 			var rootElement = new XElement(SharedConstants.Anthropology, headerElement);
 			if (sortedInstanceData.Count > 0)
 			{
 				// 1. Main RnResearchNbk element.
-				var notebookElement = XElement.Parse(SharedConstants.Utf8.GetString(sortedInstanceData.Values.First()));
+				var notebookElement = Utilities.CreateFromBytes(sortedInstanceData.Values.First());
 				headerElement.Add(notebookElement);
 
 				CmObjectNestingService.NestObject(false, notebookElement,
@@ -111,7 +112,6 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProj, "TimeOfDay",
 										  Path.Combine(anthropologyDir, "TimeOfDay." + SharedConstants.List));
-			classData[SharedConstants.LangProject][langProj.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProj.ToString());
 		}
 
 		internal static void FlattenContext(

@@ -6,16 +6,18 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.General
 {
 	internal class GeneralDomainBoundedContext
 	{
 		internal static void NestContext(string generalBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
 			FileWriterService.WriteNestedListFileIfItExists(classData,
@@ -39,7 +41,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var filterGuid = filterObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
-					var filterElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][filterGuid]));
+					var filterElement = Utilities.CreateFromBytes(classData[className][filterGuid]);
 					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
@@ -58,7 +60,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 				{
 					var annotationGuid = annotationObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
-					var annotationElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][annotationGuid]));
+					var annotationElement = Utilities.CreateFromBytes(classData[className][annotationGuid]);
 					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(SharedConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
@@ -72,7 +74,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			var unownedPictures = classData[SharedConstants.CmPicture].Values.Where(listElement => XmlUtils.GetAttributes(listElement, new HashSet<string> { SharedConstants.OwnerGuid })[SharedConstants.OwnerGuid] == null).ToList();
 			foreach (var unownedPictureBytes in unownedPictures)
 			{
-				var element = XElement.Parse(SharedConstants.Utf8.GetString(unownedPictureBytes));
+				var element = Utilities.CreateFromBytes(unownedPictureBytes);
 				CmObjectNestingService.NestObject(
 					false,
 					element,
@@ -86,7 +88,7 @@ namespace FLEx_ChorusPlugin.Contexts.General
 			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
 			{
 				rootElement = new XElement(SharedConstants.VirtualOrderings);
-				foreach (var element in classData[SharedConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => XElement.Parse(SharedConstants.Utf8.GetString(virtualOrderingBytes))))
+				foreach (var element in classData[SharedConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => Utilities.CreateFromBytes(virtualOrderingBytes)))
 				{
 					CmObjectNestingService.NestObject(
 						false,

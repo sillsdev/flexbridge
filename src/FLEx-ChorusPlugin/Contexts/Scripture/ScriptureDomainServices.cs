@@ -7,6 +7,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -16,6 +17,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -52,7 +54,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			else
 				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
-			var langProj = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
+			var langProj = wellUsedElements[SharedConstants.LangProject];
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 
@@ -61,7 +63,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			// // Lela Teli-3 has null.
 			if (scrAsBytes != null)
 			{
-				var scripture = XElement.Parse(SharedConstants.Utf8.GetString(scrAsBytes));
+				var scripture = Utilities.CreateFromBytes(scrAsBytes);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);

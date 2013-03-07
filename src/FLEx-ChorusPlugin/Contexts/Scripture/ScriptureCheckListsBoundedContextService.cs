@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -27,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var checkListGuid = checkListObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[checkListGuid];
-				var checkList = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][checkListGuid]));
+				var checkList = Utilities.CreateFromBytes(classData[className][checkListGuid]);
 
 				CmObjectNestingService.NestObject(false, checkList,
 					classData,

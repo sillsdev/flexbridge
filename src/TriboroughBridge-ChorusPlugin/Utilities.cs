@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
@@ -69,6 +70,14 @@ namespace TriboroughBridge_ChorusPlugin
 				path = '/' + path;
 
 			return path;
+		}
+
+		public static XElement CreateFromBytes(byte[] xmlData)
+		{
+			using (var memStream = new MemoryStream(xmlData))
+			{
+				return XElement.Load(memStream);
+			}
 		}
 
 		/// <summary>

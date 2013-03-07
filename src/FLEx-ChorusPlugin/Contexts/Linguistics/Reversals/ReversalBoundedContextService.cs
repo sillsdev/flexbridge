@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
@@ -35,18 +36,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var allLexDbs = classData["LexDb"].FirstOrDefault();
-			if (allLexDbs.Value == null)
+			var lexDb = wellUsedElements[SharedConstants.LexDb];
+			if (lexDb == null)
 				return; // No LexDb, then there can be no reversals.
 
 			SortedDictionary<string, byte[]> sortedInstanceData = classData["ReversalIndex"];
 			if (sortedInstanceData.Count == 0)
 				return; // no reversals, as in Lela-Teli-3.
 
-			var lexDb = XElement.Parse(SharedConstants.Utf8.GetString(allLexDbs.Value));
 			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
 			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
@@ -56,7 +57,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndexElement = XElement.Parse(SharedConstants.Utf8.GetString(reversalIndexKvp.Value));
+				var revIndexElement = Utilities.CreateFromBytes(reversalIndexKvp.Value);
 				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
 				var revIndexDir = Path.Combine(reversalDir, ws);
 				if (!Directory.Exists(revIndexDir))
@@ -85,7 +86,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				}
 
 				FileWriterService.WriteNestedFile(Path.Combine(revIndexDir, reversalFilename), root);
-				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(lexDb.ToString());
 			}
 		}
 
@@ -98,7 +98,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			if (!Directory.Exists(reversalDir))
 				return;
 
-			var lexDb = highLevelData["LexDb"];
+			var lexDb = highLevelData[SharedConstants.LexDb];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var unlovedFolders = new HashSet<string>();
 			foreach (var revIndexDirectoryName in Directory.GetDirectories(reversalDir))

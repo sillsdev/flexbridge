@@ -5,14 +5,14 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 {
 	internal static class LexiconBoundedContextService
 	{
-		private const string LexDb = "LexDb";
-
 		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -20,10 +20,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			if (!Directory.Exists(lexiconDir))
 				Directory.CreateDirectory(lexiconDir);
 
-			var lexDb = XElement.Parse(SharedConstants.Utf8.GetString(classData[LexDb].First().Value)); // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
+			var lexDb = wellUsedElements[SharedConstants.LexDb]; // It has had its "ReversalIndexes" property processed already, so it should be an empty element.
 			// lexDb is owned by the LP in its LexDb property, so remove its <objsur> node.
-			var langProjElement = XElement.Parse(SharedConstants.Utf8.GetString(classData[SharedConstants.LangProject].Values.First()));
-			langProjElement.Element(LexDb).RemoveNodes();
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
+			langProjElement.Element(SharedConstants.LexDb).RemoveNodes();
 
 			// Nest each CmPossibilityList owned by LexDb.
 			var lists = classData[SharedConstants.CmPossibilityList];
@@ -64,7 +64,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				var srcDataCopy = new SortedDictionary<string, byte[]>(sortedEntryInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
-					var entryElement = XElement.Parse(SharedConstants.Utf8.GetString(entry));
+					var entryElement = Utilities.CreateFromBytes(entry);
 					CmObjectNestingService.NestObject(false, entryElement,
 													  classData,
 													  guidToClassMapping);
@@ -85,8 +85,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					root.Add(XElement.Parse(entryString));
 				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
-
-			classData[SharedConstants.LangProject][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = SharedConstants.Utf8.GetBytes(langProjElement.ToString());
 		}
 
 		internal static string PathnameForBucket(string inventoryDir, int bucket)
@@ -114,8 +112,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				var headerLexDbDoc = rootLexDbDoc.Element(SharedConstants.Header);
 				if (headerLexDbDoc != null)
 				{
-					var lexDb = headerLexDbDoc.Element(LexDb);
-					highLevelData[LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
+					var lexDb = headerLexDbDoc.Element(SharedConstants.LexDb);
+					highLevelData[SharedConstants.LexDb] = lexDb; // Let MorphAndSyn access it to put "MorphTypes" back into lexDb.
 					foreach (var listPathname in Directory.GetFiles(lexiconDir, "*.list", SearchOption.TopDirectoryOnly))
 					{
 						var listDoc = XDocument.Load(listPathname);
@@ -143,7 +141,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 						lexDbPathname,
 						sortedData,
 						lexDb,
-						langProjGuid, langProjElement, LexDb); // Restore 'ownerguid' to LexDb.
+						langProjGuid, langProjElement, SharedConstants.LexDb); // Restore 'ownerguid' to LexDb.
 				}
 
 				// Flatten all entries in root of lexDbDoc. (EXCEPT if it has a guid of Guid.Empty, in which case, just ignore it, and it will go away.)
@@ -172,7 +170,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					continue;
 
 				var root = new XElement(propName);
-				var listElement = XElement.Parse(SharedConstants.Utf8.GetString(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]));
+				var listElement = Utilities.CreateFromBytes(posLists[listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
 				CmObjectNestingService.NestObject(false,
 					listElement,
 					classData,

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+﻿﻿using System.Xml.Linq;
 ﻿﻿using Chorus.Utilities;
 ﻿﻿using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
 using Palaso.Progress;
 using Palaso.Xml;
+﻿﻿using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -55,9 +57,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			// (Only has current concrete classes.)
 			var classData = GenerateBasicClassData();
-			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData);
+			var wellUsedElements = new Dictionary<string, XElement>
+				{
+					{SharedConstants.LangProject, null},
+					{SharedConstants.LexDb, null}
+				};
+			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData, wellUsedElements);
 			CheckForUserCancelRequested(progress);
-			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, classData, guidToClassMapping);
+			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, wellUsedElements, classData, guidToClassMapping);
 
 #if DEBUG
 			// Enable ONLY for testing a round trip.
@@ -88,7 +95,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname, Dictionary<string, SortedDictionary<string, byte[]>> classData)
+		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname,
+			Dictionary<string, SortedDictionary<string, byte[]>> classData,
+			Dictionary<string, XElement> wellUsedElements)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var mdc = MetadataCache.MdCache;
@@ -110,7 +119,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					}
 					else
 					{
-						CacheDataRecord(record, classData, guidToClassMapping);
+						CacheDataRecord(record, wellUsedElements, classData, guidToClassMapping);
 					}
 				}
 				if (!haveWrittenCustomFile)
@@ -127,7 +136,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static void CacheDataRecord(byte[] record, IDictionary<string, SortedDictionary<string, byte[]>> classData, IDictionary<string, string> guidToClassMapping)
+		private static void CacheDataRecord(byte[] record,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
+			IDictionary<string, string> guidToClassMapping)
 		{
 			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string>
 				{
@@ -143,7 +155,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			//DataSortingService.SortMainRtElement(rtElement);
 
 			// 2. Cache it.
-			classData[className].Add(guid, record);
+			switch (className)
+			{
+				default:
+					classData[className].Add(guid, record);
+					break;
+				case  SharedConstants.LangProject:
+					wellUsedElements[SharedConstants.LangProject] = Utilities.CreateFromBytes(record);
+					//classData.Remove(SharedConstants.LangProject);
+					break;
+				case SharedConstants.LexDb:
+					wellUsedElements[SharedConstants.LexDb] = Utilities.CreateFromBytes(record);
+					//classData.Remove(SharedConstants.LexDb);
+					break;
+			}
 		}
 	}
 }

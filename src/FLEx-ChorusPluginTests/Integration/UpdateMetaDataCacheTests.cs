@@ -36,7 +36,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "VirtualOrdering");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEntry", "DoNotPublishIn");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexExampleSentence", "DoNotPublishIn");
-			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "PublicationTypes");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, SharedConstants.LexDb, "PublicationTypes");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "DoNotPublishIn");
 			DoMerge(fileHandler, 7000038);
 			//		1. Add CmObject::VirtualOrdering (concrete)
@@ -58,7 +58,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "DoNotPublishIn", DataType.ReferenceCollection);
 			//		4. Modified LexDb
 			//			Add: OA "PublicationTypes"					[CmPossibilityList]
-			classInfo = mdc.GetClassInfo("LexDb");
+			classInfo = mdc.GetClassInfo(SharedConstants.LexDb);
 			CheckNewPropertyAfterUpgrade(classInfo, "PublicationTypes", DataType.OwningAtomic);
 			//		5. Modified LexSense
 			//			Add: RC "DoNotPublishIn"					[CmPossibility]

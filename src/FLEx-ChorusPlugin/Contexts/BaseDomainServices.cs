@@ -10,20 +10,22 @@ using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
 		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
+			IDictionary<string, XElement> wellUsedElements,
 			Dictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
-			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
+			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		internal static SortedDictionary<string, string> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
@@ -137,7 +139,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			{
 				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var style = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][styleGuid]));
+				var style = Utilities.CreateFromBytes(classData[className][styleGuid]);
 				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}

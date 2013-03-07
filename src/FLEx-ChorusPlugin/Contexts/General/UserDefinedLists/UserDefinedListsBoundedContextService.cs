@@ -5,12 +5,14 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 {
 	internal class UserDefinedListsBoundedContextService
 	{
 		internal static void NestContext(string generalBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -23,9 +25,9 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 			if (!Directory.Exists(userDefinedDir))
 				Directory.CreateDirectory(userDefinedDir);
 
-			foreach (var userDefinedListString in userDefinedLists)
+			foreach (var userDefinedListBytes in userDefinedLists)
 			{
-				var element = XElement.Parse(SharedConstants.Utf8.GetString(userDefinedListString));
+				var element = Utilities.CreateFromBytes(userDefinedListBytes);
 				CmObjectNestingService.NestObject(
 					false,
 					element,

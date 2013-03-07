@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -26,7 +27,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var root = new XElement(SharedConstants.ArchivedDrafts);
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[draftGuid];
-				var draft = XElement.Parse(SharedConstants.Utf8.GetString(classData[className][draftGuid]));
+				var draft = Utilities.CreateFromBytes(classData[className][draftGuid]);
 
 				CmObjectNestingService.NestObject(false, draft,
 					classData,
