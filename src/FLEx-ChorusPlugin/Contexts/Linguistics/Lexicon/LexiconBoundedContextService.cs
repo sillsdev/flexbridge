@@ -58,7 +58,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 			header.Add(lexDb);
 
 			var sortedEntryInstanceData = classData[SharedConstants.LexEntry];
-			var nestedData = new SortedDictionary<string, string>();
+			var nestedData = new SortedDictionary<string, XElement>();
 			if (sortedEntryInstanceData.Count > 0)
 			{
 				var srcDataCopy = new SortedDictionary<string, byte[]>(sortedEntryInstanceData);
@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 					CmObjectNestingService.NestObject(false, entryElement,
 													  classData,
 													  guidToClassMapping);
-					nestedData.Add(entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), entryElement.ToString());
+					nestedData.Add(entryElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), entryElement);
 				}
 			}
 
@@ -81,8 +81,8 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Lexicon
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var entryString in currentBucket.Values)
-					root.Add(XElement.Parse(entryString));
+				foreach (var entry in currentBucket.Values)
+					root.Add(entry);
 				FileWriterService.WriteNestedFile(PathnameForBucket(lexiconDir, i), root);
 			}
 		}

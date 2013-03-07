@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
@@ -41,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (WriteWholeNode(element))
 			{
 				// Write entire element in one gulp, to avoid eating needed spaces in <Run> elements.
-				WriteElement(writer, SharedConstants.Utf8.GetBytes(element.ToString()));
+				element.WriteTo(writer);
 			}
 			else
 			{
@@ -98,13 +97,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return retval;
 		}
 
-		internal static void WriteElement(XmlWriter writer, byte[] optionalFirstElement)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), CanonicalXmlSettings.CreateXmlReaderSettings(ConformanceLevel.Fragment)))
-				writer.WriteNode(nodeReader, true);
-		}
-
-		internal static void WriteCustomPropertyFile(string newPathname, byte[] element)
+		internal static void WriteCustomPropertyFile(string newPathname, XElement element)
 		{
 			if (element == null)
 			{
@@ -175,7 +168,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 			if (hasCustomProperties)
 				mdc.ResetCaches();
-			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
+			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), cpElement);
 		}
 
 		internal static void CheckPathname(string mainFilePathname)
@@ -230,7 +223,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			WriteNestedFile(listPathname, new XElement(listOwningPropertyName, listElement));
 		}
 
-		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, string>> buckets, SortedDictionary<string, string> data)
+		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, XElement>> buckets, SortedDictionary<string, XElement> data)
 		{
 			var bucketCount = buckets.Count;
 			foreach (var kvp in data)
@@ -240,13 +233,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static Dictionary<int, SortedDictionary<string, string>> CreateEmptyBuckets(int numberOfBucketsToCreate)
+		internal static Dictionary<int, SortedDictionary<string, XElement>> CreateEmptyBuckets(int numberOfBucketsToCreate)
 		{
-			var emptyBuckets = new Dictionary<int, SortedDictionary<string, string>>();
+			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>();
 
 			for (var i = 0; i < numberOfBucketsToCreate; ++i)
 			{
-				emptyBuckets.Add(i, new SortedDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase));
+				emptyBuckets.Add(i, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase));
 			}
 
 			return emptyBuckets;

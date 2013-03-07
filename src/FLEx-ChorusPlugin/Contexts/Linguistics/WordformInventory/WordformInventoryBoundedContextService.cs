@@ -44,7 +44,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				}
 			}
 
-			var nestedData = new SortedDictionary<string, string>();
+			var nestedData = new SortedDictionary<string, XElement>();
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
@@ -62,7 +62,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 													  wfElement,
 													  classData,
 													  guidToClassMapping);
-					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement.ToString());
+					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement);
 				}
 			}
 
@@ -75,10 +75,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var wordformString in currentBucket.Values)
+				foreach (var wordform in currentBucket.Values)
 				{
-					var wordformElement = XElement.Parse(wordformString);
-					root.Add(wordformElement);
+					root.Add(wordform);
 				}
 				FileWriterService.WriteNestedFile(PathnameForBucket(inventoryDir, i), root);
 			}

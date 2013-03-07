@@ -153,7 +153,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 			}
 			mdc.ResetCaches();
-			FileWriterService.WriteElement(writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
+			FileWriterService.WriteElement(writer, doc.Root);
 		}
 	}
 }
