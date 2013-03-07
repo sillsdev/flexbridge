@@ -172,16 +172,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return sortedRecords[propertyName];
 		}
 
-		internal static void CombineData(IDictionary<string, string> results, SortedDictionary<string, XElement> sortedData)
+		internal static void CombineData(IDictionary<string, XElement> results, SortedDictionary<string, XElement> sortedData)
 		{
-			foreach (var kvp in sortedData)
+			foreach (var kvp in sortedData.Where(kvp => kvp.Value != null))
 			{
-				if (kvp.Value != null)
-					results.Add(kvp.Key, kvp.Value.ToString());
+				results.Add(kvp.Key, kvp.Value);
 			}
 
 			foreach (var key in sortedData.Keys.ToArray())
+			{
 				sortedData[key] = null;
+			}
 		}
 	}
 }

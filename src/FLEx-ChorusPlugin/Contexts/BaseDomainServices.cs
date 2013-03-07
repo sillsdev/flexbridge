@@ -28,9 +28,9 @@ namespace FLEx_ChorusPlugin.Contexts
 			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 		}
 
-		internal static SortedDictionary<string, string> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
+		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
 		{
-			var retval = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var retval = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
@@ -45,7 +45,9 @@ namespace FLEx_ChorusPlugin.Contexts
 			CmObjectFlatteningService.CombineData(retval, sortedData);
 
 			foreach (var highLevelElement in highLevelData.Values)
-				retval[highLevelElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement.ToString();
+			{
+				retval[highLevelElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement;
+			}
 
 			return retval;
 		}

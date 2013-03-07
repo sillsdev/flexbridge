@@ -72,8 +72,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						progress.WriteVerbose("Writing temporary fwdata file....");
 					else
 						progress.WriteMessage("Writing temporary fwdata file....");
-					foreach (var dataString in sortedData.Values)
-						FileWriterService.WriteElement(writer, dataString);
+					foreach (var rtElement in sortedData.Values)
+						FileWriterService.WriteElement(writer, rtElement);
 					writer.WriteEndElement();
 				}
 				//Thread.Sleep(2000); In case it blows (access denied) up again on Sue's computer.
