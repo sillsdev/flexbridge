@@ -27,7 +27,7 @@ namespace FLEx_ChorusPlugin.Controller
 				&& Directory.GetFiles(hgDataFolder, "*" + HubQuery + ".i").Any();
 		}
 
-		public string HubQuery { get { return "_custom_properties"; } }
+		public string HubQuery { get { return "._custom_properties"; } }
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{

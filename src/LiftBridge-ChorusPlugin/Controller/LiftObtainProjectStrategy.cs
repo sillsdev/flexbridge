@@ -33,7 +33,7 @@ namespace SIL.LiftBridge.Controller
 				   && Directory.GetFiles(hgDataFolder, "*" + HubQuery + ".i").Any();
 		}
 
-		public string HubQuery { get { return "lift"; } }
+		public string HubQuery { get { return ".lift"; } }
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{
