@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
+using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -132,7 +133,7 @@ namespace FwdataTestApp
 				{
 					if(!String.IsNullOrWhiteSpace(revisionBox.Text))
 					{
-						Chorus.VcsDrivers.Mercurial.HgRunner.Run("hg update -r " + revisionBox.Text, _workingDir, 300, new NullProgress());
+						HgRunner.Run("hg update -r " + revisionBox.Text, _workingDir, 300, new NullProgress());
 					}
 					RestoreMainFileFromPieces(restoreTimer);
 				}
@@ -143,13 +144,13 @@ namespace FwdataTestApp
 					{
 						RoundTripData(breakupTimer, restoreTimer, ambiguousTimer, sbValidation);
 					}
-					if (_cbVerify.Checked)
-					{
-						Verify(verifyTimer, sb);
-					}
 					if (_cbValidate.Checked)
 					{
 						ValidateSplitData(validateTimer, sb, sbValidation);
+					}
+					if (_cbVerify.Checked)
+					{
+						Verify(verifyTimer, sb);
 					}
 					if (_cbNestFile.Checked)
 					{
@@ -343,9 +344,9 @@ namespace FwdataTestApp
 					using (var fastSplitter = new FastXmlElementSplitter(dataFile))
 					{
 						bool foundOptionalFirstElement;
-						foreach (var parentNode in fastSplitter.GetSecondLevelElementStrings(optionalElementName, mainRecordName, out foundOptionalFirstElement).Select(record => XmlUtilities.GetDocumentNodeFromRawXml(record, new XmlDocument())))
+						foreach (var record in fastSplitter.GetSecondLevelElementBytes(optionalElementName, mainRecordName, out foundOptionalFirstElement))
 						{
-							XmlMergeService.RemoveAmbiguousChildren(merger.EventListener, merger.MergeStrategies, parentNode);
+							XmlMergeService.RemoveAmbiguousChildren(merger.EventListener, merger.MergeStrategies, CreateXmlNodeFromBytes(record));
 						}
 					}
 				}
@@ -354,6 +355,8 @@ namespace FwdataTestApp
 				{
 					sbValidation.AppendLine(warning.Description);
 					sbValidation.AppendLine();
+					sbValidation.AppendLine(warning.HtmlDetails);
+					sbValidation.AppendLine();
 				}
 				GC.Collect(2, GCCollectionMode.Forced);
 			}
@@ -361,6 +364,16 @@ namespace FwdataTestApp
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();
 			GC.Collect(2, GCCollectionMode.Forced);
+		}
+
+		private static XmlNode CreateXmlNodeFromBytes(byte[] xmlData)
+		{
+			using (var memoryStream = new MemoryStream(xmlData))
+			{
+				var document = new XmlDocument();
+				document.Load(memoryStream);
+				return document.DocumentElement;
+			}
 		}
 
 		private void ValidateSplitData(Stopwatch validateTimer, StringBuilder sb, StringBuilder sbValidation)
@@ -472,51 +485,69 @@ namespace FwdataTestApp
 			GC.Collect(2, GCCollectionMode.Forced);
 			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
 			{
-				bool foundNewOptionalFirstElement;
-				var newRecords = fastSplitterNew.GetSecondLevelElementStrings(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundNewOptionalFirstElement);
 				// NB: The main input file *does* have to deal with the optional first element.
 				var counter = 0;
-				foreach (var newRecord in newRecords)
+				bool foundNewOptionalFirstElement;
+				foreach (var newRecordAsBytes in fastSplitterNew.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundNewOptionalFirstElement))
 				{
-					var newRecCopy = newRecord;
-					byte[] origRecString;
+					var newRecCopyAsBytes = newRecordAsBytes;
+					byte[] origRecAsBytes;
 					string srcGuid = null;
-					if (newRecCopy.Contains(SharedConstants.AdditionalFieldsTag))
+					if (foundNewOptionalFirstElement)
 					{
-						origRecString = origData[SharedConstants.AdditionalFieldsTag];
+						origRecAsBytes = origData[SharedConstants.AdditionalFieldsTag];
 						origData.Remove(SharedConstants.AdditionalFieldsTag);
+						foundNewOptionalFirstElement = false;
 					}
 					else
 					{
-						var attrValues = XmlUtils.GetAttributes(newRecord, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class });
+						var attrValues = XmlUtils.GetAttributes(newRecordAsBytes, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class });
 						srcGuid = attrValues[SharedConstants.GuidStr];
-						origRecString = origData[srcGuid];
+						origRecAsBytes = origData[srcGuid];
 						origData.Remove(srcGuid);
 						if (attrValues[SharedConstants.Class] == "WfiWordform")
 						{
-							var wfElement = Utilities.CreateFromBytes(origRecString);
+							var wfElement = Utilities.CreateFromBytes(origRecAsBytes);
 							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
 							{
 								csProp.Attribute(SharedConstants.Val).Value = "0";
+								origRecAsBytes = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 							}
-							origRecString = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 						}
 					}
 
-					if (XmlUtilities.AreXmlElementsEqual(SharedConstants.Utf8.GetString(origRecString), newRecCopy))
+					// Way too slow, since it has to always make the XmlNodes.
+					// Just feeding strings to XmlUtilities.AreXmlElementsEqual is faster,
+					// since it skips making them, if the strings are the same.
+						//var origNode = CreateXmlNodeFromBytes(origRecAsBytes);
+						//var newNode = CreateXmlNodeFromBytes(newRecCopyAsBytes);
+						//if (XmlUtilities.AreXmlElementsEqual(origNode, newNode))
+						//    continue;
+						//if (srcGuid == null)
+						//{
+						//    WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origNode);
+						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), newNode);
+						//    sb.Append("Main src and trg custom properties are different in the resulting xml.");
+						//}
+						//else
+						//{
+						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origNode);
+						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newNode);
+						//    sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
+						//}
+					if (XmlUtilities.AreXmlElementsEqual(SharedConstants.Utf8.GetString(origRecAsBytes), SharedConstants.Utf8.GetString(newRecCopyAsBytes)))
 						continue;
-
 					if (srcGuid == null)
 					{
-						WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origRecString);
-						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), SharedConstants.Utf8.GetBytes(newRecCopy));
+						WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origRecAsBytes);
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), newRecCopyAsBytes);
 						sb.Append("Main src and trg custom properties are different in the resulting xml.");
 					}
 					else
 					{
-						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origRecString);
-						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), SharedConstants.Utf8.GetBytes(newRecCopy));
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origRecAsBytes);
+						WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newRecCopyAsBytes);
 						sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
 					}
 					sb.AppendLine();
@@ -544,6 +575,11 @@ namespace FwdataTestApp
 			verifyTimer.Stop();
 		}
 
+		//private static void WriteProblemDataFile(string pathname, XmlNode data)
+		//{
+		//    var doc = data.OwnerDocument;
+		//    doc.Save(pathname);
+		//}
 		private static void WriteProblemDataFile(string pathname, byte[] data)
 		{
 			using (var reader = XmlReader.Create(new MemoryStream(data, false), CanonicalXmlSettings.CreateXmlReaderSettings()))
