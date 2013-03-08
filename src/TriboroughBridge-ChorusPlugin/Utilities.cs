@@ -23,8 +23,7 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
-		private static Dictionary<string, string> _extantRepoIdentifiers;
-		private static string _testingProjectsPath = null;
+		private static string _testingProjectsPath;
 
 		internal static void SetProjectsPathForTests(string testProjectsPath)
 		{
