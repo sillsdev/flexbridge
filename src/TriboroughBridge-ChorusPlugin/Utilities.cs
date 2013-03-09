@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Chorus;
@@ -75,6 +74,7 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			using (var memStream = new MemoryStream(xmlData))
 			{
+				// This loads the MemoryStream as Utf8 xml. (I checked.)
 				return XElement.Load(memStream);
 			}
 		}

@@ -12,6 +12,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
+using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
@@ -370,6 +371,7 @@ namespace FwdataTestApp
 		{
 			using (var memoryStream = new MemoryStream(xmlData))
 			{
+				// This loads the MemoryStream as Utf8 xml. (I checked.)
 				var document = new XmlDocument();
 				document.Load(memoryStream);
 				return document.DocumentElement;
@@ -520,23 +522,25 @@ namespace FwdataTestApp
 					// Way too slow, since it has to always make the XmlNodes.
 					// Just feeding strings to XmlUtilities.AreXmlElementsEqual is faster,
 					// since it skips making them, if the strings are the same.
-						//var origNode = CreateXmlNodeFromBytes(origRecAsBytes);
-						//var newNode = CreateXmlNodeFromBytes(newRecCopyAsBytes);
-						//if (XmlUtilities.AreXmlElementsEqual(origNode, newNode))
-						//    continue;
-						//if (srcGuid == null)
-						//{
-						//    WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origNode);
-						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), newNode);
-						//    sb.Append("Main src and trg custom properties are different in the resulting xml.");
-						//}
-						//else
-						//{
-						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origNode);
-						//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newNode);
-						//    sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
-						//}
-					if (XmlUtilities.AreXmlElementsEqual(SharedConstants.Utf8.GetString(origRecAsBytes), SharedConstants.Utf8.GetString(newRecCopyAsBytes)))
+					//var origNode = CreateXmlNodeFromBytes(origRecAsBytes);
+					//var newNode = CreateXmlNodeFromBytes(newRecCopyAsBytes);
+					//if (XmlUtilities.AreXmlElementsEqual(origNode, newNode))
+					//    continue;
+					//if (srcGuid == null)
+					//{
+					//    WriteProblemDataFile(Path.Combine(_workingDir, "CustomProperties-SRC.txt"), origNode);
+					//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "CustomProperties-TRG.txt"), newNode);
+					//    sb.Append("Main src and trg custom properties are different in the resulting xml.");
+					//}
+					//else
+					//{
+					//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-SRC.txt"), origNode);
+					//    WriteProblemDataFile(Path.Combine(_workingDir, srcGuid + "-TRG.txt"), newNode);
+					//    sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
+					//}
+					//if (XmlUtilities.AreXmlElementsEqual(SharedConstants.Utf8.GetString(origRecAsBytes), SharedConstants.Utf8.GetString(newRecCopyAsBytes)))
+					//	continue;
+					if (XmlUtilities.AreXmlElementsEqual(origRecAsBytes, newRecCopyAsBytes))
 						continue;
 					if (srcGuid == null)
 					{
@@ -625,32 +629,32 @@ namespace FwdataTestApp
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
 				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
-				{
-					if (foundOptionalFirstElement)
 					{
-						// Cache custom prop file for later write.
-						var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
-						// Add custom property info to MDC, since it may need to be sorted in the data files.
-						foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
+					if (foundOptionalFirstElement)
 						{
-							var className = propElement.Attribute(SharedConstants.Class).Value;
-							var propName = propElement.Attribute(SharedConstants.Name).Value;
-							var typeAttr = propElement.Attribute("type");
-							var adjustedTypeValue = MetadataCache.AdjustedPropertyType(typeAttr.Value);
-							if (adjustedTypeValue != typeAttr.Value)
-								typeAttr.Value = adjustedTypeValue;
-							var customProp = new FdoPropertyInfo(
-								propName,
-								typeAttr.Value,
-								true);
-							mdc.AddCustomPropInfo(
-								className,
-								customProp);
-						}
-						mdc.ResetCaches();
-						//optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
+							// Cache custom prop file for later write.
+							var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+							// Add custom property info to MDC, since it may need to be sorted in the data files.
+							foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
+							{
+								var className = propElement.Attribute(SharedConstants.Class).Value;
+								var propName = propElement.Attribute(SharedConstants.Name).Value;
+								var typeAttr = propElement.Attribute("type");
+								var adjustedTypeValue = MetadataCache.AdjustedPropertyType(typeAttr.Value);
+								if (adjustedTypeValue != typeAttr.Value)
+									typeAttr.Value = adjustedTypeValue;
+								var customProp = new FdoPropertyInfo(
+									propName,
+									typeAttr.Value,
+									true);
+								mdc.AddCustomPropInfo(
+									className,
+									customProp);
+							}
+							mdc.ResetCaches();
+							//optionalFirstElement = Utf8.GetBytes(cpElement.ToString());
 						foundOptionalFirstElement = false;
-					}
+						}
 					else
 					{
 						CacheDataRecord(unownedObjects, classData, guidToClassMapping, record);
@@ -690,7 +694,7 @@ namespace FwdataTestApp
 				return; // Don't even think of wiping out my ZPI folder.
 
 			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
-			var backupDataFilenames = backupDataFilesFullPathnames.Select(pathname => Path.GetFileName(pathname)).ToList();
+			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;
 
@@ -719,6 +723,60 @@ namespace FwdataTestApp
 			_cbCheckOwnObjsur.CheckState = CheckState.Unchecked;
 			_cbValidate.CheckState = CheckState.Unchecked;
 			_rebuildDataFile.CheckState = CheckState.Unchecked;
+		}
+
+		private void RunLoopClicked(object sender, EventArgs e)
+		{
+			var sb = new StringBuilder();
+			const string data = "<element />";
+
+			var bytesTimer = new Stopwatch();
+			var ourBytes = Encoding.UTF8.GetBytes(data);
+			var theirBytes = Encoding.UTF8.GetBytes(data);
+			bytesTimer.Start();
+			for (var i = 0; i < 100000; ++i)
+			{
+				XmlUtilities.AreXmlElementsEqual(ourBytes, theirBytes);
+			}
+			bytesTimer.Stop();
+			sb.AppendFormat("Time to check (as bytes): {0}ms; {1}ticks.", bytesTimer.ElapsedMilliseconds, bytesTimer.ElapsedTicks);
+			sb.AppendLine();
+
+			var stringTimer = new Stopwatch();
+			stringTimer.Start();
+			for (var i = 0; i < 100000; ++i)
+			{
+				XmlUtilities.AreXmlElementsEqual(data, data);
+			}
+			stringTimer.Stop();
+			sb.AppendFormat("Time to check (as string): {0}ms; {1}ticks.", stringTimer.ElapsedMilliseconds, stringTimer.ElapsedTicks);
+			sb.AppendLine();
+
+			var doc = new XmlDocument();
+			var ourNode = XmlUtilities.GetDocumentNodeFromRawXml(data, doc);
+			var theirNode = XmlUtilities.GetDocumentNodeFromRawXml(data, doc);
+			var xmlNodeTimer = new Stopwatch();
+			xmlNodeTimer.Start();
+			for (var i = 0; i < 100000; ++i)
+			{
+				XmlUtilities.AreXmlElementsEqual(ourNode, theirNode);
+			}
+			xmlNodeTimer.Stop();
+			sb.AppendFormat("Time to check (as XmlNode): {0}ms; {1}ticks.", xmlNodeTimer.ElapsedMilliseconds, xmlNodeTimer.ElapsedTicks);
+			sb.AppendLine();
+
+			var ourInput = new XmlInput(data);
+			var theirInput = new XmlInput(data);
+			var xmlInputTimer = new Stopwatch();
+			xmlInputTimer.Start();
+			for (var i = 0; i < 100000; ++i)
+			{
+				XmlUtilities.AreXmlElementsEqual(ourInput, theirInput);
+			}
+			xmlInputTimer.Stop();
+			sb.AppendFormat("Time to check (as XmlInput): {0}ms; {1}ticks.", xmlInputTimer.ElapsedMilliseconds, xmlInputTimer.ElapsedTicks);
+
+			MessageBox.Show(sb.ToString());
 		}
 	}
 }
