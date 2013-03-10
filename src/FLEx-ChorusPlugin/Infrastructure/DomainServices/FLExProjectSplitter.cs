@@ -6,7 +6,8 @@ using System.Linq;
 ﻿﻿using Chorus.Utilities;
 ﻿﻿using FLEx_ChorusPlugin.Contexts;
 ﻿﻿using Palaso.Code;
-using Palaso.Progress;
+﻿﻿using Palaso.Extensions;
+﻿﻿using Palaso.Progress;
 using Palaso.Xml;
 ﻿﻿using TriboroughBridge_ChorusPlugin;
 
@@ -30,6 +31,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class FLExProjectSplitter
 	{
+		internal static readonly byte[] AdditionalFieldsArray = SharedConstants.Utf8.GetBytes("<" + SharedConstants.AdditionalFieldsTag);
+
 		internal static void CheckForUserCancelRequested(IProgress progress)
 		{
 			if (progress.CancelRequested)
@@ -169,6 +172,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					//classData.Remove(SharedConstants.LexDb);
 					break;
 			}
+		}
+
+		internal static bool IsOptionalFirstElement(byte[] record)
+		{
+			return AdditionalFieldsArray.AreByteArraysEqual(record.SubArray(0, AdditionalFieldsArray.Length));
 		}
 	}
 }

@@ -467,14 +467,21 @@ namespace FwdataTestApp
 
 		private void Verify(Stopwatch verifyTimer, StringBuilder sb)
 		{
+			GC.Collect(2, GCCollectionMode.Forced);
 			verifyTimer.Start();
 			GetFreshMdc(); // Want it fresh.
 			var origData = new Dictionary<string, byte[]>(StringComparer.InvariantCultureIgnoreCase);
 			using (var fastSplitterOrig = new FastXmlElementSplitter(_srcFwdataPathname + ".orig"))
 			{
-				bool foundOrigOptionalFirstElement;
-				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOrigOptionalFirstElement))
+				var foundOrigOptionalFirstElement = false;
+				var testedforExistanceOfOrigOptionalFirstElement = false;
+				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag))
 				{
+					if (!testedforExistanceOfOrigOptionalFirstElement)
+					{
+						foundOrigOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(origRecord);
+						testedforExistanceOfOrigOptionalFirstElement = true;
+					}
 					if (foundOrigOptionalFirstElement)
 					{
 						origData.Add(SharedConstants.AdditionalFieldsTag, origRecord);
@@ -484,14 +491,22 @@ namespace FwdataTestApp
 					origData.Add(XmlUtils.GetAttributes(origRecord, new HashSet<string> { SharedConstants.GuidStr })[SharedConstants.GuidStr].ToLowerInvariant(), origRecord);
 				}
 			}
+			verifyTimer.Stop();
 			GC.Collect(2, GCCollectionMode.Forced);
+			verifyTimer.Start();
 			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
 			{
 				// NB: The main input file *does* have to deal with the optional first element.
-				var counter = 0;
-				bool foundNewOptionalFirstElement;
-				foreach (var newRecordAsBytes in fastSplitterNew.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundNewOptionalFirstElement))
+				//var counter = 0;
+				var foundNewOptionalFirstElement = false;
+				var testedforExistanceOfNewOptionalFirstElement = false;
+				foreach (var newRecordAsBytes in fastSplitterNew.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag))
 				{
+					if (!testedforExistanceOfNewOptionalFirstElement)
+					{
+						foundNewOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(newRecordAsBytes);
+						testedforExistanceOfNewOptionalFirstElement = true;
+					}
 					var newRecCopyAsBytes = newRecordAsBytes;
 					byte[] origRecAsBytes;
 					string srcGuid = null;
@@ -519,6 +534,17 @@ namespace FwdataTestApp
 						}
 					}
 
+					//if (counter == 1000)
+					//{
+					//    verifyTimer.Stop();
+					//    GC.Collect(2, GCCollectionMode.Forced);
+					//    verifyTimer.Start();
+					//    counter = 0;
+					//}
+					//else
+					//{
+					//    counter++;
+					//}
 					// Way too slow, since it has to always make the XmlNodes.
 					// Just feeding strings to XmlUtilities.AreXmlElementsEqual is faster,
 					// since it skips making them, if the strings are the same.
@@ -555,15 +581,6 @@ namespace FwdataTestApp
 						sb.AppendFormat("Main src and trg object with guid '{0}' are different in the resulting xml.", srcGuid);
 					}
 					sb.AppendLine();
-					if (counter == 1000)
-					{
-						GC.Collect(2, GCCollectionMode.Forced);
-						counter = 0;
-					}
-					else
-					{
-						counter++;
-					}
 				}
 			}
 			if (origData.Count > 0)
