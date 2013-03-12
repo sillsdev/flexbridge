@@ -26,10 +26,11 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
 		private const char SepChar = '|';
+		private const string HubQueryKey = "filePattern=";
 
 		internal string ChorusHubQuery
 		{
-			get { return "filePattern=" + PasteTogetherQueryParts(); }
+			get { return HubQueryKey + PasteTogetherQueryParts(); }
 		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
