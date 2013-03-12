@@ -90,22 +90,13 @@ namespace SIL.LiftBridge.Model
 			//			-p <$fwroot>\foo\foo.fwdata
 			var pOption = options["-p"];
 			ProjectName = Path.GetFileNameWithoutExtension(pOption); // Works for "-p <$fwroot>\foo" or "p <$fwroot>\foo\foo.fwdata" to get "foo".
-			var otherPath = Path.Combine(pOption, Utilities.OtherRepositories); // Will be <$fwroot>\foo\foo.fwdata\OtherRepositories for some cases, but those are changed, below.
+			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDB4oExtension))
+				? Path.GetDirectoryName(pOption) // "p <$fwroot>\foo\foo.fwdata" -> <$fwroot>\foo.
+				: pOption; // "-p <$fwroot>\foo" -> <$fwroot>\foo.
+			var otherPath = Path.Combine(projectPath, Utilities.OtherRepositories); // Will always be <$fwroot>\foo\OtherRepositories.
 
-			switch (controllerType)
-			{
-				case ControllerType.SendReceiveLift: // Fall through. Uses: LiftBridgeSyncronizeController
-				case ControllerType.ViewNotesLift: // Fall through.	Uses: LiftConflictStrategy of the common BridgeConflictController
-				case ControllerType.UndoExportLift: // Nothing to create. Uses: UndoExportController is probably created, but not used.
-					otherPath = Path.GetDirectoryName(pOption); // pOption Is <$fwroot>\foo\foo.fwdata, and we want the 'foo' containing direcotry path.
-					break;
-
-				case ControllerType.MoveLift: // Uses: MoveLiftRepositoryController
-				case ControllerType.ObtainLift: // Uses: one of two inner strategies of LiftObtainProjectStrategy of ObtainProjectController
-					if (!Directory.Exists(otherPath))
-						Directory.CreateDirectory(otherPath); // Default for 'otherPath' is fine here.
-					break;
-			}
+			if ((controllerType == ControllerType.ObtainLift || controllerType == ControllerType.MoveLift) && !Directory.Exists(otherPath))
+				Directory.CreateDirectory(otherPath);
 			PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT); // May, or may not, exist.
 
 			CurrentController = GetController(controllerType);
