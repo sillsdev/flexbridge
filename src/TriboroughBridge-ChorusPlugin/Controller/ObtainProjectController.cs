@@ -29,7 +29,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		internal string ChorusHubQuery
 		{
-			get { return "fileExtension=" + PasteTogetherQueryParts(); }
+			get { return "filePattern=" + PasteTogetherQueryParts(); }
 		}
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
