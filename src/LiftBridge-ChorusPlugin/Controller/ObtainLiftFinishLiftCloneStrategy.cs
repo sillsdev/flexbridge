@@ -28,9 +28,11 @@ namespace SIL.LiftBridge.Controller
 
 			if (cloneLocation != expectedPathToClonedRepository)
 			{
-				if (Utilities.FolderIsEmpty(expectedPathToClonedRepository))
+
+				if (!Directory.Exists(expectedPathToClonedRepository) || Utilities.FolderIsEmpty(expectedPathToClonedRepository))
 				{
-					Directory.Delete(expectedPathToClonedRepository);
+					if (Directory.Exists(expectedPathToClonedRepository))
+						Directory.Delete(expectedPathToClonedRepository);
 					DirectoryUtilities.MoveDirectorySafely(cloneLocation, expectedPathToClonedRepository);
 					retVal.ActualCloneFolder = expectedPathToClonedRepository;
 					retVal.FinalCloneResult = FinalCloneResult.Cloned;

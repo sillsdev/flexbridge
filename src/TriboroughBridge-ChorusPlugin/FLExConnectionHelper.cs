@@ -89,6 +89,22 @@ namespace TriboroughBridge_ChorusPlugin
 		private bool HostOpened { get; set; }
 
 		/// <summary>
+		/// The Obtain was cancelled or failed, so tell Felx to forget about it.
+		/// </summary>
+		public void TellFlexNoNewProjectObtained()
+		{
+			try
+			{
+				if (_pipe != null)
+					_pipe.InformFwProjectName(null);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
+			}
+		}
+
+		/// <summary>
 		/// Sends the entire FieldWorks project folder path (must include the
 		/// project folder and project name with "fwdata" extension) across the pipe
 		/// to FieldWorks.

@@ -15,6 +15,8 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	[Export(typeof(IBridgeController))]
 	internal class ObtainProjectController : IObtainNewProjectController
 	{
+		[Import]
+		private FLExConnectionHelper _connectionHelper;
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private string _baseDir;
@@ -113,8 +115,14 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		/// </summary>
 		public void EndWork()
 		{
-			if (_currentStrategy != null)
+			if (_currentStrategy == null)
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
+			else
+			{
 				_currentStrategy.TellFlexAboutIt();
+			}
 		}
 
 		/// <summary>
