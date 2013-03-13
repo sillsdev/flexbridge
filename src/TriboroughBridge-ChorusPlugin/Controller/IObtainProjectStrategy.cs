@@ -5,6 +5,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 	public interface IObtainProjectStrategy
 	{
 		bool ProjectFilter(string repositoryLocation);
+		string HubQuery { get; }
 		bool IsRepositoryEmpty(string repositoryLocation);
 		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
