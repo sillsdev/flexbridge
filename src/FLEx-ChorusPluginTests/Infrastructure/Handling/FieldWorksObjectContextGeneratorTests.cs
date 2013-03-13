@@ -767,6 +767,43 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		}
 
 		/// <summary>
+		/// Given something like a LexEntry containing a LexemeForm containing an MoStemAllomorph containing a MorphType
+		/// with an objsur, for the objsur, we want to see something like Entry LexemeForm MorphType
+		/// That is, the MoStemAllomorph level can just be left out.
+		/// More generally, all object levels can just be left out, that is, the ones that have guid attributes.
+		/// We don't use the standard names here because we may eventually implement a nicer case for all of LexEntry.
+		/// This is partly to see what happens when we don't have a context generator for the top level.
+		/// We have to have one real class (MoStemAllomorph) because that is how the generator knows
+		/// it has found a good level to return a guid for.
+		/// </summary>
+		[Test]
+		public void UnknownObjSurPathOmitsObjectLevels()
+		{
+			const string source = @"<Dummy
+					guid='01efa516-1749-4b60-b43d-00089269e7c5'>
+					<HomographNumber
+						val='0' />
+					<Outer>
+						<MoStemAllomorph
+							guid='8e982d88-0111-43b9-a25c-420bb5c84cf0'>
+							<Target>
+								<objsur
+									guid='d7f713e4-e8cf-11d3-9764-00c04f186933'
+									t='r' />
+							</Target>
+							<IsAbstract
+								val='False' />
+						</MoStemAllomorph>
+					</Outer>
+				</Dummy>";
+			var root = FieldWorksTestServices.GetNode(source);
+			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the objsur element.
+			var generator = MakeGenerator();
+			var descriptor = generator.GenerateContextDescriptor(input, "myfile"); // myfile is not relevant here.
+			Assert.That(descriptor.DataLabel, Is.EqualTo("Dummy Outer Target"));
+		}
+
+		/// <summary>
 		/// Given something like a LexEntry containing Senses containing a Gloss
 		/// which is one or more AUnis, we want to see something like Sense 1.Gloss en: {text}.
 		/// We don't use the standard names here because we may eventually implement a nicer case for all of LexEntry.

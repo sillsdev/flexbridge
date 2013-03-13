@@ -75,6 +75,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						return result + GetPathAppend(current, target);
 					}
 				}
+				if (current.ParentNode == null || current.ParentNode == current.OwnerDocument)
+				{
+					// some top-level node we don't have a specialized strategy for. This is better than nothing.
+					return current.Name + GetPathAppend(current, target);
+				}
 				current = current.ParentNode;
 			}
 			return label;

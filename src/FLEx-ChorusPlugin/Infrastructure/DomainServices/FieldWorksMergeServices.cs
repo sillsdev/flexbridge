@@ -233,7 +233,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							propStrategy.ChildOrderPolicy = new SignificantOrderPolicy();
 						}
 						break;
-
+					case DataType.OwningCollection:
+						if (classInfo.ClassName == "FsFeatStruc" && propertyInfo.PropertyName == "FeatureSpecs")
+							propStrategy.Premerger = new FeatureSpecsPreMerger();
+						break;
 					case DataType.TextPropBinary:
 						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
