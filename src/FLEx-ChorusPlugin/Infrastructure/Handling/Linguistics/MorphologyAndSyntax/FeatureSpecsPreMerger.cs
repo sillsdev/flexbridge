@@ -14,6 +14,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 	/// refer to the same feature, yet (being added independently) have different guids.
 	/// In this situation, the guid is not important, since nothing currently refers to FsFeatureSpecifications.
 	/// We could make a different partner finder, but then the guid differences would show up as conflicts.
+	/// We could make guids be ignored for FsFeatureSpecification, but this feels more fragile: the
+	/// effect we want is being produced by two distinct strategies, and the second one could affect other
+	/// properties (e.g., FsFeatDefn.Default) which may not be wanted.
 	/// It is simpler just to pre-merge the guids.
 	/// </summary>
 	public class FeatureSpecsPreMerger : IPremerger
