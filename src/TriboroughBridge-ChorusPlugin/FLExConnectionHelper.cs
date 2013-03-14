@@ -29,13 +29,13 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			HostOpened = true;
 
-			// 'obtain' will send in the $fwroot, which is where FW holds its projects, so it won't be a pathname to a file.
-			var fwProjectName = options.Keys.Count == 0 ? "" : GetFlexPathnameFromOption(options["-p"]); // will only be able to to S/R one project at a time
+			// The pipeID as set by FLEx to be used in setting the communication channels
+			var pipeId = options.Keys.Count == 0 ? "" : options["-pipeID"];
 
 			try
 			{
 				_host = new ServiceHost(typeof(FLExService),
-									   new[] { new Uri("net.pipe://localhost/FLExEndpoint" + fwProjectName) });
+									   new[] { new Uri("net.pipe://localhost/FLExEndpoint" + pipeId) });
 				//open host ready for business
 
 				var hostPipeBinding = new NetNamedPipeBinding
@@ -55,7 +55,7 @@ namespace TriboroughBridge_ChorusPlugin
 									  ReceiveTimeout = TimeSpan.MaxValue
 								  };
 			var pipeFactory = new ChannelFactory<IFLExBridgeService>(pipeBinding, new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint"
-																									  + fwProjectName + "/FLExPipe"));
+																									  + pipeId + "/FLExPipe"));
 			_pipe = pipeFactory.CreateChannel();
 			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
 			try
