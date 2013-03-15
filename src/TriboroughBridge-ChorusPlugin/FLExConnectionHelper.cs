@@ -30,7 +30,7 @@ namespace TriboroughBridge_ChorusPlugin
 			HostOpened = true;
 
 			// The pipeID as set by FLEx to be used in setting the communication channels
-			var pipeId = options.Keys.Count == 0 ? "" : options["-pipeID"];
+			var pipeId = options.Keys.Count == 0 || !options.ContainsKey("-pipeID") ? "" : options["-pipeID"];
 
 			try
 			{
