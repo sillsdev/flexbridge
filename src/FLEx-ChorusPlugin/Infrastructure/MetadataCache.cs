@@ -536,7 +536,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// But, now it will live on its own, and as the model changes, it will need to be changed by hand.
 		/// </summary>
 		/// <remarks>
-		/// It is now at: 7000044.
+		/// It is now at: 7000037.
 		/// </remarks>
 		private void AddMainClassInfo()
 		{
