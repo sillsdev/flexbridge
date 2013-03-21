@@ -42,6 +42,10 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private string PasteTogetherQueryParts()
 		{
+			if (_controllerActionType == ControllerType.ObtainLift)
+				return Strategies.First(strategy => strategy.SupportedControllerType == ControllerType.ObtainLift).HubQuery;
+
+			// ControllerType.Obtain gets them from any source.
 			var sb = new StringBuilder();
 			foreach (var strategy in Strategies)
 			{

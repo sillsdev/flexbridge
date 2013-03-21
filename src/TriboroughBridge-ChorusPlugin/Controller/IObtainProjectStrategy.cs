@@ -10,6 +10,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		BridgeModelType SupportedModelType { get; }
+		ControllerType SupportedControllerType { get; }
 	}
 
 	public class ActualCloneResult
