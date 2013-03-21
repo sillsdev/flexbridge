@@ -72,7 +72,7 @@ namespace SIL.LiftBridge.Controller
 
 		public ControllerType SupportedControllerType
 		{
-			get { return ControllerType.Obtain; }
+			get { return ControllerType.ObtainLift; }
 		}
 
 		#endregion

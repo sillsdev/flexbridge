@@ -67,7 +67,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ControllerType SupportedControllerType
 		{
-			get { return ControllerType.ObtainLift; }
+			get { return ControllerType.Obtain; }
 		}
 
 		#endregion
