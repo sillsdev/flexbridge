@@ -14,7 +14,6 @@ namespace SIL.LiftBridge.Controller
 	{
 		[ImportMany]
 		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
-
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
 
 		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ControllerType actionType)
@@ -69,6 +68,11 @@ namespace SIL.LiftBridge.Controller
 		public BridgeModelType SupportedModelType
 		{
 			get { return BridgeModelType.Lift; }
+		}
+
+		public ControllerType SupportedControllerType
+		{
+			get { return ControllerType.Obtain; }
 		}
 
 		#endregion

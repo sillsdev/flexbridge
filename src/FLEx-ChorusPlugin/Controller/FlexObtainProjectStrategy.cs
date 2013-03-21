@@ -65,6 +65,11 @@ namespace FLEx_ChorusPlugin.Controller
 			get { return BridgeModelType.Flex; }
 		}
 
+		public ControllerType SupportedControllerType
+		{
+			get { return ControllerType.ObtainLift; }
+		}
+
 		#endregion
 	}
 }
