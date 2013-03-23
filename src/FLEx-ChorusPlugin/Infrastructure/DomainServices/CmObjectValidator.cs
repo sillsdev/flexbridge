@@ -634,8 +634,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			result = null;
 
-			if (mdc.ModelVersion < 7000064)
-				return true; // The value type data types are only required at DM 7000064, and higher.
+			if (mdc.ModelVersion < 7000066)
+				return true; // The value type data types are only required at DM 7000066, and higher.
 
 			foreach (var basicPropertyName in basicPropertyNames)
 			{
