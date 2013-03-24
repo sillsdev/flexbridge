@@ -18,11 +18,13 @@ namespace FLEx_ChorusPlugin.Controller
 		private MainBridgeForm _mainBridgeForm;
 		private string _projectDir;
 		private string _projectName;
+		private Dictionary<string, string> _options;
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_options = options;
 			_projectDir = Path.GetDirectoryName(options["-p"]);
 			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 			_mainBridgeForm = mainForm;
@@ -57,7 +59,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void Syncronize()
 		{
-			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _projectDir, _projectName);
+			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_options, _mainBridgeForm, ChorusSystem, _projectDir, _projectName);
 		}
 
 		public bool ChangesReceived { get; private set; }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.UI.Sync;
@@ -17,7 +18,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// This will trigger the synchronizing of the fieldworks project with the provided system and project
 		/// </summary>
 		/// <returns>true if changes from others were made, false otherwise</returns>
-		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
+		public bool SynchronizeProject(Dictionary<string, string> options, Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 			var lockPathname = Path.Combine(projectPath, projectName + Utilities.FwXmlLockExtension);
@@ -38,7 +39,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
 					// so Flex Bridge can restore the fwdata file, AND, most importantly,
 					// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-					var syncAdjunt = new FlexBridgeSychronizerAdjunct(_origPathname);
+					var syncAdjunt = new FlexBridgeSychronizerAdjunct(_origPathname, options["-f"]);
 					syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 					// Chorus does it in ths order:

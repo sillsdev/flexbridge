@@ -17,10 +17,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private readonly string _fwdataPathname;
 		private readonly bool _writeVerbose;
 		private bool _needToNestMainFile = true;
+		private string _fixitPathname;
 
-		internal FlexBridgeSychronizerAdjunct(string fwdataPathname)
+		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname)
 			: this(fwdataPathname, true)
 		{
+			_fixitPathname = fixitPathname;
 		}
 
 		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, bool writeVerbose)
@@ -88,42 +90,47 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
-		/// Run FixUp.exe, a program to clean up any bad problems with the FLEx database.
+		/// Run FixFwData.exe, a program to clean up any bad problems with the FLEx database.
 		/// </summary>
 		/// <returns>true if problems were fixed</returns>
 		private bool RunFixFwData(IProgress progress)
 		{
-			const string fixerName = @"FixFwData.exe";
-			// This should work on user machines.
-			var codeDir = (string) Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"RootCodeDir");
-			var fixupPath = Path.Combine(codeDir, fixerName);
-			if (!File.Exists(fixupPath))
+			if (string.IsNullOrEmpty(_fixitPathname))
 			{
-				// This should work on developer machines.
-				codeDir = (string) Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"FwExeDir");
-				fixupPath = Path.Combine(codeDir, fixerName);
+				// This shoudl now only be called by the stand alone option, as the Felx driven side will feed the pathname as a '-f' option.
+				const string fixerName = @"FixFwData.exe";
+				// This should work on user machines.
+				var codeDir = (string)Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"RootCodeDir");
+				_fixitPathname = Path.Combine(codeDir, fixerName);
+				if (!File.Exists(_fixitPathname))
+				{
+					// This should work on developer machines.
+					codeDir = (string)Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0\").GetValue(@"FwExeDir");
+					_fixitPathname = Path.Combine(codeDir, fixerName);
+				}
+				if (!File.Exists(_fixitPathname))
+				{
+					// Most developers have it here...
+					codeDir = @"C:\fwrepo\fw\Output\Debug";
+					_fixitPathname = Path.Combine(codeDir, fixerName);
+				}
+				if (!File.Exists(_fixitPathname))
+				{
+					// Or maybe a release build?
+					codeDir = @"C:\fwrepo\fw\Output\Release";
+					_fixitPathname = Path.Combine(codeDir, fixerName);
+				}
 			}
-			if (!File.Exists(fixupPath))
-			{
-				// Most developers have it here...
-				codeDir = @"C:\fwrepo\fw\Output\Debug";
-				fixupPath = Path.Combine(codeDir, fixerName);
-			}
-			if (!File.Exists(fixupPath))
-			{
-				// Or maybe a release build?
-				codeDir = @"C:\fwrepo\fw\Output\Release";
-				fixupPath = Path.Combine(codeDir, fixerName);
-			}
-			if (!File.Exists(fixupPath))
+			if (!File.Exists(_fixitPathname))
 				return false; // give up.
+
 			var process = new Process();
 			var startInfo = process.StartInfo;
-			startInfo.FileName = fixupPath;
+			startInfo.FileName = _fixitPathname;
 			startInfo.Arguments = "\"" + _fwdataPathname + "\"";
 			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
 			startInfo.UseShellExecute = false;
-			startInfo.WorkingDirectory = Path.GetDirectoryName(fixupPath) ?? string.Empty;
+			startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
 			startInfo.RedirectStandardOutput = true;
 			process.Start();
 			var mergeOutput = process.StandardOutput.ReadToEnd();

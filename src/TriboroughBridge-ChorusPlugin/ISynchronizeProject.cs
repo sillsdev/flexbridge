@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using Chorus;
 
 namespace TriboroughBridge_ChorusPlugin
 {
 	public interface ISynchronizeProject
 	{
-		bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName);
+		bool SynchronizeProject(Dictionary<string, string> options, Form parent, ChorusSystem chorusSystem, string projectPath, string projectName);
 	}
 }
