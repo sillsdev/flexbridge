@@ -38,7 +38,6 @@ namespace FwdataTestApp
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NestFwdataFile));
-			this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this._btnBrowse = new System.Windows.Forms.Button();
 			this._fwdataPathname = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -56,11 +55,11 @@ namespace FwdataTestApp
 			this.revisionlabel = new System.Windows.Forms.Label();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this._btnRunLoop = new System.Windows.Forms.Button();
+			this._folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this._listView = new System.Windows.Forms.ListView();
+			this.FwdataPathname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this._btnToggle = new System.Windows.Forms.Button();
 			this.SuspendLayout();
-			//
-			// _openFileDialog
-			//
-			this._openFileDialog.Filter = "Fwdata Files|*.fwdata";
 			//
 			// _btnBrowse
 			//
@@ -70,15 +69,16 @@ namespace FwdataTestApp
 			this._btnBrowse.TabIndex = 11;
 			this._btnBrowse.Text = "Browse...";
 			this._btnBrowse.UseVisualStyleBackColor = true;
-			this._btnBrowse.Click += new System.EventHandler(this.BrowseForFile);
+			this._btnBrowse.Click += new System.EventHandler(this.BrowseForFolder);
 			//
 			// _fwdataPathname
 			//
 			this._fwdataPathname.Enabled = false;
-			this._fwdataPathname.Location = new System.Drawing.Point(70, 12);
+			this._fwdataPathname.Location = new System.Drawing.Point(88, 12);
 			this._fwdataPathname.Name = "_fwdataPathname";
-			this._fwdataPathname.Size = new System.Drawing.Size(403, 20);
+			this._fwdataPathname.Size = new System.Drawing.Size(385, 20);
 			this._fwdataPathname.TabIndex = 10;
+			this._fwdataPathname.Text = "C:\\ProgramData\\SIL\\FieldWorks 7\\TestProjects";
 			this._fwdataPathname.WordWrap = false;
 			//
 			// label1
@@ -86,14 +86,14 @@ namespace FwdataTestApp
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(7, 16);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(58, 13);
+			this.label1.Size = new System.Drawing.Size(75, 13);
 			this.label1.TabIndex = 9;
-			this.label1.Text = "fwdata file:";
+			this.label1.Text = "Project Folder:";
 			//
 			// _btnRunSelected
 			//
 			this._btnRunSelected.Enabled = false;
-			this._btnRunSelected.Location = new System.Drawing.Point(7, 203);
+			this._btnRunSelected.Location = new System.Drawing.Point(-1, 509);
 			this._btnRunSelected.Name = "_btnRunSelected";
 			this._btnRunSelected.Size = new System.Drawing.Size(107, 23);
 			this._btnRunSelected.TabIndex = 8;
@@ -104,7 +104,7 @@ namespace FwdataTestApp
 			// _cbNestFile
 			//
 			this._cbNestFile.AutoSize = true;
-			this._cbNestFile.Location = new System.Drawing.Point(7, 42);
+			this._cbNestFile.Location = new System.Drawing.Point(-1, 403);
 			this._cbNestFile.Name = "_cbNestFile";
 			this._cbNestFile.Size = new System.Drawing.Size(67, 17);
 			this._cbNestFile.TabIndex = 12;
@@ -116,7 +116,7 @@ namespace FwdataTestApp
 			this._cbRoundTripData.AutoSize = true;
 			this._cbRoundTripData.Checked = true;
 			this._cbRoundTripData.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._cbRoundTripData.Location = new System.Drawing.Point(7, 66);
+			this._cbRoundTripData.Location = new System.Drawing.Point(-1, 427);
 			this._cbRoundTripData.Name = "_cbRoundTripData";
 			this._cbRoundTripData.Size = new System.Drawing.Size(105, 17);
 			this._cbRoundTripData.TabIndex = 13;
@@ -128,7 +128,7 @@ namespace FwdataTestApp
 			this._cbVerify.AutoSize = true;
 			this._cbVerify.Checked = true;
 			this._cbVerify.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._cbVerify.Location = new System.Drawing.Point(116, 66);
+			this._cbVerify.Location = new System.Drawing.Point(108, 427);
 			this._cbVerify.Name = "_cbVerify";
 			this._cbVerify.Size = new System.Drawing.Size(102, 17);
 			this._cbVerify.TabIndex = 14;
@@ -138,7 +138,7 @@ namespace FwdataTestApp
 			// _cbCheckOwnObjsur
 			//
 			this._cbCheckOwnObjsur.AutoSize = true;
-			this._cbCheckOwnObjsur.Location = new System.Drawing.Point(80, 44);
+			this._cbCheckOwnObjsur.Location = new System.Drawing.Point(72, 405);
 			this._cbCheckOwnObjsur.Name = "_cbCheckOwnObjsur";
 			this._cbCheckOwnObjsur.Size = new System.Drawing.Size(85, 17);
 			this._cbCheckOwnObjsur.TabIndex = 15;
@@ -150,7 +150,7 @@ namespace FwdataTestApp
 			this._cbValidate.AutoSize = true;
 			this._cbValidate.Checked = true;
 			this._cbValidate.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._cbValidate.Location = new System.Drawing.Point(222, 66);
+			this._cbValidate.Location = new System.Drawing.Point(214, 427);
 			this._cbValidate.Name = "_cbValidate";
 			this._cbValidate.Size = new System.Drawing.Size(88, 17);
 			this._cbValidate.TabIndex = 16;
@@ -160,7 +160,7 @@ namespace FwdataTestApp
 			// _rebuildDataFile
 			//
 			this._rebuildDataFile.AutoSize = true;
-			this._rebuildDataFile.Location = new System.Drawing.Point(7, 167);
+			this._rebuildDataFile.Location = new System.Drawing.Point(-1, 487);
 			this._rebuildDataFile.Name = "_rebuildDataFile";
 			this._rebuildDataFile.Size = new System.Drawing.Size(200, 17);
 			this._rebuildDataFile.TabIndex = 17;
@@ -169,7 +169,7 @@ namespace FwdataTestApp
 			//
 			// _btnRestoreProjects
 			//
-			this._btnRestoreProjects.Location = new System.Drawing.Point(438, 73);
+			this._btnRestoreProjects.Location = new System.Drawing.Point(430, 434);
 			this._btnRestoreProjects.Name = "_btnRestoreProjects";
 			this._btnRestoreProjects.Size = new System.Drawing.Size(107, 23);
 			this._btnRestoreProjects.TabIndex = 18;
@@ -179,7 +179,7 @@ namespace FwdataTestApp
 			//
 			// _btnClearCheckboxes
 			//
-			this._btnClearCheckboxes.Location = new System.Drawing.Point(438, 42);
+			this._btnClearCheckboxes.Location = new System.Drawing.Point(430, 403);
 			this._btnClearCheckboxes.Name = "_btnClearCheckboxes";
 			this._btnClearCheckboxes.Size = new System.Drawing.Size(107, 23);
 			this._btnClearCheckboxes.TabIndex = 19;
@@ -192,7 +192,7 @@ namespace FwdataTestApp
 			this._cbCheckAmbiguousElements.AutoSize = true;
 			this._cbCheckAmbiguousElements.Checked = true;
 			this._cbCheckAmbiguousElements.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._cbCheckAmbiguousElements.Location = new System.Drawing.Point(25, 82);
+			this._cbCheckAmbiguousElements.Location = new System.Drawing.Point(17, 443);
 			this._cbCheckAmbiguousElements.Name = "_cbCheckAmbiguousElements";
 			this._cbCheckAmbiguousElements.Size = new System.Drawing.Size(171, 17);
 			this._cbCheckAmbiguousElements.TabIndex = 20;
@@ -201,7 +201,7 @@ namespace FwdataTestApp
 			//
 			// revisionBox
 			//
-			this.revisionBox.Location = new System.Drawing.Point(70, 122);
+			this.revisionBox.Location = new System.Drawing.Point(62, 464);
 			this.revisionBox.Name = "revisionBox";
 			this.revisionBox.Size = new System.Drawing.Size(100, 20);
 			this.revisionBox.TabIndex = 21;
@@ -210,7 +210,7 @@ namespace FwdataTestApp
 			// revisionlabel
 			//
 			this.revisionlabel.AutoSize = true;
-			this.revisionlabel.Location = new System.Drawing.Point(7, 125);
+			this.revisionlabel.Location = new System.Drawing.Point(-1, 467);
 			this.revisionlabel.Name = "revisionlabel";
 			this.revisionlabel.Size = new System.Drawing.Size(61, 13);
 			this.revisionlabel.TabIndex = 22;
@@ -225,8 +225,7 @@ namespace FwdataTestApp
 			//
 			// _btnRunLoop
 			//
-			this._btnRunLoop.Enabled = true;
-			this._btnRunLoop.Location = new System.Drawing.Point(148, 203);
+			this._btnRunLoop.Location = new System.Drawing.Point(140, 509);
 			this._btnRunLoop.Name = "_btnRunLoop";
 			this._btnRunLoop.Size = new System.Drawing.Size(75, 23);
 			this._btnRunLoop.TabIndex = 23;
@@ -234,10 +233,45 @@ namespace FwdataTestApp
 			this._btnRunLoop.UseVisualStyleBackColor = true;
 			this._btnRunLoop.Click += new System.EventHandler(this.RunLoopClicked);
 			//
+			// _folderBrowserDialog
+			//
+			this._folderBrowserDialog.Description = "Select FW Project Folder";
+			this._folderBrowserDialog.SelectedPath = "C:\\ProgramData\\SIL\\FieldWorks 7\\TestProjects";
+			this._folderBrowserDialog.ShowNewFolderButton = false;
+			//
+			// _listView
+			//
+			this._listView.CheckBoxes = true;
+			this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.FwdataPathname});
+			this._listView.Location = new System.Drawing.Point(10, 79);
+			this._listView.Name = "_listView";
+			this._listView.Size = new System.Drawing.Size(527, 318);
+			this._listView.TabIndex = 24;
+			this._listView.UseCompatibleStateImageBehavior = false;
+			this._listView.View = System.Windows.Forms.View.Details;
+			//
+			// FwdataPathname
+			//
+			this.FwdataPathname.Text = "FW Fathname";
+			this.FwdataPathname.Width = 475;
+			//
+			// _btnToggle
+			//
+			this._btnToggle.Location = new System.Drawing.Point(13, 49);
+			this._btnToggle.Name = "_btnToggle";
+			this._btnToggle.Size = new System.Drawing.Size(75, 23);
+			this._btnToggle.TabIndex = 25;
+			this._btnToggle.Text = "Toggle";
+			this._btnToggle.UseVisualStyleBackColor = true;
+			this._btnToggle.Click += new System.EventHandler(this.ToggleCheckBoxes);
+			//
 			// NestFwdataFile
 			//
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 238);
+			this.ClientSize = new System.Drawing.Size(554, 539);
+			this.Controls.Add(this._btnToggle);
+			this.Controls.Add(this._listView);
 			this.Controls.Add(this._btnRunLoop);
 			this.Controls.Add(this.revisionlabel);
 			this.Controls.Add(this.revisionBox);
@@ -264,7 +298,6 @@ namespace FwdataTestApp
 
 		#endregion
 
-		private OpenFileDialog _openFileDialog;
 		private Button _btnBrowse;
 		private TextBox _fwdataPathname;
 		private Label label1;
@@ -282,5 +315,9 @@ namespace FwdataTestApp
 		private Label revisionlabel;
 		private ToolTip toolTip;
 		private Button _btnRunLoop;
+		private FolderBrowserDialog _folderBrowserDialog;
+		private ListView _listView;
+		private ColumnHeader FwdataPathname;
+		private Button _btnToggle;
 	}
 }

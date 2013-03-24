@@ -30,27 +30,143 @@ namespace FwdataTestApp
 		public NestFwdataFile()
 		{
 			InitializeComponent();
+			PopulateList();
+
+			_btnRunSelected.Enabled = _listView.Items.Count > 0;
 		}
 
-		private void BrowseForFile(object sender, EventArgs e)
+		private void BrowseForFolder(object sender, EventArgs e)
 		{
 			_btnRunSelected.Enabled = false;
 			_fwdataPathname.Text = null;
 
-			//if (string.IsNullOrEmpty(_openFileDialog.InitialDirectory))
-			//	_openFileDialog.InitialDirectory = NormalUserProjectDir;
-			//_openFileDialog.RestoreDirectory = false;
-			if (_openFileDialog.ShowDialog(this) != DialogResult.OK)
+			if (_folderBrowserDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
-			var currentFwdataPathname = _openFileDialog.FileName;
-			var currentFilename = Path.GetFileName(currentFwdataPathname);
-			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
-				return; // Don't even think of wiping out my ZPI folder.
+			PopulateList();
 
-			_fwdataPathname.Text = currentFwdataPathname;
-			_btnRunSelected.Enabled = true;
+			_btnRunSelected.Enabled = _listView.Items.Count > 0;
+		}
+
+		private void PopulateList()
+		{
+			_listView.SuspendLayout();
+			_listView.Items.Clear();
+			var currentBaseFolder = _folderBrowserDialog.SelectedPath;
+			_fwdataPathname.Text = currentBaseFolder;
+			foreach (var projectDir in Directory.GetDirectories(currentBaseFolder).Where(dir => dir.ToLowerInvariant() != "zpi"))
+			{
+				var fwdataFileName = Path.GetFileNameWithoutExtension(Path.Combine(projectDir, Directory.GetFiles(projectDir, "*.fwdata").First()));
+				var listItem = new ListViewItem(fwdataFileName)
+					{
+						Tag = projectDir,
+						Checked = true
+					};
+				_listView.Items.Add(listItem);
+			}
+			_listView.ResumeLayout();
+		}
+
+		private void RunSelected(object sender, EventArgs e)
+		{
+			RestoreAllProjects();
+			Cursor = Cursors.WaitCursor;
+			foreach (ListViewItem selectedItem in _listView.CheckedItems)
+			{
+				GC.Collect(2, GCCollectionMode.Forced);
+				RunSelected(Path.Combine((string)selectedItem.Tag, selectedItem.Text + ".fwdata"));
+			}
+			Cursor = Cursors.Default;
+			Close();
+		}
+
+		private void RunSelected(string currentFwdataPathname)
+		{
+			_srcFwdataPathname = currentFwdataPathname;
+			_workingDir = Path.GetDirectoryName(_srcFwdataPathname);
+			var sb = new StringBuilder();
+			var sbValidation = new StringBuilder();
+			var nestTimer = new Stopwatch();
+			var breakupTimer = new Stopwatch();
+			var ambiguousTimer = new Stopwatch();
+			var restoreTimer = new Stopwatch();
+			var verifyTimer = new Stopwatch();
+			var checkOwnObjsurTimer = new Stopwatch();
+			var validateTimer = new Stopwatch();
+			var ownObjsurFound = false;
+			try
+			{
+				if (_rebuildDataFile.Checked)
+				{
+					if (!String.IsNullOrWhiteSpace(revisionBox.Text))
+					{
+						HgRunner.Run("hg update -r " + revisionBox.Text, _workingDir, 300, new NullProgress());
+					}
+					RestoreMainFileFromPieces(restoreTimer);
+				}
+				else
+				{
+					RestoreProjectIfNeeded(_srcFwdataPathname);
+					if (_cbRoundTripData.Checked)
+					{
+						RoundTripData(breakupTimer, restoreTimer, ambiguousTimer, sbValidation);
+					}
+					if (_cbValidate.Checked)
+					{
+						ValidateSplitData(validateTimer, sb, sbValidation);
+					}
+					if (_cbVerify.Checked)
+					{
+						Verify(verifyTimer, sb);
+					}
+					if (_cbNestFile.Checked)
+					{
+						ownObjsurFound = NestFile(nestTimer, checkOwnObjsurTimer, _cbCheckOwnObjsur.Checked);
+					}
+				}
+			}
+			catch (Exception err)
+			{
+				GC.Collect(2, GCCollectionMode.Forced);
+				File.WriteAllText(Path.Combine(_workingDir, "StackTrace.log"),
+								  err.GetType().Name + Environment.NewLine + err.StackTrace);
+				if (File.Exists(_srcFwdataPathname + ".orig"))
+				{
+					File.Delete(_srcFwdataPathname);
+					File.Move(_srcFwdataPathname + ".orig", _srcFwdataPathname); // Restore it.
+				}
+			}
+			finally
+			{
+				var compTxt = String.Format(
+					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}Time to check ambiguous data: {8}.{0}{0}{9}",
+					Environment.NewLine,
+					nestTimer.ElapsedMilliseconds > 0 ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
+					checkOwnObjsurTimer.ElapsedMilliseconds > 0
+						? checkOwnObjsurTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					_cbCheckOwnObjsur.Checked ? (ownObjsurFound ? "********* YES FIX BUG *********" : "No") : "Not run",
+					breakupTimer.ElapsedMilliseconds > 0
+						? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					restoreTimer.ElapsedMilliseconds > 0
+						? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					verifyTimer.ElapsedMilliseconds > 0
+						? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					validateTimer.ElapsedMilliseconds > 0
+						? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					ambiguousTimer.ElapsedMilliseconds > 0
+						? ambiguousTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
+						: "Not run",
+					sb);
+				File.WriteAllText(Path.Combine(_workingDir, "Comparison.log"), compTxt);
+				var validationErrors = sbValidation.ToString();
+				if (validationErrors.Length > 0)
+					File.WriteAllText(Path.Combine(_workingDir, "Validation.log"), validationErrors);
+			}
 		}
 
 		private MetadataCache GetFreshMdc()
@@ -111,84 +227,6 @@ namespace FwdataTestApp
 				classData.Add(className, recordData);
 			}
 			recordData.Add(guid, record);
-		}
-
-		private void RunSelected(object sender, EventArgs e)
-		{
-			_srcFwdataPathname = _openFileDialog.FileName;
-			_workingDir = Path.GetDirectoryName(_srcFwdataPathname);
-			Cursor = Cursors.WaitCursor;
-			var sb = new StringBuilder();
-			var sbValidation = new StringBuilder();
-			var nestTimer = new Stopwatch();
-			var breakupTimer = new Stopwatch();
-			var ambiguousTimer = new Stopwatch();
-			var restoreTimer = new Stopwatch();
-			var verifyTimer = new Stopwatch();
-			var checkOwnObjsurTimer = new Stopwatch();
-			var validateTimer = new Stopwatch();
-			var ownObjsurFound = false;
-			try
-			{
-				if (_rebuildDataFile.Checked)
-				{
-					if(!String.IsNullOrWhiteSpace(revisionBox.Text))
-					{
-						HgRunner.Run("hg update -r " + revisionBox.Text, _workingDir, 300, new NullProgress());
-					}
-					RestoreMainFileFromPieces(restoreTimer);
-				}
-				else
-				{
-					RestoreProjectIfNeeded(_srcFwdataPathname);
-					if (_cbRoundTripData.Checked)
-					{
-						RoundTripData(breakupTimer, restoreTimer, ambiguousTimer, sbValidation);
-					}
-					if (_cbValidate.Checked)
-					{
-						ValidateSplitData(validateTimer, sb, sbValidation);
-					}
-					if (_cbVerify.Checked)
-					{
-						Verify(verifyTimer, sb);
-					}
-					if (_cbNestFile.Checked)
-					{
-						ownObjsurFound = NestFile(nestTimer, checkOwnObjsurTimer, _cbCheckOwnObjsur.Checked);
-					}
-				}
-			}
-			catch (Exception err)
-			{
-				File.WriteAllText(Path.Combine(_workingDir, "StackTrace.log"), err.GetType().Name + Environment.NewLine +  err.StackTrace);
-				if (File.Exists(_srcFwdataPathname + ".orig"))
-				{
-					File.Delete(_srcFwdataPathname);
-					File.Move(_srcFwdataPathname + ".orig", _srcFwdataPathname); // Restore it.
-				}
-			}
-			finally
-			{
-				var compTxt = String.Format(
-					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}Time to check ambiguous data: {8}.{0}{0}{9}",
-					Environment.NewLine,
-					nestTimer.ElapsedMilliseconds > 0 ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					checkOwnObjsurTimer.ElapsedMilliseconds > 0 ? checkOwnObjsurTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					_cbCheckOwnObjsur.Checked ? (ownObjsurFound ? "********* YES FIX BUG *********" : "No") : "Not run",
-					breakupTimer.ElapsedMilliseconds > 0 ? breakupTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					restoreTimer.ElapsedMilliseconds > 0 ? restoreTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					verifyTimer.ElapsedMilliseconds > 0 ? verifyTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					validateTimer.ElapsedMilliseconds > 0 ? validateTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					ambiguousTimer.ElapsedMilliseconds > 0 ? ambiguousTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
-					sb);
-				File.WriteAllText(Path.Combine(_workingDir, "Comparison.log"), compTxt);
-				var validationErrors = sbValidation.ToString();
-				if (validationErrors.Length > 0)
-					File.WriteAllText(Path.Combine(_workingDir, "Validation.log"), validationErrors);
-				Cursor = Cursors.Default;
-				Close();
-			}
 		}
 
 		private void RestoreMainFileFromPieces(Stopwatch restoreTimer)
@@ -683,13 +721,20 @@ namespace FwdataTestApp
 
 		private void RestoreProjects(object sender, EventArgs e)
 		{
+			RestoreAllProjects();
+		}
+
+		private void RestoreAllProjects()
+		{
 			Cursor = Cursors.WaitCursor;
 			try
 			{
 				// Wipe out contents of all test folders in regular FW project location,
 				// EXCEPT the real ZPI project.
 				// If there is no copy of the fwdata file in the main project folder, then skip it.
-				var allProjectDirNamesExceptMine = Directory.GetDirectories(NormalUserProjectDir).Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
+				var allProjectDirNamesExceptMine =
+					Directory.GetDirectories(NormalUserProjectDir)
+							 .Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
 					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" + Utilities.FwXmlExtension).FirstOrDefault());
@@ -794,6 +839,14 @@ namespace FwdataTestApp
 			sb.AppendFormat("Time to check (as XmlInput): {0}ms; {1}ticks.", xmlInputTimer.ElapsedMilliseconds, xmlInputTimer.ElapsedTicks);
 
 			MessageBox.Show(sb.ToString());
+		}
+
+		private void ToggleCheckBoxes(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in _listView.Items)
+			{
+				item.Checked = !item.Checked;
+			}
 		}
 	}
 }
