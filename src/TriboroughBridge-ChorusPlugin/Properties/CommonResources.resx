@@ -167,6 +167,6 @@ You probably have a Conflict Report open. It will need to be closed before you c
 	<value>Check for Update Failure</value>
   </data>
   <data name="kFlexUpdateRequired" xml:space="preserve">
-	<value>You will need to update you version of Flex to obtain the requested project, since it is newer.</value>
+	<value>You will need to update your version of Flex to obtain the requested project, since it is newer.</value>
   </data>
 </root>

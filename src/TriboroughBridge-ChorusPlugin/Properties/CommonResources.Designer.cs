@@ -137,7 +137,7 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to You will need to update you version of Flex to obtain the requested project, since it is newer..
+		///   Looks up a localized string similar to You will need to update your version of Flex to obtain the requested project, since it is newer..
 		/// </summary>
 		public static string kFlexUpdateRequired {
 			get {

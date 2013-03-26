@@ -29,7 +29,7 @@ namespace SIL.LiftBridge.Controller
 			};
 
 			// Update to the head of the desired branch, if possible.
-			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, options["-liftmodel"]))
+			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, "LIFT" + options["-liftmodel"]))
 			{
 				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 				retVal.Message = CommonResources.kFlexUpdateRequired;

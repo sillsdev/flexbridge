@@ -202,6 +202,8 @@ namespace TriboroughBridge_ChorusPlugin
 			foreach (var head in repo.GetHeads())
 			{
 				var branch = head.Branch;
+				if (branch == String.Empty)
+					branch = "default";
 				if (retval.ContainsKey(branch))
 				{
 					// Use the higher rev number since it has more than one head of the same branch.
