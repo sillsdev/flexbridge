@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
+using NetSparkle;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -117,6 +118,11 @@ namespace TriboroughBridge_ChorusPlugin
 
 			if (vOption == check_for_updates)
 			{
+				using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/appcast.xml", CommonResources.chorus32x32))
+				{
+					var results = sparkle.CheckForUpdatesAtUserRequest();
+				}
+
 				// Do this before fretting about a controller. (Or, make a special controller for it?)
 				var tempFile = Path.Combine(Path.GetTempPath(), "CurrentVersion.txt");
 				if (File.Exists(tempFile))
@@ -128,7 +134,7 @@ namespace TriboroughBridge_ChorusPlugin
 				{
 					using (var client = new WebClient())
 					{
-						client.DownloadFile("http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
+						client.DownloadFile(@"http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
 					}
 
 					var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
