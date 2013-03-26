@@ -128,7 +128,7 @@ namespace TriboroughBridge_ChorusPlugin
 				{
 					using (var client = new WebClient())
 					{
-						client.DownloadFile("http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
+						client.DownloadFile("http://downloads.palaso.org/FlexBridge/Beta/CurrentVersion.txt", tempFile);
 					}
 
 					var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -152,7 +152,7 @@ namespace TriboroughBridge_ChorusPlugin
 							}
 							using (var client = new WebClient())
 							{
-								client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);
+								client.DownloadFile("http://downloads.palaso.org/FlexBridge/Beta/FLExBridgeInstaller.msi", installerPathname);
 							}
 							if (File.Exists(installerPathname))
 							{
