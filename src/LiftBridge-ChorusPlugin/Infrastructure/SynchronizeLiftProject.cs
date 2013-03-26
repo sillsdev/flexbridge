@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chorus;
@@ -21,7 +22,7 @@ namespace SIL.LiftBridge.Infrastructure
 		/// This will trigger the synchronizing of the LIFT project with the provided system and project
 		/// </summary>
 		/// <returns>true if changes from others were made, false otherwise</returns>
-		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
+		public bool SynchronizeProject(Dictionary<string, string> options, Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			var othersChanges = false;
 

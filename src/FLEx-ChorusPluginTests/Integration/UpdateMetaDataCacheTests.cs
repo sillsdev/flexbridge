@@ -249,6 +249,15 @@ namespace FLEx_ChorusPluginTests.Integration
 			DoMerge(fileHandler, 7000063);
 			classInfo = mdc.GetClassInfo("LangProject");
 			CheckNewPropertyAfterUpgrade(classInfo, "HomographWs", DataType.Unicode);
+
+			// 7000064: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000064);
+
+			// 7000065: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000065);
+
+			// 7000066: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000066);
 		}
 
 		[Test]

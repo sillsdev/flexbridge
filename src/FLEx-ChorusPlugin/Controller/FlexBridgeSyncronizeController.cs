@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
@@ -17,16 +18,26 @@ namespace FLEx_ChorusPlugin.Controller
 		private MainBridgeForm _mainBridgeForm;
 		private string _projectDir;
 		private string _projectName;
+		private Dictionary<string, string> _options;
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_options = options;
 			_projectDir = Path.GetDirectoryName(options["-p"]);
 			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 			_mainBridgeForm = mainForm;
 			_flexProjectSynchronizer = new SynchronizeFlexProject();
 			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
+			if (ChorusSystem.Repository.Identifier == null)
+			{
+				// Write an empty custom prop file to get something in the default branch at rev 0.
+				// The custom prop file will always exist and can be empty, so start it as empty (null).
+				// This basic rev 0 commit will then allow for a roll back if the soon to follow main commit fails on a validation problem.
+				FileWriterService.WriteCustomPropertyFile(Path.Combine(_projectDir, SharedConstants.CustomPropertiesFilename), null);
+				ChorusSystem.Repository.AddAndCheckinFile(Path.Combine(_projectDir, SharedConstants.CustomPropertiesFilename));
+			}
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}
 
@@ -48,7 +59,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void Syncronize()
 		{
-			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, _projectDir, _projectName);
+			ChangesReceived = _flexProjectSynchronizer.SynchronizeProject(_options, _mainBridgeForm, ChorusSystem, _projectDir, _projectName);
 		}
 
 		public bool ChangesReceived { get; private set; }

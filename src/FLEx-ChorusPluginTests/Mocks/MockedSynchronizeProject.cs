@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using Chorus;
 using TriboroughBridge_ChorusPlugin;
 
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		#region Implementation of ISynchronizeProject
 
-		public bool SynchronizeProject(Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
+		public bool SynchronizeProject(Dictionary<string, string> options, Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			HasForm = (parent != null);
 			HasChorusSystem = (chorusSystem != null);

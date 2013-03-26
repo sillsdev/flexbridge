@@ -23,6 +23,7 @@ namespace FLEx_ChorusPlugin.Controller
 		private LanguageProjectRepository _repository;
 		private ISynchronizeProject _projectSynchronizer;
 		private MainBridgeForm _mainBridgeForm;
+		private Dictionary<string, string> _options;
 
 		internal FlexBridgeController()
 		{}
@@ -56,6 +57,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_options = options;
 			_projectSynchronizer = new SynchronizeFlexProject();
 			_fwBridgeView = new FwBridgeView();
 			_projectView = _fwBridgeView.ProjectView;
@@ -97,7 +99,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		void FwBridgeViewSynchronizeProjectHandler(object sender, EventArgs e)
 		{
-			_projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, CurrentProject.DirectoryName, CurrentProject.Name);
+			_projectSynchronizer.SynchronizeProject(_options, _mainBridgeForm, ChorusSystem, CurrentProject.DirectoryName, CurrentProject.Name);
 		}
 
 		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)

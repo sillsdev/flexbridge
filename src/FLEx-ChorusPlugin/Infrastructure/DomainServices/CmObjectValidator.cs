@@ -18,6 +18,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				DataType.GenDate,
 				DataType.Guid,
 				DataType.Integer,
+				DataType.Float,
+				DataType.Numeric,
 				DataType.Time
 			};
 		/// <summary>
@@ -193,6 +195,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							{
 								// What is a GenDate?
 								//var dateTimeAttrVal = DateTime.Parse(element.Attribute(SharedConstants.Val).Value);
+								// string.Format("{0}{1:0000}{2:00}{3:00}{4}", dataProperty.IsAD ? "" : "-", dataProperty.Year,
+								//		dataProperty.Month, dataProperty.Day, (int)dataProperty.Precision)
 								// TODO: Check internals of the GenDate.
 								result = null;
 							}
@@ -634,8 +638,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			result = null;
 
-			if (mdc.ModelVersion < 7000064)
-				return true; // The value type data types are only required at DM 7000064, and higher.
+			if (mdc.ModelVersion < 7000066)
+				return true; // The value type data types are only required at DM 7000066, and higher.
 
 			foreach (var basicPropertyName in basicPropertyNames)
 			{

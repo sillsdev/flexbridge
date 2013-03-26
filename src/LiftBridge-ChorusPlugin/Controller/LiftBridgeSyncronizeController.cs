@@ -20,11 +20,13 @@ namespace SIL.LiftBridge.Controller
 		private ISynchronizeProject _projectSynchronizer;
 		private MainBridgeForm _mainBridgeForm;
 		private LiftProject CurrentProject { get; set; }
+		private Dictionary<string, string> _options;
 
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			_options = options;
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
@@ -71,7 +73,7 @@ namespace SIL.LiftBridge.Controller
 
 		public void Syncronize()
 		{
-			ChangesReceived = _projectSynchronizer.SynchronizeProject(_mainBridgeForm, ChorusSystem, CurrentProject.PathToProject, Path.GetFileNameWithoutExtension(CurrentProject.LiftPathname));
+			ChangesReceived = _projectSynchronizer.SynchronizeProject(_options, _mainBridgeForm, ChorusSystem, CurrentProject.PathToProject, Path.GetFileNameWithoutExtension(CurrentProject.LiftPathname));
 		}
 
 		public bool ChangesReceived { get; private set; }

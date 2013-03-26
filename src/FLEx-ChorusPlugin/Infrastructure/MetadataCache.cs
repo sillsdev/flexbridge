@@ -308,6 +308,9 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000065:
 						// 7000065: No actual model change.
 						break;
+					case 7000066:
+						// 7000066: No actual model change.
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -316,7 +319,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000065;
+		public const int MaximumModelVersion = 7000066;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
