@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
@@ -46,19 +47,62 @@ namespace FLEx_ChorusPlugin.Controller
 					FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 				};
 
-			// Check the actual FW model number in the '-fwmodel' of 'options' parm.
-			// Update to the head of the desired branch, if possible.
-			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, options["-fwmodel"]))
-			{
-				// Not on desired bracnh. So, bailout with a message to the user telling them they are 'toast'.
-				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-				retVal.Message = CommonResources.kFlexUpdateRequired;
-				Directory.Delete(cloneLocation, true);
-				return retVal;
-			}
-
 			_newProjectFilename = Path.GetFileName(cloneLocation) + Utilities.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
+
+			// Check the actual FW model number in the '-fwmodel' of 'options' parm.
+			// Update to the head of the desired branch, if possible.
+			var repo = new HgRepository(cloneLocation, new NullProgress());
+			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
+			var desiredBranchName = options["-fwmodel"];
+			var desiredModelVersion = int.Parse(desiredBranchName);
+			Revision desiredRevision;
+			if (allHeads.TryGetValue(desiredBranchName, out desiredRevision))
+			{
+				// Have the right branch. Use it.
+				repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			}
+			else
+			{
+				if (allHeads.Count == 1)
+				{
+					Revision onlyModelVersion = allHeads.Values.First();
+					string onlyBranchName = onlyModelVersion.Branch;
+					repo.Update(onlyModelVersion.Number.LocalRevisionNumber);
+					uint actualVersion;
+					if (onlyBranchName == string.Empty)
+					{
+						// Dig out the version number from the model version file, since it isn't carried by a branch name.
+						actualVersion = uint.Parse(FLExProjectUnifier.GetModelVersion(cloneLocation));
+					}
+					else
+					{
+						// Just use the branch name, since it really is in int.
+						actualVersion = uint.Parse(onlyModelVersion.Branch);
+					}
+
+					// Only has one branch. It may, or may not, be default.
+					// It can be higher, or lower, than the current Fw data model.
+					// If it is higher, then bail out with the warning to the user.
+					if (actualVersion > desiredModelVersion)
+					{
+						// Not on desired model version, so bailout with a message to the user telling them they are 'toast'.
+						retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+						retVal.Message = CommonResources.kFlexUpdateRequired;
+						Directory.Delete(cloneLocation, true);
+						return retVal;
+					}
+
+					// Otherwise, use it.
+					repo.Update(onlyModelVersion.Number.LocalRevisionNumber);
+				}
+				else
+				{
+					// Multiple heads. See if one is better to use than another.
+					// If all of them are higher, then it is a no go.
+					// Otherwise, pick the highest one that is below us.
+				}
+			}
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
 

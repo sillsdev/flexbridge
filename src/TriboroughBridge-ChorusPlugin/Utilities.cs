@@ -25,7 +25,6 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
 		private static string _testingProjectsPath;
-		private const string TipKey = "+_tip_+";
 
 		internal static void SetProjectsPathForTests(string testProjectsPath)
 		{
@@ -158,47 +157,60 @@ namespace TriboroughBridge_ChorusPlugin
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		public static bool UpdateToDesiredBranchHead(string repoPath, string desiredBranch)
-		{
-			bool desiredIsAtTip;
-			var desiredRevision = GetDesiredBranchHead(repoPath, desiredBranch, out desiredIsAtTip);
+		//public static bool UpdateToDesiredBranchHead(Func<string, bool> checkForCompatibility, string repoPath, string desiredBranch)
+		//{
+		//    bool desiredIsAtTip;
+		//    var desiredRevision = GetDesiredBranchHead(repoPath, desiredBranch, out desiredIsAtTip);
 
-			if (desiredRevision == null)
-				return false;
+		//    var repo = new HgRepository(repoPath, new NullProgress());
+		//    if (desiredRevision == null)
+		//    {
+		//        var tip = repo.GetTip();
+		//        if (tip != null)
+		//        {
+		//            try
+		//            {
+		//                repo.Update(tip.Number.LocalRevisionNumber);
+		//            }
+		//            catch (Exception)
+		//            {
+		//                return false;
+		//            }
+		//            return checkForCompatibility(desiredBranch);
+		//        }
+		//        return false;
+		//    }
 
-			if (desiredIsAtTip)
-				return true;
+		//    if (desiredIsAtTip)
+		//        return true;
 
-			try
-			{
-				var repo = new HgRepository(repoPath, new NullProgress());
-				repo.Update(desiredRevision.Number.LocalRevisionNumber);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			return true;
-		}
+		//    try
+		//    {
+		//        repo.Update(desiredRevision.Number.LocalRevisionNumber);
+		//    }
+		//    catch (Exception)
+		//    {
+		//        return false;
+		//    }
+		//    return true;
+		//}
 
-		public static Revision GetDesiredBranchHead(string repoPath, string desiredBranch, out bool desiredIsAtTip)
-		{
-			Revision desiredRevision;
-			var allBranchHeads = CollectAllNewestBranchHeads(repoPath);
-			allBranchHeads.TryGetValue(desiredBranch, out desiredRevision);
+		//public static Revision GetDesiredBranchHead(string repoPath, string desiredBranch, out bool desiredIsAtTip)
+		//{
+		//    Revision desiredRevision;
+		//    var allBranchHeads = CollectAllBranchHeads(repoPath);
+		//    allBranchHeads.TryGetValue(desiredBranch, out desiredRevision);
 
-			desiredIsAtTip = desiredRevision != null && desiredRevision.Number.Hash == allBranchHeads[TipKey].Number.Hash;
+		//    desiredIsAtTip = desiredRevision != null && desiredRevision.Number.Hash == allBranchHeads[TipKey].Number.Hash;
 
-			return desiredRevision; // Will be null, if it is not in the repo.
-		}
+		//    return desiredRevision; // Will be null, if it is not in the repo.
+		//}
 
-		private static Dictionary<string, Revision> CollectAllNewestBranchHeads(string repoPath)
+		public static Dictionary<string, Revision> CollectAllBranchHeads(string repoPath)
 		{
 			var retval = new Dictionary<string, Revision>();
 
 			var repo = new HgRepository(repoPath, new NullProgress());
-			var tip = repo.GetTip();
-			retval.Add(TipKey, tip);
 			foreach (var head in repo.GetHeads())
 			{
 				var branch = head.Branch;

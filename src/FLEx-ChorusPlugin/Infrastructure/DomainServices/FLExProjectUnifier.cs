@@ -121,13 +121,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			writer.WriteStartElement("languageproject");
 
 			// Write out version number from the ModelVersion file.
-			var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
-			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
-			var version = splitModelVersionData[1].Trim();
+			var version = GetModelVersion(pathRoot);
 			writer.WriteAttributeString("version", version);
 
 			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
+		}
+
+		public static string GetModelVersion(string pathRoot)
+		{
+			var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
+			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
+			var version = splitModelVersionData[1].Trim();
+			return version;
 		}
 
 		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)

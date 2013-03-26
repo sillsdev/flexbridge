@@ -45,13 +45,13 @@ namespace SIL.LiftBridge.Controller
 			// Check for Lift version compatibility.
 
 			// Update to the head of the desired branch, if possible.
-			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, "LIFT" + options["-liftmodel"]))
-			{
-				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-				retVal.Message = CommonResources.kFlexUpdateRequired;
-				Directory.Delete(cloneLocation, true);
-				return retVal;
-			}
+			//if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, "LIFT" + options["-liftmodel"]))
+			//{
+			//    retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+			//    retVal.Message = CommonResources.kFlexUpdateRequired;
+			//    Directory.Delete(cloneLocation, true);
+			//    return retVal;
+			//}
 
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
 			var liftProj = new LiftProject(cloneLocation);
