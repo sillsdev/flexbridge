@@ -1,4 +1,5 @@
-﻿using Chorus.UI.Clone;
+﻿using System.Collections.Generic;
+using Chorus.UI.Clone;
 
 namespace TriboroughBridge_ChorusPlugin.Controller
 {
@@ -7,7 +8,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		bool ProjectFilter(string repositoryLocation);
 		string HubQuery { get; }
 		bool IsRepositoryEmpty(string repositoryLocation);
-		ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
+		ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		BridgeModelType SupportedModelType { get; }
 		ControllerType SupportedControllerType { get; }
@@ -18,11 +19,13 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		public FinalCloneResult FinalCloneResult { get; set; }
 		public string ActualCloneFolder { get; set; }
 		public CloneResult CloneResult { get; set; }
+		public string Message { get; set; }
 	}
 
 	public enum FinalCloneResult
 	{
 		Cloned,
-		ExistingCloneTargetFolder
+		ExistingCloneTargetFolder,
+		FlexVersionIsTooOld
 	}
 }

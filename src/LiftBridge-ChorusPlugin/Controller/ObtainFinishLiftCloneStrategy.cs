@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace SIL.LiftBridge.Controller
 {
@@ -30,7 +32,7 @@ namespace SIL.LiftBridge.Controller
 
 		#region IObtainProjectStrategy impl
 
-		public ActualCloneResult FinishCloning(string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var retVal = new ActualCloneResult
 			{
@@ -39,6 +41,17 @@ namespace SIL.LiftBridge.Controller
 				ActualCloneFolder = null,
 				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 			};
+
+			// Check for Lift version compatibility.
+
+			// Update to the head of the desired branch, if possible.
+			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, options["-liftmodel"]))
+			{
+				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+				retVal.Message = CommonResources.kFlexUpdateRequired;
+				Directory.Delete(cloneLocation, true);
+				return retVal;
+			}
 
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
 			var liftProj = new LiftProject(cloneLocation);

@@ -137,6 +137,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to You will need to update you version of Flex to obtain the requested project, since it is newer..
+		/// </summary>
+		public static string kFlexUpdateRequired {
+			get {
+				return ResourceManager.GetString("kFlexUpdateRequired", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to To Send/Receive that project, open it and use Send/Receive &gt; Project (or Lexicon)..
 		/// </summary>
 		public static string kHowToSendReceiveExtantRepository {

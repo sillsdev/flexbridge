@@ -39,7 +39,7 @@ namespace SIL.LiftBridge.Controller
 			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
 		}
 
-		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			if (actionType != ControllerType.Obtain && actionType != ControllerType.ObtainLift)
 			{
@@ -57,7 +57,7 @@ namespace SIL.LiftBridge.Controller
 			//		'expectedPathToClonedRepository' is where it is supposed to be.
 			_currentFinishStrategy = GetCurrentFinishStrategy(actionType);
 
-			return _currentFinishStrategy.FinishCloning(cloneLocation, expectedPathToClonedRepository);
+			return _currentFinishStrategy.FinishCloning(options, cloneLocation, expectedPathToClonedRepository);
 		}
 
 		public void TellFlexAboutIt()

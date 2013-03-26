@@ -20,7 +20,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private FLExConnectionHelper _connectionHelper;
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
-
+		private Dictionary<string, string> _options;
 		private string _baseDir;
 		private ControllerType _controllerActionType;
 		private IObtainProjectStrategy _currentStrategy;
@@ -107,6 +107,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		{
 			CheckOptionCompatibility(options);
 
+			_options = options;
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(239, 313);
 			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
@@ -114,6 +115,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm.Text = CommonResources.ObtainProjectView_DialogTitle;
 			_mainBridgeForm.MaximizeBox = false;
 			_mainBridgeForm.MinimizeBox = false;
+			_options = options;
 		}
 
 		public ChorusSystem ChorusSystem
@@ -173,10 +175,15 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				return;
 			}
 
-			var actualCloneResult = _currentStrategy.FinishCloning(_controllerActionType, result.ActualLocation, expectedPathToClonedRepository);
-			if (actualCloneResult.FinalCloneResult == FinalCloneResult.ExistingCloneTargetFolder)
+			var actualCloneResult = _currentStrategy.FinishCloning(_options, _controllerActionType, result.ActualLocation, expectedPathToClonedRepository);
+			switch (actualCloneResult.FinalCloneResult)
 			{
-				MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				case FinalCloneResult.ExistingCloneTargetFolder:
+					MessageBox.Show(_mainBridgeForm, CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					break;
+				case FinalCloneResult.FlexVersionIsTooOld:
+					MessageBox.Show(_mainBridgeForm, actualCloneResult.Message, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					break;
 			}
 		}
 

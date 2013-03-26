@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -6,6 +7,7 @@ using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Controller
 {
@@ -31,10 +33,10 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{
-			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.ModelVersionFilename));
+			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.CustomPropertiesFilename));
 		}
 
-		public ActualCloneResult FinishCloning(ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var retVal = new ActualCloneResult
 				{
@@ -43,6 +45,17 @@ namespace FLEx_ChorusPlugin.Controller
 					ActualCloneFolder = null,
 					FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 				};
+
+			// Check the actual FW model number in the '-fwmodel' of 'options' parm.
+			// Update to the head of the desired branch, if possible.
+			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, options["-fwmodel"]))
+			{
+				// Not on desired bracnh. So, bailout with a message to the user telling them they are 'toast'.
+				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+				retVal.Message = CommonResources.kFlexUpdateRequired;
+				Directory.Delete(cloneLocation, true);
+				return retVal;
+			}
 
 			_newProjectFilename = Path.GetFileName(cloneLocation) + Utilities.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
