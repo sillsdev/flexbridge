@@ -160,55 +160,6 @@ namespace TriboroughBridge_ChorusPlugin
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		//public static bool UpdateToDesiredBranchHead(Func<string, bool> checkForCompatibility, string repoPath, string desiredBranch)
-		//{
-		//    bool desiredIsAtTip;
-		//    var desiredRevision = GetDesiredBranchHead(repoPath, desiredBranch, out desiredIsAtTip);
-
-		//    var repo = new HgRepository(repoPath, new NullProgress());
-		//    if (desiredRevision == null)
-		//    {
-		//        var tip = repo.GetTip();
-		//        if (tip != null)
-		//        {
-		//            try
-		//            {
-		//                repo.Update(tip.Number.LocalRevisionNumber);
-		//            }
-		//            catch (Exception)
-		//            {
-		//                return false;
-		//            }
-		//            return checkForCompatibility(desiredBranch);
-		//        }
-		//        return false;
-		//    }
-
-		//    if (desiredIsAtTip)
-		//        return true;
-
-		//    try
-		//    {
-		//        repo.Update(desiredRevision.Number.LocalRevisionNumber);
-		//    }
-		//    catch (Exception)
-		//    {
-		//        return false;
-		//    }
-		//    return true;
-		//}
-
-		//public static Revision GetDesiredBranchHead(string repoPath, string desiredBranch, out bool desiredIsAtTip)
-		//{
-		//    Revision desiredRevision;
-		//    var allBranchHeads = CollectAllBranchHeads(repoPath);
-		//    allBranchHeads.TryGetValue(desiredBranch, out desiredRevision);
-
-		//    desiredIsAtTip = desiredRevision != null && desiredRevision.Number.Hash == allBranchHeads[TipKey].Number.Hash;
-
-		//    return desiredRevision; // Will be null, if it is not in the repo.
-		//}
-
 		public static Dictionary<string, Revision> CollectAllBranchHeads(string repoPath)
 		{
 			var retval = new Dictionary<string, Revision>();
@@ -224,13 +175,17 @@ namespace TriboroughBridge_ChorusPlugin
 				if (retval.ContainsKey(branch))
 				{
 					// Use the higher rev number since it has more than one head of the same branch.
-					var extantRevNumber = Int32.Parse(retval[branch].Number.LocalRevisionNumber);
-					var currentRevNumber = Int32.Parse(head.Number.LocalRevisionNumber);
+					var extantRevNumber = int.Parse(retval[branch].Number.LocalRevisionNumber);
+					var currentRevNumber = int.Parse(head.Number.LocalRevisionNumber);
 					if (currentRevNumber > extantRevNumber)
 					{
 						// Use the newer head of a branch.
 						retval[branch] = head;
 					}
+					//else
+					//{
+					//    // 'else' case: The one we already have is newer, so keep it.
+					//}
 				}
 				else
 				{
