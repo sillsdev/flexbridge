@@ -29,9 +29,10 @@ namespace SIL.LiftBridge.Controller
 			};
 
 			// Update to the head of the desired branch, if possible.
-			if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, options["-liftmodel"]))
+			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + options["-liftmodel"], retVal);
+
+			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
 			{
-				retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 				retVal.Message = CommonResources.kFlexUpdateRequired;
 				Directory.Delete(cloneLocation, true);
 				return retVal;

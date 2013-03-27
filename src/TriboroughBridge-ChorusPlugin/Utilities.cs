@@ -25,7 +25,6 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
 		private static string _testingProjectsPath;
-		private const string TipKey = "+_tip_+";
 
 		internal static void SetProjectsPathForTests(string testProjectsPath)
 		{
@@ -131,87 +130,37 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 		}
 
-		public static void MakeLocalClone(string sourceFolder, string targetFolder)
-		{
-			var parentFolder = Directory.GetParent(targetFolder).FullName;
-			if (!Directory.Exists(parentFolder))
-				Directory.CreateDirectory(parentFolder);
-
-			// Do a clone of the lift repo into the new home.
-			var oldRepo = new HgRepository(sourceFolder, new NullProgress());
-			oldRepo.CloneLocalWithoutUpdate(targetFolder);
-
-			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
-
-			// Move the import failure notification file, if it exists.
-			var roadblock = Path.Combine(sourceFolder, FailureFilename);
-			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
-
-			var newRepo = new HgRepository(targetFolder, new NullProgress());
-			newRepo.Update();
-		}
-
 		public static bool FolderIsEmpty(string folder)
 		{
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		public static bool UpdateToDesiredBranchHead(string repoPath, string desiredBranch)
-		{
-			bool desiredIsAtTip;
-			var desiredRevision = GetDesiredBranchHead(repoPath, desiredBranch, out desiredIsAtTip);
-
-			if (desiredRevision == null)
-				return false;
-
-			if (desiredIsAtTip)
-				return true;
-
-			try
-			{
-				var repo = new HgRepository(repoPath, new NullProgress());
-				repo.Update(desiredRevision.Number.LocalRevisionNumber);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			return true;
-		}
-
-		public static Revision GetDesiredBranchHead(string repoPath, string desiredBranch, out bool desiredIsAtTip)
-		{
-			Revision desiredRevision;
-			var allBranchHeads = CollectAllNewestBranchHeads(repoPath);
-			allBranchHeads.TryGetValue(desiredBranch, out desiredRevision);
-
-			desiredIsAtTip = desiredRevision != null && desiredRevision.Number.Hash == allBranchHeads[TipKey].Number.Hash;
-
-			return desiredRevision; // Will be null, if it is not in the repo.
-		}
-
-		private static Dictionary<string, Revision> CollectAllNewestBranchHeads(string repoPath)
+		public static Dictionary<string, Revision> CollectAllBranchHeads(string repoPath)
 		{
 			var retval = new Dictionary<string, Revision>();
 
 			var repo = new HgRepository(repoPath, new NullProgress());
-			var tip = repo.GetTip();
-			retval.Add(TipKey, tip);
 			foreach (var head in repo.GetHeads())
 			{
 				var branch = head.Branch;
+				if (branch == String.Empty)
+				{
+					branch = "default";
+				}
 				if (retval.ContainsKey(branch))
 				{
 					// Use the higher rev number since it has more than one head of the same branch.
-					var extantRevNumber = Int32.Parse(retval[branch].Number.LocalRevisionNumber);
-					var currentRevNumber = Int32.Parse(head.Number.LocalRevisionNumber);
+					var extantRevNumber = int.Parse(retval[branch].Number.LocalRevisionNumber);
+					var currentRevNumber = int.Parse(head.Number.LocalRevisionNumber);
 					if (currentRevNumber > extantRevNumber)
 					{
 						// Use the newer head of a branch.
 						retval[branch] = head;
 					}
+					//else
+					//{
+					//    // 'else' case: The one we already have is newer, so keep it.
+					//}
 				}
 				else
 				{

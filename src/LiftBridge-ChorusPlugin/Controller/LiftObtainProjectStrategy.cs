@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -60,6 +62,20 @@ namespace SIL.LiftBridge.Controller
 			return _currentFinishStrategy.FinishCloning(options, cloneLocation, expectedPathToClonedRepository);
 		}
 
+		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation, string desiredBranchName, ActualCloneResult cloneResult)
+		{
+			var repo = new HgRepository(cloneLocation, new NullProgress());
+			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
+			Revision desiredRevision;
+			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
+			{
+				cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+				return;
+			}
+			repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
+		}
+
 		public void TellFlexAboutIt()
 		{
 			_currentFinishStrategy.TellFlexAboutIt();
@@ -76,5 +92,24 @@ namespace SIL.LiftBridge.Controller
 		}
 
 		#endregion
+
+		internal static void MakeLocalClone(string sourceFolder, string targetFolder)
+		{
+			var parentFolder = Directory.GetParent(targetFolder).FullName;
+			if (!Directory.Exists(parentFolder))
+				Directory.CreateDirectory(parentFolder);
+
+			// Do a clone of the lift repo into the new home.
+			var oldRepo = new HgRepository(sourceFolder, new NullProgress());
+			oldRepo.CloneLocalWithoutUpdate(targetFolder);
+
+			// Now copy the original hgrc file into the new location.
+			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
+
+			// Move the import failure notification file, if it exists.
+			var roadblock = Path.Combine(sourceFolder, Utilities.FailureFilename);
+			if (File.Exists(roadblock))
+				File.Copy(roadblock, Path.Combine(targetFolder, Utilities.FailureFilename), true);
+		}
 	}
 }

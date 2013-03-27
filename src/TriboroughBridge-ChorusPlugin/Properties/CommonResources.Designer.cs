@@ -60,6 +60,13 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 			}
 		}
 
+		public static System.Drawing.Icon chorus32x32 {
+			get {
+				object obj = ResourceManager.GetObject("chorus32x32", resourceCulture);
+				return ((System.Drawing.Icon)(obj));
+			}
+		}
+
 		/// <summary>
 		///   Looks up a localized string similar to There is already a copy of FLExBridge running.
 		///You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
@@ -137,7 +144,7 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to You will need to update you version of Flex to obtain the requested project, since it is newer..
+		///   Looks up a localized string similar to You will need to update your version of Flex to obtain the requested project, since it is newer..
 		/// </summary>
 		public static string kFlexUpdateRequired {
 			get {
