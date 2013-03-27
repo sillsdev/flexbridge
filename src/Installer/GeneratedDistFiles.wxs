@@ -2,9 +2,6 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
 		<DirectoryRef Id="INSTALLDIR">
-			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
-				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\DistFiles\about.htm" />
-			</Component>
 			<Component Id="license.rtf" Guid="61288324-9979-40DF-9F86-DE66B2FA1B41">
 				<File Id="license.rtf" Name="license.rtf" Source="..\..\DistFiles\license.rtf" />
 			</Component>
@@ -13,7 +10,6 @@
 			</Component>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
-			<ComponentRef Id="about.htm" />
 			<ComponentRef Id="license.rtf" />
 			<ComponentRef Id="LogoForAbout.png" />
 		</ComponentGroup>

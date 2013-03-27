@@ -141,6 +141,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\Release\NetSparkle.Net40.dll"/>
 			</Component>
 
+			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
+				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\output\Installer\about.htm" />
+			</Component>
+
 			<Merge Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\ChorusMergeModule.msm" DiskId="1"/>
 		  </Directory>
 		</Directory>
@@ -186,6 +190,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
+	  <ComponentRef Id="about.htm" />
 
 	  <MergeRef Id="ChorusMergeModule"/>
 	  <MergeRef Id="CRT90"/>
