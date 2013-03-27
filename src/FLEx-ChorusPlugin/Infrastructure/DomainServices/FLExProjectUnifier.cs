@@ -130,7 +130,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 
 		public static string GetModelVersion(string pathRoot)
 		{
-			var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
+			var modelVersionPathname = Path.Combine(pathRoot, SharedConstants.ModelVersionFilename);
+			if (!File.Exists(modelVersionPathname))
+				return null;
+			var modelVersionData = File.ReadAllText(modelVersionPathname);
 			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
 			var version = splitModelVersionData[1].Trim();
 			return version;

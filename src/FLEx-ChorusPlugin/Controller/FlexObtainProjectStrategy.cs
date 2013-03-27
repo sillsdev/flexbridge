@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -55,54 +56,76 @@ namespace FLEx_ChorusPlugin.Controller
 			var repo = new HgRepository(cloneLocation, new NullProgress());
 			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
 			var desiredBranchName = options["-fwmodel"];
-			var desiredModelVersion = int.Parse(desiredBranchName);
+			var desiredModelVersion = uint.Parse(desiredBranchName);
 			Revision desiredRevision;
-			if (allHeads.TryGetValue(desiredBranchName, out desiredRevision))
+			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
 			{
-				// Have the right branch. Use it.
-				repo.Update(desiredRevision.Number.LocalRevisionNumber);
-			}
-			else
-			{
-				if (allHeads.Count == 1)
+				// Remove any that are too high.
+				var gonerKeys = new HashSet<string>();
+				foreach (var headKvp in allHeads)
 				{
-					Revision onlyModelVersion = allHeads.Values.First();
-					string onlyBranchName = onlyModelVersion.Branch;
-					repo.Update(onlyModelVersion.Number.LocalRevisionNumber);
-					uint actualVersion;
-					if (onlyBranchName == string.Empty)
+					uint currentVersion;
+					if (headKvp.Key == "default")
 					{
-						// Dig out the version number from the model version file, since it isn't carried by a branch name.
-						actualVersion = uint.Parse(FLExProjectUnifier.GetModelVersion(cloneLocation));
+						repo.Update(headKvp.Value.Number.LocalRevisionNumber);
+						var mvn = FLExProjectUnifier.GetModelVersion(cloneLocation);
+						currentVersion = (mvn == null)
+							? uint.MaxValue // Get rid of the initial default commit by making it max for uint. It had no model version file.
+							: uint.Parse(mvn);
 					}
 					else
 					{
-						// Just use the branch name, since it really is in int.
-						actualVersion = uint.Parse(onlyModelVersion.Branch);
+						currentVersion = uint.Parse(headKvp.Value.Branch);
 					}
-
-					// Only has one branch. It may, or may not, be default.
-					// It can be higher, or lower, than the current Fw data model.
-					// If it is higher, then bail out with the warning to the user.
-					if (actualVersion > desiredModelVersion)
+					if (currentVersion > desiredModelVersion)
 					{
-						// Not on desired model version, so bailout with a message to the user telling them they are 'toast'.
-						retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-						retVal.Message = CommonResources.kFlexUpdateRequired;
-						Directory.Delete(cloneLocation, true);
-						return retVal;
+						gonerKeys.Add(headKvp.Key == "default" ? "default" : headKvp.Key);
 					}
-
-					// Otherwise, use it.
-					repo.Update(onlyModelVersion.Number.LocalRevisionNumber);
 				}
-				else
+				foreach (var goner in gonerKeys)
 				{
-					// Multiple heads. See if one is better to use than another.
-					// If all of them are higher, then it is a no go.
-					// Otherwise, pick the highest one that is below us.
+					allHeads.Remove(goner);
 				}
+
+				// Replace 'default' with its real model number.
+				if (allHeads.ContainsKey("default"))
+				{
+					repo.Update(allHeads["default"].Number.LocalRevisionNumber);
+					var modelVersion = FLExProjectUnifier.GetModelVersion(cloneLocation);
+					if (allHeads.ContainsKey(modelVersion))
+					{
+						// Pick the highest one of the two.
+						var defaultModelVersion = uint.Parse(modelVersion);
+						var otherModelVersion = uint.Parse(allHeads[modelVersion].Branch);
+						allHeads[modelVersion] = defaultModelVersion > otherModelVersion ? allHeads["default"] : allHeads[modelVersion];
+					}
+					else
+					{
+						allHeads.Add(modelVersion, allHeads["default"]);
+					}
+					allHeads.Remove("default");
+				}
+
+				// 'default' is no longer present in 'allHeads'.
+				// If all of them are higher, then it is a no go.
+				if (allHeads.Count == 0)
+				{
+					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
+					retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+					retVal.Message = CommonResources.kFlexUpdateRequired;
+					Directory.Delete(cloneLocation, true);
+					return retVal;
+				}
+
+				// Now. get to the real work.
+				var sortedRevisions = new SortedList<uint, Revision>();
+				foreach (var kvp in allHeads)
+				{
+					sortedRevisions.Add(uint.Parse(kvp.Key), kvp.Value);
+				}
+				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
+			repo.Update(desiredRevision.Number.LocalRevisionNumber);
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
 
