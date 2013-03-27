@@ -120,69 +120,7 @@ namespace TriboroughBridge_ChorusPlugin
 			{
 				using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/appcast.xml", CommonResources.chorus32x32))
 				{
-					var results = sparkle.CheckForUpdatesAtUserRequest();
-				}
-
-				// Do this before fretting about a controller. (Or, make a special controller for it?)
-				var tempFile = Path.Combine(Path.GetTempPath(), "CurrentVersion.txt");
-				if (File.Exists(tempFile))
-				{
-					File.Delete(tempFile);
-				}
-
-				try
-				{
-					using (var client = new WebClient())
-					{
-						client.DownloadFile(@"http://downloads.palaso.org/FlexBridge/CurrentVersion.txt", tempFile);
-					}
-
-					var myVersion = Assembly.GetExecutingAssembly().GetName().Version;
-					var currentVersion = new Version(File.ReadAllText(tempFile));
-					if (currentVersion > myVersion)
-					{
-						var result = MessageBox.Show(MainForm,
-													 string.Format(CommonResources.kNewerVersionAvailablePattern, myVersion,
-																   currentVersion),
-													 CommonResources.KFlexBridgeVersion,
-													 MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-						if (result == DialogResult.Yes)
-						{
-							var installerPathname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-																 "Downloads",
-																 "FLExBridgeInstaller.msi");
-							if (File.Exists(installerPathname))
-							{
-								// We don't want the downloader to append some dumb number, and then us end up trying to intall the older one.
-								File.Delete(installerPathname);
-							}
-							using (var client = new WebClient())
-							{
-								client.DownloadFile("http://downloads.palaso.org/FlexBridge/FLExBridgeInstaller.msi", installerPathname);
-							}
-							if (File.Exists(installerPathname))
-							{
-								Process.Start(installerPathname);
-							}
-						}
-					}
-					else
-					{
-						MessageBox.Show(MainForm, CommonResources.kYourVersionIsCurrent, CommonResources.KFlexBridgeVersion,
-										MessageBoxButtons.OK, MessageBoxIcon.Information);
-					}
-				}
-				catch (WebException)
-				{
-					MessageBox.Show(MainForm, CommonResources.kCannotCheckForUpdateNow, CommonResources.kCheckForUpdateFailure,
-									MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
-				finally
-				{
-					if (File.Exists(tempFile))
-					{
-						File.Delete(tempFile);
-					}
+					sparkle.CheckForUpdatesAtUserRequest();
 				}
 
 				return false;
