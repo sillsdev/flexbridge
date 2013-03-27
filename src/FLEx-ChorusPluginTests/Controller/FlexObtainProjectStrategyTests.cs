@@ -49,6 +49,7 @@ namespace FLEx_ChorusPluginTests.Controller
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Utilities.SetProjectsPathForTests(fakeProjectDir);
+				Directory.CreateDirectory(fakeProjectDir);
 				try
 				{
 					using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))

@@ -29,13 +29,15 @@ namespace SIL.LiftBridge.Controller
 			};
 
 			// Update to the head of the desired branch, if possible.
-			//if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, "LIFT" + options["-liftmodel"]))
-			//{
-			//    retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-			//    retVal.Message = CommonResources.kFlexUpdateRequired;
-			//    Directory.Delete(cloneLocation, true);
-			//    return retVal;
-			//}
+			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + options["-liftmodel"],
+																			 ref retVal);
+
+			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
+			{
+				retVal.Message = CommonResources.kFlexUpdateRequired;
+				Directory.Delete(cloneLocation, true);
+				return retVal;
+			}
 
 			if (cloneLocation != expectedPathToClonedRepository)
 			{

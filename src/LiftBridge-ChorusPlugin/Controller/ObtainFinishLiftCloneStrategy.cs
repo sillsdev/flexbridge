@@ -43,16 +43,6 @@ namespace SIL.LiftBridge.Controller
 			};
 
 			// Check for Lift version compatibility.
-
-			// Update to the head of the desired branch, if possible.
-			//if (!Utilities.UpdateToDesiredBranchHead(cloneLocation, "LIFT" + options["-liftmodel"]))
-			//{
-			//    retVal.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-			//    retVal.Message = CommonResources.kFlexUpdateRequired;
-			//    Directory.Delete(cloneLocation, true);
-			//    return retVal;
-			//}
-
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
 			var liftProj = new LiftProject(cloneLocation);
 			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
@@ -66,6 +56,17 @@ namespace SIL.LiftBridge.Controller
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
 			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
 			Utilities.MakeLocalClone(cloneLocation, _liftFolder);
+
+			// Update to the head of the desired branch, if possible.
+			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + options["-liftmodel"],
+																			 ref retVal);
+
+			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
+			{
+				retVal.Message = CommonResources.kFlexUpdateRequired;
+				Directory.Delete(cloneLocation, true);
+				return retVal;
+			}
 
 			// Delete all old repo folders and files from 'cloneLocation'.
 			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(Utilities.OtherRepositories)))

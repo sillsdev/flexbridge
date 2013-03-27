@@ -147,13 +147,7 @@ namespace TriboroughBridge_ChorusPlugin
 			var roadblock = Path.Combine(sourceFolder, FailureFilename);
 			if (File.Exists(roadblock))
 				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
-
-			var newRepo = new HgRepository(targetFolder, new NullProgress());
-			newRepo.BranchingHelper.Branch(new NullProgress(), LIFTBranchName);
-			newRepo.Update();
 		}
-
-		public static string LIFTBranchName = @"LIFT0.13";
 
 		public static bool FolderIsEmpty(string folder)
 		{

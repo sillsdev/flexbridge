@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Chorus.VcsDrivers.Mercurial;
+using Palaso.Progress;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
@@ -58,6 +60,20 @@ namespace SIL.LiftBridge.Controller
 			_currentFinishStrategy = GetCurrentFinishStrategy(actionType);
 
 			return _currentFinishStrategy.FinishCloning(options, cloneLocation, expectedPathToClonedRepository);
+		}
+
+		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation, string desiredBranchName, ref ActualCloneResult cloneResult)
+		{
+			var repo = new HgRepository(cloneLocation, new NullProgress());
+			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
+			Revision desiredRevision;
+			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
+			{
+				cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+				return;
+			}
+			repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 		}
 
 		public void TellFlexAboutIt()
