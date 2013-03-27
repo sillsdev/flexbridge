@@ -8,7 +8,7 @@
 		 <item>
 			<title>Version DEV_VERSION_NUMBER</title>
 						<sparkle:releaseNotesLink>
-							http://downloads.palaso.org/FlexBridge/ReleaseNotes.md
+							http://downloads.palaso.org/FlexBridge/Beta/ReleaseNotes.md
 						</sparkle:releaseNotesLink>
 			<enclosure url="http://downloads.palaso.org/FlexBridge/Beta/FLExBridgeInstaller.msi" sparkle:version="DEV_VERSION_NUMBER" type="application/octet-stream" />
 		 </item>
