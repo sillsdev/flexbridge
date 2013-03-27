@@ -55,11 +55,10 @@ namespace SIL.LiftBridge.Controller
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
 			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
-			Utilities.MakeLocalClone(cloneLocation, _liftFolder);
+			LiftObtainProjectStrategy.MakeLocalClone(cloneLocation, _liftFolder);
 
 			// Update to the head of the desired branch, if possible.
-			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + options["-liftmodel"],
-																			 ref retVal);
+			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + options["-liftmodel"], retVal);
 
 			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
 			{

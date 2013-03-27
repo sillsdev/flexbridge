@@ -130,25 +130,6 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 		}
 
-		public static void MakeLocalClone(string sourceFolder, string targetFolder)
-		{
-			var parentFolder = Directory.GetParent(targetFolder).FullName;
-			if (!Directory.Exists(parentFolder))
-				Directory.CreateDirectory(parentFolder);
-
-			// Do a clone of the lift repo into the new home.
-			var oldRepo = new HgRepository(sourceFolder, new NullProgress());
-			oldRepo.CloneLocalWithoutUpdate(targetFolder);
-
-			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
-
-			// Move the import failure notification file, if it exists.
-			var roadblock = Path.Combine(sourceFolder, FailureFilename);
-			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, FailureFilename), true);
-		}
-
 		public static bool FolderIsEmpty(string folder)
 		{
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
