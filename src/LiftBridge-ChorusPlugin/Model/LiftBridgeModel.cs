@@ -100,6 +100,10 @@ namespace SIL.LiftBridge.Model
 			PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT); // May, or may not, exist.
 
 			CurrentController = GetController(controllerType);
+			if (controllerType == ControllerType.UndoExportLift)
+			{
+				options["-p"] = PathToRepository;
+			}
 			CurrentController.InitializeController(mainForm, options, controllerType);
 		}
 
