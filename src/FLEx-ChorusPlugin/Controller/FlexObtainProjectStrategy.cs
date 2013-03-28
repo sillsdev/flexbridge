@@ -103,6 +103,7 @@ namespace FLEx_ChorusPlugin.Controller
 				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
 			repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 		}
 
 		#region IObtainProjectStrategy impl
