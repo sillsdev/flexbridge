@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.StandAlone.Model;
 using NUnit.Framework;
 using Palaso.IO;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPluginTests.Model
+namespace FLEx_ChorusPluginTests.StandAlone.Model
 {
 	/// <summary>
 	/// Test the LanguageProject class.

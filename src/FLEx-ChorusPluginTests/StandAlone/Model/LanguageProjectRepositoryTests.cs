@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPluginTests.Mocks;
+using FLEx_ChorusPlugin.StandAlone.Model;
+using FLEx_ChorusPluginTests.StandAlone.Mocks;
 using NUnit.Framework;
 
-namespace FLEx_ChorusPluginTests.Model
+namespace FLEx_ChorusPluginTests.StandAlone.Model
 {
 	/// <summary>
 	/// Test the LanguageProjectRepository class.

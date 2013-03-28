@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FLEx_ChorusPlugin.Controller;
+using FLEx_ChorusPlugin.StandAlone.Controller;
 using FLEx_ChorusPluginTests.Mocks;
+using FLEx_ChorusPluginTests.StandAlone.Mocks;
 using NUnit.Framework;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPluginTests.Controller
+namespace FLEx_ChorusPluginTests.StandAlone.Controller
 {
 	/// <summary>
 	/// Test the controller with mocked implementations of the various view interfaces.

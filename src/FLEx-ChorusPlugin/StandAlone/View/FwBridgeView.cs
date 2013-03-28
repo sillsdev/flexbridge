@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.StandAlone.Model;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.StandAlone.View
 {
 	internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
 	internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);

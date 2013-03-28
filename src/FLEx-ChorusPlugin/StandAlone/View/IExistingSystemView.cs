@@ -1,8 +1,8 @@
 using Chorus;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.StandAlone.Model;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.StandAlone.View
 {
 	internal interface IExistingSystemView : IActiveProjectView
 	{

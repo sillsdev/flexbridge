@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FLEx_ChorusPlugin.Infrastructure;
 
-namespace FLEx_ChorusPluginTests.Mocks
+namespace FLEx_ChorusPluginTests.StandAlone.Mocks
 {
 	internal class MockedProjectPathLocator : IProjectPathLocator
 	{

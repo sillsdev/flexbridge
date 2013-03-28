@@ -181,7 +181,7 @@
 	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
 	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
-	<Compile Include="Controller\FlexBridgeController.cs" />
+	<Compile Include="StandAlone\Controller\FlexBridgeController.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
 	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningService.cs" />
@@ -209,7 +209,7 @@
 	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WfiWordformContextGenerator.cs" />
 	<Compile Include="Infrastructure\IProjectPathLocator.cs" />
-	<Compile Include="Infrastructure\LanguageProjectRepository.cs" />
+	<Compile Include="StandAlone\Model\LanguageProjectRepository.cs" />
 	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\LinguisticsDomainServices.cs" />
 	<Compile Include="Infrastructure\MetadataCache.cs" />
@@ -223,7 +223,7 @@
 	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
 	<Compile Include="Infrastructure\SharedConstants.cs" />
 	<Compile Include="Model\FlexBridgeModel.cs" />
-	<Compile Include="Model\LanguageProject.cs" />
+	<Compile Include="StandAlone\Model\LanguageProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
@@ -240,42 +240,42 @@
 	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	  <DependentUpon>Settings.settings</DependentUpon>
 	</Compile>
-	<Compile Include="View\ExistingSystemView.cs">
+	<Compile Include="StandAlone\View\ExistingSystemView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\ExistingSystemView.designer.cs">
+	<Compile Include="StandAlone\View\ExistingSystemView.designer.cs">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
-	<Compile Include="View\FwBridgeView.cs">
+	<Compile Include="StandAlone\View\FwBridgeView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\FwBridgeView.Designer.cs">
+	<Compile Include="StandAlone\View\FwBridgeView.Designer.cs">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>
 	</Compile>
-	<Compile Include="View\IActiveProjectView.cs" />
-	<Compile Include="View\IExistingSystemView.cs" />
-	<Compile Include="View\IFwBridgeView.cs" />
-	<Compile Include="View\IProjectView.cs" />
-	<Compile Include="View\ProjectEventArgs.cs" />
-	<Compile Include="View\ProjectView.cs">
+	<Compile Include="StandAlone\View\IActiveProjectView.cs" />
+	<Compile Include="StandAlone\View\IExistingSystemView.cs" />
+	<Compile Include="StandAlone\View\IFwBridgeView.cs" />
+	<Compile Include="StandAlone\View\IProjectView.cs" />
+	<Compile Include="StandAlone\View\ProjectEventArgs.cs" />
+	<Compile Include="StandAlone\View\ProjectView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="View\ProjectView.Designer.cs">
+	<Compile Include="StandAlone\View\ProjectView.Designer.cs">
 	  <DependentUpon>ProjectView.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Infrastructure\SynchronizeFlexProject.cs" />
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="View\ExistingSystemView.resx">
+	<EmbeddedResource Include="StandAlone\View\ExistingSystemView.resx">
 	  <DependentUpon>ExistingSystemView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="View\FwBridgeView.resx">
+	<EmbeddedResource Include="StandAlone\View\FwBridgeView.resx">
 	  <DependentUpon>FwBridgeView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="View\ProjectView.resx">
+	<EmbeddedResource Include="StandAlone\View\ProjectView.resx">
 	  <DependentUpon>ProjectView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
@@ -296,6 +296,7 @@
 	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 	</None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

@@ -4,7 +4,7 @@ using Chorus.FileTypeHanders;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
-namespace FLEx_ChorusPluginTests
+namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {
 	[TestFixture]
 	public class LoadHandlersTests

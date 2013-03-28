@@ -5,14 +5,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
-using FLEx_ChorusPlugin.View;
+using FLEx_ChorusPlugin.StandAlone.Model;
+using FLEx_ChorusPlugin.StandAlone.View;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.Controller
+namespace FLEx_ChorusPlugin.StandAlone.Controller
 {
 	[Export(typeof(IBridgeController))]
 	internal sealed class FlexBridgeController : IBridgeController

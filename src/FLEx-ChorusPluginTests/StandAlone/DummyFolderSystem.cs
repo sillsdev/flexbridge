@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPluginTests
+namespace FLEx_ChorusPluginTests.StandAlone
 {
 	/// <summary>
 	/// Class used to create/delete test folders and files.

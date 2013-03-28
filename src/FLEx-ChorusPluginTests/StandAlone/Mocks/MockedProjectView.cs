@@ -1,6 +1,6 @@
-﻿using FLEx_ChorusPlugin.View;
+﻿using FLEx_ChorusPlugin.StandAlone.View;
 
-namespace FLEx_ChorusPluginTests.Mocks
+namespace FLEx_ChorusPluginTests.StandAlone.Mocks
 {
 	internal class MockedProjectView : IProjectView
 	{

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace FLEx_ChorusPlugin.StandAlone.Model
 {
 	/// <summary>
 	/// A repository that gets the available FieldWorks projects on a computer

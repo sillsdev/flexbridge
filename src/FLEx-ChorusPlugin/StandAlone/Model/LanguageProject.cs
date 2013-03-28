@@ -3,7 +3,7 @@ using System.IO;
 using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPlugin.Model
+namespace FLEx_ChorusPlugin.StandAlone.Model
 {
 	/// <summary>
 	/// LanguageProject represents a FieldWorks language project

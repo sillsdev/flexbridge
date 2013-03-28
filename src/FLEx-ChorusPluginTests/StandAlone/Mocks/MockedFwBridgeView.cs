@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using FLEx_ChorusPlugin.Model;
-using FLEx_ChorusPlugin.View;
+using FLEx_ChorusPlugin.StandAlone.Model;
+using FLEx_ChorusPlugin.StandAlone.View;
 
-namespace FLEx_ChorusPluginTests.Mocks
+namespace FLEx_ChorusPluginTests.StandAlone.Mocks
 {
 	internal class MockedFwBridgeView : UserControl, IFwBridgeView
 	{

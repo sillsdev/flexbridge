@@ -7,10 +7,10 @@ using Chorus.UI.Misc;
 using Chorus.UI.Settings;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.StandAlone.Model;
 using TriboroughBridge_ChorusPlugin;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.StandAlone.View
 {
 	internal sealed partial class ExistingSystemView : UserControl, IExistingSystemView
 	{

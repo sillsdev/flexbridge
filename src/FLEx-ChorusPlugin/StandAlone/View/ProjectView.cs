@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.StandAlone.View
 {
 	internal sealed partial class ProjectView : UserControl, IProjectView
 	{

@@ -1,4 +1,4 @@
-namespace FLEx_ChorusPlugin.View
+namespace FLEx_ChorusPlugin.StandAlone.View
 {
 	internal interface IProjectView
 	{
