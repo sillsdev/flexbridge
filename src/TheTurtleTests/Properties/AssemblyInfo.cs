@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FLEx-ChorusPlugin")]
+[assembly: AssemblyTitle("TheTurtleTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("FLEx-ChorusPlugin")]
-[assembly: AssemblyCopyright("Copyright © SIL 2011-2012")]
+[assembly: AssemblyProduct("TheTurtleTests")]
+[assembly: AssemblyCopyright("Copyright © SIL 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("52c8c11d-6c44-49c0-bff0-cdfbbfde54f5")]
+[assembly: Guid("81ef0da9-7ae0-4799-81e9-a7a80968372d")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,10 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.5.2.*")]
-[assembly: AssemblyFileVersion("0.5.2.0")]
-
-[assembly: InternalsVisibleTo("FLExBridge")]
-[assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
-[assembly: InternalsVisibleTo("FwdataTestApp")]
-[assembly: InternalsVisibleTo("TheTurtle")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
