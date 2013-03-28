@@ -73,6 +73,12 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
+	<Reference Include="Palaso">
+	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
@@ -95,7 +101,7 @@
 	<Compile Include="Model\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Controller\FlexBridgeController.cs" />
+	<Compile Include="Controller\TheTurtleController.cs" />
 	<Compile Include="Model\LanguageProject.cs" />
 	<Compile Include="Model\LanguageProjectRepository.cs" />
 	<Compile Include="View\ExistingSystemView.cs">

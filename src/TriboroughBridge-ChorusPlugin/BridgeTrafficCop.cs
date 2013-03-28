@@ -56,7 +56,7 @@ namespace TriboroughBridge_ChorusPlugin
 					where model.ModelType == modelType
 					select model).First();
 
-			var controllerType = ControllerType.StandAloneFlexBridge;
+			var controllerType = ControllerType.Unknown;
 			switch (vOption)
 			{
 				// Not used.
@@ -126,13 +126,6 @@ namespace TriboroughBridge_ChorusPlugin
 
 			_changesReceived = false;
 			InitializeCurrentModel(options);
-
-			if (options.Count == 0)
-			{
-				// Stand alone FLEx Bridge.
-				showWindow = true;
-				return true;
-			}
 
 			switch (options["-v"])
 			{

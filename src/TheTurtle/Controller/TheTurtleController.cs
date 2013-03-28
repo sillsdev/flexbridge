@@ -15,7 +15,7 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace TheTurtle.Controller
 {
 	[Export(typeof(IBridgeController))]
-	internal sealed class FlexBridgeController : IBridgeController
+	internal sealed class TheTurtleController : IBridgeController
 	{
 		private IFwBridgeView _fwBridgeView;
 		private IProjectView _projectView;
@@ -25,10 +25,12 @@ namespace TheTurtle.Controller
 		private MainBridgeForm _mainBridgeForm;
 		private Dictionary<string, string> _options;
 
-		internal FlexBridgeController()
+		// Used by MEF to create the controller.
+		internal TheTurtleController()
 		{}
 
-		internal FlexBridgeController(IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
+		// Used by tests.
+		internal TheTurtleController(IFwBridgeView fwBridgeView, IProjectPathLocator locator, ISynchronizeProject projectSynchronizer)
 		{
 			_projectSynchronizer = projectSynchronizer;
 			_projectView = fwBridgeView.ProjectView;
@@ -73,7 +75,7 @@ namespace TheTurtle.Controller
 			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
 			_mainBridgeForm.ClientSize = new Size(856, 520);
 			_mainBridgeForm.MinimumSize = new Size(525, 490);
-			_mainBridgeForm.Name = "FLExBridge";
+			_mainBridgeForm.Name = "FLExBridge: The Turtle";
 			_mainBridgeForm.Text = Resources.kFlexBridge;
 
 			var ctrl = (Control)_fwBridgeView;
@@ -87,7 +89,7 @@ namespace TheTurtle.Controller
 
 		public IEnumerable<ControllerType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> {ControllerType.StandAloneFlexBridge}; }
+			get { return new List<ControllerType> {ControllerType.TheTurtle}; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
@@ -126,7 +128,7 @@ namespace TheTurtle.Controller
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
 		/// </summary>
-		~FlexBridgeController()
+		~TheTurtleController()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

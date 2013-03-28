@@ -1,5 +1,17 @@
 ﻿using System;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Model;
+using FLEx_ChorusPlugin.Properties;
+using Palaso.Reporting;
+using Palaso.UI.WindowsForms.HotSpot;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Properties;
+using TriboroughBridge_ChorusPlugin.View;
 
 namespace TheTurtle
 {
@@ -11,9 +23,47 @@ namespace TheTurtle
 		[STAThread]
 		static void Main()
 		{
+			// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
+			// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
+			// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
+			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
+			// exception handler.
+			var hotspot = new HotSpotProvider();
+
+			SetUpErrorHandling();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new TheTurtleForm());
+
+			// Is mercurial set up?
+			var readinessMessage = HgRepository.GetEnvironmentReadinessMessage("en");
+			if (!string.IsNullOrEmpty(readinessMessage))
+			{
+				MessageBox.Show(readinessMessage, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+				return;
+			}
+
+			// An aggregate catalog that combines multiple catalogs
+			using (var catalog = new AggregateCatalog())
+			{
+				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(FlexBridgeModel))));
+				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(BridgeTrafficCop))));
+
+				// Create the CompositionContainer with the parts in the catalog
+				using (var container = new CompositionContainer(catalog))
+				{
+					Application.Run(container.GetExportedValue<MainBridgeForm>());
+				}
+			}
+			Settings.Default.Save();
+		}
+
+		private static void SetUpErrorHandling()
+		{
+			ErrorReport.EmailAddress = "fieldworksbridge@gmail.com";
+			ErrorReport.AddStandardProperties();
+			ExceptionHandler.Init();
 		}
 	}
 }

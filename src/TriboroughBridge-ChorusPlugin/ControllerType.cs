@@ -2,6 +2,9 @@
 {
 	public enum ControllerType
 	{
+		TheTurtle,
+		Unknown,
+
 		Obtain,
 		ObtainLift,
 
@@ -14,8 +17,6 @@
 		UndoExport,
 		UndoExportLift,
 
-		MoveLift,
-
-		StandAloneFlexBridge
+		MoveLift
 	}
 }

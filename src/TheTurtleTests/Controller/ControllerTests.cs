@@ -14,7 +14,7 @@ namespace TheTurtleTests.Controller
 	[TestFixture]
 	public class ControllerTests
 	{
-		private FlexBridgeController _realController;
+		private TheTurtleController _realController;
 		private MockedProjectPathLocator _mockedProjectPathLocator;
 		private MockedFwBridgeView _mockedFwBridgeView;
 		private MockedProjectView _mockedProjectView;
@@ -31,7 +31,7 @@ namespace TheTurtleTests.Controller
 			_mockedSynchronizeProject = new MockedSynchronizeProject();
 
 			_mockedFwBridgeView = new MockedFwBridgeView();
-			_realController = new FlexBridgeController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject);
+			_realController = new TheTurtleController(_mockedFwBridgeView, _mockedProjectPathLocator, _mockedSynchronizeProject);
 
 			_mockedProjectView = (MockedProjectView)_mockedFwBridgeView.ProjectView;
 			_mockedExistingSystemView = (MockedExistingSystemView)_mockedProjectView.ExistingSystemView;
