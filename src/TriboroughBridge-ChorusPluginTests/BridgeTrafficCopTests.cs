@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
+using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -54,11 +55,25 @@ namespace TriboroughBridge_ChorusPluginTests
 		}
 
 		[Test, Category("UnknownMonoIssue")]
-		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFiles_AndLeavesTombstone()
+		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFiles_AndLeavesTombstoneAndBarProject()
 		{
-			using (var repo = new RepositorySetup("Rollback", true))
+			using (var mainProjectFolder = new TemporaryFolder("Projects"))
+			using (var fooProjectFolder = new TemporaryFolder(mainProjectFolder, "foo"))
+			using (var barProjectFolder = new TemporaryFolder(mainProjectFolder, "bar"))
+			using (var otherRepositoriesFolder = new TemporaryFolder(fooProjectFolder, Utilities.OtherRepositories))
+			using (var someOtherRepositoriesFolder = new TemporaryFolder(otherRepositoriesFolder, "PT_Repo"))
+			using (var repo = new RepositorySetup("Randy", Path.Combine(otherRepositoriesFolder.Path, "foo_LIFT")))
 			{
-				var repoFile = Path.Combine(repo.ProjectFolder.Path, "keeper" + Utilities.LiftExtension);
+				var barFile = Path.Combine(barProjectFolder.Path, "bar" + Utilities.LiftExtension);
+				File.WriteAllText(barFile, "bar stuff");
+
+				var fooFile = Path.Combine(fooProjectFolder.Path, "foo" + Utilities.FwXmlExtension);
+				File.WriteAllText(fooFile, "foo main project stuff");
+
+				var ptFile = Path.Combine(someOtherRepositoriesFolder.Path, "pt.file");
+				File.WriteAllText(ptFile, "PT stuff");
+
+				var repoFile = Path.Combine(repo.ProjectFolder.Path, "foo" + Utilities.LiftExtension);
 				repo.AddAndCheckinFile(repoFile, "original stuff");
 				File.WriteAllText(repoFile, "changed stuff");
 
@@ -72,7 +87,7 @@ namespace TriboroughBridge_ChorusPluginTests
 					{
 						{"-v", "undo_export_lift"},
 						{"-u", "Randy"},
-						{"-p", Path.Combine(repo.ProjectFolder.Path, repoFile) }
+						{"-p", fooProjectFolder.Path }
 					};
 				var trafficCop = _container.GetExportedValue<BridgeTrafficCop>();
 				bool showWindow;
@@ -82,6 +97,12 @@ namespace TriboroughBridge_ChorusPluginTests
 				Assert.AreEqual("original stuff", File.ReadAllText(repoFile));
 				Assert.IsFalse(File.Exists(newFile));
 				Assert.IsTrue(File.Exists(failureNotificationFile));
+				Assert.IsTrue(Directory.Exists(barProjectFolder.Path));
+				Assert.IsTrue(File.Exists(barFile));
+				Assert.IsTrue(Directory.Exists(fooProjectFolder.Path));
+				Assert.IsTrue(File.Exists(fooFile));
+				Assert.IsTrue(Directory.Exists(otherRepositoriesFolder.Path));
+				Assert.IsTrue(File.Exists(ptFile));
 			}
 		}
 	}
