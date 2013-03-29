@@ -18,10 +18,10 @@ namespace SIL.LiftBridge.Controller
 		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
 
-		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ControllerType actionType)
+		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ActionType actionType)
 		{
 			return
-				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedControllerAction == actionType);
+				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedActionAction == actionType);
 		}
 
 		#region IObtainProjectStrategy impl
@@ -41,9 +41,9 @@ namespace SIL.LiftBridge.Controller
 			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
 		}
 
-		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
-			if (actionType != ControllerType.Obtain && actionType != ControllerType.ObtainLift)
+			if (actionType != ActionType.Obtain && actionType != ActionType.ObtainLift)
 			{
 				throw new ArgumentException(Resources.kUnsupportedControllerActionForLiftObtain, "actionType");
 			}
@@ -86,9 +86,9 @@ namespace SIL.LiftBridge.Controller
 			get { return BridgeModelType.Lift; }
 		}
 
-		public ControllerType SupportedControllerType
+		public ActionType SupportedActionType
 		{
-			get { return ControllerType.ObtainLift; }
+			get { return ActionType.ObtainLift; }
 		}
 
 		#endregion

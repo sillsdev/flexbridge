@@ -242,4 +242,7 @@
   <data name="kReversalEntryClassLabel" xml:space="preserve">
 	<value>Reversal Entry</value>
   </data>
+	<data name="kFBTheTurtle" xml:space="preserve">
+	<value>FLEx Bridge: The Turtle</value>
+  </data>
 </root>

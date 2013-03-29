@@ -8,7 +8,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 {
 	public interface IConflictStrategy : IDisposable
 	{
-		ControllerType SupportedControllerAction { get; }
+		ActionType SupportedActionAction { get; }
 		Action<ProjectFolderConfiguration> ConfigureProjectFolders { get; }
 		string ProjectName { get; }
 		string ProjectDir { get; }

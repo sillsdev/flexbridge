@@ -113,6 +113,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FLEx Bridge: The Turtle.
+		/// </summary>
+		internal static string kFBTheTurtle {
+			get {
+				return ResourceManager.GetString("kFBTheTurtle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
 		internal static string kFlexBridge {

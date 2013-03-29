@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -9,6 +9,7 @@ using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
+using TheTurtle.Model;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin.View;
@@ -47,13 +48,15 @@ namespace TheTurtle
 			{
 				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
 				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(FlexBridgeModel))));
-				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
 				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(BridgeTrafficCop))));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
-					Application.Run(container.GetExportedValue<MainBridgeForm>());
+					var turtleModel = container.GetExportedValue<TheTurtleModel>();
+					var wind = container.GetExportedValue<MainBridgeForm>();
+					turtleModel.InitializeModel(wind, new Dictionary<string, string>(), ActionType.TheTurtle);
+					Application.Run(wind);
 				}
 			}
 			Settings.Default.Save();

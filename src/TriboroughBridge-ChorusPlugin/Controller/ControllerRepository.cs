@@ -10,10 +10,10 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		[ImportMany]
 		public IEnumerable<IBridgeController> Controllers { get; private set; }
 
-		public IBridgeController GetController(BridgeModelType modelType, ControllerType controllerType)
+		public IBridgeController GetController(BridgeModelType modelType, ActionType actionType)
 		{
 			return (from controller in Controllers
-				where controller.SupportedModels.Contains(modelType) && controller.SupportedControllerActions.Contains(controllerType)
+				where controller.SupportedModels.Contains(modelType) && controller.SupportedControllerActions.Contains(actionType)
 				select controller).FirstOrDefault();
 		}
 	}

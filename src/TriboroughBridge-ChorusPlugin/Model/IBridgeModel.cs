@@ -44,17 +44,6 @@ namespace TriboroughBridge_ChorusPlugin.Model
 		/// <summary>
 		/// Initialize the current instance.
 		/// </summary>
-		void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType);
-	}
-
-	public interface IBridgeModelNew : IDisposable
-	{
-		/// <summary>
-		/// Initialize the current instance.
-		/// </summary>
-		void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType, out bool showWindow);
-
-		bool StartWork();
-		void EndWork();
+		void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType);
 	}
 }

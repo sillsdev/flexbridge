@@ -29,7 +29,7 @@ namespace SIL.LiftBridge.Controller
 		{
 		}
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 			_fwLangProjGuid = options["-g"];
@@ -40,9 +40,9 @@ namespace SIL.LiftBridge.Controller
 			get { return null; }
 		}
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.MoveLift }; }
+			get { return new List<ActionType> { ActionType.MoveLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels

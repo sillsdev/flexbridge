@@ -58,9 +58,9 @@ namespace SIL.LiftBridge.Controller
 
 		#region IConflictStrategy impl
 
-		public ControllerType SupportedControllerAction
+		public ActionType SupportedActionAction
 		{
-			get { return ControllerType.ViewNotesLift; }
+			get { return ActionType.ViewNotesLift; }
 		}
 
 		public Action<ProjectFolderConfiguration> ConfigureProjectFolders

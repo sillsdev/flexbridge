@@ -8,10 +8,10 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		bool ProjectFilter(string repositoryLocation);
 		string HubQuery { get; }
 		bool IsRepositoryEmpty(string repositoryLocation);
-		ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository);
+		ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		BridgeModelType SupportedModelType { get; }
-		ControllerType SupportedControllerType { get; }
+		ActionType SupportedActionType { get; }
 	}
 
 	public class ActualCloneResult

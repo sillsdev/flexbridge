@@ -22,7 +22,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private Dictionary<string, string> _options;
 		private string _baseDir;
-		private ControllerType _controllerActionType;
+		private ActionType _actionActionType;
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
 		private const char SepChar = '|';
@@ -35,17 +35,17 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
-			return (_controllerActionType == ControllerType.ObtainLift)
+			return (_actionActionType == ActionType.ObtainLift)
 				? Strategies.FirstOrDefault(strategy => strategy.SupportedModelType == BridgeModelType.Lift)
 				: Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
 		}
 
 		private string PasteTogetherQueryParts()
 		{
-			if (_controllerActionType == ControllerType.ObtainLift)
-				return Strategies.First(strategy => strategy.SupportedControllerType == ControllerType.ObtainLift).HubQuery;
+			if (_actionActionType == ActionType.ObtainLift)
+				return Strategies.First(strategy => strategy.SupportedActionType == ActionType.ObtainLift).HubQuery;
 
-			// ControllerType.Obtain gets them from any source.
+			// ActionType.Obtain gets them from any source.
 			var sb = new StringBuilder();
 			foreach (var strategy in Strategies)
 			{
@@ -58,7 +58,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private bool ProjectFilter(string path)
 		{
-			return _controllerActionType == ControllerType.Obtain
+			return _actionActionType == ActionType.Obtain
 				? Strategies.Any(strategy => strategy.ProjectFilter(path))
 				: Strategies.First(strategy => strategy.SupportedModelType == BridgeModelType.Lift).ProjectFilter(path);
 		}
@@ -82,7 +82,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			{
 				case BridgeTrafficCop.obtain:
 					_baseDir = pOption; // fwroot: main FW project folder.
-					_controllerActionType = ControllerType.Obtain;
+					_actionActionType = ActionType.Obtain;
 					break;
 				case BridgeTrafficCop.obtain_lift:
 					// "-p" is: $fwroot\[foo] without the file name.
@@ -96,14 +96,14 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 						_baseDir = null;
 						throw new InvalidOperationException("Lift repository folder already exists.");
 					}
-					_controllerActionType = ControllerType.ObtainLift;
+					_actionActionType = ActionType.ObtainLift;
 					break;
 			}
 		}
 
 		#region IBridgeController implementation
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
 			CheckOptionCompatibility(options);
 
@@ -123,9 +123,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			get { return null; }
 		}
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.Obtain, ControllerType.ObtainLift }; }
+			get { return new List<ActionType> { ActionType.Obtain, ActionType.ObtainLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
@@ -175,7 +175,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				return;
 			}
 
-			var actualCloneResult = _currentStrategy.FinishCloning(_options, _controllerActionType, result.ActualLocation, expectedPathToClonedRepository);
+			var actualCloneResult = _currentStrategy.FinishCloning(_options, _actionActionType, result.ActualLocation, expectedPathToClonedRepository);
 			switch (actualCloneResult.FinalCloneResult)
 			{
 				case FinalCloneResult.ExistingCloneTargetFolder:

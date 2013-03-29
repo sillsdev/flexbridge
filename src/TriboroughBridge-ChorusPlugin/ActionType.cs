@@ -1,6 +1,6 @@
 ﻿namespace TriboroughBridge_ChorusPlugin
 {
-	public enum ControllerType
+	public enum ActionType
 	{
 		TheTurtle,
 		Unknown,

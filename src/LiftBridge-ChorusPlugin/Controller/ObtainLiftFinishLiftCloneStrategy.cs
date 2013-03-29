@@ -74,9 +74,9 @@ namespace SIL.LiftBridge.Controller
 			_connectionHelper.ImportLiftFileSafely(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is probably not so fine.
 		}
 
-		public ControllerType SuppportedControllerAction
+		public ActionType SuppportedActionAction
 		{
-			get { return ControllerType.ObtainLift; }
+			get { return ActionType.ObtainLift; }
 		}
 
 		#endregion
