@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using FLEx_ChorusPlugin.Properties;
@@ -12,11 +13,13 @@ namespace TheTurtle.Model
 	/// as represented by the class LanguageProject
 	/// (not the FielwdWorks internal language project class).
 	/// </summary>
+	[Export(typeof(LanguageProjectRepository))]
 	internal sealed class LanguageProjectRepository
 	{
 		private readonly HashSet<string> _baseFolderPaths;
 		private readonly HashSet<LanguageProject> _projects = new HashSet<LanguageProject>();
 
+		[ImportingConstructor]
 		internal LanguageProjectRepository(IProjectPathLocator pathLocator)
 		{
 			if (pathLocator == null)

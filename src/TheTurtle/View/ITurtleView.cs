@@ -3,10 +3,9 @@ using TheTurtle.Model;
 
 namespace TheTurtle.View
 {
-	internal interface IFwBridgeView
+	internal interface ITurtleView
 	{
 		event ProjectSelectedEventHandler ProjectSelected;
-		event SynchronizeProjectEventHandler SynchronizeProject;
 
 		IEnumerable<LanguageProject> Projects { set; }
 		IProjectView ProjectView { get; }

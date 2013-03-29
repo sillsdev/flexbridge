@@ -15,31 +15,22 @@ namespace TheTurtle.View
 	internal sealed partial class ExistingSystemView : UserControl, IExistingSystemView
 	{
 		private LanguageProject _project;
-		private SyncControlModel _model;
 
 		internal ExistingSystemView()
 		{
 			InitializeComponent();
 		}
 
-		SyncControlModel IExistingSystemView.Model
-		{
-			get { return _model; }
-		}
+		#region IExistingSystemView impl
 
-		void IExistingSystemView.UpdateDisplay(bool projectIsInUse)
-		{
-			_tcMain.TabPages[2].Enabled = !projectIsInUse;
-		}
-
-		void IExistingSystemView.SetSystem(ChorusSystem chorusSystem, LanguageProject project)
+		public void SetSystem(ChorusSystem chorusSystem, LanguageProject project)
 		{
 			_tcMain.SuspendLayout();
 			_project = project;
 
 			if (chorusSystem == null)
 			{
-				_model = null;
+				Model = null;
 				ClearPage(_tcMain.TabPages[0]);
 				ClearPage(_tcMain.TabPages[1]);
 				ClearPage(_tcMain.TabPages[2]);
@@ -56,12 +47,19 @@ namespace TheTurtle.View
 				_tcMain.Enabled = true;
 				ResetPage(0, chorusSystem.WinForms.CreateNotesBrowser());
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
-				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(_project.DirectoryName, _project.Name + Utilities.FwXmlExtension), false);
-				_model = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
+				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(
+					Path.Combine(_project.DirectoryName, _project.Name + Utilities.FwXmlExtension),
+					Path.Combine(Utilities.FwAssemblyPath, "FixFwData.exe"),
+					true);
+				Model = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
 													 SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,
 													 new ChorusUser(chorusSystem.UserNameForHistoryAndNotes));
-				_model.SetSynchronizerAdjunct(synchronizerAdjunct);
-				var syncPanel = new SyncPanel(_model);
+				Model.SetSynchronizerAdjunct(synchronizerAdjunct);
+				Model.SyncOptions.DoPullFromOthers = true;
+				Model.SyncOptions.DoMergeWithOthers = true;
+				Model.SyncOptions.DoSendToOthers = true;
+				var syncPanel = new SyncPanel(Model);
+				//syncPanel.
 				ResetPage(2, syncPanel);
 				// 3 - SettingsView
 				ResetPage(3, new SettingsView(new SettingsModel(chorusSystem.Repository)));
@@ -73,6 +71,15 @@ namespace TheTurtle.View
 			_tcMain.ResumeLayout(true);
 			_tcMain.Enabled = (chorusSystem != null);
 		}
+
+		public void UpdateDisplay(bool projectIsInUse)
+		{
+			_tcMain.TabPages[2].Enabled = !projectIsInUse;
+		}
+
+		public SyncControlModel Model { get; private set; }
+
+		#endregion IExistingSystemView impl
 
 		private void ResetPage(int idx, Control newContent)
 		{

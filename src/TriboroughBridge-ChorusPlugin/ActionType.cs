@@ -2,7 +2,6 @@
 {
 	public enum ActionType
 	{
-		TheTurtle,
 		Unknown,
 
 		Obtain,

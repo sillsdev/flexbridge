@@ -11,18 +11,9 @@ namespace TheTurtle.View
 
 		#region Implementation of IProjectView
 
-		IExistingSystemView IProjectView.ExistingSystemView
+		public IExistingSystemView ExistingSystemView
 		{
 			get { return _existingSystemView; }
-		}
-
-		void IProjectView.ActivateView(IActiveProjectView activeView)
-		{
-			SuspendLayout();
-
-			_existingSystemView.Visible = true;
-
-			ResumeLayout(true);
 		}
 
 		#endregion

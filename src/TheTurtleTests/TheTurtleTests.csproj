@@ -54,7 +54,7 @@
   <ItemGroup>
 	<Compile Include="DummyFolderSystem.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
-	<Compile Include="Mocks\MockedFwBridgeView.cs">
+	<Compile Include="Mocks\MockedTurtleView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="Mocks\MockedProjectPathLocator.cs" />

@@ -4,10 +4,11 @@ using TheTurtle.Model;
 
 namespace TheTurtle.View
 {
-	internal interface IExistingSystemView : IActiveProjectView
+	internal interface IExistingSystemView
 	{
 		void SetSystem(ChorusSystem chorusSystem, LanguageProject project);
 		void UpdateDisplay(bool projectIsInUse);
 		SyncControlModel Model { get; }
+		bool Enabled { get; set; }
 	}
 }

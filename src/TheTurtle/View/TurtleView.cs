@@ -7,13 +7,12 @@ using TheTurtle.Model;
 namespace TheTurtle.View
 {
 	internal delegate void ProjectSelectedEventHandler(object sender, ProjectEventArgs e);
-	internal delegate void SynchronizeProjectEventHandler(object sender, EventArgs e);
 
-	internal sealed partial class FwBridgeView : UserControl, IFwBridgeView
+	internal sealed partial class TurtleView : UserControl, ITurtleView
 	{
 		private IEnumerable<LanguageProject> _projects;
 
-		internal FwBridgeView()
+		internal TurtleView()
 		{
 			InitializeComponent();
 		}
@@ -26,7 +25,7 @@ namespace TheTurtle.View
 		private void ProjectsSelectedIndexChanged(object sender, EventArgs e)
 		{
 			var projectIsInUse = SelectedProject.FieldWorkProjectInUse;
-			((IFwBridgeView)this).EnableSendReceiveControls(projectIsInUse);
+			EnableSendReceiveControls(projectIsInUse);
 
 			if (SelectedProject.IsRemoteCollaborationEnabled)
 			{
@@ -34,28 +33,27 @@ namespace TheTurtle.View
 				_projectView.Visible = true;
 				if (ProjectSelected != null)
 					ProjectSelected(this, new ProjectEventArgs(SelectedProject));
-				(((IProjectView) _projectView).ExistingSystemView as Control).Enabled = true;
+				ProjectView.ExistingSystemView.Enabled = true;
 			}
 			else
 			{
 				_projectView.Enabled = false;
 				_projectView.Visible = false;
-				(((IProjectView)_projectView).ExistingSystemView as Control).Enabled = false;
+				ProjectView.ExistingSystemView.Enabled = false;
 			}
 		}
 
-		#region Implementation of IFwBridgeView
+		#region Implementation of ITurtleView
 
 		public event ProjectSelectedEventHandler ProjectSelected;
-		public event SynchronizeProjectEventHandler SynchronizeProject;
 
-		IEnumerable<LanguageProject> IFwBridgeView.Projects
+		public IEnumerable<LanguageProject> Projects
 		{
 			set
 			{
 				_projects = value;
 
-				_cbProjects.SuspendLayout();
+				_cbProjects.BeginUpdate();
 
 				_cbProjects.Items.Clear();
 				var projectsCopy = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
@@ -64,16 +62,16 @@ namespace TheTurtle.View
 				if (projectsCopy.Any())
 					_cbProjects.SelectedIndex = 0;
 
-				_cbProjects.ResumeLayout();
+				_cbProjects.EndUpdate();
 			}
 		}
 
-		IProjectView IFwBridgeView.ProjectView
+		public IProjectView ProjectView
 		{
 			get { return _projectView; }
 		}
 
-		void IFwBridgeView.EnableSendReceiveControls(bool makeWarningsVisible)
+		public void EnableSendReceiveControls(bool makeWarningsVisible)
 		{
 			_warninglabel1.Visible = makeWarningsVisible;
 			_warninglabel2.Visible = makeWarningsVisible;
@@ -87,7 +85,7 @@ namespace TheTurtle.View
 			var msg = _tbComment.Text;
 			if (string.IsNullOrEmpty(msg))
 				msg = Environment.UserName + " made some changes.";
-			((IProjectView)_projectView).ExistingSystemView.Model.SyncOptions.CheckinDescription = string.Format("[{0}: {1}] {2}", Application.ProductName, Application.ProductVersion, msg);
+			ProjectView.ExistingSystemView.Model.SyncOptions.CheckinDescription = string.Format("[{0}: {1}] {2}", Application.ProductName, Application.ProductVersion, msg);
 		}
 	}
 }

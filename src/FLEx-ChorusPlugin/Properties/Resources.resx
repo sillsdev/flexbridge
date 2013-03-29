@@ -245,4 +245,7 @@
 	<data name="kFBTheTurtle" xml:space="preserve">
 	<value>FLEx Bridge: The Turtle</value>
   </data>
+	<data name="kFlexNotFound" xml:space="preserve">
+	<value>Can't find FLEx.</value>
+  </data>
 </root>

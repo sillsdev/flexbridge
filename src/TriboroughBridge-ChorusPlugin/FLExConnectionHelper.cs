@@ -81,7 +81,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		private static string GetFlexPathnameFromOption(string pOption)
 		{
-			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDB4oExtensionNoPeriod)
+			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDb4oExtensionNoPeriod)
 					   ? Path.GetFileNameWithoutExtension(pOption)
 					   : string.Empty;
 		}

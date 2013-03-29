@@ -1,49 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
 using TheTurtle.View;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Model;
-using TriboroughBridge_ChorusPlugin.View;
 
 namespace TheTurtle.Model
 {
-	[Export(typeof(TheTurtleModel))]
-	internal sealed class TheTurtleModel : IBridgeModelNew
+	[Export(typeof(TheTurtle))]
+	internal sealed class TheTurtle
 	{
-		private IFwBridgeView _fwBridgeView;
-		private IProjectView _projectView;
-		private IExistingSystemView _existingSystemView;
-		private LanguageProjectRepository _repository;
-		private ISynchronizeProject _projectSynchronizer;
-		private MainBridgeForm _mainBridgeForm;
-		private Dictionary<string, string> _options;
+		private readonly TheTurtleForm _mainTurtleForm;
+		private readonly ITurtleView _turtleView;
+		private readonly IProjectView _projectView;
+		private readonly IExistingSystemView _existingSystemView;
+		private readonly LanguageProjectRepository _repository;
 
-		void FwBridgeViewSynchronizeProjectHandler(object sender, EventArgs e)
+		[ImportingConstructor]
+		internal TheTurtle(TheTurtleForm mainTurtleForm, LanguageProjectRepository repository)
 		{
-			_projectSynchronizer.SynchronizeProject(_options, _mainBridgeForm, ChorusSystem, CurrentProject.DirectoryName, CurrentProject.Name);
+			_mainTurtleForm = mainTurtleForm;
+			_repository = repository;
+
+			_turtleView = mainTurtleForm.TurtleView;
+			_projectView = _turtleView.ProjectView;
+			_existingSystemView = _projectView.ExistingSystemView;
+
+			_mainTurtleForm.Load += MainTurtleFormOnLoad;
+			_turtleView.ProjectSelected += TurtleViewProjectSelectedHandler;
 		}
 
-		void FwBridgeViewProjectSelectedHandler(object sender, ProjectEventArgs e)
+		internal Form MainWindow { get { return _mainTurtleForm; }}
+
+		void TurtleViewProjectSelectedHandler(object sender, ProjectEventArgs e)
 		{
+			if (CurrentProject == e.Project)
+				return;
 			CurrentProject = e.Project;
 
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
 			var chorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, Environment.UserName, FlexFolderSystem.ConfigureChorusProjectFolder);
+			chorusSystem.EnsureAllNotesRepositoriesLoaded();
 			// 1: If FW project is in use, then show a warning message.
 			var projectInUse = CurrentProject.FieldWorkProjectInUse;
 
 			// 2. Show correct view and enable/disable S/R btn and show (or not) the warnings.
-			_projectView.ActivateView(_existingSystemView);
 			_existingSystemView.UpdateDisplay(projectInUse);
-			_fwBridgeView.EnableSendReceiveControls(projectInUse);
+			_turtleView.EnableSendReceiveControls(projectInUse);
 			SetSystem(chorusSystem);
 		}
 
@@ -61,67 +67,10 @@ namespace TheTurtle.Model
 			_existingSystemView.SetSystem(ChorusSystem, CurrentProject); // CurrentProject may be null, which is fine.
 		}
 
-		#region IBridgeModelNew implementation
-
-		/// <summary>
-		/// Initialize the current instance.
-		/// </summary>
-		/// <returns>'true' if the caller expects the main window to show, otherwise 'false'.</returns>
-		public bool InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
+		private void MainTurtleFormOnLoad(object sender, EventArgs eventArgs)
 		{
-			if (actionType != ActionType.TheTurtle)
-				throw new InvalidOperationException(string.Format("This model only handles 'ActionType.TheTurtle', but was given a '{0}'.", actionType));
-
-			_options = options;
-			_projectSynchronizer = new SynchronizeFlexProject();
-			_fwBridgeView = new FwBridgeView();
-			_projectView = _fwBridgeView.ProjectView;
-			_existingSystemView = _projectView.ExistingSystemView;
-			_repository = new LanguageProjectRepository(new RegularUserProjectPathLocator());
-
-			_mainBridgeForm = mainForm;
-			_mainBridgeForm.AutoScaleDimensions = new SizeF(6F, 13F);
-			_mainBridgeForm.AutoScaleMode = AutoScaleMode.Font;
-			_mainBridgeForm.ClientSize = new Size(856, 520);
-			_mainBridgeForm.MinimumSize = new Size(525, 490);
-			_mainBridgeForm.Name = "TheTurtle";
-			_mainBridgeForm.Text = Resources.kFBTheTurtle;
-
-			var ctrl = (Control)_fwBridgeView;
-			mainForm.Controls.Add(ctrl);
-			ctrl.Dock = DockStyle.Fill;
-			_fwBridgeView.ProjectSelected += FwBridgeViewProjectSelectedHandler;
-			_fwBridgeView.SynchronizeProject += FwBridgeViewSynchronizeProjectHandler;
-
-			// NB: Setting the property should fire the ProjectSelected event.
-			_fwBridgeView.Projects = _repository.AllLanguageProjects;
-
-			return true;
+			_turtleView.Projects = _repository.AllLanguageProjects;
 		}
-
-		/// <summary>
-		/// Start doing whatever is needed for the supported type of action.
-		/// </summary>
-		public void StartWork()
-		{
-		}
-
-		/// <summary>
-		/// Perform ending work for the supported action
-		/// </summary>
-		public void EndWork()
-		{
-		}
-
-		/// <summary>
-		/// Get the type of action supported by the model.
-		/// </summary>
-		public ActionType SupportedActionType
-		{
-			get { return ActionType.TheTurtle; }
-		}
-
-		#endregion End of IBridgeModelNew implementation
 
 		#region IDisposable implementation
 
@@ -129,7 +78,7 @@ namespace TheTurtle.Model
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. IsDisposed is true)
 		/// </summary>
-		~TheTurtleModel()
+		~TheTurtle()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -177,6 +126,8 @@ namespace TheTurtle.Model
 
 			if (disposing)
 			{
+				_turtleView.ProjectSelected -= TurtleViewProjectSelectedHandler;
+				_mainTurtleForm.Load -= MainTurtleFormOnLoad;
 			}
 
 			IsDisposed = true;

@@ -47,6 +47,7 @@ namespace TriboroughBridge_ChorusPlugin
 			AddArg(ref args, "-u", userNameActual);
 			AddArg(ref args, "-p", projectFolder); (See above)
 			AddArg(ref args, "-v", command);
+			AddArg(ref args, "-f", FixItAppPathname);
 			AddArg(ref args, "-g", projectGuid);
 			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
 			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
@@ -55,7 +56,7 @@ namespace TriboroughBridge_ChorusPlugin
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
 			AddArg(ref args, "-pipeID", _pipeID);
 			*/
-// ReSharper restore InconsistentNaming
+		// ReSharper restore InconsistentNaming
 
 		private void InitializeCurrentModel(Dictionary<string, string> options)
 		{

@@ -1,6 +1,6 @@
 ﻿namespace TheTurtle.View
 {
-	internal partial class FwBridgeView
+	internal partial class TurtleView
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwBridgeView));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TurtleView));
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
 			this._label1 = new System.Windows.Forms.Label();
 			this._cbProjects = new System.Windows.Forms.ComboBox();
@@ -144,13 +144,13 @@
 			this._tbComment.TabIndex = 26;
 			this._tbComment.TextChanged += new System.EventHandler(this.CommentChanged);
 			//
-			// FwBridgeView
+			// turtleView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
 			this.Controls.Add(this._splitContainer);
-			this.Name = "FwBridgeView";
+			this.Name = "TurtleView";
 			this.Size = new System.Drawing.Size(852, 456);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel1.PerformLayout();

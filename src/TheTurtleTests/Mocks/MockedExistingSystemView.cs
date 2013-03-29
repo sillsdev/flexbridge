@@ -25,6 +25,8 @@ namespace TheTurtleTests.Mocks
 			get { return null; }
 		}
 
+		public bool Enabled { get; set; }
+
 		#endregion
 	}
 }

@@ -32,7 +32,7 @@ namespace TheTurtleTests
 			// Client-Server DB4o project
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "DB4o")).FullName;
 			_dummyFolderPaths.Add(projectPath);
-			File.WriteAllText(Path.Combine(projectPath, "DB4o" + Utilities.FwDB4oExtension), "");
+			File.WriteAllText(Path.Combine(projectPath, "DB4o" + Utilities.FwDb4oExtension), "");
 
 			// Random non-FW folder
 			projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "RandomFolder")).FullName;

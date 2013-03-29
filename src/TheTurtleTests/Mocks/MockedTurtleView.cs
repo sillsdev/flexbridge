@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using TheTurtle.Model;
 using TheTurtle.View;
 
 namespace TheTurtleTests.Mocks
 {
-	internal class MockedFwBridgeView : UserControl, IFwBridgeView
+	internal class MockedTurtleView : UserControl, ITurtleView
 	{
 		private readonly IProjectView _mockedProjectView = new MockedProjectView();
 
@@ -16,16 +15,9 @@ namespace TheTurtleTests.Mocks
 				ProjectSelected(this, new ProjectEventArgs(selectedProject));
 		}
 
-		internal void RaiseSynchronizeProject()
-		{
-			if (SynchronizeProject != null)
-				SynchronizeProject(this, new EventArgs());
-		}
-
-		#region Implementation of IFwBridgeView
+		#region Implementation of ITurtleView
 
 		public event ProjectSelectedEventHandler ProjectSelected;
-		public event SynchronizeProjectEventHandler SynchronizeProject;
 
 		public IEnumerable<LanguageProject> Projects { set; internal get; }
 

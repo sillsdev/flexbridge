@@ -90,7 +90,7 @@ namespace SIL.LiftBridge.Model
 			//			-p <$fwroot>\foo\foo.fwdata
 			var pOption = options["-p"];
 			ProjectName = Path.GetFileNameWithoutExtension(pOption); // Works for "-p <$fwroot>\foo" or "p <$fwroot>\foo\foo.fwdata" to get "foo".
-			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDB4oExtension))
+			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDb4oExtension))
 				? Path.GetDirectoryName(pOption) // "p <$fwroot>\foo\foo.fwdata" -> <$fwroot>\foo.
 				: pOption; // "-p <$fwroot>\foo" -> <$fwroot>\foo.
 			var otherPath = Path.Combine(projectPath, Utilities.OtherRepositories); // Will always be <$fwroot>\foo\OtherRepositories.

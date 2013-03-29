@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
@@ -43,6 +44,14 @@ namespace TheTurtle
 				return;
 			}
 
+			var fwAssemblyPath = Utilities.FwAssemblyPath;
+			if (fwAssemblyPath == null)
+			{
+				MessageBox.Show(Resources.kFlexNotFound, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+				return;
+			}
+			fwAssemblyPath = fwAssemblyPath.Contains(" ") ? "\"" + fwAssemblyPath + "\"" : fwAssemblyPath;
+
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
@@ -53,10 +62,8 @@ namespace TheTurtle
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
-					var turtleModel = container.GetExportedValue<TheTurtleModel>();
-					var wind = container.GetExportedValue<MainBridgeForm>();
-					turtleModel.InitializeModel(wind, new Dictionary<string, string>(), ActionType.TheTurtle);
-					Application.Run(wind);
+					var turtleModel = container.GetExportedValue<Model.TheTurtle>();
+					Application.Run(turtleModel.MainWindow);
 				}
 			}
 			Settings.Default.Save();

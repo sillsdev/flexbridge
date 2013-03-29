@@ -131,6 +131,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Can&apos;t find FLEx..
+		/// </summary>
+		internal static string kFlexNotFound {
+			get {
+				return ResourceManager.GetString("kFlexNotFound", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Project File (*.fwdata)|*.fwdata.
 		/// </summary>
 		internal static string kFwDataFileFilter {
