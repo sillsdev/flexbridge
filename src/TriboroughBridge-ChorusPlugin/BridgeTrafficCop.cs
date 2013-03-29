@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 using NetSparkle;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;

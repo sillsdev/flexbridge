@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
+using Palaso.TestUtilities;
 using TriboroughBridge_ChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
@@ -56,9 +57,12 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test, Category("UnknownMonoIssue")]
 		public void undo_export_lift_RevertsModifiedFiles_RemovesNewFiles_AndLeavesTombstone()
 		{
-			using (var repo = new RepositorySetup("Rollback", true))
+			using (var mainProjectFolder = new TemporaryFolder("Projects"))
+			using (var fooProjectFolder = new TemporaryFolder(mainProjectFolder, "foo"))
+			using (var otherRepositoriesFolder = new TemporaryFolder(fooProjectFolder, Utilities.OtherRepositories))
+			using (var repo = new RepositorySetup("Randy", Path.Combine(otherRepositoriesFolder.Path, "foo_LIFT")))
 			{
-				var repoFile = Path.Combine(repo.ProjectFolder.Path, "keeper" + Utilities.LiftExtension);
+				var repoFile = Path.Combine(repo.ProjectFolder.Path, "foo" + Utilities.LiftExtension);
 				repo.AddAndCheckinFile(repoFile, "original stuff");
 				File.WriteAllText(repoFile, "changed stuff");
 
@@ -72,7 +76,7 @@ namespace TriboroughBridge_ChorusPluginTests
 					{
 						{"-v", "undo_export_lift"},
 						{"-u", "Randy"},
-						{"-p", Path.Combine(repo.ProjectFolder.Path, repoFile) }
+						{"-p", fooProjectFolder.Path }
 					};
 				var trafficCop = _container.GetExportedValue<BridgeTrafficCop>();
 				bool showWindow;
