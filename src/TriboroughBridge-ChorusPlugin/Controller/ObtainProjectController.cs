@@ -70,7 +70,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			// If "-p" is $fwroot\foo, then the "-v" option *must* be "obtain_lift".
 			var vOption = options["-v"];
 			var pOption = options["-p"];
-			var fwrootDir = Utilities.ProjectsPath;
+			var fwrootDir = options["-projDir"];
 
 			if (((pOption == fwrootDir) && (vOption == BridgeTrafficCop.obtain_lift))
 				|| ((pOption != fwrootDir) && (vOption == BridgeTrafficCop.obtain)))
@@ -159,7 +159,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		{
 			var getSharedProjectModel = new GetSharedProjectModel();
 			var result = getSharedProjectModel.GetSharedProjectUsing(_mainBridgeForm, _baseDir, null, ProjectFilter,
-				ChorusHubQuery, Utilities.ProjectsPath, Utilities.OtherRepositories,
+				ChorusHubQuery, _options["-projDir"], Utilities.OtherRepositories,
 				CommonResources.kHowToSendReceiveExtantRepository);
 
 			if (result.CloneStatus != CloneStatus.Created)

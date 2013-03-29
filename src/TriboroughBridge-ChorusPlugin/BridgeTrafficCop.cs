@@ -43,7 +43,19 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
 		public const string hg = ".hg";
 		public const string git = ".git";
-// ReSharper restore InconsistentNaming
+		/*
+			AddArg(ref args, "-u", userNameActual);
+			AddArg(ref args, "-p", projectFolder); (See above)
+			AddArg(ref args, "-v", command);
+			AddArg(ref args, "-g", projectGuid);
+			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
+			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
+			// Tell Flex Bridge which model version of data are expected by FLEx.
+			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
+			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
+			AddArg(ref args, "-pipeID", _pipeID);
+			*/
+		// ReSharper restore InconsistentNaming
 
 		private void InitializeCurrentModel(Dictionary<string, string> options)
 		{
