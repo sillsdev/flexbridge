@@ -122,7 +122,7 @@ namespace TriboroughBridge_ChorusPlugin
 												.OpenSubKey("software")
 												.OpenSubKey("SIL")
 												.OpenSubKey("FieldWorks")
-												.OpenSubKey("7.0")
+												.OpenSubKey("8")
 												.GetValue("ProjectsDir")).Trim();
 				if (rootDir.Length > 3)
 					rootDir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
