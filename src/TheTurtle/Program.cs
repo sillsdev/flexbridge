@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
-using TheTurtle.Model;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
-using TriboroughBridge_ChorusPlugin.View;
 
 namespace TheTurtle
 {
@@ -44,7 +39,7 @@ namespace TheTurtle
 				return;
 			}
 
-			var fwAssemblyPath = Utilities.FwAssemblyPath;
+			var fwAssemblyPath = TheTurtleUtilities.FwAssemblyPath;
 			if (fwAssemblyPath == null)
 			{
 				MessageBox.Show(Resources.kFlexNotFound, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);

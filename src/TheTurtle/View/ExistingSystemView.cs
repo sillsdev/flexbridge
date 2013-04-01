@@ -49,7 +49,7 @@ namespace TheTurtle.View
 				ResetPage(1, chorusSystem.WinForms.CreateHistoryPage());
 				var synchronizerAdjunct = new FlexBridgeSychronizerAdjunct(
 					Path.Combine(_project.DirectoryName, _project.Name + Utilities.FwXmlExtension),
-					Path.Combine(Utilities.FwAssemblyPath, "FixFwData.exe"),
+					Path.Combine(TheTurtleUtilities.FwAssemblyPath, "FixFwData.exe"),
 					true);
 				Model = new SyncControlModel(chorusSystem.ProjectFolderConfiguration,
 													 SyncUIFeatures.Advanced | SyncUIFeatures.PlaySoundIfSuccessful,

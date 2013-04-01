@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using TriboroughBridge_ChorusPlugin;
 
 namespace TheTurtle.Model
 {
@@ -19,7 +18,7 @@ namespace TheTurtle.Model
 			{
 				return new HashSet<string>
 								{
-									Utilities.ProjectsPath
+									TheTurtleUtilities.ProjectsPath
 								};
 			}
 		}
