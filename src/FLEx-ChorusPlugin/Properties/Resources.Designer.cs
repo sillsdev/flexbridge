@@ -149,15 +149,6 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Invalid command line options. Please launch from FLEx or run the executable without arguments..
-		/// </summary>
-		internal static string kInvalidCommandLineOptions {
-			get {
-				return ResourceManager.GetString("kInvalidCommandLineOptions", resourceCulture);
-			}
-		}
-
-		/// <summary>
 		///   Looks up a localized string similar to Entry.
 		/// </summary>
 		internal static string kLexEntryClassLabel {

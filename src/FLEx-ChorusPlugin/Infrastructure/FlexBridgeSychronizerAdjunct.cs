@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose)
 		{
 			if (!File.Exists(fixitPathname))
-				throw new InvalidOperationException("The FLEx 'fix it' program ws not found.");
+				throw new InvalidOperationException("The FLEx 'fix it' program was not found.");
 			_fwdataPathname = fwdataPathname;
 			_fixitPathname = fixitPathname;
 			_writeVerbose = writeVerbose;

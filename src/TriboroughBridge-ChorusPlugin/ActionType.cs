@@ -13,9 +13,12 @@
 		ViewNotes,
 		ViewNotesLift,
 
-		UndoExport,
+		UndoExport, // Not supported yet.
 		UndoExportLift,
 
-		MoveLift
+		MoveLift,
+
+		CheckForUpdates,
+		AboutFlexBridge
 	}
 }

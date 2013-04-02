@@ -230,9 +230,6 @@
   <data name="kUnTitled" xml:space="preserve">
 	<value>[untitled]</value>
   </data>
-  <data name="kInvalidCommandLineOptions" xml:space="preserve">
-	<value>Invalid command line options. Please launch from FLEx or run the executable without arguments.</value>
-  </data>
   <data name="kFlexBridge" xml:space="preserve">
 	<value>FLEx Bridge</value>
   </data>
@@ -242,10 +239,10 @@
   <data name="kReversalEntryClassLabel" xml:space="preserve">
 	<value>Reversal Entry</value>
   </data>
-	<data name="kFBTheTurtle" xml:space="preserve">
+  <data name="kFBTheTurtle" xml:space="preserve">
 	<value>FLEx Bridge: The Turtle</value>
   </data>
-	<data name="kFlexNotFound" xml:space="preserve">
+  <data name="kFlexNotFound" xml:space="preserve">
 	<value>Can't find FLEx.</value>
   </data>
 </root>

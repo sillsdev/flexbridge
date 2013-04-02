@@ -110,6 +110,8 @@
   <ItemGroup>
 	<Compile Include="BridgeTrafficCop.cs" />
 	<Compile Include="ActionType.cs" />
+	<Compile Include="CommandLineException.cs" />
+	<Compile Include="CommandLineProcessor.cs" />
 	<Compile Include="Controller\ControllerRepository.cs" />
 	<Compile Include="Controller\BridgeConflictController.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
