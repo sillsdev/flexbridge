@@ -93,57 +93,58 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void MalformedUOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.u);
 		}
 
 		[Test]
 		public void MalformedPOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.p);
 		}
 
 		[Test]
 		public void MalformedVOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.v);
 
-			_options[CommandLineProcessor.v] = "Random data";
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Unsupported 'v' option should have thrown");
-		}
-
-		[Test]
-		public void MalformedFOptionThrows()
-		{
-			BasicWellformedOptionCheck(CommandLineProcessor.f);
 		}
 
 		[Test]
 		public void MalformedProjDirOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.projDir);
 		}
 
 		[Test]
 		public void MalformedFwAppsDirThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.fwAppsDir);
 		}
 
 		[Test]
 		public void MalformedFwmodelOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.fwmodel);
 		}
 
 		[Test]
 		public void MalformedLiftmodelOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.liftmodel);
 		}
 
 		[Test]
 		public void MalformedPipeIDOptionThrows()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.pipeID);
 		}
 
@@ -152,6 +153,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.move_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
+			_options.Remove(CommandLineProcessor.f);
 
 			CheckWellformedWithFwDataFile(CommandLineProcessor.g);
 
@@ -167,6 +169,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.about_flex_bridge;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = Path.Combine(_tempProjectFolder.Path, "NonExistantFolder");
@@ -189,6 +192,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.check_for_updates;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = Path.Combine(_tempProjectFolder.Path, "NonExistantFolder");
@@ -211,6 +215,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.obtain;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = "NonExistantFolder";
@@ -235,6 +240,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.obtain_lift;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
@@ -283,6 +289,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.send_receive_lift;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
@@ -305,6 +312,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export;
 			_options.Remove(CommandLineProcessor.g);
+			_options.Remove(CommandLineProcessor.f);
 
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export;
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Unsupported 'v' option should have thrown");
@@ -313,6 +321,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void undo_export_liftOption()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");
@@ -338,6 +347,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void view_notesOption()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.view_notes;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");
@@ -358,6 +368,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void view_notes_liftOption()
 		{
+			_options.Remove(CommandLineProcessor.f);
 			_options[CommandLineProcessor.v] = BridgeTrafficCop.view_notes_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");

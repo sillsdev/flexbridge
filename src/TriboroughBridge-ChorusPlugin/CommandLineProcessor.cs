@@ -88,6 +88,13 @@ namespace TriboroughBridge_ChorusPlugin
 					throw new CommandLineException("-g", "is present");
 			}
 
+			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
+			if (vOption != BridgeTrafficCop.send_receive)
+			{
+				if (options.ContainsKey(f))
+					throw new CommandLineException("-f", "is present");
+			}
+
 			string liftFolder;
 			switch (vOption)
 			{
@@ -131,6 +138,8 @@ namespace TriboroughBridge_ChorusPlugin
 				case BridgeTrafficCop.send_receive:
 					// internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
+					// Must have -f option with fix it app in it.
+					ValidateFOptionIsExtantFixItFile(options[fwAppsDir], options[f]);
 					break;
 
 				case BridgeTrafficCop.send_receive_lift:
@@ -196,15 +205,18 @@ namespace TriboroughBridge_ChorusPlugin
 			if (!Directory.Exists(fwAppsDirOption))
 				throw new CommandLineException("-fwAppsDir", "folder does not exist");
 
-			if (!options.ContainsKey(f) || String.IsNullOrEmpty(options[f]))
-				throw new CommandLineException("-f", "is missing");
-			var fOption = options[f];
-			const string fixitAppName = "FixFwData.exe";
-			var fixitAppPathnameCalculated = Path.Combine(fwAppsDirOption, fixitAppName);
-			if (fOption != fixitAppPathnameCalculated)
-				throw new CommandLineException("-f & -fwAppsDir", "are mis-matched");
-			if (!File.Exists(fixitAppPathnameCalculated))
-				throw new CommandLineException("-f", "missing 'FixFwData.exe'");
+			if (vOption == BridgeTrafficCop.send_receive)
+			{
+				if (!options.ContainsKey(f) || String.IsNullOrEmpty(options[f]))
+					throw new CommandLineException("-f", "is missing");
+				var fOption = options[f];
+				const string fixitAppName = "FixFwData.exe";
+				var fixitAppPathnameCalculated = Path.Combine(fwAppsDirOption, fixitAppName);
+				if (fOption != fixitAppPathnameCalculated)
+					throw new CommandLineException("-f & -fwAppsDir", "are mis-matched");
+				if (!File.Exists(fixitAppPathnameCalculated))
+					throw new CommandLineException("-f", "missing 'FixFwData.exe'");
+			}
 
 			if (!options.ContainsKey(fwmodel) || String.IsNullOrEmpty(options[fwmodel]))
 				throw new CommandLineException("-fwmodel", "is missing");
@@ -241,6 +253,16 @@ namespace TriboroughBridge_ChorusPlugin
 				throw new CommandLineException("-p", "has no fwdata file");
 			if (!File.Exists(pOption))
 				throw new CommandLineException("-p", "has no fwdata file");
+		}
+
+		private static void ValidateFOptionIsExtantFixItFile(string fwAppsDir, string fOption)
+		{
+			if (!fOption.StartsWith(fwAppsDir))
+				throw new CommandLineException("-f & -fwAppsDir", "are mis-matched");
+			if (Path.GetFileName(fOption) != "FixFwData.exe")
+				throw new CommandLineException("-f", "has no 'fix it' program");
+			if (!File.Exists(fOption))
+				throw new CommandLineException("-f", "has no 'fix it' program");
 		}
 
 		private static void ValidatePOptionIsExtantFwProjectFolder(string projDirOption, string pOption)
