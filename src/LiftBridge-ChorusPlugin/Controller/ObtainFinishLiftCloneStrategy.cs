@@ -89,9 +89,9 @@ namespace SIL.LiftBridge.Controller
 			_liftprojectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
 		}
 
-		public ControllerType SuppportedControllerAction
+		public ActionType SuppportedActionAction
 		{
-			get { return ControllerType.Obtain; }
+			get { return ActionType.Obtain; }
 		}
 
 		#endregion

@@ -113,6 +113,15 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FLEx Bridge: The Turtle.
+		/// </summary>
+		internal static string kFBTheTurtle {
+			get {
+				return ResourceManager.GetString("kFBTheTurtle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FLEx Bridge.
 		/// </summary>
 		internal static string kFlexBridge {
@@ -122,20 +131,20 @@ namespace FLEx_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Can&apos;t find FLEx..
+		/// </summary>
+		internal static string kFlexNotFound {
+			get {
+				return ResourceManager.GetString("kFlexNotFound", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Project File (*.fwdata)|*.fwdata.
 		/// </summary>
 		internal static string kFwDataFileFilter {
 			get {
 				return ResourceManager.GetString("kFwDataFileFilter", resourceCulture);
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized string similar to Invalid command line options. Please launch from FLEx or run the executable without arguments..
-		/// </summary>
-		internal static string kInvalidCommandLineOptions {
-			get {
-				return ResourceManager.GetString("kInvalidCommandLineOptions", resourceCulture);
 			}
 		}
 

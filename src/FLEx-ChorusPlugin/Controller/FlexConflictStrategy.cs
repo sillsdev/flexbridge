@@ -24,9 +24,9 @@ namespace FLEx_ChorusPlugin.Controller
 
 		#region IConflictStrategy impl
 
-		public ControllerType SupportedControllerAction
+		public ActionType SupportedActionAction
 		{
-			get { return ControllerType.ViewNotes; }
+			get { return ActionType.ViewNotes; }
 		}
 
 		public Action<ProjectFolderConfiguration> ConfigureProjectFolders

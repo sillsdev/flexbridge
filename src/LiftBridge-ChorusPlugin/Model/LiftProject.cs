@@ -43,7 +43,7 @@ namespace SIL.LiftBridge.Model
 		{
 			var fwFiles = Directory.GetFiles(basePath, "*" + Utilities.FwXmlExtension).ToList();
 			if (fwFiles.Count == 0)
-				fwFiles = Directory.GetFiles(basePath, "*" + Utilities.FwDB4oExtension).ToList();
+				fwFiles = Directory.GetFiles(basePath, "*" + Utilities.FwDb4oExtension).ToList();
 			return fwFiles.Count == 0 ? null : (from file in fwFiles
 												  where HasOnlyOneDot(file)
 												  select file).FirstOrDefault();

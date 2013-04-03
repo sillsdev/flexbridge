@@ -21,16 +21,16 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private MainBridgeForm _mainBridgeForm;
 		private NotesBrowserPage _notesBrowser;
 
-		private IConflictStrategy GetCurrentStrategy(ControllerType controllerType)
+		private IConflictStrategy GetCurrentStrategy(ActionType actionType)
 		{
-			return Strategies.FirstOrDefault(strategy => strategy.SupportedControllerAction == controllerType);
+			return Strategies.FirstOrDefault(strategy => strategy.SupportedActionAction == actionType);
 		}
 
 		#region IBridgeController implementation
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
-			_currentStrategy = GetCurrentStrategy(controllerType);
+			_currentStrategy = GetCurrentStrategy(actionType);
 			_currentStrategy.PreInitializeStrategy(options);
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(904, 510);
@@ -57,9 +57,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.ViewNotes, ControllerType.ViewNotesLift }; }
+			get { return new List<ActionType> { ActionType.ViewNotes, ActionType.ViewNotesLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels

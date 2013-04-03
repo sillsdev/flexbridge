@@ -14,9 +14,9 @@ namespace SIL.LiftBridge.Model
 	{
 		[Import] private ControllerRepository _controllerRepos;
 
-		private IBridgeController GetController(ControllerType controllerType)
+		private IBridgeController GetController(ActionType actionType)
 		{
-			return _controllerRepos.GetController(ModelType, controllerType);
+			return _controllerRepos.GetController(ModelType, actionType);
 		}
 
 		#region Implementation of IBridgeModel
@@ -71,7 +71,7 @@ namespace SIL.LiftBridge.Model
 		/// <summary>
 		/// Initialize the current instance.
 		/// </summary>
-		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
 			// No folders to create:
 			// 1. "send_receive_lift": Flex creates the folders on a normal lift S/R,
@@ -90,17 +90,17 @@ namespace SIL.LiftBridge.Model
 			//			-p <$fwroot>\foo\foo.fwdata
 			var pOption = options["-p"];
 			ProjectName = Path.GetFileNameWithoutExtension(pOption); // Works for "-p <$fwroot>\foo" or "p <$fwroot>\foo\foo.fwdata" to get "foo".
-			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDB4oExtension))
+			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDb4oExtension))
 				? Path.GetDirectoryName(pOption) // "p <$fwroot>\foo\foo.fwdata" -> <$fwroot>\foo.
 				: pOption; // "-p <$fwroot>\foo" -> <$fwroot>\foo.
 			var otherPath = Path.Combine(projectPath, Utilities.OtherRepositories); // Will always be <$fwroot>\foo\OtherRepositories.
 
-			if ((controllerType == ControllerType.ObtainLift || controllerType == ControllerType.MoveLift) && !Directory.Exists(otherPath))
+			if ((actionType == ActionType.ObtainLift || actionType == ActionType.MoveLift) && !Directory.Exists(otherPath))
 				Directory.CreateDirectory(otherPath);
 			PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT); // May, or may not, exist.
 
-			CurrentController = GetController(controllerType);
-			CurrentController.InitializeController(mainForm, options, controllerType);
+			CurrentController = GetController(actionType);
+			CurrentController.InitializeController(mainForm, options, actionType);
 		}
 
 		#endregion End of IBridgeModel impl

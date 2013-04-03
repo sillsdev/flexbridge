@@ -22,7 +22,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
 		private Dictionary<string, string> _options;
 		private string _baseDir;
-		private ControllerType _controllerActionType;
+		private ActionType _actionActionType;
 		private IObtainProjectStrategy _currentStrategy;
 		private MainBridgeForm _mainBridgeForm;
 		private const char SepChar = '|';
@@ -35,17 +35,17 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
-			return (_controllerActionType == ControllerType.ObtainLift)
+			return (_actionActionType == ActionType.ObtainLift)
 				? Strategies.FirstOrDefault(strategy => strategy.SupportedModelType == BridgeModelType.Lift)
 				: Strategies.FirstOrDefault(strategy => strategy.ProjectFilter(cloneLocation));
 		}
 
 		private string PasteTogetherQueryParts()
 		{
-			if (_controllerActionType == ControllerType.ObtainLift)
-				return Strategies.First(strategy => strategy.SupportedControllerType == ControllerType.ObtainLift).HubQuery;
+			if (_actionActionType == ActionType.ObtainLift)
+				return Strategies.First(strategy => strategy.SupportedActionType == ActionType.ObtainLift).HubQuery;
 
-			// ControllerType.Obtain gets them from any source.
+			// ActionType.Obtain gets them from any source.
 			var sb = new StringBuilder();
 			foreach (var strategy in Strategies)
 			{
@@ -58,55 +58,15 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 
 		private bool ProjectFilter(string path)
 		{
-			return _controllerActionType == ControllerType.Obtain
+			return _actionActionType == ActionType.Obtain
 				? Strategies.Any(strategy => strategy.ProjectFilter(path))
 				: Strategies.First(strategy => strategy.SupportedModelType == BridgeModelType.Lift).ProjectFilter(path);
 		}
 
-		private void CheckOptionCompatibility(Dictionary<string, string> options)
-		{
-			// "-p" will be $fwroot (for get either type of repo) or $fwroot\foo to only get a lift repo for an extant project.
-			// If "-p" is $fwroot, then the "-v" option *must* be "obtain".
-			// If "-p" is $fwroot\foo, then the "-v" option *must* be "obtain_lift".
-			var vOption = options["-v"];
-			var pOption = options["-p"];
-			var fwrootDir = options["-projDir"];
-
-			if (((pOption == fwrootDir) && (vOption == BridgeTrafficCop.obtain_lift))
-				|| ((pOption != fwrootDir) && (vOption == BridgeTrafficCop.obtain)))
-			{
-				throw new ApplicationException(String.Format("Incompatible options for '-p' : '{0}' and '-v' : '{1}'.", pOption, vOption));
-			}
-
-			switch (vOption)
-			{
-				case BridgeTrafficCop.obtain:
-					_baseDir = pOption; // fwroot: main FW project folder.
-					_controllerActionType = ControllerType.Obtain;
-					break;
-				case BridgeTrafficCop.obtain_lift:
-					// "-p" is: $fwroot\[foo] without the file name.
-					var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
-					if (!Directory.Exists(otherReposDir))
-						Directory.CreateDirectory(otherReposDir);
-					_baseDir = Path.Combine(pOption, Utilities.OtherRepositories); // , Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT
-					var repoDir = Path.Combine(_baseDir, Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT);
-					if (Directory.Exists(repoDir) && !Utilities.FolderIsEmpty(repoDir))
-					{
-						_baseDir = null;
-						throw new InvalidOperationException("Lift repository folder already exists.");
-					}
-					_controllerActionType = ControllerType.ObtainLift;
-					break;
-			}
-		}
-
 		#region IBridgeController implementation
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
-			CheckOptionCompatibility(options);
-
 			_options = options;
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(239, 313);
@@ -123,9 +83,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			get { return null; }
 		}
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.Obtain, ControllerType.ObtainLift }; }
+			get { return new List<ActionType> { ActionType.Obtain, ActionType.ObtainLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
@@ -175,7 +135,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				return;
 			}
 
-			var actualCloneResult = _currentStrategy.FinishCloning(_options, _controllerActionType, result.ActualLocation, expectedPathToClonedRepository);
+			var actualCloneResult = _currentStrategy.FinishCloning(_options, _actionActionType, result.ActualLocation, expectedPathToClonedRepository);
 			switch (actualCloneResult.FinalCloneResult)
 			{
 				case FinalCloneResult.ExistingCloneTargetFolder:

@@ -8,6 +8,6 @@ namespace SIL.LiftBridge.Controller
 	{
 		ActualCloneResult FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
-		ControllerType SuppportedControllerAction { get; }
+		ActionType SuppportedActionAction { get; }
 	}
 }

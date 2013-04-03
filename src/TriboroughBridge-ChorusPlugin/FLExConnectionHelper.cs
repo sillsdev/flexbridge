@@ -81,7 +81,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		private static string GetFlexPathnameFromOption(string pOption)
 		{
-			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDB4oExtensionNoPeriod)
+			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDb4oExtensionNoPeriod)
 					   ? Path.GetFileNameWithoutExtension(pOption)
 					   : string.Empty;
 		}
@@ -153,7 +153,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived)
+		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			// open a channel to flex and send the message.
 			try

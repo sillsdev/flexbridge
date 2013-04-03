@@ -7,9 +7,9 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 {
 	public interface IBridgeController : IDisposable
 	{
-		void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType);
+		void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType);
 		ChorusSystem ChorusSystem { get; }
-		IEnumerable<ControllerType> SupportedControllerActions { get; }
+		IEnumerable<ActionType> SupportedControllerActions { get; }
 		IEnumerable<BridgeModelType> SupportedModels { get; }
 	}
 }

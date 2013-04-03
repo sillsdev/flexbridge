@@ -24,7 +24,7 @@ namespace SIL.LiftBridge.Controller
 
 		#region IBridgeController implementation
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
 			_options = options;
 			// As per the API, -p will be the main FW data file.
@@ -57,9 +57,9 @@ namespace SIL.LiftBridge.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.SendReceiveLift }; }
+			get { return new List<ActionType> { ActionType.SendReceiveLift }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels

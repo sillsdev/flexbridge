@@ -5,31 +5,27 @@ using System.Xml.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
-using Microsoft.Win32;
 using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin
 {
 	public static class Utilities
 	{
-		public const string FailureFilename = "FLExImportFailure.notice";
+// ReSharper disable InconsistentNaming
 		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
 		public const string FwXmlExtensionNoPeriod = "fwdata";
 		public const string FwLockExtension = ".lock";
 		public const string FwXmlLockExtension = FwXmlExtension + FwLockExtension;
-		public const string FwDB4oExtension = "." + FwDB4oExtensionNoPeriod;
-		public const string FwDB4oExtensionNoPeriod = "fwdb";
+		public const string FwDb4oExtension = "." + FwDb4oExtensionNoPeriod;
+		public const string FwDb4oExtensionNoPeriod = "fwdb";
 		public const string LiftExtension = ".lift";
 		public const string FlexExtension = "_model_version";
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
-		private static string _testingProjectsPath;
-
-		internal static void SetProjectsPathForTests(string testProjectsPath)
-		{
-			_testingProjectsPath = testProjectsPath;
-		}
+		public const string hg = ".hg";
+		public const string git = ".git";
+// ReSharper restore InconsistentNaming
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -103,31 +99,12 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string HgDataFolder(string path)
 		{
-			return Path.Combine(path, BridgeTrafficCop.hg, "store", "data");
+			return Path.Combine(path, hg, "store", "data");
 		}
 
 		public static string LiftOffset(string path)
 		{
 			return Path.Combine(path, OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
-		}
-
-		public static string ProjectsPath
-		{
-			get
-			{
-				if (_testingProjectsPath != null)
-					return _testingProjectsPath;
-
-				var rootDir = ((string) Registry.LocalMachine
-												.OpenSubKey("software")
-												.OpenSubKey("SIL")
-												.OpenSubKey("FieldWorks")
-												.OpenSubKey("8")
-												.GetValue("ProjectsDir")).Trim();
-				if (rootDir.Length > 3)
-					rootDir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-				return rootDir;
-			}
 		}
 
 		public static bool FolderIsEmpty(string folder)

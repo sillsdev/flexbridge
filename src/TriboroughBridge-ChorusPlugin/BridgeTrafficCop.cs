@@ -47,6 +47,7 @@ namespace TriboroughBridge_ChorusPlugin
 			AddArg(ref args, "-u", userNameActual);
 			AddArg(ref args, "-p", projectFolder); (See above)
 			AddArg(ref args, "-v", command);
+			AddArg(ref args, "-f", FixItAppPathname);
 			AddArg(ref args, "-g", projectGuid);
 			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
 			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
@@ -68,42 +69,42 @@ namespace TriboroughBridge_ChorusPlugin
 					where model.ModelType == modelType
 					select model).First();
 
-			var controllerType = ControllerType.StandAloneFlexBridge;
+			var controllerType = ActionType.Unknown;
 			switch (vOption)
 			{
 				// Not used.
 				//case undo_export:
-				//	controllerType = ControllerType.UndoExport;
+				//	controllerType = ActionType.UndoExport;
 				//	break;
 				case undo_export_lift:
-					controllerType = ControllerType.UndoExportLift;
+					controllerType = ActionType.UndoExportLift;
 					break;
 
 				case obtain: // Get new repo (FW or lift)
-					controllerType = ControllerType.Obtain;
+					controllerType = ActionType.Obtain;
 					break;
 				case obtain_lift: // Get new lift repro, whch gets imported (safely) into FLEx.
-					controllerType = ControllerType.ObtainLift;
+					controllerType = ActionType.ObtainLift;
 					break;
 
 				//case "send_receive_all": // Future: Any and all repos.
 				//	break;
 				case send_receive: // Only for main FW repo.
-					controllerType = ControllerType.SendReceive;
+					controllerType = ActionType.SendReceive;
 					break;
 				case send_receive_lift: // Only for lift repo.
-					controllerType = ControllerType.SendReceiveLift;
+					controllerType = ActionType.SendReceiveLift;
 					break;
 
 				case view_notes:
-					controllerType = ControllerType.ViewNotes;
+					controllerType = ActionType.ViewNotes;
 					break;
 				case view_notes_lift:
-					controllerType = ControllerType.ViewNotesLift;
+					controllerType = ActionType.ViewNotesLift;
 					break;
 
 				case move_lift:
-					controllerType = ControllerType.MoveLift;
+					controllerType = ActionType.MoveLift;
 					break;
 			}
 			CurrentModel.InitializeModel(MainForm, options, controllerType);
@@ -138,13 +139,6 @@ namespace TriboroughBridge_ChorusPlugin
 
 			_changesReceived = false;
 			InitializeCurrentModel(options);
-
-			if (options.Count == 0)
-			{
-				// Stand alone FLEx Bridge.
-				showWindow = true;
-				return true;
-			}
 
 			switch (options["-v"])
 			{

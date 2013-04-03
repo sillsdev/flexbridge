@@ -44,6 +44,6 @@ namespace TriboroughBridge_ChorusPlugin.Model
 		/// <summary>
 		/// Initialize the current instance.
 		/// </summary>
-		void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType);
+		void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType);
 	}
 }

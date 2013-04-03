@@ -15,9 +15,9 @@ namespace FLEx_ChorusPlugin.Model
 		[Import]
 		private ControllerRepository _controllerRepos;
 
-		private IBridgeController GetController(ControllerType controllerType)
+		private IBridgeController GetController(ActionType actionType)
 		{
-			return _controllerRepos.GetController(ModelType, controllerType);
+			return _controllerRepos.GetController(ModelType, actionType);
 		}
 
 		#region Implementation of IBridgeModel
@@ -72,17 +72,14 @@ namespace FLEx_ChorusPlugin.Model
 		/// <summary>
 		/// Initialize the current instance.
 		/// </summary>
-		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeModel(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
-			if (controllerType != ControllerType.StandAloneFlexBridge)
-			{
-				var pOption = options["-p"];
-				PathToRepository = Path.GetDirectoryName(pOption);
-				ProjectName = Path.GetFileNameWithoutExtension(pOption);
-			}
+			var pOption = options["-p"];
+			PathToRepository = Path.GetDirectoryName(pOption);
+			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 
-			CurrentController = GetController(controllerType);
-			CurrentController.InitializeController(mainForm, options, controllerType);
+			CurrentController = GetController(actionType);
+			CurrentController.InitializeController(mainForm, options, actionType);
 		}
 
 		#endregion End of IBridgeModel impl

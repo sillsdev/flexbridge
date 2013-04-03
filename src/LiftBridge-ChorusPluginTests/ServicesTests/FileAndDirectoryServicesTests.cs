@@ -25,9 +25,9 @@ namespace LiftBridgeTests.ServicesTests
 			_baseDir = Path.Combine(tempSysFolder, "FileServicesTestBase");
 			Directory.CreateDirectory(_baseDir);
 			// Add .hg folder and one file in it.
-			Directory.CreateDirectory(Path.Combine(_baseDir, BridgeTrafficCop.hg));
+			Directory.CreateDirectory(Path.Combine(_baseDir, Utilities.hg));
 			// Add .git folder and one file in it.
-			Directory.CreateDirectory(Path.Combine(_baseDir, BridgeTrafficCop.git));
+			Directory.CreateDirectory(Path.Combine(_baseDir, Utilities.git));
 
 			// Create 'old' files and folders.
 			_newBaseFolderPathname = Path.Combine(_baseDir, "somefile" + Utilities.LiftExtension);
@@ -52,8 +52,8 @@ namespace LiftBridgeTests.ServicesTests
 		{
 			var allFilesAndDirs = FileAndDirectoryServices.EnumerateExtantFiles(_baseDir);
 
-			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, BridgeTrafficCop.hg)));
-			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, BridgeTrafficCop.git)));
+			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, Utilities.git)));
 
 			Assert.IsTrue(allFilesAndDirs.Contains(_newBaseFolderPathname));
 			Assert.IsTrue(allFilesAndDirs.Contains(_newAudioDirName));
@@ -97,11 +97,11 @@ namespace LiftBridgeTests.ServicesTests
 			Assert.IsTrue(File.Exists(_newBaseFolderPathname));
 			Assert.IsTrue(File.Exists(_newLdmlPathname));
 
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, BridgeTrafficCop.hg)));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, BridgeTrafficCop.git)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.git)));
 			Assert.IsTrue(Directory.Exists(_newAudioDirName));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, BridgeTrafficCop.hg)));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, BridgeTrafficCop.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
 			Assert.IsTrue(Directory.Exists(_newWsDirName));
 		}
 	}

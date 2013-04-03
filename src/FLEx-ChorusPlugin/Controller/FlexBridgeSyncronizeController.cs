@@ -22,7 +22,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		#region IBridgeController implementation
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
+		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
 			_options = options;
 			_projectDir = Path.GetDirectoryName(options["-p"]);
@@ -43,9 +43,9 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public ChorusSystem ChorusSystem { get; private set; }
 
-		public IEnumerable<ControllerType> SupportedControllerActions
+		public IEnumerable<ActionType> SupportedControllerActions
 		{
-			get { return new List<ControllerType> { ControllerType.SendReceive }; }
+			get { return new List<ActionType> { ActionType.SendReceive }; }
 		}
 
 		public IEnumerable<BridgeModelType> SupportedModels
