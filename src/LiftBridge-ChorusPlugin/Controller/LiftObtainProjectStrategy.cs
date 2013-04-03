@@ -6,6 +6,7 @@ using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 
@@ -104,12 +105,12 @@ namespace SIL.LiftBridge.Controller
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, Utilities.hg, "hgrc"), Path.Combine(targetFolder, Utilities.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
-			var roadblock = Path.Combine(sourceFolder, Utilities.FailureFilename);
+			var roadblock = Path.Combine(sourceFolder, ImportFailureServices.FailureFilename);
 			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, Utilities.FailureFilename), true);
+				File.Copy(roadblock, Path.Combine(targetFolder, ImportFailureServices.FailureFilename), true);
 		}
 	}
 }

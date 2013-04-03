@@ -151,7 +151,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void move_liftOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.move_lift;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.move_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			_options.Remove(CommandLineProcessor.f);
 
@@ -167,7 +167,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void about_flex_bridgeOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.about_flex_bridge;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.about_flex_bridge;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
@@ -190,7 +190,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void check_for_updatesOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.check_for_updates;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.check_for_updates;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
@@ -213,7 +213,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void obtainOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.obtain;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.obtain;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
@@ -238,7 +238,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void obtain_liftOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.obtain_lift;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.obtain_lift;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
@@ -267,7 +267,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void send_receiveOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.send_receive;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.send_receive;
 			_options.Remove(CommandLineProcessor.g);
 
 			string fooDir;
@@ -287,7 +287,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void send_receive_liftOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.send_receive_lift;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.send_receive_lift;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
@@ -310,11 +310,11 @@ namespace TriboroughBridge_ChorusPluginTests
 		[Test]
 		public void undo_exportOption()
 		{
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.undo_export;
 			_options.Remove(CommandLineProcessor.g);
 			_options.Remove(CommandLineProcessor.f);
 
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.undo_export;
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Unsupported 'v' option should have thrown");
 		}
 
@@ -322,7 +322,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		public void undo_export_liftOption()
 		{
 			_options.Remove(CommandLineProcessor.f);
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.undo_export_lift;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.undo_export_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");
 
@@ -340,7 +340,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
-			Directory.CreateDirectory(Path.Combine(liftOffset, ".hg"));
+			Directory.CreateDirectory(Path.Combine(liftOffset, Utilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 
@@ -348,7 +348,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		public void view_notesOption()
 		{
 			_options.Remove(CommandLineProcessor.f);
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.view_notes;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.view_notes;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");
 
@@ -361,7 +361,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			// Has no .hg folder
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have an '.hg' folder");
 
-			Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(fooFwdataPathname), ".hg"));
+			Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(fooFwdataPathname), Utilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 
@@ -369,7 +369,7 @@ namespace TriboroughBridge_ChorusPluginTests
 		public void view_notes_liftOption()
 		{
 			_options.Remove(CommandLineProcessor.f);
-			_options[CommandLineProcessor.v] = BridgeTrafficCop.view_notes_lift;
+			_options[CommandLineProcessor.v] = CommandLineProcessor.view_notes_lift;
 			_options[CommandLineProcessor.g] = Guid.NewGuid().ToString();
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not have -g option");
 
@@ -387,7 +387,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
-			Directory.CreateDirectory(Path.Combine(liftOffset, ".hg"));
+			Directory.CreateDirectory(Path.Combine(liftOffset, Utilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 	}

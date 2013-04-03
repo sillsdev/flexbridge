@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace TriboroughBridge_ChorusPlugin.Infrastructure
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	public class AboutFlexBridgeActionTypeHandler : IBridgeActionTypeHandler
+	public sealed class AboutFlexBridgeActionTypeHandler : IBridgeActionTypeHandler
 	{
 		#region IBridgeActionTypeHandler impl
 

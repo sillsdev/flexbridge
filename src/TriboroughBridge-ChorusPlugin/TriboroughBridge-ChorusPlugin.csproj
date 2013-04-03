@@ -108,7 +108,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="BridgeTrafficCop.cs" />
+	<None Include="BridgeTrafficCop.cs" />
 	<Compile Include="ActionType.cs" />
 	<Compile Include="CommandLineException.cs" />
 	<Compile Include="CommandLineProcessor.cs" />
@@ -125,7 +125,6 @@
 	<Compile Include="Controller\ISyncronizeController.cs" />
 	<Compile Include="Controller\JumpEventHandler.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
-	<Compile Include="Controller\UndoExportController.cs" />
 	<Compile Include="Infrastructure\CheckForUpdatesActionTypeHandler.cs" />
 	<Compile Include="ISynchronizeProject.cs" />
 	<Compile Include="JumpEventArgs.cs" />

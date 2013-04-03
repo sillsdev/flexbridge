@@ -52,7 +52,6 @@ namespace TheTurtle
 			{
 				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
 				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(FlexBridgeModel))));
-				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(BridgeTrafficCop))));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))

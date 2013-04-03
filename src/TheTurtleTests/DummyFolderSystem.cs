@@ -14,13 +14,13 @@ namespace TheTurtleTests
 
 		internal DummyFolderSystem()
 		{
-			BaseFolderPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Projects")).FullName;
+			BaseFolderPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "Projects")).FullName;
 
 			BaseFolderPaths = new HashSet<string> {BaseFolderPath};
 
 			// Remote collaboration enabled project
 			var projectPath = Directory.CreateDirectory(Path.Combine(BaseFolderPath, "ZPI")).FullName;
-			Directory.CreateDirectory(Path.Combine(projectPath, BridgeTrafficCop.hg));
+			Directory.CreateDirectory(Path.Combine(projectPath, Utilities.hg));
 			_dummyFolderPaths.Add(projectPath);
 			File.WriteAllText(Path.Combine(projectPath, "ZPI" + Utilities.FwXmlExtension), "");
 

@@ -8,6 +8,7 @@ namespace TriboroughBridge_ChorusPlugin
 {
 	public static class CommandLineProcessor
 	{
+// ReSharper disable InconsistentNaming
 		internal const string u = "-u";
 		internal const string p = "-p";
 		internal const string v = "-v";
@@ -18,6 +19,32 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string fwmodel = "-fwmodel";
 		internal const string liftmodel = "-liftmodel";
 		internal const string pipeID = "-pipeID";
+
+		internal const string obtain = "obtain";						// -p <$fwroot>
+		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
+		internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata
+		internal const string view_notes = "view_notes";				// -p <$fwroot>\foo\foo.fwdata
+		internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata
+		internal const string undo_export = "undo_export";				// Not supported.
+		internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
+		internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		/*
+			AddArg(ref args, "-u", userNameActual);
+			AddArg(ref args, "-p", projectFolder); (See above)
+			AddArg(ref args, "-v", command);
+			AddArg(ref args, "-f", FixItAppPathname);
+			AddArg(ref args, "-g", projectGuid);
+			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
+			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
+			// Tell Flex Bridge which model version of data are expected by FLEx.
+			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
+			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
+			AddArg(ref args, "-pipeID", _pipeID);
+			*/
+// ReSharper restore InconsistentNaming
 
 		public static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
 		{
@@ -64,17 +91,17 @@ namespace TriboroughBridge_ChorusPlugin
 
 			var supportedOperations = new HashSet<string>
 				{
-					BridgeTrafficCop.move_lift,
-					BridgeTrafficCop.about_flex_bridge,
-					BridgeTrafficCop.check_for_updates,
-					BridgeTrafficCop.obtain,
-					BridgeTrafficCop.obtain_lift,
-					BridgeTrafficCop.send_receive,
-					BridgeTrafficCop.send_receive_lift,
-					// Not supported yet. BridgeTrafficCop.undo_export,
-					BridgeTrafficCop.undo_export_lift,
-					BridgeTrafficCop.view_notes,
-					BridgeTrafficCop.view_notes_lift
+					move_lift,
+					about_flex_bridge,
+					check_for_updates,
+					obtain,
+					obtain_lift,
+					send_receive,
+					send_receive_lift,
+					// Not supported yet. undo_export,
+					undo_export_lift,
+					view_notes,
+					view_notes_lift
 				};
 
 			// internal const string undo_export = "undo_export";				// Not supported.
@@ -82,14 +109,14 @@ namespace TriboroughBridge_ChorusPlugin
 				throw new CommandLineException("-v", "is not supported");
 
 			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
-			if (vOption != BridgeTrafficCop.move_lift)
+			if (vOption != move_lift)
 			{
 				if (options.ContainsKey(g))
 					throw new CommandLineException("-g", "is present");
 			}
 
 			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
-			if (vOption != BridgeTrafficCop.send_receive)
+			if (vOption != send_receive)
 			{
 				if (options.ContainsKey(f))
 					throw new CommandLineException("-f", "is present");
@@ -98,7 +125,7 @@ namespace TriboroughBridge_ChorusPlugin
 			string liftFolder;
 			switch (vOption)
 			{
-				case BridgeTrafficCop.move_lift:
+				case move_lift:
 					// internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
 					if (!options.ContainsKey(g) || String.IsNullOrEmpty(options[g]))
 						throw new CommandLineException("-g", "is missing");
@@ -109,23 +136,23 @@ namespace TriboroughBridge_ChorusPlugin
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					break;
 
-				case BridgeTrafficCop.about_flex_bridge: // Fall through
+				case about_flex_bridge: // Fall through
 					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
-				case BridgeTrafficCop.check_for_updates:
+				case check_for_updates:
 					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
 					if (Path.GetExtension(pOption) == ".fwdata")
 						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
 					break;
 
-				case BridgeTrafficCop.obtain:
+				case obtain:
 					//internal const string obtain = "obtain";						// -p <$fwroot>
 					var projectBaseDir = ValidateProjDirOption(options);
 					if (projectBaseDir != options[p])
 						throw new CommandLineException("-v, -p and -projDir", "are incompatible, since '-p' and '-projDir' are different");
 					break;
 
-				case BridgeTrafficCop.obtain_lift:
+				case obtain_lift:
 					// internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
 					if (Path.GetExtension(pOption) == ".fwdata")
 						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
@@ -135,14 +162,14 @@ namespace TriboroughBridge_ChorusPlugin
 						throw new CommandLineException("-v & -p", "are incompatible, since there is an extant Lift repository");
 					break;
 
-				case BridgeTrafficCop.send_receive:
+				case send_receive:
 					// internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					// Must have -f option with fix it app in it.
 					ValidateFOptionIsExtantFixItFile(options[fwAppsDir], options[f]);
 					break;
 
-				case BridgeTrafficCop.send_receive_lift:
+				case send_receive_lift:
 					// internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
@@ -152,10 +179,10 @@ namespace TriboroughBridge_ChorusPlugin
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift file");
 					break;
 
-				case BridgeTrafficCop.undo_export:
+				case undo_export:
 					throw new CommandLineException("-v", "'undo_export' is not supported");
 
-				case BridgeTrafficCop.undo_export_lift:
+				case undo_export_lift:
 					// internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
 					liftFolder = Utilities.LiftOffset(pOption);
@@ -165,14 +192,14 @@ namespace TriboroughBridge_ChorusPlugin
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift repository");
 					break;
 
-				case BridgeTrafficCop.view_notes:
+				case view_notes:
 					// internal const string view_notes = "view_notes";				// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					if (!Directory.Exists(Path.Combine(Path.GetDirectoryName(pOption), ".hg")))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant FW repository, and thus, no main set of notes");
 					break;
 
-				case BridgeTrafficCop.view_notes_lift:
+				case view_notes_lift:
 					// internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
@@ -205,7 +232,7 @@ namespace TriboroughBridge_ChorusPlugin
 			if (!Directory.Exists(fwAppsDirOption))
 				throw new CommandLineException("-fwAppsDir", "folder does not exist");
 
-			if (vOption == BridgeTrafficCop.send_receive)
+			if (vOption == send_receive)
 			{
 				if (!options.ContainsKey(f) || String.IsNullOrEmpty(options[f]))
 					throw new CommandLineException("-f", "is missing");
@@ -255,9 +282,9 @@ namespace TriboroughBridge_ChorusPlugin
 				throw new CommandLineException("-p", "has no fwdata file");
 		}
 
-		private static void ValidateFOptionIsExtantFixItFile(string fwAppsDir, string fOption)
+		private static void ValidateFOptionIsExtantFixItFile(string flexAppsDir, string fOption)
 		{
-			if (!fOption.StartsWith(fwAppsDir))
+			if (!fOption.StartsWith(flexAppsDir))
 				throw new CommandLineException("-f & -fwAppsDir", "are mis-matched");
 			if (Path.GetFileName(fOption) != "FixFwData.exe")
 				throw new CommandLineException("-f", "has no 'fix it' program");

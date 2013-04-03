@@ -96,7 +96,7 @@ namespace SIL.LiftBridge.Controller
 
 				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
 
-				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, BridgeTrafficCop.hg))))
+				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, Utilities.hg))))
 				{
 					var repo = new HgRepository(directory, new NullProgress());
 					if (repo.Identifier != repoId)

@@ -16,8 +16,8 @@ namespace TheTurtleTests.Model
 		private DummyFolderSystem _dummyFolderSystem;
 		private LanguageProjectRepository _languageProjectRepository;
 
-		[TestFixtureSetUp]
-		public void FixtureSetup()
+		[SetUp]
+		public void TestSetup()
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
 			_languageProjectRepository = new LanguageProjectRepository(
@@ -25,8 +25,8 @@ namespace TheTurtleTests.Model
 					new HashSet<string>(_dummyFolderSystem.BaseFolderPaths)));
 		}
 
-		[TestFixtureTearDown]
-		public void FixtureTearDown()
+		[TearDown]
+		public void TestTearDown()
 		{
 			_dummyFolderSystem.Dispose();
 		}

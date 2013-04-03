@@ -51,7 +51,7 @@ namespace TheTurtle.Model
 		{
 			get
 			{
-				return Directory.Exists(Path.Combine(DirectoryName, BridgeTrafficCop.hg));
+				return Directory.Exists(Path.Combine(DirectoryName, Utilities.hg));
 			}
 		}
 

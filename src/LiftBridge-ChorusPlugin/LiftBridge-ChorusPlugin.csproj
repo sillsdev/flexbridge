@@ -128,6 +128,7 @@
 	<Compile Include="Controller\MoveLiftRepositoryController.cs" />
 	<Compile Include="Controller\ObtainFinishLiftCloneStrategy.cs" />
 	<Compile Include="Controller\ObtainLiftFinishLiftCloneStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
 	<Compile Include="Model\LiftBridgeModel.cs" />
 	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
