@@ -46,7 +46,7 @@ namespace SIL.LiftBridge.Services
 
 		internal static string GetPathToFirstLiftFile(string liftFolder)
 		{
-			if (string.IsNullOrEmpty(liftFolder) || string.IsNullOrWhiteSpace(liftFolder))
+			if (string.IsNullOrWhiteSpace(liftFolder))
 				return null;
 
 			var liftFiles = Directory.GetFiles(liftFolder, "*" + Utilities.LiftExtension).ToList();
