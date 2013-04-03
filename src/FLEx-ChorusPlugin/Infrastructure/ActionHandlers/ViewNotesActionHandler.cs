@@ -208,6 +208,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
+		/// <summary>
+		/// Start doing whatever is needed for the supported type of action.
+		/// </summary>
+		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public bool StartWorking(Dictionary<string, string> options)
 		{
 			var pOption = options["-p"];
@@ -244,14 +248,23 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			return true;
 		}
 
+		/// <summary>
+		/// Perform ending work for the supported action.
+		/// </summary>
 		public void EndWork()
 		{ /* Don't notify FLEx. */ }
 
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
 		public ActionType SupportedActionType
 		{
 			get { return ActionType.ViewNotes; }
 		}
 
+		/// <summary>
+		/// Get the main window for the application.
+		/// </summary>
 		public Form MainForm
 		{
 			get { throw new NotSupportedException("The Undo Export handler is not supported"); }

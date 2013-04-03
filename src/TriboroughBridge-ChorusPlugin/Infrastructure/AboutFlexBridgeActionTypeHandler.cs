@@ -16,7 +16,6 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		/// <param name="options"></param>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public bool StartWorking(Dictionary<string, string> options)
 		{
@@ -40,7 +39,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
-		/// Get the main window for the allication.
+		/// Get the main window for the application.
 		/// </summary>
 		public Form MainForm
 		{

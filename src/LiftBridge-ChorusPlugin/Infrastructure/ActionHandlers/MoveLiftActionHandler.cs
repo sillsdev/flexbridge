@@ -32,6 +32,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
+		/// <summary>
+		/// Start doing whatever is needed for the supported type of action.
+		/// </summary>
+		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public bool StartWorking(Dictionary<string, string> options)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
@@ -111,6 +115,9 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			return false;
 		}
 
+		/// <summary>
+		/// Perform ending work for the supported action.
+		/// </summary>
 		public void EndWork()
 		{
 			var liftPathname = Directory.Exists(_baseLiftDir)
@@ -120,11 +127,17 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
 		public ActionType SupportedActionType
 		{
 			get { return ActionType.MoveLift; }
 		}
 
+		/// <summary>
+		/// Get the main window for the application.
+		/// </summary>
 		public Form MainForm
 		{
 			get { throw new NotSupportedException("The Move Lift handler has no window"); }

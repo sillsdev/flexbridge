@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
@@ -62,6 +61,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
+		/// <summary>
+		/// Start doing whatever is needed for the supported type of action.
+		/// </summary>
+		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public bool StartWorking(Dictionary<string, string> options)
 		{
 			if (_liftProject == null)
@@ -97,14 +100,23 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			return true;
 		}
 
+		/// <summary>
+		/// Perform ending work for the supported action.
+		/// </summary>
 		public void EndWork()
 		{ /* Don't notify FLEx. */ }
 
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
 		public ActionType SupportedActionType
 		{
 			get { return ActionType.ViewNotesLift; }
 		}
 
+		/// <summary>
+		/// Get the main window for the application.
+		/// </summary>
 		public Form MainForm
 		{
 			get { return _mainForm; }
