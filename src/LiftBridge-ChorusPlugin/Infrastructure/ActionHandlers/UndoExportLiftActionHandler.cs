@@ -38,7 +38,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		public void EndWork()
 		{
-			_connectionHelper.SignalBridgeWorkComplete(true);
+			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		public ActionType SupportedActionType

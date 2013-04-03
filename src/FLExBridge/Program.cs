@@ -57,6 +57,9 @@ namespace FLExBridge
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
+					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
+					if (!connHelper.Init(options))
+						return;
 					var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
 					var currentHandler = handlerRepository.GetHandler(options);
 					if (currentHandler.StartWorking(options))

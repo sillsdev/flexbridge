@@ -113,12 +113,9 @@
 	<Compile Include="CommandLineException.cs" />
 	<Compile Include="CommandLineProcessor.cs" />
 	<Compile Include="Controller\ControllerRepository.cs" />
-	<Compile Include="Controller\BridgeConflictController.cs" />
 	<Compile Include="Infrastructure\AboutFlexBridgeActionTypeHandler.cs" />
 	<Compile Include="Infrastructure\ActionTypeHandlerRepository.cs" />
 	<Compile Include="Controller\IBridgeController.cs" />
-	<Compile Include="Controller\IConflictController.cs" />
-	<Compile Include="Controller\IConflictStrategy.cs" />
 	<Compile Include="Controller\IObtainNewProjectController.cs" />
 	<Compile Include="Controller\IObtainProjectStrategy.cs" />
 	<Compile Include="Controller\ISyncronizeController.cs" />

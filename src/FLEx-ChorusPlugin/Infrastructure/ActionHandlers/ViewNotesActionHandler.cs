@@ -1,124 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus;
 using Chorus.UI.Notes;
-using Chorus.sync;
-using FLEx_ChorusPlugin.Infrastructure;
+using Chorus.UI.Notes.Browser;
 using Palaso.Network;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
+using TriboroughBridge_ChorusPlugin.View;
 
-namespace FLEx_ChorusPlugin.Controller
+namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
-	[Export(typeof(IConflictStrategy))]
-	public class FlexConflictStrategy : IConflictStrategy
+	[Export(typeof (IBridgeActionTypeHandler))]
+	internal sealed class ViewNotesActionHandler : IBridgeActionTypeHandler
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
-
-		#region IConflictStrategy impl
-
-		public ActionType SupportedActionAction
-		{
-			get { return ActionType.ViewNotes; }
-		}
-
-		public Action<ProjectFolderConfiguration> ConfigureProjectFolders
-		{
-			get { return FlexFolderSystem.ConfigureChorusProjectFolder; }
-		}
-
-		public string ProjectName { get; internal set; }
-
-		public string ProjectDir { get; internal set; }
-
-		public void PreInitializeStrategy(Dictionary<string, string> options)
-		{
-			var pOption = options["-p"];
-			ProjectName = Path.GetFileNameWithoutExtension(pOption);
-			ProjectDir = Path.GetDirectoryName(pOption);
-		}
-
-		public void InitializeStrategy(ChorusSystem chorusSystem, MergeConflictEmbeddedMessageContentHandler conflictHandler)
-		{
-			chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
-			conflictHandler.HtmlAdjuster = AdjustConflictHtml;
-			if (_connectionHelper != null)
-				JumpUrlChanged += _connectionHelper.SendJumpUrlToFlex;
-		}
+		private Form _mainForm;
+		private IChorusUser _chorusUser;
+		private ChorusSystem _chorusSystem;
+		private NotesBrowserPage _notesBrowser;
 
 		public event JumpEventHandler JumpUrlChanged;
 
-		#endregion IConflictStrategy impl
-
-		#region Implementation of IDisposable
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		~FlexConflictStrategy()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing,
-		/// or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		private bool IsDisposed { get; set; }
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the issue.
-		/// </remarks>
-		private void Dispose(bool disposing)
-		{
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				if (_connectionHelper != null)
-					JumpUrlChanged -= _connectionHelper.SendJumpUrlToFlex;
-			}
-
-			IsDisposed = true;
-		}
-
-		#endregion
+		internal string ProjectName { get; set; }
+		internal string ProjectDir { get; set; }
 
 		private void JumpToFlexObject(string url)
 		{
@@ -169,7 +83,7 @@ namespace FLEx_ChorusPlugin.Controller
 										select child).ToList();
 				var conflictPropnames = (checksumChildren.Where(child => child.Element("span") != null)
 														 .Select(ExtractPropName)).ToList(); // This part may not work on Mono, so if not, use the non-method cahin option, below.
-														// .Select(child => ExtractPropName(child))).ToList();
+				// .Select(child => ExtractPropName(child))).ToList();
 				var needToRemove = checksumChildren.Skip(1).ToList(); // all but first will surely be removed
 				var firstChild = checksumChildren.First();
 				if (conflictPropnames.Any())
@@ -269,7 +183,7 @@ namespace FLEx_ChorusPlugin.Controller
 				}
 				catch (XmlException)
 				{
-					continue; // ignore any parsing errors, just can't improve this one
+					// ignore any parsing errors, just can't improve this one
 				}
 			}
 			return current;
@@ -291,5 +205,141 @@ namespace FLEx_ChorusPlugin.Controller
 						.Where(valueAttr => valueAttr != null)
 						.Select(valueAttr => valueAttr.Value)).FirstOrDefault();
 		}
+
+		#region IBridgeActionTypeHandler impl
+
+		public bool StartWorking(Dictionary<string, string> options)
+		{
+			var pOption = options["-p"];
+			ProjectName = Path.GetFileNameWithoutExtension(pOption);
+			ProjectDir = Path.GetDirectoryName(pOption);
+
+			_mainForm = new Form
+			{
+				ClientSize = new Size(904, 510)
+			};
+			_chorusUser = new ChorusUser(options["-u"]);
+			_chorusSystem = Utilities.InitializeChorusSystem(ProjectDir, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
+			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
+			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
+			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>().First();
+
+			// _currentStrategy.InitializeStrategy(ChorusSystem, conflictHandler);
+			_chorusSystem.NavigateToRecordEvent.Subscribe(JumpToFlexObject);
+			conflictHandler.HtmlAdjuster = AdjustConflictHtml;
+			if (_connectionHelper != null)
+				JumpUrlChanged += _connectionHelper.SendJumpUrlToFlex;
+
+			var viewer = new BridgeConflictView();
+			_mainForm.Controls.Add(viewer);
+			_mainForm.Text = viewer.Text;
+			viewer.Dock = DockStyle.Fill;
+			viewer.SetBrowseView(_notesBrowser);
+
+			// Only used by FLEx, so how can it not be in use?
+			//if (_currentLanguageProject.FieldWorkProjectInUse)
+			//	viewer.EnableWarning();
+			viewer.SetProjectName(ProjectName);
+
+			return true;
+		}
+
+		public void EndWork()
+		{ /* Don't notify FLEx. */ }
+
+		public ActionType SupportedActionType
+		{
+			get { return ActionType.ViewNotes; }
+		}
+
+		public Form MainForm
+		{
+			get { throw new NotSupportedException("The Undo Export handler is not supported"); }
+		}
+
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IDisposable impl
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		~ViewNotesActionHandler()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing,
+		/// or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		private bool IsDisposed { get; set; }
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the issue.
+		/// </remarks>
+		private void Dispose(bool disposing)
+		{
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				if (_notesBrowser != null)
+				{
+					_notesBrowser.Dispose();
+				}
+				if (_chorusSystem != null)
+				{
+					_chorusSystem.Dispose();
+				}
+				if (_connectionHelper != null)
+				{
+					JumpUrlChanged -= _connectionHelper.SendJumpUrlToFlex;
+				}
+				if (_chorusSystem != null)
+				{
+					_chorusSystem.Dispose();
+				}
+			}
+			_connectionHelper = null;
+			_mainForm = null;
+			_chorusUser = null;
+			_notesBrowser = null;
+			ProjectName = null;
+			ProjectDir = null;
+
+			IsDisposed = true;
+		}
+
+		#endregion IDisposable impl
 	}
 }

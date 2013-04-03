@@ -1,23 +1,21 @@
 ﻿using System.IO;
-using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Controller
 {
 	/// <summary>
-	/// Test the conflict controller with mocked implementations of the various view interfaces.
+	/// Test the ViewNotesActionHandler with mocked implementations of the various view interfaces.
 	/// </summary>
 	[TestFixture]
-	public class ConflictControllerTests
+	public class ViewNotesActionHandlerTests
 	{
-
 		[Test]
 		public void AdjustConflictHtml_ReplacesDatabaseCurrent()
 		{
-			var input =
-				@"<root>silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni</root>";
-			var strategy = new FlexConflictStrategy
+			const string input = @"<root>silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=7b3a3472-7730-474e-b3d2-06779fd751e8&amp;tag=&amp;label=Uni</root>";
+			var strategy = new ViewNotesActionHandler
 				{
 					ProjectName = "MyProject"
 				};
@@ -98,7 +96,7 @@ namespace FLEx_ChorusPluginTests.Controller
 			File.WriteAllText(Path.Combine(wsFolder, "es-fonipa.ldml"), ldmlContent3);
 			File.WriteAllText(Path.Combine(wsFolder, "en-Zxxx-x-audio.ldml"), ldmlContent4);
 
-			var strategy = new FlexConflictStrategy();
+			var strategy = new ViewNotesActionHandler();
 				{
 					strategy.ProjectDir = projFolder;
 				}
@@ -133,7 +131,7 @@ namespace FLEx_ChorusPluginTests.Controller
 					<div class='checksum'>SomeSeq: qwxyz</div>
 				</div>
 			</body>").Replace("'", "\"");
-			var strategy = new FlexConflictStrategy();
+			var strategy = new ViewNotesActionHandler();
 			var result = strategy.AdjustConflictHtml(input);
 			Assert.That(result, Is.EqualTo((@"<body>
 				<div class='property'>Root:

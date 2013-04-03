@@ -127,9 +127,9 @@
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Controller\FlexBridgeSyncronizeController.cs" />
-	<Compile Include="Controller\FlexConflictStrategy.cs" />
 	<Compile Include="Controller\FlexObtainProjectStrategy.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
 	<Compile Include="Infrastructure\DomainServices\CheckForDuplicateElementMethod.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
 	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
