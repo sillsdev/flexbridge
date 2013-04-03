@@ -123,7 +123,7 @@ namespace FLEx_ChorusPlugin.Controller
 			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.CustomPropertiesFilename));
 		}
 
-		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var retVal = new ActualCloneResult
 				{
@@ -160,9 +160,9 @@ namespace FLEx_ChorusPlugin.Controller
 			get { return BridgeModelType.Flex; }
 		}
 
-		public ControllerType SupportedControllerType
+		public ActionType SupportedActionType
 		{
-			get { return ControllerType.Obtain; }
+			get { return ActionType.Obtain; }
 		}
 
 		#endregion

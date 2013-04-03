@@ -23,10 +23,10 @@ namespace SIL.LiftBridge.Controller
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
 		private const string Default = "default";
 
-		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ControllerType actionType)
+		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ActionType actionType)
 		{
 			return
-				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedControllerAction == actionType);
+				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedActionAction == actionType);
 		}
 
 		#region IObtainProjectStrategy impl
@@ -46,9 +46,9 @@ namespace SIL.LiftBridge.Controller
 			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
 		}
 
-		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ControllerType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository)
 		{
-			if (actionType != ControllerType.Obtain && actionType != ControllerType.ObtainLift)
+			if (actionType != ActionType.Obtain && actionType != ActionType.ObtainLift)
 			{
 				throw new ArgumentException(Resources.kUnsupportedControllerActionForLiftObtain, "actionType");
 			}
@@ -141,11 +141,11 @@ namespace SIL.LiftBridge.Controller
 				if (allHeads.Count == 0)
 				{
 					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
-					cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+				cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 					cloneResult.Message = CommonResources.kFlexUpdateRequired;
 					Directory.Delete(cloneLocation, true);
-					return;
-				}
+				return;
+			}
 
 				// Now. get to the real work.
 				var sortedRevisions = new SortedList<float, Revision>();
@@ -169,9 +169,9 @@ namespace SIL.LiftBridge.Controller
 			get { return BridgeModelType.Lift; }
 		}
 
-		public ControllerType SupportedControllerType
+		public ActionType SupportedActionType
 		{
-			get { return ControllerType.ObtainLift; }
+			get { return ActionType.ObtainLift; }
 		}
 
 		#endregion
@@ -187,12 +187,12 @@ namespace SIL.LiftBridge.Controller
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, BridgeTrafficCop.hg, "hgrc"), Path.Combine(targetFolder, BridgeTrafficCop.hg, "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, Utilities.hg, "hgrc"), Path.Combine(targetFolder, Utilities.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
-			var roadblock = Path.Combine(sourceFolder, Utilities.FailureFilename);
+			var roadblock = Path.Combine(sourceFolder, ImportFailureServices.FailureFilename);
 			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, Utilities.FailureFilename), true);
+				File.Copy(roadblock, Path.Combine(targetFolder, ImportFailureServices.FailureFilename), true);
 		}
 	}
 }

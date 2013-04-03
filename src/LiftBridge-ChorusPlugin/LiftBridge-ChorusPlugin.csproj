@@ -123,11 +123,12 @@
   <ItemGroup>
 	<Compile Include="Controller\IFinishLiftCloneStrategy.cs" />
 	<Compile Include="Controller\LiftBridgeSyncronizeController.cs" />
-	<Compile Include="Controller\LiftConflictStrategy.cs" />
 	<Compile Include="Controller\LiftObtainProjectStrategy.cs" />
-	<Compile Include="Controller\MoveLiftRepositoryController.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\MoveLiftActionHandler.cs" />
 	<Compile Include="Controller\ObtainFinishLiftCloneStrategy.cs" />
 	<Compile Include="Controller\ObtainLiftFinishLiftCloneStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ViewNotesLiftActionHandler.cs" />
 	<Compile Include="Model\LiftBridgeModel.cs" />
 	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />

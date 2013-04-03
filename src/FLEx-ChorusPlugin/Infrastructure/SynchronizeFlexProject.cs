@@ -39,7 +39,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
 					// so Flex Bridge can restore the fwdata file, AND, most importantly,
 					// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-					var syncAdjunt = new FlexBridgeSychronizerAdjunct(_origPathname, options["-f"]);
+					var syncAdjunt = new FlexBridgeSychronizerAdjunct(_origPathname, options["-f"], false);
 					syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 					// Chorus does it in ths order:
