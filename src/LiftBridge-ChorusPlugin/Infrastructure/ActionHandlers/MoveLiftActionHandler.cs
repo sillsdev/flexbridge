@@ -3,78 +3,62 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
-using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
+using SIL.LiftBridge.Controller;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
-using TriboroughBridge_ChorusPlugin.View;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 
-namespace SIL.LiftBridge.Controller
+namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
-	[Export(typeof(IBridgeController))]
-	internal class MoveLiftRepositoryController : IMoveOldLiftRepositorController
+	[Export(typeof (IBridgeActionTypeHandler))]
+	internal sealed class MoveLiftActionHandler : IBridgeActionTypeHandler
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 		private string _baseLiftDir;
-		private string _fwLangProjGuid;
 		private const string MappingTag = "Mapping";
 		private const string ProjectguidAttrTag = "projectguid";
 		private const string RepositoryidentifierAttrTag = "repositoryidentifier";
 		private const string MappingFilename = "LanguageProject_Repository_Map.xml";
 
-		public void Dispose()
+		private static void RemoveElementAndSaveDoc(XDocument mappingDoc, XElement goner, string mappingDocPathname)
 		{
+			goner.Remove();
+			mappingDoc.Save(mappingDocPathname);
 		}
 
-		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
+		#region IBridgeActionTypeHandler impl
+
+		public bool StartWorking(Dictionary<string, string> options)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
-			_fwLangProjGuid = options["-g"];
-		}
-
-		public ChorusSystem ChorusSystem
-		{
-			get { return null; }
-		}
-
-		public IEnumerable<ActionType> SupportedControllerActions
-		{
-			get { return new List<ActionType> { ActionType.MoveLift }; }
-		}
-
-		public IEnumerable<BridgeModelType> SupportedModels
-		{
-			get { return new List<BridgeModelType> { BridgeModelType.Lift }; }
-		}
-
-		public void MoveRepoIfPresent()
-		{
+			var fwLangProjGuid = options["-g"];
 			var basePathForOldLiftRepos = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 						"LiftBridge");
 			if (!Directory.Exists(basePathForOldLiftRepos))
 			{
-				return;
+				return false;
 			}
 			if (Directory.GetDirectories(basePathForOldLiftRepos).Length == 0)
 			{
 				Directory.Delete(basePathForOldLiftRepos, true);
-				return;
+				return false;
 			}
 			var mappingDocPathname = Path.Combine(basePathForOldLiftRepos, MappingFilename);
 			if (!File.Exists(mappingDocPathname))
 			{
-				return;
+				return false;
 			}
 
 			var mappingDoc = XDocument.Load(mappingDocPathname);
 			if (!mappingDoc.Root.HasElements)
 			{
 				Directory.Delete(basePathForOldLiftRepos, true);
-				return;
+				return false;
 			}
 			var removedElements = mappingDoc.Root.Elements(MappingTag)
 				.Where(mapElement => mapElement.Attribute(ProjectguidAttrTag) == null || mapElement.Attribute(RepositoryidentifierAttrTag) == null).ToList();
@@ -91,7 +75,7 @@ namespace SIL.LiftBridge.Controller
 			string oldLiftFolder = null;
 			foreach (var mapElement in mappingDoc.Root.Elements(MappingTag).ToList())
 			{
-				if (mapElement.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() != _fwLangProjGuid.ToLowerInvariant())
+				if (mapElement.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() != fwLangProjGuid.ToLowerInvariant())
 					continue;
 
 				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
@@ -112,7 +96,7 @@ namespace SIL.LiftBridge.Controller
 				break;
 			}
 			if (oldLiftFolder == null)
-				return;
+				return false;
 
 			LiftObtainProjectStrategy.MakeLocalClone(oldLiftFolder, _baseLiftDir);
 
@@ -123,6 +107,8 @@ namespace SIL.LiftBridge.Controller
 			var otherRepoDir = Directory.GetParent(_baseLiftDir).FullName;
 			if (!Directory.Exists(_baseLiftDir) && Directory.GetDirectories(_baseLiftDir).Length == 0)
 				Directory.Delete(otherRepoDir);
+
+			return false;
 		}
 
 		public void EndWork()
@@ -131,17 +117,26 @@ namespace SIL.LiftBridge.Controller
 				? Directory.GetFiles(_baseLiftDir, "*" + Utilities.LiftExtension).FirstOrDefault()
 				: null;
 			_connectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
+			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		public void ObtainRepository(string expectedPathToClonedRepository)
+		public ActionType SupportedActionType
 		{
-			throw new NotSupportedException();
+			get { return ActionType.MoveLift; }
 		}
 
-		private static void RemoveElementAndSaveDoc(XDocument mappingDoc, XElement goner, string mappingDocPathname)
+		public Form MainForm
 		{
-			goner.Remove();
-			mappingDoc.Save(mappingDocPathname);
+			get { throw new NotSupportedException("The Move Lift handler has no window"); }
 		}
+
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IDisposable impl
+
+		public void Dispose()
+		{ /* Do nothing */ }
+
+		#endregion IDisposable impl
 	}
 }

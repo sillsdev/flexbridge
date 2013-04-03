@@ -119,7 +119,6 @@
 	<Compile Include="Controller\IBridgeController.cs" />
 	<Compile Include="Controller\IConflictController.cs" />
 	<Compile Include="Controller\IConflictStrategy.cs" />
-	<Compile Include="Controller\IMoveOldLiftRepositorController.cs" />
 	<Compile Include="Controller\IObtainNewProjectController.cs" />
 	<Compile Include="Controller\IObtainProjectStrategy.cs" />
 	<Compile Include="Controller\ISyncronizeController.cs" />
