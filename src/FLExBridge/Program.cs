@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
@@ -8,6 +7,7 @@ using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLExBridge
@@ -51,27 +51,19 @@ namespace FLExBridge
 			using (var catalog = new AggregateCatalog())
 			{
 				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase)),
+					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)),
 					"*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
-					var wantEndCall = false;
-					var bridgeTrafficCop = container.GetExportedValue<BridgeTrafficCop>();
-					try
+					var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
+					var currentHandler = handlerRepository.GetHandler(options);
+					if (currentHandler.StartWorking(options))
 					{
-						bool showWindow;
-						wantEndCall = bridgeTrafficCop.StartWorking(options, out showWindow);
-						if (showWindow)
-							Application.Run(bridgeTrafficCop.MainForm);
+						Application.Run(currentHandler.MainForm);
 					}
-					finally
-					{
-						if (wantEndCall)
-							bridgeTrafficCop.EndWork(options);
-					}
-
+					currentHandler.EndWork();
 				}
 			}
 			Settings.Default.Save();
