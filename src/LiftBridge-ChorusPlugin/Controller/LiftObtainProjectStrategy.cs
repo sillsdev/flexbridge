@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
+using Palaso.Xml;
 using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace SIL.LiftBridge.Controller
 {
@@ -17,6 +21,7 @@ namespace SIL.LiftBridge.Controller
 		[ImportMany]
 		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
+		private const string Default = "default";
 
 		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ControllerType actionType)
 		{
@@ -62,15 +67,93 @@ namespace SIL.LiftBridge.Controller
 			return _currentFinishStrategy.FinishCloning(options, cloneLocation, expectedPathToClonedRepository);
 		}
 
+		private static float GetLiftVersionNumber(string repoLocation)
+		{
+			// Return 0.13 if there is no lift file or it has no 'version' attr on the main 'lift' element.
+			var firstLiftFile = FileAndDirectoryServices.GetPathToFirstLiftFile(repoLocation);
+			if (firstLiftFile == null)
+				return float.MaxValue;
+
+			using (var reader = XmlReader.Create(firstLiftFile, CanonicalXmlSettings.CreateXmlReaderSettings()))
+			{
+				reader.MoveToContent();
+				reader.MoveToAttribute("version");
+				return float.Parse(reader.Value);
+			}
+		}
+
 		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation, string desiredBranchName, ActualCloneResult cloneResult)
 		{
 			var repo = new HgRepository(cloneLocation, new NullProgress());
 			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
+			var desiredModelVersion = float.Parse(desiredBranchName.Replace("LIFT", null));
 			Revision desiredRevision;
 			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
 			{
-				cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-				return;
+				// Remove any that are too high.
+				var gonerKeys = new HashSet<string>();
+				foreach (var headKvp in allHeads)
+				{
+					float currentVersion;
+					if (headKvp.Key == Default)
+					{
+						repo.Update(headKvp.Value.Number.LocalRevisionNumber);
+						currentVersion = GetLiftVersionNumber(cloneLocation);
+					}
+					else
+					{
+						currentVersion = float.Parse(headKvp.Value.Branch);
+					}
+					if (currentVersion > desiredModelVersion)
+					{
+						gonerKeys.Add((headKvp.Key == Default) ? Default : headKvp.Key);
+					}
+				}
+				foreach (var goner in gonerKeys)
+				{
+					allHeads.Remove(goner);
+				}
+
+				// Replace 'default' with its real model number.
+				if (allHeads.ContainsKey(Default))
+				{
+					repo.Update(allHeads[Default].Number.LocalRevisionNumber);
+					var modelVersion = GetLiftVersionNumber(cloneLocation);
+					var fullModelVersion = "LIFT" + modelVersion;
+					if (allHeads.ContainsKey(fullModelVersion))
+					{
+						// Pick the highest revision of the two.
+						var defaultHead = allHeads[Default];
+						var otherHead = allHeads[fullModelVersion];
+						var defaultRevisionNumber = int.Parse(defaultHead.Number.LocalRevisionNumber);
+						var otherRevisionNumber = int.Parse(otherHead.Number.LocalRevisionNumber);
+						allHeads[fullModelVersion] = defaultRevisionNumber > otherRevisionNumber ? defaultHead : otherHead;
+					}
+					else
+					{
+						allHeads.Add(fullModelVersion, allHeads[Default]);
+					}
+					allHeads.Remove(Default);
+				}
+
+				// 'default' is no longer present in 'allHeads'.
+				// If all of them are higher, then it is a no go.
+				if (allHeads.Count == 0)
+				{
+					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
+					cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+					cloneResult.Message = CommonResources.kFlexUpdateRequired;
+					Directory.Delete(cloneLocation, true);
+					return;
+				}
+
+				// Now. get to the real work.
+				var sortedRevisions = new SortedList<float, Revision>();
+				foreach (var kvp in allHeads)
+				{
+					sortedRevisions.Add(float.Parse(kvp.Key.Replace("LIFT", null)), kvp.Value);
+				}
+				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
 			repo.Update(desiredRevision.Number.LocalRevisionNumber);
 			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;

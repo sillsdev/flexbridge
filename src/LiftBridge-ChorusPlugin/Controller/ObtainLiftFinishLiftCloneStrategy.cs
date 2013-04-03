@@ -35,6 +35,7 @@ namespace SIL.LiftBridge.Controller
 			{
 				retVal.Message = CommonResources.kFlexUpdateRequired;
 				Directory.Delete(cloneLocation, true);
+				_liftFolder = null;
 				return retVal;
 			}
 

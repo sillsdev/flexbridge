@@ -62,6 +62,7 @@ namespace SIL.LiftBridge.Controller
 
 			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
 			{
+				_liftFolder = null;
 				retVal.Message = CommonResources.kFlexUpdateRequired;
 				Directory.Delete(cloneLocation, true);
 				return retVal;
