@@ -70,7 +70,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			if (_liftProject == null)
 				_liftProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 
-			_mainForm = new Form
+			_mainForm = new MainBridgeForm
 				{
 					ClientSize = new Size(904, 510)
 				};

@@ -126,8 +126,8 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
-	<Compile Include="Controller\FlexBridgeSyncronizeController.cs" />
 	<Compile Include="Controller\FlexObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
 	<Compile Include="Infrastructure\DomainServices\CheckForDuplicateElementMethod.cs" />
@@ -237,7 +237,6 @@
 	  <DependentUpon>Settings.settings</DependentUpon>
 	</Compile>
 	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
-	<Compile Include="Infrastructure\SynchronizeFlexProject.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="chorus.ico" />

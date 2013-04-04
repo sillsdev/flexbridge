@@ -59,7 +59,6 @@
 	</Compile>
 	<Compile Include="Mocks\MockedProjectPathLocator.cs" />
 	<Compile Include="Mocks\MockedProjectView.cs" />
-	<Compile Include="Mocks\MockedSynchronizeProject.cs" />
 	<Compile Include="Model\LanguageProjectRepositoryTests.cs" />
 	<Compile Include="Model\LanguageProjectTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />

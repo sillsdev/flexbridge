@@ -218,7 +218,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
 
-			_mainForm = new Form
+			_mainForm = new MainBridgeForm
 			{
 				ClientSize = new Size(904, 510)
 			};
