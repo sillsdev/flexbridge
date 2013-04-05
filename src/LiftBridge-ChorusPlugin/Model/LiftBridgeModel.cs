@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
@@ -97,7 +98,9 @@ namespace SIL.LiftBridge.Model
 
 			if ((controllerType == ControllerType.ObtainLift || controllerType == ControllerType.MoveLift) && !Directory.Exists(otherPath))
 				Directory.CreateDirectory(otherPath);
-			PathToRepository = Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT); // May, or may not, exist.
+			// Find a subfolder of 'otherPath' that ends with "_LIFT", and do not try to match with 'ProjectName'.
+			var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
+			PathToRepository = extantLiftFolder ?? Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT);
 
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);

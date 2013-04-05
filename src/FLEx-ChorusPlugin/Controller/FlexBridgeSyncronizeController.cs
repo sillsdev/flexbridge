@@ -24,6 +24,7 @@ namespace FLEx_ChorusPlugin.Controller
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ControllerType controllerType)
 		{
+			// // -p <$fwroot>\foo\foo.fwdata
 			_options = options;
 			_projectDir = Path.GetDirectoryName(options["-p"]);
 			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);

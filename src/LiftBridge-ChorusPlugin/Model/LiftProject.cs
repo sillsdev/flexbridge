@@ -12,7 +12,7 @@ namespace SIL.LiftBridge.Model
 	{
 		internal LiftProject(string basePath)
 		{
-			BasePath = basePath;
+			BasePath = basePath; // fwroot/foo
 		}
 
 		internal string LiftPathname
@@ -30,6 +30,13 @@ namespace SIL.LiftBridge.Model
 			get
 			{
 				var flexProjName = Path.GetFileName(BasePath);
+				var otherPath = Path.Combine(BasePath, Utilities.OtherRepositories);
+				if (Directory.Exists(otherPath))
+				{
+					var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
+					if (extantLiftFolder != null)
+						return extantLiftFolder;
+				}
 				return Path.Combine(BasePath, Utilities.OtherRepositories, flexProjName + '_' + Utilities.LIFT);
 			}
 		}

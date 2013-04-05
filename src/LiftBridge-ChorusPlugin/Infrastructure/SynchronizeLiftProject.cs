@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
-using Chorus.UI.Clone;
 using Chorus.UI.Sync;
-using Chorus.VcsDrivers;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 
@@ -25,7 +22,7 @@ namespace SIL.LiftBridge.Infrastructure
 		public bool SynchronizeProject(Dictionary<string, string> options, Form parent, ChorusSystem chorusSystem, string projectPath, string projectName)
 		{
 			var othersChanges = false;
-
+			// -p <$fwroot>\foo\foo.fwdata
 			_origPathname = Path.Combine(projectPath, projectName + Utilities.LiftExtension);
 
 			// Do the Chorus business.
@@ -34,7 +31,7 @@ namespace SIL.LiftBridge.Infrastructure
 				var syncAdjunt = new LiftSynchronizerAdjunct(_origPathname);
 				syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
-				// Chorus does it in ths order:
+				// Chorus does it in this order:
 				// local Commit
 				// Pull
 				// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
@@ -55,15 +52,5 @@ namespace SIL.LiftBridge.Infrastructure
 		}
 
 		#endregion
-
-		private static bool RenameFolderIfPossible(string actualCloneLocation, string possibleNewLocation)
-		{
-			if (actualCloneLocation != possibleNewLocation && !Directory.Exists(possibleNewLocation))
-			{
-				Directory.Move(actualCloneLocation, possibleNewLocation);
-				return true;
-			}
-			return false;
-		}
 	}
 }

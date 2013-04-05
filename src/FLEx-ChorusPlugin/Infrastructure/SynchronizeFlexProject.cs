@@ -51,6 +51,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					syncDlg.SyncOptions.DoMergeWithOthers = true;
 					syncDlg.SyncOptions.DoSendToOthers = true;
 					syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
+					syncDlg.StartPosition = FormStartPosition.CenterScreen;
+					syncDlg.BringToFront();
 					syncDlg.ShowDialog(parent);
 
 					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
