@@ -119,7 +119,7 @@
 	<Compile Include="Controller\IObtainNewProjectController.cs" />
 	<Compile Include="Controller\IObtainProjectStrategy.cs" />
 	<Compile Include="Controller\ISyncronizeController.cs" />
-	<Compile Include="Controller\JumpEventHandler.cs" />
+	<Compile Include="Infrastructure\JumpEventHandler.cs" />
 	<Compile Include="Controller\ObtainProjectController.cs" />
 	<Compile Include="Infrastructure\CheckForUpdatesActionTypeHandler.cs" />
 	<Compile Include="JumpEventArgs.cs" />
