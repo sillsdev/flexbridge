@@ -63,10 +63,50 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				: Strategies.First(strategy => strategy.SupportedModelType == BridgeModelType.Lift).ProjectFilter(path);
 		}
 
+		private void CheckOptionCompatibility(Dictionary<string, string> options)
+		{
+			// "-p" will be $fwroot (for get either type of repo) or $fwroot\foo to only get a lift repo for an extant project.
+			// If "-p" is $fwroot, then the "-v" option *must* be "obtain".
+			// If "-p" is $fwroot\foo, then the "-v" option *must* be "obtain_lift".
+			var vOption = options["-v"];
+			var pOption = options["-p"];
+			var fwrootDir = options["-projDir"];
+
+			if (((pOption == fwrootDir) && (vOption == CommandLineProcessor.obtain_lift))
+				|| ((pOption != fwrootDir) && (vOption == CommandLineProcessor.obtain)))
+			{
+				throw new ApplicationException(String.Format("Incompatible options for '-p' : '{0}' and '-v' : '{1}'.", pOption, vOption));
+			}
+
+			switch (vOption)
+			{
+				case CommandLineProcessor.obtain:
+					_baseDir = pOption; // fwroot: main FW project folder.
+					_actionActionType = ActionType.Obtain;
+					break;
+				case CommandLineProcessor.obtain_lift:
+					// "-p" is: $fwroot\[foo] without the file name.
+					var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
+					if (!Directory.Exists(otherReposDir))
+						Directory.CreateDirectory(otherReposDir);
+					_baseDir = Path.Combine(pOption, Utilities.OtherRepositories); // , Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT
+					var repoDir = Path.Combine(_baseDir, Path.GetFileNameWithoutExtension(pOption) + "_" + Utilities.LIFT);
+					if (Directory.Exists(repoDir) && !Utilities.FolderIsEmpty(repoDir))
+					{
+						_baseDir = null;
+						throw new InvalidOperationException("Lift repository folder already exists.");
+					}
+					_actionActionType = ActionType.ObtainLift;
+					break;
+			}
+		}
+
 		#region IBridgeController implementation
 
 		public void InitializeController(MainBridgeForm mainForm, Dictionary<string, string> options, ActionType actionType)
 		{
+			CheckOptionCompatibility(options);
+
 			_options = options;
 			_mainBridgeForm = mainForm;
 			_mainBridgeForm.ClientSize = new Size(239, 313);

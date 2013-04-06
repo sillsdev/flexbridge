@@ -141,11 +141,11 @@ namespace SIL.LiftBridge.Controller
 				if (allHeads.Count == 0)
 				{
 					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
-				cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
+					cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 					cloneResult.Message = CommonResources.kFlexUpdateRequired;
 					Directory.Delete(cloneLocation, true);
-				return;
-			}
+					return;
+				}
 
 				// Now. get to the real work.
 				var sortedRevisions = new SortedList<float, Revision>();

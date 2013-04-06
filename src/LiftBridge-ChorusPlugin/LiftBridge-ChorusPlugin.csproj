@@ -125,7 +125,7 @@
 	<Compile Include="Controller\LiftObtainProjectStrategy.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\MoveLiftActionHandler.cs" />
 	<Compile Include="Controller\ObtainFinishLiftCloneStrategy.cs" />
-	<Compile Include="Controller\ObtainLiftFinishLiftCloneStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\SendReceiveLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesLiftActionHandler.cs" />
