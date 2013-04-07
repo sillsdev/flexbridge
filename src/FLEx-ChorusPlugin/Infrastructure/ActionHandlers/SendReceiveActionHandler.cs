@@ -22,6 +22,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public bool StartWorking(Dictionary<string, string> options)
 		{
+			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(options["-p"]);
 			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
@@ -64,6 +65,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						syncDlg.SyncOptions.DoMergeWithOthers = true;
 						syncDlg.SyncOptions.DoSendToOthers = true;
 						syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
+						syncDlg.StartPosition = FormStartPosition.CenterScreen;
+						syncDlg.BringToFront();
 						syncDlg.ShowDialog();
 
 						if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)

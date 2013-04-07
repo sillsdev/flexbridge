@@ -27,10 +27,12 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
+			// -p <$fwroot>\foo\foo.fwdata
 			var currentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 			var liftPathname = currentProject.LiftPathname;
 			if (liftPathname == null)
 			{
+				// Given that FLEx has already written the file, I'm not sure this code will ever be used.
 				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
 				liftPathname = Path.Combine(currentProject.PathToProject, currentProject.ProjectName + LiftUtilties.LiftExtension);
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
@@ -49,6 +51,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
+				// -p <$fwroot>\foo\foo.fwdata
 				var origPathname = Path.Combine(currentProject.PathToProject, Path.GetFileNameWithoutExtension(currentProject.LiftPathname) + LiftUtilties.LiftExtension);
 
 				// Do the Chorus business.
@@ -57,7 +60,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					var syncAdjunt = new LiftSynchronizerAdjunct(origPathname);
 					syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
-					// Chorus does it in ths order:
+					// Chorus does it in this order:
 					// Local Commit
 					// Pull
 					// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
