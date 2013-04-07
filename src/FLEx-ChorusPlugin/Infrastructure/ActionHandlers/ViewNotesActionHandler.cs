@@ -266,7 +266,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// </summary>
 		public Form MainForm
 		{
-			get { throw new NotSupportedException("The Undo Export handler is not supported"); }
+			get { return _mainForm; }
 		}
 
 		#endregion IBridgeActionTypeHandler impl

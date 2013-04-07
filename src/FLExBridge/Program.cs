@@ -20,6 +20,8 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
+			//MessageBox.Show("Get ready to debug FB exe.");
+
 			// args are:
 			// -u username
 			// -p entire pathname to fwdata file including extension.
@@ -50,9 +52,7 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)),
-					"*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
