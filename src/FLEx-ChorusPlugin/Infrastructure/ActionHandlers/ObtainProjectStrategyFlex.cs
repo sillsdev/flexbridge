@@ -2,18 +2,18 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Controller
+namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IObtainProjectStrategy))]
-	public class FlexObtainProjectStrategy : IObtainProjectStrategy
+	public class ObtainProjectStrategyFlex : IObtainProjectStrategy
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -103,6 +103,7 @@ namespace FLEx_ChorusPlugin.Controller
 				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
 			repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			cloneResult.ActualCloneFolder = cloneLocation;
 			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 		}
 
@@ -111,9 +112,7 @@ namespace FLEx_ChorusPlugin.Controller
 		public bool ProjectFilter(string repositoryLocation)
 		{
 			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder)
-				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
-				&& Directory.GetFiles(hgDataFolder, "*._custom_properties.i").Any();
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*._custom_properties.i").Any();
 		}
 
 		public string HubQuery { get { return "*.CustomProperties"; } }
@@ -123,9 +122,9 @@ namespace FLEx_ChorusPlugin.Controller
 			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.CustomPropertiesFilename));
 		}
 
-		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository)
+		public void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
 		{
-			var retVal = new ActualCloneResult
+			var actualCloneResult = new ActualCloneResult
 				{
 					// Be a bit pessimistic at first.
 					CloneResult = null,
@@ -138,26 +137,31 @@ namespace FLEx_ChorusPlugin.Controller
 
 			// Check the actual FW model number in the '-fwmodel' of 'options' parm.
 			// Update to the head of the desired branch, if possible.
-			UpdateToTheCorrectBranchHeadIfPossible(options, retVal, cloneLocation);
-			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
-				return retVal;
+			UpdateToTheCorrectBranchHeadIfPossible(options, actualCloneResult, cloneLocation);
+
+			switch (actualCloneResult.FinalCloneResult)
+			{
+				case FinalCloneResult.ExistingCloneTargetFolder:
+					MessageBox.Show(CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					Directory.Delete(cloneLocation, true);
+					_newFwProjectPathname = null;
+					return;
+				case FinalCloneResult.FlexVersionIsTooOld:
+					MessageBox.Show(actualCloneResult.Message, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					Directory.Delete(cloneLocation, true);
+					_newFwProjectPathname = null;
+					return;
+				case FinalCloneResult.Cloned:
+					break;
+			}
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
-
-			retVal.ActualCloneFolder = cloneLocation;
-			retVal.FinalCloneResult = FinalCloneResult.Cloned;
-
-			return retVal;
 		}
 
 		public void TellFlexAboutIt()
 		{
-			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
-		}
-
-		public BridgeModelType SupportedModelType
-		{
-			get { return BridgeModelType.Flex; }
+			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname); // May be null.
+			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		public ActionType SupportedActionType

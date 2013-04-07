@@ -3,7 +3,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using NUnit.Framework;
 
-namespace FLEx_ChorusPluginTests.Controller
+namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 {
 	/// <summary>
 	/// Test the ViewNotesActionHandler with mocked implementations of the various view interfaces.

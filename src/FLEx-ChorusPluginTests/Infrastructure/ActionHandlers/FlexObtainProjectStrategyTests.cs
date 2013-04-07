@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
-using FLEx_ChorusPlugin.Controller;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 
-namespace FLEx_ChorusPluginTests.Controller
+namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 {
 	/// <summary>
-	/// Test the FlexObtainProjectStrategy.
+	/// Test the ObtainProjectStrategyFlex.
 	/// </summary>
 	[TestFixture]
 	public class FlexObtainProjectStrategyTests
@@ -27,7 +27,7 @@ namespace FLEx_ChorusPluginTests.Controller
 					Directory.CreateDirectory(extantDir);
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
 					sue.CloneLocalWithoutUpdate(extantDir);
-					var strat = new FlexObtainProjectStrategy();
+					var strat = new ObtainProjectStrategyFlex();
 					Assert.IsFalse(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
 				}
 			}
@@ -45,7 +45,7 @@ namespace FLEx_ChorusPluginTests.Controller
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
 					Directory.CreateDirectory(extantDir);
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-					var strat = new FlexObtainProjectStrategy();
+					var strat = new ObtainProjectStrategyFlex();
 					Assert.IsTrue(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
 				}
 			}

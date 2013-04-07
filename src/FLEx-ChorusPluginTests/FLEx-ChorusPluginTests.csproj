@@ -103,8 +103,8 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Controller\ViewNotesActionHandlerTests.cs" />
-	<Compile Include="Controller\FlexObtainProjectStrategyTests.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandlerTests.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\FlexObtainProjectStrategyTests.cs" />
 	<Compile Include="Infrastructure\Handling\DateTimeMergingTests.cs" />
 	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
 	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />

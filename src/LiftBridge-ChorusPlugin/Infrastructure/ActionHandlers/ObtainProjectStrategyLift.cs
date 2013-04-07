@@ -3,69 +3,31 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using Chorus.VcsDrivers.Mercurial;
+using Palaso.IO;
 using Palaso.Progress;
 using Palaso.Xml;
-using SIL.LiftBridge.Properties;
+using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace SIL.LiftBridge.Controller
+namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IObtainProjectStrategy))]
-	public class LiftObtainProjectStrategy : IObtainProjectStrategy
+	public class ObtainProjectStrategyLift : IObtainProjectStrategy
 	{
-		[ImportMany]
-		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
-		private IFinishLiftCloneStrategy _currentFinishStrategy;
+		[Import]
+		private ICreateProjectFromLift _liftprojectCreator;
+		[Import]
+		private FLExConnectionHelper _connectionHelper;
 		private const string Default = "default";
+		private string _liftFolder;
 
-		private IFinishLiftCloneStrategy GetCurrentFinishStrategy(ActionType actionType)
-		{
-			return
-				FinishStrategies.FirstOrDefault(strategy => strategy.SuppportedActionAction == actionType);
-		}
-
-		#region IObtainProjectStrategy impl
-
-		public bool ProjectFilter(string repositoryLocation)
-		{
-			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder)
-				   /* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
-				   && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
-		}
-
-		public string HubQuery { get { return "*.lift"; } }
-
-		public bool IsRepositoryEmpty(string repositoryLocation)
-		{
-			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
-		}
-
-		public ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository)
-		{
-			if (actionType != ActionType.Obtain && actionType != ActionType.ObtainLift)
-			{
-				throw new ArgumentException(Resources.kUnsupportedControllerActionForLiftObtain, "actionType");
-			}
-
-			// "obtain"
-			//		'cloneLocation' will be a new folder at the $fwroot main project location, such as $fwroot\foo.
-			//		Move the lift repo down into $fwroot\foo\OtherRepositories\foo_LIFT folder
-			// "obtain_lift"
-			//		'cloneLocation' wants to be a new folder at the $fwroot\foo\OtherRepositories\foo_LIFT folder,
-			//		but Chorus may put it in $fwroot\foo\OtherRepositories\bar.
-			//		So, it might need to be moved or the containing folder renamed,
-			//		as we have no real control over the actual folder of 'cloneLocation' from Chorus.
-			//		'expectedPathToClonedRepository' is where it is supposed to be.
-			_currentFinishStrategy = GetCurrentFinishStrategy(actionType);
-
-			return _currentFinishStrategy.FinishCloning(options, cloneLocation, expectedPathToClonedRepository);
-		}
+		#region Other methods
 
 		private static float GetLiftVersionNumber(string repoLocation)
 		{
@@ -156,25 +118,21 @@ namespace SIL.LiftBridge.Controller
 				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
 			repo.Update(desiredRevision.Number.LocalRevisionNumber);
+			cloneResult.ActualCloneFolder = cloneLocation;
 			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 		}
 
-		public void TellFlexAboutIt()
+		private string RemoveAppendedLiftIfNeeded(string cloneLocation)
 		{
-			_currentFinishStrategy.TellFlexAboutIt();
-		}
+			cloneLocation = cloneLocation.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (!cloneLocation.EndsWith("_LIFT"))
+				return cloneLocation;
 
-		public BridgeModelType SupportedModelType
-		{
-			get { return BridgeModelType.Lift; }
+			var cloneLocationSansSuffix = cloneLocation.Substring(0, cloneLocation.LastIndexOf("_LIFT", StringComparison.InvariantCulture));
+			var possiblyAdjustedCloneLocation = DirectoryUtilities.GetUniqueFolderPath(cloneLocationSansSuffix);
+			DirectoryUtilities.MoveDirectorySafely(cloneLocation, possiblyAdjustedCloneLocation);
+			return possiblyAdjustedCloneLocation;
 		}
-
-		public ActionType SupportedActionType
-		{
-			get { return ActionType.ObtainLift; }
-		}
-
-		#endregion
 
 		internal static void MakeLocalClone(string sourceFolder, string targetFolder)
 		{
@@ -194,5 +152,94 @@ namespace SIL.LiftBridge.Controller
 			if (File.Exists(roadblock))
 				File.Copy(roadblock, Path.Combine(targetFolder, ImportFailureServices.FailureFilename), true);
 		}
+
+		#endregion Other methods
+
+		#region IObtainProjectStrategy impl
+
+		public bool ProjectFilter(string repositoryLocation)
+		{
+			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
+		}
+
+		public string HubQuery { get { return "*.lift"; } }
+
+		public bool IsRepositoryEmpty(string repositoryLocation)
+		{
+			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
+		}
+
+		public void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
+		{
+			// "obtain"
+			//		'cloneLocation' will be a new folder at the $fwroot main project location, such as $fwroot\foo.
+			//		Move the lift repo down into $fwroot\foo\OtherRepositories\foo_LIFT folder
+
+			// Check for Lift version compatibility.
+			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
+			var liftProj = new LiftProject(cloneLocation);
+			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
+			if (!Directory.Exists(otherReposDir))
+			{
+				Directory.CreateDirectory(otherReposDir);
+			}
+			_liftFolder = liftProj.PathToProject;
+
+			var actualCloneResult = new ActualCloneResult
+			{
+				// Be a bit pessimistic at first.
+				CloneResult = null,
+				ActualCloneFolder = null,
+				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
+			};
+
+			// Move the repo from its temp home in cloneLocation into new home.
+			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
+			// At the end of the day, cloneLocation and its parent temp folder need to be deleted. MakeLocalCloneAndRemoveSourceParentFolder aims to do all of it.
+			MakeLocalClone(cloneLocation, _liftFolder);
+			actualCloneResult.ActualCloneFolder = _liftFolder;
+			actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
+
+			// Update to the head of the desired branch, if possible.
+			UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + options["-liftmodel"], actualCloneResult);
+
+			switch (actualCloneResult.FinalCloneResult)
+			{
+				case FinalCloneResult.ExistingCloneTargetFolder:
+					MessageBox.Show(CommonResources.kFlexProjectExists, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					Directory.Delete(cloneLocation, true);
+					_liftFolder = null;
+					break;
+				case FinalCloneResult.FlexVersionIsTooOld:
+					MessageBox.Show(CommonResources.kFlexUpdateRequired, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					Directory.Delete(cloneLocation, true);
+					_liftFolder = null;
+					break;
+			}
+
+			// Delete all old repo folders and files from 'cloneLocation'.
+			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(Utilities.OtherRepositories)))
+			{
+				Directory.Delete(dir, true);
+			}
+			foreach (var file in Directory.GetFiles(cloneLocation))
+			{
+				File.Delete(file);
+			}
+		}
+
+		public void TellFlexAboutIt()
+		{
+			_liftprojectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
+			_connectionHelper.SignalBridgeWorkComplete(false);
+		}
+
+		public ActionType SupportedActionType
+		{
+			get { return ActionType.ObtainLift; }
+		}
+
+		#endregion
 	}
 }

@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 
-namespace TriboroughBridge_ChorusPlugin.Infrastructure
+namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(ActionTypeHandlerRepository))]
 	public class ActionTypeHandlerRepository

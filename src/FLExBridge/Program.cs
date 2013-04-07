@@ -7,7 +7,7 @@ using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
+using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLExBridge

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using NetSparkle;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace TriboroughBridge_ChorusPlugin.Infrastructure
+namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
 	public sealed class CheckForUpdatesActionTypeHandler : IBridgeActionTypeHandler

@@ -126,7 +126,7 @@
 	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
 	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
-	<Compile Include="Controller\FlexObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
@@ -219,7 +219,6 @@
 	<Compile Include="Contexts\Linguistics\TextCorpus\TextCorpusBoundedContextService.cs" />
 	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
 	<Compile Include="Infrastructure\SharedConstants.cs" />
-	<Compile Include="Model\FlexBridgeModel.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>

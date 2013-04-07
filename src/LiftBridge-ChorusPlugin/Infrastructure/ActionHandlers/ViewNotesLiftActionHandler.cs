@@ -12,7 +12,6 @@ using Chorus.UI.Notes.Browser;
 using Palaso.Network;
 using SIL.LiftBridge.Model;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
 

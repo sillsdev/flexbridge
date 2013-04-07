@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace TriboroughBridge_ChorusPlugin.Infrastructure
+namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
 	public sealed class AboutFlexBridgeActionTypeHandler : IBridgeActionTypeHandler

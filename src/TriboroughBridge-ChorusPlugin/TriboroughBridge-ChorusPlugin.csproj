@@ -108,27 +108,20 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="BridgeTrafficCop.cs" />
 	<Compile Include="ActionType.cs" />
 	<Compile Include="CommandLineException.cs" />
 	<Compile Include="CommandLineProcessor.cs" />
-	<Compile Include="Controller\ControllerRepository.cs" />
-	<Compile Include="Infrastructure\AboutFlexBridgeActionTypeHandler.cs" />
-	<Compile Include="Infrastructure\ActionTypeHandlerRepository.cs" />
-	<Compile Include="Controller\IBridgeController.cs" />
-	<Compile Include="Controller\IObtainNewProjectController.cs" />
-	<Compile Include="Controller\IObtainProjectStrategy.cs" />
-	<Compile Include="Controller\ISyncronizeController.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\AboutFlexBridgeActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ActionTypeHandlerRepository.cs" />
+	<Compile Include="Infrastructure\IObtainProjectStrategy.cs" />
 	<Compile Include="Infrastructure\JumpEventHandler.cs" />
-	<Compile Include="Controller\ObtainProjectController.cs" />
-	<Compile Include="Infrastructure\CheckForUpdatesActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\CheckForUpdatesActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainAnyProjectActionHandler.cs" />
 	<Compile Include="JumpEventArgs.cs" />
 	<Compile Include="ICreateProjectFromLift.cs" />
 	<Compile Include="FLExConnectionHelper.cs" />
-	<Compile Include="Model\IBridgeModel.cs" />
 	<Compile Include="Infrastructure\IBridgeActionTypeHandler.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="BridgeModelType.cs" />
 	<Compile Include="Properties\CommonResources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>

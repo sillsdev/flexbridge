@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using Chorus.UI.Clone;
 
-namespace TriboroughBridge_ChorusPlugin.Controller
+namespace TriboroughBridge_ChorusPlugin.Infrastructure
 {
 	public interface IObtainProjectStrategy
 	{
 		bool ProjectFilter(string repositoryLocation);
 		string HubQuery { get; }
 		bool IsRepositoryEmpty(string repositoryLocation);
-		ActualCloneResult FinishCloning(Dictionary<string, string> options, ActionType actionType, string cloneLocation, string expectedPathToClonedRepository);
+		void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
-		BridgeModelType SupportedModelType { get; }
 		ActionType SupportedActionType { get; }
 	}
 

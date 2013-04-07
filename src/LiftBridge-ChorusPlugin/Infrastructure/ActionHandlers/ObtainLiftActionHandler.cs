@@ -6,11 +6,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using Palaso.IO;
-using SIL.LiftBridge.Controller;
-using SIL.LiftBridge.Properties;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 
@@ -57,7 +54,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			};
 
 			// Update to the head of the desired branch, if possible.
-			LiftObtainProjectStrategy.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + options["-liftmodel"], actualCloneResult);
+			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + options["-liftmodel"], actualCloneResult);
 
 			switch (actualCloneResult.FinalCloneResult)
 			{
@@ -78,8 +75,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			if (cloneLocation == expectedPathToClonedRepository)
 			{
-				actualCloneResult.ActualCloneFolder = cloneLocation;
-				actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 				_liftFolder = cloneLocation;
 				return;
 			}
@@ -189,9 +184,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		#region IDisposable impl
 
 		public void Dispose()
-		{
-			throw new System.NotImplementedException();
-		}
+		{ /* Do nothing. */ }
 
 		#endregion IDisposable impl
 	}

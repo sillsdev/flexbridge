@@ -13,7 +13,6 @@ using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
 using Palaso.Network;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
 

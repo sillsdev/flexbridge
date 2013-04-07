@@ -121,15 +121,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Controller\IFinishLiftCloneStrategy.cs" />
-	<Compile Include="Controller\LiftObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyLift.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\MoveLiftActionHandler.cs" />
-	<Compile Include="Controller\ObtainFinishLiftCloneStrategy.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ObtainLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\SendReceiveLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesLiftActionHandler.cs" />
-	<Compile Include="Model\LiftBridgeModel.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="Model\LiftProject.cs" />

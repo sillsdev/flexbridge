@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
-using SIL.LiftBridge.Controller;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 
@@ -102,7 +101,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			if (oldLiftFolder == null)
 				return false;
 
-			LiftObtainProjectStrategy.MakeLocalClone(oldLiftFolder, _baseLiftDir);
+			ObtainProjectStrategyLift.MakeLocalClone(oldLiftFolder, _baseLiftDir);
 
 			var folderToZap = mappingDoc.Root.HasElements || Directory.GetDirectories(basePathForOldLiftRepos).Length > 1
 								  ? oldLiftFolder
