@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
 using TheTurtle.Model;
@@ -75,7 +76,7 @@ namespace TheTurtleTests.Model
 
 				var lp = new LanguageProject(fwdataFile);
 				Assert.IsFalse(lp.FieldWorkProjectInUse);
-				var lockedFwdataFile = fwdataFile + Utilities.FwLockExtension;
+				var lockedFwdataFile = fwdataFile + SharedConstants.FwLockExtension;
 				File.WriteAllText(lockedFwdataFile, "");
 				Assert.IsTrue(lp.FieldWorkProjectInUse);
 			}

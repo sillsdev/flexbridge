@@ -37,7 +37,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 				// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 				var projectName = Path.GetFileNameWithoutExtension(options["-p"]);
-				var lockPathname = Path.Combine(projectDir, projectName + Utilities.FwXmlLockExtension);
+				var lockPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlLockExtension);
 				try
 				{
 					File.WriteAllText(lockPathname, "");

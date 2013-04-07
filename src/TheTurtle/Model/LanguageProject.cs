@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 
@@ -59,7 +60,7 @@ namespace TheTurtle.Model
 		{
 			get
 			{
-				var lockPathname = Path.Combine(DirectoryName, Name + Utilities.FwXmlLockExtension);
+				var lockPathname = Path.Combine(DirectoryName, Name + SharedConstants.FwXmlLockExtension);
 				return File.Exists(lockPathname);
 			}
 		}

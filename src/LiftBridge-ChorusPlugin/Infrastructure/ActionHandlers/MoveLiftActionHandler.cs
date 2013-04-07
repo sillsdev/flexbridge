@@ -120,7 +120,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		public void EndWork()
 		{
 			var liftPathname = Directory.Exists(_baseLiftDir)
-				? Directory.GetFiles(_baseLiftDir, "*" + Utilities.LiftExtension).FirstOrDefault()
+				? Directory.GetFiles(_baseLiftDir, "*" + LiftUtilties.LiftExtension).FirstOrDefault()
 				: null;
 			_connectionHelper.SendLiftPathnameToFlex(liftPathname); // May send null, which is fine.
 			_connectionHelper.SignalBridgeWorkComplete(false);

@@ -32,7 +32,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			if (liftPathname == null)
 			{
 				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
-				liftPathname = Path.Combine(currentProject.PathToProject, currentProject.ProjectName + Utilities.LiftExtension);
+				liftPathname = Path.Combine(currentProject.PathToProject, currentProject.ProjectName + LiftUtilties.LiftExtension);
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
 			}
 
@@ -49,7 +49,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
-				var origPathname = Path.Combine(currentProject.PathToProject, Path.GetFileNameWithoutExtension(currentProject.LiftPathname) + Utilities.LiftExtension);
+				var origPathname = Path.Combine(currentProject.PathToProject, Path.GetFileNameWithoutExtension(currentProject.LiftPathname) + LiftUtilties.LiftExtension);
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))

@@ -23,12 +23,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.LiftExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
 			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlLockExtension);
+			projectFolderConfiguration.ExcludePatterns.Add("**" + SharedConstants.FwXmlLockExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("**.log");

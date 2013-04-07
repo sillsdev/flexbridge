@@ -14,17 +14,11 @@ namespace TriboroughBridge_ChorusPlugin
 // ReSharper disable InconsistentNaming
 		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
 		public const string FwXmlExtensionNoPeriod = "fwdata";
-		public const string FwLockExtension = ".lock";
-		public const string FwXmlLockExtension = FwXmlExtension + FwLockExtension;
 		public const string FwDb4oExtension = "." + FwDb4oExtensionNoPeriod;
 		public const string FwDb4oExtensionNoPeriod = "fwdb";
-		public const string LiftExtension = ".lift";
-		public const string FlexExtension = "_model_version";
-		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
 		public const string hg = ".hg";
-		public const string git = ".git";
 // ReSharper restore InconsistentNaming
 
 		/// <summary>

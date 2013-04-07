@@ -33,7 +33,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		private static bool IsRepositoryEmpty(string repositoryLocation)
 		{
-			return !Directory.GetFiles(repositoryLocation, "*" + Utilities.LiftExtension).Any();
+			return !Directory.GetFiles(repositoryLocation, "*" + LiftUtilties.LiftExtension).Any();
 		}
 
 		private void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)

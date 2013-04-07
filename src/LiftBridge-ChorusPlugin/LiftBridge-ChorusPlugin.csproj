@@ -127,6 +127,7 @@
 	<Compile Include="Infrastructure\ActionHandlers\SendReceiveLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\LiftUtilties.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
 	<Compile Include="Services\ImportFailureServices.cs" />
 	<Compile Include="Model\LiftProject.cs" />

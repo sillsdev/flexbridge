@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using SIL.LiftBridge.Infrastructure;
 using TriboroughBridge_ChorusPlugin;
 
 namespace SIL.LiftBridge.Model
@@ -51,7 +52,7 @@ namespace SIL.LiftBridge.Model
 
 		private static string PathToFirstLiftFile(LiftProject project)
 		{
-			var liftFiles = Directory.GetFiles(project.PathToProject, "*" + Utilities.LiftExtension).ToList();
+			var liftFiles = Directory.GetFiles(project.PathToProject, "*" + LiftUtilties.LiftExtension).ToList();
 			return liftFiles.Count == 0 ? null : (from file in liftFiles
 												  where HasOnlyOneDot(file)
 												  select file).FirstOrDefault();

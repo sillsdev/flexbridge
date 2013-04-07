@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 
@@ -27,10 +28,10 @@ namespace LiftBridgeTests.ServicesTests
 			// Add .hg folder and one file in it.
 			Directory.CreateDirectory(Path.Combine(_baseDir, Utilities.hg));
 			// Add .git folder and one file in it.
-			Directory.CreateDirectory(Path.Combine(_baseDir, Utilities.git));
+			Directory.CreateDirectory(Path.Combine(_baseDir, LiftUtilties.git));
 
 			// Create 'old' files and folders.
-			_newBaseFolderPathname = Path.Combine(_baseDir, "somefile" + Utilities.LiftExtension);
+			_newBaseFolderPathname = Path.Combine(_baseDir, "somefile" + LiftUtilties.LiftExtension);
 			File.Create(_newBaseFolderPathname).Close();
 			_newAudioDirName = Path.Combine(_baseDir, "audio");
 			Directory.CreateDirectory(_newAudioDirName);
@@ -53,7 +54,7 @@ namespace LiftBridgeTests.ServicesTests
 			var allFilesAndDirs = FileAndDirectoryServices.EnumerateExtantFiles(_baseDir);
 
 			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, Utilities.hg)));
-			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, Utilities.git)));
+			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, LiftUtilties.git)));
 
 			Assert.IsTrue(allFilesAndDirs.Contains(_newBaseFolderPathname));
 			Assert.IsTrue(allFilesAndDirs.Contains(_newAudioDirName));
@@ -98,7 +99,7 @@ namespace LiftBridgeTests.ServicesTests
 			Assert.IsTrue(File.Exists(_newLdmlPathname));
 
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.git)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, LiftUtilties.git)));
 			Assert.IsTrue(Directory.Exists(_newAudioDirName));
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));

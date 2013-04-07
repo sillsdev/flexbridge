@@ -7,7 +7,7 @@ namespace TheTurtle
 {
 	internal static class TheTurtleUtilities
 	{
-		public static string ProjectsPath
+		internal static string ProjectsPath
 		{
 			get
 			{
@@ -25,7 +25,7 @@ namespace TheTurtle
 			}
 		}
 
-		public static string FwAssemblyPath
+		internal static string FwAssemblyPath
 		{
 			get
 			{
