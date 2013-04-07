@@ -17,6 +17,7 @@ using TriboroughBridge_ChorusPlugin.View;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class ViewNotesLiftActionHandler : IBridgeActionTypeHandler
 	{
 		[Import]

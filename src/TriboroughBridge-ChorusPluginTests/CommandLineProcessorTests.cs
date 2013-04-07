@@ -177,14 +177,10 @@ namespace TriboroughBridge_ChorusPluginTests
 			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted the main FW project folder for '-p'");
 
-			var fooDir = Path.Combine(_tempProjectFolder.Path, "Foo");
-			Directory.CreateDirectory(fooDir);
-			_options[CommandLineProcessor.p] = fooDir;
-			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not accept the correct '-p' option");
-
+			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
 			_options[CommandLineProcessor.p] = fooFwdataPathname;
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted an fwdata file for '-p'");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have accepted an fwdata file for '-p'");
 		}
 
 		[Test]
@@ -200,14 +196,10 @@ namespace TriboroughBridge_ChorusPluginTests
 			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted the main FW project folder for '-p'");
 
-			var fooDir = Path.Combine(_tempProjectFolder.Path, "Foo");
-			Directory.CreateDirectory(fooDir);
-			_options[CommandLineProcessor.p] = fooDir;
-			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not accept the correct '-p' option");
-
+			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
 			_options[CommandLineProcessor.p] = fooFwdataPathname;
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted an fwdata file for '-p'");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have accepted an fwdata file for '-p'");
 		}
 
 		[Test]

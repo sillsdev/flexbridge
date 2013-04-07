@@ -13,7 +13,7 @@ using TriboroughBridge_ChorusPlugin.Properties;
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IObtainProjectStrategy))]
-	public class ObtainProjectStrategyFlex : IObtainProjectStrategy
+	internal class ObtainProjectStrategyFlex : IObtainProjectStrategy
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;

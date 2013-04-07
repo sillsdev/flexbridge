@@ -8,7 +8,7 @@ using TriboroughBridge_ChorusPlugin.Properties;
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	public sealed class CheckForUpdatesActionTypeHandler : IBridgeActionTypeHandler
+	internal sealed class CheckForUpdatesActionTypeHandler : IBridgeActionTypeHandler
 	{
 		#region IBridgeActionTypeHandler impl
 

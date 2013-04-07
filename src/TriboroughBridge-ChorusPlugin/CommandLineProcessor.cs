@@ -137,12 +137,11 @@ namespace TriboroughBridge_ChorusPlugin
 					break;
 
 				case about_flex_bridge: // Fall through
-					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
+					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo\foo.fwdata
 				case check_for_updates:
-					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
-					if (Path.GetExtension(pOption) == ".fwdata")
-						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
-					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
+					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo\foo.fwdata
+					ValidatePOptionIsExtantFwDataFile(pOption);
+					ValidatePOptionIsExtantFwProjectFolder(projDirOption, Path.GetDirectoryName(pOption));
 					break;
 
 				case obtain:

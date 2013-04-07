@@ -11,10 +11,12 @@ using TriboroughBridge_ChorusPlugin.Properties;
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	public sealed class ObtainAnyProjectActionHandler : IBridgeActionTypeHandler
+	internal sealed class ObtainAnyProjectActionHandler : IBridgeActionTypeHandler
 	{
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
+		[Import]
+		private FLExConnectionHelper _connectionHelper;
 		private IObtainProjectStrategy _currentStrategy;
 		private string _pathToRepository;
 		private const char SepChar = '|';
@@ -90,7 +92,15 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// notifyFlex = true;
 			// changes = false;
-			_currentStrategy.TellFlexAboutIt();
+			if (_currentStrategy == null)
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
+			else
+			{
+				_currentStrategy.TellFlexAboutIt();
+			}
+			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		/// <summary>
