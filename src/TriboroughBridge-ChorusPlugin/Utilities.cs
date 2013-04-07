@@ -11,7 +11,7 @@ namespace TriboroughBridge_ChorusPlugin
 {
 	public static class Utilities
 	{
-		public const string FailureFilename = "FLExImportFailure.notice";
+// ReSharper disable InconsistentNaming
 		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
 		public const string FwXmlExtensionNoPeriod = "fwdata";
 		public const string FwLockExtension = ".lock";
@@ -23,6 +23,9 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string LiftRangesExtension = ".lift-ranges";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
+		public const string hg = ".hg";
+		public const string git = ".git";
+// ReSharper restore InconsistentNaming
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -96,7 +99,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string HgDataFolder(string path)
 		{
-			return Path.Combine(path, BridgeTrafficCop.hg, "store", "data");
+			return Path.Combine(path, hg, "store", "data");
 		}
 
 		public static string LiftOffset(string path)

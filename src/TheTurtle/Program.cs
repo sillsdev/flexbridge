@@ -3,11 +3,9 @@ using System.ComponentModel.Composition.Hosting;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Model;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
-using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TheTurtle
@@ -50,9 +48,10 @@ namespace TheTurtle
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(FlexBridgeModel))));
-				catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetAssembly(typeof(BridgeTrafficCop))));
+				var executingAssembly = Assembly.GetExecutingAssembly();
+				catalog.Catalogs.Add(new AssemblyCatalog(executingAssembly));
+				//catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(executingAssembly.CodeBase)), "TriboroughBridge-ChorusPlugin"));
+				//catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(executingAssembly.CodeBase)), "FLEx-ChorusPlugin"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))

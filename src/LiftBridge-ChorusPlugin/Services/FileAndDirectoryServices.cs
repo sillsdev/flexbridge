@@ -20,7 +20,7 @@ namespace SIL.LiftBridge.Services
 
 			foreach (var dirName in Directory.GetDirectories(baseDirPath))
 			{
-				if (dirName.EndsWith(BridgeTrafficCop.hg) || dirName.EndsWith(BridgeTrafficCop.git))
+				if (dirName.EndsWith(Utilities.hg) || dirName.EndsWith(Utilities.git))
 					continue; // Skip the repo file (for Hg or Git, if it becomes an option).
 
 				results.UnionWith(EnumerateExtantFiles(dirName));
@@ -46,6 +46,9 @@ namespace SIL.LiftBridge.Services
 
 		internal static string GetPathToFirstLiftFile(string liftFolder)
 		{
+			if (string.IsNullOrWhiteSpace(liftFolder))
+				return null;
+
 			var liftFiles = Directory.GetFiles(liftFolder, "*" + Utilities.LiftExtension).ToList();
 			return liftFiles.Count == 0
 					   ? null
