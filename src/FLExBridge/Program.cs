@@ -60,13 +60,21 @@ namespace FLExBridge
 					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
 					if (!connHelper.Init(options))
 						return;
-					var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
-					var currentHandler = handlerRepository.GetHandler(options);
-					if (currentHandler.StartWorking(options))
+					try
 					{
-						Application.Run(currentHandler.MainForm);
+						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
+						var currentHandler = handlerRepository.GetHandler(options);
+						if (currentHandler.StartWorking(options))
+						{
+							Application.Run(currentHandler.MainForm);
+						}
+						currentHandler.EndWork();
 					}
-					currentHandler.EndWork();
+					catch
+					{
+						connHelper.SignalBridgeWorkComplete(false);
+						throw;
+					}
 				}
 			}
 			Settings.Default.Save();

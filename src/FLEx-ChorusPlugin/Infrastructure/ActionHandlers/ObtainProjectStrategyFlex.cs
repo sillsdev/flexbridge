@@ -161,7 +161,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		public void TellFlexAboutIt()
 		{
 			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname); // May be null.
-			_connectionHelper.SignalBridgeWorkComplete(false);
+			//Caller does it._connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		public ActionType SupportedActionType

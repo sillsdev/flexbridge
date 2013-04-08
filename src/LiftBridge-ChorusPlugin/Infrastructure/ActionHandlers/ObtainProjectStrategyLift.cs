@@ -232,7 +232,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		public void TellFlexAboutIt()
 		{
 			_liftprojectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
-			_connectionHelper.SignalBridgeWorkComplete(false);
+			//Caller does it. _connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		public ActionType SupportedActionType
