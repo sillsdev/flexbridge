@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
@@ -94,13 +93,11 @@ namespace SIL.LiftBridge.Model
 			var projectPath = (pOption.EndsWith(Utilities.FwXmlExtension) || pOption.EndsWith(Utilities.FwDB4oExtension))
 				? Path.GetDirectoryName(pOption) // "p <$fwroot>\foo\foo.fwdata" -> <$fwroot>\foo.
 				: pOption; // "-p <$fwroot>\foo" -> <$fwroot>\foo.
-			var otherPath = Path.Combine(projectPath, Utilities.OtherRepositories); // Will always be <$fwroot>\foo\OtherRepositories.
 
+			PathToRepository = Utilities.LiftOffset(projectPath);
+			var otherPath = Path.Combine(projectPath, Utilities.OtherRepositories); // Will always be <$fwroot>\foo\OtherRepositories.
 			if ((controllerType == ControllerType.ObtainLift || controllerType == ControllerType.MoveLift) && !Directory.Exists(otherPath))
 				Directory.CreateDirectory(otherPath);
-			// Find a subfolder of 'otherPath' that ends with "_LIFT", and do not try to match with 'ProjectName'.
-			var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
-			PathToRepository = extantLiftFolder ?? Path.Combine(otherPath, ProjectName + '_' + Utilities.LIFT);
 
 			CurrentController = GetController(controllerType);
 			CurrentController.InitializeController(mainForm, options, controllerType);
