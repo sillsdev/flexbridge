@@ -8,4 +8,4 @@ This version has the following limitations (and probably many others). Feel free
 * Not available yet for Linux.
 * Some merge reports may not be the easiest to read and understand.
 * Some types of lexical relations appear to not merge correctly in both Lift data and in the main FLEx data set. The issues are more complex than merging.
-
+See additional limitations [here](http://projects.palaso.org/projects/fwbridge/wiki/Happy_Path/).
