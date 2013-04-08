@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
-using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 
@@ -31,7 +30,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			repo.Update();
 			// Delete any new files (except import failure notifier file).
 			var newbies = repo.GetChangedFiles();
-			foreach (var goner in newbies.Where(newFile => newFile.Trim() != ImportFailureServices.FailureFilename))
+			foreach (var goner in newbies.Where(newFile => newFile.Trim() != LiftUtilties.FailureFilename))
 			{
 				File.Delete(Path.Combine(pathToRepository, goner.Trim()));
 			}

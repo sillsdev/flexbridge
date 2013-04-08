@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Sync;
 using Chorus.sync;
-using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
@@ -18,6 +17,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 		private bool _gotChanges;
+		private string _fwProjectFolder;
 
 		#region IBridgeActionTypeHandler impl
 
@@ -27,17 +27,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			var currentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
-			var liftPathname = currentProject.LiftPathname;
-			if (liftPathname == null)
-			{
-				// Given that FLEx has already written the file, I'm not sure this code will ever be used.
-				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
-				liftPathname = Path.Combine(currentProject.PathToProject, currentProject.ProjectName + LiftUtilties.LiftExtension);
-				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
-			}
+			_fwProjectFolder = Path.GetDirectoryName(options["-p"]);
+			var pathToLiftProject = Utilities.LiftOffset(_fwProjectFolder);
 
-			using (var chorusSystem = Utilities.InitializeChorusSystem(currentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
+			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
 				if (chorusSystem.Repository.Identifier == null)
 				{
@@ -51,7 +44,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 				// -p <$fwroot>\foo\foo.fwdata
-				var origPathname = Path.Combine(currentProject.PathToProject, Path.GetFileNameWithoutExtension(currentProject.LiftPathname) + LiftUtilties.LiftExtension);
+				var origPathname = Path.Combine(pathToLiftProject, Path.GetFileNameWithoutExtension(LiftUtilties.PathToFirstLiftFile(_fwProjectFolder)) + LiftUtilties.LiftExtension);
 
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))

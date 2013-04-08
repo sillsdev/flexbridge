@@ -9,7 +9,6 @@ using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 using Palaso.Progress;
 using Palaso.Xml;
-using SIL.LiftBridge.Model;
 using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
@@ -22,8 +21,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private ICreateProjectFromLift _liftprojectCreator;
-		[Import]
-		private FLExConnectionHelper _connectionHelper;
 		private const string Default = "default";
 		private string _liftFolder;
 
@@ -148,9 +145,9 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			File.Copy(Path.Combine(sourceFolder, Utilities.hg, "hgrc"), Path.Combine(targetFolder, Utilities.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
-			var roadblock = Path.Combine(sourceFolder, ImportFailureServices.FailureFilename);
+			var roadblock = Path.Combine(sourceFolder, LiftUtilties.FailureFilename);
 			if (File.Exists(roadblock))
-				File.Copy(roadblock, Path.Combine(targetFolder, ImportFailureServices.FailureFilename), true);
+				File.Copy(roadblock, Path.Combine(targetFolder, LiftUtilties.FailureFilename), true);
 		}
 
 		#endregion Other methods
@@ -178,13 +175,12 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			// Check for Lift version compatibility.
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
-			var liftProj = new LiftProject(cloneLocation);
 			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 			{
 				Directory.CreateDirectory(otherReposDir);
 			}
-			_liftFolder = liftProj.PathToProject;
+			_liftFolder = Utilities.LiftOffset(cloneLocation);
 
 			var actualCloneResult = new ActualCloneResult
 			{

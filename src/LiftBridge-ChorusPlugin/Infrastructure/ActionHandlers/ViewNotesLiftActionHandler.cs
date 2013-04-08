@@ -10,7 +10,6 @@ using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
 using Palaso.Network;
-using SIL.LiftBridge.Model;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
@@ -22,11 +21,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
-
-		private LiftProject _liftProject;
 		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
 		private NotesBrowserPage _notesBrowser;
+		private string _fwProjectFolder;
 
 		public event JumpEventHandler JumpUrlChanged;
 
@@ -50,7 +48,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// This should be fairly safe for a lift URL, since it won't have the "database=current" string in the query.
 			// A lift URL will be something like:
 			//		lift://foo.lift?type=entry&id=someguid&label=formforentry
-			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + _liftProject.ProjectName);
+			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + LiftUtilties.GetLiftProjectName(_fwProjectFolder));
 			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
@@ -67,15 +65,14 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public void StartWorking(Dictionary<string, string> options)
 		{
-			if (_liftProject == null)
-				_liftProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
+			_fwProjectFolder = Path.GetDirectoryName(options["-p"]);
 
 			MainForm = new MainBridgeForm
 				{
 					ClientSize = new Size(904, 510)
 				};
 			_chorusUser = new ChorusUser(options["-u"]);
-			_chorusSystem = Utilities.InitializeChorusSystem(_liftProject.PathToProject, _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
+			_chorusSystem = Utilities.InitializeChorusSystem(Utilities.LiftOffset(_fwProjectFolder), _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
@@ -95,7 +92,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// Only used by FLEx, so how can it not be in use?
 			//if (_currentLanguageProject.FieldWorkProjectInUse)
 			//	viewer.EnableWarning();
-			viewer.SetProjectName(_liftProject.ProjectName);
+			viewer.SetProjectName(LiftUtilties.GetLiftProjectName(_fwProjectFolder));
 		}
 
 		/// <summary>
@@ -190,7 +187,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 			_connectionHelper = null;
 			MainForm = null;
-			_liftProject = null;
 			_chorusUser = null;
 			_notesBrowser = null;
 
