@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
@@ -108,6 +109,13 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string LiftOffset(string path)
 		{
+			var otherPath = Path.Combine(path, OtherRepositories);
+			if (Directory.Exists(otherPath))
+			{
+				var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
+				if (extantLiftFolder != null)
+					return extantLiftFolder;
+			}
 			return Path.Combine(path, OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
 		}
 

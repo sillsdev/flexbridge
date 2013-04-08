@@ -32,11 +32,12 @@ namespace SIL.LiftBridge.Controller
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			_mainBridgeForm = mainForm;
 			_projectSynchronizer = new SynchronizeLiftProject();
-
+			// -p <$fwroot>\foo\foo.fwdata
 			CurrentProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 			var liftPathname = CurrentProject.LiftPathname;
 			if (liftPathname == null)
 			{
+				// Given that FLEx has already written the file, I'm not sure this code will ever be used.
 				// The tmp file should be there, as well as the lift-ranges file, since we get here after Flex does its export.
 				liftPathname = Path.Combine(CurrentProject.PathToProject, CurrentProject.ProjectName + Utilities.LiftExtension);
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
