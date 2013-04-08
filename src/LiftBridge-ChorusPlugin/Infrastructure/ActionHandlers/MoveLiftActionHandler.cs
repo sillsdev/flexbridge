@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
@@ -13,7 +12,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof (IBridgeActionTypeHandler))]
-	internal sealed class MoveLiftActionHandler : IBridgeActionTypeHandler
+	internal sealed class MoveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -35,7 +34,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 			var fwLangProjGuid = options["-g"];
@@ -44,24 +43,24 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 						"LiftBridge");
 			if (!Directory.Exists(basePathForOldLiftRepos))
 			{
-				return false;
+				return;
 			}
 			if (Directory.GetDirectories(basePathForOldLiftRepos).Length == 0)
 			{
 				Directory.Delete(basePathForOldLiftRepos, true);
-				return false;
+				return;
 			}
 			var mappingDocPathname = Path.Combine(basePathForOldLiftRepos, MappingFilename);
 			if (!File.Exists(mappingDocPathname))
 			{
-				return false;
+				return;
 			}
 
 			var mappingDoc = XDocument.Load(mappingDocPathname);
 			if (!mappingDoc.Root.HasElements)
 			{
 				Directory.Delete(basePathForOldLiftRepos, true);
-				return false;
+				return;
 			}
 			var removedElements = mappingDoc.Root.Elements(MappingTag)
 				.Where(mapElement => mapElement.Attribute(ProjectguidAttrTag) == null || mapElement.Attribute(RepositoryidentifierAttrTag) == null).ToList();
@@ -99,7 +98,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				break;
 			}
 			if (oldLiftFolder == null)
-				return false;
+				return;
 
 			ObtainProjectStrategyLift.MakeLocalClone(oldLiftFolder, _baseLiftDir);
 
@@ -110,9 +109,19 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			var otherRepoDir = Directory.GetParent(_baseLiftDir).FullName;
 			if (!Directory.Exists(_baseLiftDir) && Directory.GetDirectories(_baseLiftDir).Length == 0)
 				Directory.Delete(otherRepoDir);
-
-			return false;
 		}
+
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
+		public ActionType SupportedActionType
+		{
+			get { return ActionType.MoveLift; }
+		}
+
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
 		/// <summary>
 		/// Perform ending work for the supported action.
@@ -126,29 +135,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		/// <summary>
-		/// Get the type of action supported by the handler.
-		/// </summary>
-		public ActionType SupportedActionType
-		{
-			get { return ActionType.MoveLift; }
-		}
-
-		/// <summary>
-		/// Get the main window for the application.
-		/// </summary>
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Move Lift handler has no window"); }
-		}
-
-		#endregion IBridgeActionTypeHandler impl
-
-		#region IDisposable impl
-
-		public void Dispose()
-		{ /* Do nothing */ }
-
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

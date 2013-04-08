@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -11,7 +10,7 @@ using TriboroughBridge_ChorusPlugin.Properties;
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class ObtainAnyProjectActionHandler : IBridgeActionTypeHandler
+	internal sealed class ObtainAnyProjectActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
@@ -56,7 +55,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = options[CommandLineProcessor.projDir];
@@ -70,20 +69,30 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 
 			if (result.CloneStatus != CloneStatus.Created)
-				return false;
+				return;
 
 			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
 			if (_currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
 				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 				MessageBox.Show(CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
-				return false;
+				return;
 			}
 
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
-
-			return false;
 		}
+
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
+		public ActionType SupportedActionType
+		{
+			get { return ActionType.Obtain; }
+		}
+
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
 		/// <summary>
 		/// Perform ending work for the supported action.
@@ -103,29 +112,6 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		/// <summary>
-		/// Get the type of action supported by the handler.
-		/// </summary>
-		public ActionType SupportedActionType
-		{
-			get { return ActionType.Obtain; }
-		}
-
-		/// <summary>
-		/// Get the main window for the application.
-		/// </summary>
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Obtain and project handler has no window"); }
-		}
-
-		#endregion IBridgeActionTypeHandler impl
-
-		#region IDisposable impl
-
-		public void Dispose()
-		{ /* Do nothing */ }
-
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

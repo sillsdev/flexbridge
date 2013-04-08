@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,7 @@ using TriboroughBridge_ChorusPlugin.Properties;
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof (IBridgeActionTypeHandler))]
-	internal sealed class ObtainLiftActionHandler : IBridgeActionTypeHandler
+	internal sealed class ObtainLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -105,7 +104,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			// -p <$fwroot>\foo where 'foo' is the project folder name
 			var pOption = options["-p"];
@@ -130,22 +129,32 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			if (result.CloneStatus != CloneStatus.Created)
 			{
-				return false;
+				return;
 			}
 
 			if (IsRepositoryEmpty(result.ActualLocation))
 			{
 				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 				MessageBox.Show(CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
-				return false;
+				return;
 			}
 
 			FinishCloning(options,
 				result.ActualLocation,
 				desiredCloneLocation); // May, or may not, exist.
-
-			return false;
 		}
+
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
+		public ActionType SupportedActionType
+		{
+			get { return ActionType.ObtainLift; }
+		}
+
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
 		/// <summary>
 		/// Perform ending work for the supported action.
@@ -163,29 +172,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		/// <summary>
-		/// Get the type of action supported by the handler.
-		/// </summary>
-		public ActionType SupportedActionType
-		{
-			get { return ActionType.ObtainLift; }
-		}
-
-		/// <summary>
-		/// Get the main window for the application.
-		/// </summary>
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Obtain Lift handler has no window"); }
-		}
-
-		#endregion IBridgeActionTypeHandler impl
-
-		#region IDisposable impl
-
-		public void Dispose()
-		{ /* Do nothing. */ }
-
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

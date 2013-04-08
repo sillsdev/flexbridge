@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
@@ -12,7 +11,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler
+	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -20,7 +19,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public bool StartWorking(Dictionary<string, string> options)
+		/// <summary>
+		/// Start doing whatever is needed for the supported type of action.
+		/// </summary>
+		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(options["-p"]);
@@ -81,32 +84,28 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						File.Delete(lockPathname);
 				}
 			}
-
-			return false;
 		}
 
-		public void EndWork()
-		{
-			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
-		}
-
+		/// <summary>
+		/// Get the type of action supported by the handler.
+		/// </summary>
 		public ActionType SupportedActionType
 		{
 			get { return ActionType.SendReceive; }
 		}
 
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Send Receive handler does not have a window."); }
-		}
-
 		#endregion IBridgeActionTypeHandler impl
 
-		#region IDisposable impl
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
-		public void Dispose()
-		{ /* Do nothing. */ }
+		/// <summary>
+		/// Perform ending work for the supported action.
+		/// </summary>
+		public void EndWork()
+		{
+			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
+		}
 
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

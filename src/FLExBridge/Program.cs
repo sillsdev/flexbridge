@@ -7,6 +7,7 @@ using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin.Properties;
 
@@ -64,11 +65,17 @@ namespace FLExBridge
 					{
 						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
 						var currentHandler = handlerRepository.GetHandler(options);
-						if (currentHandler.StartWorking(options))
+						currentHandler.StartWorking(options);
+						var bridgeActionTypeHandlerShowWindow = currentHandler as IBridgeActionTypeHandlerShowWindow;
+						if (bridgeActionTypeHandlerShowWindow != null)
 						{
-							Application.Run(currentHandler.MainForm);
+							Application.Run(bridgeActionTypeHandlerShowWindow.MainForm);
 						}
-						currentHandler.EndWork();
+						var bridgeActionTypeHandlerCallEndWork = currentHandler as IBridgeActionTypeHandlerCallEndWork;
+						if (bridgeActionTypeHandlerCallEndWork != null)
+						{
+							bridgeActionTypeHandlerCallEndWork.EndWork();
+						}
 					}
 					catch
 					{

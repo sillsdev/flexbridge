@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 using SIL.LiftBridge.Services;
@@ -13,7 +11,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class UndoExportLiftActionHandler : IBridgeActionTypeHandler
+	internal sealed class UndoExportLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -24,7 +22,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			// undo_export_lift: -p <$fwroot>\foo where 'foo' is the project folder name
 			// Calling Utilities.LiftOffset(options["-p"]) will use the folder: <$fwroot>\foo\OtherRepositories\foo_Lift
@@ -37,15 +35,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			{
 				File.Delete(Path.Combine(pathToRepository, goner.Trim()));
 			}
-			return false;
-		}
-
-		/// <summary>
-		/// Perform ending work for the supported action.
-		/// </summary>
-		public void EndWork()
-		{
-			_connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
 		/// <summary>
@@ -56,21 +45,18 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			get { return ActionType.UndoExportLift; }
 		}
 
-		/// <summary>
-		/// Get the main window for the application.
-		/// </summary>
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Undo Export handler has no window"); }
-		}
-
 		#endregion IBridgeActionTypeHandler impl
 
-		#region IDisposable impl
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
-		public void Dispose()
-		{ /* Do nothing */ }
+		/// <summary>
+		/// Perform ending work for the supported action.
+		/// </summary>
+		public void EndWork()
+		{
+			_connectionHelper.SignalBridgeWorkComplete(false);
+		}
 
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

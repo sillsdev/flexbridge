@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
@@ -14,7 +13,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class SendReceiveLiftActionHandler : IBridgeActionTypeHandler
+	internal sealed class SendReceiveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -22,7 +21,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
@@ -79,13 +78,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					}
 				}
 			}
-
-			return false;
-		}
-
-		public void EndWork()
-		{
-			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
 		}
 
 		public ActionType SupportedActionType
@@ -93,18 +85,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			get { return ActionType.SendReceiveLift; }
 		}
 
-		public Form MainForm
-		{
-			get { throw new NotSupportedException("The Send Receive Lift handler does not have a window."); }
-		}
-
 		#endregion IBridgeActionTypeHandler impl
 
-		#region IDisposable impl
+		#region IBridgeActionTypeHandlerCallEndWork impl
 
-		public void Dispose()
-		{ /* Do nothing. */ }
+		public void EndWork()
+		{
+			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
+		}
 
-		#endregion IDisposable impl
+		#endregion IBridgeActionTypeHandlerCallEndWork impl
 	}
 }

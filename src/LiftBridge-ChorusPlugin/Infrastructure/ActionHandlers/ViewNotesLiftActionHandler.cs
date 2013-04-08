@@ -18,11 +18,11 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class ViewNotesLiftActionHandler : IBridgeActionTypeHandler
+	internal sealed class ViewNotesLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerShowWindow
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
-		private Form _mainForm;
+
 		private LiftProject _liftProject;
 		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
@@ -65,12 +65,12 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			if (_liftProject == null)
 				_liftProject = new LiftProject(Path.GetDirectoryName(options["-p"]));
 
-			_mainForm = new MainBridgeForm
+			MainForm = new MainBridgeForm
 				{
 					ClientSize = new Size(904, 510)
 				};
@@ -87,8 +87,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				JumpUrlChanged += _connectionHelper.SendJumpUrlToFlex;
 
 			var viewer = new BridgeConflictView();
-			_mainForm.Controls.Add(viewer);
-			_mainForm.Text = viewer.Text;
+			MainForm.Controls.Add(viewer);
+			MainForm.Text = viewer.Text;
 			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 
@@ -96,15 +96,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			//if (_currentLanguageProject.FieldWorkProjectInUse)
 			//	viewer.EnableWarning();
 			viewer.SetProjectName(_liftProject.ProjectName);
-
-			return true;
 		}
-
-		/// <summary>
-		/// Perform ending work for the supported action.
-		/// </summary>
-		public void EndWork()
-		{ /* Don't notify FLEx. */ }
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
@@ -114,15 +106,16 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			get { return ActionType.ViewNotesLift; }
 		}
 
+		#endregion IBridgeActionTypeHandler impl
+
+		#region Implementation of IBridgeActionTypeHandlerShowWindow
+
 		/// <summary>
 		/// Get the main window for the application.
 		/// </summary>
-		public Form MainForm
-		{
-			get { return _mainForm; }
-		}
+		public Form MainForm { get; private set; }
 
-		#endregion IBridgeActionTypeHandler impl
+		#endregion Implementation of IBridgeActionTypeHandlerShowWindow
 
 		#region Implementation of IDisposable
 
@@ -196,7 +189,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				}
 			}
 			_connectionHelper = null;
-			_mainForm = null;
+			MainForm = null;
 			_liftProject = null;
 			_chorusUser = null;
 			_notesBrowser = null;

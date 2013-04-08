@@ -19,11 +19,11 @@ using TriboroughBridge_ChorusPlugin.View;
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	[Export(typeof (IBridgeActionTypeHandler))]
-	internal sealed class ViewNotesActionHandler : IBridgeActionTypeHandler
+	internal sealed class ViewNotesActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerShowWindow
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
-		private Form _mainForm;
+
 		private IChorusUser _chorusUser;
 		private ChorusSystem _chorusSystem;
 		private NotesBrowserPage _notesBrowser;
@@ -211,13 +211,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public bool StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> options)
 		{
 			var pOption = options["-p"];
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
 
-			_mainForm = new MainBridgeForm
+			MainForm = new MainBridgeForm
 			{
 				ClientSize = new Size(904, 510)
 			};
@@ -234,8 +234,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				JumpUrlChanged += _connectionHelper.SendJumpUrlToFlex;
 
 			var viewer = new BridgeConflictView();
-			_mainForm.Controls.Add(viewer);
-			_mainForm.Text = viewer.Text;
+			MainForm.Controls.Add(viewer);
+			MainForm.Text = viewer.Text;
 			viewer.Dock = DockStyle.Fill;
 			viewer.SetBrowseView(_notesBrowser);
 
@@ -243,15 +243,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			//if (_currentLanguageProject.FieldWorkProjectInUse)
 			//	viewer.EnableWarning();
 			viewer.SetProjectName(ProjectName);
-
-			return true;
 		}
-
-		/// <summary>
-		/// Perform ending work for the supported action.
-		/// </summary>
-		public void EndWork()
-		{ /* Don't notify FLEx. */ }
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
@@ -261,15 +253,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			get { return ActionType.ViewNotes; }
 		}
 
+		#endregion IBridgeActionTypeHandler impl
+
+		#region IBridgeActionTypeHandlerShowWindow impl
+
 		/// <summary>
 		/// Get the main window for the application.
 		/// </summary>
-		public Form MainForm
-		{
-			get { return _mainForm; }
-		}
+		public Form MainForm { get; private set; }
 
-		#endregion IBridgeActionTypeHandler impl
+		#endregion IBridgeActionTypeHandlerShowWindow impl
 
 		#region IDisposable impl
 
@@ -343,7 +336,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 			}
 			_connectionHelper = null;
-			_mainForm = null;
+			MainForm = null;
 			_chorusUser = null;
 			_notesBrowser = null;
 			ProjectName = null;
