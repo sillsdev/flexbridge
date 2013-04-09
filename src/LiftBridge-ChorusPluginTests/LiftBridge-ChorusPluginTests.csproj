@@ -103,6 +103,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
 	</Reference>
+	<Reference Include="LibChorus.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\$(Configuration)\LibChorus.TestUtilities.dll</HintPath>
+	</Reference>
 	<Reference Include="nunit.framework">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
@@ -120,7 +124,7 @@
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="ModelTests\LiftBridgeModelTests.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyLiftTests.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="ServicesTests\FileAndDirectoryServicesTests.cs" />
   </ItemGroup>
@@ -133,9 +137,6 @@
 	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
 	</ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-	<Folder Include="ControllerTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

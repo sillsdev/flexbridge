@@ -121,18 +121,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Controller\IFinishLiftCloneStrategy.cs" />
-	<Compile Include="Controller\LiftBridgeSyncronizeController.cs" />
-	<Compile Include="Controller\LiftConflictStrategy.cs" />
-	<Compile Include="Controller\LiftObtainProjectStrategy.cs" />
-	<Compile Include="Controller\MoveLiftRepositoryController.cs" />
-	<Compile Include="Controller\ObtainFinishLiftCloneStrategy.cs" />
-	<Compile Include="Controller\ObtainLiftFinishLiftCloneStrategy.cs" />
-	<Compile Include="Model\LiftBridgeModel.cs" />
-	<Compile Include="Infrastructure\SynchronizeLiftProject.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyLift.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\MoveLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\SendReceiveLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\UndoExportLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ViewNotesLiftActionHandler.cs" />
+	<Compile Include="Infrastructure\LiftUtilties.cs" />
 	<Compile Include="Services\FileAndDirectoryServices.cs" />
-	<Compile Include="Services\ImportFailureServices.cs" />
-	<Compile Include="Model\LiftProject.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>

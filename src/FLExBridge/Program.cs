@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
@@ -8,6 +7,8 @@ using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
+using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLExBridge
@@ -20,6 +21,8 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
+			//MessageBox.Show("Get ready to debug FB exe.");
+
 			// args are:
 			// -u username
 			// -p entire pathname to fwdata file including extension.
@@ -45,32 +48,40 @@ namespace FLExBridge
 				return;
 			}
 
+			var options = CommandLineProcessor.ParseCommandLineArgs(args);
+
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(BridgeTrafficCop).Assembly.CodeBase)),
-					"*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
-					var wantEndCall = false;
-					var options = ParseCommandLineArgs(args);
-					var bridgeTrafficCop = container.GetExportedValue<BridgeTrafficCop>();
+					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
+					if (!connHelper.Init(options))
+						return;
 					try
 					{
-						bool showWindow;
-						wantEndCall = bridgeTrafficCop.StartWorking(options, out showWindow);
-						if (showWindow)
-							Application.Run(bridgeTrafficCop.MainForm);
+						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
+						var currentHandler = handlerRepository.GetHandler(options);
+						currentHandler.StartWorking(options);
+						var bridgeActionTypeHandlerShowWindow = currentHandler as IBridgeActionTypeHandlerShowWindow;
+						if (bridgeActionTypeHandlerShowWindow != null)
+						{
+							Application.Run(bridgeActionTypeHandlerShowWindow.MainForm);
+						}
+						var bridgeActionTypeHandlerCallEndWork = currentHandler as IBridgeActionTypeHandlerCallEndWork;
+						if (bridgeActionTypeHandlerCallEndWork != null)
+						{
+							bridgeActionTypeHandlerCallEndWork.EndWork();
+						}
 					}
-					finally
+					catch
 					{
-						if (wantEndCall)
-							bridgeTrafficCop.EndWork(options);
+						connHelper.SignalBridgeWorkComplete(false);
+						throw;
 					}
-
 				}
 			}
 			Settings.Default.Save();
@@ -81,40 +92,6 @@ namespace FLExBridge
 			ErrorReport.EmailAddress = "fieldworksbridge@gmail.com";
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
-		}
-
-		static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
-		{
-			var options = new Dictionary<string, string>();
-			if (args != null && args.Count > 0)
-			{
-				string currentKey = null;
-				foreach (var arg in args)
-				{
-					//not all options are followed by input, so just add them as a key
-					if(arg.StartsWith("-") || arg.StartsWith("/"))
-					{
-						currentKey = arg.Trim();
-						options[currentKey] = null;
-					}
-					else //this is input which apparently follows an option, added it as the value in the dictionary
-					{
-						if (currentKey != null && options[currentKey] == null)
-						{
-							//this option goes with the flag that came before it
-							options[currentKey] = arg.Trim();
-						}
-						else //there was no flag before this option.
-						{
-							//This is an unparsable command line
-							Console.WriteLine(Resources.kInvalidCommandLineOptions);
-							//Signal FLEx or other apps
-							throw new ApplicationException("Invalid command line options.");
-						}
-					}
-				}
-			}
-			return options;
 		}
 	}
 }
