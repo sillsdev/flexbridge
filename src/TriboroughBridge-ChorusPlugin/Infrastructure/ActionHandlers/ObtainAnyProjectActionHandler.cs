@@ -9,6 +9,13 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed to obtain anyh type of supported bridge system.
+	///
+	/// Each bridge system needs to implement the IObtainProjectStrategy interface and export it for use by MEF.
+	/// Those implementations then are responsible for processing the newly cloned repo, and tell FLEx how to create
+	/// a new FW project from the new clone.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class ObtainAnyProjectActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

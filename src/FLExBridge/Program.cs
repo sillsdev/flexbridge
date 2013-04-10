@@ -53,7 +53,9 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(
+					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)),
+					"*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
@@ -77,10 +79,10 @@ namespace FLExBridge
 							bridgeActionTypeHandlerCallEndWork.EndWork();
 						}
 					}
-					catch
+					catch (Exception err)
 					{
 						connHelper.SignalBridgeWorkComplete(false);
-						throw;
+						throw err; // Re-throw the original exception, so the crash dlg hs something to display.
 					}
 				}
 			}

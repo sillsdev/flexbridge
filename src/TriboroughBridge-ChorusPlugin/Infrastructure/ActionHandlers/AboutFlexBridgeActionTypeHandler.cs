@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed show the "About FLEx Bridge" information.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class AboutFlexBridgeActionTypeHandler : IBridgeActionTypeHandler
 	{

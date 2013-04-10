@@ -11,6 +11,10 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed move a Lift repo
+	/// from the older Lift Bridge location to the new Lift repo home within to the main Felx project folder structure.
+	/// </summary>
 	[Export(typeof (IBridgeActionTypeHandler))]
 	internal sealed class MoveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

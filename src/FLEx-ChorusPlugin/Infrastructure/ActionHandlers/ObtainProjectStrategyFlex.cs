@@ -12,6 +12,9 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IObtainProjectStrategy implementation handles the FLEx type of repo that the user selected in a generic 'obtain' call.
+	/// </summary>
 	[Export(typeof(IObtainProjectStrategy))]
 	internal class ObtainProjectStrategyFlex : IObtainProjectStrategy
 	{

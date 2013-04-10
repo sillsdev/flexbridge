@@ -18,6 +18,9 @@ using TriboroughBridge_ChorusPlugin.View;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed for viewing the notes of a Flex repo.
+	/// </summary>
 	[Export(typeof (IBridgeActionTypeHandler))]
 	internal sealed class ViewNotesActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerShowWindow
 	{

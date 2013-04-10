@@ -4,6 +4,15 @@ using System.Linq;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This is the central repository (collection) of IBridgeActionTypeHandler implementations.
+	///
+	/// When an implementation of the IBridgeActionTypeHandler is marked for export. MEF then makes sure
+	/// it is included in this class.
+	///
+	/// Depending on the command line option for "-v", the startup code selects a matching hanlder to process
+	/// the action specified in the "-v" option.
+	/// </summary>
 	[Export(typeof(ActionTypeHandlerRepository))]
 	public class ActionTypeHandlerRepository
 	{

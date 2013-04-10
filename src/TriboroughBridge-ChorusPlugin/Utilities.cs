@@ -10,6 +10,14 @@ using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin
 {
+	/// <summary>
+	/// This class holds constants and methods that are relevant to common bridge operations.
+	/// A lot of what it had held earlier, was moved into places like Flex Bridge's SharedConstants class or
+	/// into Lift Bridge's LiftUtilties class, when the stuff was only used by one bridge.
+	///
+	/// Some of the remaining constants could yet be moved at the cost of having duplciates in each bridge's project.
+	/// It may be worth that to be rid of bridge-specific stuff in this project.
+	/// </summary>
 	public static class Utilities
 	{
 // ReSharper disable InconsistentNaming

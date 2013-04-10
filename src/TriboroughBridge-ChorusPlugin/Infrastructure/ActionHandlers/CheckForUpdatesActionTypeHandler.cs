@@ -5,6 +5,10 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed to manage the FLEx Bridge upgrade operation,
+	/// if a new FLEx Bridge installer is available.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class CheckForUpdatesActionTypeHandler : IBridgeActionTypeHandler
 	{

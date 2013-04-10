@@ -3,6 +3,11 @@ using Chorus.UI.Clone;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure
 {
+	/// <summary>
+	/// This interface definition is used for bridges that can create new FLEx language projects from an obtained repo.
+	///
+	/// Do not use this interface, if the implemnentattion cannot be used to create a new language project.
+	/// </summary>
 	public interface IObtainProjectStrategy
 	{
 		bool ProjectFilter(string repositoryLocation);

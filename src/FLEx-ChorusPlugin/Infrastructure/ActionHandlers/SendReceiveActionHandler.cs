@@ -10,6 +10,9 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal S/R for a Flex repo.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

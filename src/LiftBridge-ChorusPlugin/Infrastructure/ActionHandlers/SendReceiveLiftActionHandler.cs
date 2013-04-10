@@ -11,6 +11,9 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal S/R for a Lift repo.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class SendReceiveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

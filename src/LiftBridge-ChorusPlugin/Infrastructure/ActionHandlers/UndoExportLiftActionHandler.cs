@@ -9,6 +9,10 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed undo a Lift export if Felx decides
+	/// to not continue with the Send/Receive operation. The undo call aims to leave the Lift repo in a good state.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class UndoExportLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

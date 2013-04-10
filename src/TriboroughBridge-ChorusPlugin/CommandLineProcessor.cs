@@ -6,6 +6,10 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
 {
+	/// <summary>
+	/// This class validates all of the varoius command line options that can be fed into the FLEx Bridge program.
+	/// Some options are always expected, but others are used only in combination with another option.
+	/// </summary>
 	public static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming

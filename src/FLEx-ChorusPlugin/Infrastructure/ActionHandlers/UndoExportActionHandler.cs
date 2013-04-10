@@ -6,6 +6,12 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal 'undo export' for a Flex repo.
+	/// </summary>
+	/// <remarks>
+	/// This option is not supported at the moment.
+	/// </remarks>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class UndoExportActionHandler : IBridgeActionTypeHandler
 	{

@@ -12,6 +12,11 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles the Lift type of repo that the user selected in an 'obtain lift' call.
+	///
+	/// The newly acquired Lift repo will be used by an extant Flex project.
+	/// </summary>
 	[Export(typeof (IBridgeActionTypeHandler))]
 	internal sealed class ObtainLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{

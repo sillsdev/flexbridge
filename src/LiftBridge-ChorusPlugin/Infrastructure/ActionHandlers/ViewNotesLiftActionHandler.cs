@@ -16,6 +16,9 @@ using TriboroughBridge_ChorusPlugin.View;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
+	/// <summary>
+	/// This IBridgeActionTypeHandler implementation handles everything needed for viewing the notes of a Lift repo.
+	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class ViewNotesLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerShowWindow
 	{
