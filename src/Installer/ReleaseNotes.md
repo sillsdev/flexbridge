@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+Have feature structures only allow one person to makes a change in a given merge.
+## 1.0.15
 Initial Beta release.
 
 ### Limitations

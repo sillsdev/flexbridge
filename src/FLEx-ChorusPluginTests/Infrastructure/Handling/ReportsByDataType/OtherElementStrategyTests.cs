@@ -65,13 +65,24 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				else
 				{
 					elementStrategy = _merger.MergeStrategies.ElementStrategies[classInfo.ClassName];
-					Assert.IsFalse(elementStrategy.IsAtomic);
+					if (classInfo.ClassName == "FsFeatStruc")
+					{
+						Assert.IsTrue(elementStrategy.IsAtomic);
+					}
+					else
+					{
+						Assert.IsFalse(elementStrategy.IsAtomic);
+					}
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
 					if (classInfo.ClassName == "ScrDraft")
+					{
 						Assert.IsTrue(elementStrategy.IsImmutable);
+					}
 					else
+					{
 						Assert.IsFalse(elementStrategy.IsImmutable);
+					}
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 				}
