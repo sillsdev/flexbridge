@@ -104,11 +104,24 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			Guard.AgainstNull(defaultDescriptor, "defaultDescriptor");
 
+			bool atomic;
+			switch (classInfo.ClassName)
+			{
+					// Feature structure merge is very complex (e.g., see LT-14400) and the chance of a useful result is small.
+					// We prevent a lot of possible inconsistent states by just not allowing merge below the element level.
+				case "FsFeatStruc":
+					atomic = true;
+					break;
+				default:
+					atomic = false;
+					break;
+			}
+
 			var classStrat = new ElementStrategy(false)
 				{
 					ContextDescriptorGenerator = defaultDescriptor,
 					MergePartnerFinder = GuidKeyFinder,
-					IsAtomic = false
+					IsAtomic = atomic
 				};
 
 			strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
