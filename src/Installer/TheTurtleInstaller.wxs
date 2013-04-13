@@ -165,7 +165,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		<Directory Id="DesktopFolder" SourceName="Desktop"/>
 		<Directory Id="TheTurtleShortcutDir" Name="The Turtle">
 		  <Component Id="ApplicationShortcut" Guid="3D9BF2DE-4A25-11DF-9879-0800200C9A66">
-			<Shortcut Id="startmenuShortcut" Name="The Turtle" Target="[!TheTurtle.exe]" WorkingDirectory="INSTALLDIR" Icon="FLExBridge.ico"/>
+			<Shortcut Id="startmenuShortcut" Name="The Turtle" Target="[!TheTurtle.exe]" WorkingDirectory="INSTALLDIR" Icon="TheTurtle.ico"/>
 			<RemoveFolder Id="TheTurtleShortcutDir" On="uninstall"/>
 			<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\The Turtle" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 		  </Component>
