@@ -15,7 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension + "-replaced");
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension + "-x");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwDB4oExtension);
+			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwDb4oExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwbackup");
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwstub");
 			projectFolderConfiguration.ExcludePatterns.Add("**.orig");
@@ -23,12 +23,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.LiftExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
 			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
 			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlLockExtension);
+			projectFolderConfiguration.ExcludePatterns.Add("**" + SharedConstants.FwXmlLockExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
 			projectFolderConfiguration.ExcludePatterns.Add("**.log");

@@ -38,3 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("FLExBridge")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("FwdataTestApp")]
+[assembly: InternalsVisibleTo("TheTurtle")]
+[assembly: InternalsVisibleTo("TheTurtleTests")]

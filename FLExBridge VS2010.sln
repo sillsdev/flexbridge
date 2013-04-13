@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriboroughBridge-ChorusPlug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriboroughBridge-ChorusPluginTests", "src\TriboroughBridge-ChorusPluginTests\TriboroughBridge-ChorusPluginTests.csproj", "{88C35B4A-6925-45D7-97A4-E4DC4A59731F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheTurtle", "src\TheTurtle\TheTurtle.csproj", "{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheTurtleTests", "src\TheTurtleTests\TheTurtleTests.csproj", "{D9C37AF7-7089-420F-902C-8AEC55DAE498}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,20 @@ Global
 		{88C35B4A-6925-45D7-97A4-E4DC4A59731F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88C35B4A-6925-45D7-97A4-E4DC4A59731F}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{88C35B4A-6925-45D7-97A4-E4DC4A59731F}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.DebugMono|Any CPU.ActiveCfg = Debug|x86
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45349DFD-121A-423A-ACFF-C2FA1BFF61E3}.ReleaseMono|Any CPU.ActiveCfg = Release|x86
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.DebugMono|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.DebugMono|Any CPU.Build.0 = Debug|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.ReleaseMono|Any CPU.ActiveCfg = Release|Any CPU
+		{D9C37AF7-7089-420F-902C-8AEC55DAE498}.ReleaseMono|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

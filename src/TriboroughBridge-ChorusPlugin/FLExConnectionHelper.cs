@@ -25,7 +25,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="options">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		internal bool Init(Dictionary<string, string> options)
+		public bool Init(Dictionary<string, string> options)
 		{
 			HostOpened = true;
 
@@ -81,7 +81,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		private static string GetFlexPathnameFromOption(string pOption)
 		{
-			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDB4oExtensionNoPeriod)
+			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDb4oExtensionNoPeriod)
 					   ? Path.GetFileNameWithoutExtension(pOption)
 					   : string.Empty;
 		}
@@ -153,7 +153,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived)
+		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
 			// open a channel to flex and send the message.
 			try
