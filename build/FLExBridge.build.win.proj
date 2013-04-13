@@ -125,6 +125,6 @@
 	<!-- Copy TheTurtleInstaller.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\output\Installer\TheTurtleInstaller.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
 
-  </Target
+  </Target>
 
 </Project>
