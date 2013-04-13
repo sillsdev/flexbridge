@@ -54,7 +54,7 @@
 	<DefineSolutionProperties>False</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
-	<Compile Include="InstallerTheTurtle.wxs"/>
+	<Compile Include="TheTurtleInstaller.wxs"/>
 	<Compile Include="GeneratedDistFiles.wxs"/>
   </ItemGroup>
   <ItemGroup>
