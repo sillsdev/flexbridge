@@ -194,7 +194,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="TriboroughBridgeChorusPlugin.dll"/>
 	  <ComponentRef Id="TriboroughBridgeChorusPlugin.pdb"/>
 
-	  <<ComponentRef Id="ApplicationShortcut"/>
+	  <ComponentRef Id="ApplicationShortcut"/>
 	  <ComponentRef Id="RegInstallationDir"/>
 	  <ComponentRef Id="LibChorus.pdb"/>
 	  <ComponentRef Id="Chorus.pdb"/>
