@@ -125,6 +125,12 @@
 	<!-- Copy TheTurtleInstaller.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\output\Installer\TheTurtleInstaller.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
 
+	<!-- remove an existing one with the same name, if necessary -->
+	<Delete Files="$(RootDir)\output\Installer\TheTurtleInstaller.$(Version).msi" TreatErrorsAsWarnings="false" />
+	<Copy SourceFiles="$(RootDir)\output\Installer\TheTurtleInstaller.msi" DestinationFiles="$(RootDir)\output\installer\TheTurtleInstaller.$(Version).msi" />
+	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
+	<Delete Files="$(RootDir)\output\Installer\TheTurtleInstaller.msi" TreatErrorsAsWarnings="false" />
+
   </Target>
 
 </Project>
