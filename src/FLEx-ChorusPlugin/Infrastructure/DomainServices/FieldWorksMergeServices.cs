@@ -104,33 +104,56 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		{
 			Guard.AgainstNull(defaultDescriptor, "defaultDescriptor");
 
-			bool atomic;
-			switch (classInfo.ClassName)
-			{
-					// Feature structure merge is very complex (e.g., see LT-14400) and the chance of a useful result is small.
-					// We prevent a lot of possible inconsistent states by just not allowing merge below the element level.
-				case "FsFeatStruc":
-					atomic = true;
-					break;
-				default:
-					atomic = false;
-					break;
-			}
-
+			// These values can be overridden or added to in the big switch, below.
 			var classStrat = new ElementStrategy(false)
 				{
 					ContextDescriptorGenerator = defaultDescriptor,
 					MergePartnerFinder = GuidKeyFinder,
-					IsAtomic = atomic
+					IsAtomic = false
 				};
 
 			strategiesForMerger.SetStrategy(classInfo.ClassName, classStrat);
 
+			// Try to keep these in alphbetical order, and where there are 'blocks', then try to keep the blocks in order.
+			// That will make them easier to find.
 			switch (classInfo.ClassName)
 			{
+				case "CmPossibilityList":
+					classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
+					break;
+				case "FsClosedFeature":
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
+					break;
+				case "FsFeatStruc":
+					classStrat.IsAtomic = true;
+					break;
+				case "LangProject":
+					classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
+					break;
+				case "LexEntry":
+					classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
+					break;
+				case "PhEnvironment":
+					classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
+					break;
+				case "PhNCSegments":
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
+					break;
+				case "ReversalIndexEntry":
+					classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
+					break;
+				case "RnGenericRec":
+					classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
+					break;
+				case "ScrBook":
+					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
+					break;
 				case "ScrDraft":
 					// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
 					classStrat.IsImmutable = true;
+					break;
+				case "ScrSection":
+					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
 					break;
 				case "ScrTxtPara": // Fall through.
 				case "StTxtPara":
@@ -139,66 +162,38 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					// Didn't work, since StTxtParas & ScrTxtParas are actually in an 'ownseq' element.
 					// classStrat.IsAtomic = true;
 					break;
-				case "LangProject":
-					classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
-					break;
-				case "LexEntry":
-					classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
+				case "Text":
+					classStrat.ContextDescriptorGenerator = new TextContextGenerator();
 					break;
 				case "WfiWordform":
 					classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
 					break;
-				case "ReversalIndexEntry":
-					classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
-					break;
-				case "Text":
-					classStrat.ContextDescriptorGenerator = new TextContextGenerator();
-					break;
-				case "RnGenericRec":
-					classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
-					break;
-				case "ScrBook":
-					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
-					break;
-				case "ScrSection":
-					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
-					break;
-				case "CmPossibilityList":
-					classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
-					break;
+
 				// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
 				// OTOH, if we ever want special handling for any of them, we can easily add a special generator.
 				// Note that these will not usually be found as strategies, since they are owned in owning sequences
 				// and ownseq has its own item. However, they can be found by the default object context generator code,
 				// which has a special case for ownseq.
-				case "MoMorphType":
-				case "PartOfSpeech":
 				case "ChkTerm":
-				case "PhPhonRuleFeat":
+				case "CmAnthroItem":
+				case "CmAnnotationDefn":
 				case "CmCustomItem":
 				case "CmLocation":
-				case "CmAnnotationDefn":
 				case "CmPerson":
-				case "CmAnthroItem":
+				case "CmPossibility":
 				case "CmSemanticDomain":
 				case "LexEntryType":
 				case "LexRefType":
-				case "CmPossibility":
+				case "MoMorphType":
+				case "PartOfSpeech":
+				case "PhPhonRuleFeat":
 					classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator();
 					break;
-				case "PhEnvironment":
-					classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
-					break;
-				case "DsConstChart":
+
 				case "ConstChartRow":
 				case "ConstChartWordGroup":
+				case "DsConstChart":
 					classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator();
-					break;
-				case "PhNCSegments":
-					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
-					break;
-				case "FsClosedFeature":
-					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
 					break;
 			}
 
@@ -215,24 +210,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 									   : CreateSingletonElementStrategy();
 				switch (propertyInfo.DataType)
 				{
-					//default:
-					//	break;
-					case DataType.ReferenceSequence:
-						// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
-						// we get a conflict report if it fails.
-						if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
-							propStrategy.IsAtomic = true;
-						break;
-					case DataType.ReferenceAtomic:
-						if (classInfo.ClassName == "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
-						{
-							propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
-						}
-						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
-						break;
+					// Block of object properties
+
 					case DataType.OwningAtomic:
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
+					//case DataType.OwningCollection: // Nothing special done
+					//	break;
 					case DataType.OwningSequence:
 						if ((classInfo.ClassName == "CmPossibilityList" && propertyInfo.PropertyName == "Possibilities")
 							|| (propertyInfo.PropertyName == "SubPossibilities" && classInfo.IsOrInheritsFrom("CmPossibility")))
@@ -246,19 +230,54 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 							propStrategy.ChildOrderPolicy = new SignificantOrderPolicy();
 						}
 						break;
-					case DataType.OwningCollection:
-						if (classInfo.ClassName == "FsFeatStruc" && propertyInfo.PropertyName == "FeatureSpecs")
-							propStrategy.Premerger = new FeatureSpecsPreMerger();
-						break;
-					case DataType.TextPropBinary:
-						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
+					case DataType.ReferenceAtomic:
+						if (classInfo.ClassName == "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
+						{
+							propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
+						}
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
-					case DataType.Unicode: // Fall through - Contains one <Uni> element
-					case DataType.String: // Fall through (TsString) - Contains one <Str> element
-						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+					//case DataType.ReferenceCollection: // Nothing special done
+					//	break;
+					case DataType.ReferenceSequence:
+						// Trying to merge the Analyses of a segment is problematic. Best to go all-or-nothing, and ensure
+						// we get a conflict report if it fails.
+						if (classInfo.ClassName == "Segment" && propertyInfo.PropertyName == "Analyses")
+							propStrategy.IsAtomic = true;
 						break;
 
+					// Block of multi-somethings
+					// In model, but nothing special done at the property element level
+					//case DataType.MultiString:
+					//    break;
+					//case DataType.MultiUnicode:
+					//    break;
+
+					// Block of other property data types
+					case DataType.Binary:
+						propStrategy.IsAtomic = true;
+						break;
+					case DataType.Boolean:
+						// LT-13320 "Date of Event is lost after send/receive (data loss)"
+						// says these fields don't play nice as immutable.
+						//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+						//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					//case DataType.Float: // Not used in model
+					//	break;
+					case DataType.GenDate:
+						// LT-13320 "Date of Event is lost after send/receive (data loss)"
+						// says these fields don't play nice as immutable.
+						//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
+						//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
+					case DataType.Guid:
+						if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
+							propStrategy.IsImmutable = true;
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+						break;
 					case DataType.Integer: // Fall through
 						if (propertyInfo.PropertyName == "HomographNumber")
 						{
@@ -267,13 +286,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						}
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 						break;
-					case DataType.Boolean: // Fall through
-					case DataType.GenDate:
-						// LT-13320 "Date of Event is lost after send/receive (data loss)"
-						// says these fields don't play nice as immutable.
-						//if (classInfo.ClassName == "CmPerson" || classInfo.ClassName == "RnGenericRec")
-						//	propStrategy.IsImmutable = true; // Surely DateOfBirth, DateOfDeath, and DateOfEvent are fixed. onced they happen. :-)
-						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
+					//case DataType.Numeric: // Not used in model
+					//	break;
+					case DataType.String: // Contains one <Str> element
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
+						break;
+					case DataType.TextPropBinary:
+						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
 					case DataType.Time:
 						if (propertyInfo.PropertyName == "DateCreated")
@@ -289,13 +309,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						}
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 						break;
-					case DataType.Guid:
-						if (classInfo.ClassName == "CmFilter" || classInfo.ClassName == "CmResource")
-							propStrategy.IsImmutable = true;
-						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
-						break;
-					case DataType.Binary:
-						propStrategy.IsAtomic = true;
+					case DataType.Unicode: // Contains one <Uni> element
+						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
 				}
 				strategiesForMerger.SetStrategy(
@@ -357,7 +372,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			AddSharedKeyedByWsElementType(sharedElementStrategies, SharedConstants.AUni, false, false); // final parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
-			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true); ;
+			elementStrategy = CreateStrategyForKeyedElement(SharedConstants.GuidStr, true);
 			elementStrategy.Premerger = new OwnSeqPremerger();
 			elementStrategy.ContextDescriptorGenerator = ContextGen;
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { SharedConstants.GuidStr, SharedConstants.Class });
