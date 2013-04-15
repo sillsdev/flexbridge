@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.
+* Chorus: Remove the older Shared Network support.
+## 1.0.16 12/Apr/2013
 Have feature structures only allow one person to makes a change in a given merge.
 ## 1.0.15 10/Apr/2013
 Initial Beta release.

@@ -57,10 +57,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "*.*"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "*.*"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Pictures", "*.*"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("SupportingFiles", "*.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "**.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "**.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Pictures", "**.*"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("SupportingFiles", "**.*"));
 
 			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Reversals", "**.reversal"));

@@ -119,7 +119,6 @@
 	<Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\PictureTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\General\VirtualOrderingTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FeatureSpecsPreMergerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
 	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
@@ -207,7 +206,6 @@
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
