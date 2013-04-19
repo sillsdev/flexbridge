@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Update Chorus Help file and connect one Help button to the help.
+## 1.0.17 15/Apr/2013
 * FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.
 * Chorus: Remove the older Shared Network support.
 ## 1.0.16 12/Apr/2013
