@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix unreported bug with one delete vs. edit conflict report.
+## 1.0.19 30/Apr/2013
 * Chorus: Update help file.
 * Chorus: Fix problem with "Collection was modified" error.
 ## 1.0.18 19/Apr/2013
