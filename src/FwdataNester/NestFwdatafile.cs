@@ -23,7 +23,7 @@ namespace FwdataTestApp
 {
 	public partial class NestFwdataFile : Form
 	{
-		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks 7\TestProjects";
+		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks\TestProjects";
 		private string _srcFwdataPathname;
 		private string _workingDir;
 
