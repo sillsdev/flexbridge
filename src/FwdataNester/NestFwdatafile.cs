@@ -69,7 +69,6 @@ namespace FwdataTestApp
 
 		private void RunSelected(object sender, EventArgs e)
 		{
-			RestoreAllProjects();
 			Cursor = Cursors.WaitCursor;
 			foreach (ListViewItem selectedItem in _listView.CheckedItems)
 			{
