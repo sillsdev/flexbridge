@@ -78,7 +78,7 @@ namespace FwdataTestApp
 			this._fwdataPathname.Name = "_fwdataPathname";
 			this._fwdataPathname.Size = new System.Drawing.Size(385, 20);
 			this._fwdataPathname.TabIndex = 10;
-			this._fwdataPathname.Text = "C:\\ProgramData\\SIL\\FieldWorks 7\\TestProjects";
+			this._fwdataPathname.Text = "C:\\ProgramData\\SIL\\FieldWorks\\TestProjects";
 			this._fwdataPathname.WordWrap = false;
 			//
 			// label1
@@ -236,7 +236,7 @@ namespace FwdataTestApp
 			// _folderBrowserDialog
 			//
 			this._folderBrowserDialog.Description = "Select FW Project Folder";
-			this._folderBrowserDialog.SelectedPath = "C:\\ProgramData\\SIL\\FieldWorks 7\\TestProjects";
+			this._folderBrowserDialog.SelectedPath = "C:\\ProgramData\\SIL\\FieldWorks\\TestProjects";
 			this._folderBrowserDialog.ShowNewFolderButton = false;
 			//
 			// _listView

@@ -184,27 +184,27 @@ namespace FLEx_ChorusPlugin.Contexts.General
 
 			// LP Annotations (OC-CmAnnotation). [Odd elements like in Discourse.]
 			currentPathname = Path.Combine(generalBaseDir, SharedConstants.FLExAnnotationsFilename);
-			if (!File.Exists(currentPathname))
-				return;
-
-			sortedElements = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
-			doc = XDocument.Load(currentPathname);
-			foreach (var annotationElement in doc.Root.Elements(SharedConstants.CmAnnotation))
+			if (File.Exists(currentPathname))
 			{
-				// Put CmAnnotation back into LP's Annotations element.
-				var classAttr = annotationElement.Attribute(SharedConstants.Class);
-				annotationElement.Name = classAttr.Value;
-				classAttr.Remove();
-				CmObjectFlatteningService.FlattenOwnedObject(
-					currentPathname,
-					sortedData,
-					annotationElement,
-					langProjGuid, sortedElements); // Restore 'ownerguid' to style.
+				sortedElements = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+				doc = XDocument.Load(currentPathname);
+				foreach (var annotationElement in doc.Root.Elements(SharedConstants.CmAnnotation))
+				{
+					// Put CmAnnotation back into LP's Annotations element.
+					var classAttr = annotationElement.Attribute(SharedConstants.Class);
+					annotationElement.Name = classAttr.Value;
+					classAttr.Remove();
+					CmObjectFlatteningService.FlattenOwnedObject(
+						currentPathname,
+						sortedData,
+						annotationElement,
+						langProjGuid, sortedElements); // Restore 'ownerguid' to style.
+				}
+				// Restore LP Annotations property in sorted order.
+				var owningProp = langProjElement.Element(SharedConstants.Annotations);
+				foreach (var sortedTextObjSurElement in sortedElements.Values)
+					owningProp.Add(sortedTextObjSurElement);
 			}
-			// Restore LP Annotations property in sorted order.
-			var owningProp = langProjElement.Element(SharedConstants.Annotations);
-			foreach (var sortedTextObjSurElement in sortedElements.Values)
-				owningProp.Add(sortedTextObjSurElement);
 
 			// No VirtualOrdering instances are owned.
 			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
