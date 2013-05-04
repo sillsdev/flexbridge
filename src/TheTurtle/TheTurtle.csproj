@@ -91,6 +91,9 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="IProjectPathLocator.cs" />
 	<Compile Include="Model\RegularUserProjectPathLocator.cs" />
 	<Compile Include="Model\TheTurtle.cs" />

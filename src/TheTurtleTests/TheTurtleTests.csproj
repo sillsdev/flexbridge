@@ -52,6 +52,9 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="DummyFolderSystem.cs" />
 	<Compile Include="Mocks\MockedExistingSystemView.cs" />
 	<Compile Include="Mocks\MockedTurtleView.cs">
