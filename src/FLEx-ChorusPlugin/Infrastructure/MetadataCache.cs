@@ -119,7 +119,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// 7000037: Starting point (FW 7.0.6)
 			// 7000044: FW 7.1 released.
 			// 7000051: FW 7.2 released.
-			// 700006x: FW 7.3 released.
+			// 700006x: FW 8.0.x released.
 			var currentVersion = ModelVersion;
 			var cmObject = GetClassInfo("CmObject");
 			while (currentVersion < newVersion)
@@ -311,6 +311,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 					case 7000066:
 						// 7000066: No actual model change.
 						break;
+					case 7000067:
+						// 7000067: No actual model change.
+						break;
+					case 7000068:
+						// 7000068: No actual model change.
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -319,7 +325,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000066;
+		public const int MaximumModelVersion = 7000068;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
