@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix problem with timeout limit stopping a merge before it is finished.
+* FLEx Bridge: Add support for two more FLEx data migrations (DM 67 & DM68).
+## 1.0.21 2/May/2013
 * FLEx Bridge: Fix problem with VirtualOrder instances and unowned pictures getting lost, if an annotation file is not also present.
 ## 1.0.20 30/Apr/2013
 * Chorus: Fix unreported bug with one delete vs. edit conflict report.
