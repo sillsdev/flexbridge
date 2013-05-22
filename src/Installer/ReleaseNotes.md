@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix issue with unresolved merge (a merge didn't complete).
+## 1.0.23 16/May/2013
 * Palaso: Fix issue with loading xml files (e.g., Lift files) with comments.
 * Chorus: Fix issue with removing some duplicate data in a Lift file.
 ## 1.0.22 11/May/2013
