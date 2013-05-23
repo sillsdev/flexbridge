@@ -4,6 +4,8 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
@@ -44,6 +46,9 @@ namespace FLExBridge
 				MessageBox.Show(readinessMessage, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 				return;
 			}
+
+			// Allows us to reconstitute one of these, if we find it in a Notes file.
+			Conflict.RegisterContextClass(typeof(TaggingDiscardedConflict));
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())

@@ -162,6 +162,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					// Didn't work, since StTxtParas & ScrTxtParas are actually in an 'ownseq' element.
 					// classStrat.IsAtomic = true;
 					break;
+				case "StText":
+					classStrat.Premerger = new StTextPreMerger();
+					break;
 				case "Text":
 					classStrat.ContextDescriptorGenerator = new TextContextGenerator();
 					break;
