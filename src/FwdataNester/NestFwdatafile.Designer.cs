@@ -59,6 +59,7 @@ namespace FwdataTestApp
 			this._listView = new System.Windows.Forms.ListView();
 			this.FwdataPathname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this._btnToggle = new System.Windows.Forms.Button();
+			this._cbFindDanglingRefs = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			//
 			// _btnBrowse
@@ -93,7 +94,7 @@ namespace FwdataTestApp
 			// _btnRunSelected
 			//
 			this._btnRunSelected.Enabled = false;
-			this._btnRunSelected.Location = new System.Drawing.Point(-1, 509);
+			this._btnRunSelected.Location = new System.Drawing.Point(-1, 629);
 			this._btnRunSelected.Name = "_btnRunSelected";
 			this._btnRunSelected.Size = new System.Drawing.Size(107, 23);
 			this._btnRunSelected.TabIndex = 8;
@@ -225,7 +226,7 @@ namespace FwdataTestApp
 			//
 			// _btnRunLoop
 			//
-			this._btnRunLoop.Location = new System.Drawing.Point(140, 509);
+			this._btnRunLoop.Location = new System.Drawing.Point(140, 629);
 			this._btnRunLoop.Name = "_btnRunLoop";
 			this._btnRunLoop.Size = new System.Drawing.Size(75, 23);
 			this._btnRunLoop.TabIndex = 23;
@@ -266,10 +267,21 @@ namespace FwdataTestApp
 			this._btnToggle.UseVisualStyleBackColor = true;
 			this._btnToggle.Click += new System.EventHandler(this.ToggleCheckBoxes);
 			//
+			// _cbFindDanglingRefs
+			//
+			this._cbFindDanglingRefs.AutoSize = true;
+			this._cbFindDanglingRefs.Location = new System.Drawing.Point(-1, 510);
+			this._cbFindDanglingRefs.Name = "_cbFindDanglingRefs";
+			this._cbFindDanglingRefs.Size = new System.Drawing.Size(218, 17);
+			this._cbFindDanglingRefs.TabIndex = 26;
+			this._cbFindDanglingRefs.Text = "Find dangling reference props in main file";
+			this._cbFindDanglingRefs.UseVisualStyleBackColor = true;
+			//
 			// NestFwdataFile
 			//
 			this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			this.ClientSize = new System.Drawing.Size(554, 539);
+			this.ClientSize = new System.Drawing.Size(554, 657);
+			this.Controls.Add(this._cbFindDanglingRefs);
 			this.Controls.Add(this._btnToggle);
 			this.Controls.Add(this._listView);
 			this.Controls.Add(this._btnRunLoop);
@@ -319,5 +331,6 @@ namespace FwdataTestApp
 		private ListView _listView;
 		private ColumnHeader FwdataPathname;
 		private Button _btnToggle;
+		private CheckBox _cbFindDanglingRefs;
 	}
 }

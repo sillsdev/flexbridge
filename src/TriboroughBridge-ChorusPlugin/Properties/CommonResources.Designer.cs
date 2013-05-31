@@ -162,6 +162,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Invalid command line options. Please launch from FLEx..
+		/// </summary>
+		public static string kInvalidCommandLineOptions {
+			get {
+				return ResourceManager.GetString("kInvalidCommandLineOptions", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Moving obtained project to final location..
 		/// </summary>
 		public static string kMovingRepo {

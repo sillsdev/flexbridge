@@ -58,7 +58,8 @@
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -75,7 +76,8 @@
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile></TargetFrameworkProfile>
+	<TargetFrameworkProfile>
+	</TargetFrameworkProfile>
 	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -109,6 +111,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="NestFwdatafile.cs">
 	  <SubType>Form</SubType>
 	</Compile>
