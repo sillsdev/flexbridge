@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
+using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
+using L10NSharp;
+using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
@@ -45,6 +49,8 @@ namespace FLExBridge
 				return;
 			}
 
+			SetupLocalization(options);
+
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
@@ -74,6 +80,28 @@ namespace FLExBridge
 				}
 			}
 			Settings.Default.Save();
+		}
+
+		private static void SetupLocalization(Dictionary<string, string> options)
+		{
+			string desiredUiLangId;
+			if (!options.TryGetValue("-locale", out desiredUiLangId))
+				desiredUiLangId = "en";
+			var localizationFolder = FileLocator.GetDirectoryDistributedWithApplication("localizations");
+			ChorusSystem.SetUpLocalization(desiredUiLangId, localizationFolder);
+
+			// Now set it up for the handful of localizable elements in FlexBridge itself.
+			string targetTmxFilePath = Path.Combine(localizationFolder, "Chorus");
+			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			// Version will have 4 parts, but we don't need to reload strings for every build.
+			version = version.Substring(0, version.LastIndexOf('.'));
+			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
+						   version, localizationFolder,
+						   targetTmxFilePath,
+						   Resources.chorus,
+						   "fieldworksbridge@gmail.com", "FlexBridge");
 		}
 
 		private static void SetUpErrorHandling()
