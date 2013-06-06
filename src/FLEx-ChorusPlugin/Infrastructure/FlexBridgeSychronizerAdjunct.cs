@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -128,7 +129,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			var startInfo = process.StartInfo;
 			startInfo.FileName = _fixitPathname;
 			startInfo.Arguments = "\"" + _fwdataPathname + "\"";
-			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
+			startInfo.CreateNoWindow = false;
 			startInfo.UseShellExecute = false;
 			startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
 			startInfo.RedirectStandardOutput = true;
@@ -139,7 +140,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Unfortunately this includes sequences of dots intended to show progress on the console.
 			// They always occur at the start of a line. The Replace gets rid of them.
 			progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
-			return process.ExitCode != 0;
+			if (process.ExitCode < 0)
+			{
+				throw new Exception("Merge fixing program has crashed.");
+			}
+			return process.ExitCode > 0;
 		}
 
 		/// <summary>
