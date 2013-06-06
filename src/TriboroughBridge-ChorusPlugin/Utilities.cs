@@ -93,10 +93,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, string type, string languageId,
+														  Action<ProjectFolderConfiguration> configure)
 		{
 			var system = new ChorusSystem(directoryName);
-			system.Init(user);
+			system.Init(user, type, languageId);
 			if (configure != null)
 				configure(system.ProjectFolderConfiguration);
 			return system;

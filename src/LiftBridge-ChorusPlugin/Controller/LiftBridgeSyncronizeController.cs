@@ -43,7 +43,7 @@ namespace SIL.LiftBridge.Controller
 				File.WriteAllText(liftPathname, Resources.kEmptyLiftFileXml);
 			}
 
-			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
+			ChorusSystem = Utilities.InitializeChorusSystem(CurrentProject.PathToProject, options["-u"], "dict", options["-ws"], LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			if (ChorusSystem.Repository.Identifier == null)
 			{
 				// First do a commit, since the repo is brand new.

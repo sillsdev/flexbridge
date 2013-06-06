@@ -30,7 +30,7 @@ namespace FLEx_ChorusPlugin.Controller
 			_projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 			_mainBridgeForm = mainForm;
 			_flexProjectSynchronizer = new SynchronizeFlexProject();
-			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder);
+			ChorusSystem = Utilities.InitializeChorusSystem(_projectDir, options["-u"], "flex", options["-ws"], FlexFolderSystem.ConfigureChorusProjectFolder);
 			if (ChorusSystem.Repository.Identifier == null)
 			{
 				// Write an empty custom prop file to get something in the default branch at rev 0.

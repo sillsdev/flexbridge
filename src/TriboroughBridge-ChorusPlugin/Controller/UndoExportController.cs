@@ -23,7 +23,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 				(controllerType == ControllerType.UndoExportLift)
 						? Utilities.LiftOffset(options["-p"])
 						: options["-p"],
-				options["-u"],
+				options["-u"], null, null,
 				null);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 		}

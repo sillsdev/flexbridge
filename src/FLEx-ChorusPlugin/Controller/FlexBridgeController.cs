@@ -109,7 +109,7 @@ namespace FLEx_ChorusPlugin.Controller
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
 			// intends to start sharing an existing system.
-			var chorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, Environment.UserName, FlexFolderSystem.ConfigureChorusProjectFolder);
+			var chorusSystem = Utilities.InitializeChorusSystem(CurrentProject.DirectoryName, Environment.UserName, "flex", null, FlexFolderSystem.ConfigureChorusProjectFolder);
 			// 1: If FW project is in use, then show a warning message.
 			var projectInUse = CurrentProject.FieldWorkProjectInUse;
 

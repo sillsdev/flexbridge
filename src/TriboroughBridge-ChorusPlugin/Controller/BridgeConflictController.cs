@@ -36,7 +36,7 @@ namespace TriboroughBridge_ChorusPlugin.Controller
 			_mainBridgeForm.ClientSize = new Size(904, 510);
 
 			_chorusUser = new ChorusUser(options["-u"]);
-			ChorusSystem = Utilities.InitializeChorusSystem(_currentStrategy.ProjectDir, _chorusUser.Name, _currentStrategy.ConfigureProjectFolders);
+			ChorusSystem = Utilities.InitializeChorusSystem(_currentStrategy.ProjectDir, _chorusUser.Name, null, null, _currentStrategy.ConfigureProjectFolders);
 			ChorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 			_notesBrowser = ChorusSystem.WinForms.CreateNotesBrowser();
