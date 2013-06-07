@@ -5,7 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
+using Chorus;
+using L10NSharp;
 using NetSparkle;
+using Palaso.IO;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -136,6 +140,8 @@ namespace TriboroughBridge_ChorusPlugin
 				return false;
 			}
 
+			SetupLocalization(options); // not needed for about/check verbs.
+
 			_changesReceived = false;
 			InitializeCurrentModel(options);
 
@@ -188,6 +194,28 @@ namespace TriboroughBridge_ChorusPlugin
 					break;
 			}
 			return true;
+		}
+
+		private static void SetupLocalization(Dictionary<string, string> options)
+		{
+			string desiredUiLangId;
+			if (!options.TryGetValue("-locale", out desiredUiLangId))
+				desiredUiLangId = "en";
+			var localizationFolder = FileLocator.GetDirectoryDistributedWithApplication("localizations");
+			ChorusSystem.SetUpLocalization(desiredUiLangId, localizationFolder);
+
+			// Now set it up for the handful of localizable elements in FlexBridge itself.
+			string targetTmxFilePath = Path.Combine(localizationFolder, "Chorus");
+			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			// We don't need to reload strings for every "revision" (that might be every time we build).
+			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
+						   version, localizationFolder,
+						   targetTmxFilePath,
+						   CommonResources.chorus32x32,
+						   "fieldworksbridge@gmail.com", "FlexBridge");
 		}
 
 		public void EndWork(Dictionary<string, string> options)
