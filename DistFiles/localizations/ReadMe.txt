@@ -1,1 +1,0 @@
-This file is a placeholder to make sure the localizations folder gets created
