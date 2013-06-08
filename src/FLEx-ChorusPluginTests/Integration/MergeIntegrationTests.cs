@@ -159,7 +159,7 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(notesContents.Contains("Removed Vs Edited Element Conflict"));
 					Assert.IsTrue(notesContents.Contains("Randy deleted this element"));
 					Assert.IsTrue(notesContents.Contains("Sue edited it"));
-					Assert.IsTrue(notesContents.Contains("The merger kept the change made by Sue."));
+					Assert.IsTrue(notesContents.Contains("The automated merger kept the change made by Sue."));
 					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
 					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
 					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));

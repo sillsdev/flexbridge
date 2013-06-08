@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
+using L10NSharp;
 using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
@@ -48,6 +49,8 @@ namespace FLExBridge
 				return;
 			}
 
+			SetupLocalization(options);
+
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
@@ -60,7 +63,6 @@ namespace FLExBridge
 				{
 					var wantEndCall = false;
 					var options = ParseCommandLineArgs(args);
-
 					var bridgeTrafficCop = container.GetExportedValue<BridgeTrafficCop>();
 					try
 					{
@@ -78,6 +80,28 @@ namespace FLExBridge
 				}
 			}
 			Settings.Default.Save();
+		}
+
+		private static void SetupLocalization(Dictionary<string, string> options)
+		{
+			string desiredUiLangId;
+			if (!options.TryGetValue("-locale", out desiredUiLangId))
+				desiredUiLangId = "en";
+			var localizationFolder = FileLocator.GetDirectoryDistributedWithApplication("localizations");
+			ChorusSystem.SetUpLocalization(desiredUiLangId, localizationFolder);
+
+			// Now set it up for the handful of localizable elements in FlexBridge itself.
+			string targetTmxFilePath = Path.Combine(localizationFolder, "Chorus");
+			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			// We don't need to reload strings for every "revision" (that might be every time we build).
+			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
+						   version, localizationFolder,
+						   targetTmxFilePath,
+						   Resources.chorus,
+						   "fieldworksbridge@gmail.com", "FlexBridge");
 		}
 
 		private static void SetUpErrorHandling()
