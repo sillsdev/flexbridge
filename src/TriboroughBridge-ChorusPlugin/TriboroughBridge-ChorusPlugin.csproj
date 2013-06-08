@@ -78,7 +78,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="L10NSharp, Version=1.1.4902.16423, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>

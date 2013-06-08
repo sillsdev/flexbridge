@@ -53,3 +53,4 @@ src/TheTurtle/bin/*
 src/TheTurtle/obj/*
 src/TheTurtleTests/bin/*
 src/TheTurtleTests/obj/*
+lib/common/L10NSharp.dll
