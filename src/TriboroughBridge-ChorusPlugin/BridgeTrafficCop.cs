@@ -5,7 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
+using Chorus;
+using L10NSharp;
 using NetSparkle;
+using Palaso.Extensions;
+using Palaso.IO;
 using TriboroughBridge_ChorusPlugin.Controller;
 using TriboroughBridge_ChorusPlugin.Model;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -136,6 +141,8 @@ namespace TriboroughBridge_ChorusPlugin
 				return false;
 			}
 
+			SetupLocalization(options); // not needed for about/check verbs.
+
 			_changesReceived = false;
 			InitializeCurrentModel(options);
 
@@ -188,6 +195,52 @@ namespace TriboroughBridge_ChorusPlugin
 					break;
 			}
 			return true;
+		}
+
+		private static void SetupLocalization(Dictionary<string, string> options)
+		{
+			string desiredUiLangId;
+			if (!options.TryGetValue("-locale", out desiredUiLangId))
+				desiredUiLangId = "en";
+			var rootDirectoryOfInstalledTmxFiles = FileLocator.GetDirectoryDistributedWithApplication("localizations");
+			var rootDirectoryOfUserModifiedTmxFiles = Path.Combine(GetFlexBridgeAppDataFolder(), "localizations");
+			ChorusSystem.SetUpLocalization(desiredUiLangId, rootDirectoryOfInstalledTmxFiles, rootDirectoryOfUserModifiedTmxFiles);
+
+			// Now set it up for the handful of localizable elements in FlexBridge itself.
+			string directoryOfInstalledTmxFiles = Path.Combine(rootDirectoryOfInstalledTmxFiles, "FlexBridge");
+			string directoryOfUserModifiedTmxFiles = Path.Combine(rootDirectoryOfUserModifiedTmxFiles, "FlexBridge");
+			if (!Directory.Exists(directoryOfUserModifiedTmxFiles))
+			{
+				try
+				{
+					Directory.CreateDirectory(directoryOfUserModifiedTmxFiles);
+				}
+				catch (IOException)
+				{
+					// User won't be able to localize, but we can't do much about it.
+				}
+			}
+			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			// We don't need to reload strings for every "revision" (that might be every time we build).
+			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
+						   version, directoryOfInstalledTmxFiles,
+						   directoryOfUserModifiedTmxFiles,
+						   CommonResources.chorus32x32,
+						   "fieldworksbridge@gmail.com", "FlexBridge");
+		}
+
+		public static string GetFlexBridgeAppDataFolder()
+		{
+			var d = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData).CombineForPath("SIL");
+			if (!Directory.Exists(d))
+				Directory.CreateDirectory(d);
+			d = d.CombineForPath("FlexBridge");
+			if (!Directory.Exists(d))
+				Directory.CreateDirectory(d);
+			return d;
 		}
 
 		public void EndWork(Dictionary<string, string> options)
