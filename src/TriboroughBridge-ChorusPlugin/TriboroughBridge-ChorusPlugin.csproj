@@ -78,9 +78,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="L10NSharp, Version=1.1.4903.23456, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="L10NSharp">
 	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
@@ -112,27 +112,23 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="BridgeTrafficCop.cs" />
-	<Compile Include="ControllerType.cs" />
-	<Compile Include="Controller\ControllerRepository.cs" />
-	<Compile Include="Controller\BridgeConflictController.cs" />
-	<Compile Include="Controller\IBridgeController.cs" />
-	<Compile Include="Controller\IConflictController.cs" />
-	<Compile Include="Controller\IConflictStrategy.cs" />
-	<Compile Include="Controller\IMoveOldLiftRepositorController.cs" />
-	<Compile Include="Controller\IObtainNewProjectController.cs" />
-	<Compile Include="Controller\IObtainProjectStrategy.cs" />
-	<Compile Include="Controller\ISyncronizeController.cs" />
-	<Compile Include="Controller\JumpEventHandler.cs" />
-	<Compile Include="Controller\ObtainProjectController.cs" />
-	<Compile Include="Controller\UndoExportController.cs" />
-	<Compile Include="ISynchronizeProject.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="ActionType.cs" />
+	<Compile Include="CommandLineException.cs" />
+	<Compile Include="CommandLineProcessor.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\AboutFlexBridgeActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ActionTypeHandlerRepository.cs" />
+	<Compile Include="Infrastructure\IObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\JumpEventHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\CheckForUpdatesActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainAnyProjectActionHandler.cs" />
 	<Compile Include="JumpEventArgs.cs" />
 	<Compile Include="ICreateProjectFromLift.cs" />
 	<Compile Include="FLExConnectionHelper.cs" />
-	<Compile Include="Model\IBridgeModel.cs" />
+	<Compile Include="Infrastructure\IBridgeActionTypeHandler.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="BridgeModelType.cs" />
 	<Compile Include="Properties\CommonResources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
