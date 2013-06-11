@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
@@ -100,18 +101,19 @@ namespace FLExBridge
 			string desiredUiLangId;
 			if (!options.TryGetValue("-locale", out desiredUiLangId))
 				desiredUiLangId = "en";
-			var localizationFolder = FileLocator.GetDirectoryDistributedWithApplication("localizations");
-			ChorusSystem.SetUpLocalization(desiredUiLangId, localizationFolder);
+			var installedTmxDirectory = Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), "localizations");
+			var userTmxDirectory = FileLocator.GetDirectoryDistributedWithApplication("localizations");
+			ChorusSystem.SetUpLocalization(desiredUiLangId, installedTmxDirectory, userTmxDirectory);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
-			string targetTmxFilePath = Path.Combine(localizationFolder, "Chorus");
+			string targetTmxFilePath = Path.Combine(userTmxDirectory, "Chorus");
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
 			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
 			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
-						   version, localizationFolder,
+						   version, userTmxDirectory,
 						   targetTmxFilePath,
 						   Resources.chorus,
 						   "fieldworksbridge@gmail.com", "FlexBridge");
