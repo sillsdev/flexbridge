@@ -202,7 +202,7 @@ namespace TriboroughBridge_ChorusPlugin
 			string desiredUiLangId;
 			if (!options.TryGetValue("-locale", out desiredUiLangId))
 				desiredUiLangId = "en";
-			var rootDirectoryOfInstalledTmxFiles = Path.Combine(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase), "localizations");
+			var rootDirectoryOfInstalledTmxFiles = Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), "localizations");
 			var rootDirectoryOfUserModifiedTmxFiles = Path.Combine(GetFlexBridgeAppDataFolder(), "localizations");
 			ChorusSystem.SetUpLocalization(desiredUiLangId, rootDirectoryOfInstalledTmxFiles, rootDirectoryOfUserModifiedTmxFiles);
 
