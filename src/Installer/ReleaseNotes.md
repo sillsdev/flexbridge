@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Show technical conflict details on demand.
+## 2.0.1: 13/June/2013
 * FLEx Bridge: Rearchitecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
 * Palaso, Chorus, & FLEx Bridge: Add localization support.
 
