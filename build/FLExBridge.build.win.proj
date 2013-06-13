@@ -15,7 +15,6 @@
   <PropertyGroup>
 	<Solution>FLExBridge VS2010.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
-	<UploadFolder>Alpha</UploadFolder>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
