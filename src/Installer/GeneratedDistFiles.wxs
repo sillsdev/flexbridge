@@ -8,10 +8,24 @@
 			<Component Id="LogoForAbout.png" Guid="C217AC6E-CDB7-4334-9D0F-BDD53F57EA21">
 				<File Id="LogoForAbout.png" Name="LogoForAbout.png" Source="..\..\DistFiles\LogoForAbout.png" />
 			</Component>
+			<Directory Id="LocalizationsDir" name="localizations">
+				<Directory Id="ChorusDir" name="Chorus">
+					<Component Id="Chorus.en.tmx" Guid="C1EE5817-E382-11DE-8A39-0800200C9A66">
+						<File Id="Chorus.en.tmx" Name="Chorus.en.tmx" Source="..\..\DistFiles\localizations\Chorus\Chorus.en.tmx" />
+					</Component>
+				</Directory>
+				<Directory Id="FlexBridgeDir" name="FlexBridge">
+					<Component Id="FlexBridge.en.tmx" Guid="C1EE5818-E382-11DE-8A39-0800200C9A66">
+						<File Id="FlexBridge.en.tmx" Name="FlexBridge.en.tmx" Source="..\..\DistFiles\localizations\FlexBridge\FlexBridge.en.tmx" />
+					</Component>
+				</Directory>
+			<Directory>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
 			<ComponentRef Id="license.rtf" />
 			<ComponentRef Id="LogoForAbout.png" />
+			<ComponentRef Id="Chorus.en.tmx" />
+			<ComponentRef Id="FlexBridge.en.tmx" />
 		</ComponentGroup>
 	</Fragment>
 </Wix>

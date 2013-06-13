@@ -109,7 +109,7 @@ namespace FLExBridge
 			string targetTmxFilePath = Path.Combine(userTmxDirectory, "Chorus");
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
 			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
-			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,

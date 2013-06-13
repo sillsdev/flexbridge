@@ -15,6 +15,7 @@
   <PropertyGroup>
 	<Solution>FLExBridge VS2010.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
+	<UploadFolder>Alpha</UploadFolder>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
@@ -77,6 +78,9 @@
 	<Copy SourceFiles="$(RootDir)\src\Installer\appcast.xml" DestinationFolder="$(RootDir)\output\Installer"/>
 	<FileUpdate File="$(RootDir)\output\Installer\appcast.xml" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 
+	<Copy SourceFiles="$(RootDir)\src\Installer\$(UploadFolder).htm" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\output\Installer\$(UploadFolder).htm" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+
 	<Copy SourceFiles="$(RootDir)\src\Installer\ReleaseNotes.md" DestinationFolder="$(RootDir)\output\Installer"/>
 	<FileUpdate File="$(RootDir)\output\Installer\ReleaseNotes.md" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 
@@ -94,10 +98,10 @@
   <Target Name="Upload" DependsOnTargets="CreateDirectories">
 
 	<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/Beta/FLExBridgeInstaller.msi"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/Alpha/FLExBridgeInstaller.msi"/>
 
 	<Message Text="Attempting rsync of ReleaseNotes.md" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/Beta/ReleaseNotes.md"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/ReleaseNotes.md"/>
 
 	<Message Text="Attempting rsync of appcast.xml" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/appcast.xml&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/appcast.xml"/>
@@ -105,8 +109,8 @@
 	<Message Text="Attempting rsync of flexbridge.css" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/flexbridge.css&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/flexbridge.css"/>
 
-	<Message Text="Attempting rsync of Beta.htm" Importance="high"/>
-	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/Beta.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
+	<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
 
   </Target>
 
