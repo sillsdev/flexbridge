@@ -19,7 +19,7 @@
 						<File Id="FlexBridge.en.tmx" Name="FlexBridge.en.tmx" Source="..\..\DistFiles\localizations\FlexBridge\FlexBridge.en.tmx" />
 					</Component>
 				</Directory>
-			<Directory>
+			</Directory>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
 			<ComponentRef Id="license.rtf" />
