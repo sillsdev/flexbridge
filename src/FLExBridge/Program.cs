@@ -8,7 +8,6 @@ using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
 using L10NSharp;
-using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
@@ -20,6 +19,10 @@ namespace FLExBridge
 {
 	static class Program
 	{
+		private const string FlexBridge = "FlexBridge";
+		private const string localizations = "localizations";
+		private const string FlexBridgeEmailAddress = "fieldworksbridge@gmail.com";
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -101,27 +104,27 @@ namespace FLExBridge
 			string desiredUiLangId;
 			if (!options.TryGetValue("-locale", out desiredUiLangId))
 				desiredUiLangId = "en";
-			var installedTmxDirectory = Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), "localizations");
-			var userTmxDirectory = FileLocator.GetDirectoryDistributedWithApplication("localizations");
-			ChorusSystem.SetUpLocalization(desiredUiLangId, installedTmxDirectory, userTmxDirectory);
+			var installedTmxBaseDirectory = Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+			var userTmxBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), localizations);
+			ChorusSystem.SetUpLocalization(desiredUiLangId, installedTmxBaseDirectory, userTmxBaseDirectory);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
-			string targetTmxFilePath = Path.Combine(userTmxDirectory, "Chorus");
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
 			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
 			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
-						   version, userTmxDirectory,
-						   targetTmxFilePath,
+			LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
+						   version,
+						   Path.Combine(installedTmxBaseDirectory, FlexBridge),
+						   Path.Combine(userTmxBaseDirectory, FlexBridge),
 						   Resources.chorus,
-						   "fieldworksbridge@gmail.com", "FlexBridge");
+						   FlexBridgeEmailAddress, FlexBridge);
 		}
 
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = "fieldworksbridge@gmail.com";
+			ErrorReport.EmailAddress = FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 		}
