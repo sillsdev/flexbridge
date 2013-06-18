@@ -58,7 +58,7 @@ namespace FLExBridge
 
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
 
-			SetupLocalization(options);
+			var l10Managers = SetupLocalization(options);
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -92,21 +92,30 @@ namespace FLExBridge
 					catch (Exception err)
 					{
 						connHelper.SignalBridgeWorkComplete(false);
-						throw err; // Re-throw the original exception, so the crash dlg hs something to display.
+						throw err; // Re-throw the original exception, so the crash dlg has something to display.
+					}
+					finally
+					{
+						foreach (var manager in l10Managers.Values)
+						{
+							manager.Dispose();
+						}
+
 					}
 				}
 			}
 			Settings.Default.Save();
 		}
 
-		private static void SetupLocalization(Dictionary<string, string> options)
+		private static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> options)
 		{
+			var results = new Dictionary<string, LocalizationManager>(3);
+
 			string desiredUiLangId;
 			if (!options.TryGetValue("-locale", out desiredUiLangId))
 				desiredUiLangId = "en";
 			var installedTmxBaseDirectory = Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userTmxBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), localizations);
-			ChorusSystem.SetUpLocalization(desiredUiLangId, installedTmxBaseDirectory, userTmxBaseDirectory);
+			var userTmxBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
@@ -114,12 +123,35 @@ namespace FLExBridge
 			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
-						   version,
-						   Path.Combine(installedTmxBaseDirectory, FlexBridge),
-						   Path.Combine(userTmxBaseDirectory, FlexBridge),
-						   Resources.chorus,
-						   FlexBridgeEmailAddress, FlexBridge);
+			var flexBridgeLocMan = LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
+				version,
+				installedTmxBaseDirectory,
+				userTmxBaseDirectory,
+				Resources.chorus,
+				FlexBridgeEmailAddress, new string[] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
+			results.Add("FlexBridge", flexBridgeLocMan);
+
+			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
+			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
+				version,
+				installedTmxBaseDirectory,
+				userTmxBaseDirectory,
+				Resources.chorus,
+				FlexBridgeEmailAddress, "Chorus");
+			results.Add("Chorus", chorusLocMan);
+
+			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			var palasoLocMan = LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso",
+				version,
+				installedTmxBaseDirectory,
+				userTmxBaseDirectory,
+				Resources.chorus,
+				FlexBridgeEmailAddress, "Palaso");
+			results.Add("Palaso", palasoLocMan);
+
+			return results;
 		}
 
 		private static void SetUpErrorHandling()

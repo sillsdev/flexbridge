@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<tmx version="1.4">
-  <header srclang="en" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.4903.23456" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-	<prop type="x-appversion">0.5.2</prop>
-	<prop type="x-hardlinebreakreplacement">\n</prop>
-  </header>
-  <body />
-</tmx>
