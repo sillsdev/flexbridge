@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fix localization to include Palaso.
+## 2.0.3: 16/June/2013
 * Flex Bridge: Fix localization problems.
 ## 2.0.2: 13/June/2013
 * Chorus: Show technical conflict details on demand.
