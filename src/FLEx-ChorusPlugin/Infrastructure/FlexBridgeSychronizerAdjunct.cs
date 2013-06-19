@@ -81,7 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			progress.WriteMessage("Checking project for merge problems");
 			if (RunFixFwData(progress))
 			{
-				progress.WriteWarning("Fixed some merge problems");
+				progress.WriteMessage("Ran fix-up utility after merge.");
 				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			}
 		}
