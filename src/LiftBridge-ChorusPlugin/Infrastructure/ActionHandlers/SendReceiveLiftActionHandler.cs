@@ -20,7 +20,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 		private bool _gotChanges;
-		private string _fwProjectFolder;
 
 		#region IBridgeActionTypeHandler impl
 
@@ -30,8 +29,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			_fwProjectFolder = Path.GetDirectoryName(options["-p"]);
-			var pathToLiftProject = Utilities.LiftOffset(_fwProjectFolder);
+			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 
 			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
@@ -46,13 +44,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
-				// -p <$fwroot>\foo\foo.fwdata
-				var origPathname = Path.Combine(pathToLiftProject, Path.GetFileNameWithoutExtension(LiftUtilties.PathToFirstLiftFile(_fwProjectFolder)) + LiftUtilties.LiftExtension);
-
 				// Do the Chorus business.
 				using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 				{
-					var syncAdjunt = new LiftSynchronizerAdjunct(origPathname);
+					var syncAdjunt = new LiftSynchronizerAdjunct(LiftUtilties.PathToFirstLiftFile(pathToLiftProject));
 					syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 					// Chorus does it in this order:
