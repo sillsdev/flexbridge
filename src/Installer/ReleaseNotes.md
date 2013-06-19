@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fix problem in revised system in Lift Send/Receive.
+## 2.0.4: 18/June/2013
 * FLEx Bridge: Fix localization to include Palaso.
 ## 2.0.3: 16/June/2013
 * Flex Bridge: Fix localization problems.
