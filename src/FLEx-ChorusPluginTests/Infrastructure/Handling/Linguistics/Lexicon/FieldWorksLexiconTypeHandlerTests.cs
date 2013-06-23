@@ -746,7 +746,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d4-e382-11de-8a39-0800200c9a66']" },
 				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa/PartOfSpeech/objsur[@guid='c1ed94d5-e382-11de-8a39-0800200c9a66']" },
-				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				1, new List<Type> { typeof(BothAddedMainElementButWithDifferentContentConflict) },
 				1, new List<Type> {typeof(XmlBothAddedSameChangeReport)});
 		}
 
@@ -808,7 +808,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 				new List<string>{ @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='OurAddition']" },
 				new List<string> { @"Lexicon/LexEntry/ImportResidue/Str/Run[text()='TheirAddition']" },
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
