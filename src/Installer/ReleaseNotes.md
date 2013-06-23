@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix merge bug.
+* FLEx Bridge: Make message about 'fix it' program to not be a warning.
+## 2.0.5: 19/June/2013
 * FLEx Bridge: Fix problem in revised system in Lift Send/Receive.
 ## 2.0.4: 18/June/2013
 * FLEx Bridge: Fix localization to include Palaso.
