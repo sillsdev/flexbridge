@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix merge bug.
+## 1.0.26 10/Jun/2013
 * Palaso: Fix issue with loading large xml files.
 ## 1.0.24 22/May/2013
 * Chorus: Fix issue with unresolved merge (a merge didn't complete).
