@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Re-enable menu in log window.
+## 2.0.6: 23/June/2013
 * Chorus: Fix merge bug.
 * FLEx Bridge: Make message about 'fix it' program to not be a warning.
 ## 2.0.5: 19/June/2013
