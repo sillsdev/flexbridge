@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix problem where source repository had no initial commit.
+## 1.0.27 23/Jun/2013
 * Chorus: Fix merge bug.
 ## 1.0.26 10/Jun/2013
 * Palaso: Fix issue with loading large xml files.
