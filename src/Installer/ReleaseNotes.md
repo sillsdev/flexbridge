@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix problem where source repository had no initial commit.
+## 2.0.8: 25/June/2013
 * Chorus: Re-enable menu in log window.
 ## 2.0.6: 23/June/2013
 * Chorus: Fix merge bug.
