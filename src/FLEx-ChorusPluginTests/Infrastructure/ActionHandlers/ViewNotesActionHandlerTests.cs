@@ -133,7 +133,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 			</body>").Replace("'", "\"");
 			var strategy = new ViewNotesActionHandler();
 			var result = strategy.AdjustConflictHtml(input);
-			Assert.That(result, Is.EqualTo((@"<body>
+			var desired = (@"<body>
 				<div class='property'>Root:
 					<div class='property'>Child: SomeText
 					</div>
@@ -144,7 +144,12 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 				</div>
 				<div class='property'>yetAnother:
 				</div>
-			</body>").Replace("'", "\"")));
+			</body>").Replace("'", "\"");
+#if MONO
+			result = result.Replace("\r\n", "\n");
+			desired = desired.Replace("\r\n", "\n");
+#endif
+			Assert.That(result, Is.EqualTo(desired));
 		}
 #if notyet
 		private FlexBridgeConflictController _realController; // Well, 'real' minus references to Forms mostly.
