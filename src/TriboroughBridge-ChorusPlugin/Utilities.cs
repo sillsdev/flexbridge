@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Chorus;
+//using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using Palaso.Progress;
@@ -91,9 +91,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		public static Chorus.ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
 		{
-			var system = new ChorusSystem(directoryName);
+			var system = new Chorus.ChorusSystem(directoryName);
 			system.Init(user);
 			if (configure != null)
 				configure(system.ProjectFolderConfiguration);
