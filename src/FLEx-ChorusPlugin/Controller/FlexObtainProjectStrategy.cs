@@ -17,6 +17,7 @@ namespace FLEx_ChorusPlugin.Controller
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+		private bool _gotClone;
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
 		private const string Default = "default";
@@ -140,19 +141,29 @@ namespace FLEx_ChorusPlugin.Controller
 			// Update to the head of the desired branch, if possible.
 			UpdateToTheCorrectBranchHeadIfPossible(options, retVal, cloneLocation);
 			if (retVal.FinalCloneResult != FinalCloneResult.Cloned)
+			{
+				_gotClone = false;
 				return retVal;
+			}
 
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
 
 			retVal.ActualCloneFolder = cloneLocation;
 			retVal.FinalCloneResult = FinalCloneResult.Cloned;
-
+			_gotClone = true;
 			return retVal;
 		}
 
 		public void TellFlexAboutIt()
 		{
-			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			if (_gotClone)
+			{
+				_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			}
+			else
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
 		}
 
 		public BridgeModelType SupportedModelType

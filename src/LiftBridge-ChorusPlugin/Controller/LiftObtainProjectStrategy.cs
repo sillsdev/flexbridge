@@ -18,6 +18,8 @@ namespace SIL.LiftBridge.Controller
 	[Export(typeof(IObtainProjectStrategy))]
 	public class LiftObtainProjectStrategy : IObtainProjectStrategy
 	{
+		[Import]
+		private FLExConnectionHelper _connectionHelper;
 		[ImportMany]
 		private IEnumerable<IFinishLiftCloneStrategy> FinishStrategies { get; set; }
 		private IFinishLiftCloneStrategy _currentFinishStrategy;
@@ -161,7 +163,14 @@ namespace SIL.LiftBridge.Controller
 
 		public void TellFlexAboutIt()
 		{
-			_currentFinishStrategy.TellFlexAboutIt();
+			if (_currentFinishStrategy == null)
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
+			else
+			{
+				_currentFinishStrategy.TellFlexAboutIt();
+			}
 		}
 
 		public BridgeModelType SupportedModelType
