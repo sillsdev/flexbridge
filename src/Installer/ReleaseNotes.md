@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Flex Bridge: Fix crash getting an empty repository.
+## 1.0.28 25/Jun/2013
 * Chorus: Fix problem where source repository had no initial commit.
 ## 1.0.27 23/Jun/2013
 * Chorus: Fix merge bug.
