@@ -189,7 +189,7 @@ namespace TriboroughBridge_ChorusPlugin
 															  FlexBridgeEmailAddress, new[] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
 			results.Add("FlexBridge", flexBridgeLocMan);
 
-			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
+			versionObj = Assembly.GetAssembly(typeof(Chorus.ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
 														  version,
