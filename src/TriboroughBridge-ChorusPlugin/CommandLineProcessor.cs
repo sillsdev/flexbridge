@@ -23,6 +23,7 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string fwmodel = "-fwmodel";
 		internal const string liftmodel = "-liftmodel";
 		internal const string pipeID = "-pipeID";
+		internal const string locale = "-locale";
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
@@ -253,6 +254,10 @@ namespace TriboroughBridge_ChorusPlugin
 			var fwmodelOption = uint.Parse(options[fwmodel]);
 			if (fwmodelOption < 7000066)
 				throw new CommandLineException("-fwmodel", "is below the minimum supported FLEx data model version of 7000066");
+
+			// Required
+			if (!options.ContainsKey(locale) || String.IsNullOrEmpty(options[locale]))
+				throw new CommandLineException("-locale", "is missing");
 
 			// Required
 			if (!options.ContainsKey(liftmodel) || String.IsNullOrEmpty(options[liftmodel]))

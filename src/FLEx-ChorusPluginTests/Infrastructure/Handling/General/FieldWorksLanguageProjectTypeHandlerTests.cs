@@ -171,7 +171,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 
 		public const string conflictMarker = "<span style=\"background: Yellow\">";
 
-		[Test]
+		[Test, Ignore("Review RandyR(JasonN)")]
 		public void MergeUnicodePropWithConflicts()
 		{
 			const string commonAncestor =

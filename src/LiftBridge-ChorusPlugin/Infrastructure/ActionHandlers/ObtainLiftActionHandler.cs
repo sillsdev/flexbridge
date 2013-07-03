@@ -125,7 +125,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				result = getSharedProjectModel.GetSharedProjectUsing(form,
 					otherReposDir, // Folder to put the clone in
 					desiredCloneLocation, // Desired location for new clone
-					ProjectFilter,	// Lift repo folter
+					ProjectFilter,	// Lift repo filter
 					HubQuery, // If it goes to Chorus Hub, use this filter
 					options["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
 					Utilities.OtherRepositories, // subfolder of eafh FW proejct folder, in which to look for additional repo ids.

@@ -60,6 +60,13 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 			}
 		}
 
+		public static System.Drawing.Icon chorus {
+			get {
+				object obj = ResourceManager.GetObject("chorus", resourceCulture);
+				return ((System.Drawing.Icon)(obj));
+			}
+		}
+
 		public static System.Drawing.Icon chorus32x32 {
 			get {
 				object obj = ResourceManager.GetObject("chorus32x32", resourceCulture);

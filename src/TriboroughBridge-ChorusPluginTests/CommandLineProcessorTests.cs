@@ -74,6 +74,7 @@ namespace TriboroughBridge_ChorusPluginTests
 					//{CommandLineProcessor.g, "projectGuid"}, // not present for most '-v' options, but required for 'move_lift'
 					{CommandLineProcessor.projDir, _tempProjectFolder.Path},
 					{CommandLineProcessor.fwAppsDir, _tempFwAppsFolder.Path},
+					{CommandLineProcessor.locale, "en"},
 					{CommandLineProcessor.fwmodel, "7000066"},
 					{CommandLineProcessor.liftmodel, "0.13"},
 					{CommandLineProcessor.pipeID, "FW pipe id"}
@@ -118,6 +119,13 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options.Remove(CommandLineProcessor.f);
 			BasicWellformedOptionCheck(CommandLineProcessor.projDir);
+		}
+
+		[Test]
+		public void MalformedLocaleOptionThrows()
+		{
+			_options.Remove(CommandLineProcessor.f);
+			BasicWellformedOptionCheck(CommandLineProcessor.locale);
 		}
 
 		[Test]

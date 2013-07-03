@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
-using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
-using L10NSharp;
-using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
@@ -53,8 +49,7 @@ namespace FLExBridge
 			}
 
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
-
-			SetupLocalization(options);
+			var l10Managers = Utilities.SetupLocalization(options);
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -88,38 +83,24 @@ namespace FLExBridge
 					catch (Exception err)
 					{
 						connHelper.SignalBridgeWorkComplete(false);
-						throw err; // Re-throw the original exception, so the crash dlg hs something to display.
+						throw err; // Re-throw the original exception, so the crash dlg has something to display.
+					}
+					finally
+					{
+						foreach (var manager in l10Managers.Values)
+						{
+							manager.Dispose();
+						}
+
 					}
 				}
 			}
 			Settings.Default.Save();
 		}
 
-		private static void SetupLocalization(Dictionary<string, string> options)
-		{
-			string desiredUiLangId;
-			if (!options.TryGetValue("-locale", out desiredUiLangId))
-				desiredUiLangId = "en";
-			var localizationFolder = FileLocator.GetDirectoryDistributedWithApplication("localizations");
-			ChorusSystem.SetUpLocalization(desiredUiLangId, localizationFolder);
-
-			// Now set it up for the handful of localizable elements in FlexBridge itself.
-			string targetTmxFilePath = Path.Combine(localizationFolder, "Chorus");
-			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
-			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
-			var versionObj = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			// We don't need to reload strings for every "revision" (that might be every time we build).
-			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			LocalizationManager.Create(desiredUiLangId, "FlexBridge", Application.ProductName,
-						   version, localizationFolder,
-						   targetTmxFilePath,
-						   Resources.chorus,
-						   "fieldworksbridge@gmail.com", "FlexBridge");
-		}
-
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = "fieldworksbridge@gmail.com";
+			ErrorReport.EmailAddress = Utilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 		}

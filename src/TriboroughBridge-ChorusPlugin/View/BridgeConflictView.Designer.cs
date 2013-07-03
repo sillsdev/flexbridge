@@ -80,7 +80,7 @@
 			this._warninglabel1.Name = "_warninglabel1";
 			this._warninglabel1.Size = new System.Drawing.Size(148, 13);
 			this._warninglabel1.TabIndex = 22;
-			this._warninglabel1.Text = "The selected project is in use,";
+			this._warninglabel1.Text = "The selected project is in use.";
 			//
 			// _label1
 			//
