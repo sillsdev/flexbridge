@@ -29,10 +29,9 @@
 
   <ItemGroup>
 	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*" Exclude="$(RootDir)/.hg/**/*"/>
-  </ItemGroup>
-  <ItemGroup>
 	<OutputDirectory Include="$(RootDir)\output\"/>
   </ItemGroup>
+
   <Target Name="Clean">
 	<Message Text="Starting Clean"/>
 	<Delete Files="@(ExistingObjectFiles)"/>
@@ -49,6 +48,7 @@
 	<MyMercurialFiles Include="$(RootDir)\Mercurial\**\*.*"/>
 	<MyMercurialExtensionFiles Include="$(RootDir)\MercurialExtensions\**\*.*"/>
   </ItemGroup>
+
   <Target Name="CopyMercurialFolders">
 	<Copy SourceFiles="@(MyMercurialFiles)" DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)\Mercurial\%(RecursiveDir)%(Filename)%(Extension)')"/>
 	<Copy SourceFiles="@(MyMercurialExtensionFiles)" DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)\MercurialExtensions\%(RecursiveDir)%(Filename)%(Extension)')"/>
