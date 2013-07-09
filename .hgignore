@@ -57,3 +57,5 @@ src/TheTurtleTests/obj/*
 lib/common/L10NSharp.dll
 All*Files.lst
 *.userprefs
+Download/
+lib/*/Chorus*.exe

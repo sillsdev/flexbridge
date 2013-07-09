@@ -3,13 +3,15 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
   <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <!-- dynamically download the Palaso, Chorus, etc. assemblies that we depend on -->
+  <Import Project="$(RootDir)\build\Download.targets"/>
 
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
@@ -39,7 +41,7 @@
 	<Message Text="End Clean"/>
   </Target>
 
-  <Target Name="Build">
+  <Target Name="Build" DependsOnTargets="DownloadFiles">
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
@@ -48,7 +50,7 @@
 	<Message Text="Build Complete"/>
   </Target>
 
-  <Target Name="UnzipMercurial" DependsOnTargets="">
+  <Target Name="UnzipMercurial">
 	<!-- Extract a zip file-->
 	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)"/>
   </Target>
