@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix problem with sending unrelated repositories out.
+* FLEx Bridge: Update the minimum install version for FLEx.
+## 2.0.9: 25/June/2013
 * Chorus: Fix problem where source repository had no initial commit.
 ## 2.0.8: 25/June/2013
 * Chorus: Re-enable menu in log window.
