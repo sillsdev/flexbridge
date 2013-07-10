@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix code merge problem with USB code.
+## 2.0.10: 9/July/2013
 * Chorus: Fix problem with sending unrelated repositories out.
 * FLEx Bridge: Update the minimum install version for FLEx.
 ## 2.0.9: 25/June/2013
