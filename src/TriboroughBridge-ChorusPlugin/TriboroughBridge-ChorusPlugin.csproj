@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,6 +54,9 @@
   <ItemGroup>
 	<Reference Include="Chorus">
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="IPCFramework">
+	  <HintPath>..\..\lib\Debug\IPCFramework.dll</HintPath>
 	</Reference>
 	<Reference Include="L10NSharp">
 	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>

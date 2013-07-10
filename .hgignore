@@ -58,4 +58,11 @@ lib/common/L10NSharp.dll
 All*Files.lst
 *.userprefs
 Download/
+lib/*/Palaso*.dll
 lib/*/Chorus*.exe
+lib/*/LibChorus*.dll
+lib/*/Mercurial*.zip
+lib/*/icu*.dll*
+lib/*/IPCFramework.dll
+lib/*/Autofac.dll
+lib/*/*HelpProvider.dll
