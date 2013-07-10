@@ -24,7 +24,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
 
 	<!--  -->
-	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
+	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of FLEx Bridge is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
 
 	<!-- The following will set properties A[FW8INSTALLDIR] and B[FW8DEVINSTALLDIR] to the result of two different registry searches.
 	If the search for B[FW8DEVINSTALLDIR] was successful, it overrides the value of A[FW8INSTALLDIR] with the value of B[FW8DEVINSTALLDIR].
