@@ -60,7 +60,8 @@ namespace TriboroughBridge_ChorusPlugin
 				foreach (var arg in args)
 				{
 					//not all options are followed by input, so just add them as a key
-					if(arg.StartsWith("-") || arg.StartsWith("/"))
+					if (arg.StartsWith("-") ||
+						(Utilities.IsWindows && arg.StartsWith("/")))
 					{
 						currentKey = arg.Trim();
 						options[currentKey] = null;

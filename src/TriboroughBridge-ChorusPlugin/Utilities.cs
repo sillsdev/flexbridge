@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using Chorus;
+//using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using L10NSharp;
@@ -97,11 +97,19 @@ namespace TriboroughBridge_ChorusPlugin
 		}
 
 		/// <summary>
+		/// Returns <c>true</c> if we're running on Windows NT or later, otherwise <c>false</c>.
+		/// </summary>
+		public static bool IsWindows
+		{
+			get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
+		}
+
+		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		public static Chorus.ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
 		{
-			var system = new ChorusSystem(directoryName);
+			var system = new Chorus.ChorusSystem(directoryName);
 			system.Init(user);
 			if (configure != null)
 				configure(system.ProjectFolderConfiguration);
@@ -189,7 +197,7 @@ namespace TriboroughBridge_ChorusPlugin
 															  FlexBridgeEmailAddress, new[] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
 			results.Add("FlexBridge", flexBridgeLocMan);
 
-			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
+			versionObj = Assembly.GetAssembly(typeof(Chorus.ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
 														  version,
