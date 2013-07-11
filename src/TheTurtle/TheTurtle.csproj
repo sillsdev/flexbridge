@@ -155,7 +155,6 @@
 	<EmbeddedResource Include="View\TheTurtleForm.resx">
 	  <DependentUpon>TheTurtleForm.cs</DependentUpon>
 	</EmbeddedResource>
-	<None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="chorus.ico" />

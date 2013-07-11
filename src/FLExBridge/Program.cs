@@ -33,7 +33,8 @@ namespace FLExBridge
 			// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
 			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
 			// exception handler.
-			new HotSpotProvider();
+			var hotspot = new HotSpotProvider();
+			hotspot.Dispose();
 
 			if (Settings.Default.CallUpgrade)
 			{

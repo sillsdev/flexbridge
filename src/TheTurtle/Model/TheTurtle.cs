@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Windows.Forms;
 using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
@@ -15,7 +14,6 @@ namespace TheTurtle.Model
 	{
 		private readonly TheTurtleForm _mainTurtleForm;
 		private readonly ITurtleView _turtleView;
-		private readonly IProjectView _projectView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly LanguageProjectRepository _repository;
 
@@ -26,8 +24,7 @@ namespace TheTurtle.Model
 			_repository = repository;
 
 			_turtleView = mainTurtleForm.TurtleView;
-			_projectView = _turtleView.ProjectView;
-			_existingSystemView = _projectView.ExistingSystemView;
+			_existingSystemView = _turtleView.ProjectView.ExistingSystemView;
 
 			_mainTurtleForm.Load += MainTurtleFormOnLoad;
 			_turtleView.ProjectSelected += TurtleViewProjectSelectedHandler;
