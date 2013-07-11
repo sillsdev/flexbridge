@@ -95,9 +95,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExBridge.pdb" Name="FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
 			</Component>
-			<Component Id="FLExBridge.exe.config" Guid="C1EE09F4-E382-11DE-8A39-0800200C9A66">
-			  <File Id="FLExBridge.exe.config" Name="FLExBridge.exe.config" Source="..\..\output\Release\FLExBridge.exe.config"/>
-			</Component>
 			<Component Id="FLExChorusPlugin.dll" Guid="C1ED6DB1-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
 			</Component>
@@ -192,7 +189,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	  <ComponentRef Id="FLExBridge.exe"/>
 	  <ComponentRef Id="FLExBridge.pdb"/>
-	  <ComponentRef Id="FLExBridge.exe.config"/>
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
 
