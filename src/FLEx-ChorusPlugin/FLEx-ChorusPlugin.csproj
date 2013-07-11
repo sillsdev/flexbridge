@@ -232,11 +232,6 @@
 	  <DependentUpon>Resources.resx</DependentUpon>
 	  <DesignTime>True</DesignTime>
 	</Compile>
-	<Compile Include="Properties\Settings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	</Compile>
 	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -250,10 +245,6 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="app.config" />
-	<None Include="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
