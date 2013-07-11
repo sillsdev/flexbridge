@@ -19,7 +19,10 @@ namespace TheTurtleTests.Mocks
 
 		public event ProjectSelectedEventHandler ProjectSelected;
 
-		public IEnumerable<LanguageProject> Projects { set; internal get; }
+		public void SetProjects(IList<LanguageProject> allLanguageProjects, LanguageProject currentLanguageProject)
+		{
+
+		}
 
 		public IProjectView ProjectView
 		{

@@ -25,6 +25,12 @@ namespace TheTurtle
 			// exception handler.
 			var hotspot = new HotSpotProvider();
 
+			if (Settings.Default.CallUpgrade)
+			{
+				Settings.Default.Upgrade();
+				Settings.Default.CallUpgrade = false;
+			}
+
 			SetUpErrorHandling();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);

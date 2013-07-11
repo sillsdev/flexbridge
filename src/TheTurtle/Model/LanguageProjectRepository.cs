@@ -16,7 +16,6 @@ namespace TheTurtle.Model
 	[Export(typeof(LanguageProjectRepository))]
 	internal sealed class LanguageProjectRepository
 	{
-		private readonly HashSet<string> _baseFolderPaths;
 		private readonly HashSet<LanguageProject> _projects = new HashSet<LanguageProject>();
 
 		[ImportingConstructor]
@@ -27,9 +26,9 @@ namespace TheTurtle.Model
 			if (pathLocator.BaseFolderPaths.Count == 0)
 				throw new ArgumentOutOfRangeException("pathLocator", Resources.kNoPathsGiven);
 
-			_baseFolderPaths = pathLocator.BaseFolderPaths;
+			var baseFolderPaths = pathLocator.BaseFolderPaths;
 			foreach (var fwdataFiles in
-				_baseFolderPaths.SelectMany(baseFolderPath => Directory.
+				baseFolderPaths.SelectMany(baseFolderPath => Directory.
 					GetDirectories(baseFolderPath).
 					Select(dir => Directory.
 						GetFiles(dir, "*" + Utilities.FwXmlExtension)).
@@ -42,19 +41,16 @@ namespace TheTurtle.Model
 		/// <summary>
 		/// Return all of the FieldWorks projects on a computer.
 		/// </summary>
-		internal IEnumerable<LanguageProject> AllLanguageProjects
+		internal IList<LanguageProject> AllLanguageProjects
 		{
-			get { return _projects; }
+			get { return _projects.ToList(); }
 		}
 
 		internal LanguageProject GetProject(string projectName)
 		{
-			if (string.IsNullOrEmpty(projectName))
-				throw new ArgumentNullException("projectName");
-
 			return (from project in _projects
 					where project.Name == projectName
-					select project).First();
+					select project).FirstOrDefault();
 		}
 	}
 }

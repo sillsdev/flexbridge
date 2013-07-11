@@ -10,7 +10,7 @@ namespace TheTurtle.View
 
 	internal sealed partial class TurtleView : UserControl, ITurtleView
 	{
-		private IEnumerable<LanguageProject> _projects;
+		private IList<LanguageProject> _projects;
 
 		internal TurtleView()
 		{
@@ -47,23 +47,24 @@ namespace TheTurtle.View
 
 		public event ProjectSelectedEventHandler ProjectSelected;
 
-		public IEnumerable<LanguageProject> Projects
+		public void SetProjects(IList<LanguageProject> allLanguageProjects, LanguageProject currentLanguageProject)
 		{
-			set
+			_projects = allLanguageProjects;
+
+			_cbProjects.BeginUpdate();
+
+			_cbProjects.Items.Clear();
+			var enabledProjects = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
+			if (enabledProjects.Count > 0)
 			{
-				_projects = value;
-
-				_cbProjects.BeginUpdate();
-
-				_cbProjects.Items.Clear();
-				var projectsCopy = _projects.Where(lp => lp.IsRemoteCollaborationEnabled).ToList();
-				foreach (var project in projectsCopy)
+				foreach (var project in enabledProjects)
+				{
 					_cbProjects.Items.Add(project);
-				if (projectsCopy.Any())
-					_cbProjects.SelectedIndex = 0;
-
-				_cbProjects.EndUpdate();
+				}
+				_cbProjects.SelectedItem = currentLanguageProject ?? enabledProjects[0];
 			}
+
+			_cbProjects.EndUpdate();
 		}
 
 		public IProjectView ProjectView
