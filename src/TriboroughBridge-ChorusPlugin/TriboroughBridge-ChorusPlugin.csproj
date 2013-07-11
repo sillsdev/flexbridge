@@ -53,25 +53,25 @@
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	  <HintPath>..\..\Download\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="IPCFramework">
-	  <HintPath>..\..\lib\$(Configuration)\IPCFramework.dll</HintPath>
+	  <HintPath>..\..\Download\IPCFramework.dll</HintPath>
 	</Reference>
 	<Reference Include="L10NSharp">
-	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <HintPath>..\..\Download\L10NSharp.dll</HintPath>
 	</Reference>
 	<Reference Include="LibChorus">
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <HintPath>..\..\Download\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="NetSparkle.Net40" Condition="'$(OS)'=='Windows_NT'">
 	  <HintPath>..\..\lib\common\NetSparkle.Net40.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\Download\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\Download\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
@@ -82,7 +82,7 @@
 	<Reference Include="System.Xml" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="Vulcan.Uczniowie.HelpProvider">
-	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
+	  <HintPath>..\..\Download\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>

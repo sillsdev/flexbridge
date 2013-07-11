@@ -97,6 +97,14 @@ namespace TriboroughBridge_ChorusPlugin
 		}
 
 		/// <summary>
+		/// Returns <c>true</c> if we're running on Windows NT or later, otherwise <c>false</c>.
+		/// </summary>
+		public static bool IsWindows
+		{
+			get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
+		}
+
+		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
 		public static Chorus.ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
