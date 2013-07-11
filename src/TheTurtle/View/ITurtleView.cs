@@ -7,7 +7,7 @@ namespace TheTurtle.View
 	{
 		event ProjectSelectedEventHandler ProjectSelected;
 
-		IEnumerable<LanguageProject> Projects { set; }
+		void SetProjects(IList<LanguageProject> allLanguageProjects, LanguageProject currentLanguageProject);
 		IProjectView ProjectView { get; }
 		void EnableSendReceiveControls(bool makeWarningsVisible);
 	}

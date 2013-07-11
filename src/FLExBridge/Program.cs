@@ -3,7 +3,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
@@ -34,7 +33,14 @@ namespace FLExBridge
 			// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
 			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
 			// exception handler.
-			new HotSpotProvider();
+			var hotspot = new HotSpotProvider();
+			hotspot.Dispose();
+
+			if (Settings.Default.CallUpgrade)
+			{
+				Settings.Default.Upgrade();
+				Settings.Default.CallUpgrade = false;
+			}
 
 			SetUpErrorHandling();
 			Application.EnableVisualStyles();
@@ -80,10 +86,10 @@ namespace FLExBridge
 							bridgeActionTypeHandlerCallEndWork.EndWork();
 						}
 					}
-					catch (Exception err)
+					catch
 					{
 						connHelper.SignalBridgeWorkComplete(false);
-						throw err; // Re-throw the original exception, so the crash dlg has something to display.
+						throw; // Re-throw the original exception, so the crash dlg has something to display.
 					}
 					finally
 					{

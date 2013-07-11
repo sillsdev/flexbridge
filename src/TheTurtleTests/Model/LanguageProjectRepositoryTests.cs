@@ -63,21 +63,21 @@ namespace TheTurtleTests.Model
 		}
 
 		[Test]
-		public void NullProjectNameThrows()
+		public void NullProjectNameHasNullReturnedProject()
 		{
-			Assert.Throws<ArgumentNullException>(() => _languageProjectRepository.GetProject(null));
+			Assert.IsNull(_languageProjectRepository.GetProject(null));
 		}
 
 		[Test]
-		public void EmptyProjectNameThrows()
+		public void EmptyProjectNameHasNullReturnedProject()
 		{
-			Assert.Throws<ArgumentNullException>(() => _languageProjectRepository.GetProject(string.Empty));
+			Assert.IsNull(_languageProjectRepository.GetProject(string.Empty));
 		}
 
 		[Test]
-		public void NonExistantProjectNameThrows()
+		public void NonExistantProjectNameHasNullReturnedProject()
 		{
-			Assert.Throws<InvalidOperationException>(() => _languageProjectRepository.GetProject("NobodyHomeProject"));
+			Assert.IsNull(_languageProjectRepository.GetProject("NobodyHomeProject"));
 		}
 	}
 }

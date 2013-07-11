@@ -24,6 +24,13 @@ namespace TheTurtle
 			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
 			// exception handler.
 			var hotspot = new HotSpotProvider();
+			hotspot.Dispose();
+
+			if (Settings.Default.CallUpgrade)
+			{
+				Settings.Default.Upgrade();
+				Settings.Default.CallUpgrade = false;
+			}
 
 			SetUpErrorHandling();
 			Application.EnableVisualStyles();
@@ -37,21 +44,17 @@ namespace TheTurtle
 				return;
 			}
 
-			var fwAssemblyPath = TheTurtleUtilities.FwAssemblyPath;
-			if (fwAssemblyPath == null)
+			if (TheTurtleUtilities.FwAssemblyPath == null)
 			{
 				MessageBox.Show(Resources.kFlexNotFound, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 				return;
 			}
-			fwAssemblyPath = fwAssemblyPath.Contains(" ") ? "\"" + fwAssemblyPath + "\"" : fwAssemblyPath;
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
 				var executingAssembly = Assembly.GetExecutingAssembly();
 				catalog.Catalogs.Add(new AssemblyCatalog(executingAssembly));
-				//catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(executingAssembly.CodeBase)), "TriboroughBridge-ChorusPlugin"));
-				//catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(executingAssembly.CodeBase)), "FLEx-ChorusPlugin"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))

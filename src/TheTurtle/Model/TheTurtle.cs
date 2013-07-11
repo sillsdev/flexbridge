@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using FLEx_ChorusPlugin.Infrastructure;
 using TheTurtle.View;
 using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TheTurtle.Model
 {
@@ -13,7 +14,6 @@ namespace TheTurtle.Model
 	{
 		private readonly TheTurtleForm _mainTurtleForm;
 		private readonly ITurtleView _turtleView;
-		private readonly IProjectView _projectView;
 		private readonly IExistingSystemView _existingSystemView;
 		private readonly LanguageProjectRepository _repository;
 
@@ -24,8 +24,7 @@ namespace TheTurtle.Model
 			_repository = repository;
 
 			_turtleView = mainTurtleForm.TurtleView;
-			_projectView = _turtleView.ProjectView;
-			_existingSystemView = _projectView.ExistingSystemView;
+			_existingSystemView = _turtleView.ProjectView.ExistingSystemView;
 
 			_mainTurtleForm.Load += MainTurtleFormOnLoad;
 			_turtleView.ProjectSelected += TurtleViewProjectSelectedHandler;
@@ -38,6 +37,8 @@ namespace TheTurtle.Model
 			if (CurrentProject == e.Project)
 				return;
 			CurrentProject = e.Project;
+			Settings.Default.LastTurtleProject = CurrentProject.Name;
+			Settings.Default.Save();
 
 			// NB: Creating a new ChorusSystem will also create the Hg repo, if it does not exist.
 			// This possible repo creation allows for the case where the local computer
@@ -69,7 +70,9 @@ namespace TheTurtle.Model
 
 		private void MainTurtleFormOnLoad(object sender, EventArgs eventArgs)
 		{
-			_turtleView.Projects = _repository.AllLanguageProjects;
+			_turtleView.SetProjects(
+				_repository.AllLanguageProjects,
+				_repository.GetProject(Settings.Default.LastTurtleProject));
 		}
 
 		#region IDisposable implementation

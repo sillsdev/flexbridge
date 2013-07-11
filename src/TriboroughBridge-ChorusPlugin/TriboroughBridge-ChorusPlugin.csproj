@@ -108,6 +108,11 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>CommonResources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="Properties\Settings.Designer.cs">
+	  <DependentUpon>Settings.settings</DependentUpon>
+	  <AutoGen>True</AutoGen>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	</Compile>
 	<Compile Include="Utilities.cs" />
 	<Compile Include="View\BridgeConflictView.cs">
 	  <SubType>UserControl</SubType>
@@ -146,6 +151,13 @@
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+	<None Include="app.config">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+	<None Include="Properties\Settings.settings">
+	  <Generator>PublicSettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	</None>
 	<None Include="Resources\chorus32x32.ico" />
   </ItemGroup>
   <ItemGroup>
