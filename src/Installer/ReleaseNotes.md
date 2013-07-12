@@ -1,6 +1,9 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
-## 1.0.29 1/Jul/2013
+* FLEx Bridge: Add better support for FLEx data migration DM68.
+## 1.0.30 9/Jul/2013
 * Chorus: Fix problem with sending unrelated repositories out.
+## 1.0.29 1/Jul/2013
+Flex Bridge: Fix crash getting an empty repository.
 ## 1.0.28 25/Jun/2013
 * Chorus: Fix problem where source repository had no initial commit.
 ## 1.0.27 23/Jun/2013
