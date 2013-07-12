@@ -262,8 +262,10 @@ namespace FLEx_ChorusPluginTests.Integration
 			// 7000067: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000067);
 
-			// 7000068: No actual model change.
-			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000068);
+			// 7000068: Change ReversalIndexEntry's Subentries property from owning collection to owning sequence.
+			Assert.AreEqual(DataType.OwningCollection, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
+			DoMerge(fileHandler, 7000068);
+			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 		}
 
 		[Test]
