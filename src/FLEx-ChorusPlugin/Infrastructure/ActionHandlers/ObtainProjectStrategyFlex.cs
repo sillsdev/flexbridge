@@ -168,17 +168,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			if (_gotClone)
 			{
-			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
-		}
+				_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			}
 			else
 			{
 				_connectionHelper.TellFlexNoNewProjectObtained();
 			}
-		}
-
-		public BridgeModelType SupportedModelType
-		{
-			get { return BridgeModelType.Flex; }
 		}
 
 		public ActionType SupportedActionType
