@@ -20,6 +20,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+		private bool _gotClone;
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
 		private const string Default = "default";
@@ -142,6 +143,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			// Update to the head of the desired branch, if possible.
 			UpdateToTheCorrectBranchHeadIfPossible(options, actualCloneResult, cloneLocation);
 
+			_gotClone = false;
 			switch (actualCloneResult.FinalCloneResult)
 			{
 				case FinalCloneResult.ExistingCloneTargetFolder:
@@ -155,6 +157,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					_newFwProjectPathname = null;
 					return;
 				case FinalCloneResult.Cloned:
+					_gotClone = true;
 					break;
 			}
 
@@ -163,8 +166,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public void TellFlexAboutIt()
 		{
-			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname); // May be null.
-			//Caller does it._connectionHelper.SignalBridgeWorkComplete(false);
+			if (_gotClone)
+			{
+				_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			}
+			else
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
 		}
 
 		public ActionType SupportedActionType
