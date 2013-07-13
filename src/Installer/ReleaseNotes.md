@@ -1,26 +1,12 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
-* Chorus: Fix code merge problem with USB code.
-## 2.0.10 9/July/2013
-* Chorus: Fix problem with sending unrelated repositories out.
-* FLEx Bridge: Update the minimum install version for FLEx.
-## 2.0.9 25/June/2013
-* Chorus: Fix problem where source repository had no initial commit.
-## 2.0.8: 25/June/2013
-* Chorus: Re-enable menu in log window.
-## 2.0.6 23/June/2013
-* Chorus: Fix merge bug.
-* FLEx Bridge: Make message about 'fix it' program to not be a warning.
-## 2.0.5 19/June/2013
-* FLEx Bridge: Fix problem in revised system in Lift Send/Receive.
-## 2.0.4 18/June/2013
-* FLEx Bridge: Fix localization to include Palaso.
-## 2.0.3 16/June/2013
-* Flex Bridge: Fix localization problems.
-## 2.0.2 13/June/2013
-* Chorus: Show technical conflict details on demand.
-## 2.0.1 13/June/2013
-* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
-* Palaso, Chorus, & FLEx Bridge: Add localization support.
+* New in this release
+	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
+	* FLEx Bridge: Update the minimum install version for FLEx.
+	* Palaso, Chorus, & FLEx Bridge: Add localization support.
+	* Chorus: Show technical conflict details on demand.
+* Fixes in this release
+	* FLEx Bridge: Make message about 'fix it' program to not be a warning.
+	* Chorus: Fix merge bug.
 ## 1.0.31 11/Jul/2013
 * FLEx Bridge: Add better support for FLEx data migration DM68.
 ## 1.0.30 9/Jul/2013
