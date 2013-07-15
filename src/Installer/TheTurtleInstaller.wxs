@@ -158,9 +158,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="IPCFramework.dll" Guid="C1EE581D-E382-11DE-8A39-0800200C9A66">
 			  <File Id="IPCFramework.dll" Name="IPCFramework.dll" KeyPath="yes" Source="..\..\lib\Release\IPCFramework.dll"/>
 			</Component>
-			<Component Id="IPCFramework.pdb" Guid="C1EE581E-E382-11DE-8A39-0800200C9A66">
-			  <File Id="IPCFramework.pdb" Name="IPCFramework.pdb" KeyPath="yes" Source="..\..\lib\Release\IPCFramework.pdb"/>
-			</Component>
 
 			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
 				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\output\Installer\about.htm" />
@@ -218,7 +215,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="IPCFramework.dll"/>
-	  <ComponentRef Id="IPCFramework.pdb"/>
 
 	  <ComponentRef Id="about.htm" />
 
