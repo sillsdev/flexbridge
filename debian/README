@@ -1,0 +1,5 @@
+FLExBridge.exe is a program for remote collaboration by the FieldWorks program.
+It is designed to be called by FieldWorks, and is not suitable for being run
+from the command line.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Fri, 12 Jul 2013 14:57:59 -0500
