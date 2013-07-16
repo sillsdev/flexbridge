@@ -21,7 +21,7 @@
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
 
-  <Target Name="Build" DependsOnTargets="DownloadFiles;Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;Prepackaging">
+  <Target Name="Build" DependsOnTargets="DownloadFiles;Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile">
 	<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
 		 but it remembers not to call targets a second time via dependencies. -->
 	<Message Text="Build Complete"/>

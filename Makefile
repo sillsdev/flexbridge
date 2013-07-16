@@ -19,6 +19,7 @@ clean:
 	/usr/bin/find . -name obj -type d -print | xargs /bin/rm -rf
 
 install: release
+	cd build && xbuild FLExBridge.build.mono.proj /t:Prepackaging /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:Configuration=ReleaseMono
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install output/ReleaseMono/*.* $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
