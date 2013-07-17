@@ -33,6 +33,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
+				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
 				{
 					// First do a commit, since the repo is brand new.
@@ -41,6 +42,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					projectConfig.IncludePatterns.Add("**.ChorusRescuedFile");
 
 					chorusSystem.Repository.AddAndCheckinFiles(projectConfig.IncludePatterns, projectConfig.ExcludePatterns, "Initial commit");
+					newlyCreated = true;
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
@@ -63,7 +65,14 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					syncDlg.BringToFront();
 					syncDlg.ShowDialog();
 
-					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+					if (newlyCreated && (!syncDlg.SyncResult.Succeeded || syncDlg.SyncResult.ErrorEncountered != null))
+					{
+						_gotChanges = false;
+						// Wipe out new repo, since somethign bad happened in S/R,
+						// and we don't want to leave the user in a sad state (cf. LT-14751).
+						Directory.Delete(pathToLiftProject, true);
+					}
+					else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
 					{
 						_gotChanges = true;
 					}
