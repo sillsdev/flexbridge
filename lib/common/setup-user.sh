@@ -6,8 +6,8 @@
 # repositories are under $HOME.
 # We assume a user machine to start out with, since it's simpler.
 
-scriptdir="$(dirname "$0")"
-prefix="$(cd "$scriptdir/../.."; /bin/pwd)"
+fbscriptdir="$(dirname "$0")"
+prefix="$(cd "$fbscriptdir/../.."; /bin/pwd)"
 
 WRITEKEY="$prefix/lib/fieldworks/WriteKey.exe"
 
@@ -18,6 +18,12 @@ if [ ! -f "${WRITEKEY}" ]; then
 	fi
 fi
 READKEY="$(dirname ${WRITEKEY})/ReadKey.exe"
+
+if [ -d $fbscriptdir/../fieldworks ]; then
+	cd $fbscriptdir/../fieldworks
+	RUNMODE=INSTALLED . environ
+	cd $fbscriptdir
+fi
 
 FLEXBRIDGEDIR="$(mono ${READKEY} LM "Software/SIL/Flex Bridge/8" "InstallationDir")"
 if [ -n "${FLEXBRIDGEDIR}" -a -d "${FLEXBRIDGEDIR}" ]; then
@@ -44,8 +50,8 @@ else
 	exit 1
 fi
 
-if [ -f $scriptdir/Chorus.exe -a ! -f $scriptdir/Mercurial/hg ]; then
-	cd $scriptdir
+if [ -f $fbscriptdir/Chorus.exe -a ! -f $fbscriptdir/Mercurial/hg ]; then
+	cd $fbscriptdir
 	ARCH="$(/usr/bin/arch)"
 	unzip Mercurial-${ARCH}.zip
 	chmod +x Mercurial/hg

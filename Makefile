@@ -22,8 +22,14 @@ install: release
 	cd build && xbuild FLExBridge.build.mono.proj /t:Prepackaging /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:Configuration=ReleaseMono
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install output/ReleaseMono/*.* $(DESTDIR)/usr/lib/flexbridge
+	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
+	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
+	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
+	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
