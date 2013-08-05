@@ -46,14 +46,6 @@ namespace FLExBridge
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			// Is mercurial set up?
-			var readinessMessage = HgRepository.GetEnvironmentReadinessMessage("en");
-			if (!string.IsNullOrEmpty(readinessMessage))
-			{
-				MessageBox.Show(readinessMessage, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-				return;
-			}
-
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
 
 			// An aggregate catalog that combines multiple catalogs
@@ -69,6 +61,14 @@ namespace FLExBridge
 					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
 					if (!connHelper.Init(options))
 						return;
+
+					// Is mercurial set up?
+					var readinessMessage = HgRepository.GetEnvironmentReadinessMessage("en");
+					if (!string.IsNullOrEmpty(readinessMessage))
+					{
+						MessageBox.Show(readinessMessage, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+						return;
+					}
 
 					var l10Managers = Utilities.SetupLocalization(options);
 
