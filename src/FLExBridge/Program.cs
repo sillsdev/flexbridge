@@ -55,7 +55,6 @@ namespace FLExBridge
 			}
 
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
-			var l10Managers = Utilities.SetupLocalization(options);
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -70,6 +69,9 @@ namespace FLExBridge
 					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
 					if (!connHelper.Init(options))
 						return;
+
+					var l10Managers = Utilities.SetupLocalization(options);
+
 					try
 					{
 						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
