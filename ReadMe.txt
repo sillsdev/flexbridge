@@ -14,9 +14,9 @@ build it, and then copy them from Chorus\output\debug (or Chorus\output\release)
 Another option is to obtain them from the continuous build server, which puts outputs from these and various other projects at (todo: url).
 
 Connecting FieldWorks to FlexBridge:
-todo: write this up.
+To setup the registry open regedit and create HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\FLEx Bridge\8\{InstallationDir = path to fwbridge output debug directory}.
 
-To run FlexBridge you must unzip lib/debug/Mercurial.zip to a folder called Mercurial in the root of FlexBridge.
+To run FlexBridge you must unzip lib/debug/Mercurial.zip to the root of FlexBridge.
 
 Then, edit the mercurial.ini file in the Mercurial folder. Add a line like this (with the appropriate path for your FlexBridge folder).
-fixutf8 = C:\Dev\FLExBridge\MercurialExtensions\fixutf8\fixutf8.py
+fixutf8 = C:\DEV\FlexBridge\MercurialExtensions\fixutf8\fixutf8.py
