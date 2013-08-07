@@ -59,7 +59,7 @@
 	  <HintPath>..\..\lib\$(Configuration)\IPCFramework.dll</HintPath>
 	</Reference>
 	<Reference Include="L10NSharp">
-	  <HintPath>..\..\lib\$(Configuration)\L10NSharp.dll</HintPath>
+	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
 	</Reference>
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
@@ -82,7 +82,7 @@
 	<Reference Include="System.Xml" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="Vulcan.Uczniowie.HelpProvider">
-	  <HintPath>..\..\lib\$(Configuration)\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
+	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
