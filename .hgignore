@@ -50,6 +50,8 @@ src/LiftBridge-ChorusPluginTests/obj/*
 src/TriboroughBridge-ChorusPlugin/obj/*
 src/TriboroughBridge-ChorusPluginTests/obj/*
 **.pdb
+src/RepositoryUtility/obj/*
+src/RepositoryUtility/bin/*
 src/TheTurtle/bin/*
 src/TheTurtle/obj/*
 src/TheTurtleTests/bin/*
