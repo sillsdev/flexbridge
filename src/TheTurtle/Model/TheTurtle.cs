@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-//using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
 using TheTurtle.View;
 using TriboroughBridge_ChorusPlugin;
