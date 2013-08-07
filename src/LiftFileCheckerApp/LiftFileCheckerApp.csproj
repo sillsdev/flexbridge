@@ -39,7 +39,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>DEBUG;TRACE;MONO</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -48,7 +48,7 @@
 	<PlatformTarget>x86</PlatformTarget>
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -57,7 +57,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>DEBUG;TRACE;MONO</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -65,7 +65,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
