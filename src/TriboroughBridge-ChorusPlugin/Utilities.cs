@@ -172,8 +172,10 @@ namespace TriboroughBridge_ChorusPlugin
 			var results = new Dictionary<string, LocalizationManager>(3);
 
 			var desiredUiLangId = options[CommandLineProcessor.locale];
-			var installedTmxBaseDirectory = Path.Combine(Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userTmxBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
+			var installedTmxBaseDirectory = Path.Combine(
+				Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+			var userTmxBaseDirectory = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
@@ -186,8 +188,15 @@ namespace TriboroughBridge_ChorusPlugin
 															  installedTmxBaseDirectory,
 															  userTmxBaseDirectory,
 															  CommonResources.chorus,
-															  FlexBridgeEmailAddress, new[] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
+															  FlexBridgeEmailAddress, new[]
+																  {
+																	  FlexBridge, "TriboroughBridge_ChorusPlugin",
+																	  "FLEx_ChorusPlugin", "SIL.LiftBridge"
+																  });
 			results.Add("FlexBridge", flexBridgeLocMan);
+
+			// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
+			desiredUiLangId = LocalizationManager.UILanguageId;
 
 			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
