@@ -97,10 +97,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		/// </summary>
 		public string HtmlContext(XmlNode mergeElement)
 		{
-			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null && mergeElement.ParentNode.Name == SharedConstants.Msa);
+			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null &&
+				(mergeElement.ParentNode.Name == SharedConstants.Msa ||
+				mergeElement.Name == SharedConstants.Msa));
 			// We come in here once each for Ancestor, Ours and Theirs with different mergeElement,
 			// so resist the temptation to skip this step if _posGuidStrs != null.
-			_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
+			if (mergeElement.ParentNode.Name == SharedConstants.Ownseq && mergeElement.Name == SharedConstants.Msa)
+				_posGuidStrs = FindPosGuidsInMergeElement(mergeElement);
+			else
+				_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
 			var hasTwoPoses = SetTwoPosFlag(_posGuidStrs);
 			var posNames = ConvertGuidStringsToPosNames();
 
