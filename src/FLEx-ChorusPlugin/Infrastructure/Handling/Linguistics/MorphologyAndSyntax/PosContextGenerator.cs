@@ -97,6 +97,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		/// </summary>
 		public string HtmlContext(XmlNode mergeElement)
 		{
+			// The normal case is for the ParentNode to be an MSA, but there is at least one case
+			// (where both users are adding a POS to a sense), where ParentNode is an 'ownseq' and
+			// then we expect mergeElement.Name to be an MSA.
 			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null &&
 				(mergeElement.ParentNode.Name == SharedConstants.Msa ||
 				mergeElement.Name == SharedConstants.Msa));
