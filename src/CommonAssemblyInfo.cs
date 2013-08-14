@@ -11,4 +11,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("2.0.0.*")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("2.0 Alpha 1")]
+[assembly: AssemblyInformationalVersionAttribute("2.0")]

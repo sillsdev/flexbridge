@@ -1,4 +1,8 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* L10NSharp: No "OK" button text for unavailable languages
+* FLEx Bridge: Prompt only once if localization unavailable
+* FLEx Bridge: Fix problem in POS context generator for conflict reports
+## 2.0.19 24/Jul/2013
 * New in this release
 	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
 	* FLEx Bridge: Update the minimum install version for FLEx.
