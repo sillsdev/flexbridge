@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Chorus;
 using FLEx_ChorusPlugin.Infrastructure;
 using TheTurtle.View;
 using TriboroughBridge_ChorusPlugin;
@@ -55,9 +54,9 @@ namespace TheTurtle.Model
 		}
 
 		private LanguageProject CurrentProject { get; set; }
-		private ChorusSystem ChorusSystem { get; set; }
+		private Chorus.ChorusSystem ChorusSystem { get; set; }
 
-		private void SetSystem(ChorusSystem system)
+		private void SetSystem(Chorus.ChorusSystem system)
 		{
 			if (ChorusSystem != null)
 			{
