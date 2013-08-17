@@ -63,18 +63,32 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					syncDlg.Text = Resources.SendReceiveView_DialogTitleLift;
 					syncDlg.StartPosition = FormStartPosition.CenterScreen;
 					syncDlg.BringToFront();
-					syncDlg.ShowDialog();
+					var dlgResult = syncDlg.ShowDialog();
 
-					if (newlyCreated && (!syncDlg.SyncResult.Succeeded || syncDlg.SyncResult.ErrorEncountered != null))
+					if (dlgResult == DialogResult.OK)
 					{
-						_gotChanges = false;
-						// Wipe out new repo, since somethign bad happened in S/R,
-						// and we don't want to leave the user in a sad state (cf. LT-14751).
-						Directory.Delete(pathToLiftProject, true);
+						if (newlyCreated && (!syncDlg.SyncResult.Succeeded || syncDlg.SyncResult.ErrorEncountered != null))
+						{
+							_gotChanges = false;
+							// Wipe out new repo, since something bad happened in S/R,
+							// and we don't want to leave the user in a sad state (cf. LT-14751).
+							Directory.Delete(pathToLiftProject, true);
+						}
+						else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+						{
+							_gotChanges = true;
+						}
 					}
-					else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+					else
 					{
-						_gotChanges = true;
+						// User probably bailed out of S/R using the "X" to close the dlg.
+						if (newlyCreated)
+						{
+							_gotChanges = false;
+							// Wipe out new repo, since the user cancelled without even trying the S/R,
+							// and we don't want to leave the user in a sad state (cf. LT-14751).
+							Directory.Delete(pathToLiftProject, true);
+						}
 					}
 				}
 			}

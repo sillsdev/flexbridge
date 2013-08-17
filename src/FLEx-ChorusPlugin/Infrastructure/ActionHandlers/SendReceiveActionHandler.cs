@@ -73,12 +73,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
 						syncDlg.StartPosition = FormStartPosition.CenterScreen;
 						syncDlg.BringToFront();
-						syncDlg.ShowDialog();
+						var dlgResults = syncDlg.ShowDialog();
 
-						if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
-						{
-							_gotChanges = true;
-						}
+						_gotChanges = dlgResults == DialogResult.OK && (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated);
 					}
 				}
 				finally
