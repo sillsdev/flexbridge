@@ -21,6 +21,7 @@ namespace TriboroughBridge_ChorusPlugin
 		private IIPCHost _host;
 		private IIPCClient _client;
 
+		private bool _runStandAlone; // debug mode, run with message boxes instead of connection to FLEx.
 		/// <summary>
 		/// Initialize the helper, setting up the local service endpoint and opening.
 		/// </summary>
@@ -29,6 +30,13 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Empty is OK if not send_receive command.</param>
 		public bool Init(Dictionary<string, string> options)
 		{
+			if (options.ContainsKey("-runStandAlone"))
+			{
+				_runStandAlone = true;
+				MessageBox.Show ("connection opened");
+				return true;
+			}
+
 			HostOpened = true;
 
 			// The pipeID as set by FLEx to be used in setting the communication channels
@@ -68,6 +76,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void TellFlexNoNewProjectObtained()
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("TellFlexNoNewProjectObtained");
+				return;
+			}
 			if (_client != null)
 			{
 				if (!_client.RemoteCall("InformFwProjectName", new object[] { "" }))
@@ -83,6 +96,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="fwProjectName">The whole FW project path, or null, if nothing was created.</param>
 		public void CreateProjectFromFlex(string fwProjectName)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("CreateProjectFromFlex " + fwProjectName);
+				return;
+			}
 			if (_client == null)
 				return;
 			if (!_client.RemoteCall("InformFwProjectName", new object[] { fwProjectName ?? "" }))
@@ -91,6 +109,11 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public void ImportLiftFileSafely(string liftPathname)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("ImportLiftFileSafely " + liftPathname);
+				return;
+			}
 			if (_client == null)
 				return;
 			if (!_client.RemoteCall("InformFwProjectName", new object[] { liftPathname ?? "" }))
@@ -99,6 +122,11 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public void SendLiftPathnameToFlex(string liftPathname)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("SendLiftPathnameToFlex " + liftPathname);
+				return;
+			}
 			if (_client == null)
 				return;
 			if (!_client.RemoteCall("InformFwProjectName", new object[] { liftPathname ?? "" }))
@@ -111,6 +139,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("SignalBridgeWorkComplete: " + (changesReceived ? "changes" : "no changes"));
+				return;
+			}
 			if (_client != null && !_client.RemoteCall("BridgeWorkComplete", new object[] { changesReceived }))
 				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 			// Allow the _host to get the WaitObject, which will result in the WorkDoneCallback
@@ -125,6 +158,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("SendJumpUrlToFlex " + e.JumpUrl ?? "");
+				return;
+			}
 			if (_client == null)
 				return;
 			if (!_client.RemoteCall("BridgeSentJumpUrl", new object[] { e.JumpUrl ?? "" }))
@@ -140,6 +178,11 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="liftPath">The whole LIFT pathname, or null, if nothing was created.</param>
 		public bool CreateProjectFromLift(string liftPath)
 		{
+			if (_runStandAlone)
+			{
+				MessageBox.Show ("CreateProjectFromLift " + liftPath);
+				return false;
+			}
 			if (_client == null)
 				return false;
 			if (!_client.RemoteCall("InformFwProjectName", new object[] {liftPath ?? ""}))
