@@ -53,11 +53,6 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt225/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll"
 					  LocalFilename="$(RootDir)/Download/Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<!-- bt196 is the L10NSharp continuous (Windows) build -->
-		<Message Text="Downloading latest successful artifacts from the L10NSharp continuous build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt196/.lastSuccessful/L10NSharp.dll"
-					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
-
 		<Message Text="Copying latest successful artifacts from the Helpprovider and L10NSharp builds."/>
 		<Copy SourceFiles="@(DownloadedCommon)" DestinationFolder="$(RootDir)/lib/common"
 			  SkipUnchangedFiles="true"/>
@@ -130,6 +125,11 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll"
 					  LocalFilename="$(RootDir)/Download/IPCFramework.dll"/>
 
+		<!-- bt271 is the L10NSharp continuous (Mono) build -->
+		<Message Text="Downloading latest successful artifacts from the L10NSharp mono continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt271/.lastSuccessful/L10NSharp.dll"
+					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
+
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
 		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, and IPCFramework builds."/>
 		<Copy SourceFiles="@(DownloadedMono)" DestinationFolder="$(RootDir)/lib/DebugMono"
@@ -187,6 +187,11 @@
 		<Message Text="Downloading latest successful artifacts from the IPC continuous build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful/IPCFramework.dll"
 					  LocalFilename="$(RootDir)/Download/IPCFramework.dll"/>
+
+		<!-- bt196 is the L10NSharp continuous (Windows) build -->
+		<Message Text="Downloading latest successful artifacts from the L10NSharp continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt196/.lastSuccessful/L10NSharp.dll"
+					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
 
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
 		<Message Text="Copying latest successful artifacts from the icucil, Palaso, Chorus, and IPCFramework builds."/>
