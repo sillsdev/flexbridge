@@ -30,12 +30,14 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Empty is OK if not send_receive command.</param>
 		public bool Init(Dictionary<string, string> options)
 		{
+#if DEBUG // this command line argument is only for debugging. In a release build _runStandAlone is always false.
 			if (options.ContainsKey("-runStandAlone"))
 			{
 				_runStandAlone = true;
 				MessageBox.Show ("connection opened");
 				return true;
 			}
+#endif
 
 			HostOpened = true;
 
