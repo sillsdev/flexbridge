@@ -175,11 +175,11 @@ namespace TriboroughBridge_ChorusPlugin
 			return retval;
 		}
 
-		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> options)
+		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
 
-			var desiredUiLangId = options[CommandLineProcessor.locale];
+			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var installedTmxBaseDirectory = Path.Combine(
 				Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
 			var userTmxBaseDirectory = Path.Combine(

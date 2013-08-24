@@ -25,20 +25,20 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Initialize the helper, setting up the local service endpoint and opening.
 		/// </summary>
-		/// <param name="options">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
+		/// <param name="commandLineArgs">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		public bool Init(Dictionary<string, string> options)
+		public bool Init(Dictionary<string, string> commandLineArgs)
 		{
 #if DEBUG // this command line argument is only for debugging.
-			if (options.ContainsKey("-runStandAlone"))
+			if (commandLineArgs.ContainsKey("-runStandAlone"))
 			{
 				_runStandAlone = true;
 				MessageBox.Show ("connection opened");
 				return true;
 			}
 #else
-			if (options.ContainsKey("-runStandAlone"))
+			if (commandLineArgs.ContainsKey("-runStandAlone"))
 			{
 				throw new InvalidOperationException("The '-runStandAlone' command line option is not supported in a Release build.");
 			}
@@ -47,7 +47,7 @@ namespace TriboroughBridge_ChorusPlugin
 			HostOpened = true;
 
 			// The pipeID as set by FLEx to be used in setting the communication channels
-			var pipeId = options["-pipeID"];
+			var pipeId = commandLineArgs["-pipeID"];
 
 			_host = IPCHostFactory.Create();
 			_host.VerbosityLevel = 1;

@@ -46,9 +46,9 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		[ImportMany]
 		public IEnumerable<IBridgeActionTypeHandler> Handlers { get; private set; }
 
-		public IBridgeActionTypeHandler GetHandler(Dictionary<string, string> options)
+		public IBridgeActionTypeHandler GetHandler(Dictionary<string, string> commandLineArgs)
 		{
-			return Handlers.First(handler => handler.SupportedActionType == VOptionToActionTypeMap[options["-v"]]);
+			return Handlers.First(handler => handler.SupportedActionType == VOptionToActionTypeMap[commandLineArgs["-v"]]);
 		}
 	}
 }

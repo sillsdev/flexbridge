@@ -23,15 +23,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
 
-			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
+			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, commandLineArgs["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)

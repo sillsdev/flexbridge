@@ -19,7 +19,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		void StartWorking(Dictionary<string, string> options);
+		void StartWorking(Dictionary<string, string> commandLineArgs);
 
 		/// <summary>
 		/// Get the type of action supported by the handler.

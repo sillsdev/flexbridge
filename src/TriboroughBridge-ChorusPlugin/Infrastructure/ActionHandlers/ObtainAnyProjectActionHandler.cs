@@ -62,16 +62,16 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// "obtain"; // -p <$fwroot>
-			_pathToRepository = options[CommandLineProcessor.projDir];
+			_pathToRepository = commandLineArgs[CommandLineProcessor.projDir];
 			var getSharedProjectModel = new GetSharedProjectModel();
 			CloneResult result;
 			using (var form = new Form())
 			{
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, options["-projDir"], Utilities.OtherRepositories,
+					ChorusHubQuery, commandLineArgs["-projDir"], Utilities.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
@@ -86,7 +86,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 			}
 
-			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
+			_currentStrategy.FinishCloning(commandLineArgs, result.ActualLocation, null);
 		}
 
 		/// <summary>

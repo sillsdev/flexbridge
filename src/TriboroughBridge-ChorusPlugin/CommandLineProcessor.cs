@@ -53,7 +53,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
 		{
-			var options = new Dictionary<string, string>();
+			var commandLineArgs = new Dictionary<string, string>();
 			if (args != null && args.Count > 0)
 			{
 				string currentKey = null;
@@ -64,14 +64,14 @@ namespace TriboroughBridge_ChorusPlugin
 						(Utilities.IsWindows && arg.StartsWith("/")))
 					{
 						currentKey = arg.Trim();
-						options[currentKey] = null;
+						commandLineArgs[currentKey] = null;
 					}
 					else //this is input which apparently follows an option, added it as the value in the dictionary
 					{
-						if (currentKey != null && options[currentKey] == null)
+						if (currentKey != null && commandLineArgs[currentKey] == null)
 						{
 							//this option goes with the flag that came before it
-							options[currentKey] = arg.Trim();
+							commandLineArgs[currentKey] = arg.Trim();
 						}
 						else //there was no flag before this option.
 						{
@@ -83,16 +83,16 @@ namespace TriboroughBridge_ChorusPlugin
 					}
 				}
 			}
-			ValidateCommandLineArgs(options);
-			return options;
+			ValidateCommandLineArgs(commandLineArgs);
+			return commandLineArgs;
 		}
 
-		internal static void ValidateCommandLineArgs(Dictionary<string, string> options)
+		internal static void ValidateCommandLineArgs(Dictionary<string, string> commandLineArgs)
 		{
 			string pOption;
 			string vOption;
 			string projDirOption;
-			ValidateBasicsForRequiredOptions(options,
+			ValidateBasicsForRequiredOptions(commandLineArgs,
 				out pOption, out vOption, out projDirOption);
 
 			var supportedOperations = new HashSet<string>
@@ -117,14 +117,14 @@ namespace TriboroughBridge_ChorusPlugin
 			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
 			if (vOption != move_lift)
 			{
-				if (options.ContainsKey(g))
+				if (commandLineArgs.ContainsKey(g))
 					throw new CommandLineException("-g", "is present");
 			}
 
 			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
 			if (vOption != send_receive)
 			{
-				if (options.ContainsKey(f))
+				if (commandLineArgs.ContainsKey(f))
 					throw new CommandLineException("-f", "is present");
 			}
 
@@ -133,9 +133,9 @@ namespace TriboroughBridge_ChorusPlugin
 			{
 				case move_lift:
 					// internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
-					if (!options.ContainsKey(g) || String.IsNullOrEmpty(options[g]))
+					if (!commandLineArgs.ContainsKey(g) || String.IsNullOrEmpty(commandLineArgs[g]))
 						throw new CommandLineException("-g", "is missing");
-					var guid = Guid.Parse(options[g]); // Throws FormatException, if it isn't a guid.
+					var guid = Guid.Parse(commandLineArgs[g]); // Throws FormatException, if it isn't a guid.
 					if (guid == Guid.Empty)
 						throw new CommandLineException("-g", "is not a valid project guid");
 					// Make sure it ends with some data file and that it exists.
@@ -152,8 +152,8 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case obtain:
 					//internal const string obtain = "obtain";						// -p <$fwroot>
-					var projectBaseDir = ValidateProjDirOption(options);
-					if (projectBaseDir != options[p])
+					var projectBaseDir = ValidateProjDirOption(commandLineArgs);
+					if (projectBaseDir != commandLineArgs[p])
 						throw new CommandLineException("-v, -p and -projDir", "are incompatible, since '-p' and '-projDir' are different");
 					break;
 
@@ -171,7 +171,7 @@ namespace TriboroughBridge_ChorusPlugin
 					// internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					// Must have -f option with fix it app in it.
-					ValidateFOptionIsExtantFixItFile(options[fwAppsDir], options[f]);
+					ValidateFOptionIsExtantFixItFile(commandLineArgs[fwAppsDir], commandLineArgs[f]);
 					break;
 
 				case send_receive_lift:
@@ -216,32 +216,32 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 		}
 
-		private static void ValidateBasicsForRequiredOptions(Dictionary<string, string> options,
+		private static void ValidateBasicsForRequiredOptions(Dictionary<string, string> commandLineArgs,
 			out string pOption, out string vOption, out string projDirOption)
 		{
-			if (!options.ContainsKey(u) || String.IsNullOrEmpty(options[u]))
+			if (!commandLineArgs.ContainsKey(u) || String.IsNullOrEmpty(commandLineArgs[u]))
 				throw new CommandLineException("-u", "is missing");
 
-			if (!options.ContainsKey(p) || String.IsNullOrEmpty(options[p]))
+			if (!commandLineArgs.ContainsKey(p) || String.IsNullOrEmpty(commandLineArgs[p]))
 				throw new CommandLineException("-p", "is missing");
-			pOption = options[p];
-			if (!options.ContainsKey(v) || String.IsNullOrEmpty(options[v]))
+			pOption = commandLineArgs[p];
+			if (!commandLineArgs.ContainsKey(v) || String.IsNullOrEmpty(commandLineArgs[v]))
 				throw new CommandLineException("-v", "is missing");
-			vOption = options[v];
+			vOption = commandLineArgs[v];
 
-			projDirOption = ValidateProjDirOption(options);
+			projDirOption = ValidateProjDirOption(commandLineArgs);
 
-			if (!options.ContainsKey(fwAppsDir) || String.IsNullOrEmpty(options[fwAppsDir]))
+			if (!commandLineArgs.ContainsKey(fwAppsDir) || String.IsNullOrEmpty(commandLineArgs[fwAppsDir]))
 				throw new CommandLineException("-fwAppsDir", "is missing");
-			var fwAppsDirOption = options[fwAppsDir];
+			var fwAppsDirOption = commandLineArgs[fwAppsDir];
 			if (!Directory.Exists(fwAppsDirOption))
 				throw new CommandLineException("-fwAppsDir", "folder does not exist");
 
 			if (vOption == send_receive)
 			{
-				if (!options.ContainsKey(f) || String.IsNullOrEmpty(options[f]))
+				if (!commandLineArgs.ContainsKey(f) || String.IsNullOrEmpty(commandLineArgs[f]))
 					throw new CommandLineException("-f", "is missing");
-				var fOption = options[f];
+				var fOption = commandLineArgs[f];
 				const string fixitAppName = "FixFwData.exe";
 				var fixitAppPathnameCalculated = Path.Combine(fwAppsDirOption, fixitAppName);
 				if (fOption != fixitAppPathnameCalculated)
@@ -250,25 +250,25 @@ namespace TriboroughBridge_ChorusPlugin
 					throw new CommandLineException("-f", "missing 'FixFwData.exe'");
 			}
 
-			if (!options.ContainsKey(fwmodel) || String.IsNullOrEmpty(options[fwmodel]))
+			if (!commandLineArgs.ContainsKey(fwmodel) || String.IsNullOrEmpty(commandLineArgs[fwmodel]))
 				throw new CommandLineException("-fwmodel", "is missing");
-			var fwmodelOption = uint.Parse(options[fwmodel]);
+			var fwmodelOption = uint.Parse(commandLineArgs[fwmodel]);
 			if (fwmodelOption < 7000066)
 				throw new CommandLineException("-fwmodel", "is below the minimum supported FLEx data model version of 7000066");
 
 			// Required
-			if (!options.ContainsKey(locale) || String.IsNullOrEmpty(options[locale]))
+			if (!commandLineArgs.ContainsKey(locale) || String.IsNullOrEmpty(commandLineArgs[locale]))
 				throw new CommandLineException("-locale", "is missing");
 
 			// Required
-			if (!options.ContainsKey(liftmodel) || String.IsNullOrEmpty(options[liftmodel]))
+			if (!commandLineArgs.ContainsKey(liftmodel) || String.IsNullOrEmpty(commandLineArgs[liftmodel]))
 				throw new CommandLineException("-liftmodel", "is missing");
-			if (options[liftmodel] != "0.13")
+			if (commandLineArgs[liftmodel] != "0.13")
 				throw new CommandLineException("-liftmodel", "is not the supported FLEx LIFT model version of 0.13");
 
 			// AddArg(ref args, "-pipeID", _pipeID);
 			// Required
-			if (!options.ContainsKey(pipeID) || String.IsNullOrEmpty(options[pipeID]))
+			if (!commandLineArgs.ContainsKey(pipeID) || String.IsNullOrEmpty(commandLineArgs[pipeID]))
 				throw new CommandLineException("-pipeID", "is missing");
 			// What else can be validated in 'pipeID'?
 		}
