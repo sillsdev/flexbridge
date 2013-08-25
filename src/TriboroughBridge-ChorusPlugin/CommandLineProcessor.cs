@@ -132,26 +132,27 @@ namespace TriboroughBridge_ChorusPlugin
 			switch (vOption)
 			{
 				case move_lift:
-					// internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
+					// internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 					if (!commandLineArgs.ContainsKey(g) || String.IsNullOrEmpty(commandLineArgs[g]))
 						throw new CommandLineException("-g", "is missing");
 					var guid = Guid.Parse(commandLineArgs[g]); // Throws FormatException, if it isn't a guid.
 					if (guid == Guid.Empty)
 						throw new CommandLineException("-g", "is not a valid project guid");
 					// Make sure it ends with some data file and that it exists.
-					ValidatePOptionIsExtantFwDataFile(pOption);
+					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
 					break;
 
 				case about_flex_bridge: // Fall through
-					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo\foo.fwdata
+					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 				case check_for_updates:
-					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo\foo.fwdata
-					ValidatePOptionIsExtantFwDataFile(pOption);
+					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
+					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, Path.GetDirectoryName(pOption));
 					break;
 
 				case obtain:
 					//internal const string obtain = "obtain";						// -p <$fwroot>
+					// xml or Db4o isn't relevant for this option.
 					var projectBaseDir = ValidateProjDirOption(commandLineArgs);
 					if (projectBaseDir != commandLineArgs[p])
 						throw new CommandLineException("-v, -p and -projDir", "are incompatible, since '-p' and '-projDir' are different");
@@ -159,6 +160,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case obtain_lift:
 					// internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
+					// xml or Db4o isn't relevant for this option.
 					if (Path.GetExtension(pOption) == ".fwdata")
 						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
@@ -169,14 +171,15 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case send_receive:
 					// internal const string send_receive = "send_receive";			// -p <$fwroot>\foo\foo.fwdata
+					// Must be xml file, not Db4o.
 					ValidatePOptionIsExtantFwDataFile(pOption);
 					// Must have -f option with fix it app in it.
 					ValidateFOptionIsExtantFixItFile(commandLineArgs[fwAppsDir], commandLineArgs[f]);
 					break;
 
 				case send_receive_lift:
-					// internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata
-					ValidatePOptionIsExtantFwDataFile(pOption);
+					// internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
+					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
 					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder");
@@ -189,6 +192,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 				case undo_export_lift:
 					// internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
+					// xml or Db4o isn't relevant for this option.
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
 					liftFolder = Utilities.LiftOffset(pOption);
 					if (!Directory.Exists(liftFolder))
@@ -205,8 +209,8 @@ namespace TriboroughBridge_ChorusPlugin
 					break;
 
 				case view_notes_lift:
-					// internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata
-					ValidatePOptionIsExtantFwDataFile(pOption);
+					// internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
+					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
 					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder, and thus, no Lift notes");
@@ -289,6 +293,19 @@ namespace TriboroughBridge_ChorusPlugin
 				throw new CommandLineException("-p", "has no fwdata file");
 			if (!File.Exists(pOption))
 				throw new CommandLineException("-p", "has no fwdata file");
+		}
+
+		private static void ValidatePOptionIsExtantFwXmlOrDb4oFile(string pOption)
+		{
+			var recognizedFwExtensions = new HashSet<string>
+				{
+					".fwdata",
+					".fwdb"
+				};
+			if (!recognizedFwExtensions.Contains(Path.GetExtension(pOption)))
+				throw new CommandLineException("-p", "has no fwdata/fwdb file");
+			if (!File.Exists(pOption))
+				throw new CommandLineException("-p", "has no fwdata/fwdb file");
 		}
 
 		private static void ValidateFOptionIsExtantFixItFile(string flexAppsDir, string fOption)
