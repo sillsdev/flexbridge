@@ -12,6 +12,7 @@ prefix="$(cd "$fbscriptdir/../.."; /bin/pwd)"
 WRITEKEY="$prefix/lib/fieldworks/WriteKey.exe"
 
 if [ ! -f "${WRITEKEY}" ]; then
+	echo This could be SLOW... \(looking for WriteKey.exe\)
 	WRITEKEY="$(find "$HOME" -name WriteKey.exe -print | grep /fwrepo/fw/Bin/ | head -1)"
 	if [ -z "${WRITEKEY}" ]; then
 		WRITEKEY="$(find "$HOME" -name WriteKey.exe -print | grep /fw/Bin/ | head -1)"
@@ -19,10 +20,14 @@ if [ ! -f "${WRITEKEY}" ]; then
 fi
 READKEY="$(dirname ${WRITEKEY})/ReadKey.exe"
 
-if [ -d $fbscriptdir/../fieldworks ]; then
-	cd $fbscriptdir/../fieldworks
+if [ -f $prefix/lib/fieldworks/environ ]; then
+	cd $prefix/lib/fieldworks
 	RUNMODE=INSTALLED . environ
 	cd $fbscriptdir
+elif [ -f $(dirname $WRITEKEY)/../environ ]; then
+	cd $(dirname $WRITEKEY)/..
+	. environ
+	cd $OLDPWD
 fi
 
 FLEXBRIDGEDIR="$(mono ${READKEY} LM "Software/SIL/Flex Bridge/8" "InstallationDir")"
@@ -36,6 +41,7 @@ fi
 FLEXBRIDGEDIR="$prefix/lib/flexbridge"
 
 if [ ! -f "${FLEXBRIDGEDIR}/FLExBridge.exe" ]; then
+	echo This could be SLOW... \(looking for FLExBridge.exe\)
 	FLEXBRIDGEEXE="$(find "$HOME" -name FLExBridge.exe -print | sort | head -1)"
 	if [ -n "${FLEXBRIDGEEXE}" ]; then
 		FLEXBRIDGEDIR="$(dirname "${FLEXBRIDGEEXE}")"
