@@ -24,29 +24,29 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf"/>
 
 	<!--  -->
-	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
+	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of FLEx Bridge is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
 
 	<!-- The following will set properties A[FW8INSTALLDIR] and B[FW8DEVINSTALLDIR] to the result of two different registry searches.
 	If the search for B[FW8DEVINSTALLDIR] was successful, it overrides the value of A[FW8INSTALLDIR] with the value of B[FW8DEVINSTALLDIR].
 	See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-condition -->
 	<Property Id="FW8INSTALLDIR">
 	  <!-- Real users and devs have this registry entry. But, a dev machine has it set to DistFiles. -->
-	  <RegistrySearch Id="SearchForFW7" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\8" Name="RootCodeDir" Type="raw"/>
+	  <RegistrySearch Id="SearchForFW8" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\8" Name="RootCodeDir" Type="raw"/>
 	</Property>
 	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="FWVersion" Path="[FW8INSTALLDIR]">
-		<!-- 8.0.0.41373 was the actual number the day before releasing the FW beta, but I understand one then needs to go one notch under that to find 8.0.0.41373 -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.0.41372"/>
+		<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
 	  </DirectorySearch>
 	</Property>
 	<Property Id="DEVFW8BUILDDIR">
 	  <!-- Devs (only) have this registry entry. -->
-	  <RegistrySearch Id="SearchForFW7DevDir" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\8" Name="FwExeDir" Type="raw"/>
+	  <RegistrySearch Id="SearchForFW8DevDir" Root="HKLM" Key="SOFTWARE\[Manufacturer]\FieldWorks\8" Name="FwExeDir" Type="raw"/>
 	</Property>
 	<Property Id="DEVFIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="DevFWVersion" Path="[DEVFW8BUILDDIR]">
-		<!-- 8.0.0.41373 was the actual number the day before releasing the FW beta, but I understand one then needs to go one notch under that to find 8.0.0.41373 -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.0.41372"/>
+					<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
 	  </DirectorySearch>
 	</Property>
 
@@ -59,7 +59,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
-	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 8.0.0, or higher.">
+	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 8.0.3, or higher.">
 	  <![CDATA[Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION]]>
 	</Condition>
 
@@ -85,8 +85,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExBridge.pdb" Name="FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
 			</Component>
-			<Component Id="FLExBridge.exe.config" Guid="C1EE09F4-E382-11DE-8A39-0800200C9A66">
-			  <File Id="FLExBridge.exe.config" Name="FLExBridge.exe.config" Source="..\..\output\Release\FLExBridge.exe.config"/>
+			<Component Id="app.config" Guid="C1EE581C-E382-11DE-8A39-0800200C9A66">
+			  <File Id="app.config" Name="app.config" Source="..\..\output\Release\app.config"/>
 			</Component>
 			<Component Id="FLExChorusPlugin.dll" Guid="C1ED6DB1-E382-11DE-8A39-0800200C9A66">
 			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
@@ -141,6 +141,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\Release\NetSparkle.Net40.dll"/>
 			</Component>
 
+			<Component Id="L10NSharp.dll" Guid="C1EE581A-E382-11DE-8A39-0800200C9A66">
+			  <File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\lib\common\L10NSharp.dll"/>
+			</Component>
+			<Component Id="L10NSharp.pdb" Guid="C1EE581B-E382-11DE-8A39-0800200C9A66">
+			  <File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\lib\common\L10NSharp.pdb"/>
+			</Component>
+
 			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
 				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\output\Installer\about.htm" />
 			</Component>
@@ -170,7 +177,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
 	  <ComponentRef Id="FLExBridge.exe"/>
 	  <ComponentRef Id="FLExBridge.pdb"/>
-	  <ComponentRef Id="FLExBridge.exe.config"/>
+	  <ComponentRef Id="app.config"/>
 	  <ComponentRef Id="FLExChorusPlugin.dll"/>
 	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
 
@@ -190,6 +197,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
+	  <ComponentRef Id="L10NSharp.dll"/>
+	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="about.htm" />
 
 	  <MergeRef Id="ChorusMergeModule"/>

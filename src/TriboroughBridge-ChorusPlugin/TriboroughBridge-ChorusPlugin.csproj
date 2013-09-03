@@ -78,6 +78,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
@@ -108,31 +112,32 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="BridgeTrafficCop.cs" />
-	<Compile Include="ControllerType.cs" />
-	<Compile Include="Controller\ControllerRepository.cs" />
-	<Compile Include="Controller\BridgeConflictController.cs" />
-	<Compile Include="Controller\IBridgeController.cs" />
-	<Compile Include="Controller\IConflictController.cs" />
-	<Compile Include="Controller\IConflictStrategy.cs" />
-	<Compile Include="Controller\IMoveOldLiftRepositorController.cs" />
-	<Compile Include="Controller\IObtainNewProjectController.cs" />
-	<Compile Include="Controller\IObtainProjectStrategy.cs" />
-	<Compile Include="Controller\ISyncronizeController.cs" />
-	<Compile Include="Controller\JumpEventHandler.cs" />
-	<Compile Include="Controller\ObtainProjectController.cs" />
-	<Compile Include="Controller\UndoExportController.cs" />
-	<Compile Include="ISynchronizeProject.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="ActionType.cs" />
+	<Compile Include="CommandLineException.cs" />
+	<Compile Include="CommandLineProcessor.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\AboutFlexBridgeActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ActionTypeHandlerRepository.cs" />
+	<Compile Include="Infrastructure\IObtainProjectStrategy.cs" />
+	<Compile Include="Infrastructure\JumpEventHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\CheckForUpdatesActionTypeHandler.cs" />
+	<Compile Include="Infrastructure\ActionHandlers\ObtainAnyProjectActionHandler.cs" />
 	<Compile Include="JumpEventArgs.cs" />
 	<Compile Include="ICreateProjectFromLift.cs" />
 	<Compile Include="FLExConnectionHelper.cs" />
-	<Compile Include="Model\IBridgeModel.cs" />
+	<Compile Include="Infrastructure\IBridgeActionTypeHandler.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="BridgeModelType.cs" />
 	<Compile Include="Properties\CommonResources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>CommonResources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="Properties\Settings.Designer.cs">
+	  <DependentUpon>Settings.settings</DependentUpon>
+	  <AutoGen>True</AutoGen>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	</Compile>
 	<Compile Include="Utilities.cs" />
 	<Compile Include="View\BridgeConflictView.cs">
@@ -172,7 +177,17 @@
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+	<None Include="app.config">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+	<None Include="Properties\Settings.settings">
+	  <Generator>PublicSettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	</None>
 	<None Include="Resources\chorus32x32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\chorus.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

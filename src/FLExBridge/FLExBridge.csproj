@@ -98,6 +98,13 @@
 	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
@@ -113,21 +120,15 @@
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
+	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<None Include="app.config" />
-	<None Include="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
-	<Compile Include="Properties\Settings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">

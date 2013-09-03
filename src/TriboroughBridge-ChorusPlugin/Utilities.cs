@@ -2,35 +2,41 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
-using Microsoft.Win32;
+using L10NSharp;
 using Palaso.Progress;
+using Palaso.Reporting;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
 {
+	/// <summary>
+	/// This class holds constants and methods that are relevant to common bridge operations.
+	/// A lot of what it had held earlier, was moved into places like Flex Bridge's SharedConstants class or
+	/// into Lift Bridge's LiftUtilties class, when the stuff was only used by one bridge.
+	///
+	/// Some of the remaining constants could yet be moved at the cost of having duplciates in each bridge's project.
+	/// It may be worth that to be rid of bridge-specific stuff in this project.
+	/// </summary>
 	public static class Utilities
 	{
-		public const string FailureFilename = "FLExImportFailure.notice";
+// ReSharper disable InconsistentNaming
 		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
 		public const string FwXmlExtensionNoPeriod = "fwdata";
-		public const string FwLockExtension = ".lock";
-		public const string FwXmlLockExtension = FwXmlExtension + FwLockExtension;
-		public const string FwDB4oExtension = "." + FwDB4oExtensionNoPeriod;
-		public const string FwDB4oExtensionNoPeriod = "fwdb";
-		public const string LiftExtension = ".lift";
-		public const string FlexExtension = "_model_version";
-		public const string LiftRangesExtension = ".lift-ranges";
+		public const string FwDb4oExtension = "." + FwDb4oExtensionNoPeriod;
+		public const string FwDb4oExtensionNoPeriod = "fwdb";
 		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
-		private static string _testingProjectsPath;
-
-		internal static void SetProjectsPathForTests(string testProjectsPath)
-		{
-			_testingProjectsPath = testProjectsPath;
-		}
+		public const string hg = ".hg";
+		private const string FlexBridge = "FlexBridge";
+		private const string localizations = "localizations";
+		public const string FlexBridgeEmailAddress = "fieldworksbridge@gmail.com";
+// ReSharper restore InconsistentNaming
 
 		/// <summary>
 		/// Strips file URI prefix from the beginning of a file URI string, and keeps
@@ -104,7 +110,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string HgDataFolder(string path)
 		{
-			return Path.Combine(path, BridgeTrafficCop.hg, "store", "data");
+			return Path.Combine(path, hg, "store", "data");
 		}
 
 		public static string LiftOffset(string path)
@@ -117,25 +123,6 @@ namespace TriboroughBridge_ChorusPlugin
 					return extantLiftFolder;
 			}
 			return Path.Combine(path, OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
-		}
-
-		public static string ProjectsPath
-		{
-			get
-			{
-				if (_testingProjectsPath != null)
-					return _testingProjectsPath;
-
-				var rootDir = ((string) Registry.LocalMachine
-												.OpenSubKey("software")
-												.OpenSubKey("SIL")
-												.OpenSubKey("FieldWorks")
-												.OpenSubKey("8")
-												.GetValue("ProjectsDir")).Trim();
-				if (rootDir.Length > 3)
-					rootDir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-				return rootDir;
-			}
 		}
 
 		public static bool FolderIsEmpty(string folder)
@@ -158,8 +145,8 @@ namespace TriboroughBridge_ChorusPlugin
 				if (retval.ContainsKey(branch))
 				{
 					// Use the higher rev number since it has more than one head of the same branch.
-					var extantRevNumber = int.Parse(retval[branch].Number.LocalRevisionNumber);
-					var currentRevNumber = int.Parse(head.Number.LocalRevisionNumber);
+					var extantRevNumber = Int32.Parse(retval[branch].Number.LocalRevisionNumber);
+					var currentRevNumber = Int32.Parse(head.Number.LocalRevisionNumber);
 					if (currentRevNumber > extantRevNumber)
 					{
 						// Use the newer head of a branch.
@@ -178,6 +165,60 @@ namespace TriboroughBridge_ChorusPlugin
 			}
 
 			return retval;
+		}
+
+		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> options)
+		{
+			var results = new Dictionary<string, LocalizationManager>(3);
+
+			var desiredUiLangId = options[CommandLineProcessor.locale];
+			var installedTmxBaseDirectory = Path.Combine(
+				Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+			var userTmxBaseDirectory = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
+
+			// Now set it up for the handful of localizable elements in FlexBridge itself.
+			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
+			// We don't need to reload strings for every "revision" (that might be every time we build).
+			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			var flexBridgeLocMan = LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
+															  version,
+															  installedTmxBaseDirectory,
+															  userTmxBaseDirectory,
+															  CommonResources.chorus,
+															  FlexBridgeEmailAddress, new[]
+																  {
+																	  FlexBridge, "TriboroughBridge_ChorusPlugin",
+																	  "FLEx_ChorusPlugin", "SIL.LiftBridge"
+																  });
+			results.Add("FlexBridge", flexBridgeLocMan);
+
+			// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
+			desiredUiLangId = LocalizationManager.UILanguageId;
+
+			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
+			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
+														  version,
+														  installedTmxBaseDirectory,
+														  userTmxBaseDirectory,
+														  CommonResources.chorus,
+														  FlexBridgeEmailAddress, "Chorus");
+			results.Add("Chorus", chorusLocMan);
+
+			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+			var palasoLocMan = LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso",
+														  version,
+														  installedTmxBaseDirectory,
+														  userTmxBaseDirectory,
+														  CommonResources.chorus,
+														  FlexBridgeEmailAddress, "Palaso");
+			results.Add("Palaso", palasoLocMan);
+
+			return results;
 		}
 	}
 }

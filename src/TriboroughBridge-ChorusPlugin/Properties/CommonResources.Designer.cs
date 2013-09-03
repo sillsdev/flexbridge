@@ -60,6 +60,13 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 			}
 		}
 
+		public static System.Drawing.Icon chorus {
+			get {
+				object obj = ResourceManager.GetObject("chorus", resourceCulture);
+				return ((System.Drawing.Icon)(obj));
+			}
+		}
+
 		public static System.Drawing.Icon chorus32x32 {
 			get {
 				object obj = ResourceManager.GetObject("chorus32x32", resourceCulture);
@@ -158,6 +165,15 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 		public static string kHowToSendReceiveExtantRepository {
 			get {
 				return ResourceManager.GetString("kHowToSendReceiveExtantRepository", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Invalid command line options. Please launch from FLEx..
+		/// </summary>
+		public static string kInvalidCommandLineOptions {
+			get {
+				return ResourceManager.GetString("kInvalidCommandLineOptions", resourceCulture);
 			}
 		}
 

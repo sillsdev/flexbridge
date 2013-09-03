@@ -1,4 +1,17 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* L10NSharp: No "OK" button text for unavailable languages
+* FLEx Bridge: Prompt only once if localization unavailable
+* FLEx Bridge: Fix problem in POS context generator for conflict reports
+## 2.0.19 24/Jul/2013
+* New in this release
+	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
+	* FLEx Bridge: Update the minimum install version for FLEx.
+	* Palaso, Chorus, & FLEx Bridge: Add localization support.
+	* Chorus: Show technical conflict details on demand.
+* Fixes in this release
+	* FLEx Bridge: Make message about 'fix it' program to not be a warning.
+	* Chorus: Fix merge bug.
+## 1.0.31 11/Jul/2013
 * FLEx Bridge: Add better support for FLEx data migration DM68.
 ## 1.0.30 9/Jul/2013
 * Chorus: Fix problem with sending unrelated repositories out.
@@ -8,7 +21,7 @@ Flex Bridge: Fix crash getting an empty repository.
 * Chorus: Fix problem where source repository had no initial commit.
 ## 1.0.27 23/Jun/2013
 * Chorus: Fix merge bug.
-## 1.0.26 10/Jun/2013
+## 1.0.26 10/June/2013
 * Palaso: Fix issue with loading large xml files.
 ## 1.0.24 22/May/2013
 * Chorus: Fix issue with unresolved merge (a merge didn't complete).
@@ -42,4 +55,3 @@ This version has the following limitations (and probably many others). Feel free
 * Not available yet for Linux.
 * Some merge reports may not be the easiest to read and understand.
 * Some types of lexical relations appear to not merge correctly in both Lift data and in the main FLEx data set. The issues are more complex than merging.
-See additional limitations [here](http://projects.palaso.org/projects/fwbridge/wiki/Happy_Path/).
