@@ -18,7 +18,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			Process.Start(Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
 		}

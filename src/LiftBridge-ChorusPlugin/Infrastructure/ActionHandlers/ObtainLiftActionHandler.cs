@@ -40,7 +40,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			return !Directory.GetFiles(repositoryLocation, "*" + LiftUtilties.LiftExtension).Any();
 		}
 
-		private void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
+		private void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			// "obtain_lift"
 			//		'cloneLocation' wants to be a new folder at the $fwroot\foo\OtherRepositories\foo_LIFT folder,
@@ -58,7 +58,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			};
 
 			// Update to the head of the desired branch, if possible.
-			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + options["-liftmodel"], actualCloneResult);
+			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
 
 			switch (actualCloneResult.FinalCloneResult)
 			{
@@ -109,10 +109,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// -p <$fwroot>\foo where 'foo' is the project folder name
-			var pOption = options["-p"];
+			var pOption = commandLineArgs["-p"];
 			var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 				Directory.CreateDirectory(otherReposDir);
@@ -127,7 +127,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					desiredCloneLocation, // Desired location for new clone
 					ProjectFilter,	// Lift repo filter
 					HubQuery, // If it goes to Chorus Hub, use this filter
-					options["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
+					commandLineArgs["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
 					Utilities.OtherRepositories, // subfolder of eafh FW proejct folder, in which to look for additional repo ids.
 					CommonResources.kHowToSendReceiveExtantRepository); // Some message to use to let user know a repo exists.
 			}
@@ -144,7 +144,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				return;
 			}
 
-			FinishCloning(options,
+			FinishCloning(commandLineArgs,
 				result.ActualLocation,
 				desiredCloneLocation); // May, or may not, exist.
 		}

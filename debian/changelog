@@ -1,0 +1,29 @@
+flexbridge (2.1.0~alpha4) unstable; urgency=low
+
+  * Fix more packaging and setup problems.  Includes various bugfixes as well.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Fri, 30 Aug 2013 11:36:32 -0500
+
+flexbridge (2.1.0~alpha3.1) unstable; urgency=low
+
+  * Fix more packaging problems.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 17 Jul 2013 19:06:38 -0500
+
+flexbridge (2.1.0~alpha3) unstable; urgency=low
+
+  * Fix a number of packaging problems.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 17 Jul 2013 18:21:59 -0500
+
+flexbridge (2.1.0~alpha2) unstable; urgency=low
+
+  * Wipe out Lift repo if user wanted to do a "Get", but really did a "S/R"
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 17 Jul 2013 16:44:09 -0500
+
+flexbridge (2.1.0~alpha1) unstable; urgency=low
+
+  * Initial Release for Linux.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Fri, 12 Jul 2013 14:57:59 -0500

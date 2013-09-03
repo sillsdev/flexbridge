@@ -207,7 +207,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		{
 			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
 #if MONO
-			baseDir = baseDir.Replace(@"file:/", null);
+			baseDir = baseDir.Replace(@"file:", null);	// Path.GetDirectoryName squeezes file:/// to file:/
 #else
 			baseDir = baseDir.Replace(@"file:\", null);
 #endif

@@ -97,6 +97,14 @@ namespace TriboroughBridge_ChorusPlugin
 		}
 
 		/// <summary>
+		/// Returns <c>true</c> if we're running on Windows NT or later, otherwise <c>false</c>.
+		/// </summary>
+		public static bool IsWindows
+		{
+			get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
+		}
+
+		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
 		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
@@ -167,11 +175,11 @@ namespace TriboroughBridge_ChorusPlugin
 			return retval;
 		}
 
-		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> options)
+		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
 
-			var desiredUiLangId = options[CommandLineProcessor.locale];
+			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var installedTmxBaseDirectory = Path.Combine(
 				Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
 			var userTmxBaseDirectory = Path.Combine(

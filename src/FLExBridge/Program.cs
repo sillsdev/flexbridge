@@ -20,21 +20,16 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//MessageBox.Show("Get ready to debug FB exe.");
+			//MessageBox.Show(@"Get ready to debug FB exe.");
 
-			// args are:
-			// -u username
-			// -p entire pathname to fwdata file including extension.
-			// -v kind of S/R operation: obtain, start, send_receive, send_receive_lift, view_notes
-			// No args at all: Use regular UI. FW app must not be running on S/R project.
-
-			// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
-			// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
-			// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
-			// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
-			// exception handler.
-			var hotspot = new HotSpotProvider();
-			hotspot.Dispose();
+			using (var hotspot = new HotSpotProvider())
+			{
+				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
+				// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
+				// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
+				// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
+				// exception handler.
+			}
 
 			if (Settings.Default.CallUpgrade)
 			{
@@ -46,7 +41,7 @@ namespace FLExBridge
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			var options = CommandLineProcessor.ParseCommandLineArgs(args);
+			var commandLineArgs = CommandLineProcessor.ParseCommandLineArgs(args);
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -59,7 +54,7 @@ namespace FLExBridge
 				using (var container = new CompositionContainer(catalog))
 				{
 					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
-					if (!connHelper.Init(options))
+					if (!connHelper.Init(commandLineArgs))
 						return;
 
 					// Is mercurial set up?
@@ -70,13 +65,13 @@ namespace FLExBridge
 						return;
 					}
 
-					var l10Managers = Utilities.SetupLocalization(options);
+					var l10Managers = Utilities.SetupLocalization(commandLineArgs);
 
 					try
 					{
 						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
-						var currentHandler = handlerRepository.GetHandler(options);
-						currentHandler.StartWorking(options);
+						var currentHandler = handlerRepository.GetHandler(commandLineArgs);
+						currentHandler.StartWorking(commandLineArgs);
 						var bridgeActionTypeHandlerShowWindow = currentHandler as IBridgeActionTypeHandlerShowWindow;
 						if (bridgeActionTypeHandlerShowWindow != null)
 						{
