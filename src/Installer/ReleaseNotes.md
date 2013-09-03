@@ -1,4 +1,12 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* New in this release
+	* FLEx Bridge: Revise FLEx<->FLEx Bridge interaction to allow Linux to do Send/Receive.
+	* FLEx Bridge: Add support for FLEx's data model version 68.
+* Fixes in this release
+	* FLEx Bridge: Allow for better Send/Receive support for Shared network system (Db4o data storage system).
+	* FLEx Bridge: Numerous fixes for Linus support.
+	* FLEx Bridge: Fixed case where clicking "X" on S/R window caused crash.
+## 2.0.20 14/Aug/2013
 * L10NSharp: No "OK" button text for unavailable languages
 * FLEx Bridge: Prompt only once if localization unavailable
 * FLEx Bridge: Fix problem in POS context generator for conflict reports
