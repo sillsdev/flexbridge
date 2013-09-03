@@ -170,7 +170,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			return !Directory.GetFiles(repositoryLocation, "*" + LiftUtilties.LiftExtension).Any();
 		}
 
-		public void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
+		public void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			// "obtain"
 			//		'cloneLocation' will be a new folder at the $fwroot main project location, such as $fwroot\foo.
@@ -201,7 +201,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 
 			// Update to the head of the desired branch, if possible.
-			UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + options["-liftmodel"], actualCloneResult);
+			UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
 
 			switch (actualCloneResult.FinalCloneResult)
 			{

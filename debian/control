@@ -1,0 +1,23 @@
+Source: flexbridge
+Section: misc
+Priority: extra
+Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
+Build-Depends: debhelper (>= 8.0.0),
+ mono-devel,
+ libmono-winforms2.0-cil,
+ libmono-cairo2.0-cil,
+ geckofx
+Standards-Version: 3.9.2
+Homepage: http://projects.palaso.org/projects/fwbridge
+#Vcs-Git: git://git.debian.org/collab-maint/flexbridge.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/flexbridge.git;a=summary
+
+Package: flexbridge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7), python (<< 2.8)
+Suggests: fieldworks-applications (>= 8.0.3~beta4)
+Description: Allow multiple FieldWorks users to collaborate remotely
+ FLEx Bridge is an application that allows multiple FieldWorks 8.0 users
+ to do remote collaboration (i.e., not necessarily connected by a local
+ network).  Data can be shared via a local network (which is not really
+ "remote"), the Internet, or a USB memory device.

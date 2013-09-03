@@ -13,7 +13,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 		bool ProjectFilter(string repositoryLocation);
 		string HubQuery { get; }
 		bool IsRepositoryEmpty(string repositoryLocation);
-		void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository);
+		void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		ActionType SupportedActionType { get; }
 	}

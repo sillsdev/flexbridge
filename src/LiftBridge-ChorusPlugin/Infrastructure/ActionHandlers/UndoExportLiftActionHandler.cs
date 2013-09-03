@@ -25,11 +25,11 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// undo_export_lift: -p <$fwroot>\foo where 'foo' is the project folder name
-			// Calling Utilities.LiftOffset(options["-p"]) will use the folder: <$fwroot>\foo\OtherRepositories\foo_Lift
-			var pathToRepository = Utilities.LiftOffset(options["-p"]);
+			// Calling Utilities.LiftOffset(commandLineArgs["-p"]) will use the folder: <$fwroot>\foo\OtherRepositories\foo_Lift
+			var pathToRepository = Utilities.LiftOffset(commandLineArgs["-p"]);
 			var repo = new HgRepository(pathToRepository, new NullProgress());
 			repo.Update();
 			// Delete any new files (except import failure notifier file).

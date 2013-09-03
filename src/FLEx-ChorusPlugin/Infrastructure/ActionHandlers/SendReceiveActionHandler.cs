@@ -26,11 +26,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
-			var projectDir = Path.GetDirectoryName(options["-p"]);
-			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
+			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				if (chorusSystem.Repository.Identifier == null)
 				{
@@ -43,7 +43,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 				// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-				var projectName = Path.GetFileNameWithoutExtension(options["-p"]);
+				var projectName = Path.GetFileNameWithoutExtension(commandLineArgs["-p"]);
 				var lockPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlLockExtension);
 				try
 				{
@@ -59,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
 						// so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, options["-f"], false);
+						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, commandLineArgs["-f"], false);
 						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 						// Chorus does it in ths order:
@@ -73,12 +73,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
 						syncDlg.StartPosition = FormStartPosition.CenterScreen;
 						syncDlg.BringToFront();
-						syncDlg.ShowDialog();
+						var dlgResults = syncDlg.ShowDialog();
 
-						if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
-						{
-							_gotChanges = true;
-						}
+						_gotChanges = dlgResults == DialogResult.OK && (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated);
 					}
 				}
 				finally

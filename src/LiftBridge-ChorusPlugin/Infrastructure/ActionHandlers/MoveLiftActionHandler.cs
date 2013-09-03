@@ -38,10 +38,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
-			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
-			var fwLangProjGuid = options["-g"];
+			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
+			var fwLangProjGuid = commandLineArgs["-g"];
 			var basePathForOldLiftRepos = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 						"LiftBridge");
