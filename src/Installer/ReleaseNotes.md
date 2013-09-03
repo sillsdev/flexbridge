@@ -4,7 +4,7 @@
 	* FLEx Bridge: Add support for FLEx's data model version 68.
 * Fixes in this release
 	* FLEx Bridge: Allow for better LIFT Send/Receive support for Shared network system (Db4o data storage system).
-	* FLEx Bridge: Numerous fixes for Linus support.
+	* FLEx Bridge: Numerous fixes for Linux support.
 	* FLEx Bridge: Fixed case where clicking "X" on S/R window caused crash.
 ## 2.0.20 14/Aug/2013
 * L10NSharp: No "OK" button text for unavailable languages
