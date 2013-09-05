@@ -29,6 +29,7 @@ install: release
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge

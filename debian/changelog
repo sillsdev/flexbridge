@@ -1,4 +1,4 @@
-flexbridge (2.2.0~alpha1) unstable; urgency=low
+flexbridge (2.2.0~alpha2) unstable; urgency=low
 
   * Fix some setup and build problems.  Other bugfixes are included as well.
 
