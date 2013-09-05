@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-	<BuildCounter Condition="'$(BuildCounter)' == ''">0</BuildCounter>
+	<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.0</BUILD_NUMBER>
   </PropertyGroup>
 
   <Target Name="VersionNumbers">
