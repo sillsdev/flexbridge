@@ -56,12 +56,4 @@ else
 	exit 1
 fi
 
-if [ -f $fbscriptdir/Chorus.exe -a ! -f $fbscriptdir/Mercurial/hg ]; then
-	cd $fbscriptdir
-	ARCH="$(/usr/bin/arch)"
-	unzip Mercurial-${ARCH}.zip
-	chmod +x Mercurial/hg
-	chmod +x Mercurial/hg.exe
-fi
-
 exit 0
