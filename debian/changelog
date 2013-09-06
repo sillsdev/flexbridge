@@ -1,3 +1,9 @@
+flexbridge (2.2.0~alpha2) unstable; urgency=low
+
+  * Fix some setup and build problems.  Other bugfixes are included as well.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 05 Sep 2013 14:41:05 -0500
+
 flexbridge (2.1.0~alpha4) unstable; urgency=low
 
   * Fix more packaging and setup problems.  Includes various bugfixes as well.

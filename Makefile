@@ -2,8 +2,10 @@
 
 CPUARCH=$(shell /usr/bin/arch)
 # this needs to be in sync with debian/changelog and build/build.common.proj
-BUILD_NUMBER="2.1.0"
+BUILD_NUMBER="2.1.7"
 MINOR="1"
+# Work around proxy bug in older mono to allow dependency downloads
+no_proxy := $(no_proxy),*.local
 
 all: release
 
@@ -27,6 +29,10 @@ install: release
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)/usr/bin
+	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
+	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin
+	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge

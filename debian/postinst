@@ -20,7 +20,13 @@ set -e
 
 case "$1" in
 	configure)
-		/usr/lib/flexbridge/setup-user.sh
+		if [ -f /usr/lib/flexbridge/Chorus.exe -a ! -f /usr/lib/flexbridge/Mercurial/hg ]; then
+			cd /usr/lib/flexbridge
+			ARCH="$(/usr/bin/arch)"
+			unzip Mercurial-${ARCH}.zip
+			chmod +x Mercurial/hg
+			chmod +x Mercurial/hg.exe
+		fi
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)

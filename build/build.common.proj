@@ -1,5 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+	<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.0</BUILD_NUMBER>
+  </PropertyGroup>
+
   <Target Name="VersionNumbers">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
