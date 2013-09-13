@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -75,6 +75,14 @@
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<Commandlineparameters>-runStandAlone -u steve -p "/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdata" -v view_notes -projDir /home/steve/fwrepo/fw/DistFiles/Projects -fwAppsDir /home/steve/fwrepo/fw/Output_x86_64/Debug -fwmodel 7000068 -liftmodel 0.13 -locale en -pipeID "SendReceive/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdataview_notes"</Commandlineparameters>
+	<EnvironmentVariables>
+	  <EnvironmentVariables>
+		<Variable name="DISPLAY" value=":2" />
+		<Variable name="FIELDWORKS_ENVIRON" value="/home/steve/fwrepo/fw/environ" />
+		<Variable name="MONO_GAC_PREFIX" value="" />
+	  </EnvironmentVariables>
+	</EnvironmentVariables>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus">
@@ -96,6 +104,18 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
+	<Reference Include="geckofx-core-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
