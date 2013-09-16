@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
-//using Chorus;
+using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using L10NSharp;
@@ -107,9 +107,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static Chorus.ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
 		{
-			var system = new Chorus.ChorusSystem(directoryName);
+			var system = new ChorusSystem(directoryName);
 			system.Init(user);
 			if (configure != null)
 				configure(system.ProjectFolderConfiguration);
@@ -175,13 +175,15 @@ namespace TriboroughBridge_ChorusPlugin
 			return retval;
 		}
 
-		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> options)
+		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
 
-			var desiredUiLangId = options[CommandLineProcessor.locale];
-			var installedTmxBaseDirectory = Path.Combine(Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userTmxBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
+			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
+			var installedTmxBaseDirectory = Path.Combine(
+				Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+			var userTmxBaseDirectory = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", FlexBridge, localizations);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
@@ -194,10 +196,17 @@ namespace TriboroughBridge_ChorusPlugin
 															  installedTmxBaseDirectory,
 															  userTmxBaseDirectory,
 															  CommonResources.chorus,
-															  FlexBridgeEmailAddress, new[] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
+															  FlexBridgeEmailAddress, new[]
+																  {
+																	  FlexBridge, "TriboroughBridge_ChorusPlugin",
+																	  "FLEx_ChorusPlugin", "SIL.LiftBridge"
+																  });
 			results.Add("FlexBridge", flexBridgeLocMan);
 
-			versionObj = Assembly.GetAssembly(typeof(Chorus.ChorusSystem)).GetName().Version;
+			// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
+			desiredUiLangId = LocalizationManager.UILanguageId;
+
+			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
 														  version,

@@ -59,7 +59,7 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -69,16 +69,24 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<Commandlineparameters>-runStandAlone -u steve -p "/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdata" -v view_notes -projDir /home/steve/fwrepo/fw/DistFiles/Projects -fwAppsDir /home/steve/fwrepo/fw/Output_x86_64/Debug -fwmodel 7000068 -liftmodel 0.13 -locale en -pipeID "SendReceive/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdataview_notes"</Commandlineparameters>
+	<EnvironmentVariables>
+	  <EnvironmentVariables>
+		<Variable name="DISPLAY" value=":2" />
+		<Variable name="FIELDWORKS_ENVIRON" value="/home/steve/fwrepo/fw/environ" />
+		<Variable name="MONO_GAC_PREFIX" value="" />
+	  </EnvironmentVariables>
+	</EnvironmentVariables>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
+	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="L10NSharp">
 	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
@@ -96,10 +104,21 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
+	<Reference Include="geckofx-core-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
-	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>

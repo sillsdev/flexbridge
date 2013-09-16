@@ -20,17 +20,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+		private bool _gotClone;
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
 		private const string Default = "default";
 
-		private static void UpdateToTheCorrectBranchHeadIfPossible(Dictionary<string, string> options,
+		private static void UpdateToTheCorrectBranchHeadIfPossible(Dictionary<string, string> commandLineArgs,
 				ActualCloneResult cloneResult,
 				string cloneLocation)
 		{
 			var repo = new HgRepository(cloneLocation, new NullProgress());
 			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
-			var desiredBranchName = options["-fwmodel"];
+			var desiredBranchName = commandLineArgs["-fwmodel"];
 			var desiredModelVersion = uint.Parse(desiredBranchName);
 			Revision desiredRevision;
 			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
@@ -125,7 +126,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.CustomPropertiesFilename));
 		}
 
-		public void FinishCloning(Dictionary<string, string> options, string cloneLocation, string expectedPathToClonedRepository)
+		public void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var actualCloneResult = new ActualCloneResult
 				{
@@ -138,10 +139,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			_newProjectFilename = Path.GetFileName(cloneLocation) + Utilities.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
 
-			// Check the actual FW model number in the '-fwmodel' of 'options' parm.
+			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' parm.
 			// Update to the head of the desired branch, if possible.
-			UpdateToTheCorrectBranchHeadIfPossible(options, actualCloneResult, cloneLocation);
+			UpdateToTheCorrectBranchHeadIfPossible(commandLineArgs, actualCloneResult, cloneLocation);
 
+			_gotClone = false;
 			switch (actualCloneResult.FinalCloneResult)
 			{
 				case FinalCloneResult.ExistingCloneTargetFolder:
@@ -155,6 +157,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					_newFwProjectPathname = null;
 					return;
 				case FinalCloneResult.Cloned:
+					_gotClone = true;
 					break;
 			}
 
@@ -163,8 +166,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public void TellFlexAboutIt()
 		{
-			_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname); // May be null.
-			//Caller does it._connectionHelper.SignalBridgeWorkComplete(false);
+			if (_gotClone)
+			{
+				_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
+			}
+			else
+			{
+				_connectionHelper.TellFlexNoNewProjectObtained();
+			}
 		}
 
 		public ActionType SupportedActionType

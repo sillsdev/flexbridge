@@ -66,15 +66,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
-			_fwProjectFolder = Path.GetDirectoryName(options["-p"]);
+			_fwProjectFolder = Path.GetDirectoryName(commandLineArgs["-p"]);
 
 			MainForm = new MainBridgeForm
 				{
 					ClientSize = new Size(904, 510)
 				};
-			_chorusUser = new ChorusUser(options["-u"]);
+			_chorusUser = new ChorusUser(commandLineArgs["-u"]);
 			_chorusSystem = Utilities.InitializeChorusSystem(Utilities.LiftOffset(_fwProjectFolder), _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
 

@@ -23,16 +23,17 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public void StartWorking(Dictionary<string, string> options)
+		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
 
-			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
+			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, commandLineArgs["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
+				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
 				{
 					// First do a commit, since the repo is brand new.
@@ -41,6 +42,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					projectConfig.IncludePatterns.Add("**.ChorusRescuedFile");
 
 					chorusSystem.Repository.AddAndCheckinFiles(projectConfig.IncludePatterns, projectConfig.ExcludePatterns, "Initial commit");
+					newlyCreated = true;
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
@@ -61,11 +63,32 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					syncDlg.Text = Resources.SendReceiveView_DialogTitleLift;
 					syncDlg.StartPosition = FormStartPosition.CenterScreen;
 					syncDlg.BringToFront();
-					syncDlg.ShowDialog();
+					var dlgResult = syncDlg.ShowDialog();
 
-					if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+					if (dlgResult == DialogResult.OK)
 					{
-						_gotChanges = true;
+						if (newlyCreated && (!syncDlg.SyncResult.Succeeded || syncDlg.SyncResult.ErrorEncountered != null))
+						{
+							_gotChanges = false;
+							// Wipe out new repo, since something bad happened in S/R,
+							// and we don't want to leave the user in a sad state (cf. LT-14751).
+							Directory.Delete(pathToLiftProject, true);
+						}
+						else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+						{
+							_gotChanges = true;
+						}
+					}
+					else
+					{
+						// User probably bailed out of S/R using the "X" to close the dlg.
+						if (newlyCreated)
+						{
+							_gotChanges = false;
+							// Wipe out new repo, since the user cancelled without even trying the S/R,
+							// and we don't want to leave the user in a sad state (cf. LT-14751).
+							Directory.Delete(pathToLiftProject, true);
+						}
 					}
 				}
 			}

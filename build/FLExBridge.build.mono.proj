@@ -21,12 +21,9 @@
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
 
-  <Target Name="Build" DependsOnTargets="DownloadFiles">
-	<CallTarget Targets="Clean"/>
-	<CallTarget Targets="CreateDirectories"/>
-	<CallTarget Targets="SetAssemblyVersion"/>
-	<CallTarget Targets="UnzipMercurial"/>
-	<CallTarget Targets="Compile"/>
+  <Target Name="Build" DependsOnTargets="DownloadFiles;Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile">
+	<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
+		 but it remembers not to call targets a second time via dependencies. -->
 	<Message Text="Build Complete"/>
   </Target>
 
@@ -45,6 +42,7 @@
   <Target Name="CreateDirectories">
 	<MakeDir Directories="$(RootDir)/output/"/>
 	<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
+	<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
   </Target>
 
   <ItemGroup>
@@ -71,7 +69,17 @@
 	<Exec Command="/bin/chmod +x $(RootDir)/Mercurial/hg*" ContinueOnError="true"/>
   </Target>
 
-  <Target Name="Compile">
+  <ItemGroup>
+	<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
+	<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
+  </ItemGroup>
+
+  <Target Name="CopyExtraFilesToOutput">
+	<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
+  </Target>
+
+  <Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 
@@ -82,6 +90,20 @@
 	  <Output ItemName="TestAssemblies" TaskParameter="Include"/>
 	</CreateItem>
 	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity;UnknownMonoIssue" NUnitVersion="NUnit-2.5.5"/>
+  </Target>
+
+  <Target Name="Prepackaging" DependsOnTargets="CreateDirectories;VersionNumbers">
+	<Message Text="Prepackaging fix version numbers: Version=$(Version)"/>
+	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm"
+		  DestinationFolder="$(RootDir)\output\$(Configuration)"/>
+	<FileUpdate File="$(RootDir)\output\$(Configuration)\about.htm"
+				DatePlaceholder="DEV_RELEASE_DATE"
+				Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+	<Copy SourceFiles="$(RootDir)\src\Installer\ReleaseNotes.md"
+		  DestinationFolder="$(RootDir)\output\$(Configuration)"/>
+	<FileUpdate File="$(RootDir)\output\$(Configuration)\ReleaseNotes.md"
+				DatePlaceholder="DEV_RELEASE_DATE"
+				Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
   </Target>
 
 </Project>
