@@ -1,8 +1,10 @@
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using Chorus.merge.xml.generic;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
@@ -12,7 +14,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	/// Also responsible for generating (and including as a label in the descriptor) a human-readable description of the context element,
 	/// and (through the HtmlDetails method) an HTML representation of a conflicting node that can be diff'd to show the differences.
 	///
-	/// Subclasses should be created (and registered in the appropriate strategies, in FieldWorksMergeStrategyServices.BootstrapSystem)
+	/// Subclasses should be created (and registered in the appropriate strategies, in FieldWorksMergeServices.BootstrapSystem)
 	/// for elements which have non-standard behavior.
 	/// </summary>
 	internal class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
@@ -44,12 +46,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				//    guid = element.Attributes[SharedConstants.GuidStr].Value;
 				//    break;
 				default:
-					guid = FieldWorksMergeStrategyServices.GetGuid(element);
+					guid = FieldWorksMergeServices.GetGuid(element);
 					label = GetLabel(element);
 					break;
 			}
 
-			return FieldWorksMergeStrategyServices.GenerateContextDescriptor(filePath, guid, label);
+			return FieldWorksMergeServices.GenerateContextDescriptor(filePath, guid, label);
 		}
 
 		protected virtual string GetLabel(XmlNode start)
@@ -72,6 +74,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 						var result = ((FieldWorkObjectContextGenerator) strategy.ContextDescriptorGenerator).GetLabel(current);
 						return result + GetPathAppend(current, target);
 					}
+				}
+				if (current.ParentNode == null || current.ParentNode == current.OwnerDocument)
+				{
+					// some top-level node we don't have a specialized strategy for. This is better than nothing.
+					return current.Name + GetPathAppend(current, target);
 				}
 				current = current.ParentNode;
 			}
@@ -99,7 +106,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// </summary>
 		private static XmlNode GetTargetNode(XmlNode start)
 		{
-			if (IsMultiStringChild(start) || IsMultiRunStringChild(start))
+			if (IsMultiStringChild(start) || IsMultiRunStringChild(start) || IsUnicodeStringChild(start))
 				return start.ParentNode;
 			return start; // Enhance JohnT: may eventually be other exceptions.
 		}
@@ -107,6 +114,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		private static bool IsMultiRunStringChild(XmlNode start)
 		{
 			return start.Name.ToLowerInvariant() == "str";
+		}
+
+		private static bool IsUnicodeStringChild(XmlNode start)
+		{
+			return start.Name.ToLowerInvariant() == SharedConstants.Uni.ToLowerInvariant();
 		}
 
 		// If the start node is a child of current, generate a path from current to start, with a leading space.
@@ -225,11 +237,49 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return HtmlForMultiString(mergeElement);
 			if (IsMultiStringChild(mergeElement))
 				return HtmlForMultiString(mergeElement.ParentNode);
+			if (IsUnicodeStringChild(mergeElement))
+				return HtmlContextForUnicodeString(mergeElement);
+			if (IsUnicodeStringParent(mergeElement))
+				return HtmlContextForUnicodeString(mergeElement.SelectSingleNode(SharedConstants.Uni));
 			// last resort
 			return new FwGenericHtmlGenerator().MakeHtml(mergeElement);
 		}
 
+		private static string HtmlContextForUnicodeString(XmlNode mergeElement)
+		{
+			var result = mergeElement.InnerText; // default
+			if (mergeElement.ParentNode == null)
+				return result; // paranoia
+			// If it is one of the special strings that contain lists of writing systems, mark them
+			// so the user-friendly names can be substituted.
+			switch (mergeElement.ParentNode.Name)
+			{
+				case @"AnalysisWss":
+				case @"CurAnalysisWss":
+				case @"CurPronunWss":
+				case @"CurVernWss":
+				case @"VernWss":
+					var sb = new StringBuilder();
+					foreach (var ws in result.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries))
+					{
+						if (sb.Length > 0)
+							sb.Append("; "); // Makes it a little more readable than just putting the space back in
+						sb.Append("<span class=\"ws\">");
+						sb.Append(ws);
+						sb.Append("</span>");
+					}
+					return sb.ToString();
+				default:
+					return result;
+			}
+		}
+
 		public string HtmlContextStyles(XmlNode mergeElement)
+		{
+			return DefaultHtmlContextStyles(mergeElement);
+		}
+
+		public static string DefaultHtmlContextStyles(XmlNode mergeElement)
 		{
 			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
 		}
@@ -272,8 +322,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				var ws = XmlUtilities.GetOptionalAttributeString(elt, "ws");
 				if (multiple)
 					sb.Append("<div>");
+				sb.Append("<span class=\"ws\">");
 				sb.Append(ws);
-				sb.Append(": ");
+				sb.Append("</span>: ");
 				sb.Append(elt.InnerText); // enhance JohnT: possibly indicate WS and style if AStr and relevant?
 				if (multiple)
 					sb.Append("</div>");
@@ -297,6 +348,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			return "***ownseq messup***"; // not worth crashing?, but this is totally bizarre
 		}
 
+		private static bool IsUnicodeStringParent(XmlNode mergeElement)
+		{
+			return mergeElement.SelectSingleNode(SharedConstants.Uni) != null;
+		}
+
 		private static bool IsMultiString(XmlNode mergeElement)
 		{
 			if (mergeElement.SelectSingleNode(SharedConstants.AUni) != null)
@@ -305,6 +361,5 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				return true;
 			return false;
 		}
-
 	}
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -13,7 +14,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 		internal static void NestContext(XElement langProj,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (!Directory.Exists(scriptureBaseDir))
@@ -27,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var checkListGuid = checkListObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[checkListGuid];
-				var checkList = XElement.Parse(classData[className][checkListGuid]);
+				var checkList = Utilities.CreateFromBytes(classData[className][checkListGuid]);
 
 				CmObjectNestingService.NestObject(false, checkList,
 					classData,
@@ -47,7 +48,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(scriptureBaseDir))
 				return; // Nothing to do.
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 			var sortedLists = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			foreach (var listPathname in Directory.GetFiles(scriptureBaseDir, "*.list", SearchOption.TopDirectoryOnly))
@@ -57,13 +58,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element(SharedConstants.CmPossibilityList);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					listPathname,
 					sortedData,
 					listElement,
-					langProjGuid); // Restore 'ownerguid' to list.
-				var listGuid = listElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedLists.Add(listGuid, BaseDomainServices.CreateObjSurElement(listGuid));
+					langProjGuid, sortedLists); // Restore 'ownerguid' to list.
 			}
 
 			if (sortedLists.Count == 0)

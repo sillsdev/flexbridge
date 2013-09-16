@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
@@ -20,8 +18,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 	internal sealed class FilterFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
-
-		private const string CmFilter = "CmFilter";
 
 		public bool CanValidateFile(string pathToFile)
 		{
@@ -37,12 +33,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 				var root = doc.Root;
 				if (root.Name.LocalName != SharedConstants.Filters
 					|| root.Element(SharedConstants.Header) != null
-					|| !root.Elements(CmFilter).Any())
+					|| !root.Elements(SharedConstants.CmFilter).Any())
 				{
 					return "Not a valid filter file.";
 				}
 
-				return root.Elements(CmFilter)
+				return root.Elements(SharedConstants.CmFilter)
 					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
@@ -60,18 +56,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				CmFilter, SharedConstants.GuidStr);
+				SharedConstants.CmFilter, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
-
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
-				true,
-				null,
-				CmFilter, SharedConstants.GuidStr);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
 		public string Extension

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Chorus.FileTypeHanders;
+using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
@@ -7,6 +8,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 	public abstract class BaseFieldWorksTypeHandlerTests
 	{
 		protected IChorusFileTypeHandler FileHandler;
+		internal MetadataCache Mdc;
 
 		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
@@ -20,6 +22,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 		public virtual void FixtureTearDown()
 		{
 			FileHandler = null;
+		}
+
+		[SetUp]
+		public virtual void TestSetup()
+		{
+			Mdc = MetadataCache.TestOnlyNewCache;
+		}
+
+		[TearDown]
+		public virtual void TestTearDown()
+		{
+			Mdc = null;
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {
@@ -15,15 +15,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.AnalyzingAgentsFilename, out _ourFile,
 														  out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -107,7 +109,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		{
 			const string data =
 @"<AnalyzingAgents>
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' />
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+</CmAgent>
 </AnalyzingAgents>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
@@ -118,8 +121,10 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.MorphologyA
 		{
 			const string data =
 @"<AnalyzingAgents>
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' />
-<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a8' />
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a7' >
+</CmAgent>
+<CmAgent guid='fff03918-9674-4401-8bb1-efe6502985a8' >
+</CmAgent>
 </AnalyzingAgents>";
 
 			File.WriteAllText(_ourFile.Path, data);

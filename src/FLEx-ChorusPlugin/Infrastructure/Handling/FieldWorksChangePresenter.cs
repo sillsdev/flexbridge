@@ -59,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				case SharedConstants.RtTag:
 					label = firstNode.Attributes[SharedConstants.Class].Value;
 					break;
-				case "CustomField":
+				case SharedConstants.CustomField:
 					label = "Custom property";
 					break;
 				default:

@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kLabel" xml:space="preserve">
+	<value>LIFT Collaboration</value>
+  </data>
+  <data name="kLiftBridgeProcessing" xml:space="preserve">
+	<value>LiftBridge Processing</value>
+  </data>
+  <data name="kRedoDescription" xml:space="preserve">
+	<value>This operation cannot be undone.</value>
+  </data>
+  <data name="ksExportingEntries" xml:space="preserve">
+	<value>Exporting {0} entries from the lexicon</value>
+  </data>
+  <data name="kWhatDescription" xml:space="preserve">
+	<value>This utility allows for: 1) exporting FLEx lexical data in the LIFT format, 2) sending it to other LIFT users, and 3) receiving entries from them.</value>
+  </data>
+  <data name="kWhenDescription" xml:space="preserve">
+	<value>When you want to share lexical entries with another application that uses LIFT data.</value>
+  </data>
+  <data name="kSendReceive" xml:space="preserve">
+	<value>Chorus Send/Receive</value>
+  </data>
+  <data name="kLiftVersionMigration" xml:space="preserve">
+	<value>Migrating from LIFT version {0} to version {1}</value>
+  </data>
+  <data name="kLoadingListInfo" xml:space="preserve">
+	<value>Loading various lists for lookup during import</value>
+  </data>
+  <data name="kProblemMerging" xml:space="preserve">
+	<value>Problem Merging</value>
+  </data>
+  <data name="kFixingRelationLinks" xml:space="preserve">
+	<value>Fixing relation links between imported entries</value>
+  </data>
+  <data name="kProblem" xml:space="preserve">
+	<value>Something went wrong while FLEx was attempting to import {0}.</value>
+  </data>
+  <data name="kProblemImportWhileMerging" xml:space="preserve">
+	<value>Something went wrong trying to import {0} while merging..</value>
+  </data>
+  <data name="kExportLiftLexicon" xml:space="preserve">
+	<value>Export LIFT Lexicon</value>
+  </data>
+  <data name="kImportLiftlexicon" xml:space="preserve">
+	<value>Import LIFT Lexicon</value>
+  </data>
+  <data name="kLocateLiftFile" xml:space="preserve">
+	<value>Locate Lift File</value>
+  </data>
+  <data name="kLiftFileFilter" xml:space="preserve">
+	<value>LIFT Lexicon File (*.lift)|*.lift</value>
+  </data>
+  <data name="kCloneTrouble" xml:space="preserve">
+	<value>Cannot clone onto an existing directory ({0})</value>
+  </data>
+  <data name="kDidNotCloneSystem" xml:space="preserve">
+	<value>Did not get an existing Lift system.</value>
+  </data>
+  <data name="kLiftSetUp" xml:space="preserve">
+	<value>Lift Setup</value>
+  </data>
+  <data name="kTitle" xml:space="preserve">
+	<value>LIFT Bridge: {0}</value>
+  </data>
+  <data name="kLoneLiftFileWarning" xml:space="preserve">
+	<value>The selected LIFT file appears to have been simply exported, and cannot be used for sharing. Please try another LIFT file.</value>
+  </data>
+  <data name="kUnsupportedLiftFile" xml:space="preserve">
+	<value>Unsupported LIFT file</value>
+  </data>
+  <data name="lFolderAlreadyExists" xml:space="preserve">
+	<value>Folder Already Exists</value>
+  </data>
+  <data name="kFlexStandardImportFailureMessage" xml:space="preserve">
+	<value>FLEx reported it was not able to import the changes received. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive.</value>
+  </data>
+  <data name="kFlexImportFailureTitle" xml:space="preserve">
+	<value>FLEx Import failure</value>
+  </data>
+  <data name="kStandardFailureFileContents" xml:space="preserve">
+	<value>standard</value>
+  </data>
+  <data name="kBasicImportFailureMessage" xml:space="preserve">
+	<value>FLEx reported it was not able to do the initial import. Lift Bridge will protect its shared data from loss by requiring FLEx to retry the initial import, until it is successful. Retry attempts will start with the next Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using Send/Receive.</value>
+  </data>
+  <data name="kBasicFailureFileContents" xml:space="preserve">
+	<value>basic</value>
+  </data>
+  <data name="kRepoIdNotNull" xml:space="preserve">
+	<value>Value for RepositoryIdentifier may not be null or an empty string.</value>
+  </data>
+  <data name="kFlexExportProblemMessage" xml:space="preserve">
+	<value>FLEx reported that it was not able to export its lexicon, so the Send / Receive cannot continue.</value>
+  </data>
+  <data name="kFlexExportProblemTitle" xml:space="preserve">
+	<value>FLEx export problem</value>
+  </data>
+  <data name="kCancelGetMeOutOfHere" xml:space="preserve">
+	<value>'Cancel' means: 'Get me out of here. I'd rather not do Send/Receive now.'</value>
+  </data>
+  <data name="kExtantSharedSystem" xml:space="preserve">
+	<value>There seems to be an existing shared system that could be used. Do you want to use it?</value>
+  </data>
+  <data name="kExtantNonEmptyFolder" xml:space="preserve">
+	<value>There seems to be an existing folder that could be used, but it is not empty. Do you want to use it?</value>
+  </data>
+  <data name="kExistingSharedStstemTitle" xml:space="preserve">
+	<value>Existing Shared System Found</value>
+  </data>
+  <data name="kNonEmptyFolderTitle" xml:space="preserve">
+	<value>Existing Non-empty Folder Found</value>
+  </data>
+  <data name="kUseExtantRepo" xml:space="preserve">
+	<value> 'Yes' means: 'I feel lucky. Use it.'</value>
+  </data>
+  <data name="kUseExtantNonEmptyFolder" xml:space="preserve">
+	<value> 'Ok' means 'I feel lucky. Delete everything in it and re-use it.'</value>
+  </data>
+  <data name="kWIpeOutExtantRepoAndReuseFolder" xml:space="preserve">
+	<value> 'No' means: 'Wipe it out and start fresh.'</value>
+  </data>
+  <data name="KLocateNetworkedComputer" xml:space="preserve">
+	<value>Locate a networked *computer* that is to contain the shared LIFT data.</value>
+  </data>
+  <data name="kSelectionIsNotANetworkedComputer" xml:space="preserve">
+	<value>The selection does not appear to be a networked computer.</value>
+  </data>
+  <data name="kNotNetworkedComputer" xml:space="preserve">
+	<value>Not a networked computer</value>
+  </data>
+  <data name="kError" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="errorSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\error.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="finishedSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\finished.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="kEmptyLiftFileXml" xml:space="preserve">
+	<value>&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;lift version='0.13'&gt;
+&lt;/lift&gt;</value>
+  </data>
+  <data name="kUserCancelledCloneOperation" xml:space="preserve">
+	<value>The user seems to have cancelled the sharing attempt.</value>
+  </data>
+  <data name="kSharingAttempCancelled" xml:space="preserve">
+	<value>Sharing Attempt Cancelled</value>
+  </data>
+  <data name="kInvalidCommandLine" xml:space="preserve">
+	<value>Invalid command line options. Please launch from FLEx.</value>
+  </data>
+  <data name="kFlexNotListening" xml:space="preserve">
+	<value>FLEx isn't listening.</value>
+  </data>
+  <data name="kAlreadyRunning" xml:space="preserve">
+	<value>There is already a copy of FLExBridge running.
+You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
+-- Send/Receive Project
+-- Receive Project from a colleague
+-- View Conflict Report (can't have two open)</value>
+  </data>
+  <data name="kLiftBridge" xml:space="preserve">
+	<value>Lift Bridge</value>
+  </data>
+  <data name="chorus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\chorus.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ObtainProjectView_DialogTitle" xml:space="preserve">
+	<value>Receive project</value>
+  </data>
+  <data name="SendReceiveView_DialogTitle" xml:space="preserve">
+	<value>Send/Receive Project</value>
+  </data>
+  <data name="kEmptyLiftRangesFileXml" xml:space="preserve">
+	<value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;lift-ranges&gt;
+&lt;/lift-ranges&gt;</value>
+  </data>
+  <data name="SendReceiveView_DialogTitleLift" xml:space="preserve">
+	<value>Send/Receive Lexicon (LIFT)</value>
+  </data>
+	<data name="kUnsupportedControllerActionForLiftObtain" xml:space="preserve">
+	<value>The Lift obtain strategy does not support the giving controller action.</value>
+  </data>
+</root>

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.IO;
 
@@ -15,7 +14,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 	{
 		#region Implementation of IFieldWorksFileHandler
 
-		private const string CustomField = "CustomField";
 		private const string Key = "key";
 
 		public bool CanValidateFile(string pathToFile)
@@ -50,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 											"listRoot",
 											"label"
 										};
-				foreach (var customFieldElement in root.Elements(CustomField))
+				foreach (var customFieldElement in root.Elements(SharedConstants.CustomField))
 				{
 					if (requiredAttrs
 						.Any(requiredAttr => customFieldElement.Attribute(requiredAttr) == null))
@@ -71,7 +69,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 						return "Contains illegal child element";
 				}
 
-				MetadataCache.MdCache.AddCustomPropInfo(pathToFile);
+				MetadataCache.MdCache.AddCustomPropInfo(new MergeOrder(
+					pathToFile, pathToFile, pathToFile,
+					new MergeSituation(pathToFile, "", "", "", "", MergeOrder.ConflictHandlingModeChoices.WeWin)));
 
 				return null;
 			}
@@ -90,17 +90,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				CustomField, Key);
+				SharedConstants.CustomField, Key);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			// NB: Doesn't need the mdc updated with custom props.
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCustomPropertyMergingStrategy(mergeOrder.MergeSituation),
-				true,
-				null,
-				CustomField, Key);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc,
+				false); // We don't want (or even need) the custom properties to be added to the MDC, while merging the custom props file itself.
+						// We won't even know what they are until after the merge is done.
 		}
 
 		public string Extension

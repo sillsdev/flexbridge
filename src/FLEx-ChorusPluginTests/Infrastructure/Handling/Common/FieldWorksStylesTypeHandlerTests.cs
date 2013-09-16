@@ -8,7 +8,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 {
@@ -20,14 +20,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.Style, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -172,7 +174,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Common
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlTextChangedReport) });
 			Assert.IsTrue(results.Contains("Line4"));
 		}
 

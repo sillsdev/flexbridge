@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -8,6 +9,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
 		internal const string dupid = "dupid";
+		public const string FwLockExtension = ".lock";
+		public const string FwXmlLockExtension = Utilities.FwXmlExtension + FwLockExtension;
 
 		// General
 		internal const string Str = "Str";
@@ -26,13 +29,14 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string GuidStr = "guid";
 		internal const string Header = "header";
 		internal const string OwnerGuid = "ownerguid";
-		internal const string TempOwnerGuid = "tempownerguid";
 		internal const string Class = "class";
 		internal const string Name = "name";
+		internal const string InitialCapitalName = "Name";
 		internal const string Ownseq = "ownseq";
 		internal const string Refseq = "refseq";
 		internal const string Refcol = "refcol";
 		internal const string Custom = "Custom";
+		internal const string CustomField = "CustomField";
 		internal const string General = "General";
 		internal const string CmPossibilityList = "CmPossibilityList";
 		internal const string AnnotationDefs = "AnnotationDefs";
@@ -47,10 +51,18 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string langproj = "langproj";
 		internal const string LanguageProject = "LanguageProject";
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
-		internal const string lint = "lint";
-		internal const string LintFilename = "FLExProject." + lint;
 		internal const string LangProject = "LangProject";
-		internal const string curiosity = "curiosity";
+		internal const string Label = "label";
+		internal const string Title = "Title";
+		internal const string NamedStyle = "namedStyle";
+		internal const string Pictures = "Pictures";
+		internal const string CmPicture = "CmPicture";
+		internal const string pictures = "pictures";
+		internal const string FLExUnownedPicturesFilename = "UnownedPictures." + pictures;
+		internal const string orderings = "orderings";
+		internal const string VirtualOrderings = "VirtualOrderings";
+		internal const string VirtualOrdering = "VirtualOrdering";
+		internal const string FLExVirtualOrderingFilename = "VirtualOrdering." + orderings;
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";
@@ -72,17 +84,26 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Styles = "Styles";
 		internal const string Style = "style";
 		internal const string StStyle = "StStyle";
+		internal const string CmFilter = "CmFilter";
+		// The style applied to spans of added text by diff tool
+		internal const string ConflictInsertStyle = "background: Yellow";
+		internal const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
 
 		// Linguistics
 		internal const string Linguistics = "Linguistics";
+		internal const string ReversalIndexEntry = "ReversalIndexEntry";
 		internal const string Reversal = "reversal";
 		internal const string Lexicon = "Lexicon";
 		internal const string Lexdb = "lexdb";
+		internal const string LexDb = "LexDb";
 		internal const string LexEntry = "LexEntry";
+		internal const string LexemeForm = "LexemeForm";
+		internal const string Form = "Form";
 		internal const string TextInCorpus = "textincorpus";
 		internal const string TextCorpus = "TextCorpus";
 		internal const string GenreList = "GenreList";
 		internal const string GenreListFilename = GenreList + "." + List;
+		internal const string Text = "Text";
 		internal const string TextMarkupTags = "TextMarkupTags";
 		internal const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
 		internal const string TranslationTags = "TranslationTags";
@@ -136,6 +157,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string Ntbk = "ntbk";
 		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
 		internal const string Anthropology = "Anthropology";
+		internal const string RnGenericRec = "RnGenericRec";
 
 		// Scripture
 		internal const string TranslatedScripture = "TranslatedScripture";
@@ -147,6 +169,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
 		internal const string ImportSettings = "ImportSettings";
 		internal const string ImportSetting = "ImportSetting";
+		internal const string ScrImportSet = "ScrImportSet";
 		internal const string Trans = "trans";
 		internal const string Scripture = "Scripture";
 		internal const string Other = "Other";
@@ -164,6 +187,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string ScrBookAnnotations = "ScrBookAnnotations";
 		internal const string BookAnnotations = "BookAnnotations";
 		internal const string ScriptureBooks = "ScriptureBooks";
+		internal const string ScrRefSystem = "ScrRefSystem";
 
 		/***** Relocate ones that get added below here. *****/
 	}

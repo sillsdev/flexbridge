@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Web;
+using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {
@@ -128,7 +129,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		/// ------------------------------------------------------------------------------------
 		public Guid TargetGuid
 		{
-			get { return _guid == null ? Guid.Empty : new Guid(_guid); }
+			get
+			{
+				if (_guid == null)
+					return Guid.Empty;
+				Guid guid;
+				if (Guid.TryParse(_guid, out guid))
+					return guid;
+				return Guid.NewGuid(); // For tests that don't use a real guid.
+			}
 			protected set { _guid = value.ToString().ToLowerInvariant(); }
 		}
 
@@ -288,7 +297,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
-			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
+			uriBuilder.Query = HttpUtilityFromMono.UrlEncode(query.ToString());
 
 			return uriBuilder.Uri.AbsoluteUri;
 		}
@@ -338,7 +347,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 				value = value.Substring(5);
 				return bool.Parse(value);
 			}
-			return HttpUtility.UrlDecode(value);
+			return HttpUtilityFromMono.UrlDecode(value);
 		}
 		#endregion
 	}
@@ -347,8 +356,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	#region FwAppArgs class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Class representing the arguments necessary for starting up a FieldWorks application
-	/// (from the command line or from a URI).
+	/// Class representing the arguments necessary for starting up a FieldWorks application (from a URI).
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
@@ -356,34 +364,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 	public class FwAppArgs : FwLinkArgs
 	{
 		#region Command-line switch constants
-		/// <summary>Command-line argument: Command-line usage help</summary>
-		public const string kHelp = "help";
-		/// <summary>Command-line argument: Culture abbreviation</summary>
-		public const string kLocale = "locale";
 		/// <summary>Command-line argument: The application to start (te or flex)</summary>
-		public const string kApp = "app";
+		private const string kApp = "app";
 		/// <summary>Command-line argument: The project name (or file)</summary>
-		public const string kProject = "db";
+		private const string kProject = "db";
 		/// <summary>URI argument: The project name (or file)</summary>
-		public const string kProjectUri = "database";
+		private const string kProjectUri = "database";
 		/// <summary>Command-line argument: The server name</summary>
-		public const string kServer = "s";
+		private const string kServer = "s";
 		/// <summary>URI argument: The server name</summary>
-		public const string kServerUri = "server";
-		/// <summary>Command-line argument: The database type</summary>
-		public const string kDbType = "type";
-		/// <summary>Command-line argument: </summary>
-		public const string kFlexConfigFile = "x";
-		/// <summary>Command-line argument: The fwbackup file</summary>
-		public const string kRestoreFile = "restore";
-		/// <summary>Command-line argument: String indicating optional files to restore</summary>
-		public const string kRestoreOptions = "include";
-		/// <summary>Command-line argument: flag that keeps FW from showing UI.</summary>
-		public const string kNoUserInterface = "noui";
-		/// <summary>Command-line argument: flag that causes FW to come up in a server mode for other applications.</summary>
-		public const string kAppServerMode = "appServerMode";
-		/// <summary>Command-line argument: flag that tells FW to bring up a dialog to set an associated project.</summary>
-		public const string kChooseProject = "chooseProject";
+		private const string kServerUri = "server";
 		#endregion
 
 		#region Member variables
@@ -638,179 +628,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		}
 		#endregion
 
-		#region Command-line Handling Methods
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Parse the command line, and return the results in a hashtable. The hash key is the
-		/// option tag. The hashtable value holds the parameter value.
-		/// The value may be null for cases where the option tag is all there is (e.g.,
-		/// -help). If an argument is supplied on the command line that does not match any
-		/// switch, it is assumed to be the project name.
-		///
-		/// Current set of options:
-		/// -app Application name (TE or FLEx)
-		/// -db Database (BEP) Type (xml)
-		/// -proj Project Name (usually a file name)
-		/// -help (also -? and -h Command line usage help
-		/// -link URL (as composed at some point by FwLink)
-		/// -locale CultureAbbr
-		/// </summary>
-		/// <param name="rgArgs">Array of strings containing the command-line arguments. In
-		/// general, the command-line will be parsed into whitespace-separated tokens, but
-		/// double-quotes (") can be used to create a multiple-word token that will appear in
-		/// the array as a single argument. One argument in this array can represent either a
-		/// key, a value, or both (since whitespace is not required between keys and values.
-		/// </param>
-		/// <exception>Incorrectly formed command line. Caller should
-		/// alert user to correct command-line structure.
-		///   <cref>T:ArgumentException</cref>
-		/// </exception>
-		///	-----------------------------------------------------------------------------------
-		private static Dictionary<string, string> ParseCommandLine(string[] rgArgs)
-		{
-			var dictArgs = new Dictionary<string, string>();
-			if (rgArgs == null || rgArgs.Length == 0)
-				return dictArgs;
-
-			var sKey = string.Empty;
-			var value = string.Empty;
-
-			foreach (var sArg in rgArgs)
-			{
-				if (string.IsNullOrEmpty(sArg))
-					continue;
-
-				int iCurrChar = 0;
-#if __MonoCS__
-				if (sArg[iCurrChar] == '-') // Start of option
-				// Linux absolute paths begin with a slash
-#else
-				if (sArg[iCurrChar] == '-' || sArg[iCurrChar] == '/') // Start of option
-#endif
-				{
-					// Start of a new argument key
-					if (!String.IsNullOrEmpty(value))
-					{
-						// Save the previous values to the previous key
-						if (dictArgs.ContainsKey(sKey))
-							throw new ArgumentException(sKey + " was passed in more then once");
-						dictArgs[sKey] = value;
-						value = string.Empty;
-					}
-					else if (sKey.Length > 0)
-					{
-						// Found a tag in the previous pass, but it has no argument, so save it in
-						// the map with a value of an empty vector, before processing current tag.
-						dictArgs.Add(sKey, string.Empty);
-					}
-					++iCurrChar; // Increment counter
-
-					// The user may have just put an argument right next to the marker,
-					// so we need to split the tag from the argument at this point.
-					sKey = CommandLineSwitch(sArg, ref iCurrChar);
-				}
-				if (iCurrChar < sArg.Length)
-				{
-					// Check for a second value for the current key
-					string newValue = sArg.Substring(iCurrChar);
-					if (!string.IsNullOrEmpty(value))
-						throw new ArgumentException(newValue + " added as second value for " + sKey);
-					value = newValue;
-					// There may not be a key, if this is the first argument, as when opening a file directly.
-					if (sKey.Length == 0)
-					{
-						sKey = kProject;
-					}
-				}
-			}
-
-			// Save final tag.
-			if (sKey.Length > 0)
-				dictArgs.Add(sKey, value);
-
-			return dictArgs;
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Checks given string argument, starting at position iCurrChar for one of the
-		/// standard approved multi-character command line switches. If not found, it assumes
-		/// this is a single-character switch.
-		/// </summary>
-		///
-		/// <param name='sArg'>Command-line argument being processed</param>
-		/// <param name='iCurrChar'>Zero-based index indicating first character in sArg to be
-		/// considered when looking for switch. Typically, the initial value will be 1, since
-		/// character 0 will usually be a - or /. This parameter is returned to the caller
-		/// incremented by the number of characters in the switch.</param>
-		/// -----------------------------------------------------------------------------------
-		private static string CommandLineSwitch(string sArg, ref int iCurrChar)
-		{
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kAppServerMode))
-				return kAppServerMode;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kApp))
-				return kApp;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kProject)) // (old) project name
-				return kProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, "proj")) // project name
-				return kProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kServer)) // server name
-				return kServer;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kDbType)) // database (BEP) type
-				return kDbType;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kHelp))
-				return kHelp;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kChooseProject))
-				return kChooseProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kLink))
-				return kLink;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kLocale))
-				return kLocale;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kRestoreFile))
-				return kRestoreFile;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kRestoreOptions))
-				return kRestoreOptions;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kNoUserInterface))
-				return kNoUserInterface;
-
-			if (sArg.Length > iCurrChar)
-			{
-				// It is a single character tag.
-				string sKey = sArg.Substring(iCurrChar, 1).ToLowerInvariant();
-				if (sKey == "?" || sKey == "h")	// Variants of help.
-				{
-					++iCurrChar;
-					return kHelp;
-				}
-				sKey = sArg.Substring(iCurrChar).ToLowerInvariant();
-				iCurrChar += sArg.Length - 1;
-				return sKey;
-			}
-			throw new ArgumentException();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the specified argument key in the specified argument string.
-		/// </summary>
-		/// <param name="sArg">The argument string</param>
-		/// <param name="iCurrChar">Index of the current character to start looking.</param>
-		/// <param name="key">The argument to look for</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool FindCommandLineArgument(string sArg, ref int iCurrChar, string key)
-		{
-			if (string.Compare(sArg, iCurrChar, key, 0, key.Length, true) == 0)
-			{
-				iCurrChar += key.Length;
-				return true;
-			}
-			return false;
-		}
-
-		#endregion
-
 		#region Public methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -829,37 +646,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Processes a URL or command-line argument represented by the given name and value pair.
+		/// Processes a URL argument represented by the given name and value pair.
 		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="value">The value.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ProcessArg(string name, string value)
 		{
-			Debug.Assert(value != null || name == kHelp);
 			switch (name)
 			{
-				case kProject:
-				case kProjectUri: _database = value; break;
-				case "c": // For historical purposes (even though it will probably never work)
-				case kServer:
-				case kServerUri: _server = value; break;
+				case kProject: _database = value; break;
+				case kServer: _server = value; break;
 				case kApp: SetAppNameAndAbbrev(value); break;
-				case kDbType: _dbType = value; break;
-				case kLocale: _locale = value; break;
-				case kHelp: ShowHelp = true; break;
-				case kChooseProject: _chooseProjectFile = value; break;
-				case kFlexConfigFile: _configFile = value; break;
-				case kRestoreFile: _backupFile = value; break;
-				case kRestoreOptions: _restoreOptions = value; break;
-				case kNoUserInterface: NoUserInterface = true; break;
-				case kAppServerMode: AppServerMode = true; break;
-				case kTag: _tag = value; break;
-				case kTool: _toolName = value; break;
-				case kGuid:
-					if (value != "null")
-						TargetGuid = new Guid(value);
-					break;
 			}
 		}
 

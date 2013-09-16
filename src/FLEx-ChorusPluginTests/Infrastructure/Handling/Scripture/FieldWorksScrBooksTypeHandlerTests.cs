@@ -3,7 +3,7 @@ using System.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 {
@@ -15,14 +15,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.book, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -84,7 +86,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Book>
-<ScrBook guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
+<ScrBook guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
+</ScrBook>
 </Book>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));

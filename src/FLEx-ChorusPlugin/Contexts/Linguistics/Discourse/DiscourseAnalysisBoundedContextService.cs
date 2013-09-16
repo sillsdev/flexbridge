@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 {
@@ -15,8 +16,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 	/// </summary>
 	internal static class DiscourseAnalysisBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, string>> classData,
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var discourseDir = Path.Combine(linguisticsBaseDir, SharedConstants.DiscourseRootFolder);
@@ -28,7 +30,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				return;
 
 			// 'discourseElement' is owned by LangProj in DsDiscourseData prop (OA).
-			var discourseElement = XElement.Parse(sortedInstanceData.Values.First());
+			var discourseElement = Utilities.CreateFromBytes(sortedInstanceData.Values.First());
 
 			// Nest the entire object, and then pull out the owned stuff, and relocate them, as needed.
 			CmObjectNestingService.NestObject(
@@ -65,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			root.Add(header);
 			header.Add(discourseElement);
 			// Remove child objsur node from owning LangProg
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 			langProjElement.Element("DiscourseData").RemoveNodes();
 
 			var chartElements = discourseElement.Element("Charts");
@@ -81,7 +83,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 			}
 
 			FileWriterService.WriteNestedFile(Path.Combine(discourseDir, SharedConstants.DiscourseChartFilename), root);
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -136,7 +137,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Discourse
 				foreach (var sortedChartElement in sortedCharts.Values)
 					discourseElementOwningProp.Add(sortedChartElement);
 			}
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			BaseDomainServices.RestoreElement(
 				chartPathname,
 				sortedData,

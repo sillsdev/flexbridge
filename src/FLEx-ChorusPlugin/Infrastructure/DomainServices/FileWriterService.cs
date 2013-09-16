@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
 	internal static class FileWriterService
 	{
+		internal static void WriteNestedFile(string newPathname, XmlNode root)
+		{
+			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
+			{
+				XmlUtils.WriteNode(writer, root.OuterXml, new HashSet<string>());
+			}
+		}
+
 		internal static void WriteNestedFile(string newPathname, XElement root)
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
@@ -32,7 +40,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (WriteWholeNode(element))
 			{
 				// Write entire element in one gulp, to avoid eating needed spaces in <Run> elements.
-				WriteElement(writer, Encoding.UTF8.GetBytes(element.ToString()));
+				element.WriteTo(writer);
 			}
 			else
 			{
@@ -89,13 +97,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return retval;
 		}
 
-		internal static void WriteElement(XmlWriter writer, byte[] optionalFirstElement)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(optionalFirstElement, false), CanonicalXmlSettings.CreateXmlReaderSettings(ConformanceLevel.Fragment)))
-				writer.WriteNode(nodeReader, true);
-		}
-
-		internal static void WriteCustomPropertyFile(string newPathname, byte[] element)
+		internal static void WriteCustomPropertyFile(string newPathname, XElement element)
 		{
 			if (element == null)
 			{
@@ -147,7 +149,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// Not this one, since it leaves out the temporary "key' attr. var cpElement = XElement.Parse(SharedConstants.Utf8.GetString(record));
 			// Add custom property info to MDC, since it may need to be sorted in the data files.
 			var hasCustomProperties = false;
-			foreach (var propElement in cpElement.Elements("CustomField"))
+			foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
 			{
 				hasCustomProperties = true;
 				var className = propElement.Attribute(SharedConstants.Class).Value;
@@ -166,7 +168,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 			if (hasCustomProperties)
 				mdc.ResetCaches();
-			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), SharedConstants.Utf8.GetBytes(cpElement.ToString()));
+			WriteCustomPropertyFile(Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename), cpElement);
 		}
 
 		internal static void CheckPathname(string mainFilePathname)
@@ -183,7 +185,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,
-				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == ".fwdata")
+				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == Utilities.FwXmlExtension)
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");
@@ -203,7 +205,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		internal static void WriteNestedListFileIfItExists(IDictionary<string,
-			SortedDictionary<string, string>> classData,
+			SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement listOwningElement, string listOwningPropertyName,
 			string listPathname)
@@ -212,7 +214,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (listPropElement == null || !listPropElement.HasElements)
 				return;
 
-			var listElement = XElement.Parse(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
+			var listElement = Utilities.CreateFromBytes(classData[SharedConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()]);
 			CmObjectNestingService.NestObject(false,
 											  listElement,
 											  classData,
@@ -221,7 +223,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			WriteNestedFile(listPathname, new XElement(listOwningPropertyName, listElement));
 		}
 
-		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, string>> buckets, SortedDictionary<string, string> data)
+		internal static void FillBuckets(Dictionary<int, SortedDictionary<string, XElement>> buckets, SortedDictionary<string, XElement> data)
 		{
 			var bucketCount = buckets.Count;
 			foreach (var kvp in data)
@@ -231,13 +233,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			}
 		}
 
-		internal static Dictionary<int, SortedDictionary<string, string>> CreateEmptyBuckets(int numberOfBucketsToCreate)
+		internal static Dictionary<int, SortedDictionary<string, XElement>> CreateEmptyBuckets(int numberOfBucketsToCreate)
 		{
-			var emptyBuckets = new Dictionary<int, SortedDictionary<string, string>>();
+			var emptyBuckets = new Dictionary<int, SortedDictionary<string, XElement>>();
 
 			for (var i = 0; i < numberOfBucketsToCreate; ++i)
 			{
-				emptyBuckets.Add(i, new SortedDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase));
+				emptyBuckets.Add(i, new SortedDictionary<string, XElement>(StringComparer.InvariantCultureIgnoreCase));
 			}
 
 			return emptyBuckets;

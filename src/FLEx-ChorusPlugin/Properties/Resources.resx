@@ -112,14 +112,11 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="kFLExBridge" xml:space="preserve">
-	<value>FLEx Bridge</value>
-  </data>
   <data name="kChorusEnabledFwProject" xml:space="preserve">
 	<value>Select a Chorus-enabled FieldWorks project to open:</value>
   </data>
@@ -218,20 +215,34 @@
   <data name="ksDiscourseChart" xml:space="preserve">
 	<value>Discourse Chart</value>
   </data>
-  <data name="SendReceiveView_DialogTitle" xml:space="preserve">
+  <data name="SendReceiveView_DialogTitleFlexProject" xml:space="preserve">
 	<value>Send/Receive Project</value>
-  </data>
-  <data name="kAlreadyRunning" xml:space="preserve">
-	<value>There is already a copy of FLExBridge running.
-You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
--- Send/Receive Project
--- Receive Project from a colleague
--- View Conflict Report (can't have two open)</value>
   </data>
   <data name="kCanonicalBookNumberOutOfRange" xml:space="preserve">
 	<value>Canonical book number is out of range.</value>
   </data>
   <data name="kStyleLabel" xml:space="preserve">
 	<value>Style</value>
+  </data>
+  <data name="kCustomFieldLabel" xml:space="preserve">
+	<value>Custom Field</value>
+  </data>
+  <data name="kUnTitled" xml:space="preserve">
+	<value>[untitled]</value>
+  </data>
+  <data name="kFlexBridge" xml:space="preserve">
+	<value>FLEx Bridge</value>
+  </data>
+  <data name="ksOtherRevisionWarning" xml:space="preserve">
+	<value>Other users of this repository (most recently {0}) are using a different version of FieldWorks. Changes from users with more recent versions will not be merged into projects using older versions. We strongly recommend that all users upgrade to the same version as soon as possible.</value>
+  </data>
+  <data name="kReversalEntryClassLabel" xml:space="preserve">
+	<value>Reversal Entry</value>
+  </data>
+  <data name="kFBTheTurtle" xml:space="preserve">
+	<value>FLEx Bridge: The Turtle</value>
+  </data>
+  <data name="kFlexNotFound" xml:space="preserve">
+	<value>Can't find FLEx.</value>
   </data>
 </root>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -14,7 +15,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		internal static void NestObject(
 			bool isOwningSeqProp,
 			XElement obj,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
@@ -95,7 +96,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 		}
 
 		private static void NestOwnedObjects(
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
 		{
@@ -126,9 +127,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					var guid = objsurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 					string classOfOwnedObject;
 					if (!guidToClassMapping.TryGetValue(guid, out classOfOwnedObject))
+					{
+						// Dangling owning ref to non-existant object.
+						objsurElement.Remove();
 						continue;
+					}
 					guidToClassMapping.Remove(guid);
-					var ownedElement = XElement.Parse(classData[classOfOwnedObject][guid]);
+					var ownedElement = Utilities.CreateFromBytes(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);

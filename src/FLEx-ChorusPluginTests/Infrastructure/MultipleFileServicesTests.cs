@@ -4,7 +4,8 @@
 using NUnit.Framework;
 using Palaso.IO;
 using System.IO;
-﻿using Palaso.Progress.LogBox;
+﻿using Palaso.Progress;
+﻿using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Infrastructure
 {
@@ -27,7 +28,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NonExistingFileForBreakupShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), "Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), "Bogus" + Utilities.FwXmlExtension));
 		}
 
 		[Test]
@@ -43,7 +44,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void UserCancelledBreakupShouldThrow()
 		{
-			using (var tempFile = TempFile.WithFilename("foo.fwdata"))
+			using (var tempFile = TempFile.WithFilename("foo" + Utilities.FwXmlExtension))
 			{
 				var progress = new NullProgress
 					{
@@ -69,7 +70,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), "Bogus.fwdata"));
+			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), "Bogus" + Utilities.FwXmlExtension));
 		}
 
 		[Test]

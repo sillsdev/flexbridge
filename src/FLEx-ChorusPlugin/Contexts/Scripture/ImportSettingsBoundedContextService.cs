@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	{
 		internal static void NestContext(XElement importSettingsProperty,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (importSettingsProperty == null)
@@ -27,7 +28,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var styleGuid = importSettingObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var importSetting = XElement.Parse(classData[className][styleGuid]);
+				var importSetting = Utilities.CreateFromBytes(classData[className][styleGuid]);
 
 				CmObjectNestingService.NestObject(false, importSetting,
 												  classData,
@@ -59,13 +60,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			var doc = XDocument.Load(pathname);
 			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
 			{
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					pathname,
 					sortedData,
 					importSettingsElement,
-					scrOwningGuid); // Restore 'ownerguid' to importSettingsElement.
-				var importSettingsGuid = importSettingsElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedImportSettings.Add(importSettingsGuid, BaseDomainServices.CreateObjSurElement(importSettingsGuid));
+					scrOwningGuid, sortedImportSettings); // Restore 'ownerguid' to importSettingsElement.
 			}
 
 			// Restore scrElement ImportSettings property in sorted order.

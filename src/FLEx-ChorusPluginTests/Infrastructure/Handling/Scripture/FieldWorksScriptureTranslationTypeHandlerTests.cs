@@ -8,7 +8,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 {
@@ -20,14 +20,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ScriptureTransFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -92,7 +94,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <TranslatedScripture>
-<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' />
+<Scripture guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
+</Scripture>
 </TranslatedScripture>";
 
 			File.WriteAllText(_ourFile.Path, data);
@@ -157,7 +160,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlTextChangedReport) });
 			Assert.IsTrue(results.Contains("<Uni>+</Uni>"));
 		}
 

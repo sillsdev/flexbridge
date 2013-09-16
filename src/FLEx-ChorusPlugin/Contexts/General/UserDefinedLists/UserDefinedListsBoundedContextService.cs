@@ -5,13 +5,15 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 {
 	internal class UserDefinedListsBoundedContextService
 	{
 		internal static void NestContext(string generalBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// Write out each user-defined list (unowned CmPossibilityList) in a separate file.
@@ -23,9 +25,9 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 			if (!Directory.Exists(userDefinedDir))
 				Directory.CreateDirectory(userDefinedDir);
 
-			foreach (var userDefinedListString in userDefinedLists)
+			foreach (var userDefinedListBytes in userDefinedLists)
 			{
-				var element = XElement.Parse(userDefinedListString);
+				var element = Utilities.CreateFromBytes(userDefinedListBytes);
 				CmObjectNestingService.NestObject(
 					false,
 					element,
@@ -50,10 +52,9 @@ namespace FLEx_ChorusPlugin.Contexts.General.UserDefinedLists
 			{
 				// These are un-owned lists.
 				var userDefinedListDoc = XDocument.Load(userDefinedListPathname);
-				CmObjectFlatteningService.FlattenObject(userDefinedListPathname,
+				CmObjectFlatteningService.FlattenOwnerlessObject(userDefinedListPathname,
 					sortedData,
-					userDefinedListDoc.Root.Element(SharedConstants.CmPossibilityList),
-					null); // No owner.
+					userDefinedListDoc.Root.Element(SharedConstants.CmPossibilityList));
 			}
 		}
 	}

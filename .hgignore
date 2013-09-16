@@ -1,7 +1,14 @@
+relre:src/_ReSharper.LiftBridge/*
+relre:src/LiftBridge/bin/*
+relre:src/LiftBridge/obj/*
+relre:src/LiftBridgeTests/bin/*
+relre:src/LiftBridgeTests/obj/*
+glob:src/LiftBridge/LiftBridge.csproj.ReSharper.user
 relre:output/*
 relre:^Mercurial/
 syntax: regexp
 Perf test  results/*.*
+test-results/*
 src/FLEx-ChorusPlugin/bin/*.*
 src/FLEx-ChorusPlugin/obj/*.*
 src/FLEx-ChorusPluginTests/bin/*.*
@@ -12,6 +19,17 @@ src/FwdataNester/obj/*.*
 _ReSharper.FLExBridge VS2010/*.*
 src/FLExBridge/obj/*.*
 src/Installer/output/*.*
+relre:src/LiftBridgeCore/bin/*
+relre:src/LiftBridgeCore/obj/*
+glob:LiftBridge VS2010.5.1.ReSharper.user
+glob:src/LiftBridge/LiftBridge.csproj.user
+glob:src/LiftBridgeCore/LiftBridgeCore.csproj.user
+glob:LiftBridge VS2010.suo
+glob:src/LiftBridgeTests/LiftBridgeTests.csproj.user
+syntax: regexp
+_ReSharper.LiftBridge VS2010/*
+DistFiles/Mercurial/*
+DistFiles/Mercurial/MercurialExtensions/*
 syntax: glob
 Perf test  results/*.app6results
 *.user
@@ -19,3 +37,34 @@ Perf test  results/*.app6results
 DistFiles/.guidsForInstaller.xml
 Mercurial/mercurial.ini
 **.app7results
+Patches/**
+LiftBridge VS2010.userprefs
+src/LiftBridge/LiftBridge.pidb
+src/LiftBridgeCore/LiftBridgeCore.pidb
+src/LiftBridgeTests/LiftBridgeTests.pidb
+glob:LiftBridge VS2010.6.1.ReSharper.user
+glob:LiftBridge VS2010.sln.DotSettings.user
+glob:src/LiftBridge/LiftBridge.csproj.DotSettings.user
+src/LiftBridge-ChorusPlugin/obj/*
+src/LiftBridge-ChorusPluginTests/obj/*
+src/TriboroughBridge-ChorusPlugin/obj/*
+src/TriboroughBridge-ChorusPluginTests/obj/*
+**.pdb
+src/RepositoryUtility/obj/*
+src/RepositoryUtility/bin/*
+src/TheTurtle/bin/*
+src/TheTurtle/obj/*
+src/TheTurtleTests/bin/*
+src/TheTurtleTests/obj/*
+lib/common/L10NSharp.dll
+All*Files.lst
+*.userprefs
+Download/
+lib/*/Palaso*.dll
+lib/*/Chorus*.exe
+lib/*/LibChorus*.dll
+lib/*/Mercurial*.zip
+lib/*/icu*.dll*
+lib/*/IPCFramework.dll
+lib/*/Autofac.dll
+lib/*/*HelpProvider.dll

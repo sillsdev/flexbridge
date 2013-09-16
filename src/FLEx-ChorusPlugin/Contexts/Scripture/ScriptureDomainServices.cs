@@ -6,7 +6,8 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -16,7 +17,8 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			/*
@@ -52,16 +54,16 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			else
 				progress.WriteMessage("Writing the other data....");
 			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
-			var langProj = XElement.Parse(classData["LangProject"].Values.First());
+			var langProj = wellUsedElements[SharedConstants.LangProject];
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
 
 			// These are intentionally out of order from the above numbering scheme.
-			var scrAsString = classData[SharedConstants.Scripture].Values.FirstOrDefault();
+			var scrAsBytes = classData[SharedConstants.Scripture].Values.FirstOrDefault();
 			// // Lela Teli-3 has null.
-			if (!string.IsNullOrEmpty(scrAsString))
+			if (scrAsBytes != null)
 			{
-				var scripture = XElement.Parse(scrAsString);
+				var scripture = Utilities.CreateFromBytes(scrAsBytes);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);

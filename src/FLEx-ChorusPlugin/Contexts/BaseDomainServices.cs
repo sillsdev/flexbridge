@@ -9,27 +9,28 @@ using FLEx_ChorusPlugin.Contexts.Linguistics;
 using FLEx_ChorusPlugin.Contexts.Scripture;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress.LogBox;
-using Palaso.Xml;
+using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
 		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
-			Dictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			Dictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
-			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
-			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, classData, guidToClassMapping);
+			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 		}
 
-		internal static SortedDictionary<string, string> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
+		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
 		{
-			var retval = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var retval = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
@@ -44,7 +45,9 @@ namespace FLEx_ChorusPlugin.Contexts
 			CmObjectFlatteningService.CombineData(retval, sortedData);
 
 			foreach (var highLevelElement in highLevelData.Values)
-				retval[highLevelElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement.ToString();
+			{
+				retval[highLevelElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement;
+			}
 
 			return retval;
 		}
@@ -79,12 +82,11 @@ namespace FLEx_ChorusPlugin.Contexts
 			XElement owningElement, string owningPropertyName,
 			XElement ownedElement)
 		{
-			RestoreObjsurElement(owningElement, owningPropertyName, ownedElement);
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnedObject(
 				pathname,
 				sortedData,
 				ownedElement,
-				owningElement.Attribute(SharedConstants.GuidStr).Value); // Restore 'ownerguid' to ownedElement.
+				owningElement.Attribute(SharedConstants.GuidStr).Value, owningElement, owningPropertyName); // Restore 'ownerguid' to ownedElement.
 		}
 
 		internal static void RestoreObjsurElement(XElement owningPropertyElement, XElement ownedElement)
@@ -122,7 +124,7 @@ namespace FLEx_ChorusPlugin.Contexts
 		}
 
 		internal static void NestStylesPropertyElement(
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement stylesProperty,
 			string outputPathname)
@@ -139,7 +141,7 @@ namespace FLEx_ChorusPlugin.Contexts
 			{
 				var styleGuid = styleObjSurElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var style = XElement.Parse(classData[className][styleGuid]);
+				var style = Utilities.CreateFromBytes(classData[className][styleGuid]);
 				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}

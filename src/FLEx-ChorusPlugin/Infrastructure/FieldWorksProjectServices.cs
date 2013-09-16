@@ -1,21 +1,25 @@
-﻿using Microsoft.Win32;
+﻿//#define USEFAKEVERSION
+#if !USEFAKEVERSION
+using System.Xml;
+using Palaso.Xml;
+#endif
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
 	internal static class FieldWorksProjectServices
 	{
-		internal static string ProjectsPath
+		internal static string GetVersionNumber(string mainDataPathname)
 		{
-			get
+#if USEFAKEVERSION
+			return @"7000067";
+#else
+			using (var reader = XmlReader.Create(mainDataPathname, CanonicalXmlSettings.CreateXmlReaderSettings()))
 			{
-				return (string)Registry
-								.LocalMachine
-								.OpenSubKey("software")
-								.OpenSubKey("SIL")
-								.OpenSubKey("FieldWorks")
-								.OpenSubKey("7.0")
-								.GetValue("ProjectsDir");
+				reader.MoveToContent();
+				reader.MoveToAttribute("version");
+				return reader.Value;
 			}
+#endif
 		}
 	}
 }

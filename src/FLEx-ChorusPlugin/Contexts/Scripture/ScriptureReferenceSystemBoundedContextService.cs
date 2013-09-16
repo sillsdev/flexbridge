@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 /*
 BC 1. ScrRefSystem (no owner)
@@ -16,7 +17,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	internal static class ScriptureReferenceSystemBoundedContextService
 	{
 		internal static void NestContext(string baseDirectory,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedInstanceData = classData["ScrRefSystem"];
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(baseDirectory))
 				Directory.CreateDirectory(baseDirectory);
 
-			var refSystem = XElement.Parse(sortedInstanceData.First().Value);
+			var refSystem = Utilities.CreateFromBytes(sortedInstanceData.First().Value);
 
 			CmObjectNestingService.NestObject(false, refSystem,
 				classData,
@@ -46,11 +47,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (!File.Exists(pathname))
 				return; // Nobody home.
 			var doc = XDocument.Load(pathname);
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnerlessObject(
 				pathname,
 				sortedData,
-				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"),
-				null); // Not owned.
+				doc.Element(SharedConstants.ScriptureReferenceSystem).Element("ScrRefSystem"));
 		}
 	}
 }

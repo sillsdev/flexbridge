@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
@@ -14,8 +12,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 {
 	internal sealed class ScriptureReferenceSystemTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		private const string ScrRefSystem = "ScrRefSystem";
-
 		#region Implementation of IFieldWorksFileHandler
 
 		public bool CanValidateFile(string pathToFile)
@@ -30,10 +26,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
-				if (root.Name.LocalName != SharedConstants.ScriptureReferenceSystem || root.Element(ScrRefSystem) == null)
+				if (root.Name.LocalName != SharedConstants.ScriptureReferenceSystem || root.Element(SharedConstants.ScrRefSystem) == null)
 					return "Not valid Scripture reference system file.";
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(ScrRefSystem));
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.ScrRefSystem));
 			}
 			catch (Exception e)
 			{
@@ -50,18 +46,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Scripture
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				ScrRefSystem, SharedConstants.GuidStr);
+				SharedConstants.ScrRefSystem, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created.
-
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
-				true,
-				null,
-				ScrRefSystem, SharedConstants.GuidStr);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
 		public string Extension

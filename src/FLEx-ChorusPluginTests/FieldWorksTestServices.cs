@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Xml;
 using Chorus.FileTypeHanders;
@@ -14,7 +13,7 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 25;
+		internal const int ExpectedExtensionCount = 26;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
@@ -53,17 +52,16 @@ namespace FLEx_ChorusPluginTests
 
 		internal static void SetupTempFilesWithName(string filename, int modelVersion, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
-			var counter = 1;
-			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
-			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter++));
-			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion, counter));
+			ourFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
+			commonFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
+			theirFile = TempFile.TrackExisting(CreateTempFileWithName(filename, modelVersion));
 		}
 
-		private static string CreateTempFileWithName(string filename, int modelVersion, int counter)
+		private static string CreateTempFileWithName(string filename, int modelVersion)
 		{
 			var tempFileName = Path.GetTempFileName();
 			var tempPath = Path.GetTempPath();
-			var newDirName = Path.Combine(tempPath, counter.ToString(CultureInfo.InvariantCulture));
+			var newDirName = Path.Combine(tempPath, Path.GetRandomFileName());
 			if (Directory.Exists(newDirName))
 				Directory.Delete(newDirName, true);
 			Directory.CreateDirectory(newDirName);
@@ -97,12 +95,32 @@ namespace FLEx_ChorusPluginTests
 			int expectedConflictCount, List<Type> conflictTypes,
 			int expectedChangesCount, List<Type> changeTypes)
 		{
+			List<IConflict> resultingConflicts;
+			return DoMerge(chorusFileHandler,
+				ourFile, ourContent,
+				commonFile, commonAncestor,
+				theirFile, theirContent,
+				matchesExactlyOne, isNull,
+				expectedConflictCount, conflictTypes,
+				expectedChangesCount, changeTypes, out resultingConflicts);
+		}
+
+		internal static string DoMerge(
+			IChorusFileTypeHandler chorusFileHandler,
+			TempFile ourFile, string ourContent,
+			TempFile commonFile, string commonAncestor,
+			TempFile theirFile, string theirContent,
+			IEnumerable<string> matchesExactlyOne, IEnumerable<string> isNull,
+			int expectedConflictCount, List<Type> conflictTypes,
+			int expectedChangesCount, List<Type> changeTypes, out List<IConflict> resultingConflicts)
+		{
 			File.WriteAllText(ourFile.Path, ourContent);
-			File.WriteAllText(commonFile.Path, commonAncestor);
+			if (commonFile != null)
+				File.WriteAllText(commonFile.Path, commonAncestor);
 			File.WriteAllText(theirFile.Path, theirContent);
 
 			var situation = new NullMergeSituation();
-			var mergeOrder = new MergeOrder(ourFile.Path, commonFile.Path, theirFile.Path, situation);
+			var mergeOrder = new MergeOrder(ourFile.Path, (commonFile == null ? null : commonFile.Path), theirFile.Path, situation);
 			var eventListener = new ListenerForUnitTests();
 			mergeOrder.EventListener = eventListener;
 
@@ -126,6 +144,7 @@ namespace FLEx_ChorusPluginTests
 			Assert.AreEqual(changeTypes.Count, eventListener.Changes.Count);
 			for (var idx = 0; idx < changeTypes.Count; ++idx)
 				Assert.AreSame(changeTypes[idx], eventListener.Changes[idx].GetType());
+			resultingConflicts = eventListener.Conflicts;
 			return result;
 		}
 

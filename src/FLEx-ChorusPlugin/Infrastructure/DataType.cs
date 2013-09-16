@@ -27,6 +27,10 @@
 		String, // TsString
 		/// <summary></summary>
 		Integer,
+		/// <summary>Not used</summary>
+		Float,
+		/// <summary>Not used</summary>
+		Numeric,
 		/// <summary></summary>
 		Boolean,
 		/// <summary></summary>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -12,7 +13,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 	{
 		internal static void NestContext(XElement archivedDraftsProperty,
 			string scriptureBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			if (archivedDraftsProperty == null)
@@ -26,7 +27,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				var root = new XElement(SharedConstants.ArchivedDrafts);
 				var draftGuid = draftObjSur.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[draftGuid];
-				var draft = XElement.Parse(classData[className][draftGuid]);
+				var draft = Utilities.CreateFromBytes(classData[className][draftGuid]);
 
 				CmObjectNestingService.NestObject(false, draft,
 					classData,
@@ -55,12 +56,10 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var doc = XDocument.Load(draftPathname);
 				var draftElement = doc.Root.Element(SharedConstants.ScrDraft);
-				CmObjectFlatteningService.FlattenObject(draftPathname,
+				CmObjectFlatteningService.FlattenOwnedObject(draftPathname,
 					sortedData,
 					draftElement,
-					scrOwningGuid); // Restore 'ownerguid' to draftElement.
-				var draftGuid = draftElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedDrafts.Add(draftGuid, BaseDomainServices.CreateObjSurElement(draftGuid));
+					scrOwningGuid, sortedDrafts); // Restore 'ownerguid' to draftElement.
 			}
 
 			// Restore scrElement ArchivedDrafts property in sorted order.

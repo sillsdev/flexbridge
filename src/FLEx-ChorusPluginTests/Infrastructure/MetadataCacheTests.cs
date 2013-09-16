@@ -98,7 +98,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure
 		[Test]
 		public void LexDbHasCollectionProperties()
 		{
-			Assert.IsTrue(_mdc.GetClassInfo("LexDb").AllCollectionProperties.Any());
+			Assert.IsTrue(_mdc.GetClassInfo(SharedConstants.LexDb).AllCollectionProperties.Any());
 		}
 
 		/// <summary></summary>

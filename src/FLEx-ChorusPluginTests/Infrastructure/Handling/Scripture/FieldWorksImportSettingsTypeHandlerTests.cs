@@ -8,7 +8,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 {
@@ -20,14 +20,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.ImportSettingsFilename, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -92,7 +94,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 			const string data =
 @"<?xml version='1.0' encoding='utf-8'?>
 <ImportSettings>
-<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' />
+<ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
+</ScrImportSet>
 </ImportSettings>";
 
 			File.WriteAllText(_ourFile.Path, data);

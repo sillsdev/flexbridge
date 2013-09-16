@@ -1,8 +1,10 @@
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Palaso.Xml;
-using XmlNodeExtensions = Chorus.merge.xml.generic.XmlNodeExtensions;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {
@@ -28,14 +30,32 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 		private static XmlNode MakeCombinedKeyAttributeForPartElement(string pathname)
 		{
 			var doc = new XmlDocument();
-			doc.Load(pathname);
-			foreach (XmlNode partNode in doc.DocumentElement.SelectNodes("layout/generate"))
+			// The merger's default behavior when there is no ancestor to merge seems to be to create an empty file.
+			// Handle all the varieties of missing content I can think of.
+			if (string.IsNullOrEmpty(pathname) || !File.Exists(pathname) || new FileInfo(pathname).Length == 0)
 			{
-				var attr = doc.CreateAttribute("combinedkey");
-				attr.Value = XmlUtilities.GetStringAttribute(partNode, "class")
-					+ XmlUtilities.GetStringAttribute(partNode, "fieldType")
-					+ XmlUtilities.GetStringAttribute(partNode, "restrictions");
-				partNode.Attributes.Append(attr);
+				// Make a dummy, empty node as the parent
+				doc.LoadXml(@"<LayoutInventory/>");
+				return doc.DocumentElement;
+			}
+			try
+			{
+				doc.Load(pathname);
+				foreach (XmlNode partNode in doc.DocumentElement.SelectNodes("layout/generate"))
+				{
+					var attr = doc.CreateAttribute("combinedkey");
+					attr.Value = XmlUtilities.GetStringAttribute(partNode, "class")
+						+ XmlUtilities.GetStringAttribute(partNode, "fieldType")
+						+ XmlUtilities.GetStringAttribute(partNode, "restrictions");
+					partNode.Attributes.Append(attr);
+				}
+
+			}
+
+			catch (Exception e)
+			{
+				Debug.Fail("something went wrong parsing a file");
+				throw new Exception("Failed to parse file " + pathname + " with content " + File.ReadAllText(pathname), e);
 			}
 
 			return doc.DocumentElement;
@@ -43,7 +63,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 
 		private static void DoPostMerge(string outputPath, XmlNode mergedNode)
 		{
-			foreach (XmlNode partNode in XmlNodeExtensions.SafeSelectNodes(mergedNode, "layout/generate"))
+			foreach (XmlNode partNode in mergedNode.SafeSelectNodes("layout/generate"))
 			{
 				partNode.Attributes.Remove(partNode.Attributes["combinedkey"]);
 			}

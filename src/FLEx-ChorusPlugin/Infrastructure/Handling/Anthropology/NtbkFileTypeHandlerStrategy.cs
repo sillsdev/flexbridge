@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
@@ -15,8 +13,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 	internal sealed class NtbkFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		#region Implementation of IFieldWorksFileHandler
-
-		private const string RnGenericRec = "RnGenericRec";
 
 		public bool CanValidateFile(string pathToFile)
 		{
@@ -36,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("RnResearchNbk"));
 				if (result != null)
 					return result;
-				foreach (var record in root.Elements(RnGenericRec))
+				foreach (var record in root.Elements(SharedConstants.RnGenericRec))
 				{
 					if (record.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() == SharedConstants.EmptyGuid)
 						return null;
@@ -61,18 +57,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				SharedConstants.Header,
-				RnGenericRec, SharedConstants.GuidStr);
+				SharedConstants.RnGenericRec, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksAnthropologyMergeStrategy is created.
-
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksHeaderedMergeStrategy(mergeOrder.MergeSituation, mdc),
-				true,
-				SharedConstants.Header,
-				RnGenericRec, SharedConstants.GuidStr);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
 		public string Extension

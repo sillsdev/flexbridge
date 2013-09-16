@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using Palaso.IO;
 
@@ -14,7 +12,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 	internal sealed class TextCorpusFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
 		private const string TextInCorpus = "TextInCorpus"; // NB: Not the same as what is in SharedSharedConstants.
-		private const string Text = "Text";
 
 		#region Implementation of IFieldWorksFileHandler
 
@@ -30,11 +27,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				if (root.Name.LocalName != TextInCorpus
-					|| root.Element(Text) == null)
+					|| root.Element(SharedConstants.Text) == null)
 				{
 					return "Not valid text corpus file";
 				}
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(Text));
+				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(SharedConstants.Text));
 			}
 			catch (Exception e)
 			{
@@ -51,18 +48,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
-				Text, SharedConstants.GuidStr);
+				SharedConstants.Text, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksReversalMergeStrategy is created.
-
-			XmlMergeService.Do3WayMerge(mergeOrder,
-				new FieldWorksCommonMergeStrategy(mergeOrder.MergeSituation, mdc),
-				true,
-				null,
-				Text, SharedConstants.GuidStr);
+			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
 		public string Extension

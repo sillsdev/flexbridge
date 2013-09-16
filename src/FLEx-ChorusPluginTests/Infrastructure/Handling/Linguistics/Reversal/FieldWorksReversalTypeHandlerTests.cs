@@ -9,7 +9,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 {
@@ -22,15 +22,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			_eventListener = new ListenerForUnitTests();
 			FieldWorksTestServices.SetupTempFilesWithExtension(".reversal", out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			_eventListener = null;
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
@@ -252,7 +254,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 				_theirFile, theirContent,
 				new List<string> { @"Reversal/ReversalIndexEntry[@guid=""oldie""]", @"Reversal/ReversalIndexEntry[@guid=""newbieOurs""]", @"Reversal/ReversalIndexEntry[@guid=""newbieTheirs""]" }, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]
@@ -282,7 +284,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Reversal
 						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc4-e382-11de-8a39-0800200c9a66""]",
 						@"Reversal/ReversalIndexEntry[@guid=""c1ed6dc3-e382-11de-8a39-0800200c9a66""]/Subentries/ReversalIndexEntry[@guid=""c1ed6dc5-e382-11de-8a39-0800200c9a66""]" }, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test]

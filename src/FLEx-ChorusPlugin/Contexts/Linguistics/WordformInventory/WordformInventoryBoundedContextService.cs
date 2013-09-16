@@ -5,13 +5,15 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 {
 	internal static class WordformInventoryBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir, IDictionary<string,
-			SortedDictionary<string, string>> classData,
+		internal static void NestContext(string linguisticsBaseDir,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var sortedPunctuationFormInstanceData = classData["PunctuationForm"];
@@ -26,14 +28,14 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 			// Each WfiWordform (unowned) will then be a child of root.
 			var header = new XElement(SharedConstants.Header);
 			// Work on copy, since 'classData' is changed during the loop.
-			SortedDictionary<string, string> srcDataCopy;
+			SortedDictionary<string, byte[]> srcDataCopy;
 			if (sortedPunctuationFormInstanceData.Count > 0)
 			{
 				// There may be no punct forms, even if there are wordforms, so header really is optional.
-				srcDataCopy = new SortedDictionary<string, string>(sortedPunctuationFormInstanceData);
+				srcDataCopy = new SortedDictionary<string, byte[]>(sortedPunctuationFormInstanceData);
 				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					var pfElement = XElement.Parse(punctFormStringData);
+					var pfElement = Utilities.CreateFromBytes(punctFormStringData);
 					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
 						pfElement,
@@ -42,22 +44,25 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				}
 			}
 
-			var nestedData = new SortedDictionary<string, string>();
+			var nestedData = new SortedDictionary<string, XElement>();
 			if (sortedWfiWordformInstanceData.Count > 0)
 			{
 				// Work on copy, since 'classData' is changed during the loop.
-				srcDataCopy = new SortedDictionary<string, string>(sortedWfiWordformInstanceData);
+				srcDataCopy = new SortedDictionary<string, byte[]>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var wfElement = XElement.Parse(wordFormElement);
+					var wfElement = Utilities.CreateFromBytes(wordFormElement);
 					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
-						checksumProperty.Remove();
+					{
+						// Can be null, for DMs less than 64.
+						checksumProperty.Attribute(SharedConstants.Val).Value = "0";
+					}
 					CmObjectNestingService.NestObject(false,
 													  wfElement,
 													  classData,
 													  guidToClassMapping);
-					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement.ToString());
+					nestedData.Add(wfElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), wfElement);
 				}
 			}
 
@@ -70,10 +75,9 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				if (i == 0 && header.HasElements)
 					root.Add(header);
 				var currentBucket = buckets[i];
-				foreach (var wordformString in currentBucket.Values)
+				foreach (var wordform in currentBucket.Values)
 				{
-					var wordformElement = XElement.Parse(wordformString);
-					root.Add(wordformElement);
+					root.Add(wordform);
 				}
 				FileWriterService.WriteNestedFile(PathnameForBucket(inventoryDir, i), root);
 			}
@@ -113,11 +117,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory
 				foreach (var unownedElement in unownedElements
 					.Where(element => element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant() != SharedConstants.EmptyGuid))
 				{
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						inventoryPathname,
 						sortedData,
-						unownedElement,
-						null); // Not owned.
+						unownedElement);
 				}
 			}
 		}

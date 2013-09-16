@@ -1,9 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Chorus.FileTypeHanders.xml;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 {
@@ -15,14 +18,16 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithExtension("." + SharedConstants.TextInCorpus, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			FieldWorksTestServices.RemoveTempFiles(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
@@ -100,6 +105,111 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 </TextInCorpus>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void MergeStTxtParaNoChanges()
+		{
+			string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Text guid='4836797B-5ADE-4C1C-94F7-8C1104236A94'>
+	<StText guid='4D86FB53-CB4E-44D9-9FBD-AC7E1CBEA766'>
+		<Paragraphs>
+			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
+				<Contents>
+					<Str>
+						<Run ws='en'>This is the first paragraph.</Run>
+					</Str>
+				</Contents>
+				<ParseIsCurrent val='true'/>
+			</ownseq>
+		</Paragraphs>
+	</StText>
+</Text>".Replace("'", "\"");
+
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, commonAncestor,
+				_commonFile, commonAncestor,
+				_theirFile, commonAncestor,
+				new [] {"Text/StText/Paragraphs/ownseq/ParseIsCurrent[@val='true']"}, null,
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void MergeStTxtParaTheyChangedText_SetsParseIsCurrentFalse()
+		{
+			string pattern =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Text guid='4836797B-5ADE-4C1C-94F7-8C1104236A94'>
+	<StText guid='4D86FB53-CB4E-44D9-9FBD-AC7E1CBEA766'>
+		<Paragraphs>
+			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
+				<Contents>
+					<Str>
+						<Run ws='en'>This is the first paragraph.{0}</Run>
+					</Str>
+				</Contents>
+				<ParseIsCurrent val='True'/>
+			</ownseq>
+		</Paragraphs>
+	</StText>
+</Text>".Replace("'", "\"");
+					string commonAncestor = string.Format(pattern, "");
+					string ours = commonAncestor;
+					string theirs = string.Format(pattern, "x");
+
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ours,
+				_commonFile, commonAncestor,
+				_theirFile, theirs,
+				new [] {"Text/StText/Paragraphs/ownseq/ParseIsCurrent[@val='False']"}, null,
+				0, new List<Type>(),
+				1, new List<Type>() { typeof(XmlChangedRecordReport) });
+		}
+
+		[Test]
+		public void MergeStTxtParaWeChangedText_SetsParseIsCurrentFalse()
+		{
+			string pattern =
+@"<?xml version='1.0' encoding='utf-8'?>
+<ScrBook guid='4836797b-5ade-4c1c-94f7-8c1104236a94'>
+	<Sections>
+		<ownseq class='ScrSection' guid='4d86fb53-cb4e-44d9-9fbd-ac7e1cbea766'>
+			<Content>
+				<StText guid='c1ee3114-e382-11de-8a39-0800200c9a66'>
+					<Paragraphs>
+						<ownseq class='ScrTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
+							<Contents>
+								<Str>
+									<Run ws='en'>This is the first paragraph.{0}</Run>
+								</Str>
+							</Contents>
+							<ParseIsCurrent val='True'/>
+						</ownseq>
+					</Paragraphs>
+				</StText>
+			</Content>
+		</ownseq>
+	</Sections>
+</ScrBook>".Replace("'", "\"");
+			string commonAncestor = string.Format(pattern, "");
+			string theirs = commonAncestor;
+			string ours = string.Format(pattern, "x");
+
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ours,
+				_commonFile, commonAncestor,
+				_theirFile, theirs,
+				new[] { "ScrBook/Sections/ownseq/Content/StText/Paragraphs/ownseq/ParseIsCurrent[@val='False']" }, null,
+				0, new List<Type>(),
+				1, new List<Type>() { typeof(XmlChangedRecordReport) });
 		}
 	}
 }

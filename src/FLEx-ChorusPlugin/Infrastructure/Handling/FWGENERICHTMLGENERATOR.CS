@@ -20,22 +20,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		{
 			var sb = new StringBuilder();
 			ProcessNode(sb, input);
-			var checksumInput = new MemoryStream();
-			var encoder = SHA1.Create();
-			AddChecksum(checksumInput, input);
-			if (checksumInput.Length > 0)
-			{
-				checksumInput.Seek(0, SeekOrigin.Begin);
-				var hash = encoder.ComputeHash(checksumInput);
-				var checksum = Convert.ToBase64String(hash);
-				sb.Append("<div class='checksum'>" + ChecksumLabel + checksum + "</div>");
-			}
 			return sb.ToString();
 		}
 
 		private void ProcessNode(StringBuilder sb, XmlNode input)
 		{
 			if (SpecialHandling(sb, input))
+				return;
+			if (HandleRefProp(sb, input))
 				return;
 			var sb2 = new StringBuilder();
 			foreach (var child in input.ChildNodes)
@@ -64,6 +56,33 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		}
 
 		/// <summary>
+		/// If this node is some sort of reference property (identified by having objsur, refsur, or refcol children), output a checksum div.
+		/// These are generated so that a subsequent stage can diff the HTML of different objects and highlight the
+		/// checksums that differ. However, the result is an ugly thing we don't want users to see; so still later code
+		/// (in BridgeConflictController.AdjustConflictHtml) cleans them up and just shows a list of attributes with problems.
+		/// </summary>
+		/// <param name="sb"></param>
+		/// <param name="input"></param>
+		/// <returns>true if the node is a ref prop (and has been handled)</returns>
+		private bool HandleRefProp(StringBuilder sb, XmlNode input)
+		{
+			var firstChild = input.FirstChild as XmlElement;
+			if (firstChild == null || !WantChecksum(firstChild))
+				return false;
+			var checksumInput = new MemoryStream();
+			var encoder = SHA1.Create();
+			AddChecksum(checksumInput, input);
+			if (checksumInput.Length > 0) // paranoia
+			{
+				checksumInput.Seek(0, SeekOrigin.Begin);
+				var hash = encoder.ComputeHash(checksumInput);
+				var checksum = Convert.ToBase64String(hash);
+				sb.Append("<div class='checksum'>" + input.Name + ": " + checksum + "</div>");
+			}
+			return true;
+		}
+
+		/// <summary>
 		/// Append the appropriate div header for displaying a property.
 		/// </summary>
 		private static void AppendElementlabelDiv(StringBuilder sb, XmlNode input)
@@ -87,8 +106,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 					var ws = XmlUtilities.GetOptionalAttributeString(input, SharedConstants.Ws);
 					if (!string.IsNullOrEmpty(ws))
 					{
+						sb.Append("<span class=\"ws\">");
 						sb.Append(ws);
-						sb.Append(": ");
+						sb.Append("</span>: ");
 					}
 					sb.Append(input.InnerText);
 					sb.Append("</div>");
@@ -149,7 +169,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			string guid = XmlUtilities.GetOptionalAttributeString(input, "guid");
 			if (!string.IsNullOrEmpty(guid))
 			{
-				var bytes = Encoding.UTF8.GetBytes(guid);
+				var bytes = SharedConstants.Utf8.GetBytes(guid);
 				s.Write(bytes, 0, bytes.Length);
 			}
 		}

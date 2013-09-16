@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 {
@@ -27,14 +28,15 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 	internal static class TextCorpusBoundedContextService
 	{
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var textCorpusBaseDir = Path.Combine(linguisticsBaseDir, SharedConstants.TextCorpus);
 			if (!Directory.Exists(textCorpusBaseDir))
 				Directory.CreateDirectory(textCorpusBaseDir);
 
-			var langProjElement = XElement.Parse(classData["LangProject"].Values.First());
+			var langProjElement = wellUsedElements[SharedConstants.LangProject];
 
 			// Write Genre list (owning atomic CmPossibilityList)
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
@@ -50,7 +52,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
 										  langProjElement, SharedConstants.TranslationTags,
 										  Path.Combine(textCorpusBaseDir, SharedConstants.TranslationTagsListFilename));
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 
 			var texts = classData["Text"];
 			if (texts.Count == 0)
@@ -66,7 +67,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				foreach (var textGuid in textGuidsInLangProj)
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = XElement.Parse(texts[textGuid]);
+					var textElement = Utilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -79,14 +80,13 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 				}
 				// Remove child objsur nodes from owning LangProg
 				langProjElement.Element("Texts").RemoveNodes();
-				classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 			}
 			else
 			{
 				foreach (var textGuid in texts.Keys.ToArray()) // Needs a copy, since the dictionary is changed.
 				{
 					var rootElement = new XElement("TextInCorpus");
-					var textElement = XElement.Parse(texts[textGuid]);
+					var textElement = Utilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
 						false,
@@ -98,7 +98,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 						rootElement);
 				}
 			}
-			classData["LangProject"][langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = langProjElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -110,7 +109,7 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (!Directory.Exists(textCorpusBaseDir))
 				return;
 
-			var langProjElement = highLevelData["LangProject"];
+			var langProjElement = highLevelData[SharedConstants.LangProject];
 			var langProjGuid = langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
 
 			// Put the Genre list back in the right place.
@@ -137,13 +136,11 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					// Put texts back into index's Entries element.
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnedObject(
 						textPathname,
 						sortedData,
 						textElement,
-						langProjGuid); // Restore 'ownerguid' to text.
-					var textGuid = textElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-					sortedTexts.Add(textGuid, BaseDomainServices.CreateObjSurElement(textGuid));
+						langProjGuid, sortedTexts); // Restore 'ownerguid' to text.
 				}
 				// Restore LP Texts property in sorted order.
 				if (sortedTexts.Count == 0)
@@ -160,11 +157,10 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus
 					var textDoc = XDocument.Load(textPathname);
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
-					CmObjectFlatteningService.FlattenObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(
 						textPathname,
 						sortedData,
-						textElement,
-						null); // No owner.
+						textElement);
 				}
 			}
 		}

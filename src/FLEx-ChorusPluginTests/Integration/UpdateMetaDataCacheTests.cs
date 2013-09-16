@@ -36,7 +36,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "VirtualOrdering");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEntry", "DoNotPublishIn");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexExampleSentence", "DoNotPublishIn");
-			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "PublicationTypes");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, SharedConstants.LexDb, "PublicationTypes");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "DoNotPublishIn");
 			DoMerge(fileHandler, 7000038);
 			//		1. Add CmObject::VirtualOrdering (concrete)
@@ -58,7 +58,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(classInfo, "DoNotPublishIn", DataType.ReferenceCollection);
 			//		4. Modified LexDb
 			//			Add: OA "PublicationTypes"					[CmPossibilityList]
-			classInfo = mdc.GetClassInfo("LexDb");
+			classInfo = mdc.GetClassInfo(SharedConstants.LexDb);
 			CheckNewPropertyAfterUpgrade(classInfo, "PublicationTypes", DataType.OwningAtomic);
 			//		5. Modified LexSense
 			//			Add: RC "DoNotPublishIn"					[CmPossibility]
@@ -237,6 +237,35 @@ namespace FLEx_ChorusPluginTests.Integration
 
 			// 7000060: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000060);
+
+			// 7000061: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000061);
+
+			// 7000062: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000062);
+
+			// 7000063: Add the LangProject HomographWs property.
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LangProject", "HomographWs");
+			DoMerge(fileHandler, 7000063);
+			classInfo = mdc.GetClassInfo("LangProject");
+			CheckNewPropertyAfterUpgrade(classInfo, "HomographWs", DataType.Unicode);
+
+			// 7000064: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000064);
+
+			// 7000065: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000065);
+
+			// 7000066: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000066);
+
+			// 7000067: No actual model change.
+			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000067);
+
+			// 7000068: Change ReversalIndexEntry's Subentries property from owning collection to owning sequence.
+			Assert.AreEqual(DataType.OwningCollection, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
+			DoMerge(fileHandler, 7000068);
+			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 		}
 
 		[Test]

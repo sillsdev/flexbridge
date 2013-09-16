@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
 using Palaso.Code;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {
@@ -72,8 +72,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 						progress.WriteVerbose("Writing temporary fwdata file....");
 					else
 						progress.WriteMessage("Writing temporary fwdata file....");
-					foreach (var dataString in sortedData.Values)
-						FileWriterService.WriteElement(writer, dataString);
+					foreach (var rtElement in sortedData.Values)
+						FileWriterService.WriteElement(writer, rtElement);
 					writer.WriteEndElement();
 				}
 				//Thread.Sleep(2000); In case it blows (access denied) up again on Sue's computer.
@@ -121,13 +121,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			writer.WriteStartElement("languageproject");
 
 			// Write out version number from the ModelVersion file.
-			var modelVersionData = File.ReadAllText(Path.Combine(pathRoot, SharedConstants.ModelVersionFilename));
-			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
-			var version = splitModelVersionData[1].Trim();
+			var version = GetModelVersion(pathRoot);
 			writer.WriteAttributeString("version", version);
 
 			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
+		}
+
+		public static string GetModelVersion(string pathRoot)
+		{
+			var modelVersionPathname = Path.Combine(pathRoot, SharedConstants.ModelVersionFilename);
+			if (!File.Exists(modelVersionPathname))
+				return null;
+			var modelVersionData = File.ReadAllText(modelVersionPathname);
+			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
+			var version = splitModelVersionData[1].Trim();
+			return version;
 		}
 
 		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
@@ -136,7 +145,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
 			var optionalCustomPropFile = Path.Combine(pathRoot, SharedConstants.CustomPropertiesFilename);
 			var doc = XDocument.Load(optionalCustomPropFile);
-			var customFieldElements = doc.Root.Elements("CustomField").ToList();
+			var customFieldElements = doc.Root.Elements(SharedConstants.CustomField).ToList();
 			if (!customFieldElements.Any())
 				return;
 
@@ -153,7 +162,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					new FdoPropertyInfo(cf.Attribute(SharedConstants.Name).Value, propType, true));
 			}
 			mdc.ResetCaches();
-			FileWriterService.WriteElement(writer, SharedConstants.Utf8.GetBytes(doc.Root.ToString()));
+			FileWriterService.WriteElement(writer, doc.Root);
 		}
 	}
 }

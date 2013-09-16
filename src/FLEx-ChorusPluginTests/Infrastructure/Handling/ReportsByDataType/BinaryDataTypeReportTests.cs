@@ -2,7 +2,8 @@ using System.Linq;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
@@ -21,7 +22,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		public void EnsureAllBinaryPropertiesAreSetUpCorrectly()
 		{
 			var mdc = MetadataCache.MdCache;
-			var merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), mdc);
+			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+				{
+					EventListener = new ListenerForUnitTests()
+				};
+			var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
 			foreach (var elementStrategy in mdc.AllConcreteClasses
 				.SelectMany(classInfo => classInfo.AllProperties, (classInfo, propertyInfo) => new {classInfo, propertyInfo})
 				.Where(@t => @t.propertyInfo.DataType == DataType.Binary)

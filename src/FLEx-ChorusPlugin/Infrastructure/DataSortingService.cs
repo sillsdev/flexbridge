@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace FLEx_ChorusPlugin.Infrastructure
@@ -132,17 +130,6 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			propertyElement.Elements().Remove();
 			foreach (var kvp in sortCollectionData)
 				propertyElement.Add(kvp.Value);
-		}
-
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
-		{
-			WriteElement(writer, readerSettings, element.ToString());
-		}
-
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, string element)
-		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(SharedConstants.Utf8.GetBytes(element), false), readerSettings))
-				writer.WriteNode(nodeReader, true);
 		}
 
 		internal static void SortAndStoreElement(IDictionary<string, XElement> sortedData, XElement restorableElement)

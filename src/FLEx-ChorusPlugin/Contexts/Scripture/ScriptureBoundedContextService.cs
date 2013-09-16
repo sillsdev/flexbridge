@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Scripture
 {
@@ -13,7 +14,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 		internal static void NestContext(XElement languageProjectElement,
 			XElement scriptureElement,
 			string baseDirectory,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// baseDirectory is root/Scripture and has already been created by caller.
@@ -35,7 +36,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			for (var canonicalBookNumber = 1; canonicalBookNumber < 67; ++canonicalBookNumber)
 			{
 				var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(canonicalBookNumber);
-				var currentAnnotationElement = XElement.Parse(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(SharedConstants.GuidStr).Value]);
+				var currentAnnotationElement = Utilities.CreateFromBytes(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(SharedConstants.GuidStr).Value]);
 				CmObjectNestingService.NestObject(false, currentAnnotationElement,
 					classData,
 					guidToClassMapping);
@@ -53,7 +54,7 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				scriptureElement.Element(SharedConstants.ScriptureBooks).RemoveNodes();
 				foreach (var objsurEl in bookObjSurElements)
 				{
-					var currentBookElement = XElement.Parse(allBooks[objsurEl.Attribute(SharedConstants.GuidStr).Value]);
+					var currentBookElement = Utilities.CreateFromBytes(allBooks[objsurEl.Attribute(SharedConstants.GuidStr).Value]);
 					var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(Int32.Parse(currentBookElement.Element("CanonicalNum").Attribute("val").Value));
 					CmObjectNestingService.NestObject(false, currentBookElement,
 						classData,
@@ -73,7 +74,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				new XElement(SharedConstants.TranslatedScripture, scriptureElement));
 
 			languageProjectElement.Element(SharedConstants.TranslatedScripture).RemoveNodes();
-			classData[SharedConstants.LangProject][languageProjectElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = languageProjectElement.ToString();
 		}
 
 		internal static void FlattenContext(
@@ -101,13 +101,13 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData[SharedConstants.LangProject];
-			BaseDomainServices.RestoreObjsurElement(langProjElement, SharedConstants.TranslatedScripture, scrElement);
 
-			CmObjectFlatteningService.FlattenObject(
+			CmObjectFlatteningService.FlattenOwnedObject(
 				pathname,
 				sortedData,
 				scrElement,
-				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to scrElement.
+				langProjElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(),
+				langProjElement, SharedConstants.TranslatedScripture); // Restore 'ownerguid' to scrElement.
 
 			// Put the <objsur> elements back into BookAnnotations and ScriptureBooks property elements.
 			// There will always be 66 ScrBookAnnotations instances and they need go in canonical book order.
@@ -122,12 +122,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			{
 				var sortedDoc = XDocument.Load(sortedPathnameKvp.Value);
 				var element = sortedDoc.Root.Element(SharedConstants.ScrBookAnnotations);
-				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.BookAnnotations, element);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					sortedPathnameKvp.Value,
 					sortedData,
 					element,
-					scrElementGuid); // Restore 'ownerguid' to annotation.
+					scrElementGuid, scrElement, SharedConstants.BookAnnotations); // Restore 'ownerguid' to annotation.
 
 				// Deal with optional ScrBook
 				var bookPathname = sortedPathnameKvp.Value.Replace(SharedConstants.bookannotations, SharedConstants.book);
@@ -144,12 +143,11 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 				// Add book <objsur> element to scrElement's ScriptureBooks element.
 				sortedDoc = XDocument.Load(bookPathname);
 				element = sortedDoc.Root.Element(SharedConstants.ScrBook);
-				BaseDomainServices.RestoreObjsurElement(scrElement, SharedConstants.ScriptureBooks, element);
-				CmObjectFlatteningService.FlattenObject(
+				CmObjectFlatteningService.FlattenOwnedObject(
 					bookPathname,
 					sortedData,
 					element,
-					scrElementGuid); // Restore 'ownerguid' to book.
+					scrElementGuid, scrElement, SharedConstants.ScriptureBooks); // Restore 'ownerguid' to book.
 			}
 
 			highLevelData.Add(scrElement.Attribute(SharedConstants.Class).Value, scrElement);

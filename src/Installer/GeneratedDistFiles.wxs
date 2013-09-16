@@ -2,20 +2,30 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
 		<DirectoryRef Id="INSTALLDIR">
-			<Component Id="about.htm" Guid="68290B0A-7A61-4486-8E76-DD1C9C3F03BC">
-				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\DistFiles\about.htm" />
-			</Component>
 			<Component Id="license.rtf" Guid="61288324-9979-40DF-9F86-DE66B2FA1B41">
 				<File Id="license.rtf" Name="license.rtf" Source="..\..\DistFiles\license.rtf" />
 			</Component>
 			<Component Id="LogoForAbout.png" Guid="C217AC6E-CDB7-4334-9D0F-BDD53F57EA21">
 				<File Id="LogoForAbout.png" Name="LogoForAbout.png" Source="..\..\DistFiles\LogoForAbout.png" />
 			</Component>
+			<Directory Id="LocalizationsDir" Name="localizations">
+					<Component Id="Palaso.en.tmx" Guid="7530325B-E7BA-4EAB-B385-4EEC91A23D97">
+						<File Id="Palaso.en.tmx" Name="Palaso.en.tmx" Source="..\..\DistFiles\localizations\Palaso.en.tmx" />
+					</Component>
+					<Component Id="Chorus.en.tmx" Guid="C1EE5817-E382-11DE-8A39-0800200C9A66">
+						<File Id="Chorus.en.tmx" Name="Chorus.en.tmx" Source="..\..\DistFiles\localizations\Chorus.en.tmx" />
+					</Component>
+					<Component Id="FlexBridge.en.tmx" Guid="C1EE5818-E382-11DE-8A39-0800200C9A66">
+						<File Id="FlexBridge.en.tmx" Name="FlexBridge.en.tmx" Source="..\..\DistFiles\localizations\FlexBridge.en.tmx" />
+					</Component>
+			</Directory>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
-			<ComponentRef Id="about.htm" />
 			<ComponentRef Id="license.rtf" />
 			<ComponentRef Id="LogoForAbout.png" />
+			<ComponentRef Id="Palaso.en.tmx" />
+			<ComponentRef Id="Chorus.en.tmx" />
+			<ComponentRef Id="FlexBridge.en.tmx" />
 		</ComponentGroup>
 	</Fragment>
 </Wix>

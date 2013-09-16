@@ -1,11 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibChorus.TestUtilities;
 using NUnit.Framework;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
@@ -16,23 +17,31 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 	[TestFixture]
 	public class ReferenceAtomicDataTypeReportTests : BaseFieldWorksTypeHandlerTests
 	{
-		private MetadataCache _mdc;
 		private XmlMerger _merger;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		[SetUp]
+		public override void TestSetup()
 		{
-			base.FixtureSetup();
+			base.TestSetup();
+			Mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
+			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
+			{
+				EventListener = new ListenerForUnitTests()
+			};
+			_merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, Mdc);
+		}
 
-			_mdc = MetadataCache.TestOnlyNewCache;
-			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
-			_merger = FieldWorksMergeStrategyServices.CreateXmlMergerForFieldWorksData(new NullMergeSituation(), _mdc);
+		[TearDown]
+		public override void TestTearDown()
+		{
+			base.TestTearDown();
+			_merger = null;
 		}
 
 		[Test]
 		public void EnsureAllReferenceAtomicAreSetUpCorrectly()
 		{
-			foreach (var classInfo in _mdc.AllConcreteClasses)
+			foreach (var classInfo in Mdc.AllConcreteClasses)
 			{
 				var clsInfo = classInfo;
 				foreach (var elementStrategy in classInfo.AllProperties
@@ -139,7 +148,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				"lexdb",
 				commonAncestor, ours, theirs,
 				new[] { "Lexicon/LexEntry/Senses/ownseq/MorphoSyntaxAnalysis/objsur" }, null,
-				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				1, new List<Type> { typeof(BothAddedMainElementButWithDifferentContentConflict) },
 				3, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlBothAddedSameChangeReport) });
 		}
 	}

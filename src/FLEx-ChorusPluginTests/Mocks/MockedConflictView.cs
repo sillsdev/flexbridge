@@ -1,14 +1,11 @@
 ﻿using System.Windows.Forms;
-using Chorus.UI.Notes;
-using Chorus.UI.Notes.Browser;
-using FLEx_ChorusPlugin.View;
 
 namespace FLEx_ChorusPluginTests.Mocks
 {
-	class MockedConflictView : Form
+	internal class MockedConflictView : Form
 	{
-		private string m_projName;
-		private string m_nipView;
+		private string _projName;
+		private string _nipView;
 
 		public void EnableWarning()
 		{
@@ -17,12 +14,12 @@ namespace FLEx_ChorusPluginTests.Mocks
 
 		public void SetProjectName(string projName)
 		{
-			m_projName = projName;
+			_projName = projName;
 		}
 
 		public void SetBrowseView(string browser)
 		{
-			m_nipView = browser;
+			_nipView = browser;
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 {
@@ -35,28 +36,28 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 		private const string ReversalRootFolder = "Reversals";
 
 		internal static void NestContext(string linguisticsBaseDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
-			var allLexDbs = classData["LexDb"].FirstOrDefault();
-			if (allLexDbs.Value == null)
+			var lexDb = wellUsedElements[SharedConstants.LexDb];
+			if (lexDb == null)
 				return; // No LexDb, then there can be no reversals.
 
-			SortedDictionary<string, string> sortedInstanceData = classData["ReversalIndex"];
+			SortedDictionary<string, byte[]> sortedInstanceData = classData["ReversalIndex"];
 			if (sortedInstanceData.Count == 0)
 				return; // no reversals, as in Lela-Teli-3.
 
-			var lexDb = XElement.Parse(allLexDbs.Value);
 			lexDb.Element("ReversalIndexes").RemoveNodes(); // Restored in FlattenContext method.
 
 			var reversalDir = Path.Combine(linguisticsBaseDir, ReversalRootFolder);
 			if (!Directory.Exists(reversalDir))
 				Directory.CreateDirectory(reversalDir);
 
-			var srcDataCopy = new SortedDictionary<string, string>(sortedInstanceData);
+			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndexElement = XElement.Parse(reversalIndexKvp.Value);
+				var revIndexElement = Utilities.CreateFromBytes(reversalIndexKvp.Value);
 				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
 				var revIndexDir = Path.Combine(reversalDir, ws);
 				if (!Directory.Exists(revIndexDir))
@@ -85,7 +86,6 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 				}
 
 				FileWriterService.WriteNestedFile(Path.Combine(revIndexDir, reversalFilename), root);
-				classData["LexDb"][lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()] = lexDb.ToString();
 			}
 		}
 
@@ -98,13 +98,22 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 			if (!Directory.Exists(reversalDir))
 				return;
 
-			var lexDb = highLevelData["LexDb"];
+			var lexDb = highLevelData[SharedConstants.LexDb];
 			var sortedRevs = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
+			var unlovedFolders = new HashSet<string>();
 			foreach (var revIndexDirectoryName in Directory.GetDirectories(reversalDir))
 			{
 				var dirInfo = new DirectoryInfo(revIndexDirectoryName);
 				var ws = dirInfo.Name;
 				var reversalPathname = Path.Combine(revIndexDirectoryName, ws + "." + SharedConstants.Reversal);
+				if (!File.Exists(reversalPathname))
+				{
+					// If a reversal is deleted but there were ChorusNotes associated with it the directory might be
+					// here without any reversal files inside it.
+					unlovedFolders.Add(revIndexDirectoryName);
+					continue;
+				}
+
 				var reversalDoc = XDocument.Load(reversalPathname);
 
 				// Put entries back into index's Entries element.
@@ -142,17 +151,18 @@ namespace FLEx_ChorusPlugin.Contexts.Linguistics.Reversals
 					foreach (var sortedChartElement in sortedRecords.Values)
 						recordsElementOwningProp.Add(sortedChartElement);
 				}
-				CmObjectFlatteningService.FlattenObject(reversalPathname, sortedData, revIdxElement, lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant()); // Restore 'ownerguid' to indices.
-
-				var revIdxGuid = revIdxElement.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-				sortedRevs.Add(revIdxGuid, BaseDomainServices.CreateObjSurElement(revIdxGuid));
+				CmObjectFlatteningService.FlattenOwnedObject(reversalPathname, sortedData, revIdxElement,
+					lexDb.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant(), sortedRevs); // Restore 'ownerguid' to indices.
 			}
+
+			foreach (var unlovedFolder in unlovedFolders)
+				Directory.Delete(unlovedFolder, true);
 
 			// Restore lexDb ReversalIndexes property in sorted order.
 			if (sortedRevs.Count == 0)
 				return;
-			var reversalsOwningProp = lexDb.Element("ReversalIndexes")
-									  ?? CmObjectFlatteningService.AddNewPropertyElement(lexDb, "ReversalIndexes");
+
+			var reversalsOwningProp = lexDb.Element("ReversalIndexes") ?? CmObjectFlatteningService.AddNewPropertyElement(lexDb, "ReversalIndexes");
 			foreach (var sortedRev in sortedRevs.Values)
 				reversalsOwningProp.Add(sortedRev);
 		}

@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {
@@ -13,7 +13,8 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 	internal static class AnthropologyDomainServices
 	{
 		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
-			IDictionary<string, SortedDictionary<string, string>> classData,
+			IDictionary<string, XElement> wellUsedElements,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			var anthropologyBaseDir = Path.Combine(rootDir, SharedConstants.Anthropology);
@@ -25,7 +26,7 @@ namespace FLEx_ChorusPlugin.Contexts.Anthropology
 				progress.WriteVerbose("Writing the anthropology data....");
 			else
 				progress.WriteMessage("Writing the anthropology data....");
-			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, classData, guidToClassMapping);
+			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(

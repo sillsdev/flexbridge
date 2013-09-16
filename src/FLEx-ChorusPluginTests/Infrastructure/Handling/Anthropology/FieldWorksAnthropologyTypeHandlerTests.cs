@@ -10,7 +10,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 {
@@ -23,15 +23,18 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		private TempFile _commonFile;
 
 		[SetUp]
-		public void TestSetup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
+			Mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			_eventListener = new ListenerForUnitTests();
 			FieldWorksTestServices.SetupTempFilesWithName(SharedConstants.DataNotebookFilename, MetadataCache.MaximumModelVersion, out _ourFile, out _commonFile, out _theirFile);
 		}
 
 		[TearDown]
-		public void TestTearDown()
+		public override void TestTearDown()
 		{
+			base.TestTearDown();
 			_eventListener = null;
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
@@ -115,9 +118,14 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 <Anthropology>
 <header>
 <RnResearchNbk guid='c1ed6db2-e382-11de-8a39-0800200c9a66'>
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
 </RnResearchNbk>
 </header>
 <RnGenericRec guid='c1ed6db3-e382-11de-8a39-0800200c9a66'>
+<DateCreated val='2012-12-10 6:29:17.117' />
+<DateModified val='2012-12-10 6:29:17.117' />
+<DateOfEvent val='gendatedata' />
 </RnGenericRec>
 </Anthropology>";
 			File.WriteAllText(_ourFile.Path, data);
@@ -191,7 +199,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 						@"Anthropology/RnGenericRec[@guid=""newbieTheirs""]"
 					}, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
 		[Test, Category("UnknownMonoIssue")]
@@ -199,7 +207,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		{
 			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
 #if MONO
-			baseDir = baseDir.Replace(@"file:/", null);
+			baseDir = baseDir.Replace(@"file:", null);	// Path.GetDirectoryName squeezes file:/// to file:/
 #else
 			baseDir = baseDir.Replace(@"file:\", null);
 #endif

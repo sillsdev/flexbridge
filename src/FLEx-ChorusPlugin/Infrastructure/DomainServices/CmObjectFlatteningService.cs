@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Chorus.merge;
-using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Contexts;
 using FLEx_ChorusPlugin.Properties;
 
@@ -16,7 +13,44 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 	/// </summary>
 	internal static class CmObjectFlatteningService
 	{
-		internal static void FlattenObject(
+		internal static void FlattenOwnerlessObject(
+			string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element)
+		{
+			if (element == null) throw new ArgumentNullException("element");
+			if (element.Attribute("ownerguid") != null)
+				throw new ArgumentException("FlattenOwnerlessObject cannot be safely used to flatten owned objects");
+			FlattenObjectCore(pathname, sortedData, element, null);
+		}
+
+		/// <summary>
+		/// Flatten an owned object and put an appropriate objsur in the list. //AND RETURN THE OBJSUR which should replace it.
+		/// </summary>
+		internal static void FlattenOwnedObject(string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element, string ownerguid, SortedDictionary<string, XElement> sortedSurrogates)
+		{
+			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
+			var guid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			sortedSurrogates.Add(guid, BaseDomainServices.CreateObjSurElement(guid));
+		}
+
+		/// <summary>
+		/// Flatten an owned object and add an appropriate objsur to the specified property of the owning object.
+		/// </summary>
+		internal static void FlattenOwnedObject(string pathname,
+			SortedDictionary<string, XElement> sortedData,
+			XElement element, string ownerguid, XContainer owningElement, string propertyName)
+		{
+			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
+			var guid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
+			BaseDomainServices.RestoreObjsurElement(owningElement, propertyName, BaseDomainServices.CreateObjSurElement(guid));
+		}
+
+		private static void FlattenObjectCore(
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid)
@@ -30,31 +64,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			if (ownerguid != null && ownerguid == string.Empty)
 				throw new ArgumentException(Resources.kOwnerGuidEmpty, SharedConstants.OwnerGuid);
 
-			var mdc = MetadataCache.MdCache;
-			FdoClassInfo classInfo;
 			string className;
-			var isOwnSeqNode = GetClassInfoFromElement(mdc, element, out classInfo, out className);
-			var elementGuid = element.Attribute(SharedConstants.GuidStr).Value.ToLowerInvariant();
-			if (sortedData.ContainsKey(elementGuid))
-			{
-				// Does LT-12524 "Handle merge in case of conflicting move object to different destination".
-				// This need will manifest itself in the guid already being in 'sortedData' and an exception being thrown.
-				// At this point element has not been flattened, so stuff it owns will still be in it.
-				// That is good, if we go with JohnT's idea of using a new guid for guids that are already in 'sortedData'.
-				// By changing it before flattening, then the owned stuff will get the new one for their ownerguid attrs.
-				// The owned stuff will also be dup, so the idea is to also change their guids right now. [ChangeGuids is recursive down the owning tree.]
-				// Just be sure to change 'elementGuid' to the new one. :-)
-				// The first item added to sortedData has been flattened by this point, but not any following ones.
-				elementGuid = ChangeGuids(mdc, classInfo, element);
-				using (var listener = new ChorusNotesMergeEventListener(ChorusNotesMergeEventListener.GetChorusNotesFilePath(pathname)))
-				{
-					// Adding the conflict to the listener, will result in the ChorusNotes file being updated (created if need be.)
-					var conflict = new IncompatibleMoveConflict(className, GetXmlNode(element)) {Situation = new NullMergeSituation()};
-					listener.RecordContextInConflict(conflict);
-					listener.ConflictOccurred(conflict);
-					File.WriteAllText(pathname + "." + SharedConstants.dupid, "");
-				}
-			}
+			bool isOwnSeqNode;
+			var elementGuid = CheckForDuplicateElementMethod.CheckForDuplicateGuid(pathname, sortedData, element, out isOwnSeqNode, out className);
 			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject, or 'ownseq', or....
@@ -73,6 +85,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			element.Add(sortedAttrs.Values);
 
 			// Restore any ref seq props to have 'objsur' elements.
+			var mdc = MetadataCache.MdCache;
 			var propCache = mdc.PropertyCache[className];
 			var refSeqPropNames = propCache["AllReferenceSequence"];
 			// Restore any ref col props to have 'objsur' elements.
@@ -113,57 +126,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 					// Do before the removal call, so we know the parent, and thus, the property name.
 					if (isCustomProperty)
 					{
-						BaseDomainServices.RestoreObjsurElement((element.Elements().Where(
-							customNode =>
-							customNode.Name.LocalName == SharedConstants.Custom
-							&& customNode.Attribute(SharedConstants.Name) != null
-							&& customNode.Attribute(SharedConstants.Name).Value == propertyElement.Attribute(SharedConstants.Name).Value)).First(), ownedElement);
+						var owningPropertyElement = (element.Elements().Where(customNode => customNode.Name.LocalName == SharedConstants.Custom && customNode.Attribute(SharedConstants.Name) != null && customNode.Attribute(SharedConstants.Name).Value == propertyElement.Attribute(SharedConstants.Name).Value)).First();
+						ownedElement.Remove();
+						FlattenObjectCore(pathname, sortedData, ownedElement, elementGuid); // BEFORE we make the objsur!
+						BaseDomainServices.RestoreObjsurElement(owningPropertyElement, ownedElement);
 					}
 					else
 					{
-						BaseDomainServices.RestoreObjsurElement(element, ownedElement.Parent.Name.LocalName, ownedElement);
+						var propertyName = ownedElement.Parent.Name.LocalName;
+						ownedElement.Remove();
+						// Move down the nested set of owned objects, and do the same.
+						FlattenOwnedObject(pathname, sortedData, ownedElement, elementGuid, element, propertyName);
 					}
-					ownedElement.Remove();
-					// Move down the nested set of owned objects, and do the same.
-					FlattenObject(pathname, sortedData, ownedElement, elementGuid);
 				}
 			}
-		}
-
-		private static bool GetClassInfoFromElement(MetadataCache mdc, XElement element, out FdoClassInfo classInfo,
-													out string className)
-		{
-			var isOwnSeqNode = element.Name.LocalName == SharedConstants.Ownseq;
-			className = isOwnSeqNode ? element.Attribute(SharedConstants.Class).Value : element.Name.LocalName;
-			classInfo = mdc.GetClassInfo(className);
-			return isOwnSeqNode;
-		}
-
-		internal static string ChangeGuids(MetadataCache mdc, FdoClassInfo classInfo, XElement element)
-		{
-			var newGuid = Guid.NewGuid().ToString().ToLowerInvariant();
-
-			element.Attribute(SharedConstants.GuidStr).Value = newGuid;
-
-			// TODO: Recurse down through everything that is owned and change those guids.
-			foreach (var owningPropInfo in classInfo.AllOwningProperties)
-			{
-				var isCustomProp = owningPropInfo.IsCustomProperty;
-				var owningPropElement = isCustomProp
-					? (element.Elements(SharedConstants.Custom).Where(customProp => customProp.Attribute(SharedConstants.Name).Value == owningPropInfo.PropertyName)).FirstOrDefault()
-					: element.Element(owningPropInfo.PropertyName);
-				if (owningPropElement == null || !owningPropElement.HasElements)
-					continue;
-				foreach (var ownedElement in owningPropElement.Elements())
-				{
-					FdoClassInfo ownedClassInfo;
-					string className;
-					GetClassInfoFromElement(mdc, element, out ownedClassInfo, out className);
-					ChangeGuids(mdc, ownedClassInfo, ownedElement);
-				}
-			}
-
-			return newGuid;
 		}
 
 		internal static XmlNode GetXmlNode(XElement element)
@@ -196,16 +172,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			return sortedRecords[propertyName];
 		}
 
-		internal static void CombineData(IDictionary<string, string> results, SortedDictionary<string, XElement> sortedData)
+		internal static void CombineData(IDictionary<string, XElement> results, SortedDictionary<string, XElement> sortedData)
 		{
-			foreach (var kvp in sortedData)
+			foreach (var kvp in sortedData.Where(kvp => kvp.Value != null))
 			{
-				if (kvp.Value != null)
-					results.Add(kvp.Key, kvp.Value.ToString());
+				results.Add(kvp.Key, kvp.Value);
 			}
 
 			foreach (var key in sortedData.Keys.ToArray())
+			{
 				sortedData[key] = null;
+			}
 		}
 	}
 }
