@@ -14,7 +14,8 @@ Homepage: http://projects.palaso.org/projects/fwbridge
 
 Package: flexbridge
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7), python (<< 2.8)
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7), python (<< 2.8),
+ fieldworks-mono
 Suggests: fieldworks-applications (>= 8.0.3~beta4)
 Description: Allow multiple FieldWorks users to collaborate remotely
  FLEx Bridge is an application that allows multiple FieldWorks 8.0 users

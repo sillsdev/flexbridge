@@ -35,8 +35,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	</Property>
 	<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="FWVersion" Path="[FW8INSTALLDIR]">
-		<!-- 8.0.4.41516 was the actual number the day the FW Beta 5 was released, but I understand one then needs to go one notch under that to find it. -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.4.41515"/>
+		<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
 	  </DirectorySearch>
 	</Property>
 	<Property Id="DEVFW8BUILDDIR">
@@ -45,8 +45,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	</Property>
 	<Property Id="DEVFIELDWORKSMINIMUMINSTALLEDVERSION">
 	  <DirectorySearch Id="DevFWVersion" Path="[DEVFW8BUILDDIR]">
-		<!-- 8.0.4.41516 was the actual number the day the FW Beta 5 was released, but I understand one then needs to go one notch under that to find it. -->
-		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.4.41515"/>
+					<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+		<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
 	  </DirectorySearch>
 	</Property>
 
@@ -59,7 +59,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
-	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 8.0.4, or higher.">
+	<Condition Message="Before [ProductName] can install, you need to install SIL's FieldWorks 8.0.3, or higher.">
 	  <![CDATA[Installed OR FIELDWORKSMINIMUMINSTALLEDVERSION]]>
 	</Condition>
 
