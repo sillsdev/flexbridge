@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Users with large numbers of revisions would see the internet hang after an update.
+## 2.1.8 3/Sep/2013
 * New in this release
 	* FLEx Bridge: Revise FLEx<->FLEx Bridge interaction to allow Linux to do Send/Receive.
 	* FLEx Bridge: Add support for FLEx's data model version 68.
