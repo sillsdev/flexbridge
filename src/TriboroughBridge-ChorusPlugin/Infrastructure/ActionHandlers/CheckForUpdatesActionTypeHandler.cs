@@ -21,11 +21,10 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// </summary>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
-#if MONO
-			// I can't imagine what if anything would be wanted for Linux/Mono!
-#else
+#if !MONO
 			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/appcast.xml", CommonResources.chorus32x32))
 			{
+				sparkle.DoLaunchAfterUpdate = false;
 				sparkle.CheckForUpdatesAtUserRequest();
 			}
 #endif
