@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fixed problem with FLEx<->FLEx Bridge interaction.
+* FLEx Bridge: Don't try to restart FELx Bridge after updating to a newer version.
+## 2.1.9 16/Sep/2013
 * Chorus: Users with large numbers of revisions would see the internet hang after an update.
 ## 2.1.8 3/Sep/2013
 * New in this release
