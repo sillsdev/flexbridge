@@ -95,7 +95,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var process = new Process();
 			var startInfo = process.StartInfo;
-			startInfo.FileName = "\"" + _fixitPathname.Replace("\"", null) + "\"";
+			startInfo.FileName = _fixitPathname.Replace("\"", null);
 			startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
 			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
 			startInfo.UseShellExecute = false;
