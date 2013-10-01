@@ -1,4 +1,17 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fixed problem with FLEx<->FLEx Bridge interaction.
+* FLEx Bridge: Don't try to restart FELx Bridge after updating to a newer version.
+## 2.1.9 16/Sep/2013
+* Chorus: Users with large numbers of revisions would see the internet hang after an update.
+## 2.1.8 3/Sep/2013
+* New in this release
+	* FLEx Bridge: Revise FLEx<->FLEx Bridge interaction to allow Linux to do Send/Receive.
+	* FLEx Bridge: Add support for FLEx's data model version 68.
+* Fixes in this release
+	* FLEx Bridge: Allow for better LIFT Send/Receive support for Shared network system (Db4o data storage system).
+	* FLEx Bridge: Numerous fixes for Linux support.
+	* FLEx Bridge: Fixed case where clicking "X" on S/R window caused crash.
+## 2.0.20 14/Aug/2013
 * L10NSharp: No "OK" button text for unavailable languages
 * FLEx Bridge: Prompt only once if localization unavailable
 * FLEx Bridge: Fix problem in POS context generator for conflict reports

@@ -75,14 +75,6 @@
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<Commandlineparameters>-runStandAlone -u steve -p "/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdata" -v view_notes -projDir /home/steve/fwrepo/fw/DistFiles/Projects -fwAppsDir /home/steve/fwrepo/fw/Output_x86_64/Debug -fwmodel 7000068 -liftmodel 0.13 -locale en -pipeID "SendReceive/home/steve/fwrepo/fw/DistFiles/Projects/Sena 2/Sena 2.fwdataview_notes"</Commandlineparameters>
-	<EnvironmentVariables>
-	  <EnvironmentVariables>
-		<Variable name="DISPLAY" value=":2" />
-		<Variable name="FIELDWORKS_ENVIRON" value="/home/steve/fwrepo/fw/environ" />
-		<Variable name="MONO_GAC_PREFIX" value="" />
-	  </EnvironmentVariables>
-	</EnvironmentVariables>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Chorus">
