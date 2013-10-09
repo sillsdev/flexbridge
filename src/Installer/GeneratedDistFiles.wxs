@@ -15,6 +15,15 @@
 					<Component Id="Chorus.en.tmx" Guid="C1EE5817-E382-11DE-8A39-0800200C9A66">
 						<File Id="Chorus.en.tmx" Name="Chorus.en.tmx" Source="..\..\DistFiles\localizations\Chorus.en.tmx" />
 					</Component>
+					<Component Id="Chorus.es.tmx" Guid="c1ee581f-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.es.tmx" Name="Chorus.es.tmx" Source="..\..\DistFiles\localizations\Chorus.es.tmx" />
+					</Component>
+					<Component Id="Chorus.fr.tmx" Guid="c1ee5820-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.fr.tmx" Name="Chorus.fr.tmx" Source="..\..\DistFiles\localizations\Chorus.fr.tmx" />
+					</Component>
+					<Component Id="Chorus.zh-Hans.tmx" Guid="c1ee5821-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.zh-Hans.tmx" Name="Chorus.zh-Hans.tmx" Source="..\..\DistFiles\localizations\Chorus.zh-Hans.tmx" />
+					</Component>
 					<Component Id="FlexBridge.en.tmx" Guid="C1EE5818-E382-11DE-8A39-0800200C9A66">
 						<File Id="FlexBridge.en.tmx" Name="FlexBridge.en.tmx" Source="..\..\DistFiles\localizations\FlexBridge.en.tmx" />
 					</Component>
@@ -25,6 +34,9 @@
 			<ComponentRef Id="LogoForAbout.png" />
 			<ComponentRef Id="Palaso.en.tmx" />
 			<ComponentRef Id="Chorus.en.tmx" />
+			<ComponentRef Id="Chorus.es.tmx" />
+			<ComponentRef Id="Chorus.fr.tmx" />
+			<ComponentRef Id="Chorus.zh-Hans.tmx" />
 			<ComponentRef Id="FlexBridge.en.tmx" />
 		</ComponentGroup>
 	</Fragment>
