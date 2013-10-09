@@ -36,7 +36,7 @@
 			<ComponentRef Id="Chorus.en.tmx" />
 			<ComponentRef Id="Chorus.es.tmx" />
 			<ComponentRef Id="Chorus.fr.tmx" />
-			<ComponentRef Id="Chorus.zh-Hans.tmx" />
+			<ComponentRef Id="Chorus.zhHans.tmx" />
 			<ComponentRef Id="FlexBridge.en.tmx" />
 		</ComponentGroup>
 	</Fragment>
