@@ -1,10 +1,12 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Shift formal ownership from Randy Regnier to LSDev.
+## 2.1.12 09/Oct/2013
 * Palaso: Fix problem copying error reporting to clipboard on Linux.
 * Chorus: Fix stack overflow problem on Linux when finished using some dialogs.
 * Chorus: Fix problem displaying conflict details on Linux.
 ## 2.1.10 17/Sep/2013
 * FLEx Bridge: Fixed problem with FLEx<->FLEx Bridge interaction.
-* FLEx Bridge: Don't try to restart FELx Bridge after updating to a newer version.
+* FLEx Bridge: Don't try to restart FLEx Bridge after updating to a newer version.
 ## 2.1.9 16/Sep/2013
 * Chorus: Users with large numbers of revisions would see the internet hang after an update.
 ## 2.1.8 3/Sep/2013
