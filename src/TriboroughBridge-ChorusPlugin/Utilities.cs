@@ -35,7 +35,7 @@ namespace TriboroughBridge_ChorusPlugin
 		public const string hg = ".hg";
 		private const string FlexBridge = "FlexBridge";
 		private const string localizations = "localizations";
-		public const string FlexBridgeEmailAddress = "fieldworksbridge@gmail.com";
+		public const string FlexBridgeEmailAddress = "flex_errors@sil.org";
 // ReSharper restore InconsistentNaming
 
 		/// <summary>
