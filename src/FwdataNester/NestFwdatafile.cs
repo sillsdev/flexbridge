@@ -23,13 +23,22 @@ namespace FwdataTestApp
 {
 	public partial class NestFwdataFile : Form
 	{
-		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks\TestProjects";
+		private static string CurrentBaseFolder = @"C:\ProgramData\SIL\FieldWorks\TestProjects";
 		private string _srcFwdataPathname;
 		private string _workingDir;
 
 		public NestFwdataFile()
 		{
+			if (Utilities.IsUnix)
+			{
+				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable("HOME"), @"TestProjects");
+			}
+
 			InitializeComponent();
+
+			_fwdataPathname.Text = CurrentBaseFolder;
+			_folderBrowserDialog.SelectedPath = CurrentBaseFolder;
+
 			PopulateList();
 
 			_btnRunSelected.Enabled = _listView.Items.Count > 0;
@@ -38,11 +47,13 @@ namespace FwdataTestApp
 		private void BrowseForFolder(object sender, EventArgs e)
 		{
 			_btnRunSelected.Enabled = false;
-			_fwdataPathname.Text = null;
+			_fwdataPathname.Text = CurrentBaseFolder;
 
 			if (_folderBrowserDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
+			CurrentBaseFolder = _folderBrowserDialog.SelectedPath;
+			_fwdataPathname.Text = CurrentBaseFolder;
 			PopulateList();
 
 			_btnRunSelected.Enabled = _listView.Items.Count > 0;
@@ -52,11 +63,16 @@ namespace FwdataTestApp
 		{
 			_listView.SuspendLayout();
 			_listView.Items.Clear();
-			var currentBaseFolder = _folderBrowserDialog.SelectedPath;
-			_fwdataPathname.Text = currentBaseFolder;
-			foreach (var projectDir in Directory.GetDirectories(currentBaseFolder).Where(dir => dir.ToLowerInvariant() != "zpi"))
+			foreach (var projectDir in Directory.GetDirectories(CurrentBaseFolder))
 			{
-				var fwdataFileName = Path.GetFileNameWithoutExtension(Path.Combine(projectDir, Directory.GetFiles(projectDir, "*.fwdata").First()));
+				if (projectDir.EndsWith("zpi") || projectDir.Contains("."))
+					continue;
+
+				var fwdataFiles = Directory.GetFiles(projectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+				if (fwdataFiles.Length == 0)
+					continue;
+
+				var fwdataFileName = Path.GetFileNameWithoutExtension(fwdataFiles[0]);
 				var listItem = new ListViewItem(fwdataFileName)
 					{
 						Tag = projectDir,
@@ -783,7 +799,7 @@ namespace FwdataTestApp
 				// EXCEPT the real ZPI project.
 				// If there is no copy of the fwdata file in the main project folder, then skip it.
 				var allProjectDirNamesExceptMine =
-					Directory.GetDirectories(NormalUserProjectDir)
+					Directory.GetDirectories(CurrentBaseFolder)
 							 .Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
@@ -805,7 +821,7 @@ namespace FwdataTestApp
 			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
 				return; // Don't even think of wiping out my ZPI folder.
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
+			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;
@@ -824,7 +840,7 @@ namespace FwdataTestApp
 				Directory.Delete(subDir, true);
 			foreach (var pathname in allFiles)
 				File.Delete(pathname);
-			File.Copy(Path.Combine(NormalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+			File.Copy(Path.Combine(CurrentBaseFolder, currentFilename), Path.Combine(projectDirName, currentFilename));
 		}
 
 		private void ClearCheckboxes(object sender, EventArgs e)
