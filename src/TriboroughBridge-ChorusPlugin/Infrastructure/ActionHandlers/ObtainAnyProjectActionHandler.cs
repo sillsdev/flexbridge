@@ -79,7 +79,8 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 
 			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
-			if (_currentStrategy.IsRepositoryEmpty(result.ActualLocation))
+			//If the repository has 0 commits neither the Project or Lift filters will identify it and the strategy will be null
+			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
 				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 				MessageBox.Show(CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);
