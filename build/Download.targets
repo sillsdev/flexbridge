@@ -19,6 +19,7 @@
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Mercurial-x86_64.zip"/>
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Autofac.dll"/>
 		<DownloadedMono Include="$(RootDir)/Download/IPCFramework.dll"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Chorus_Help.chm"/>
 
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
@@ -87,6 +88,9 @@
 	bt14 (icucil-win32-default Continuous)
 	icu*.dll => lib/$(Configuration)
 	icu.net.config => lib/$(Configuration)
+	===================================================
+	bt216 (Chorus-Documentation)
+	Chorus_Help.chm => lib/common
 -->
 	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT'">
 		<MakeDir Directories="$(RootDir)/Download"/>
@@ -129,6 +133,11 @@
 		<Message Text="Downloading latest successful artifacts from the L10NSharp mono continuous build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt271/.lastSuccessful/L10NSharp.dll"
 					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
+
+		<!-- bt216 is the Chorus-Documentation build -->
+		<Message Text="Downloading latest successful artifacts from the Chorus-Documentation build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt216/.lastSuccessful/Chorus_Help.chm"
+					  LocalFilename="$(RootDir)/Download/Chorus_Help.chm"/>
 
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
 		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, and IPCFramework builds."/>

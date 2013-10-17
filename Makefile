@@ -38,6 +38,7 @@ install: release
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
