@@ -102,27 +102,4 @@
 
   </Target>
 
-  <!-- *********************** The Turtle Installer stuff below.  ******************************* -->
-  <Target Name="TheTurtleInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Test">
-
-	<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
-	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm" DestinationFolder="$(RootDir)\output\Installer"/>
-	<FileUpdate File="$(RootDir)\output\Installer\about.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-	<Copy SourceFiles="$(RootDir)\src\Installer\TheTurtleInstaller.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
-	<FileUpdate File="$(RootDir)\src\Installer\TheTurtleInstaller.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
-
-	<Message Text="Making TheTurtleInstaller Version: $(Version)" Importance="high"/>
-	<MSBuild Projects="$(RootDir)\src\Installer\TheTurtleInstaller.wixproj"/>
-
-	<!-- Copy TheTurtleInstaller.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
-	<Copy SourceFiles="$(RootDir)\output\Installer\TheTurtleInstaller.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
-
-	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(RootDir)\output\Installer\TheTurtleInstaller.$(Version).msi" TreatErrorsAsWarnings="false" />
-	<Copy SourceFiles="$(RootDir)\output\Installer\TheTurtleInstaller.msi" DestinationFiles="$(RootDir)\output\installer\TheTurtleInstaller.$(Version).msi" />
-	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(RootDir)\output\Installer\TheTurtleInstaller.msi" TreatErrorsAsWarnings="false" />
-
-  </Target>
-
 </Project>
