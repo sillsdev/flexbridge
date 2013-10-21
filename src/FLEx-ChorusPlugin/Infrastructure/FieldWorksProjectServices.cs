@@ -1,4 +1,10 @@
-﻿//#define USEFAKEVERSION
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+//#define USEFAKEVERSION
 #if !USEFAKEVERSION
 using System.Xml;
 using Palaso.Xml;

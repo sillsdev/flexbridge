@@ -1,4 +1,10 @@
-﻿using System.IO;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System.IO;
 using NUnit.Framework;
 using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Services;
