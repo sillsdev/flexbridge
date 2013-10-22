@@ -108,7 +108,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// -p <$fwroot>\foo where 'foo' is the project folder name
@@ -128,7 +127,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					ProjectFilter,	// Lift repo filter
 					HubQuery, // If it goes to Chorus Hub, use this filter
 					commandLineArgs["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
-					Utilities.OtherRepositories, // subfolder of eafh FW proejct folder, in which to look for additional repo ids.
+					Utilities.OtherRepositories, // subfolder of each FW project folder, in which to look for additional repo ids.
 					CommonResources.kHowToSendReceiveExtantRepository); // Some message to use to let user know a repo exists.
 			}
 
