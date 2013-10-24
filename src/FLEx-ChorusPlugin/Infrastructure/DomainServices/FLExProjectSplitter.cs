@@ -96,7 +96,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
-		private static void WriteVersionFile(string mainFilePathname)
+		internal static void WriteVersionFile(string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var version = FieldWorksProjectServices.GetVersionNumber(mainFilePathname);
