@@ -37,7 +37,7 @@ namespace FwdataTestApp
 		{
 			if (Utilities.IsUnix)
 			{
-				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable("HOME"), @"TestProjects");
+				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
 			}
 
 			InitializeComponent();
