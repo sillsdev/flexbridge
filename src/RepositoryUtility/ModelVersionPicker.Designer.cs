@@ -70,11 +70,11 @@ namespace RepositoryUtility
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(260, 13);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Please select the current FELx model version number:";
+			this.label1.Text = "Please select the current FLEx model version number:";
 			//
 			// _btnOk
 			//
-			this._btnOk.Location = new System.Drawing.Point(85, 40);
+			this._btnOk.Location = new System.Drawing.Point(85, 102);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 2;
@@ -85,7 +85,7 @@ namespace RepositoryUtility
 			// _btnCancel
 			//
 			this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._btnCancel.Location = new System.Drawing.Point(189, 40);
+			this._btnCancel.Location = new System.Drawing.Point(189, 102);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
 			this._btnCancel.TabIndex = 3;
@@ -99,7 +99,7 @@ namespace RepositoryUtility
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._btnCancel;
-			this.ClientSize = new System.Drawing.Size(346, 66);
+			this.ClientSize = new System.Drawing.Size(353, 133);
 			this.ControlBox = false;
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnOk);
