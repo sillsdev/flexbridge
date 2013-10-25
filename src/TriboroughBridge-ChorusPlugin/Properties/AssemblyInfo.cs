@@ -13,3 +13,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("TriboroughBridge-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("LiftBridge-ChorusPluginTests")]
+[assembly: InternalsVisibleTo("RepositoryUtility")]

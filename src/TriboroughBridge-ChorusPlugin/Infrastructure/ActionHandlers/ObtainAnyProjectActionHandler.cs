@@ -77,7 +77,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			using (var form = new Form())
 			{
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, commandLineArgs["-projDir"], Utilities.OtherRepositories,
+					ChorusHubQuery, _pathToRepository, Utilities.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
