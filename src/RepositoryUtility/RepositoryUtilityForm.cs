@@ -111,7 +111,7 @@ namespace RepositoryUtility
 			if (string.IsNullOrWhiteSpace(_repoFolder))
 				return;
 
-			OpenLocalRepo();
+			MessageBox.Show(this, @"Pending....");
 		}
 
 		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
