@@ -98,14 +98,6 @@ namespace RepositoryUtility
 			OpenLocalRepo();
 		}
 
-		private void HandleViewHistoryMenuClick(object sender, EventArgs e)
-		{
-			if (string.IsNullOrWhiteSpace(_repoFolder))
-				return;
-
-			OpenLocalRepo();
-		}
-
 		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder))
@@ -115,14 +107,6 @@ namespace RepositoryUtility
 		}
 
 		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
-		{
-			if (string.IsNullOrWhiteSpace(_repoFolder))
-				return;
-
-			MessageBox.Show(this, @"Pending....");
-		}
-
-		private void HandleCloseRepositoryClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder))
 				return;

@@ -19,10 +19,16 @@ namespace RepositoryUtility
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				if (_chorusSystem != null)
+					_chorusSystem.Dispose();
 			}
+			_chorusSystem = null;
+			_repoFolder = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -39,12 +45,10 @@ namespace RepositoryUtility
 			this._menuStrip = new System.Windows.Forms.MenuStrip();
 			this.repositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cloneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.viewHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openLocalRepositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.updateToRevisionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.restoreToRevisionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.openLocalRepositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripMenuItemBlank1 = new System.Windows.Forms.ToolStripSeparator();
 			this._menuStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -69,11 +73,9 @@ namespace RepositoryUtility
 			this.repositoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.cloneToolStripMenuItem,
 			this.openLocalRepositoryToolStripMenuItem,
-			this.viewHistoryToolStripMenuItem,
 			this.updateToRevisionToolStripMenuItem,
 			this.restoreToRevisionToolStripMenuItem,
 			toolStripMenuItemBlank1,
-			this.closeToolStripMenuItem,
 			this.exitToolStripMenuItem});
 			this.repositoryToolStripMenuItem.Name = "repositoryToolStripMenuItem";
 			this.repositoryToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
@@ -86,12 +88,12 @@ namespace RepositoryUtility
 			this.cloneToolStripMenuItem.Text = "&Clone";
 			this.cloneToolStripMenuItem.Click += new System.EventHandler(this.HandleCloneMenuClick);
 			//
-			// viewHistoryToolStripMenuItem
+			// openLocalRepositoryToolStripMenuItem
 			//
-			this.viewHistoryToolStripMenuItem.Name = "viewHistoryToolStripMenuItem";
-			this.viewHistoryToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-			this.viewHistoryToolStripMenuItem.Text = "&View history";
-			this.viewHistoryToolStripMenuItem.Click += new System.EventHandler(this.HandleViewHistoryMenuClick);
+			this.openLocalRepositoryToolStripMenuItem.Name = "openLocalRepositoryToolStripMenuItem";
+			this.openLocalRepositoryToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+			this.openLocalRepositoryToolStripMenuItem.Text = "&Open local repository";
+			this.openLocalRepositoryToolStripMenuItem.Click += new System.EventHandler(this.HandleOpenLocalRepositoryClick);
 			//
 			// updateToRevisionToolStripMenuItem
 			//
@@ -107,26 +109,12 @@ namespace RepositoryUtility
 			this.restoreToRevisionToolStripMenuItem.Text = "&Restore to revision";
 			this.restoreToRevisionToolStripMenuItem.Click += new System.EventHandler(this.HandleRestoreToRevisionMenuClick);
 			//
-			// closeToolStripMenuItem
-			//
-			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-			this.closeToolStripMenuItem.Text = "C&lose repository";
-			this.closeToolStripMenuItem.Click += new System.EventHandler(this.HandleCloseRepositoryClick);
-			//
 			// exitToolStripMenuItem
 			//
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.HandleExitMenuClick);
-			//
-			// openLocalRepositoryToolStripMenuItem
-			//
-			this.openLocalRepositoryToolStripMenuItem.Name = "openLocalRepositoryToolStripMenuItem";
-			this.openLocalRepositoryToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-			this.openLocalRepositoryToolStripMenuItem.Text = "&Open local repository";
-			this.openLocalRepositoryToolStripMenuItem.Click += new System.EventHandler(this.HandleOpenLocalRepositoryClick);
 			//
 			// RepositoryUtilityForm
 			//
@@ -150,8 +138,6 @@ namespace RepositoryUtility
 		private System.Windows.Forms.MenuStrip _menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem repositoryToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem cloneToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem viewHistoryToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem updateToRevisionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem restoreToRevisionToolStripMenuItem;
