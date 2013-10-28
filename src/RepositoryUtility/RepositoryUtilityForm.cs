@@ -16,6 +16,8 @@ using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Review;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 
@@ -29,6 +31,8 @@ namespace RepositoryUtility
 		private readonly string _repoHoldingFolder;
 		private string _repoFolder;
 		private ChorusSystem _chorusSystem;
+		private Revision _currentRevision;
+		private RepoType _repoType = RepoType.None;
 
 		public RepositoryUtilityForm()
 		{
@@ -100,7 +104,7 @@ namespace RepositoryUtility
 
 		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
 		{
-			if (string.IsNullOrWhiteSpace(_repoFolder))
+			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null)
 				return;
 
 			MessageBox.Show(this, @"Pending....");
@@ -108,10 +112,19 @@ namespace RepositoryUtility
 
 		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
 		{
-			if (string.IsNullOrWhiteSpace(_repoFolder))
+			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
 				return;
 
-			MessageBox.Show(this, @"Pending....");
+			var hgRepo = _chorusSystem.Repository;
+			hgRepo.Update(_currentRevision.Number.LocalRevisionNumber);
+
+			if (GetRepoType() != RepoType.FLEx)
+				return;
+
+			var fwdataPathname = Path.Combine(_repoFolder, Path.GetDirectoryName(_repoFolder), Utilities.FwXmlExtension);
+			if (!File.Exists(fwdataPathname))
+				File.WriteAllText(fwdataPathname, @"");
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
 		}
 
 		private void HandleExitMenuClick(object sender, EventArgs e)
@@ -149,12 +162,15 @@ namespace RepositoryUtility
 					return;
 			}
 			SuspendLayout();
+			HistoryPage historyPage = null;
 			if (_chorusSystem != null)
 			{
 				foreach (var control in Controls)
 				{
 					((IDisposable)control).Dispose();
 				}
+				historyPage = Controls[0] as HistoryPage;
+				//historyPage -=
 				Controls.Clear();
 				_chorusSystem.Dispose();
 				_chorusSystem = null;
@@ -162,7 +178,7 @@ namespace RepositoryUtility
 			_chorusSystem = newChorusSystem;
 			var historyPageOptions = new HistoryPageOptions();
 			var revisionListOptions = historyPageOptions.RevisionListOptions;
-			//revisionListOptions.ShowRevisionChoiceControls = true;
+			// Not enabled in Chorus. revisionListOptions.ShowRevisionChoiceControls = true;
 			var branchColumnDefinition = new HistoryColumnDefinition
 			{
 				ColumnLabel = "Branch",
@@ -179,15 +195,16 @@ namespace RepositoryUtility
 					branchColumnDefinition //,
 					//revisionIdColumnDefinition
 				};
-			var historyPage = _chorusSystem.WinForms.CreateHistoryPage(historyPageOptions);
+			historyPage = _chorusSystem.WinForms.CreateHistoryPage(historyPageOptions);
+			historyPage.RevisionSelectionChanged += HistoryPageRevisionSelectionChanged;
 			Controls.Add(historyPage);
 			historyPage.Dock = DockStyle.Fill;
 			ResumeLayout(true);
 		}
 
-		private static string RevisionId(Revision revision)
+		private void HistoryPageRevisionSelectionChanged(object sender, RevisionEventArgs e)
 		{
-			return revision.Number.Hash;
+			_currentRevision = e.Revision;
 		}
 
 		private static string BranchName(Revision revision)
@@ -203,19 +220,33 @@ namespace RepositoryUtility
 
 		private bool HasRepo
 		{
-			get { return Directory.Exists(RepoDir); }
+			get
+			{
+				return !string.IsNullOrWhiteSpace(_repoFolder) && Directory.Exists(RepoDir);
+			}
 		}
 
 		private RepoType GetRepoType()
 		{
+			_repoType = RepoType.None;
 			if (!HasRepo)
-				return RepoType.None;
-			if (Directory.GetFiles(Utilities.HgDataFolder(_repoFolder), "*.lift.i").Any())
-				return RepoType.LIFT;
-			if (Directory.GetFiles(Utilities.HgDataFolder(_repoFolder), "*._custom_properties.i").Any())
-				return RepoType.FLEx;
+			{
+				_repoType = RepoType.None;
+			}
+			else if (Directory.GetFiles(Utilities.HgDataFolder(_repoFolder), "*.lift.i").Any())
+			{
+				_repoType = RepoType.LIFT;
+			}
+			else if (Directory.GetFiles(Utilities.HgDataFolder(_repoFolder), "*._custom_properties.i").Any())
+			{
+				_repoType = RepoType.FLEx;
+			}
+			else
+			{
+				_repoType = RepoType.NotSupported;
+			}
 
-			return RepoType.NotSupported;
+			return _repoType;
 		}
 
 		private enum RepoType
