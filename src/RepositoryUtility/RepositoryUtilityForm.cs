@@ -102,14 +102,6 @@ namespace RepositoryUtility
 			OpenLocalRepo();
 		}
 
-		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
-		{
-			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null)
-				return;
-
-			MessageBox.Show(this, @"Pending....");
-		}
-
 		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
@@ -121,10 +113,25 @@ namespace RepositoryUtility
 			if (GetRepoType() != RepoType.FLEx)
 				return;
 
-			var fwdataPathname = Path.Combine(_repoFolder, Path.GetDirectoryName(_repoFolder), Utilities.FwXmlExtension);
+
+			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + Utilities.FwXmlExtension);
 			if (!File.Exists(fwdataPathname))
 				File.WriteAllText(fwdataPathname, @"");
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
+		}
+
+		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
+		{
+			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
+				return;
+
+			var hgRepo = _chorusSystem.Repository;
+			MessageBox.Show(this, @"Pending....");
+		}
+
+		private void HandleSendBackToSourceMenuClick(object sender, EventArgs e)
+		{
+			MessageBox.Show(this, @"Pending....");
 		}
 
 		private void HandleExitMenuClick(object sender, EventArgs e)
@@ -169,8 +176,9 @@ namespace RepositoryUtility
 				{
 					((IDisposable)control).Dispose();
 				}
-				historyPage = Controls[0] as HistoryPage;
-				//historyPage -=
+				historyPage = (HistoryPage)Controls[0];
+				historyPage.RevisionSelectionChanged -= HistoryPageRevisionSelectionChanged;
+				historyPage.Dispose();
 				Controls.Clear();
 				_chorusSystem.Dispose();
 				_chorusSystem = null;
