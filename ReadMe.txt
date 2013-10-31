@@ -8,16 +8,19 @@ to build it, you must usually get the latest versions of these DLLs and copy the
 
 The required DLLs (that are likely to be out of date) are
  IPCFramework.dll, L10NSharp.dll, Chorus.exe, ChorusMerge.exe, LibChorus.dll, and Palaso.dll.
-For a Windows debug build the Chorus and Palaso dependencies currently live in lib/Debug (release build: lib/Release, Mono: TODO);
-IPCFrmework and L10NSharp live in lib/common.  You can download these and various other projects from the continuous build server
-at http://build.palaso.org/.
+For a Windows debug build the Chorus and Palaso dependencies currently live in lib/Debug (release build: lib/Release,
+Mono: lib/DebugMono); IPCFrmework and L10NSharp live in lib/common.  You can download these and various other projects from the
+continuous build server at http://build.palaso.org/.
 
 If you plan to work on Chorus,
 - clone the Chorus and Palaso repos from http://hg.palaso.org/chorus and http://hg.palaso.org/palaso into the same parent
    directory without changing their repository names
-- run chorus/GetAndBuildThis.bat to download the latest, build Palaso, copy dependencies from Palaso to Chorus, and build Chorus
-- copy Chorus and Palaso dependencies from Chorus\output\Debug (or Chorus\output\Release).  You can do this using the
-   UpdateDependencies.bat script in the AddUpdateDependenciesScript branch in the fwbridge repo
+- run GetAndBuildThis.bat to download the latest commit on your branch of FWBridge, GetAndBuild Palaso and Chorus recursively,
+   copy dependencies from Palaso to Chorus to FWBridge, and build FWBridge
+
+Special Mono dependencies:
+$ cp ../palaso/lib/Debug/icu.net.dll* ../palaso/lib/DebugMono
+$ PATH=/usr/bin:$PATH make #This will prefer the System Mono over fieldworks-mono
 
 To run FlexBridge you must unzip chorus/lib/debug/Mercurial.zip to the root of FlexBridge.
 Then, edit the mercurial.ini file in the Mercurial folder. Add a line like this (with the appropriate path for your FlexBridge folder).
@@ -31,6 +34,6 @@ Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: T
 </code>
 Also, if you are working on Chorus:
 - Copy Chorus.exe, LibChorus.dll, and Palaso dll's to C:\fwrepo\fw\output\Debug (or Release).  You can do this using the
-   UpdateFLExDependencies script in the AddUpdateDependenciesScript branch in the fwbridge repo
+   UpdateFLExDependencies script in the fwbridge repo
 - Comment out the corresponding DownloadFiles tags in C:\fwrepo\fw\Build\mkall.targets
 - Rebuild FLEx
