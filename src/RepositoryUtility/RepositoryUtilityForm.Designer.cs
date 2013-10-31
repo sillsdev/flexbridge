@@ -48,8 +48,8 @@ namespace RepositoryUtility
 			this.openLocalRepositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.restoreToRevisionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.updateToRevisionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendBackToSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripMenuItemBlank1 = new System.Windows.Forms.ToolStripSeparator();
 			this._menuStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -57,7 +57,7 @@ namespace RepositoryUtility
 			// toolStripMenuItemBlank1
 			//
 			toolStripMenuItemBlank1.Name = "toolStripMenuItemBlank1";
-			toolStripMenuItemBlank1.Size = new System.Drawing.Size(184, 6);
+			toolStripMenuItemBlank1.Size = new System.Drawing.Size(295, 6);
 			//
 			// _menuStrip
 			//
@@ -74,8 +74,8 @@ namespace RepositoryUtility
 			this.repositoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.cloneToolStripMenuItem,
 			this.openLocalRepositoryToolStripMenuItem,
-			this.restoreToRevisionToolStripMenuItem,
 			this.updateToRevisionToolStripMenuItem,
+			this.restoreToRevisionToolStripMenuItem,
 			this.sendBackToSourceToolStripMenuItem,
 			toolStripMenuItemBlank1,
 			this.exitToolStripMenuItem});
@@ -86,44 +86,44 @@ namespace RepositoryUtility
 			// cloneToolStripMenuItem
 			//
 			this.cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
-			this.cloneToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+			this.cloneToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
 			this.cloneToolStripMenuItem.Text = "&Clone";
 			this.cloneToolStripMenuItem.Click += new System.EventHandler(this.HandleCloneMenuClick);
 			//
 			// openLocalRepositoryToolStripMenuItem
 			//
 			this.openLocalRepositoryToolStripMenuItem.Name = "openLocalRepositoryToolStripMenuItem";
-			this.openLocalRepositoryToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+			this.openLocalRepositoryToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
 			this.openLocalRepositoryToolStripMenuItem.Text = "&Open local repository";
 			this.openLocalRepositoryToolStripMenuItem.Click += new System.EventHandler(this.HandleOpenLocalRepositoryClick);
 			//
 			// restoreToRevisionToolStripMenuItem
 			//
 			this.restoreToRevisionToolStripMenuItem.Name = "restoreToRevisionToolStripMenuItem";
-			this.restoreToRevisionToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-			this.restoreToRevisionToolStripMenuItem.Text = "&Restore to revision";
+			this.restoreToRevisionToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
+			this.restoreToRevisionToolStripMenuItem.Text = "&Reset Repo to revision (cannot be undone)";
 			this.restoreToRevisionToolStripMenuItem.Click += new System.EventHandler(this.HandleRestoreToRevisionMenuClick);
 			//
 			// updateToRevisionToolStripMenuItem
 			//
 			this.updateToRevisionToolStripMenuItem.Name = "updateToRevisionToolStripMenuItem";
-			this.updateToRevisionToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+			this.updateToRevisionToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
 			this.updateToRevisionToolStripMenuItem.Text = "&Update to revision";
 			this.updateToRevisionToolStripMenuItem.Click += new System.EventHandler(this.HandleUpdateToRevisionMenuClick);
-			//
-			// exitToolStripMenuItem
-			//
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-			this.exitToolStripMenuItem.Text = "E&xit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.HandleExitMenuClick);
 			//
 			// sendBackToSourceToolStripMenuItem
 			//
 			this.sendBackToSourceToolStripMenuItem.Name = "sendBackToSourceToolStripMenuItem";
-			this.sendBackToSourceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+			this.sendBackToSourceToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
 			this.sendBackToSourceToolStripMenuItem.Text = "&Send Back to Source";
 			this.sendBackToSourceToolStripMenuItem.Click += new System.EventHandler(this.HandleSendBackToSourceMenuClick);
+			//
+			// exitToolStripMenuItem
+			//
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
+			this.exitToolStripMenuItem.Text = "E&xit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.HandleExitMenuClick);
 			//
 			// RepositoryUtilityForm
 			//

@@ -14,9 +14,11 @@ using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
 using Chorus.UI.Review;
+using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
@@ -102,7 +104,7 @@ namespace RepositoryUtility
 			OpenLocalRepo();
 		}
 
-		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
+		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
 				return;
@@ -110,33 +112,134 @@ namespace RepositoryUtility
 			var hgRepo = _chorusSystem.Repository;
 			hgRepo.Update(_currentRevision.Number.LocalRevisionNumber);
 
-			if (GetRepoType() != RepoType.FLEx)
-				return;
-
-
-			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + Utilities.FwXmlExtension);
-			if (!File.Exists(fwdataPathname))
-				File.WriteAllText(fwdataPathname, @"");
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
+			RebuildFlexFileIfRelevant();
 		}
 
-		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
+		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
 				return;
 
 			var hgRepo = _chorusSystem.Repository;
-			MessageBox.Show(this, @"Pending....");
+			var selectedBranchName = BranchName(_currentRevision);
+			var oldTip = hgRepo.GetTip();
+			var oldTipBranchName = BranchName(oldTip);
+			if (selectedBranchName != oldTipBranchName)
+			{
+				MessageBox.Show(this,
+					String.Format(@"Selected revision '{0}' is in branch '{1}', but tip revision '{2}' is in branch '{3}', so the merge cannot be done.",
+						_currentRevision.Number.LocalRevisionNumber, selectedBranchName,
+						oldTip.Number.LocalRevisionNumber, oldTipBranchName),
+					@"Mis-matched branches", MessageBoxButtons.OK,
+					MessageBoxIcon.Stop);
+				return;
+			}
+
+			// Step 0: Confirm we are at the correct revision.
+			if (MessageBox.Show(this,
+				string.Format(@"This aims to roll back to revision '{0}' (currently selected revision). If this is not the desired revision, select the 'Cancel' button.", _currentRevision.Number.LocalRevisionNumber),
+				"Confirm revision to roll back to",
+				MessageBoxButtons.OKCancel,
+				MessageBoxIcon.Question) != DialogResult.OK)
+			{
+				return;
+			}
+
+			// Step 1. Make sure we are at the currently selected revision.
+			hgRepo.Update(_currentRevision.Number.LocalRevisionNumber);
+
+			// Step 2: Do some minimal change and commit it.
+			var repoType = GetRepoType();
+			string pathname;
+			switch (repoType)
+			{
+				case RepoType.FLEx:
+					pathname = Path.Combine(_repoFolder, SharedConstants.CustomPropertiesFilename);
+					break;
+				case RepoType.LIFT:
+					pathname = Directory.GetFiles(_repoFolder, "*.lift").First();
+					break;
+				default:
+					throw new InvalidOperationException(@"Repository tyep not recognized/supported.");
+			}
+			using (var writer = File.AppendText(pathname))
+			{
+				writer.WriteLine(@" ");
+			}
+			hgRepo.Commit(true, @"Do-nothing commit as part of rollback to earlier state.");
+
+			// Step 3. Need the new tip from the last commit, since it must be sent to the no-op merge code, not the '_currentRevision' one, which is now old.
+			var newTip = hgRepo.GetTip();
+
+			// Step 4. Get an additional (optional) comment for why the rollback is being done.
+			string optionalComment = null;
+			using (var optionalCommentDlg = new OptionalCommentDlg())
+			{
+				if (optionalCommentDlg.ShowDialog(this) == DialogResult.OK && !string.IsNullOrWhiteSpace(optionalCommentDlg.OptionalComment))
+				{
+					optionalComment = optionalCommentDlg.OptionalComment.Trim();
+				}
+			}
+
+			// Step 5: Do no-op merge with tip (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
+			// This comment text is supplied by the 'NoopMerge' method: "No-Op Merge: Revert repository to revision '{0}'".
+			// "_currentRevision.Number.LocalRevisionNumber" is used for {0}.
+			// The 'additionalComment' parameter allows for clients (read: this app) to provide a more helpful (to the user) comment.
+			// Such an additional comment could be the rationale for why this no-op merge was done.
+			hgRepo.NoopMerge(_repoFolder, optionalComment, newTip.Number.LocalRevisionNumber, oldTip.Number.LocalRevisionNumber);
+
+			RebuildFlexFileIfRelevant();
 		}
 
 		private void HandleSendBackToSourceMenuClick(object sender, EventArgs e)
 		{
-			MessageBox.Show(this, @"Pending....");
+			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null)
+				return;
+
+			// Send it off to some source.
+			using (var syncDlg = (SyncDialog)_chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
+			{
+				var repoType = GetRepoType();
+				var syncAdjunt = new RepositoryUtilitySychronizerAdjunct(
+						(repoType == RepoType.LIFT)
+							? Directory.GetFiles(_repoFolder, "*.lift").First()
+							: Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + Utilities.FwXmlExtension),
+						repoType);
+				syncDlg.SetSynchronizerAdjunct(syncAdjunt);
+
+				// Chorus does it in this order:
+				// Local Commit
+				// Pull
+				// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
+				// Push
+				// Chorus will try the commit, as we have no way to tell Chorus to not do it.
+				// But, there is nothing to commit, if the app user plays the game properly.
+				// So, we do have control over the pull, merge, and push operations, and we only want to do the push.
+				// The idea is that any other team members are idle during this business, and they have all synced up before this is done.
+				syncDlg.SyncOptions.DoPullFromOthers = false;
+				syncDlg.SyncOptions.DoMergeWithOthers = false;
+				syncDlg.SyncOptions.DoSendToOthers = true;
+				syncDlg.Text = "End Game of rollback repo";
+				syncDlg.StartPosition = FormStartPosition.CenterScreen;
+				syncDlg.BringToFront();
+				syncDlg.ShowDialog();
+			}
 		}
 
 		private void HandleExitMenuClick(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void RebuildFlexFileIfRelevant()
+		{
+			if (GetRepoType() != RepoType.FLEx)
+				return;
+
+			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + Utilities.FwXmlExtension);
+			if (!File.Exists(fwdataPathname))
+				File.WriteAllText(fwdataPathname, @"");
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
 		}
 
 		/// <summary>
@@ -192,16 +295,16 @@ namespace RepositoryUtility
 				ColumnLabel = "Branch",
 				StringSupplier = BranchName
 			};
-			// This is available as a tool tip of the icon cell.
-			//var revisionIdColumnDefinition = new HistoryColumnDefinition
-			//{
-			//    ColumnLabel = "Revision Id",
-			//    StringSupplier = RevisionId
-			//};
+			// This is available as a tool tip of the icon cell, but show it here, anyway.
+			var revisionIdColumnDefinition = new HistoryColumnDefinition
+			{
+				ColumnLabel = "Revision Id",
+				StringSupplier = RevisionId
+			};
 			revisionListOptions.ExtraColumns = new List<HistoryColumnDefinition>
 				{
-					branchColumnDefinition //,
-					//revisionIdColumnDefinition
+					branchColumnDefinition,
+					revisionIdColumnDefinition
 				};
 			historyPage = _chorusSystem.WinForms.CreateHistoryPage(historyPageOptions);
 			historyPage.RevisionSelectionChanged += HistoryPageRevisionSelectionChanged;
@@ -219,6 +322,11 @@ namespace RepositoryUtility
 		{
 			var name = revision.Branch;
 			return string.IsNullOrWhiteSpace(name) ? @"default" : name;
+		}
+
+		private static string RevisionId(Revision revision)
+		{
+			return revision.Number.LocalRevisionNumber;
 		}
 
 		private string RepoDir
@@ -257,7 +365,7 @@ namespace RepositoryUtility
 			return _repoType;
 		}
 
-		private enum RepoType
+		internal enum RepoType
 		{
 			None,
 

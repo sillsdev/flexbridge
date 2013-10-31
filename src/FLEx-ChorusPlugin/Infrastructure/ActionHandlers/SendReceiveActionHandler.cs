@@ -62,13 +62,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring now.
 						// 'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and
 						// the Synchronizer class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit) call.
-						// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
+						// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once for each pair of merged heads)
 						// so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
 						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, commandLineArgs["-f"], false);
 						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
-						// Chorus does it in ths order:
+						// Chorus does it in this order:
 						// Local Commit
 						// Pull
 						// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
