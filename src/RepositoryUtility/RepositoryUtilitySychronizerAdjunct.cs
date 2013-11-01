@@ -4,6 +4,7 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using Chorus.sync;
@@ -14,6 +15,13 @@ using Palaso.Xml;
 
 namespace RepositoryUtility
 {
+	/// <summary>
+	/// A minimalist implementation of the ISychronizerAdjunct interface that only deals with the branch name.
+	///
+	/// This implementation can handle getting the bracnh name for Lift and FW repos. It will need to be revised,
+	/// if Lift ever goes to a new model, or if the repo util app ever supports types of Chorus repos,
+	/// beyond Lift and FW project repos.
+	/// </summary>
 	internal sealed class RepositoryUtilitySychronizerAdjunct : ISychronizerAdjunct
 	{
 		private readonly string _dataPathname;
@@ -62,7 +70,15 @@ namespace RepositoryUtility
 		public string BranchName {
 			get
 			{
-				return (_repoType == RepositoryUtilityForm.RepoType.LIFT) ? GetLiftBranchName() : FieldWorksProjectServices.GetVersionNumber(_dataPathname);
+				switch (_repoType)
+				{
+					case RepositoryUtilityForm.RepoType.FLEx:
+						return FieldWorksProjectServices.GetVersionNumber(_dataPathname);
+					case RepositoryUtilityForm.RepoType.LIFT:
+						return GetLiftBranchName();
+					default:
+						throw new InvalidOperationException("Repository type not supported.");
+				}
 			}
 		}
 

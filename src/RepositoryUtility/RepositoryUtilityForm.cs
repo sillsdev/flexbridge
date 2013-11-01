@@ -34,6 +34,7 @@ namespace RepositoryUtility
 		private string _repoFolder;
 		private ChorusSystem _chorusSystem;
 		private Revision _currentRevision;
+		private HistoryPage _historyPage;
 		private RepoType _repoType = RepoType.None;
 
 		public RepositoryUtilityForm()
@@ -47,15 +48,32 @@ namespace RepositoryUtility
 		private void HandleCloneMenuClick(object sender, EventArgs e)
 		{
 			_repoFolder = null;
-			uint modelVersion;
-			using (var modelPickerDlg = new ModelVersionPicker())
-			{
-				if (modelPickerDlg.ShowDialog(this) != DialogResult.OK)
-				{
-					return;
-				}
-				modelVersion = modelPickerDlg.ModelVersion;
-			}
+			var modelVersion = GetFlexModelVersionNumber();
+			if (modelVersion == 0)
+				return;
+
+			// This must be done before doing the clone,
+			// as the clone will be in the only new folder in '_repoHoldingFolder', afterwards.
+			var directoriesThatExistedBeforeCloning = ExtantDirectories;
+
+			// Get the clone. This may not get a clone, if the user cancels or the clonne fails.
+			GetClone(modelVersion);
+
+			// '_repoFolder' will be the new cloned folder, if the clone worked.
+			// Otherwise, it will be null.
+			_repoFolder = GetNewClonedDirectoryOrNulIfNoneCloned(directoriesThatExistedBeforeCloning);
+			if (!string.IsNullOrWhiteSpace(_repoFolder))
+				OpenLocalRepo(); // Set it up to be used in app.
+		}
+
+		private string GetNewClonedDirectoryOrNulIfNoneCloned(IEnumerable<string> directoriesThatExistedBeforeCloning)
+		{
+			var dirs = new HashSet<string>(Directory.GetDirectories(_repoHoldingFolder));
+			return dirs.Except(directoriesThatExistedBeforeCloning).FirstOrDefault();
+		}
+
+		private void GetClone(uint modelVersion)
+		{
 			var commandLineArgs = new Dictionary<string, string>
 			{
 				{CommandLineProcessor.v, CommandLineProcessor.obtain},
@@ -63,20 +81,34 @@ namespace RepositoryUtility
 				{CommandLineProcessor.liftmodel, @"0.13"},
 				{CommandLineProcessor.projDir, _repoHoldingFolder}
 			};
-			if (!Directory.Exists(commandLineArgs[CommandLineProcessor.projDir]))
-				Directory.CreateDirectory(commandLineArgs[CommandLineProcessor.projDir]);
-			var extantDirs = new HashSet<string>(Directory.GetDirectories(commandLineArgs[CommandLineProcessor.projDir]));
 
 			var obtainHandler = _actionTypeHandlerRepository.GetHandler(commandLineArgs);
 			obtainHandler.StartWorking(commandLineArgs);
+		}
 
-			var dirs = new HashSet<string>(Directory.GetDirectories(commandLineArgs[CommandLineProcessor.projDir]));
-			_repoFolder = dirs.Except(extantDirs).FirstOrDefault();
-			if (string.IsNullOrWhiteSpace(_repoFolder))
-				return;
+		private IEnumerable<string> ExtantDirectories
+		{
+			get
+			{
+				if (!Directory.Exists(_repoHoldingFolder))
+					Directory.CreateDirectory(_repoHoldingFolder);
+				var extantDirs = new HashSet<string>(Directory.GetDirectories(_repoHoldingFolder));
+				return extantDirs;
+			}
+		}
 
-			// Set it up to be used.
-			OpenLocalRepo();
+		private uint GetFlexModelVersionNumber()
+		{
+			uint modelVersion = 0;
+			using (var modelPickerDlg = new ModelVersionPicker())
+			{
+				if (modelPickerDlg.ShowDialog(this) != DialogResult.OK)
+				{
+					return modelVersion;
+				}
+				modelVersion = modelPickerDlg.ModelVersion;
+			}
+			return modelVersion;
 		}
 
 		private void HandleOpenLocalRepositoryClick(object sender, EventArgs e)
@@ -243,12 +275,26 @@ namespace RepositoryUtility
 		}
 
 		/// <summary>
-		/// Open the given repo in the 'View History' control.
+		/// Open the given repo in the 'HistoryPage' control and its sub-system of controls.
 		/// </summary>
 		private void OpenLocalRepo()
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder))
 				return;
+
+			SuspendLayout();
+			if (_historyPage != null)
+			{
+				_historyPage.RevisionSelectionChanged -= HistoryPageRevisionSelectionChanged;
+				Controls.Remove(_historyPage);
+				_historyPage.Dispose();
+				_historyPage = null;
+			}
+			if (_chorusSystem != null)
+			{
+				_chorusSystem.Dispose();
+				_chorusSystem = null;
+			}
 
 			var repoType = GetRepoType();
 			ChorusSystem newChorusSystem;
@@ -271,22 +317,10 @@ namespace RepositoryUtility
 						MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;
 			}
-			SuspendLayout();
-			HistoryPage historyPage = null;
-			if (_chorusSystem != null)
-			{
-				foreach (var control in Controls)
-				{
-					((IDisposable)control).Dispose();
-				}
-				historyPage = (HistoryPage)Controls[0];
-				historyPage.RevisionSelectionChanged -= HistoryPageRevisionSelectionChanged;
-				historyPage.Dispose();
-				Controls.Clear();
-				_chorusSystem.Dispose();
-				_chorusSystem = null;
-			}
 			_chorusSystem = newChorusSystem;
+
+			// Set up some new columns in the main control of the history page.
+			// This makes it easy for the user to know the selected revision's branch and simple rev id.
 			var historyPageOptions = new HistoryPageOptions();
 			var revisionListOptions = historyPageOptions.RevisionListOptions;
 			// Not enabled in Chorus. revisionListOptions.ShowRevisionChoiceControls = true;
@@ -306,10 +340,11 @@ namespace RepositoryUtility
 					branchColumnDefinition,
 					revisionIdColumnDefinition
 				};
-			historyPage = _chorusSystem.WinForms.CreateHistoryPage(historyPageOptions);
-			historyPage.RevisionSelectionChanged += HistoryPageRevisionSelectionChanged;
-			Controls.Add(historyPage);
-			historyPage.Dock = DockStyle.Fill;
+			_historyPage = _chorusSystem.WinForms.CreateHistoryPage(historyPageOptions);
+			_historyPage.RevisionSelectionChanged += HistoryPageRevisionSelectionChanged;
+			Controls.Add(_historyPage);
+			_historyPage.Dock = DockStyle.Fill;
+
 			ResumeLayout(true);
 		}
 
