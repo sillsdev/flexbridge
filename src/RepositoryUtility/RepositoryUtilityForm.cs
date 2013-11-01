@@ -204,21 +204,13 @@ namespace RepositoryUtility
 			var newTip = hgRepo.GetTip();
 
 			// Step 4. Get an additional (optional) comment for why the rollback is being done.
-			string optionalComment = null;
-			using (var optionalCommentDlg = new OptionalCommentDlg())
-			{
-				if (optionalCommentDlg.ShowDialog(this) == DialogResult.OK && !string.IsNullOrWhiteSpace(optionalCommentDlg.OptionalComment))
-				{
-					optionalComment = optionalCommentDlg.OptionalComment.Trim();
-				}
-			}
 
 			// Step 5: Do no-op merge with tip (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
 			// This comment text is supplied by the 'NoopMerge' method: "No-Op Merge: Revert repository to revision '{0}'".
 			// "_currentRevision.Number.LocalRevisionNumber" is used for {0}.
 			// The 'additionalComment' parameter allows for clients (read: this app) to provide a more helpful (to the user) comment.
 			// Such an additional comment could be the rationale for why this no-op merge was done.
-			hgRepo.NoopMerge(_repoFolder, optionalComment, newTip.Number.LocalRevisionNumber, oldTip.Number.LocalRevisionNumber);
+			NoopMerge(hgRepo, newTip, oldTip);
 
 			RebuildFlexFileIfRelevant();
 		}
@@ -375,6 +367,33 @@ namespace RepositoryUtility
 			{
 				return !string.IsNullOrWhiteSpace(_repoFolder) && Directory.Exists(RepoDir);
 			}
+		}
+
+		/// <summary>
+		/// Do a no-op merge. (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
+		/// </summary>
+		private void NoopMerge(HgRepository repo, Revision keeperRevision, Revision gonerRevision)
+		{
+			string optionalComment = null;
+			using (var optionalCommentDlg = new OptionalCommentDlg())
+			{
+				if (optionalCommentDlg.ShowDialog(this) == DialogResult.OK && !string.IsNullOrWhiteSpace(optionalCommentDlg.OptionalComment))
+				{
+					optionalComment = optionalCommentDlg.OptionalComment.Trim();
+				}
+			}
+
+			// Merge goner into keeper.
+			repo.Merge(_repoFolder, gonerRevision.Number.LocalRevisionNumber);
+
+			// Revert the merge.
+			repo.Execute(repo.SecondsBeforeTimeoutOnMergeOperation, "revert", "-a", "-r", keeperRevision.Number.LocalRevisionNumber);
+
+			// Commit
+			var comment = string.Format(@"No-Op Merge: Revert repository to revision '{0}'", keeperRevision.Number.LocalRevisionNumber);
+			if (!string.IsNullOrWhiteSpace(optionalComment))
+				comment = string.Format(@"{0}. {1}", comment, optionalComment);
+			repo.Commit(true, comment);
 		}
 
 		private RepoType GetRepoType()
