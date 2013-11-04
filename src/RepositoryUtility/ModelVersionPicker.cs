@@ -20,17 +20,5 @@ namespace RepositoryUtility
 		{
 			get { return Convert.ToUInt32(_nudModelVersionPicker.Value); }
 		}
-
-		private void OkClicked(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.OK;
-			Close();
-		}
-
-		private void CancelClicked(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.Cancel;
-			Close();
-		}
 	}
 }

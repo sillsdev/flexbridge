@@ -16,16 +16,6 @@ namespace RepositoryUtility
 			InitializeComponent();
 		}
 
-		private void OkBtnClicked(object sender, EventArgs e)
-		{
-			Close();
-		}
-
-		private void CancelBtnClicked(object sender, EventArgs e)
-		{
-			Close();
-		}
-
 		internal string OptionalComment
 		{
 			get

@@ -65,7 +65,6 @@ namespace RepositoryUtility
 			this._btnOk.TabIndex = 2;
 			this._btnOk.Text = "Ok";
 			this._btnOk.UseVisualStyleBackColor = true;
-			this._btnOk.Click += new System.EventHandler(this.OkBtnClicked);
 			//
 			// _btnCancel
 			//
@@ -76,7 +75,6 @@ namespace RepositoryUtility
 			this._btnCancel.TabIndex = 3;
 			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
-			this._btnCancel.Click += new System.EventHandler(this.CancelBtnClicked);
 			//
 			// OptionalCommentDlg
 			//

@@ -74,13 +74,13 @@ namespace RepositoryUtility
 			//
 			// _btnOk
 			//
+			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this._btnOk.Location = new System.Drawing.Point(85, 102);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 2;
 			this._btnOk.Text = "Ok";
 			this._btnOk.UseVisualStyleBackColor = true;
-			this._btnOk.Click += new System.EventHandler(this.OkClicked);
 			//
 			// _btnCancel
 			//
@@ -91,7 +91,6 @@ namespace RepositoryUtility
 			this._btnCancel.TabIndex = 3;
 			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
-			this._btnCancel.Click += new System.EventHandler(this.CancelClicked);
 			//
 			// ModelVersionPicker
 			//
@@ -99,7 +98,7 @@ namespace RepositoryUtility
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._btnCancel;
-			this.ClientSize = new System.Drawing.Size(353, 133);
+			this.ClientSize = new System.Drawing.Size(349, 129);
 			this.ControlBox = false;
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnOk);
