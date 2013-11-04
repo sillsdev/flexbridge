@@ -20,17 +20,17 @@ If you plan to work on Chorus,
 
 Special Mono dependencies:
 $ cp ../palaso/lib/Debug/icu.net.dll* ../palaso/lib/DebugMono
-$ PATH=/usr/bin:$PATH make #This will prefer the System Mono over fieldworks-mono
+$ PATH=/usr/bin:$PATH make [debug|release] #This will prefer the System Mono over fieldworks-mono
 
 To run FlexBridge you must unzip chorus/lib/debug/Mercurial.zip to the root of FlexBridge.
 Then, edit the mercurial.ini file in the Mercurial folder. Add a line like this (with the appropriate path for your FlexBridge folder).
 fixutf8 = C:\Dev\FLExBridge\MercurialExtensions\fixutf8\fixutf8.py
 
 ***Connecting FieldWorks to FlexBridge:***
-Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: TODO):
+Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: export env var FLEXBRIDGEDIR):
 <code>
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\8]
-"InstallationDir"="C:\\Dev\\FLExBridge\\output\\Debug"
+"InstallationDir"="C:\Dev\FLExBridge\output\Debug"
 </code>
 Also, if you are working on Chorus:
 - Copy Chorus.exe, LibChorus.dll, and Palaso dll's to C:\fwrepo\fw\output\Debug (or Release).  You can do this using the
