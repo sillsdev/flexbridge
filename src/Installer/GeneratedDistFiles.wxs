@@ -51,11 +51,17 @@
 			<ComponentRef Id="license.rtf" />
 			<ComponentRef Id="LogoForAbout.png" />
 			<ComponentRef Id="Palaso.en.tmx" />
+			<ComponentRef Id="Palaso.es.tmx" />
+			<ComponentRef Id="Palaso.fr.tmx" />
+			<ComponentRef Id="Palaso.zhHans.tmx" />
 			<ComponentRef Id="Chorus.en.tmx" />
 			<ComponentRef Id="Chorus.es.tmx" />
 			<ComponentRef Id="Chorus.fr.tmx" />
 			<ComponentRef Id="Chorus.zhHans.tmx" />
 			<ComponentRef Id="FlexBridge.en.tmx" />
+			<ComponentRef Id="FlexBridge.es.tmx" />
+			<ComponentRef Id="FlexBridge.fr.tmx" />
+			<ComponentRef Id="FlexBridge.zhHans.tmx" />
 		</ComponentGroup>
 	</Fragment>
 </Wix>
