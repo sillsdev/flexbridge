@@ -26,7 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			throw new NotSupportedException("The Undo Export handler is not supported");
