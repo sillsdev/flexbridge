@@ -18,7 +18,6 @@ using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
@@ -136,6 +135,12 @@ namespace RepositoryUtility
 			OpenLocalRepo();
 		}
 
+		/// <summary>
+		/// This method allows the repo util user to move around from one revision to another, without doing anything of permanence to the repo.
+		///
+		/// This method is quite benign in it work, where that same cannot be said for the the HandleRestoreToRevisionMenuClick.
+		/// Its purpose is to allow the user of this app to be able to open up the real app, if that will help sort out which revision to roll back to.
+		/// </summary>
 		private void HandleUpdateToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
@@ -147,6 +152,9 @@ namespace RepositoryUtility
 			RebuildFlexFileIfRelevant();
 		}
 
+		/// <summary>
+		/// This method is very different than its benign 'cousin' "HandleUpdateToRevisionMenuClick" in that this method makes real changes to the repo, where the other method does not.
+		/// </summary>
 		private void HandleRestoreToRevisionMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null || _currentRevision == null)
@@ -156,8 +164,11 @@ namespace RepositoryUtility
 			var selectedBranchName = BranchName(_currentRevision);
 			var oldTip = hgRepo.GetTip();
 			var oldTipBranchName = BranchName(oldTip);
+
+			// Step 1: Confirm we the bracnhes are the same.
 			if (selectedBranchName != oldTipBranchName)
 			{
+				// Branches are used to mark diffent data models, and I (RandyR) wasn't in the mood to deal with that at this point in the following no-op merge. :-)
 				MessageBox.Show(this,
 					String.Format(@"Selected revision '{0}' is in branch '{1}', but tip revision '{2}' is in branch '{3}', so the merge cannot be done.",
 						_currentRevision.Number.LocalRevisionNumber, selectedBranchName,
@@ -167,7 +178,7 @@ namespace RepositoryUtility
 				return;
 			}
 
-			// Step 0: Confirm we are at the correct revision.
+			// Step 2: Confirm we are at the correct revision.
 			if (MessageBox.Show(this,
 				string.Format(@"This aims to roll back to revision '{0}' (currently selected revision). If this is not the desired revision, select the 'Cancel' button.", _currentRevision.Number.LocalRevisionNumber),
 				"Confirm revision to roll back to",
@@ -177,10 +188,10 @@ namespace RepositoryUtility
 				return;
 			}
 
-			// Step 1. Make sure we are at the currently selected revision.
+			// Step 3. Make sure we are at the currently selected revision.
 			hgRepo.Update(_currentRevision.Number.LocalRevisionNumber);
 
-			// Step 2: Do some minimal change and commit it.
+			// Step 4: Do some minimal change and commit it.
 			var repoType = GetRepoType();
 			string pathname;
 			switch (repoType)
@@ -192,7 +203,7 @@ namespace RepositoryUtility
 					pathname = Directory.GetFiles(_repoFolder, "*.lift").First();
 					break;
 				default:
-					throw new InvalidOperationException(@"Repository tyep not recognized/supported.");
+					throw new InvalidOperationException(@"Repository type not recognized/supported.");
 			}
 			using (var writer = File.AppendText(pathname))
 			{
@@ -200,21 +211,26 @@ namespace RepositoryUtility
 			}
 			hgRepo.Commit(true, @"Do-nothing commit as part of rollback to earlier state.");
 
-			// Step 3. Need the new tip from the last commit, since it must be sent to the no-op merge code, not the '_currentRevision' one, which is now old.
+			// Step 5. Need the new tip from the last commit, since it must be sent to the no-op merge code, not the '_currentRevision' one, which is now old.
 			var newTip = hgRepo.GetTip();
 
-			// Step 4. Get an additional (optional) comment for why the rollback is being done.
-
-			// Step 5: Do no-op merge with tip (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
+			// Step 6: Do no-op merge with tip (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
 			// This comment text is supplied by the 'NoopMerge' method: "No-Op Merge: Revert repository to revision '{0}'".
 			// "_currentRevision.Number.LocalRevisionNumber" is used for {0}.
 			// The 'additionalComment' parameter allows for clients (read: this app) to provide a more helpful (to the user) comment.
 			// Such an additional comment could be the rationale for why this no-op merge was done.
 			NoopMerge(hgRepo, newTip, oldTip);
 
+			// Step 7: Rebuild fwdata file, if right kind of repo.
 			RebuildFlexFileIfRelevant();
 		}
 
+		/// <summary>
+		/// Sends the revised repo back to some source repo. The assumption is that there have been changes in the rpo, using this tool,
+		/// and that no team members have done any S/Rs, while this fixing was being done.
+		///
+		/// If the one or more team members didn't get the memo to stop doing changes, then odds are high that this tool will need to be re-run.
+		/// </summary>
 		private void HandleSendBackToSourceMenuClick(object sender, EventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null)
@@ -239,7 +255,9 @@ namespace RepositoryUtility
 				// Chorus will try the commit, as we have no way to tell Chorus to not do it.
 				// But, there is nothing to commit, if the app user plays the game properly.
 				// So, we do have control over the pull, merge, and push operations, and we only want to do the push.
-				// The idea is that any other team members are idle during this business, and they have all synced up before this is done.
+				// The idea is that any other team members are idle during this business, and they have all synced up before this is done,
+				// so we don't really need to see if someone didn't follow the 'rules', but did one more push, after we had done made the clone.
+				// The whole point of the drill here is to nuke that other head, not to try and merge in with it.
 				syncDlg.SyncOptions.DoPullFromOthers = false;
 				syncDlg.SyncOptions.DoMergeWithOthers = false;
 				syncDlg.SyncOptions.DoSendToOthers = true;
