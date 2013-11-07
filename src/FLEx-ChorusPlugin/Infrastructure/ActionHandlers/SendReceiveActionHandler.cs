@@ -57,7 +57,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				{
 					File.WriteAllText(lockPathname, "");
 					var origPathname = Path.Combine(projectDir, projectName + Utilities.FwXmlExtension);
-					var pathToHgRepo = Path.Combine(projectDir, ".hg");
 
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
@@ -91,7 +90,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								_gotChanges = false;
 								// Wipe out new repo, since something bad happened in S/R,
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
-								Directory.Delete(pathToHgRepo, true);
+								BackOutOfRepoCreation(projectDir);
 							}
 							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
 							{
@@ -106,7 +105,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								_gotChanges = false;
 								// Wipe out new repo, since the user cancelled without even trying the S/R,
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
-								Directory.Delete(pathToHgRepo, true);
+								BackOutOfRepoCreation(projectDir);
 							}
 						}
 					}
@@ -117,6 +116,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						File.Delete(lockPathname);
 				}
 			}
+		}
+
+		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
+		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
+		private static void BackOutOfRepoCreation(string projectDir)
+		{
+			foreach (var subDir in new[] {".hg", "Anthropology", "General", "Linguistics"})
+			{
+				var fullPath = Path.Combine(projectDir, subDir);
+				if (Directory.Exists(fullPath))
+					Directory.Delete(fullPath, true);
+			}
+			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
+			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
 		}
 
 		/// <summary>
