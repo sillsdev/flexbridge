@@ -29,7 +29,7 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
-			MessageBox.Show(@"Get ready to debug FB exe.");
+			//MessageBox.Show(@"Get ready to debug FB exe.");
 
 			using (var hotspot = new HotSpotProvider())
 			{
