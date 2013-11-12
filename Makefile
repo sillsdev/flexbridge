@@ -31,14 +31,18 @@ install: release
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin
-	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
-	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
-	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)/usr/share/pixmaps
+	/usr/bin/install -m644 lib/common/chorusHubIcon.png $(DESTDIR)/usr/share/pixmaps
+	/usr/bin/install -d $(DESTDIR)/usr/share/applications
+	/usr/bin/install -m644 lib/common/fieldworks-chorushub.desktop $(DESTDIR)/usr/share/applications
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
