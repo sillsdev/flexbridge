@@ -1,4 +1,11 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLExBridge: Include Launcher for Chorus Hub on Linux.
+* FLExBridge: Clean up after cancelling a Send/Receive.
+* FLExBridge: Add French, Spanish, and Chinese localizations.
+* FLExBridge: Better handling of receiving from a repository with no data in it yet.
+* FLExBridge: Help documentation available for Chorus on Linux.
+## 2.1.13 11/Oct/2013
+* Chorus: No longer add empty notes.
 * FLEx Bridge: Shift formal ownership from Randy Regnier to LSDev.
 ## 2.1.12 09/Oct/2013
 * Palaso: Fix problem copying error reporting to clipboard on Linux.
