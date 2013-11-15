@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fix problem with moving an older Lift Bridge system to its new home.
+## 2.2.2 14/Nov/2013
 * FLExBridge: Include Launcher for Chorus Hub on Linux.
 * FLExBridge: Clean up after cancelling a Send/Receive.
 * FLExBridge: Add French, Spanish, and Chinese localizations.
