@@ -1,5 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
 * Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.
+* Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).
+* Chorus: Update instructions for using Chorus Hub.
 ## 2.2.3 15/Nov/2013
 * FLEx Bridge: Fix problem with moving an older Lift Bridge system to its new home.
 ## 2.2.2 14/Nov/2013
