@@ -14,6 +14,9 @@ using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
+#if MONO
+using Gecko;
+#endif
 
 namespace RepositoryUtility
 {
