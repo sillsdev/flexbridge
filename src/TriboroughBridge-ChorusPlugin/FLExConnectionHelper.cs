@@ -1,11 +1,18 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using TriboroughBridge_ChorusPlugin.Properties;
+
+using IPCFramework;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -16,74 +23,56 @@ namespace TriboroughBridge_ChorusPlugin
 	[Export(typeof(ICreateProjectFromLift))]
 	public class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
 	{
-		private ServiceHost _host;
-		private IFLExBridgeService _pipe;
-
+		private IIPCHost _host;
+		private IIPCClient _client;
+#if DEBUG
+		private bool _runStandAlone; // debug mode, run with message boxes instead of connection to FLEx.
+#endif
 		/// <summary>
 		/// Initialize the helper, setting up the local service endpoint and opening.
 		/// </summary>
-		/// <param name="options">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
+		/// <param name="commandLineArgs">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		internal bool Init(Dictionary<string, string> options)
+		public bool Init(Dictionary<string, string> commandLineArgs)
 		{
+#if DEBUG // this command line argument is only for debugging.
+			if (commandLineArgs.ContainsKey("-runStandAlone"))
+			{
+				_runStandAlone = true;
+				MessageBox.Show ("connection opened");
+				return true;
+			}
+#else
+			if (commandLineArgs.ContainsKey("-runStandAlone"))
+			{
+				throw new InvalidOperationException("The '-runStandAlone' command line option is not supported in a Release build.");
+			}
+#endif
+
 			HostOpened = true;
 
 			// The pipeID as set by FLEx to be used in setting the communication channels
-			var pipeId = options.Keys.Count == 0 || !options.ContainsKey("-pipeID") ? "" : options["-pipeID"];
+			var pipeId = commandLineArgs["-pipeID"];
 
-			try
+			_host = IPCHostFactory.Create();
+			_host.VerbosityLevel = 1;
+			var hostIsInitialized = _host.Initialize<FLExService, IFLExService>("FLExEndpoint" + pipeId, null, null);
+			if (!hostIsInitialized)
 			{
-				_host = new ServiceHost(typeof(FLExService),
-									   new[] { new Uri("net.pipe://localhost/FLExEndpoint" + pipeId) });
-				//open host ready for business
-
-				var hostPipeBinding = new NetNamedPipeBinding
-										  {
-											  ReceiveTimeout = TimeSpan.MaxValue
-										  };
-				_host.AddServiceEndpoint(typeof(IFLExService), hostPipeBinding, "FLExPipe");
-				_host.Open();
-			}
-			catch (AddressAlreadyInUseException)
-			{
-				//There may be another copy of FLExBridge running, but we need to try and wakeup FLEx before we quit.
 				HostOpened = false;
-			}
-			var pipeBinding = new NetNamedPipeBinding
-								  {
-									  ReceiveTimeout = TimeSpan.MaxValue
-								  };
-			var pipeFactory = new ChannelFactory<IFLExBridgeService>(pipeBinding, new EndpointAddress("net.pipe://localhost/FLExBridgeEndpoint"
-																									  + pipeId + "/FLExPipe"));
-			_pipe = pipeFactory.CreateChannel();
-			((IContextChannel)_pipe).OperationTimeout = TimeSpan.MaxValue;
-			try
-			{
-				//Notify FLEx that we are ready to receive requests.
-				//(if we failed to create the host we still want to do this so FLEx can wake up)
-				_pipe.BridgeReady();
-			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening);
-				_pipe = null; //FLEx isn't listening.
-			}
-
-			if (!HostOpened)
-			{
 				// display messagebox and quit
 				MessageBox.Show(CommonResources.kAlreadyRunning, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 				return false;
 			}
-			return true;
-		}
+			//open host ready for business
 
-		private static string GetFlexPathnameFromOption(string pOption)
-		{
-			return pOption.EndsWith(Utilities.FwXmlExtensionNoPeriod) || pOption.EndsWith(Utilities.FwDB4oExtensionNoPeriod)
-					   ? Path.GetFileNameWithoutExtension(pOption)
-					   : string.Empty;
+			_client = IPCClientFactory.Create();
+			_client.VerbosityLevel = 1;
+			_client.Initialize<IFLExBridgeService>("FLExBridgeEndpoint" + pipeId, FLExService.WaitObject, null);
+			if (!_client.RemoteCall("BridgeReady"))
+				_client = null;	//FLEx isn't listening.
+			return true;
 		}
 
 		private bool HostOpened { get; set; }
@@ -93,14 +82,17 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void TellFlexNoNewProjectObtained()
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.InformFwProjectName(null);
+				MessageBox.Show ("TellFlexNoNewProjectObtained");
+				return;
 			}
-			catch (Exception)
+#endif
+			if (_client != null)
 			{
-				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
+				if (!_client.RemoteCall("InformFwProjectName", new object[] { "" }))
+					Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 			}
 		}
 
@@ -112,59 +104,64 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="fwProjectName">The whole FW project path, or null, if nothing was created.</param>
 		public void CreateProjectFromFlex(string fwProjectName)
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.InformFwProjectName(fwProjectName);
+				MessageBox.Show ("CreateProjectFromFlex " + fwProjectName);
+				return;
 			}
-			catch (Exception)
-			{
+#endif
+			if (_client == null)
+				return;
+			if (!_client.RemoteCall("InformFwProjectName", new object[] { fwProjectName ?? "" }))
 				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
-			}
 		}
 
 		public void ImportLiftFileSafely(string liftPathname)
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.InformFwProjectName(liftPathname);
+				MessageBox.Show ("ImportLiftFileSafely " + liftPathname);
+				return;
 			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
-			}
+#endif
+			if (_client == null)
+				return;
+			if (!_client.RemoteCall("InformFwProjectName", new object[] { liftPathname ?? "" }))
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 		}
 
 		public void SendLiftPathnameToFlex(string liftPathname)
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.InformFwProjectName(liftPathname); // May be null, which is fine.
+				MessageBox.Show ("SendLiftPathnameToFlex " + liftPathname);
+				return;
 			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
-			}
+#endif
+			if (_client == null)
+				return;
+			if (!_client.RemoteCall("InformFwProjectName", new object[] { liftPathname ?? "" }))
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 		}
 
 		/// <summary>
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		internal void SignalBridgeWorkComplete(bool changesReceived)
+		public void SignalBridgeWorkComplete(bool changesReceived)
 		{
-			// open a channel to flex and send the message.
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if(_pipe != null)
-					_pipe.BridgeWorkComplete(changesReceived);
+				MessageBox.Show ("SignalBridgeWorkComplete: " + (changesReceived ? "changes" : "no changes"));
+				return;
 			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening);//It isn't fatal if FLEx isn't listening to us.
-			}
+#endif
+			if (_client != null && !_client.RemoteCall("BridgeWorkComplete", new object[] { changesReceived }))
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 			// Allow the _host to get the WaitObject, which will result in the WorkDoneCallback
 			// method being called in FLEx:
 			Monitor.Enter(FLExService.WaitObject);
@@ -177,15 +174,17 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </summary>
 		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.BridgeSentJumpUrl(e.JumpUrl);
+				MessageBox.Show ("SendJumpUrlToFlex " + e.JumpUrl ?? "");
+				return;
 			}
-			catch(Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening);//It isn't fatal if FLEx isn't listening to us.
-			}
+#endif
+			if (_client == null)
+				return;
+			if (!_client.RemoteCall("BridgeSentJumpUrl", new object[] { e.JumpUrl ?? "" }))
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 		}
 
 		#region ICreateProjectFromLift impl
@@ -197,17 +196,21 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="liftPath">The whole LIFT pathname, or null, if nothing was created.</param>
 		public bool CreateProjectFromLift(string liftPath)
 		{
-			try
+#if DEBUG
+			if (_runStandAlone)
 			{
-				if (_pipe != null)
-					_pipe.InformFwProjectName(liftPath);
-			}
-			catch (Exception)
-			{
-				Console.WriteLine(CommonResources.kFlexNotListening); //It may not be fatal if FLEx isn't listening to us, but we can't create.
+				MessageBox.Show ("CreateProjectFromLift " + liftPath);
 				return false;
 			}
-			return false;
+#endif
+			if (_client == null)
+				return false;
+			if (!_client.RemoteCall("InformFwProjectName", new object[] {liftPath ?? ""}))
+			{
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
+				return false;
+			}
+			return false;	// should this be true??
 		}
 
 		#endregion
@@ -267,7 +270,16 @@ namespace TriboroughBridge_ChorusPlugin
 			if (disposing)
 			{
 				if (HostOpened)
+				{
 					_host.Close();
+					_host = null;
+					HostOpened = false;
+				}
+				if (_client != null)
+				{
+					_client.Close();
+					_client = null;
+				}
 			}
 
 			IsDisposed = true;

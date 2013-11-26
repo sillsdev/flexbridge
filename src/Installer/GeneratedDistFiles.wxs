@@ -8,10 +8,60 @@
 			<Component Id="LogoForAbout.png" Guid="C217AC6E-CDB7-4334-9D0F-BDD53F57EA21">
 				<File Id="LogoForAbout.png" Name="LogoForAbout.png" Source="..\..\DistFiles\LogoForAbout.png" />
 			</Component>
+			<Directory Id="LocalizationsDir" Name="localizations">
+					<Component Id="Palaso.en.tmx" Guid="7530325B-E7BA-4EAB-B385-4EEC91A23D97">
+						<File Id="Palaso.en.tmx" Name="Palaso.en.tmx" Source="..\..\DistFiles\localizations\Palaso.en.tmx" />
+					</Component>
+					<Component Id="Palaso.es.tmx" Guid="D08E3F10-76E4-42AB-87E3-EC80E773D016">
+						<File Id="Palaso.es.tmx" Name="Palaso.es.tmx" Source="..\..\DistFiles\localizations\Palaso.es.tmx" />
+					</Component>
+					<Component Id="Palaso.fr.tmx" Guid="735E2604-154A-4869-9856-19AD92BC42C2">
+						<File Id="Palaso.fr.tmx" Name="Palaso.fr.tmx" Source="..\..\DistFiles\localizations\Palaso.fr.tmx" />
+					</Component>
+					<Component Id="Palaso.zhHans.tmx" Guid="6ADD49B4-4F6F-4DD7-B74F-59ED1FF877C6">
+						<File Id="Palaso.zhHans.tmx" Name="Palaso.zh-Hans.tmx" Source="..\..\DistFiles\localizations\Palaso.zh-Hans.tmx" />
+					</Component>
+					<Component Id="Chorus.en.tmx" Guid="C1EE5817-E382-11DE-8A39-0800200C9A66">
+						<File Id="Chorus.en.tmx" Name="Chorus.en.tmx" Source="..\..\DistFiles\localizations\Chorus.en.tmx" />
+					</Component>
+					<Component Id="Chorus.es.tmx" Guid="c1ee581f-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.es.tmx" Name="Chorus.es.tmx" Source="..\..\DistFiles\localizations\Chorus.es.tmx" />
+					</Component>
+					<Component Id="Chorus.fr.tmx" Guid="c1ee5820-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.fr.tmx" Name="Chorus.fr.tmx" Source="..\..\DistFiles\localizations\Chorus.fr.tmx" />
+					</Component>
+					<Component Id="Chorus.zhHans.tmx" Guid="c1ee5821-e382-11de-8a39-0800200c9a66">
+						<File Id="Chorus.zhHans.tmx" Name="Chorus.zh-Hans.tmx" Source="..\..\DistFiles\localizations\Chorus.zh-Hans.tmx" />
+					</Component>
+					<Component Id="FlexBridge.en.tmx" Guid="C1EE5818-E382-11DE-8A39-0800200C9A66">
+						<File Id="FlexBridge.en.tmx" Name="FlexBridge.en.tmx" Source="..\..\DistFiles\localizations\FlexBridge.en.tmx" />
+					</Component>
+					<Component Id="FlexBridge.es.tmx" Guid="9B7DD578-0E71-43B5-AF2C-84C627775E72">
+						<File Id="FlexBridge.es.tmx" Name="FlexBridge.es.tmx" Source="..\..\DistFiles\localizations\FlexBridge.es.tmx" />
+					</Component>
+					<Component Id="FlexBridge.fr.tmx" Guid="E6EC8E59-44E7-4DAF-B7FB-C8A3D5CB7103">
+						<File Id="FlexBridge.fr.tmx" Name="FlexBridge.fr.tmx" Source="..\..\DistFiles\localizations\FlexBridge.fr.tmx" />
+					</Component>
+					<Component Id="FlexBridge.zhHans.tmx" Guid="F8864AA9-90A4-470F-9513-B0EE06B89629">
+						<File Id="FlexBridge.zhHans.tmx" Name="FlexBridge.zh-Hans.tmx" Source="..\..\DistFiles\localizations\FlexBridge.zh-Hans.tmx" />
+					</Component>
+			</Directory>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
 			<ComponentRef Id="license.rtf" />
 			<ComponentRef Id="LogoForAbout.png" />
+			<ComponentRef Id="Palaso.en.tmx" />
+			<ComponentRef Id="Palaso.es.tmx" />
+			<ComponentRef Id="Palaso.fr.tmx" />
+			<ComponentRef Id="Palaso.zhHans.tmx" />
+			<ComponentRef Id="Chorus.en.tmx" />
+			<ComponentRef Id="Chorus.es.tmx" />
+			<ComponentRef Id="Chorus.fr.tmx" />
+			<ComponentRef Id="Chorus.zhHans.tmx" />
+			<ComponentRef Id="FlexBridge.en.tmx" />
+			<ComponentRef Id="FlexBridge.es.tmx" />
+			<ComponentRef Id="FlexBridge.fr.tmx" />
+			<ComponentRef Id="FlexBridge.zhHans.tmx" />
 		</ComponentGroup>
 	</Fragment>
 </Wix>

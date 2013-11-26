@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -97,10 +103,18 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyn
 		/// </summary>
 		public string HtmlContext(XmlNode mergeElement)
 		{
-			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null && mergeElement.ParentNode.Name == SharedConstants.Msa);
+			// The normal case is for the ParentNode to be an MSA, but there is at least one case
+			// (where both users are adding a POS to a sense), where ParentNode is an 'ownseq' and
+			// then we expect mergeElement.Name to be an MSA.
+			Debug.Assert(mergeElement != null && mergeElement.ParentNode != null &&
+				(mergeElement.ParentNode.Name == SharedConstants.Msa ||
+				mergeElement.Name == SharedConstants.Msa));
 			// We come in here once each for Ancestor, Ours and Theirs with different mergeElement,
 			// so resist the temptation to skip this step if _posGuidStrs != null.
-			_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
+			if (mergeElement.ParentNode.Name == SharedConstants.Ownseq && mergeElement.Name == SharedConstants.Msa)
+				_posGuidStrs = FindPosGuidsInMergeElement(mergeElement);
+			else
+				_posGuidStrs = FindPosGuidsInMergeElement(mergeElement.ParentNode);
 			var hasTwoPoses = SetTwoPosFlag(_posGuidStrs);
 			var posNames = ConvertGuidStringsToPosNames();
 

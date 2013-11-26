@@ -1,5 +1,12 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Text;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
@@ -8,6 +15,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal static readonly Encoding Utf8 = Encoding.UTF8;
 		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
 		internal const string dupid = "dupid";
+		public const string FwLockExtension = ".lock";
+		public const string FwXmlLockExtension = Utilities.FwXmlExtension + FwLockExtension;
 
 		// General
 		internal const string Str = "Str";

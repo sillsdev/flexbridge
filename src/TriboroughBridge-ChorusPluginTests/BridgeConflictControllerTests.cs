@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
 using NUnit.Framework;
-using TriboroughBridge_ChorusPlugin.Controller;
 
 namespace TriboroughBridge_ChorusPluginTests
 {
@@ -12,7 +12,7 @@ namespace TriboroughBridge_ChorusPluginTests
 	/// This is only a start on testing BridgeConflictController.
 	/// (And now an empty shell, since the ones I had moved to ConflcitControllerTests in Flex-ChorusPluginTests.)
 	/// </summary>
-	[TestFixture]
+	//[TestFixture]
 	public class BridgeConflictControllerTests
 	{
 	}

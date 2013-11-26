@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tmx version="1.4">
+  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.8.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+	<prop type="x-appversion">2.3.53</prop>
+	<prop type="x-hardlinebreakreplacement">\n</prop>
+  </header>
+  <body>
+	<tu tuid="Common.Cancel">
+	  <tuv xml:lang="en">
+		<seg>&amp;Cancel</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>&amp;Annuler</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.Close">
+	  <tuv xml:lang="en">
+		<seg>&amp;Close</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>&amp;Fermer</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.Error">
+	  <tuv xml:lang="en">
+		<seg>Error</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Erreur</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.Help">
+	  <tuv xml:lang="en">
+		<seg>Help</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Aide</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.OK">
+	  <tuv xml:lang="en">
+		<seg>&amp;OK</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>&amp;OK</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.PleaseConfirm">
+	  <tuv xml:lang="en">
+		<seg>Please confirm</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Veuillez confirmer</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Common.Problem">
+	  <tuv xml:lang="en">
+		<seg>Problem</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Problème</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="GetSharedProjectDlg.WindowTitle">
+	  <tuv xml:lang="en">
+		<seg>Receive project</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Recevoir projet</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="ServerSettingsDialog.WindowTitle">
+	  <tuv xml:lang="en">
+		<seg>Send/Receive Server Settings...</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Paramètres de serveur de envoyer/recevoir</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="SyncControl.SendReceiveButton">
+	  <tuv xml:lang="en">
+		<seg>Send/Receive</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Envoyer/recevoir</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="SyncDialog.WindowTitle">
+	  <tuv xml:lang="en">
+		<seg>Send/Receive</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Envoyer/recevoir</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="SyncPanel.SendReceiveProjectChanges">
+	  <tuv xml:lang="en">
+		<seg>Send/Receive Project Changes</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Changements de projet de envoyer/recevoir</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="SyncStartControl.Checking">
+	  <tuv xml:lang="en">
+		<seg>Checking...</seg>
+	  </tuv>
+	  <tuv xml:lang="fr">
+		<seg>Vérification...</seg>
+	  </tuv>
+	</tu>
+  </body>
+</tmx>

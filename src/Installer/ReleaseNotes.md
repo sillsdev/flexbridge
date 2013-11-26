@@ -1,4 +1,61 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.
+* Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).
+* Chorus: Update instructions for using Chorus Hub.
+## 2.2.3 15/Nov/2013
+* FLEx Bridge: Fix problem with moving an older Lift Bridge system to its new home.
+## 2.2.2 14/Nov/2013
+* FLExBridge: Include Launcher for Chorus Hub on Linux.
+* FLExBridge: Clean up after cancelling a Send/Receive.
+* FLExBridge: Add French, Spanish, and Chinese localizations.
+* FLExBridge: Better handling of receiving from a repository with no data in it yet.
+* FLExBridge: Help documentation available for Chorus on Linux.
+## 2.1.13 11/Oct/2013
+* Chorus: No longer add empty notes.
+* FLEx Bridge: Shift formal ownership from Randy Regnier to LSDev.
+## 2.1.12 09/Oct/2013
+* Palaso: Fix problem copying error reporting to clipboard on Linux.
+* Chorus: Fix stack overflow problem on Linux when finished using some dialogs.
+* Chorus: Fix problem displaying conflict details on Linux.
+## 2.1.10 17/Sep/2013
+* FLEx Bridge: Fixed problem with FLEx<->FLEx Bridge interaction.
+* FLEx Bridge: Don't try to restart FLEx Bridge after updating to a newer version.
+## 2.1.9 16/Sep/2013
+* Chorus: Users with large numbers of revisions would see the internet hang after an update.
+## 2.1.8 3/Sep/2013
+* New in this release
+	* FLEx Bridge: Revise FLEx<->FLEx Bridge interaction to allow Linux to do Send/Receive.
+	* FLEx Bridge: Add support for FLEx's data model version 68.
+* Fixes in this release
+	* FLEx Bridge: Allow for better LIFT Send/Receive support for Shared network system (Db4o data storage system).
+	* FLEx Bridge: Numerous fixes for Linux support.
+	* FLEx Bridge: Fixed case where clicking "X" on S/R window caused crash.
+## 2.0.20 14/Aug/2013
+* L10NSharp: No "OK" button text for unavailable languages
+* FLEx Bridge: Prompt only once if localization unavailable
+* FLEx Bridge: Fix problem in POS context generator for conflict reports
+## 2.0.19 24/Jul/2013
+* New in this release
+	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
+	* FLEx Bridge: Update the minimum install version for FLEx.
+	* Palaso, Chorus, & FLEx Bridge: Add localization support.
+	* Chorus: Show technical conflict details on demand.
+* Fixes in this release
+	* FLEx Bridge: Make message about 'fix it' program to not be a warning.
+	* Chorus: Fix merge bug.
+## 1.0.31 11/Jul/2013
+* FLEx Bridge: Add better support for FLEx data migration DM68.
+## 1.0.30 9/Jul/2013
+* Chorus: Fix problem with sending unrelated repositories out.
+## 1.0.29 1/Jul/2013
+Flex Bridge: Fix crash getting an empty repository.
+## 1.0.28 25/Jun/2013
+* Chorus: Fix problem where source repository had no initial commit.
+## 1.0.27 23/Jun/2013
+* Chorus: Fix merge bug.
+## 1.0.26 10/June/2013
+* Palaso: Fix issue with loading large xml files.
+## 1.0.24 22/May/2013
 * Chorus: Fix issue with unresolved merge (a merge didn't complete).
 ## 1.0.23 16/May/2013
 * Palaso: Fix issue with loading xml files (e.g., Lift files) with comments.
@@ -30,4 +87,3 @@ This version has the following limitations (and probably many others). Feel free
 * Not available yet for Linux.
 * Some merge reports may not be the easiest to read and understand.
 * Some types of lexical relations appear to not merge correctly in both Lift data and in the main FLEx data set. The issues are more complex than merging.
-See additional limitations [here](http://projects.palaso.org/projects/fwbridge/wiki/Happy_Path/).

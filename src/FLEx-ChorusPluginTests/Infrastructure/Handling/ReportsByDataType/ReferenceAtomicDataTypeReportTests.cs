@@ -1,4 +1,10 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Chorus.FileTypeHanders.xml;
@@ -148,7 +154,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 				"lexdb",
 				commonAncestor, ours, theirs,
 				new[] { "Lexicon/LexEntry/Senses/ownseq/MorphoSyntaxAnalysis/objsur" }, null,
-				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
+				1, new List<Type> { typeof(BothAddedMainElementButWithDifferentContentConflict) },
 				3, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlBothAddedSameChangeReport) });
 		}
 	}

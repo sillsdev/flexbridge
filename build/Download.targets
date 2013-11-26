@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask TaskName="DownloadFile" AssemblyFile="Palaso.BuildTasks.dll" />
+
+	<ItemGroup>
+		<DownloadedCommon Include="$(RootDir)/Download/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<DownloadedCommon Include="$(RootDir)/Download/L10NSharp.dll"/>
+
+		<DownloadedMono Include="$(RootDir)/Download/Palaso.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/Palaso.Lift.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/Chorus.exe"/>
+		<DownloadedMono Include="$(RootDir)/Download/LibChorus.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/ChorusHub.exe"/>
+		<DownloadedMono Include="$(RootDir)/Download/ChorusMerge.exe"/>
+		<DownloadedMono Include="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Mercurial-i686.zip"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Mercurial-x86_64.zip"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Autofac.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/IPCFramework.dll"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Chorus_Help.chm"/>
+
+		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.Lift.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/Chorus.exe"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/LibChorus.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/ChorusHub.exe"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/ChorusMerge.exe"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/Mercurial.zip"/>
+		<DownloadedDotNetCommon Include="$(RootDir)/Download/Autofac.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/icu.net.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/icu.net.dll.config"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/icudt40.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/icuin40.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/icuuc40.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/IPCFramework.dll"/>
+	</ItemGroup>
+<!--
+	bt225 (Helpprovider)
+	Vulcan.Uczniowie.HelpProvider.dll => lib/common
+	===================================================
+	bt196 (L10NSharp continuous)
+	(someday may need to use bt271 (L10NSharp Mono continuous) [precise64 agent])
+	L10NSharp.dll => lib/common
+-->
+	<Target Name="DownloadFiles" DependsOnTargets="DownloadMonoAssemblies;DownloadDotNetAssemblies">
+		<MakeDir Directories="$(RootDir)/Download"/>
+		<!-- bt225 is the Helpprovider (Windows) build -->
+		<Message Text="Downloading latest successful artifacts from the Helpprovider build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt225/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll"
+					  LocalFilename="$(RootDir)/Download/Vulcan.Uczniowie.HelpProvider.dll"/>
+
+		<Message Text="Copying latest successful artifacts from the Helpprovider and L10NSharp builds."/>
+		<Copy SourceFiles="@(DownloadedCommon)" DestinationFolder="$(RootDir)/lib/common"
+			  SkipUnchangedFiles="true"/>
+	</Target>
+
+<!--
+	bt274 (chorus-win32-FlexBridgeBeta)
+	bt285 (Chorus-Precise64-FlexBridgeBeta Continuous)
+
+	Autofac.dll => lib/common
+	Chorus.exe => lib/$(Configuration)
+	LibChorus.dll => lib/$(Configuration)
+	ChorusHub.exe => lib/$(Configuration)
+	ChorusMerge.exe => lib/$(Configuration)
+	LibChorus.TestUtilities.dll => lib/$(Configuration)
+	Mercurial.zip => lib/$(Configuration)
+	Mercurial-i686.zip => lib/common
+	Mercurial-x86_64.zip => lib/common
+	===================================================
+	bt273 (palaso-win32-FlexBridgeBeta Continuous)
+	bt284 (palaso-Precise64-FlexBridgeBeta Continuous)
+
+	Palaso.dll => lib/$(Configuration)
+	Palaso.TestUtilities.dll => lib/$(Configuration)
+	PalasoUIWindowsForms.dll => lib/$(Configuration)
+	Palaso.Lift.dll => lib/$(Configuration)
+	===================================================
+	bt278 (IPC continuous)
+	bt279 (IPC-Precise64)
+	IPCFramework.dll => lib/$(Configuration)
+	===================================================
+	bt14 (icucil-win32-default Continuous)
+	icu*.dll => lib/$(Configuration)
+	icu.net.config => lib/$(Configuration)
+	===================================================
+	bt216 (Chorus-Documentation)
+	Chorus_Help.chm => lib/common
+-->
+	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT'">
+		<MakeDir Directories="$(RootDir)/Download"/>
+		<!-- bt284 is the palaso-Precise64-FlexBridgeBeta Continuous build -->
+		<Message Text="Downloading latest successful artifacts from the palaso-Precise64-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Lift.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.TestUtilities.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/PalasoUIWindowsForms.dll"
+					  LocalFilename="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
+
+		<!-- bt285 is the Chorus-Precise64-FlexBridgeBeta Continuous build -->
+		<Message Text="Downloading latest successful artifacts from the Chorus-Precise64-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Autofac.dll"
+					  LocalFilename="$(RootDir)/Download/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Chorus.exe"
+					  LocalFilename="$(RootDir)/Download/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.dll"
+					  LocalFilename="$(RootDir)/Download/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/ChorusHub.exe"
+					  LocalFilename="$(RootDir)/Download/ChorusHub.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/ChorusMerge.exe"
+					  LocalFilename="$(RootDir)/Download/ChorusMerge.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.TestUtilities.dll"
+					  LocalFilename="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Mercurial-i686.zip"
+					  LocalFilename="$(RootDir)/Download/Mercurial-i686.zip"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Mercurial-x86_64.zip"
+					  LocalFilename="$(RootDir)/Download/Mercurial-x86_64.zip"/>
+
+		<!-- bt279 is the IPC-Precise64 build -->
+		<Message Text="Downloading latest successful artifacts from the IPC-Precise64 build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll"
+					  LocalFilename="$(RootDir)/Download/IPCFramework.dll"/>
+
+		<!-- bt271 is the L10NSharp continuous (Mono) build -->
+		<Message Text="Downloading latest successful artifacts from the L10NSharp mono continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt271/.lastSuccessful/L10NSharp.dll"
+					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
+
+		<!-- bt216 is the Chorus-Documentation build -->
+		<Message Text="Downloading latest successful artifacts from the Chorus-Documentation build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt216/.lastSuccessful/Chorus_Help.chm"
+					  LocalFilename="$(RootDir)/Download/Chorus_Help.chm"/>
+
+		<!-- split into two stages so that if the net connection fails, you still have the old files -->
+		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, and IPCFramework builds."/>
+		<Copy SourceFiles="@(DownloadedMono)" DestinationFolder="$(RootDir)/lib/DebugMono"
+			SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(DownloadedMono)" DestinationFolder="$(RootDir)/lib/ReleaseMono"
+			SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(DownloadedMonoCommon)" DestinationFolder="$(RootDir)/lib/common"
+			SkipUnchangedFiles="true"/>
+	</Target>
+
+	<Target Name="DownloadDotNetAssemblies" Condition="'$(OS)'=='Windows_NT'">
+		<MakeDir Directories="$(RootDir)/Download"/>
+		<!-- bt14 is the icucil-win32-default Continuous build. -->
+		<Message Text="Downloading latest successful artifacts from the icucil-win32-default Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icu.net.dll"
+					  LocalFilename="$(RootDir)/Download/icu.net.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icu.net.dll.config"
+					  LocalFilename="$(RootDir)/Download/icu.net.dll.config"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icudt40.dll"
+					  LocalFilename="$(RootDir)/Download/icudt40.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icuin40.dll"
+					  LocalFilename="$(RootDir)/Download/icuin40.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icuuc40.dll"
+					  LocalFilename="$(RootDir)/Download/icuuc40.dll"/>
+
+		<!-- bt273 is the palaso-win32-FlexBridgeBeta Continuous build. -->
+		<Message Text="Downloading latest successful artifacts from the palaso-win32-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Lift.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.TestUtilities.dll"
+					  LocalFilename="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/PalasoUIWindowsForms.dll"
+					  LocalFilename="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
+
+		<!-- bt274 is the chorus-win32-FlexBridgeBeta build -->
+		<Message Text="Downloading latest successful artifacts from the chorus-win32-FlexBridgeBeta build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Autofac.dll"
+					  LocalFilename="$(RootDir)/Download/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Chorus.exe"
+					  LocalFilename="$(RootDir)/Download/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.dll"
+					  LocalFilename="$(RootDir)/Download/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/ChorusHub.exe"
+					  LocalFilename="$(RootDir)/Download/ChorusHub.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/ChorusMerge.exe"
+					  LocalFilename="$(RootDir)/Download/ChorusMerge.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.TestUtilities.dll"
+					  LocalFilename="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Mercurial.zip"
+					  LocalFilename="$(RootDir)/Download/Mercurial.zip"/>
+
+		<!-- bt278 is the IPC continuous build -->
+		<Message Text="Downloading latest successful artifacts from the IPC continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful/IPCFramework.dll"
+					  LocalFilename="$(RootDir)/Download/IPCFramework.dll"/>
+
+		<!-- bt196 is the L10NSharp continuous (Windows) build -->
+		<Message Text="Downloading latest successful artifacts from the L10NSharp continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt196/.lastSuccessful/L10NSharp.dll"
+					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
+
+		<!-- split into two stages so that if the net connection fails, you still have the old files -->
+		<Message Text="Copying latest successful artifacts from the icucil, Palaso, Chorus, and IPCFramework builds."/>
+		<Copy SourceFiles="@(DownloadedDotNet)" DestinationFolder="$(RootDir)/lib/Debug"
+			SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(DownloadedDotNet)" DestinationFolder="$(RootDir)/lib/Release"
+			SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(DownloadedDotNetCommon)" DestinationFolder="$(RootDir)/lib/common"
+			SkipUnchangedFiles="true"/>
+	</Target>
+
+</Project>

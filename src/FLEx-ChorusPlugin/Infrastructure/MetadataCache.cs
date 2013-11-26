@@ -1,4 +1,10 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -315,7 +321,10 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						// 7000067: No actual model change.
 						break;
 					case 7000068:
-						// 7000068: No actual model change.
+						// 7000068: Change ReversalIndexEntry's Subentries property from owning collection to owning sequence.
+						newClass = GetClassInfo("ReversalIndexEntry");
+						newClass.RemoveProperty("Subentries");
+						newClass.AddProperty(new FdoPropertyInfo("Subentries", DataType.OwningSequence));
 						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}

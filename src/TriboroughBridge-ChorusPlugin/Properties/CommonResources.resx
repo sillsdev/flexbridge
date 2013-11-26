@@ -142,28 +142,28 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <data name="kMovingRepo" xml:space="preserve">
 	<value>Moving obtained project to final location.</value>
   </data>
-	<data name="kEmptyRepoMsg" xml:space="preserve">
+  <data name="kEmptyRepoMsg" xml:space="preserve">
 	<value>This repository has no data in it yet. Before you can get data from this repository, someone needs to send project data to this repository.</value>
   </data>
-	<data name="kRepoProblem" xml:space="preserve">
+  <data name="kRepoProblem" xml:space="preserve">
 	<value>Empty Repository</value>
   </data>
-	<data name="kYourVersionIsCurrent" xml:space="preserve">
+  <data name="kYourVersionIsCurrent" xml:space="preserve">
 	<value>Your version is current.</value>
   </data>
-	<data name="KFlexBridgeVersion" xml:space="preserve">
+  <data name="KFlexBridgeVersion" xml:space="preserve">
 	<value>FLEx Bridge Version</value>
   </data>
-	<data name="kNewerVersionAvailablePattern" xml:space="preserve">
+  <data name="kNewerVersionAvailablePattern" xml:space="preserve">
 	<value>Your version is '{0}'. A newer version '{1}' exists. Do you want to download it?</value>
   </data>
-	<data name="kHowToSendReceiveExtantRepository" xml:space="preserve">
+  <data name="kHowToSendReceiveExtantRepository" xml:space="preserve">
 	<value>To Send/Receive that project, open it and use Send/Receive &gt; Project (or Lexicon).</value>
   </data>
-	<data name="kCannotCheckForUpdateNow" xml:space="preserve">
+  <data name="kCannotCheckForUpdateNow" xml:space="preserve">
 	<value>Sorry. FLEx Bridge was not able to check for an update right now.</value>
   </data>
-	<data name="kCheckForUpdateFailure" xml:space="preserve">
+  <data name="kCheckForUpdateFailure" xml:space="preserve">
 	<value>Check for Update Failure</value>
   </data>
   <data name="kFlexUpdateRequired" xml:space="preserve">
@@ -172,5 +172,11 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="chorus32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>..\Resources\chorus32x32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kInvalidCommandLineOptions" xml:space="preserve">
+	<value>Invalid command line options. Please launch from FLEx.</value>
+  </data>
+  <data name="chorus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\chorus.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

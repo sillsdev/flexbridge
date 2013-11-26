@@ -1,4 +1,10 @@
-﻿using System.IO;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
@@ -159,7 +165,7 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(notesContents.Contains("Removed Vs Edited Element Conflict"));
 					Assert.IsTrue(notesContents.Contains("Randy deleted this element"));
 					Assert.IsTrue(notesContents.Contains("Sue edited it"));
-					Assert.IsTrue(notesContents.Contains("The automated merger kept the change made by Sue."));
+					Assert.IsTrue(notesContents.Contains("The merger kept the change made by Sue."));
 					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
 					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
 					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -63,41 +63,27 @@
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
-	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile>
-	</TargetFrameworkProfile>
-	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLExBridge.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
 	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
-	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile>
-	</TargetFrameworkProfile>
-	<CodeAnalysisLogFile>..\..\output\$(Configuration)\FLExBridge.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
@@ -110,24 +96,29 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
+	<Reference Include="geckofx-core-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
-	<None Include="app.config" />
-	<None Include="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
-	<Compile Include="Properties\Settings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">

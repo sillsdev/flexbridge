@@ -1,7 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SIL.LiftBridge.Infrastructure;
 using TriboroughBridge_ChorusPlugin;
 
 namespace SIL.LiftBridge.Services
@@ -20,7 +27,7 @@ namespace SIL.LiftBridge.Services
 
 			foreach (var dirName in Directory.GetDirectories(baseDirPath))
 			{
-				if (dirName.EndsWith(BridgeTrafficCop.hg) || dirName.EndsWith(BridgeTrafficCop.git))
+				if (dirName.EndsWith(Utilities.hg) || dirName.EndsWith(LiftUtilties.git))
 					continue; // Skip the repo file (for Hg or Git, if it becomes an option).
 
 				results.UnionWith(EnumerateExtantFiles(dirName));
@@ -49,7 +56,7 @@ namespace SIL.LiftBridge.Services
 			if (string.IsNullOrWhiteSpace(liftFolder))
 				return null;
 
-			var liftFiles = Directory.GetFiles(liftFolder, "*" + Utilities.LiftExtension).ToList();
+			var liftFiles = Directory.GetFiles(liftFolder, "*" + LiftUtilties.LiftExtension).ToList();
 			return liftFiles.Count == 0
 					   ? null
 					   : (from file in liftFiles
