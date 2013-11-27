@@ -19,6 +19,7 @@
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Mercurial-x86_64.zip"/>
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Autofac.dll"/>
 		<DownloadedMono Include="$(RootDir)/Download/IPCFramework.dll"/>
+		<DownloadedMonoCommon Include="$(RootDir)/Download/Chorus_Help.chm"/>
 
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
@@ -59,8 +60,8 @@
 	</Target>
 
 <!--
-	bt276 (chorus-win32-FlexBridgeAlpha)
-	bt282 (Chorus-Precise64-FlexBridgeAlpha Continuous)
+	bt274 (chorus-win32-FlexBridgeBeta)
+	bt285 (Chorus-Precise64-FlexBridgeBeta Continuous)
 
 	Autofac.dll => lib/common
 	Chorus.exe => lib/$(Configuration)
@@ -72,8 +73,8 @@
 	Mercurial-i686.zip => lib/common
 	Mercurial-x86_64.zip => lib/common
 	===================================================
-	bt275 (palaso-win32-FlexBridgeAlpha Continuous)
-	bt280 (palaso-Precise64-FlexBridgeAlpha Continuous)
+	bt273 (palaso-win32-FlexBridgeBeta Continuous)
+	bt284 (palaso-Precise64-FlexBridgeBeta Continuous)
 
 	Palaso.dll => lib/$(Configuration)
 	Palaso.TestUtilities.dll => lib/$(Configuration)
@@ -87,37 +88,40 @@
 	bt14 (icucil-win32-default Continuous)
 	icu*.dll => lib/$(Configuration)
 	icu.net.config => lib/$(Configuration)
+	===================================================
+	bt216 (Chorus-Documentation)
+	Chorus_Help.chm => lib/common
 -->
 	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT'">
 		<MakeDir Directories="$(RootDir)/Download"/>
-		<!-- bt280 is the palaso-Precise64-FlexBridgeAlpha Continuous build -->
-		<Message Text="Downloading latest successful artifacts from the palaso-Precise64-FlexBridgeAlpha Continuous build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt280/.lastSuccessful/Palaso.dll"
+		<!-- bt284 is the palaso-Precise64-FlexBridgeBeta Continuous build -->
+		<Message Text="Downloading latest successful artifacts from the palaso-Precise64-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt280/.lastSuccessful/Palaso.Lift.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Lift.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt280/.lastSuccessful/Palaso.TestUtilities.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.TestUtilities.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt280/.lastSuccessful/PalasoUIWindowsForms.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/PalasoUIWindowsForms.dll"
 					  LocalFilename="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
 
-		<!-- bt282 is the Chorus-Precise64-FlexBridgeAlpha Continuous build -->
-		<Message Text="Downloading latest successful artifacts from the Chorus-Precise64-FlexBridgeAlpha Continuous build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/Autofac.dll"
+		<!-- bt285 is the Chorus-Precise64-FlexBridgeBeta Continuous build -->
+		<Message Text="Downloading latest successful artifacts from the Chorus-Precise64-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Autofac.dll"
 					  LocalFilename="$(RootDir)/Download/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/Chorus.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Chorus.exe"
 					  LocalFilename="$(RootDir)/Download/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/LibChorus.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.dll"
 					  LocalFilename="$(RootDir)/Download/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/ChorusHub.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/ChorusHub.exe"
 					  LocalFilename="$(RootDir)/Download/ChorusHub.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/ChorusMerge.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/ChorusMerge.exe"
 					  LocalFilename="$(RootDir)/Download/ChorusMerge.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/LibChorus.TestUtilities.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.TestUtilities.dll"
 					  LocalFilename="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/Mercurial-i686.zip"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Mercurial-i686.zip"
 					  LocalFilename="$(RootDir)/Download/Mercurial-i686.zip"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt282/.lastSuccessful/Mercurial-x86_64.zip"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Mercurial-x86_64.zip"
 					  LocalFilename="$(RootDir)/Download/Mercurial-x86_64.zip"/>
 
 		<!-- bt279 is the IPC-Precise64 build -->
@@ -129,6 +133,11 @@
 		<Message Text="Downloading latest successful artifacts from the L10NSharp mono continuous build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt271/.lastSuccessful/L10NSharp.dll"
 					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
+
+		<!-- bt216 is the Chorus-Documentation build -->
+		<Message Text="Downloading latest successful artifacts from the Chorus-Documentation build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt216/.lastSuccessful/Chorus_Help.chm"
+					  LocalFilename="$(RootDir)/Download/Chorus_Help.chm"/>
 
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
 		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, and IPCFramework builds."/>
@@ -155,32 +164,32 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icuuc40.dll"
 					  LocalFilename="$(RootDir)/Download/icuuc40.dll"/>
 
-		<!-- bt275 is the palaso-win32-FlexBridgeAlpha Continuous build. -->
-		<Message Text="Downloading latest successful artifacts from the palaso-win32-FlexBridgeAlpha Continuous build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt275/.lastSuccessful/Palaso.dll"
+		<!-- bt273 is the palaso-win32-FlexBridgeBeta Continuous build. -->
+		<Message Text="Downloading latest successful artifacts from the palaso-win32-FlexBridgeBeta Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt275/.lastSuccessful/Palaso.Lift.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Lift.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt275/.lastSuccessful/Palaso.TestUtilities.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.TestUtilities.dll"
 					  LocalFilename="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt275/.lastSuccessful/PalasoUIWindowsForms.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/PalasoUIWindowsForms.dll"
 					  LocalFilename="$(RootDir)/Download/PalasoUIWindowsForms.dll"/>
 
-		<!-- bt276 is the chorus-win32-FlexBridgeAlpha build -->
-		<Message Text="Downloading latest successful artifacts from the chorus-win32-FlexBridgeAlpha build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/Autofac.dll"
+		<!-- bt274 is the chorus-win32-FlexBridgeBeta build -->
+		<Message Text="Downloading latest successful artifacts from the chorus-win32-FlexBridgeBeta build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Autofac.dll"
 					  LocalFilename="$(RootDir)/Download/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/Chorus.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Chorus.exe"
 					  LocalFilename="$(RootDir)/Download/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/LibChorus.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.dll"
 					  LocalFilename="$(RootDir)/Download/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/ChorusHub.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/ChorusHub.exe"
 					  LocalFilename="$(RootDir)/Download/ChorusHub.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/ChorusMerge.exe"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/ChorusMerge.exe"
 					  LocalFilename="$(RootDir)/Download/ChorusMerge.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/LibChorus.TestUtilities.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.TestUtilities.dll"
 					  LocalFilename="$(RootDir)/Download/LibChorus.TestUtilities.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt276/.lastSuccessful/Mercurial.zip"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Mercurial.zip"
 					  LocalFilename="$(RootDir)/Download/Mercurial.zip"/>
 
 		<!-- bt278 is the IPC continuous build -->

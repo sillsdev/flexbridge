@@ -1,4 +1,10 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
@@ -9,6 +15,9 @@ using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin.Properties;
+#if MONO
+using Gecko;
+#endif
 
 namespace FLExBridge
 {
@@ -42,6 +51,13 @@ namespace FLExBridge
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			var commandLineArgs = CommandLineProcessor.ParseCommandLineArgs(args);
+
+#if MONO
+			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
+			Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
+			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
+#endif
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())

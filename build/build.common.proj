@@ -1,5 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+	<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.2</BUILD_NUMBER>
+  </PropertyGroup>
+
   <Target Name="VersionNumbers">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
@@ -10,7 +14,7 @@
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="2.1.$(BuildCounter)">
+	<CreateProperty Value="2.3.$(BuildCounter)">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
@@ -20,8 +24,27 @@
   <ItemGroup>
 	<AssemblyInfoFiles Include="$(RootDir)/src/CommonAssemblyInfo.cs"/>
   </ItemGroup>
-  <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+  <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers; StampReleaseFiles">
 	<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
+  </Target>
+
+
+
+  <Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers">
+
+	<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
+	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\output\Installer\about.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+	<FileUpdate File="$(RootDir)\output\Installer\about.htm" Regex="FBCOMMITID" ReplacementText="$(BUILD_VCS_NUMBER)"/>
+
+	<Copy SourceFiles="$(RootDir)\src\Installer\appcast.xml" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\output\Installer\appcast.xml" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+
+	<Copy SourceFiles="$(RootDir)\src\Installer\$(UploadFolder).htm" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\output\Installer\$(UploadFolder).htm" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+
+	<Copy SourceFiles="$(RootDir)\src\Installer\ReleaseNotes.md" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\output\Installer\ReleaseNotes.md" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
   </Target>
 
 </Project>

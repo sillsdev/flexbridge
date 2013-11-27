@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -71,7 +77,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			using (var form = new Form())
 			{
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, commandLineArgs["-projDir"], Utilities.OtherRepositories,
+					ChorusHubQuery, _pathToRepository, Utilities.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
@@ -79,7 +85,8 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 
 			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
-			if (_currentStrategy.IsRepositoryEmpty(result.ActualLocation))
+			//If the repository has 0 commits neither the Project or Lift filters will identify it and the strategy will be null
+			if (_currentStrategy == null || _currentStrategy.IsRepositoryEmpty(result.ActualLocation))
 			{
 				Directory.Delete(result.ActualLocation, true); // Don't want the newly created empty folder to hang around and mess us up!
 				MessageBox.Show(CommonResources.kEmptyRepoMsg, CommonResources.kRepoProblem);

@@ -1,4 +1,10 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -23,13 +29,22 @@ namespace FwdataTestApp
 {
 	public partial class NestFwdataFile : Form
 	{
-		private const string NormalUserProjectDir = @"C:\ProgramData\SIL\FieldWorks\TestProjects";
+		private static string CurrentBaseFolder = @"D:\TestProjects";
 		private string _srcFwdataPathname;
 		private string _workingDir;
 
 		public NestFwdataFile()
 		{
+			if (Utilities.IsUnix)
+			{
+				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
+			}
+
 			InitializeComponent();
+
+			_fwdataPathname.Text = CurrentBaseFolder;
+			_folderBrowserDialog.SelectedPath = CurrentBaseFolder;
+
 			PopulateList();
 
 			_btnRunSelected.Enabled = _listView.Items.Count > 0;
@@ -38,11 +53,13 @@ namespace FwdataTestApp
 		private void BrowseForFolder(object sender, EventArgs e)
 		{
 			_btnRunSelected.Enabled = false;
-			_fwdataPathname.Text = null;
+			_fwdataPathname.Text = CurrentBaseFolder;
 
 			if (_folderBrowserDialog.ShowDialog(this) != DialogResult.OK)
 				return;
 
+			CurrentBaseFolder = _folderBrowserDialog.SelectedPath;
+			_fwdataPathname.Text = CurrentBaseFolder;
 			PopulateList();
 
 			_btnRunSelected.Enabled = _listView.Items.Count > 0;
@@ -52,11 +69,16 @@ namespace FwdataTestApp
 		{
 			_listView.SuspendLayout();
 			_listView.Items.Clear();
-			var currentBaseFolder = _folderBrowserDialog.SelectedPath;
-			_fwdataPathname.Text = currentBaseFolder;
-			foreach (var projectDir in Directory.GetDirectories(currentBaseFolder).Where(dir => dir.ToLowerInvariant() != "zpi"))
+			foreach (var projectDir in Directory.GetDirectories(CurrentBaseFolder))
 			{
-				var fwdataFileName = Path.GetFileNameWithoutExtension(Path.Combine(projectDir, Directory.GetFiles(projectDir, "*.fwdata").First()));
+				if (projectDir.EndsWith("zpi") || projectDir.Contains("."))
+					continue;
+
+				var fwdataFiles = Directory.GetFiles(projectDir, "*.fwdata", SearchOption.TopDirectoryOnly);
+				if (fwdataFiles.Length == 0)
+					continue;
+
+				var fwdataFileName = Path.GetFileNameWithoutExtension(fwdataFiles[0]);
 				var listItem = new ListViewItem(fwdataFileName)
 					{
 						Tag = projectDir,
@@ -70,11 +92,16 @@ namespace FwdataTestApp
 		private void RunSelected(object sender, EventArgs e)
 		{
 			Cursor = Cursors.WaitCursor;
+			var totalRunTimer = new Stopwatch();
+			totalRunTimer.Start();
 			foreach (ListViewItem selectedItem in _listView.CheckedItems)
 			{
 				GC.Collect(2, GCCollectionMode.Forced);
 				RunSelected(Path.Combine((string)selectedItem.Tag, selectedItem.Text + ".fwdata"));
 			}
+			totalRunTimer.Stop();
+			var totalTxt = String.Format(@"Time to run everything: {0}", totalRunTimer.Elapsed);
+			File.WriteAllText(Path.Combine(CurrentBaseFolder, "TotalTime.log"), totalTxt);
 			Cursor = Cursors.Default;
 			Close();
 		}
@@ -98,7 +125,7 @@ namespace FwdataTestApp
 			{
 				if (_cbFindDanglingRefs.Checked)
 				{
-					CheckForDanglingReferencesInMainFile(danglingRefsTimer, _srcFwdataPathname, sb);
+					CheckForDanglingReferencesInMainFile(danglingRefsTimer, sb);
 				}
 				else if (_rebuildDataFile.Checked)
 				{
@@ -176,7 +203,7 @@ namespace FwdataTestApp
 			}
 		}
 
-		private void CheckForDanglingReferencesInMainFile(Stopwatch danglingRefsTimer, string srcFwdataPathname, StringBuilder sb)
+		private void CheckForDanglingReferencesInMainFile(Stopwatch danglingRefsTimer, StringBuilder sb)
 		{
 			var mdc = GetFreshMdc(); // Want it fresh.
 			var unownedObjects = new Dictionary<string, SortedDictionary<string, byte[]>>(200);
@@ -184,7 +211,7 @@ namespace FwdataTestApp
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>(200, StringComparer.OrdinalIgnoreCase);
 			var guidToClassMapping = new Dictionary<string, string>();
-			TokenizeFile(mdc, srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
+			TokenizeFile(mdc, _srcFwdataPathname, unownedObjects, classData, guidToClassMapping);
 
 			danglingRefsTimer.Start();
 			var danglingRefGuids = new Dictionary<string, HashSet<string>>();
@@ -222,7 +249,31 @@ namespace FwdataTestApp
 		private MetadataCache GetFreshMdc()
 		{
 			var mdc = MetadataCache.TestOnlyNewCache;
-			var modelData = File.ReadAllText(Path.Combine(_workingDir, SharedConstants.ModelVersionFilename));
+			var modelVersionPathname = Path.Combine(_workingDir, SharedConstants.ModelVersionFilename);
+			if (!File.Exists(modelVersionPathname))
+			{
+				FLExProjectSplitter.WriteVersionFile(_srcFwdataPathname);
+				using (var fastSplitter = new FastXmlElementSplitter(_srcFwdataPathname))
+				{
+					bool foundOptionalFirstElement;
+					// NB: The main input file *does* have to deal with the optional first element.
+					foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+					{
+						if (foundOptionalFirstElement)
+						{
+							// 2. Write custom properties file with custom properties.
+							FileWriterService.WriteCustomPropertyFile(mdc, _workingDir, record);
+						}
+						else
+						{
+							// Write empty custom properties file.
+							FileWriterService.WriteCustomPropertyFile(Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename), null);
+						}
+						break;
+					}
+				}
+			}
+			var modelData = File.ReadAllText(modelVersionPathname);
 			mdc.UpgradeToVersion(Int32.Parse(modelData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries)[1]));
 			var customPropPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
 			mdc.AddCustomPropInfo(new MergeOrder(
@@ -281,6 +332,7 @@ namespace FwdataTestApp
 
 		private void RestoreMainFileFromPieces(Stopwatch restoreTimer)
 		{
+			GetFreshMdc(); // Want it fresh.
 			restoreTimer.Start();
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();
@@ -305,6 +357,7 @@ namespace FwdataTestApp
 		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer, Stopwatch ambiguousTimer, StringBuilder sbValidation)
 		{
 			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
+			GetFreshMdc(); // Want it fresh.
 			breakupTimer.Start();
 			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
 			breakupTimer.Stop();
@@ -783,7 +836,7 @@ namespace FwdataTestApp
 				// EXCEPT the real ZPI project.
 				// If there is no copy of the fwdata file in the main project folder, then skip it.
 				var allProjectDirNamesExceptMine =
-					Directory.GetDirectories(NormalUserProjectDir)
+					Directory.GetDirectories(CurrentBaseFolder)
 							 .Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
@@ -805,7 +858,7 @@ namespace FwdataTestApp
 			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
 				return; // Don't even think of wiping out my ZPI folder.
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(NormalUserProjectDir, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
+			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;
@@ -824,7 +877,7 @@ namespace FwdataTestApp
 				Directory.Delete(subDir, true);
 			foreach (var pathname in allFiles)
 				File.Delete(pathname);
-			File.Copy(Path.Combine(NormalUserProjectDir, currentFilename), Path.Combine(projectDirName, currentFilename));
+			File.Copy(Path.Combine(CurrentBaseFolder, currentFilename), Path.Combine(projectDirName, currentFilename));
 		}
 
 		private void ClearCheckboxes(object sender, EventArgs e)

@@ -1,4 +1,10 @@
-﻿using System.Xml.Linq;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties

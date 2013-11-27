@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=ChorusHub
+Exec=fieldworks-chorushub
+Icon=chorusHubIcon
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Education;Network;
+StartupNotify=true

@@ -1,13 +1,21 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
+using L10NSharp;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -37,7 +45,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
@@ -104,8 +111,21 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			if (oldLiftFolder == null)
 				return;
 
+			var actualCloneResult = new ActualCloneResult();
 			ObtainProjectStrategyLift.MakeLocalClone(oldLiftFolder, _baseLiftDir);
+			actualCloneResult.ActualCloneFolder = _baseLiftDir;
+			actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 
+			// Update to the head of the desired branch, if possible.
+			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(_baseLiftDir, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
+			if(actualCloneResult.FinalCloneResult != FinalCloneResult.Cloned)
+			{
+				MessageBox.Show(actualCloneResult.Message, LocalizationManager.GetString("LiftBridge_MoveFailed_Title",
+																												 "Failed to update LiftBridge project.",
+																												 "Title of error message shown when moving a LiftBridge repo to the FlexBridge location fails."));
+				// The clone and update did not go smoothly.
+				return;
+			}
 			var folderToZap = mappingDoc.Root.HasElements || Directory.GetDirectories(basePathForOldLiftRepos).Length > 1
 								  ? oldLiftFolder
 								  : basePathForOldLiftRepos;

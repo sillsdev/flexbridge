@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
-  <header srclang="en" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.3.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-	<prop type="x-appversion">2.2.4</prop>
+  <header srclang="en" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.8.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+	<prop type="x-appversion">2.3.53</prop>
 	<prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
@@ -10,14 +10,14 @@
 		<seg>&amp;Add</seg>
 	  </tuv>
 	</tu>
-	<tu tuid="AnnotationEditorView.AddAndOk">
-	  <tuv xml:lang="en">
-		<seg>Add &amp;&amp; &amp;OK</seg>
-	  </tuv>
-	</tu>
 	<tu tuid="AnnotationEditorView.AddAndOK">
 	  <tuv xml:lang="en">
 		<seg>&amp;Add &amp;&amp; &amp;OK</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="AnnotationEditorView.AddAndOk">
+	  <tuv xml:lang="en">
+		<seg>Add &amp;&amp; &amp;OK</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="AnnotationEditorView.AddNewMessage">
@@ -126,14 +126,14 @@
 		<seg>Two users both moved something, but to different locations</seg>
 	  </tuv>
 	</tu>
-	<tu tuid="Conflict.BothAddedDifferent">
-	  <tuv xml:lang="en">
-		<seg>Both added the same element, but with different content conflict</seg>
-	  </tuv>
-	</tu>
 	<tu tuid="Conflict.BothAddedDiffNames">
 	  <tuv xml:lang="en">
 		<seg>{0} and {1} added the same element, but with different content.</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Conflict.BothAddedDifferent">
+	  <tuv xml:lang="en">
+		<seg>Both added the same element, but with different content conflict</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="Conflict.BothAddedTxt">
@@ -249,16 +249,16 @@
 		<seg>The merger kept the change made by {0}.</seg>
 	  </tuv>
 	</tu>
-	<tu tuid="Conflict.MergerAgent">
-	  <note>Used as the name of an agent responsible for a change (that is, one made by the merge process itself)</note>
-	  <tuv xml:lang="en">
-		<seg>merger</seg>
-	  </tuv>
-	</tu>
 	<tu tuid="Conflict.MergeWarning">
 	  <note>default description of less serious conflicts; possibly never seen</note>
 	  <tuv xml:lang="en">
 		<seg>Merge Warning</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="Conflict.MergerAgent">
+	  <note>Used as the name of an agent responsible for a change (that is, one made by the merge process itself)</note>
+	  <tuv xml:lang="en">
+		<seg>merger</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="Conflict.OneUser">
@@ -311,6 +311,11 @@
 		<seg>{0}'s version: </seg>
 	  </tuv>
 	</tu>
+	<tu tuid="ConflictDetailsForm.ConflictDetailsForm.technicalDetailsToolStripMenuItem">
+	  <tuv xml:lang="en">
+		<seg>Technical Details</seg>
+	  </tuv>
+	</tu>
 	<tu tuid="ConflictDetailsForm.CopyMenuItem">
 	  <tuv xml:lang="en">
 		<seg>Copy</seg>
@@ -341,14 +346,14 @@
 		<seg>Get</seg>
 	  </tuv>
 	</tu>
-	<tu tuid="GetCloneFromChorusHubDialog.projectHeader">
-	  <tuv xml:lang="en">
-		<seg>Project</seg>
-	  </tuv>
-	</tu>
 	<tu tuid="GetCloneFromChorusHubDialog.WindowTitle">
 	  <tuv xml:lang="en">
 		<seg>Get Project from Chorus Hub</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="GetCloneFromChorusHubDialog.projectHeader">
+	  <tuv xml:lang="en">
+		<seg>Project</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="GetCloneFromInternetDialog.FixSettings">
@@ -371,16 +376,6 @@
 		<seg>Get Project From Internet</seg>
 	  </tuv>
 	</tu>
-	<tu tuid="GetCloneFromUsbDialog.columnHeader1">
-	  <tuv xml:lang="en">
-		<seg>Name</seg>
-	  </tuv>
-	</tu>
-	<tu tuid="GetCloneFromUsbDialog.columnHeader2">
-	  <tuv xml:lang="en">
-		<seg>Modified Date</seg>
-	  </tuv>
-	</tu>
 	<tu tuid="GetCloneFromUsbDialog.CopyToComputer">
 	  <tuv xml:lang="en">
 		<seg>&amp;Copy To Computer</seg>
@@ -394,6 +389,16 @@
 	<tu tuid="GetCloneFromUsbDialog.WindowTitle">
 	  <tuv xml:lang="en">
 		<seg>Get Project From USB Drive</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="GetCloneFromUsbDialog.columnHeader1">
+	  <tuv xml:lang="en">
+		<seg>Name</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="GetCloneFromUsbDialog.columnHeader2">
+	  <tuv xml:lang="en">
+		<seg>Modified Date</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="GetSharedProjectDlg.ChorusHub">
@@ -826,6 +831,11 @@
 	<tu tuid="SyncControl.Log">
 	  <tuv xml:lang="en">
 		<seg>Log</seg>
+	  </tuv>
+	</tu>
+	<tu tuid="SyncControl.LogBox">
+	  <tuv xml:lang="en">
+		<seg>Box:Verbose:</seg>
 	  </tuv>
 	</tu>
 	<tu tuid="SyncControl.PeopleToSendReceive">

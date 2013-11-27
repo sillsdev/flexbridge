@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
+//
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -95,7 +101,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			var process = new Process();
 			var startInfo = process.StartInfo;
-			startInfo.FileName = "\"" + _fixitPathname.Replace("\"", null) + "\"";
+			startInfo.FileName = _fixitPathname.Replace("\"", null);
 			startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
 			startInfo.CreateNoWindow = true; // don't need to bother the user with a dos prompt
 			startInfo.UseShellExecute = false;

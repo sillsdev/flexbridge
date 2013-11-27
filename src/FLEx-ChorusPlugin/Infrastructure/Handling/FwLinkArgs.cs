@@ -1,20 +1,13 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+// Copyright (C) 2010-2013 SIL International. All rights reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: FwLinkArgs.cs
+// Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
-using System.Web;
 using Palaso.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
