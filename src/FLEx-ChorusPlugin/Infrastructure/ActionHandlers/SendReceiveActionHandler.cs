@@ -31,12 +31,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
+		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
 			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
+				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
 				{
 					// Write an empty custom prop file to get something in the default branch at rev 0.
@@ -44,6 +46,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					// This basic rev 0 commit will then allow for a roll back if the soon to follow main commit fails on a validation problem.
 					FileWriterService.WriteCustomPropertyFile(Path.Combine(projectDir, SharedConstants.CustomPropertiesFilename), null);
 					chorusSystem.Repository.AddAndCheckinFile(Path.Combine(projectDir, SharedConstants.CustomPropertiesFilename));
+					newlyCreated = true;
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
@@ -58,16 +61,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 					{
-						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring now.
-						// 'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and
-						// the Synchronizer class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit) call.
-						// If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct interface, (once foreach pair of merged heads)
-						// so Flex Bridge can restore the fwdata file, AND, most importantly,
+						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring
+						// now.  'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and the Synchronizer
+						// class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit)
+						// call.  If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct
+						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
 						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, commandLineArgs["-f"], false);
 						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
-						// Chorus does it in ths order:
+						// Chorus does it in this order:
 						// Local Commit
 						// Pull
 						// Merge (Only if anything came in with the pull from other sources, and commit of merged results)
@@ -78,9 +81,33 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						syncDlg.Text = Resources.SendReceiveView_DialogTitleFlexProject;
 						syncDlg.StartPosition = FormStartPosition.CenterScreen;
 						syncDlg.BringToFront();
-						var dlgResults = syncDlg.ShowDialog();
+						var dlgResult = syncDlg.ShowDialog();
 
-						_gotChanges = dlgResults == DialogResult.OK && (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated);
+						if (dlgResult == DialogResult.OK)
+						{
+							if (newlyCreated && (!syncDlg.SyncResult.Succeeded || syncDlg.SyncResult.ErrorEncountered != null))
+							{
+								_gotChanges = false;
+								// Wipe out new repo, since something bad happened in S/R,
+								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
+								BackOutOfRepoCreation(projectDir);
+							}
+							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+							{
+								_gotChanges = true;
+							}
+						}
+						else
+						{
+							// User probably bailed out of S/R using the "X" to close the dlg.
+							if (newlyCreated)
+							{
+								_gotChanges = false;
+								// Wipe out new repo, since the user cancelled without even trying the S/R,
+								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
+								BackOutOfRepoCreation(projectDir);
+							}
+						}
 					}
 				}
 				finally
@@ -89,6 +116,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						File.Delete(lockPathname);
 				}
 			}
+		}
+
+		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
+		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
+		private static void BackOutOfRepoCreation(string projectDir)
+		{
+			foreach (var subDir in new[] {".hg", "Anthropology", "General", "Linguistics"})
+			{
+				var fullPath = Path.Combine(projectDir, subDir);
+				if (Directory.Exists(fullPath))
+					Directory.Delete(fullPath, true);
+			}
+			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
+			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
 		}
 
 		/// <summary>

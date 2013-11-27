@@ -1,4 +1,17 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.
+* Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).
+* Chorus: Update instructions for using Chorus Hub.
+## 2.2.3 15/Nov/2013
+* FLEx Bridge: Fix problem with moving an older Lift Bridge system to its new home.
+## 2.2.2 14/Nov/2013
+* FLExBridge: Include Launcher for Chorus Hub on Linux.
+* FLExBridge: Clean up after cancelling a Send/Receive.
+* FLExBridge: Add French, Spanish, and Chinese localizations.
+* FLExBridge: Better handling of receiving from a repository with no data in it yet.
+* FLExBridge: Help documentation available for Chorus on Linux.
+## 2.1.13 11/Oct/2013
+* Chorus: No longer add empty notes.
 * FLEx Bridge: Shift formal ownership from Randy Regnier to LSDev.
 ## 2.1.12 09/Oct/2013
 * Palaso: Fix problem copying error reporting to clipboard on Linux.

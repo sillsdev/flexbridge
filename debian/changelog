@@ -1,3 +1,24 @@
+flexbridge (2.2.4~beta1) unstable; urgency=low
+
+  * Palaso: Fix downgraded version numbers to be higher, so users can upgrade
+	from FLEx Bridge 2.1.10 to 2.2.x series.
+  * Palaso and Chorus: Fix some problems in handling writing system files (ldml
+	extension).
+  * Chorus: Update instructions for using Chorus Hub.
+  * (2.2.3) Fix problem with moving an older Lift Bridge system to its new home.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 25 Nov 2013 10:04:32 -0600
+
+flexbridge (2.2.2~beta1) unstable; urgency=low
+
+  * Include Launcher for Chorus Hub on Linux.
+  * Clean up after cancelling a Send/Receive.
+  * Add French, Spanish, and Chinese localizations.
+  * Better handling of receiving from a repository with no data in it yet.
+  * Help documentation available for Chorus on Linux.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 14 Nov 2013 10:05:27 -0600
+
 flexbridge (2.2.0~alpha2) unstable; urgency=low
 
   * Fix some setup and build problems.  Other bugfixes are included as well.
