@@ -100,6 +100,9 @@
 	<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
 	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
 
+	<Message Text="Attempting rsync of index.htm" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.htm"/>
+
   </Target>
 
 </Project>

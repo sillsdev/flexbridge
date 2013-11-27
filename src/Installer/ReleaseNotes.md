@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.
+* Chorus: Fixed new bug introduced while re-working handling of writing system files (ldml extension).
+## 2.2.4 22/Nov/2013
 * Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.
 * Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).
 * Chorus: Update instructions for using Chorus Hub.
