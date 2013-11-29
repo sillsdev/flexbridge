@@ -1,3 +1,10 @@
+flexbridge (2.2.5~beta1) unstable; urgency=low
+
+  * Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.
+  * Chorus: Fixed new bug introduced while re-working handling of writing system files (ldml extension).
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 27 Nov 2013 17:15:43 -0600
+
 flexbridge (2.2.4~beta1) unstable; urgency=low
 
   * Palaso: Fix downgraded version numbers to be higher, so users can upgrade

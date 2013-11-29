@@ -62,6 +62,7 @@
 	  <Output TaskParameter="ExitCode" PropertyName="ZeroIf32BitCpu"/>
 	</Exec>
 	<!-- Extract the appropriate zip file. -->
+	<Exec Command="/bin/rm -rf ../Mercurial" />
 	<Exec Condition="'$(ZeroIf64BitCpu)'=='0'" Command="/usr/bin/unzip -uq $(RootDir)/lib/common/Mercurial-x86_64.zip -d $(RootDir)" />
 	<Exec Condition="'$(ZeroIf32BitCpu)'=='0'" Command="/usr/bin/unzip -uq $(RootDir)/lib/common/Mercurial-i686.zip -d $(RootDir)" />
 	<!-- Zip doesn't seem to retain the permission bits we need. -->
