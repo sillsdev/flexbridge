@@ -27,6 +27,22 @@ case "$1" in
 			chmod +x Mercurial/hg
 			chmod +x Mercurial/hg.exe
 		fi
+
+		UID_MIN=$(sed -n '/^UID_MIN[ \t][ \t]*/s///p' /etc/login.defs)
+		UID_MAX=$(sed -n '/^UID_MAX[ \t][ \t]*/s///p' /etc/login.defs)
+		ALLUSERS=$(getent passwd | awk -F: "\$3 >= $UID_MIN && \$3 < $UID_MAX {print \$1}" | sort)
+
+		addgroup --system --quiet fieldworks 2>/dev/null
+
+		for U in $ALLUSERS
+		do
+			adduser --quiet $U fieldworks 2>/dev/null
+		done
+
+		VLF=/var/lib/flexbridge
+		chgrp -R fieldworks $VLF
+		chmod -R g+w $VLF
+		find $VLF -type d -print0 | xargs -0 chmod 2775
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)

@@ -6,7 +6,8 @@ Build-Depends: debhelper (>= 8.0.0),
  mono-devel,
  libmono-winforms2.0-cil,
  libmono-cairo2.0-cil,
- geckofx, unzip
+ geckofx, unzip,
+ adduser (>= 3.11)
 Standards-Version: 3.9.2
 Homepage: http://projects.palaso.org/projects/fwbridge
 #Vcs-Git: git://git.debian.org/collab-maint/flexbridge.git

@@ -14,6 +14,9 @@ release:
 	cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
 
 debug:
+	FBCommonAppData="/tmp/flexbridge"
+	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
+	export FBCommonAppData
 	cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
 
 clean:
@@ -35,6 +38,8 @@ install: release
 	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -d $(DESTDIR)/var/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/var/lib/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin

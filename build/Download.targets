@@ -94,6 +94,13 @@
 -->
 	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT'">
 		<MakeDir Directories="$(RootDir)/Download"/>
+		<!-- bt281 is the icucil-precise64 Continuous build. -->
+		<Message Text="Downloading latest successful artifacts from the icucil-precise64 Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful/icu.net.dll"
+					  LocalFilename="$(RootDir)/Download/icu.net.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful/icu.net.dll.config"
+					  LocalFilename="$(RootDir)/Download/icu.net.dll.config"/>
+
 		<!-- bt284 is the palaso-Precise64-FlexBridgeBeta Continuous build -->
 		<Message Text="Downloading latest successful artifacts from the palaso-Precise64-FlexBridgeBeta Continuous build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.dll"
