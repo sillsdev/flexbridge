@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Copy localization files into a writeable location (Linux), so users can save changes.
+## 2.2.5 27/Nov/2013
 * Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.
 * Chorus: Fixed new bug introduced while re-working handling of writing system files (ldml extension).
 ## 2.2.4 22/Nov/2013
