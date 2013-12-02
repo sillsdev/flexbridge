@@ -1,4 +1,5 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Palaso: Fix more keyboarding issues (Linux).
 * FLEx Bridge: Copy localization files into a writeable location (Linux), so users can save changes.
 ## 2.2.5 27/Nov/2013
 * Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.
@@ -41,13 +42,13 @@
 * FLEx Bridge: Fix problem in POS context generator for conflict reports
 ## 2.0.19 24/Jul/2013
 * New in this release
-	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
-	* FLEx Bridge: Update the minimum install version for FLEx.
 	* Palaso, Chorus, & FLEx Bridge: Add localization support.
 	* Chorus: Show technical conflict details on demand.
+	* FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.
+	* FLEx Bridge: Update the minimum install version for FLEx.
 * Fixes in this release
-	* FLEx Bridge: Make message about 'fix it' program to not be a warning.
 	* Chorus: Fix merge bug.
+	* FLEx Bridge: Make message about 'fix it' program to not be a warning.
 ## 1.0.31 11/Jul/2013
 * FLEx Bridge: Add better support for FLEx data migration DM68.
 ## 1.0.30 9/Jul/2013
@@ -78,8 +79,8 @@ Flex Bridge: Fix crash getting an empty repository.
 ## 1.0.18 19/Apr/2013
 * Chorus: Update Chorus Help file and connect one Help button to the help.
 ## 1.0.17 15/Apr/2013
-* FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.
 * Chorus: Remove the older Shared Network support.
+* FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.
 ## 1.0.16 12/Apr/2013
 * FLEx Bridge: Have feature structures only allow one person to makes a change in a given merge.
 ## 1.0.15 10/Apr/2013
