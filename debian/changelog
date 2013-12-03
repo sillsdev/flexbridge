@@ -1,3 +1,9 @@
+flexbridge (2.2.6~beta2) unstable; urgency=low
+
+  * Include fixes omitted by DVCS confusion earlier today.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 02 Dec 2013 15:50:53 -0600
+
 flexbridge (2.2.6~beta1) unstable; urgency=low
 
   * Palaso: Fix more keyboarding issues (Linux).
