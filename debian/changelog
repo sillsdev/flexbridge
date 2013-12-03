@@ -18,6 +18,8 @@ flexbridge (2.2.5~beta1) unstable; urgency=low
 	displayed.
   * Chorus: Fixed new bug introduced while re-working handling of writing system
 	files (ldml extension).
+  * FLEx Bridge: Improved reporting mechanism that tells users about a failure
+	in FLEx's 'fix it' program.
 
  -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 27 Nov 2013 17:15:43 -0600
 

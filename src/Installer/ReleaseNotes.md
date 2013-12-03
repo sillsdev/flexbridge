@@ -4,6 +4,7 @@
 ## 2.2.5 27/Nov/2013
 * Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.
 * Chorus: Fixed new bug introduced while re-working handling of writing system files (ldml extension).
+* FLEx Bridge: Improved reporting mechanism that tells users about a failure in FLEx's 'fix it' program.
 ## 2.2.4 22/Nov/2013
 * Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.
 * Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).
