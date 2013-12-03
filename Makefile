@@ -2,8 +2,8 @@
 
 CPUARCH=$(shell /usr/bin/arch)
 # this needs to be in sync with debian/changelog and build/build.common.proj
-BUILD_NUMBER="2.2.5"
-BUILD_VCS_NUMBER="e63104af1798"
+BUILD_NUMBER="2.2.6"
+BUILD_VCS_NUMBER="a176f4778139"
 UploadFolder="Beta"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
