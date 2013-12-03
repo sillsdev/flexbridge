@@ -114,11 +114,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			// Unfortunately this includes sequences of dots intended to show progress on the console.
 			// They always occur at the start of a line. The Replace gets rid of them.
 			progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
-			if (process.ExitCode != 0)
+			if(process.ExitCode < 0)
 			{
 				throw new Exception("Merge fixing program has crashed.");
 			}
-			return true;
+			return process.ExitCode > 0;
 		}
 
 		/// <summary>
