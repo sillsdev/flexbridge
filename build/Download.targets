@@ -20,6 +20,8 @@
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Autofac.dll"/>
 		<DownloadedMono Include="$(RootDir)/Download/IPCFramework.dll"/>
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Chorus_Help.chm"/>
+		<DownloadedMono Include="$(RootDir)/Download/icu.net.dll"/>
+		<DownloadedMono Include="$(RootDir)/Download/icu.net.dll.config"/>
 
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>

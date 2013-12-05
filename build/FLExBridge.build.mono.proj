@@ -71,11 +71,13 @@
 
   <ItemGroup>
 	<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
+	<IcuDotNetFiles Include="$(RootDir)/lib/$(Configuration)/icu.net.dll*"/>
 	<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
   </ItemGroup>
 
   <Target Name="CopyExtraFilesToOutput">
 	<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	<Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
   </Target>
 
