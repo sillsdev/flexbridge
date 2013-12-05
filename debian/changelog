@@ -1,3 +1,10 @@
+flexbridge (2.2.8~beta1) unstable; urgency=low
+
+  * Localization System: Block Linux from allowing editing the localization files, while a bad bug in it is being fixed.
+  * Chorus: Fix a crash, while merging LDML (writing system) files.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 05 Dec 2013 15:40:00 -0600
+
 flexbridge (2.2.7~beta1) unstable; urgency=low
 
   * FLEx Bridge: Improved reporting mechanism that tells users about a failure

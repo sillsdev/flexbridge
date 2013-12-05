@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Localization System: Block Linux from allowing editing the localization files, while a bad bug is being fixed.
+* Chorus: Fix a crash, while merging LDML (writing system) files.
+## 2.2.7 3/Dec/2013
 * FLEx Bridge: Improved reporting mechanism that tells users about a failure in FLEx's 'fix it' program.
 ## 2.2.6 2/Dec/2013
 * Palaso: Fix more keyboarding issues (Linux).
