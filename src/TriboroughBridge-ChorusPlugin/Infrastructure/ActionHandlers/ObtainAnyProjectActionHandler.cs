@@ -72,17 +72,21 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = commandLineArgs[CommandLineProcessor.projDir];
-			var getSharedProjectModel = new GetSharedProjectModel();
 			CloneResult result;
 			using (var form = new Form())
 			{
+				var getSharedProjectModel = new GetSharedProjectModel();
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
 					ChorusHubQuery, _pathToRepository, Utilities.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
-			if (result.CloneStatus != CloneStatus.Created)
+			if (result == null // Not sure it can be null, but I (RBR) have a null ref crash report (LT-15094)
+				|| string.IsNullOrWhiteSpace(result.ActualLocation)  // Not sure it can be null, but I (RBR) have a null ref crash report (LT-15094)
+				|| result.CloneStatus != CloneStatus.Created)
+			{
 				return;
+			}
 
 			_currentStrategy = GetCurrentStrategy(result.ActualLocation);
 			//If the repository has 0 commits neither the Project or Lift filters will identify it and the strategy will be null
