@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fixed odd case where FLEx Bridge crashed, while trying to get a new project.
+## 2.2.8 5/Dec/2013
 * Localization System: Block Linux from allowing editing the localization files, while a bad bug is being fixed.
 * Chorus: Fix a crash, while merging LDML (writing system) files.
 ## 2.2.7 3/Dec/2013
