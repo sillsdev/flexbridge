@@ -1,16 +1,24 @@
+flexbridge (2.2.9~beta1) unstable; urgency=low
+
+  * FLEx Bridge: Fixed odd case where FLEx Bridge crashed, while trying to get a
+	new project.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 11 Dec 2013 10:07:57 -0600
+
 flexbridge (2.2.8~beta1) unstable; urgency=low
 
-  * Localization System: Block Linux from allowing editing the localization files, while a bad bug in it is being fixed.
+  * Localization System: Block Linux from allowing editing the localization
+	files, while a bad bug in it is being fixed.
   * Chorus: Fix a crash, while merging LDML (writing system) files.
 
- -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 05 Dec 2013 15:40:00 -0600
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 05 Dec 2013 15:40:00 -0600
 
 flexbridge (2.2.7~beta1) unstable; urgency=low
 
   * FLEx Bridge: Improved reporting mechanism that tells users about a failure
 	in FLEx's 'fix it' program.
 
- -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 03 Dec 2013 14:55:00 -0600
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Tue, 03 Dec 2013 14:55:00 -0600
 
 flexbridge (2.2.6~beta2) unstable; urgency=low
 
