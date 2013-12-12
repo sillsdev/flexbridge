@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Add one second to ldml file's internal timestamp, during a merge, to make life easier for FLEx, after a Send/Receive.
+* Chorus: Disable improperly displaying "Choose Repositories" page on Linux.
+## 2.2.9 10/Dec/2013
 * FLEx Bridge: Fixed odd case where FLEx Bridge crashed, while trying to get a new project.
 ## 2.2.8 5/Dec/2013
 * Localization System: Block Linux from allowing editing the localization files, while a bad bug is being fixed.
