@@ -1,3 +1,11 @@
+flexbridge (2.2.10~beta1) unstable; urgency=low
+
+  * Chorus: Add one second to ldml file's internal timestamp, during a merge,
+	to make life easier for FLEx, after a Send/Receive.
+  * Chorus: Disable improperly displaying "Choose Repositories" page on Linux.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Fri, 13 Dec 2013 10:20:23 -0600
+
 flexbridge (2.2.9~beta1) unstable; urgency=low
 
   * FLEx Bridge: Fixed odd case where FLEx Bridge crashed, while trying to get a
