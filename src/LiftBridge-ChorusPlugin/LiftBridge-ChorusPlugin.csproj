@@ -36,7 +36,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -47,7 +47,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -57,45 +57,125 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<OutputPath>..\..\output\ReleaseMono</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="Chorus">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="L10NSharp, Version=1.1.12.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="L10NSharp">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <HintPath>..\..\lib\Release\L10NSharp.dll</HintPath>
 	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso.Lift">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.Lift.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.Lift.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<Reference Include="Chorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\L10NSharp.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.Lift">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.Lift.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
+	<Reference Include="Chorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\L10NSharp.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.Lift">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.Lift.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
+	<Reference Include="Chorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\L10NSharp.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.Lift">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.Lift.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />

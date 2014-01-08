@@ -17,7 +17,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -35,7 +35,7 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -44,32 +44,88 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="LibChorus.TestUtilities">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.TestUtilities.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework">
-	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
+	  <HintPath>..\..\lib\Release\LibChorus.TestUtilities.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso.TestUtilities">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.TestUtilities.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.TestUtilities.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\LibChorus.TestUtilities.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.TestUtilities.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\LibChorus.TestUtilities.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.TestUtilities.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="LibChorus.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\LibChorus.TestUtilities.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.TestUtilities">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.TestUtilities.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Reference Include="nunit.framework">
+	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
