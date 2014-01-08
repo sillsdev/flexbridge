@@ -154,8 +154,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 #if MONO
 			result = result.Replace("\r\n", "\n");
 			desired = desired.Replace("\r\n", "\n");
-#else
-			result = result.Replace("\r\n", "\n");
 #endif
 			Assert.That(result, Is.EqualTo(desired));
 		}
