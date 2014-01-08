@@ -155,7 +155,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 			result = result.Replace("\r\n", "\n");
 			desired = desired.Replace("\r\n", "\n");
 #else
-			result = result.Replace("\r\n", "\n");
+			result = result.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+			desired = desired.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
 #endif
 			Assert.That(result, Is.EqualTo(desired));
 		}

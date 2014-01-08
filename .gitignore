@@ -9,15 +9,15 @@ output/*
 gexp
 Perf test  results/*.*
 test-results/*
-src/FLEx-ChorusPlugin/bin/*.*
-src/FLEx-ChorusPlugin/obj/*.*
-src/FLEx-ChorusPluginTests/bin/*.*
-src/FLEx-ChorusPluginTests/obj/*.*
-src/FwdataNester/bin/*.*
-src/FwdataNester/obj/Debug/*.*
-src/FwdataNester/obj/*.*
+src/FLEx-ChorusPlugin/bin/*
+src/FLEx-ChorusPlugin/obj/*
+src/FLEx-ChorusPluginTests/bin/*
+src/FLEx-ChorusPluginTests/obj/*
+src/FwdataNester/bin/*
+src/FwdataNester/obj/*
 _ReSharper.FLExBridge VS2010/*.*
-src/FLExBridge/obj/*.*
+src/FLExBridge/bin/*
+src/FLExBridge/obj/*
 src/Installer/output/*.*
 src/LiftBridgeCore/bin/*
 src/LiftBridgeCore/obj/*
@@ -52,11 +52,7 @@ src/TriboroughBridge-ChorusPluginTests/obj/*
 **.pdb
 src/RepositoryUtility/obj/*
 src/RepositoryUtility/bin/*
-src/TheTurtle/bin/*
-src/TheTurtle/obj/*
-src/TheTurtleTests/bin/*
-src/TheTurtleTests/obj/*
-lib/common/L10NSharp.dll
+lib/*/L10NSharp.dll
 All*Files.lst
 *.userprefs
 Download/

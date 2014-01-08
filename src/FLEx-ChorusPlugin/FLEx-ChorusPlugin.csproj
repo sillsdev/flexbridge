@@ -17,7 +17,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -36,7 +36,7 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -45,40 +45,171 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-	<Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="ChorusMerge">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="icu.net">
-	  <HintPath>..\..\lib\$(Configuration)\icu.net.dll</HintPath>
+	  <HintPath>..\..\lib\Release\ChorusMerge.exe</HintPath>
 	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+   <Reference Include="icu.net">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Release\icu.net.dll</HintPath>
+	</Reference>
+	<None Include="..\..\lib\Release\icudt40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Release\icuin40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Release\icuuc40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Release\icu.net.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+   <Reference Include="icu.net">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\icu.net.dll</HintPath>
+	</Reference>
+	<None Include="..\..\lib\Debug\icudt40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Debug\icuin40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Debug\icuuc40.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\Debug\icu.net.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+   <Reference Include="icu.net">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\icu.net.dll</HintPath>
+	</Reference>
+	<None Include="..\..\lib\ReleaseMono\icu.net.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<Reference Include="geckofx-core-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="ChorusMerge">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\ChorusMerge.exe</HintPath>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+   <Reference Include="icu.net">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\icu.net.dll</HintPath>
+	</Reference>
+	<None Include="..\..\lib\DebugMono\icu.net.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<Reference Include="geckofx-core-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<Reference Include="Autofac">
+	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />

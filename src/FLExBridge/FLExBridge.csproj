@@ -37,7 +37,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -59,7 +59,7 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
 	<DefineConstants>TRACE;MONO</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
@@ -69,45 +69,122 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\$(Configuration)\</OutputPath>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
 	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
 	<DebugType>full</DebugType>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\$(Configuration)\Chorus.exe</HintPath>
+	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
 	</Reference>
 	<Reference Include="L10NSharp">
-	  <HintPath>..\..\lib\common\L10NSharp.dll</HintPath>
+	  <HintPath>..\..\lib\Release\L10NSharp.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="LibChorus">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\LibChorus.dll</HintPath>
+	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="PalasoUIWindowsForms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\$(Configuration)\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
-	<Reference Include="geckofx-core-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\Debug\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\ReleaseMono\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+	<Reference Include="geckofx-core-14">
 	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
 	</Reference>
-	<Reference Include="Geckofx-Winforms-14" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono'">
+	<Reference Include="Geckofx-Winforms-14">
 	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
 	</Reference>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config" Condition="'$(Configuration)' == 'DebugMono' Or '$(Configuration)' == 'ReleaseMono' ">
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
+	<Reference Include="Chorus">
+	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+	</Reference>
+	<Reference Include="L10NSharp">
+	  <HintPath>..\..\lib\DebugMono\L10NSharp.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="LibChorus">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+	</Reference>
+	<Reference Include="geckofx-core-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+	</Reference>
+	<Reference Include="Geckofx-Winforms-14">
+	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
