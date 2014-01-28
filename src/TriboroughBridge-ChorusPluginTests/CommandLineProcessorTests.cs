@@ -187,9 +187,9 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = Path.Combine(_tempProjectFolder.Path, "NonExistantFolder");
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have an FW project file");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not check project folder existance when showing About");
 			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted the main FW project folder for '-p'");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not check project folder validity when showing About");
 
 			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
@@ -206,9 +206,9 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			// Has no project folder
 			_options[CommandLineProcessor.p] = Path.Combine(_tempProjectFolder.Path, "NonExistantFolder");
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have an FW project file");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not check project folder existance when checking for updates");
 			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
-			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted the main FW project folder for '-p'");
+			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Should not check project folder validity when checking for updates");
 
 			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
@@ -275,6 +275,12 @@ namespace TriboroughBridge_ChorusPluginTests
 		{
 			_options[CommandLineProcessor.v] = CommandLineProcessor.send_receive;
 			_options.Remove(CommandLineProcessor.g);
+
+			// Has no project folder
+			_options[CommandLineProcessor.p] = Path.Combine(_tempProjectFolder.Path, "NonExistantFolder");
+			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have an FW project file");
+			_options[CommandLineProcessor.p] = _tempProjectFolder.Path;
+			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have accepted the main FW project folder for '-p'");
 
 			string fooDir;
 			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);

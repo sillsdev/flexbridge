@@ -26,6 +26,7 @@ namespace LiftBridgeTests.Infrastructure.ActionHandlers
 			using (var sueRepo = new RepositoryWithFilesSetup("SueForLift", "Sue.lift", "contents"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+				Directory.CreateDirectory(fakeProjectDir);
 				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
 				{
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo", Utilities.OtherRepositories, Utilities.LIFT);
