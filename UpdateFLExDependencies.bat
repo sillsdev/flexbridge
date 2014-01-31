@@ -1,9 +1,7 @@
 REM If you are working on FLExBridge, there is a good chance you are working on Chorus as
-REM it relates to FieldWorks.  To update those dependencies that are bound at build time,
-REM first, build Chorus (GetAndBuildThis.bat in either fwbridge or chorus will do this);
-REM then, run this script to copy the dependencies.
-REM Because the FLEx build script downloads these from build.palaso.org, you will need to
-REM comment out the corresponding DownloadFiles tags in C:\fwrepo\fw\Build\mkall.targets.
+REM it relates to FieldWorks.  To update these dependencies, first, build FLEx and Chorus
+REM (GetAndBuildThis.bat in either flexbridge or chorus will build Chorus); then, run
+REM this script to copy the dependencies.
 REM This script assumes that the Chorus and Palaso directories are on the same level as
 REM this one, and that the FieldWorks repo is in C:\fwrepo.
 REM It copies the needed libraries into the debug folder.
