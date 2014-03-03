@@ -64,3 +64,6 @@ lib/*/icu*.dll*
 lib/*/IPCFramework.dll
 lib/*/Autofac.dll
 lib/*/*HelpProvider.dll
+lib/*/L10NSharp.xml
+lib/*.msm
+/Mercurial

@@ -4,7 +4,6 @@
 
 	<ItemGroup>
 		<DownloadedCommon Include="$(RootDir)/Download/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<DownloadedCommon Include="$(RootDir)/Download/L10NSharp.dll"/>
 
 		<DownloadedMono Include="$(RootDir)/Download/Palaso.dll"/>
 		<DownloadedMono Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
@@ -22,6 +21,7 @@
 		<DownloadedMonoCommon Include="$(RootDir)/Download/Chorus_Help.chm"/>
 		<DownloadedMono Include="$(RootDir)/Download/icu.net.dll"/>
 		<DownloadedMono Include="$(RootDir)/Download/icu.net.dll.config"/>
+		<DownloadedMono Include="$(RootDir)/Download/L10NSharp.dll"/>
 
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/Palaso.TestUtilities.dll"/>
@@ -40,6 +40,7 @@
 		<DownloadedDotNet Include="$(RootDir)/Download/icuin40.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/icuuc40.dll"/>
 		<DownloadedDotNet Include="$(RootDir)/Download/IPCFramework.dll"/>
+		<DownloadedDotNet Include="$(RootDir)/Download/L10NSharp.dll"/>
 	</ItemGroup>
 <!--
 	bt225 (Helpprovider)
@@ -56,7 +57,7 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt225/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll"
 					  LocalFilename="$(RootDir)/Download/Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<Message Text="Copying latest successful artifacts from the Helpprovider and L10NSharp builds."/>
+		<Message Text="Copying latest successful artifacts from the Helpprovider builds."/>
 		<Copy SourceFiles="@(DownloadedCommon)" DestinationFolder="$(RootDir)/lib/common"
 			  SkipUnchangedFiles="true"/>
 	</Target>
@@ -149,7 +150,7 @@
 					  LocalFilename="$(RootDir)/Download/Chorus_Help.chm"/>
 
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
-		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, and IPCFramework builds."/>
+		<Message Text="Copying latest successful artifacts from the Palaso, Chorus, L10NSharp and IPCFramework builds."/>
 		<Copy SourceFiles="@(DownloadedMono)" DestinationFolder="$(RootDir)/lib/DebugMono"
 			SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(DownloadedMono)" DestinationFolder="$(RootDir)/lib/ReleaseMono"
@@ -212,7 +213,7 @@
 					  LocalFilename="$(RootDir)/Download/L10NSharp.dll"/>
 
 		<!-- split into two stages so that if the net connection fails, you still have the old files -->
-		<Message Text="Copying latest successful artifacts from the icucil, Palaso, Chorus, and IPCFramework builds."/>
+		<Message Text="Copying latest successful artifacts from the icucil, Palaso, Chorus, L10NSharp, and IPCFramework builds."/>
 		<Copy SourceFiles="@(DownloadedDotNet)" DestinationFolder="$(RootDir)/lib/Debug"
 			SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(DownloadedDotNet)" DestinationFolder="$(RootDir)/lib/Release"

@@ -12,32 +12,36 @@ IF "%1"=="" (
 
 pushd .
 cd ..\chorus
-echo y | call GetAndBuildThis.bat %BUILD_CONFIG% %2
+call GetAndBuildThis.bat %BUILD_CONFIG% %2
 popd
 
-REM FieldWorks build downloads this but we don't (TODO pH 2013.09: fix our build script)
-copy /Y ..\fwrepo\fw\Downloads\IPCFramework.dll lib\%BUILD_CONFIG%\
+mkdir output\%BUILD_CONFIG%
+
+REM FieldWorks build downloads this but we don't.  Another option is to generate and run
+REM buildupdate.sh using the generator at github.com/chrisvire/BuildUpdate
+copy /Y \fwrepo\fw\Downloads\IPCFramework.dll lib\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\Download\L10NSharp.dll lib\common\
-REM Uncomment these two lines if you are working on L10NSharp
+REM Uncomment these lines if you are working on L10NSharp
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.dll lib\common\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
+REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.TestUtilities.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.dll lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.pdb lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\Chorus.exe lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\output\%BUILD_CONFIG%\Chorus.pdb lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\Chorus.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusMerge.exe lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusMerge.pdb lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusMerge.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusHub.exe lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusHub.pdb lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusHub.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.dll lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.pdb lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\icu.net.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\

@@ -110,7 +110,7 @@ namespace TriboroughBridge_ChorusPlugin
 					obtain_lift,
 					send_receive,
 					send_receive_lift,
-					// Not supported yet. undo_export,
+					// Not supported yet: undo_export,
 					undo_export_lift,
 					view_notes,
 					view_notes_lift
@@ -120,14 +120,14 @@ namespace TriboroughBridge_ChorusPlugin
 			if (!supportedOperations.Contains(vOption))
 				throw new CommandLineException("-v", "is not supported");
 
-			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
+			// '-g' is required to NOT be present for any '-v' option cases, except 'move_lift'.
 			if (vOption != move_lift)
 			{
 				if (commandLineArgs.ContainsKey(g))
 					throw new CommandLineException("-g", "is present");
 			}
 
-			// Required to NOT be present for any '-v' option cases, except 'move_lift'.
+			// '-f' is required to NOT be present for any '-v' option cases, except 'send_receive'.
 			if (vOption != send_receive)
 			{
 				if (commandLineArgs.ContainsKey(f))
@@ -152,15 +152,12 @@ namespace TriboroughBridge_ChorusPlugin
 					// internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 				case check_for_updates:
 					// internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
-					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
-					ValidatePOptionIsExtantFwProjectFolder(projDirOption, Path.GetDirectoryName(pOption));
-					break;
+					break; // Other options are irrelevant.  REVIEW (Hasso) 2014.01: would it be worthwhile to skip the basic validation for these?
 
 				case obtain:
 					//internal const string obtain = "obtain";						// -p <$fwroot>
 					// xml or Db4o isn't relevant for this option.
-					var projectBaseDir = ValidateProjDirOption(commandLineArgs);
-					if (projectBaseDir != commandLineArgs[p])
+					if (projDirOption != pOption)
 						throw new CommandLineException("-v, -p and -projDir", "are incompatible, since '-p' and '-projDir' are different");
 					break;
 
@@ -328,8 +325,6 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			if (projDirOption == pOption)
 				throw new CommandLineException("-p", "is the same as '-projDir'");
-			if (!pOption.StartsWith(projDirOption))
-				throw new CommandLineException("-p", "is not contained within '-projDir'");
 			if (!Directory.Exists(pOption))
 				throw new CommandLineException("-p", "is not an existing folder");
 		}

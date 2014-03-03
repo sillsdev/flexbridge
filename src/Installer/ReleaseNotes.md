@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fix problem with command line parameters for 'check for updates' option.
+## 2.2.10 12/Dec/2013
 * Chorus: Add one second to ldml file's internal timestamp, during a merge, to make life easier for FLEx, after a Send/Receive.
 * Chorus: Disable improperly displaying "Choose Repositories" page on Linux.
 ## 2.2.9 10/Dec/2013

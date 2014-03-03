@@ -142,10 +142,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			</Component>
 
 			<Component Id="L10NSharp.dll" Guid="C1EE581A-E382-11DE-8A39-0800200C9A66">
-			  <File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\lib\common\L10NSharp.dll"/>
+			  <File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\lib\Release\L10NSharp.dll"/>
 			</Component>
 			<Component Id="L10NSharp.pdb" Guid="C1EE581B-E382-11DE-8A39-0800200C9A66">
-			  <File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\lib\common\L10NSharp.pdb"/>
+			  <File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\lib\Release\L10NSharp.pdb"/>
 			</Component>
 
 			<Component Id="IPCFramework.dll" Guid="C1EE581D-E382-11DE-8A39-0800200C9A66">
