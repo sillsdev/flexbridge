@@ -181,27 +181,6 @@ namespace TriboroughBridge_ChorusPlugin
 			return retval;
 		}
 
-		private static string UserLocalizationFolder
-		{
-			get
-			{
-				var commonAppData = String.Empty;
-				var userLocalizationFolder = String.Empty;
-				if (IsUnix)
-				{
-					commonAppData = Environment.GetEnvironmentVariable("FBCommonAppData") ?? "/var/lib/flexbridge";
-					userLocalizationFolder = Path.Combine(StripFilePrefix(commonAppData), localizations);
-				}
-				else
-				{
-					commonAppData = Path.Combine(Environment.GetFolderPath(
-						Environment.SpecialFolder.CommonApplicationData));
-					userLocalizationFolder = Path.Combine(commonAppData, "SIL", FlexBridge, localizations);
-				}
-				return userLocalizationFolder;
-			}
-		}
-
 		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
@@ -209,7 +188,7 @@ namespace TriboroughBridge_ChorusPlugin
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var	installedTmxBaseDirectory = Path.Combine(
 					Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userTmxBaseDirectory = UserLocalizationFolder;
+			var userTmxBaseDirectory = Path.Combine("SIL", FlexBridge);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
