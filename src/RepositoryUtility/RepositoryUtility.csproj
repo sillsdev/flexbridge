@@ -1,243 +1,253 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>8.0.30703</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{FC668C72-7472-4774-8501-8E021ECF3BEA}</ProjectGuid>
-	<OutputType>WinExe</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>RepositoryUtility</RootNamespace>
-	<AssemblyName>RepositoryUtility</AssemblyName>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<TargetFrameworkProfile Condition="'$(OS)'=='Windows_NT'">Client</TargetFrameworkProfile>
-	<FileAlignment>512</FileAlignment>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FC668C72-7472-4774-8501-8E021ECF3BEA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RepositoryUtility</RootNamespace>
+    <AssemblyName>RepositoryUtility</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile Condition="'$(OS)'=='Windows_NT'">Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<PlatformTarget>x86</PlatformTarget>
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<PlatformTarget>x86</PlatformTarget>
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-	<ApplicationIcon>chorus32x32.ico</ApplicationIcon>
+    <ApplicationIcon>chorus32x32.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="L10NSharp">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\L10NSharp.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="L10NSharp">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\L10NSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="L10NSharp">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\L10NSharp.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="L10NSharp">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\L10NSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="L10NSharp">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\L10NSharp.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="L10NSharp">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\L10NSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="L10NSharp">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\L10NSharp.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="L10NSharp">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\L10NSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup  Condition="'$(Configuration)' == 'ReleaseMono' Or '$(Configuration)' == 'DebugMono'">
-	<Reference Include="geckofx-core-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
-	</Reference>
-	<Reference Include="Geckofx-Winforms-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
-	</Reference>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-  </ItemGroup>
-  <ItemGroup>
-	<Reference Include="System" />
-	<Reference Include="System.ComponentModel.Composition" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Data" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml" />
+  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono' Or '$(Configuration)' == 'DebugMono'">
+    <Reference Include="geckofx-core-14">
+      <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms-14">
+      <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+    </Reference>
+    <None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="ModelVersionPicker.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ModelVersionPicker.Designer.cs">
-	  <DependentUpon>ModelVersionPicker.cs</DependentUpon>
-	</Compile>
-	<Compile Include="OptionalCommentDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="OptionalCommentDlg.Designer.cs">
-	  <DependentUpon>OptionalCommentDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="RepositoryUtilityForm.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="RepositoryUtilityForm.Designer.cs">
-	  <DependentUpon>RepositoryUtilityForm.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Program.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="RepositoryUtilitySychronizerAdjunct.cs" />
-	<EmbeddedResource Include="ModelVersionPicker.resx">
-	  <DependentUpon>ModelVersionPicker.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="OptionalCommentDlg.resx">
-	  <DependentUpon>OptionalCommentDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="RepositoryUtilityForm.resx">
-	  <DependentUpon>RepositoryUtilityForm.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<None Include="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
-	<Compile Include="Properties\Settings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	</Compile>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Content Include="chorus32x32.ico" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="GetFileFromRevisionRange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetFileFromRevisionRange.Designer.cs">
+      <DependentUpon>GetFileFromRevisionRange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModelVersionPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModelVersionPicker.Designer.cs">
+      <DependentUpon>ModelVersionPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionalCommentDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionalCommentDlg.Designer.cs">
+      <DependentUpon>OptionalCommentDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RepositoryUtilityForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RepositoryUtilityForm.Designer.cs">
+      <DependentUpon>RepositoryUtilityForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryUtilitySychronizerAdjunct.cs" />
+    <EmbeddedResource Include="GetFileFromRevisionRange.resx">
+      <DependentUpon>GetFileFromRevisionRange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModelVersionPicker.resx">
+      <DependentUpon>ModelVersionPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionalCommentDlg.resx">
+      <DependentUpon>OptionalCommentDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RepositoryUtilityForm.resx">
+      <DependentUpon>RepositoryUtilityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
-	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
-	  <Name>FLEx-ChorusPlugin</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj">
-	  <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
-	  <Name>LiftBridge-ChorusPlugin</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
-	  <Name>TriboroughBridge-ChorusPlugin</Name>
-	</ProjectReference>
+    <Content Include="chorus32x32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
+      <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
+      <Name>FLEx-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj">
+      <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
+      <Name>LiftBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
