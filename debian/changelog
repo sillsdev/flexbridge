@@ -1,3 +1,9 @@
+flexbridge (2.2.12) unstable; urgency=low
+
+  * New version.
+
+ -- MarkS <marksvc@gmail.com>  Mon, 28 Apr 2014 09:12:30 -0600
+
 flexbridge (2.2.11~beta1) unstable; urgency=low
 
   * FLEx Bridge: Fix problem with command line parameters for 'check for
