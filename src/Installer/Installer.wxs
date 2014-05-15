@@ -119,9 +119,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="ChorusMerge.pdb" Guid="C1EDBBD5-E382-11DE-8A39-0800200C9A66">
 			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
 			</Component>
-			  <Component Id="ChorusHub.pdb" Guid="C1EDE2F4-E382-11DE-8A39-0800200C9A66">
-				  <File Id="ChorusHub.pdb" Name="ChorusHub.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusHub.pdb"/>
-			  </Component>
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
@@ -195,7 +192,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LibChorus.pdb"/>
 	  <ComponentRef Id="Chorus.pdb"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
-	  <ComponentRef Id="ChorusHub.pdb"/>
 	  <ComponentRef Id="Palaso.pdb"/>
 	  <ComponentRef Id="Palaso.Lift.pdb"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
