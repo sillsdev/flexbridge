@@ -27,14 +27,15 @@
   </Target>
 
   <ItemGroup>
-	<ExistingObjectFiles Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/**/*" Exclude="$(RootDir)/.hg/**/*"/>
-	<OutputDirectory Include="$(RootDir)\output\"/>
+	<OutputFiles
+		Include="$(RootDir)/output/$(Configuration)/**/*"
+		Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
+	/>
   </ItemGroup>
-
   <Target Name="Clean">
 	<Message Text="Starting Clean"/>
-	<Delete Files="@(ExistingObjectFiles)"/>
-	<RemoveDir Directories="$(OutputDirectory)"/>
+	<Exec Command="find . -name obj -type d -print0 | xargs -0 rm -rf" WorkingDirectory="$(RootDir)" />
+	<Delete Files="@(OutputFiles)" />
 	<Message Text="End Clean"/>
   </Target>
 

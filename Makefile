@@ -22,7 +22,6 @@ debug:
 clean:
 	cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
 	/bin/rm -rf output Download Mercurial
-	/usr/bin/find . -name obj -type d -print | xargs /bin/rm -rf
 
 install: release
 	cd build && xbuild FLExBridge.build.mono.proj /t:Prepackaging /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:Configuration=ReleaseMono
