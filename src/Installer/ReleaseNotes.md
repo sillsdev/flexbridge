@@ -1,4 +1,9 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Fix FLEx Bridge to use new API for the localization system.
+* Chorus: Improve message when the user provides invalid login information for Language Depot.
+* Chorus: Fix merge crash when two users added the same ldml (Writing System) file.
+* L10NSharp: Fix localization library to load and use packaged localization files on Linux.
+## 2.2.11 28/Jan/2014
 * FLEx Bridge: Fix problem with command line parameters for 'check for updates' option.
 ## 2.2.10 12/Dec/2013
 * Chorus: Add one second to ldml file's internal timestamp, during a merge, to make life easier for FLEx, after a Send/Receive.
