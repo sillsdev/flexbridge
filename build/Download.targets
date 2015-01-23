@@ -95,7 +95,7 @@
 	bt216 (Chorus-Documentation)
 	Chorus_Help.chm => lib/common
 -->
-	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT'">
+	<Target Name="DownloadMonoAssemblies" Condition="'$(OS)'!='Windows_NT' And '$(TeamCityBuild)'!='true'">
 		<MakeDir Directories="$(RootDir)/Download"/>
 		<!-- bt281 is the icucil-precise64 Continuous build. -->
 		<Message Text="Downloading latest successful artifacts from the icucil-precise64 Continuous build."/>
@@ -159,7 +159,7 @@
 			SkipUnchangedFiles="true"/>
 	</Target>
 
-	<Target Name="DownloadDotNetAssemblies" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="DownloadDotNetAssemblies" Condition="'$(OS)'=='Windows_NT' And '$(TeamCityBuild)'!='true'">
 		<MakeDir Directories="$(RootDir)/Download"/>
 		<!-- bt14 is the icucil-win32-default Continuous build. -->
 		<Message Text="Downloading latest successful artifacts from the icucil-win32-default Continuous build."/>
