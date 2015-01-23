@@ -1,4 +1,7 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Improve exception message for unexpected duplicate children.
+* Palaso: Fix broken 'Show characters' behavior in Settings Protection.
+## 2.2.12 24/Apr/2014
 * FLEx Bridge: Fix FLEx Bridge to use new API for the localization system.
 * Chorus: Improve message when the user provides invalid login information for Language Depot.
 * Chorus: Fix merge crash when two users added the same ldml (Writing System) file.
