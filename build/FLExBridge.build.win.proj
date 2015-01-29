@@ -41,7 +41,7 @@
 	<Message Text="End Clean"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="DownloadFiles">
+  <Target Name="Build">
 	<CallTarget Targets="Clean"/>
 	<CallTarget Targets="CreateDirectories"/>
 	<CallTarget Targets="SetAssemblyVersion"/>
