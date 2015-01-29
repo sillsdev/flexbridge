@@ -29,6 +29,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 		public void FixtureSetup()
 		{
 			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 			{
 				EventListener = new ListenerForUnitTests()
@@ -81,14 +82,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 					}
 					Assert.IsFalse(elementStrategy.OrderIsRelevant);
 					Assert.AreEqual(NumberOfChildrenAllowed.ZeroOrMore, elementStrategy.NumberOfChildren);
-					if (classInfo.ClassName == "ScrDraft")
-					{
-						Assert.IsTrue(elementStrategy.IsImmutable);
-					}
-					else
-					{
-						Assert.IsFalse(elementStrategy.IsImmutable);
-					}
+					Assert.IsFalse(elementStrategy.IsImmutable);
 					Assert.AreEqual(0, elementStrategy.AttributesToIgnoreForMerging.Count);
 					Assert.IsInstanceOf<FindByKeyAttribute>(elementStrategy.MergePartnerFinder);
 				}

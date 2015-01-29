@@ -56,7 +56,6 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				SharedConstants.pictures,			// 'pictures'
 
 				// Scripture
-				SharedConstants.ArchivedDraft,		// 'ArchivedDraft'
 				SharedConstants.ImportSetting,		// 'ImportSetting'
 				SharedConstants.Srs,				// 'srs'
 				SharedConstants.Trans,				// 'trans'

@@ -115,11 +115,11 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 @"<?xml version='1.0' encoding='utf-8'?>
 <ImportSettings>
 <ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
+<ImportType val='0' />
 </ScrImportSet>
 </ImportSettings>";
 
-			var child = parent.Replace("val='2'", "val='3'");
+			var child = parent.Replace("val='0'", "val='1'");
 
 			using (var repositorySetup = new RepositorySetup("randy"))
 			{
@@ -148,7 +148,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Scripture
 @"<?xml version='1.0' encoding='utf-8'?>
 <ImportSettings>
 <ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
+<ImportType val='0' />
 <Name>
 <AUni
 ws='en'>Default</AUni>
@@ -156,18 +156,18 @@ ws='en'>Default</AUni>
 </ScrImportSet>
 </ImportSettings>";
 
-			var ourContent = commonAncestor.Replace("val='2'", "val='3'");
-			var theirContent = commonAncestor.Replace("Default", "Basic");
+			var ourContent = commonAncestor.Replace("val='0'", "val='1'");
+			var theirContent = commonAncestor.Replace("Default", "PT");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
 				_commonFile, commonAncestor,
 				_theirFile, theirContent,
-				new List<string> { @"ImportSettings/ScrImportSet/ImportType[@val=""3""]" }, null,
+				new List<string> { @"ImportSettings/ScrImportSet/ImportType[@val=""1""]" }, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlTextChangedReport) });
-			Assert.IsTrue(results.Contains("Basic"));
+			Assert.IsTrue(results.Contains("PT"));
 		}
 
 		[Test]
@@ -177,7 +177,7 @@ ws='en'>Default</AUni>
 @"<?xml version='1.0' encoding='utf-8'?>
 <ImportSettings>
 <ScrImportSet guid='0a0be0c1-39c4-44d4-842e-231680c7cd56' >
-<ImportType val='2' />
+<ImportType val='1' />
 <Name>
 <AUni
 ws='en'>Default</AUni>
