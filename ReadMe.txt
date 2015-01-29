@@ -10,7 +10,7 @@ Windows
 download_dependencies_windows.sh
 
 Linux
-download_dependencies_linux.sh (Not yet available, since there is no Team City build configuration for FLEx Bridge's master branch.)
+download_dependencies_linux.sh
 
 If necessary, both download_dependencies can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
 
