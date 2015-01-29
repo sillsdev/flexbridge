@@ -429,9 +429,6 @@ namespace FwdataTestApp
 						case SharedConstants.pictures:
 							mainRecordName = SharedConstants.CmPicture;
 							break;
-						case SharedConstants.ArchivedDraft:
-							mainRecordName = SharedConstants.ScrDraft;
-							break;
 						case SharedConstants.ImportSetting:
 							mainRecordName = SharedConstants.ScrImportSet;
 							break;

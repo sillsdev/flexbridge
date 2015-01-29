@@ -19,7 +19,7 @@ namespace FLEx_ChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 26;
+		internal const int ExpectedExtensionCount = 25;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{

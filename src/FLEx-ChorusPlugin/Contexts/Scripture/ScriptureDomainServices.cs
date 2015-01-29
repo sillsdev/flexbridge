@@ -43,7 +43,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 						Leave in:
 							Resources prop owns col of CmResource. [Leave.]
 						Extract:
-					BC 4.		ArchivedDrafts prop owns col of ScrDraft. [Each ScrDraft goes in its own file. Archived stuff goes into subfolder of Scripture.]
 					BC 5.		Styles props owns col of StStyle. [Put styles in subfolder and one for each style.]
 					BC 6.		ImportSettings prop owns col of ScrImportSet.  [Put sets in subfolder and one for each set.]
 					BC 7.		NoteCategories prop owns one CmPossibilityList [Put list in its own file.]
@@ -70,8 +69,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			if (scrAsBytes != null)
 			{
 				var scripture = Utilities.CreateFromBytes(scrAsBytes);
-				FLExProjectSplitter.CheckForUserCancelRequested(progress);
-				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(SharedConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ScriptureStylesBoundedContextService.NestContext(scripture.Element(SharedConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
@@ -112,7 +109,6 @@ namespace FLEx_ChorusPlugin.Contexts.Scripture
 			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 			if (highLevelData.ContainsKey(SharedConstants.Scripture))
 			{
-				ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 				ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 				ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
 			}

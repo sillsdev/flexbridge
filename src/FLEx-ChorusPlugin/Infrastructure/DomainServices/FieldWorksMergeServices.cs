@@ -154,10 +154,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 				case "ScrBook":
 					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
 					break;
-				case "ScrDraft":
-					// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
-					classStrat.IsImmutable = true;
-					break;
 				case "ScrSection":
 					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
 					break;
