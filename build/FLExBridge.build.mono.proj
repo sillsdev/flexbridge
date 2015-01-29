@@ -8,9 +8,6 @@
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"/>
 
-  <!-- dynamically download the Palaso, Chorus, etc. assemblies that we depend on -->
-  <Import Project="$(RootDir)/build/Download.targets"/>
-
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
 	<Solution>FLExBridge VS2010.sln</Solution>
