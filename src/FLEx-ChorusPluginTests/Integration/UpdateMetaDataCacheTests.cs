@@ -272,6 +272,21 @@ namespace FLEx_ChorusPluginTests.Integration
 			Assert.AreEqual(DataType.OwningCollection, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 			DoMerge(fileHandler, 7000068);
 			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
+
+			// 7000069:
+			//	1. Remove "ScrDraft" class and "ArchivedDrafts" from "Scripture" object.
+			//	2. Remove "ScrDifference" class and its owning property "Diffs" on "ScrBook".
+			CheckPropertyExistsBeforeUpGrade(mdc, "Scripture", "ArchivedDrafts");
+			Assert.IsNotNull(mdc.GetClassInfo("ScrDraft"));
+			CheckPropertyExistsBeforeUpGrade(mdc, "ScrBook", "Diffs");
+			Assert.IsNotNull(mdc.GetClassInfo("ScrDifference"));
+
+			DoMerge(fileHandler, 7000069);
+
+			CheckPropertyRemovedAfterUpGrade(mdc, "Scripture", "ArchivedDrafts");
+			CheckPropertyRemovedAfterUpGrade(mdc, "ScrBook", "Diffs");
+			Assert.IsNull(mdc.GetClassInfo("ScrDraft"));
+			Assert.IsNull(mdc.GetClassInfo("ScrDifference"));
 		}
 
 		[Test]

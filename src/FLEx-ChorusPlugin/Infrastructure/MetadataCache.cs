@@ -326,6 +326,15 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.RemoveProperty("Subentries");
 						newClass.AddProperty(new FdoPropertyInfo("Subentries", DataType.OwningSequence));
 						break;
+					case 7000069:
+						// 7000069:
+						//	1. Remove "ScrDraft" class and "ArchivedDrafts" from "Scripture" object.
+						GetClassInfo("Scripture").RemoveProperty("ArchivedDrafts");
+						_classes.Remove("ScrDraft");
+						//	2. Remove "ScrDifference" class and its owning property "Diffs" on "ScrBook".
+						GetClassInfo("ScrBook").RemoveProperty("Diffs");
+						_classes.Remove("ScrDifference");
+						break;
 					//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
@@ -334,7 +343,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000068;
+		public const int MaximumModelVersion = 7000069;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
