@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLEx Bridge: Update localization files for Spanish, French, Chinese and English
+## 2.2.13 23/Jan/2015
 * Chorus: Improve exception message for unexpected duplicate children.
 * Palaso: Fix broken 'Show characters' behavior in Settings Protection.
 ## 2.2.12 24/Apr/2014

@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
-  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.3.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-	<prop type="x-appversion">2.1.0</prop>
-	<prop type="x-hardlinebreakreplacement">\n</prop>
+  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="2.0.6.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+    <prop type="x-appversion">2.2.12</prop>
+    <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
-	<tu tuid="BridgeConflictView.Project">
-	  <tuv xml:lang="en">
-		<seg>Project:</seg>
-	  </tuv>
-	  <tuv xml:lang="fr">
-		<seg>Projet :</seg>
-	  </tuv>
-	</tu>
-	<tu tuid="BridgeConflictView.ProjectInse">
-	  <tuv xml:lang="en">
-		<seg>The selected project is in use.</seg>
-	  </tuv>
-	  <tuv xml:lang="fr">
-		<seg>Le projet sélectionné est utilisé.</seg>
-	  </tuv>
-	</tu>
-	<tu tuid="BridgeConflictView.WindowTitle">
-	  <tuv xml:lang="en">
-		<seg>Conflict Report</seg>
-	  </tuv>
-	  <tuv xml:lang="fr">
-		<seg>Rapport de conflits</seg>
-	  </tuv>
-	</tu>
+    <tu tuid="BridgeConflictView.Project">
+      <tuv xml:lang="en">
+        <seg>Project:</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Projet :</seg>
+      </tuv>
+    </tu>
+    <tu tuid="BridgeConflictView.ProjectInse">
+      <tuv xml:lang="en">
+        <seg>The selected project is in use.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Le projet sélectionné est utilisé.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="BridgeConflictView.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Conflict Report</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Rapport de conflits</seg>
+      </tuv>
+    </tu>
+    <tu tuid="LiftBridge_MoveFailed_Title">
+      <note>Title of error message shown when moving a LiftBridge repo to the FlexBridge location fails.</note>
+      <tuv xml:lang="en">
+        <seg>Failed to update LiftBridge project.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Impossible d'actualiser le projet LiftBridge.</seg>
+      </tuv>
+    </tu>
   </body>
 </tmx>
