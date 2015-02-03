@@ -1,4 +1,9 @@
-flexbridge (2.2.13) unstable; urgency=low
+flexbridge (2.2.14) unstable; urgency=low
+  * Update localization files for Spanish, French, Chinese and English
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 03 Feb 2015 14:00:04 -0600
+
+ flexbridge (2.2.13) unstable; urgency=low
   * Chorus: Improve exception message for unexpected duplicate children.
   * Palaso: Fix broken 'Show characters' behavior in Settings Protection.
 
