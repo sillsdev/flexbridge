@@ -13,6 +13,7 @@
 	<Solution>FLExBridge VS2010.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
 	<Configuration>ReleaseMono</Configuration>
+	<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
@@ -79,7 +80,7 @@
 	<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
   </Target>
 
-  <Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput">
+  <Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 

@@ -67,3 +67,5 @@ lib/*/*HelpProvider.dll
 lib/*/L10NSharp.xml
 lib/*.msm
 /Mercurial
+build/.nuget/*
+packages/*
