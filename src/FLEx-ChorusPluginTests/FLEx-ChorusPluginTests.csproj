@@ -1,243 +1,243 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>8.0.30703</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{5512542B-6423-4221-90AC-CF12CC73E96F}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FLEx_ChorusPluginTests</RootNamespace>
-	<AssemblyName>FLEx-ChorusPluginTests</AssemblyName>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5512542B-6423-4221-90AC-CF12CC73E96F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FLEx_ChorusPluginTests</RootNamespace>
+    <AssemblyName>FLEx-ChorusPluginTests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus.TestUtilities">
-	  <HintPath>..\..\lib\Debug\LibChorus.TestUtilities.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso.TestUtilities">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\Palaso.TestUtilities.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus.TestUtilities">
+      <HintPath>..\..\lib\Debug\LibChorus.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus.TestUtilities">
-	  <HintPath>..\..\lib\Release\LibChorus.TestUtilities.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso.TestUtilities">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\Palaso.TestUtilities.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus.TestUtilities">
+      <HintPath>..\..\lib\Release\LibChorus.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus.TestUtilities">
-	  <HintPath>..\..\lib\DebugMono\LibChorus.TestUtilities.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso.TestUtilities">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\Palaso.TestUtilities.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus.TestUtilities">
+      <HintPath>..\..\lib\DebugMono\LibChorus.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-	<Reference Include="Chorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="LibChorus.TestUtilities">
-	  <HintPath>..\..\lib\ReleaseMono\LibChorus.TestUtilities.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="Palaso.TestUtilities">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\Palaso.TestUtilities.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus.TestUtilities">
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="nunit.framework">
-	  <HintPath>..\..\lib\common\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml.Linq" />
-	<Reference Include="System.Xml" />
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandlerTests.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\FlexObtainProjectStrategyTests.cs" />
-	<Compile Include="Infrastructure\Handling\DateTimeMergingTests.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
-	<Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
-	<Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\General\PictureTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\General\VirtualOrderingTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\FieldWorksDiscourseAnalysisTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\FieldWorksFeatureSystemTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGeneratorTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\BinaryDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\BooleanDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\GenDateDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\GuidDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\IntegerDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\OtherElementStrategyTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\MultiStringDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\MultiUnicodeDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\OwningAtomicDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\OwningCollectionDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\OwningSequenceDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceAtomicDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceCollectionDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceSequenceDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\StringDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\TextPropBinaryDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\TimeDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\ReportsByDataType\UnicodeDataTypeReportTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
-	<Compile Include="FieldWorksTestServices.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningServiceTests.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectNestingServiceTests.cs" />
-	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
-	<Compile Include="Infrastructure\DataSortingServiceTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBookAnnotationsTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBooksTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerTests.cs" />
-	<Compile Include="Infrastructure\MetadataCacheTests.cs" />
-	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
-	<Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
-	<Compile Include="Integration\MergeIntegrationTests.cs" />
-	<Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
-	<Compile Include="Infrastructure\Handling\LoadHandlersTests.cs" />
-	<Compile Include="Mocks\MockedConflictView.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\TestResources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>TestResources.resx</DependentUpon>
-	</Compile>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandlerTests.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\FlexObtainProjectStrategyTests.cs" />
+    <Compile Include="Infrastructure\Handling\DateTimeMergingTests.cs" />
+    <Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
+    <Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
+    <Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
+    <Compile Include="Infrastructure\Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Common\StyleContextGeneratorTests.cs" />
+    <Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
+    <Compile Include="Infrastructure\Handling\FieldWorksObjectContextGeneratorTests.cs" />
+    <Compile Include="Infrastructure\Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\General\PictureTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\General\VirtualOrderingTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\Discourse\FieldWorksDiscourseAnalysisTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\FieldWorksFeatureSystemTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGeneratorTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\BinaryDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\BooleanDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\GenDateDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\GuidDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\IntegerDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\OtherElementStrategyTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\MultiStringDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\MultiUnicodeDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\OwningAtomicDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\OwningCollectionDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\OwningSequenceDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceAtomicDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceCollectionDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\ReferenceSequenceDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\StringDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\TextPropBinaryDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\TimeDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\ReportsByDataType\UnicodeDataTypeReportTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\BaseFieldWorksTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
+    <Compile Include="FieldWorksTestServices.cs" />
+    <Compile Include="Infrastructure\DomainServices\CmObjectFlatteningServiceTests.cs" />
+    <Compile Include="Infrastructure\DomainServices\CmObjectNestingServiceTests.cs" />
+    <Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
+    <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBookAnnotationsTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksScrBooksTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerTests.cs" />
+    <Compile Include="Infrastructure\MetadataCacheTests.cs" />
+    <Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
+    <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
+    <Compile Include="Integration\MergeIntegrationTests.cs" />
+    <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
+    <Compile Include="Infrastructure\Handling\LoadHandlersTests.cs" />
+    <Compile Include="Mocks\MockedConflictView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\TestResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestResources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
-	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
-	  <Name>FLEx-ChorusPlugin</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
-	  <Name>TriboroughBridge-ChorusPlugin</Name>
-	</ProjectReference>
+    <ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
+      <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
+      <Name>FLEx-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<None Include="TestData\DataNotebook_Ann.ntbk">
@@ -251,11 +251,11 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="Properties\TestResources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
+    <EmbeddedResource Include="Properties\TestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

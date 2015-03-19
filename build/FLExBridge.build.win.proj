@@ -15,6 +15,7 @@
   <PropertyGroup>
 	<Solution>FLExBridge VS2010.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
+	<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
@@ -53,7 +54,7 @@
 	<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)"/>
   </Target>
 
-  <Target Name="Compile">
+  <Target Name="Compile" DependsOnTargets="RestorePackages">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
   </Target>
 

@@ -4,6 +4,8 @@
 	<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.2</BUILD_NUMBER>
   </PropertyGroup>
 
+  <Import Project="$(RootDir)\build\NuGet.targets"/>
+
   <Target Name="VersionNumbers">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
