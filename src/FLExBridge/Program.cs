@@ -30,6 +30,8 @@ namespace FLExBridge
 		static void Main(string[] args)
 		{
 			//MessageBox.Show(@"Get ready to debug FB exe.");
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
 			using (var hotspot = new HotSpotProvider())
 			{
@@ -47,8 +49,6 @@ namespace FLExBridge
 			}
 
 			SetUpErrorHandling();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 
 			var commandLineArgs = CommandLineProcessor.ParseCommandLineArgs(args);
 

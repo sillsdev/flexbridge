@@ -1,3 +1,10 @@
+flexbridge (2.3.0~alpha1) unstable; urgency=low
+
+  * Chorus: Upgrade mercurial version used by Chorus to 3.0.1 to fix serious
+    bugs in Send/Receive
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 27 Mar 2014 10:08:45 -0600
+
 flexbridge (2.2.11~beta1) unstable; urgency=low
 
   * FLEx Bridge: Fix problem with command line parameters for 'check for
