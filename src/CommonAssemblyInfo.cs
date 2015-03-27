@@ -10,7 +10,7 @@ using System.Reflection;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("FLEx Bridge")]
-[assembly: AssemblyCopyright("Copyright © SIL 2010-2013")]
+[assembly: AssemblyCopyright("Copyright © SIL 2010-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
