@@ -8,37 +8,119 @@
 		<h4>Release Notes (Preview of things to come)</h4>
 		<ul>
 			<li>DEV_VERSION_NUMBER<ol>
-				<li>Chorus: Fix code merge problem with USB code.</li>
+				<li>Chorus: Update Mercurial to version 3.</li>
 			</ol></li>
-			<li>2.0.10<ol>
+			<li>2.2.14<ol>
+				<li>FLEx Bridge: Update localization files for Spanish, French, Chinese and English.</li>
+			</ol></li>
+			<li>2.2.13<ol>
+				<li>Chorus: Improve exception message for unexpected duplicate children.</li>
+				<li>Palaso: Fix broken 'Show characters' behavior in Settings Protection.</li>
+			</ol></li>
+			<li>2.2.12<ol>
+				<li>FLEx Bridge: Fix FLEx Bridge to use new API for the localization system.</li>
+				<li>Chorus: Improve message when the user provides invalid login information for Language Depot.</li>
+				<li>Chorus: Fix merge crash when two users added the same ldml (Writing System) file.</li>
+				<li>L10NSharp: Fix localization library to load and use packaged localization files on Linux.</li>
+			</ol></li>
+			<li>2.2.11<ol>
+				<li>FLEx Bridge: Fix problem with command line parameters for 'check for updates' option.</li>
+			</ol></li>
+			<li>2.2.10<ol>
+				<li>Chorus: Add one second to ldml file's internal timestamp, during a merge, to make life easier for FLEx, after a Send/Receive.</li>
+				<li>Chorus: Disable improperly displaying "Choose Repositories" page on Linux.</li>
+			</ol></li>
+			<li>2.2.9<ol>
+				<li>FLEx Bridge: Fixed odd case where FLEx Bridge crashed, while trying to get a new project.</li>
+			</ol></li>
+			<li>2.2.8<ol>
+				<li>Localization System: Block Linux from allowing editing the localization files, while a bad bug is being fixed.</li>
+				<li>Chorus: Fix a crash, while merging LDML (writing system) files.</li>
+			</ol></li>
+			<li>2.2.7<ol>
+				<li>FLEx Bridge: Improved reporting mechanism that tells users about a failure in FLEx's 'fix it' program.</li>
+			</ol></li>
+			<li>2.2.6<ol>
+				<li>Palaso: Fix more keyboarding issues (Linux).</li>
+				<li>FLEx Bridge: Copy localization files into a writeable location (Linux), so users can save changes.</li>
+			</ol></li>
+			<li>2.2.5<ol>
+				<li>Chorus: Update instructions (again) for using Chorus Hub and how they are displayed.</li>
+				<li>Chorus: Fixed new bug introduced while re-working handling of writing system files (ldml extension).</li>
+			</ol></li>
+			<li>2.2.4<ol>
+				<li>Palaso: Fix downgraded version numbers to be higher, so users can upgrade from FLEx Bridge 2.1.10 to 2.2.x series.</li>
+				<li>Palaso and Chorus: Fix some problems in handling writing system files (ldml extension).</li>
+				<li>Chorus: Update instructions for using Chorus Hub.</li>
+			</ol></li>
+			<li>2.2.3<ol>
+				<li>FLEx Bridge: Fix problem with moving an older Lift Bridge system to its new home.</li>
+			</ol></li>
+			<li>2.2.2<ol>
+				<li>FLExBridge: Include Launcher for Chorus Hub on Linux.</li>
+				<li>FLExBridge: Clean up after cancelling a Send/Receive.</li>
+				<li>FLExBridge: Add French, Spanish, and Chinese localizations.</li>
+				<li>FLExBridge: Better handling of receiving from a repository with no data in it yet.</li>
+				<li>FLExBridge: Help documentation available for Chorus on Linux.</li>
+			</ol></li>
+			<li>2.1.13<ol>
+				<li>Chorus: No longer add empty notes.</li>
+				<li>FLEx Bridge: Shift formal ownership from Randy Regnier to LSDev.</li>
+			</ol></li>
+			<li>2.1.12<ol>
+				<li>Palaso: Fix problem copying error reporting to clipboard on Linux.</li>
+				<li>Chorus: Fix stack overflow problem on Linux when finished using some dialogs.</li>
+				<li>Chorus: Fix problem displaying conflict details on Linux.</li>
+			</ol></li>
+			<li>2.1.10<ol>
+				<li>FLEx Bridge: Fixed problem with FLEx<->FLEx Bridge interaction.</li>
+				<li>FLEx Bridge: Don't try to restart FLEx Bridge after updating to a newer version.</li>
+			</ol></li>
+			<li>2.1.9<ol>
+				<li>Chorus: Users with large numbers of revisions would see the internet hang after an update.</li>
+			</ol></li>
+			<li>2.1.8<ol>
+				<li>New in this release<ol>
+					<li>FLEx Bridge: Revise FLEx<->FLEx Bridge interaction to allow Linux to do Send/Receive.</li>
+					<li>FLEx Bridge: Add support for FLEx's data model version 68.</li>
+				</ol></li>
+				<li>Fixes in this release<ol>
+					<li>FLEx Bridge: Allow for better LIFT Send/Receive support for Shared network system (Db4o data storage system).</li>
+					<li>FLEx Bridge: Numerous fixes for Linux support.</li>
+					<li>FLEx Bridge: Fixed case where clicking "X" on S/R window caused crash.</li>
+				</ol></li>
+			</ol></li>
+			<li>2.0.20<ol>
+				<li>L10NSharp: No "OK" button text for unavailable languages</li>
+				<li>FLEx Bridge: Prompt only once if localization unavailable</li>
+				<li>FLEx Bridge: Fix problem in POS context generator for conflict reports</li>
+			</ol></li>
+			<li>2.0.19<ol>
+				<li>New in this release<ol>
+					<li>Palaso, Chorus, & FLEx Bridge: Add localization support.</li>
+					<li>Chorus: Show technical conflict details on demand.</li>
+					<li>FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.</li>
+					<li>FLEx Bridge: Update the minimum install version for FLEx.</li>
+				</ol></li>
+				<li>Fixes in this release<ol>
+					<li>Chorus: Fix merge bug.</li>
+					<li>FLEx Bridge: Make message about 'fix it' program to not be a warning.</li>
+				</ol></li>
+			</ol></li>
+			<li>1.0.31<ol>
+				<li>FLEx Bridge: Add better support for FLEx data migration DM68.</li>
+			</ol></li>
+			<li>1.0.30<ol>
 				<li>Chorus: Fix problem with sending unrelated repositories out.</li>
-				<li>FLEx Bridge: Update the minimum install version for FLEx.</li>
 			</ol></li>
-			<li>2.0.9<ol>
+			<li>1.0.29<ol>
+				<li>Flex Bridge: Fix crash getting an empty repository.</li>
+			</ol></li>
+			<li>1.0.28<ol>
 				<li>Chorus: Fix problem where source repository had no initial commit.</li>
 			</ol></li>
-			<li>2.0.8<ol>
-				<li>Chorus: Re-enable menu in log window.</li>
-			</ol></li>
-			<li>2.0.6<ol>
+			<li>1.0.27<ol>
 				<li>Chorus: Fix merge bug.</li>
-				<li>FLEx Bridge: Make message about 'fix it' program to not be a warning.</li>
-			</ol></li>
-			<li>2.0.5<ol>
-				<li>FLEx Bridge: Fix problem in revised system in Lift Send/Receive.</li>
-			</ol></li>
-			<li>2.0.4<ol>
-				<li>FLEx Bridge: Fix localization to include Palaso.</li>
-			</ol></li>
-			<li>2.0.3<ol>
-				<li>FLEx Bridge: Fix localization problems.</li>
-			</ol></li>
-			<li>2.0.2<ol>
-				<li>Chorus: Show technical conflict details on demand.</li>
-			</ol></li>
-			<li>2.0.1<ol>
-				<li>FLEx Bridge: Re-architecture work. Replace Model-View-Controller system with an action handler system that handles the various operations/actions FLEx asks to be done.</li>
-				<li>Palaso, Chorus, & FLEx Bridge: Add localization support.</li>
 			</ol></li>
 			<li>1.0.26<ol>
 				<li>Palaso: Fix issue with loading large xml files.</li>
@@ -68,8 +150,8 @@
 				<li>Chorus: Update Chorus Help file and connect one Help button to the help.</li>
 			</ol></li>
 			<li>1.0.17<ol>
-				<li>FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.</li>
 				<li>Chorus: Remove support for the obsolete Shared Network system.</li>
+				<li>FLEx Bridge: Revise merge system for treating feature structures to allow only one user to make changes to a given feature structure.</li>
 			</ol></li>
 			<li>1.0.16<ol>
 				<li>FLEx Bridge: Have feature structures only allow one person to makes a change in a given merge.</li>
