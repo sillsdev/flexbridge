@@ -11,7 +11,16 @@ else
 		BUILD_CONFIG=$1
 fi
 
-cp ../chorus/Download/L10NSharp.dll* lib/common/
+if [ ! -d output/DebugMono ]
+then
+	if [ ! -d output ]
+	then
+		mkdir output
+	fi
+	mkdir output/DebugMono
+fi
+
+cp ../chorus/lib/${BUILD_CONFIG}Mono/L10NSharp.dll* lib/common/
 # Uncomment these two lines if you are working on L10NSharp
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.dll lib/common/
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.* lib/${BUILD_CONFIG}Mono/
