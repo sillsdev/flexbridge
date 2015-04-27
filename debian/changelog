@@ -1,4 +1,9 @@
-flexbridge (2.2.14) unstable; urgency=low
+ flexbridge (2.2.15) unstable; urgency=low
+  * Chorus: Fix overflow error when receiving very large project data with resumable option
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 27 Apr 2015 11:25:00 -0600
+
+ flexbridge (2.2.14) unstable; urgency=low
   * Update localization files for Spanish, French, Chinese and English
 
  -- Jason Naylor <jason_naylor@sil.org>  Tue, 03 Feb 2015 14:00:04 -0600

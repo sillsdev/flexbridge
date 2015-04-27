@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Fix overflow error when receiving very large project data with resumable option
+## 2.2.14 3/Feb/2015
 * FLEx Bridge: Update localization files for Spanish, French, Chinese and English
 ## 2.2.13 23/Jan/2015
 * Chorus: Improve exception message for unexpected duplicate children.
