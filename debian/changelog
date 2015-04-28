@@ -1,20 +1,23 @@
- flexbridge (2.2.15) unstable; urgency=low
+flexbridge (2.2.15) unstable; urgency=low
+
   * Chorus: Fix overflow error when receiving very large project data with resumable option
 
  -- Jason Naylor <jason_naylor@sil.org>  Tue, 27 Apr 2015 11:25:00 -0600
 
- flexbridge (2.2.14) unstable; urgency=low
+flexbridge (2.2.14) unstable; urgency=low
+
   * Update localization files for Spanish, French, Chinese and English
 
  -- Jason Naylor <jason_naylor@sil.org>  Tue, 03 Feb 2015 14:00:04 -0600
 
- flexbridge (2.2.13) unstable; urgency=low
+flexbridge (2.2.13) unstable; urgency=low
+
   * Chorus: Improve exception message for unexpected duplicate children.
   * Palaso: Fix broken 'Show characters' behavior in Settings Protection.
 
  -- Jason Naylor <jason_naylor@sil.org>  Fri, 23 Jan 2015 13:21:23 -0600
 
- flexbridge (2.2.12) unstable; urgency=low
+flexbridge (2.2.12) unstable; urgency=low
 
   * New version.
 
