@@ -67,19 +67,19 @@ cd -
 # URL: http://build.palaso.org/viewType.html?buildTypeId=bt321
 # VCS: https://github.com/sillsdev/flexbridge.git [master]
 # dependencies:
-# [0] build: chorus-win32-master NoStrongName (bt437)
+# [0] build: chorus-win32-master-nostrongname Continuous (bt437)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt437
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Autofac.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [1] build: chorus-win32-master NoStrongName (bt437)
+# [1] build: chorus-win32-master-nostrongname Continuous (bt437)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt437
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Release", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release"}
+#     paths: {"Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Debug", "MercurialExtensions"=>"MercurialExtensions", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [2] build: Helpprovider (bt225)
 #     project: Helpprovider
@@ -116,29 +116,30 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/Debug", "L10NSharp.pdb"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [7] build: palaso-win32-master Continuous nostrongname (bt436)
-#     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt436
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"Palaso.BuildTasks.dll"=>"lib/Release", "Palaso.dll"=>"lib/Release", "Palaso.pdb"=>"lib/Release", "Palaso.TestUtilities.dll"=>"lib/Release", "Palaso.TestUtilities.pdb"=>"lib/Release", "PalasoUIWindowsForms.dll"=>"lib/Release", "PalasoUIWindowsForms.pdb"=>"lib/Release", "Palaso.Lift.dll"=>"lib/Release", "Palaso.Lift.pdb"=>"lib/Release"}
-#     VCS: https://github.com/sillsdev/libpalaso.git []
-# [8] build: icucil-win32-default Continuous (bt14)
+# [7] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Release", "icu*.config"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: icucil-win32-default Continuous (bt14)
+# [8] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Debug", "icu*.config"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
+# [9] build: palaso-win32-master-nostrongname Continuous (bt436)
+#     project: libpalaso
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt436
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"Palaso.BuildTasks.dll"=>"lib/Release", "Palaso.dll"=>"lib/Release", "Palaso.pdb"=>"lib/Release", "Palaso.TestUtilities.dll"=>"lib/Release", "Palaso.TestUtilities.pdb"=>"lib/Release", "PalasoUIWindowsForms.dll"=>"lib/Release", "PalasoUIWindowsForms.pdb"=>"lib/Release", "Palaso.Lift.dll"=>"lib/Release", "Palaso.Lift.pdb"=>"lib/Release"}
+#     VCS: https://github.com/sillsdev/libpalaso.git []
 
 # make sure output directories exist
+mkdir -p ./MercurialExtensions
 mkdir -p ./lib/Debug
 mkdir -p ./lib/Release
 mkdir -p ./lib/common
@@ -148,7 +149,8 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Chorus.exe ./lib/Release/Chorus.exe
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/LibChorus.dll ./lib/Release/LibChorus.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/ChorusMerge.exe ./lib/Release/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Mercurial.zip ./lib/Release/Mercurial.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Mercurial.zip ./lib/Debug/Mercurial.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/MercurialExtensions ./MercurialExtensions/MercurialExtensions
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/LibChorus.TestUtilities.dll ./lib/Release/LibChorus.TestUtilities.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Chorus.pdb ./lib/Release/Chorus.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
@@ -163,6 +165,16 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.dll ./lib/Debug/L10NSharp.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Release/icu.net.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt54.dll ./lib/Release/icudt54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin54.dll ./lib/Release/icuin54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc54.dll ./lib/Release/icuuc54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Release/icu.net.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Debug/icu.net.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt54.dll ./lib/Debug/icudt54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin54.dll ./lib/Debug/icuin54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc54.dll ./lib/Debug/icuuc54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Debug/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.BuildTasks.dll ./lib/Release/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.dll ./lib/Release/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.pdb ./lib/Release/Palaso.pdb
@@ -172,14 +184,4 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/PalasoUIWindowsForms.pdb ./lib/Release/PalasoUIWindowsForms.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.Lift.dll ./lib/Release/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.Lift.pdb ./lib/Release/Palaso.Lift.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Release/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt40.dll ./lib/Release/icudt40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin40.dll ./lib/Release/icuin40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc40.dll ./lib/Release/icuuc40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Release/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Debug/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt40.dll ./lib/Debug/icudt40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin40.dll ./lib/Debug/icuin40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc40.dll ./lib/Debug/icuuc40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Debug/icu.net.dll.config
 # End of script
