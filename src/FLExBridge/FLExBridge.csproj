@@ -138,18 +138,14 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
-	<Reference Include="geckofx-core-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
-	</Reference>
-	<Reference Include="Geckofx-Winforms-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
-	</Reference>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Core</Package>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Winforms</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
 	<Reference Include="Chorus">
@@ -171,18 +167,14 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
 	</Reference>
-	<Reference Include="geckofx-core-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
-	</Reference>
-	<Reference Include="Geckofx-Winforms-14">
-	  <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
-	</Reference>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofix.so">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll.config">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Core</Package>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Winforms</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
 	<Reference Include="System" />
