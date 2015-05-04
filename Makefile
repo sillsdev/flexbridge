@@ -20,11 +20,11 @@ debug:
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
 
 clean:
-	cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
+	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
 	/bin/rm -rf output Download Mercurial
 
 install: release
-	cd build && xbuild FLExBridge.build.mono.proj /t:Prepackaging /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:Configuration=ReleaseMono
+	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Prepackaging /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:Configuration=ReleaseMono
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install output/ReleaseMono/*.* $(DESTDIR)/usr/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
@@ -33,7 +33,8 @@ install: release
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install -m644 lib/common/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -m644 lib/ReleaseMono/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
+	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/ReleaseMono/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
