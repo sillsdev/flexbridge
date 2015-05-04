@@ -40,10 +40,10 @@ fi
 # Add packaged mono items to paths
 
 PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
-PATH="/opt/mono-sil/bin:${PATH}"
-LD_LIBRARY_PATH="/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="/opt/mono-sil/lib/pkgconfig:${PKG_CONFIG_PATH}"
-MONO_GAC_PREFIX="/opt/mono-sil:/usr"
+PATH="${MONO_PREFIX}/bin:${PATH}"
+LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
+PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+MONO_GAC_PREFIX="${MONO_PREFIX}:/usr"
 
 if [ "$RUNMODE" = "INSTALLED" ]
 then
