@@ -162,16 +162,16 @@
 	<Target Name="DownloadDotNetAssemblies" Condition="'$(OS)'=='Windows_NT' And '$(TeamCityBuild)'!='true'">
 		<MakeDir Directories="$(RootDir)/Download"/>
 		<!-- bt14 is the icucil-win32-default Continuous build. -->
-		<Message Text="Downloading latest successful artifacts from the icucil-win32-default Continuous build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icu.net.dll"
+		<Message Text="Downloading latest successful artifacts tagged icu40 from the icucil-win32-default Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/icu40.tcbuildtag/icu.net.dll"
 					  LocalFilename="$(RootDir)/Download/icu.net.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icu.net.dll.config"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/icu40.tcbuildtag/icu.net.dll.config"
 					  LocalFilename="$(RootDir)/Download/icu.net.dll.config"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icudt40.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/icu40.tcbuildtag/icudt40.dll"
 					  LocalFilename="$(RootDir)/Download/icudt40.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icuin40.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/icu40.tcbuildtag/icuin40.dll"
 					  LocalFilename="$(RootDir)/Download/icuin40.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful/icuuc40.dll"
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt14/icu40.tcbuildtag/icuuc40.dll"
 					  LocalFilename="$(RootDir)/Download/icuuc40.dll"/>
 
 		<!-- bt273 is the palaso-win32-FlexBridgeBeta Continuous build. -->
