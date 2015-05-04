@@ -3,10 +3,10 @@ Section: misc
 Priority: extra
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
 Build-Depends: debhelper (>= 8.0.0),
- mono-devel,
+ mono-sil, libgdiplus-sil,
  libmono-winforms2.0-cil,
  libmono-cairo2.0-cil,
- geckofx29, unzip,
+ geckofx29, unzip, curl,
  adduser (>= 3.11)
 Standards-Version: 3.9.2
 Homepage: http://projects.palaso.org/projects/fwbridge
@@ -16,9 +16,9 @@ Homepage: http://projects.palaso.org/projects/fwbridge
 Package: flexbridge
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7), python (<< 2.8),
- mono-sil, libgtk2.0-dev, libgtkmm-2.4-1c2a, libgtkmm-2.4-dev,
- libgtksourceview2.0-0, libgtksourceview2.0-common, geckofx
-Suggests: fieldworks-applications (>= 8.2.0)
+ mono-sil, libgdiplus-sil, libgtk2.0-dev, libgtkmm-2.4-1c2a, libgtkmm-2.4-dev,
+ libgtksourceview2.0-0, libgtksourceview2.0-common, geckofx29,
+ fieldworks-applications (>= 8.2.0)
 Description: Allow multiple FieldWorks users to collaborate remotely
  FLEx Bridge is an application that allows multiple FieldWorks 8.0 users
  to do remote collaboration (i.e., not necessarily connected by a local

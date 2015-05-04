@@ -67,84 +67,91 @@ cd -
 # URL: http://build.palaso.org/viewType.html?buildTypeId=bt435
 # VCS: https://github.com/sillsdev/flexbridge.git [master]
 # dependencies:
-# [0] build: chorus-precise64-master Continuous (bt323)
+# [0] build: Chorus-Documentation (bt216)
+#     project: Chorus
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt216
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"Chorus_Help.chm"=>"lib/common"}
+#     VCS: https://github.com/sillsdev/chorushelp.git [master]
+# [1] build: chorus-precise64-master Continuous (bt323)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Autofac.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [1] build: chorus-precise64-master Continuous (bt323)
+# [2] build: chorus-precise64-master Continuous (bt323)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/ReleaseMono", "Mercurial-x86_64.zip"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [2] build: chorus-precise64-master Continuous (bt323)
+# [3] build: chorus-precise64-master Continuous (bt323)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"debug/Chorus.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono", "MercurialExtensions/**"=>"MercurialExtensions"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [3] build: Helpprovider (bt225)
+# [4] build: Helpprovider (bt225)
 #     project: Helpprovider
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt225
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
 #     VCS: http://hg.palaso.org/helpprovider []
-# [4] build: IPC-Precise64 (bt279)
+# [5] build: IPC-Precise64 (bt279)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/ReleaseMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [5] build: IPC-Precise64 (bt279)
+# [6] build: IPC-Precise64 (bt279)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: L10NSharp Mono continuous (bt271)
+# [7] build: L10NSharp Mono continuous (bt271)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/ReleaseMono"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [7] build: L10NSharp Mono continuous (bt271)
+# [8] build: L10NSharp Mono continuous (bt271)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [8] build: icucil-precise64-Continuous (bt281)
+# [9] build: icucil-precise64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/ReleaseMono", "icu*.config"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: icucil-precise64-Continuous (bt281)
+# [10] build: icucil-precise64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [10] build: palaso-precise64-master Continuous (bt322)
+# [11] build: palaso-precise64-master Continuous (bt322)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt322
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Palaso.BuildTasks.dll"=>"lib/ReleaseMono", "Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
-# [11] build: palaso-precise64-master Continuous (bt322)
+# [12] build: palaso-precise64-master Continuous (bt322)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt322
 #     clean: false
@@ -160,6 +167,7 @@ mkdir -p ./lib/ReleaseMono
 mkdir -p ./lib/common
 
 # download artifact dependencies
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Autofac.dll ./lib/common/Autofac.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Chorus.exe ./lib/ReleaseMono/Chorus.exe
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll

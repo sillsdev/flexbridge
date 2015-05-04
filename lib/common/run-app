@@ -16,18 +16,20 @@ ARCH=$(uname -m)
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 # (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
-XULRUNNER=/usr/lib/xulrunner-geckofx
-if [ ! -d ${XULRUNNER} ]; then XULRUNNER=/usr/lib/xulrunner-14.0.1; fi
-LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-GECKOFX=/usr/lib/cli/geckofx-14.0.1
+XULRUNNER=/usr/lib/xulrunner-geckofx-29
+LD_LIBRARY_PATH="${XULRUNNER}:/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
+GECKOFX=/usr/lib/cli/geckofx-29
 LD_PRELOAD=${GECKOFX}/geckofix.so
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
 MONO_RUNTIME=v4.0.30319
+MONO_PATH="${GDK_SHARP}:${GECKOFX}"
+MONO_DEBUG=explicit-null-checks
+MONO_ENV_OPTIONS="-0=-gshared"
 
-if [ -f $fwlib/mono/bin/mono ]
+if [ -f /opt/mono-sil/bin/mono ]
 then
-	MONO_PREFIX=$fwlib/mono
+	MONO_PREFIX=/opt/mono-sil
 	BASE=$fwlib
 	RUNMODE=INSTALLED
 else
@@ -36,9 +38,12 @@ else
 fi
 
 # Add packaged mono items to paths
+
+PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 PATH="${MONO_PREFIX}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+MONO_GAC_PREFIX="${MONO_PREFIX}:/usr"
 
 if [ "$RUNMODE" = "INSTALLED" ]
 then
