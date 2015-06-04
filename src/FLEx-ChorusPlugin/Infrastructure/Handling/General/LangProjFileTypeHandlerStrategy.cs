@@ -13,7 +13,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.General
 {

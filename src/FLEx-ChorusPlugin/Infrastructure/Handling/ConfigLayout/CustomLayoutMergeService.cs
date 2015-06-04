@@ -10,7 +10,7 @@ using System.IO;
 using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {

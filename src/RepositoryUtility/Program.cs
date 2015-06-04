@@ -10,8 +10,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.Reporting;
-using Palaso.UI.WindowsForms.HotSpot;
+using SIL.Reporting;
+using SIL.Windows.Forms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 #if MONO

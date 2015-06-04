@@ -7,7 +7,7 @@
 //#define USEFAKEVERSION
 #if !USEFAKEVERSION
 using System.Xml;
-using Palaso.Xml;
+using SIL.Xml;
 #endif
 
 namespace FLEx_ChorusPlugin.Infrastructure

@@ -16,7 +16,7 @@ using FLEx_ChorusPlugin.Contexts.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Contexts.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress;
+using SIL.Progress;
 
 namespace FLEx_ChorusPlugin.Contexts.Linguistics
 {

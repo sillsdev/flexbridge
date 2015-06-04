@@ -11,7 +11,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.Properties;
 using Chorus.merge;
-using Palaso.Code;
+using SIL.Code;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {

@@ -15,8 +15,8 @@ using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
+using SIL.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {

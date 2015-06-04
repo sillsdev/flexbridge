@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.TestUtilities;
+using SIL.TestUtilities;
 using SIL.LiftBridge.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin;
 

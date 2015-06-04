@@ -12,7 +12,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Properties;
-using Palaso.Xml;
+using SIL.Xml;
 using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices

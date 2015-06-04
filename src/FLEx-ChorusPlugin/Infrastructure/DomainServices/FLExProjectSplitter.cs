@@ -11,10 +11,10 @@ using System.Linq;
 ﻿﻿using System.Xml.Linq;
 ﻿﻿using Chorus.Utilities;
 ﻿﻿using FLEx_ChorusPlugin.Contexts;
-﻿﻿using Palaso.Code;
-﻿﻿using Palaso.Extensions;
-﻿﻿using Palaso.Progress;
-using Palaso.Xml;
+﻿﻿using SIL.Code;
+﻿﻿using SIL.Extensions;
+﻿﻿using SIL.Progress;
+using SIL.Xml;
 ﻿﻿using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices

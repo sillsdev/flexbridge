@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
-using Palaso.Network;
+using SIL.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling
 {

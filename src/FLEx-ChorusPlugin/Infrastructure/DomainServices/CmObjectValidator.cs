@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.Code;
+using SIL.Code;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {

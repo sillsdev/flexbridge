@@ -10,7 +10,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.TestUtilities;
+using SIL.TestUtilities;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 {

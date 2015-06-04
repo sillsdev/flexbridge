@@ -11,7 +11,7 @@ using Chorus.FileTypeHanders;
 using Chorus.merge;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using FLEx_ChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPluginTests.Integration
