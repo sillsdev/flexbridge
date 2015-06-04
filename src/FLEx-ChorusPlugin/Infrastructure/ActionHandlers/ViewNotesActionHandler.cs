@@ -17,7 +17,7 @@ using System.Xml.Linq;
 using Chorus;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
-using Palaso.Network;
+using SIL.Network;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;

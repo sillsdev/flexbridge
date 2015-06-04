@@ -12,8 +12,8 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
+using SIL.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ModelVersion
 {

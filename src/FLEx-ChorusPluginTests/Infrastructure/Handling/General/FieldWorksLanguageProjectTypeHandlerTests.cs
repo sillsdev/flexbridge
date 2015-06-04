@@ -12,8 +12,8 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
+using SIL.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.General
 {

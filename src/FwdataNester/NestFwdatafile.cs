@@ -21,8 +21,8 @@ using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress;
-using Palaso.Xml;
+using SIL.Progress;
+using SIL.Xml;
 using TriboroughBridge_ChorusPlugin;
 
 namespace FwdataTestApp

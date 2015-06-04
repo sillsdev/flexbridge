@@ -9,8 +9,8 @@ using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
-using Palaso.Code;
-using Palaso.Xml;
+using SIL.Code;
+using SIL.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Common
 {

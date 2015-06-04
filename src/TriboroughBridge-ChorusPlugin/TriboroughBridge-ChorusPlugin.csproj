@@ -64,11 +64,11 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+	<Reference Include="SIL.Core">
+	  <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
+	<Reference Include="SIL.Windows.Forms">
+	  <HintPath>..\..\lib\Release\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -84,11 +84,11 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	<Reference Include="SIL.Core">
+	  <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	<Reference Include="SIL.Windows.Forms">
+	  <HintPath>..\..\lib\Debug\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
@@ -104,11 +104,11 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	<Reference Include="SIL.Core">
+	  <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+	<Reference Include="SIL.Windows.Forms">
+	  <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
@@ -124,11 +124,11 @@
 	<Reference Include="LibChorus">
 	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
-	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	<Reference Include="SIL.Core">
+	  <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
-	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+	<Reference Include="SIL.Windows.Forms">
+	  <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>

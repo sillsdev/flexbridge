@@ -8,9 +8,9 @@
 ﻿using Chorus.Utilities;
 ﻿using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using System.IO;
-﻿using Palaso.Progress;
+﻿using SIL.Progress;
 ﻿using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Infrastructure

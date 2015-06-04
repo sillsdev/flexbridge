@@ -9,7 +9,7 @@ using Chorus.FileTypeHanders;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {

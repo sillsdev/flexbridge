@@ -18,7 +18,7 @@ using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress;
+using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 

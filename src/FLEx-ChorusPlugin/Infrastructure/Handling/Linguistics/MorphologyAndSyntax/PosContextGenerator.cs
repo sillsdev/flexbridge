@@ -11,7 +11,7 @@ using System.Xml;
 using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.MorphologyAndSyntax
 {

@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.CustomProperties
 {

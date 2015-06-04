@@ -9,7 +9,7 @@ using System.IO;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.Progress;
+using SIL.Progress;
 
 namespace FLEx_ChorusPlugin.Contexts.Anthropology
 {

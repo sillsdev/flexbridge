@@ -15,8 +15,8 @@ using Chorus;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using L10NSharp;
-using Palaso.Progress;
-using Palaso.Reporting;
+using SIL.Progress;
+using SIL.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
