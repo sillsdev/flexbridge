@@ -51,6 +51,11 @@ namespace FLExBridge
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			var commandLineArgs = CommandLineProcessor.ParseCommandLineArgs(args);
+			if(commandLineArgs.Count == 0)
+			{
+				MessageBox.Show(CommonResources.kNoCommandLineOptions, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
 
 #if MONO
 			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).

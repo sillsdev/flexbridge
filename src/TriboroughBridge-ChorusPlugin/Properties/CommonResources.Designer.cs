@@ -231,4 +231,13 @@ namespace TriboroughBridge_ChorusPlugin.Properties {
 			}
 		}
 	}
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It looks like you&apos;ve run FLEx Bridge directly, either at the command line or by double-clicking. If you are trying to Send/Receive your project, please open your project in FLEx and choose the appropriate option from the Send/Receive menu. To learn how to use FLEx Bridge, please open FLEx and choose Send/Receive &gt; Help....
+        /// </summary>
+        public static string kNoCommandLineOptions {
+            get {
+                return ResourceManager.GetString("kNoCommandLineOptions", resourceCulture);
+            }
+        }
 }
