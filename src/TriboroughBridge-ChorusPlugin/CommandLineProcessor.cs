@@ -88,8 +88,8 @@ namespace TriboroughBridge_ChorusPlugin
 						}
 					}
 				}
-				ValidateCommandLineArgs(commandLineArgs);
 			}
+			ValidateCommandLineArgs(commandLineArgs);
 			return commandLineArgs;
 		}
 
