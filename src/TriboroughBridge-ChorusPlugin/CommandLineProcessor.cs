@@ -82,7 +82,7 @@ namespace TriboroughBridge_ChorusPlugin
 						else //there was no flag before this option.
 						{
 							//This is an unparsable command line; signal FLEx or other apps
-							throw new ApplicationException(CommonResources.kInvalidCommandLineOptions));
+							throw new ApplicationException(CommonResources.kInvalidCommandLineOptions);
 						}
 					}
 				}
