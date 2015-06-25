@@ -31,6 +31,12 @@ namespace FLExBridge
 		{
 			//MessageBox.Show(@"Get ready to debug FB exe.");
 
+			if(args.Length == 0)
+			{
+				MessageBox.Show(CommonResources.kNoCommandLineOptions, CommonResources.kFLExBridge, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
 			using (var hotspot = new HotSpotProvider())
 			{
 				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
