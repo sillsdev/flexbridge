@@ -81,9 +81,7 @@ namespace TriboroughBridge_ChorusPlugin
 						}
 						else //there was no flag before this option.
 						{
-							//This is an unparsable command line
-							Console.WriteLine(CommonResources.kInvalidCommandLineOptions);
-							//Signal FLEx or other apps
+							//This is an unparsable command line; signal FLEx or other apps
 							throw new ApplicationException(String.Format("Invalid command line options: {0}. Please launch from FLEx.", args));
 						}
 					}
