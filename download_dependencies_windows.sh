@@ -67,77 +67,70 @@ cd -
 # URL: http://build.palaso.org/viewType.html?buildTypeId=bt321
 # VCS: https://github.com/sillsdev/flexbridge.git [master]
 # dependencies:
-# [0] build: Chorus-Documentation (bt216)
-#     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt216
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"Chorus_Help.chm"=>"lib/common"}
-#     VCS: https://github.com/sillsdev/chorushelp.git [master]
-# [1] build: chorus-win32-master-nostrongname Continuous (bt437)
+# [0] build: chorus-win32-master-nostrongname Continuous (bt437)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt437
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Autofac.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [2] build: chorus-win32-master-nostrongname Continuous (bt437)
+# [1] build: chorus-win32-master-nostrongname Continuous (bt437)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt437
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Debug", "MercurialExtensions"=>"MercurialExtensions", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [3] build: Helpprovider (bt225)
+# [2] build: Helpprovider (bt225)
 #     project: Helpprovider
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt225
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
 #     VCS: http://hg.palaso.org/helpprovider []
-# [4] build: IPC continuous (bt278)
+# [3] build: IPC continuous (bt278)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt278
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/Release"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [5] build: IPC continuous (bt278)
+# [4] build: IPC continuous (bt278)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt278
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: L10NSharp continuous (bt196)
+# [5] build: L10NSharp continuous (bt196)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [7] build: L10NSharp continuous (bt196)
+# [6] build: L10NSharp continuous (bt196)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/Debug", "L10NSharp.pdb"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [8] build: icucil-win32-default Continuous (bt14)
+# [7] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Release", "icu*.config"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: icucil-win32-default Continuous (bt14)
+# [8] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Debug", "icu*.config"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [10] build: palaso-win32-master-nostrongname Continuous (bt436)
+# [9] build: palaso-win32-master-nostrongname Continuous (bt436)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt436
 #     clean: false
@@ -152,7 +145,6 @@ mkdir -p ./lib/Release
 mkdir -p ./lib/common
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Autofac.dll ./lib/common/Autofac.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/Chorus.exe ./lib/Release/Chorus.exe
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt437/latest.lastSuccessful/LibChorus.dll ./lib/Release/LibChorus.dll
