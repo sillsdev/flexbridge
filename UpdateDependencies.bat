@@ -12,6 +12,7 @@ IF "%1"=="" (
 
 pushd .
 cd ..\chorus
+REM Presence of a second argument indicates that the caller has already run vsvars32.bat
 call GetAndBuildThis.bat %BUILD_CONFIG% %2
 popd
 
@@ -26,6 +27,8 @@ REM Uncomment these lines if you are working on L10NSharp
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.dll lib\common\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
+
+copy /Y ..\chorus\output\%BUILD_CONFIG%\Autofac.dll lib\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.TestUtilities.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.dll lib\%BUILD_CONFIG%\
@@ -42,6 +45,9 @@ copy /Y ..\chorus\output\%BUILD_CONFIG%\ChorusHub.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.pdb output\%BUILD_CONFIG%\
+
+copy /Y ..\chorus\output\%BUILD_CONFIG%\SIL.*.dll lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\SIL.*.pdb output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\icu.net.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\
