@@ -25,8 +25,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<WixVariable Id="WixUIBannerBmp" Value="BannerWithSILLogo.bmp" />
 	<WixVariable Id="WixUIDialogBmp" Value="DialogBGWithSILLogo.bmp" />
 
-	<!--  -->
-	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of FLEx Bridge is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
+	<!-- Using afterInstallFinalize will allow the apparent downgrading of files in the Chorus merge module. -->
+	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of FLEx Bridge is already installed. Setup will now exit." Schedule="afterInstallFinalize"/>
 
 	<Property Id="MANUFACTURERREGKEY">SIL</Property>
 	<!-- The following will set properties A[FW8INSTALLDIR] and B[FW8DEVINSTALLDIR] to the result of two different registry searches.
