@@ -3,13 +3,16 @@ flexbridge (2.3.0~alpha1) unstable; urgency=low
   * Chorus: Upgrade mercurial version used by Chorus to 3.0.1 to fix serious
     bugs in Send/Receive
 
- flexbridge (2.2.13) unstable; urgency=low
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 27 Mar 2015 18:23:08 -0600
+
+flexbridge (2.2.13) unstable; urgency=low
+
   * Chorus: Improve exception message for unexpected duplicate children.
   * Palaso: Fix broken 'Show characters' behavior in Settings Protection.
 
  -- Jason Naylor <jason_naylor@sil.org>  Fri, 23 Jan 2015 13:21:23 -0600
 
- flexbridge (2.2.12) unstable; urgency=low
+flexbridge (2.2.12) unstable; urgency=low
 
   * New version.
 
