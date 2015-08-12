@@ -7,6 +7,8 @@ Build-Depends: debhelper (>= 8.0.0),
  libmono-winforms2.0-cil,
  libmono-cairo2.0-cil,
  geckofx29, unzip, wget,
+ pkg-config,
+ curl,
  adduser (>= 3.11)
 Standards-Version: 3.9.2
 Homepage: http://projects.palaso.org/projects/fwbridge

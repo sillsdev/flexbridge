@@ -69,8 +69,13 @@
 
   <!-- *********************** Installer stuff below.  ******************************* -->
 
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; CreateDirectories; Test">
+  <!-- For building an an installer on TC -->
+  <Target Name="Installer" DependsOnTargets="DevelopInstaller; Test"/>
 
+  <!-- For use when working on installer development -->
+  <!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
+  <!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:BuildCounter=99 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+  <Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build">
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
 
@@ -79,7 +84,6 @@
 
 	<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
-
   </Target>
 
   <Target Name="Upload" DependsOnTargets="CreateDirectories">
