@@ -49,11 +49,8 @@ copy /Y ..\chorus\output\%BUILD_CONFIG%\Palaso*.pdb output\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\SIL.*.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\SIL.*.pdb output\%BUILD_CONFIG%\
 
-copy /Y ..\chorus\output\%BUILD_CONFIG%\icu.net.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\lib\%BUILD_CONFIG%\icudt40.dll lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\lib\%BUILD_CONFIG%\icuin40.dll lib\%BUILD_CONFIG%\
-copy /Y ..\chorus\lib\%BUILD_CONFIG%\icuuc40.dll lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu*.dll lib\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\lib\common\Vulcan.Uczniowie.HelpProvider.dll lib\common
 
