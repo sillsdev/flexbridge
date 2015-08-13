@@ -26,7 +26,7 @@ If you plan to work on Chorus,
 	$ PATH=/usr/bin:$PATH make [debug|release] #This will prefer the System Mono over fieldworks-mono
 
 ### Mercurial
-To run FLExBridge you must unzip `chorus/lib/debug/Mercurial.zip` to the root of flexbridge.  Then, edit the `mercurial.ini`
+To run FLExBridge you must unzip `chorus/lib/common/Mercurial.zip` to the root of flexbridge.  Then, edit the `mercurial.ini`
 file in the Mercurial folder. Add a line like this (with the appropriate path for your flexbridge folder):
 
 	fixutf8 = C:\Dev\flexbridge\MercurialExtensions\fixutf8\fixutf8.py
