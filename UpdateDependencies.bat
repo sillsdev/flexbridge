@@ -29,6 +29,7 @@ REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\Autofac.dll lib\%BUILD_CONFIG%\
+copy /Y ..\chorus\output\%BUILD_CONFIG%\Autofac.dll lib\common
 
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.TestUtilities.dll lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\output\%BUILD_CONFIG%\LibChorus.dll lib\%BUILD_CONFIG%\
@@ -53,5 +54,3 @@ copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\
 copy /Y ..\chorus\lib\%BUILD_CONFIG%\icu*.dll lib\%BUILD_CONFIG%\
 
 copy /Y ..\chorus\lib\common\Vulcan.Uczniowie.HelpProvider.dll lib\common
-
-copy /Y ..\chorus\output\%BUILD_CONFIG%\Autofac.dll lib\common

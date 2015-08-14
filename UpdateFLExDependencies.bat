@@ -3,27 +3,36 @@ REM it relates to FieldWorks.  To update these dependencies, first, build FLEx a
 REM (GetAndBuildThis.bat in either flexbridge or chorus will build Chorus); then, run
 REM this script to copy the dependencies.
 REM This script assumes that the Chorus and Palaso directories are on the same level as
-REM this one, and that the FieldWorks repo is in C:\fwrepo.
+REM this one, and that the FieldWorks repo is inside C:\fwrepo (if the current drive is C:).
 REM It copies the needed libraries into the debug folder.
 
-copy /Y ..\chorus\output\debug\Autofac.dll \fwrepo\fw\Downloads\
+IF "%1"=="" (
+	set BUILD_CONFIG="Debug"
+) ELSE (
+	set BUILD_CONFIG=%1
+)
 
-copy /Y ..\chorus\output\debug\LibChorus.dll \fwrepo\fw\Downloads\
-copy /Y ..\chorus\output\debug\LibChorus.dll \fwrepo\fw\Output\Debug\
-copy /Y ..\chorus\output\debug\LibChorus.pdb \fwrepo\fw\Output\Debug\
+mkdir \fwrepo\fw\Downloads
+mkdir \fwrepo\fw\Output\${BUILD_CONFIG}
 
-copy /Y ..\chorus\output\debug\Chorus*.exe \fwrepo\fw\Downloads\
-copy /Y ..\chorus\output\debug\Chorus*.exe \fwrepo\fw\Output\Debug\
-copy /Y ..\chorus\output\debug\Chorus*.pdb \fwrepo\fw\Output\Debug\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Autofac.dll \fwrepo\fw\Downloads\
+
+copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.dll \fwrepo\fw\Downloads\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.dll \fwrepo\fw\Output\${BUILD_CONFIG}\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.pdb \fwrepo\fw\Output\${BUILD_CONFIG}\
+
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Chorus*.exe \fwrepo\fw\Downloads\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Chorus*.exe \fwrepo\fw\Output\${BUILD_CONFIG}\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Chorus*.pdb \fwrepo\fw\Output\${BUILD_CONFIG}\
 
 REM Uncomment this line if you are working on L10NSharp:
-REM copy /Y ..\l10nsharp\output\debug\L10NSharp.* \fwrepo\fw\Downloads\
-REM copy /Y ..\l10nsharp\output\debug\L10NSharp.* \fwrepo\fw\Output\Debug\
+REM copy /Y ..\l10nsharp\output\${BUILD_CONFIG}\L10NSharp.* \fwrepo\fw\Downloads\
+REM copy /Y ..\l10nsharp\output\${BUILD_CONFIG}\L10NSharp.* \fwrepo\fw\Output\${BUILD_CONFIG}\
 
-copy /Y ..\chorus\output\debug\Palaso*.dll \fwrepo\fw\Downloads\
-copy /Y ..\chorus\output\debug\Palaso*.dll \fwrepo\fw\Output\Debug\
-copy /Y ..\chorus\output\debug\Palaso*.pdb \fwrepo\fw\Output\Debug\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Palaso*.dll \fwrepo\fw\Downloads\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Palaso*.dll \fwrepo\fw\Output\${BUILD_CONFIG}\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\Palaso*.pdb \fwrepo\fw\Output\${BUILD_CONFIG}\
 
-copy /Y ..\chorus\output\debug\SIL.*.dll \fwrepo\fw\Downloads\
-copy /Y ..\chorus\output\debug\SIL.*.dll \fwrepo\fw\Output\Debug\
-copy /Y ..\chorus\output\debug\SIL.*.pdb \fwrepo\fw\Output\Debug\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\SIL.*.dll \fwrepo\fw\Downloads\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\SIL.*.dll \fwrepo\fw\Output\${BUILD_CONFIG}\
+copy /Y ..\chorus\output\${BUILD_CONFIG}\SIL.*.pdb \fwrepo\fw\Output\${BUILD_CONFIG}\
