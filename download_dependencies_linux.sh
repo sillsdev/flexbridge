@@ -149,14 +149,14 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt322
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Palaso.BuildTasks.dll"=>"lib/ReleaseMono", "Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono", "NDesk.DBus.*"=>"lib/ReleaseMono"}
+#     paths: {"Palaso.BuildTasks.dll"=>"lib/ReleaseMono", "Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.*dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono", "NDesk.DBus.*"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
 # [12] build: palaso-precise64-master Continuous (bt322)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt322
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"debug/Palaso.BuildTasks.dll"=>"lib/DebugMono", "debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono", "debug/NDesk.DBus.*"=>"lib/DebugMono"}
+#     paths: {"debug/Palaso.BuildTasks.dll"=>"lib/DebugMono", "debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.*dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono", "debug/NDesk.DBus.*"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
 
 # make sure output directories exist
@@ -213,6 +213,7 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/Palaso.BuildTasks.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/Palaso.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/Palaso.TestUtilities.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/PalasoUIWindowsForms.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/PalasoUIWindowsForms.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/Palaso.Lift.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/NDesk.DBus.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/NDesk.DBus.dll
@@ -220,6 +221,7 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/Palaso.BuildTasks.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/Palaso.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/Palaso.TestUtilities.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll?branch=%3Cdefault%3E ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll?branch=%3Cdefault%3E ./lib/DebugMono/PalasoUIWindowsForms.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/Palaso.Lift.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/NDesk.DBus.dll?branch=%3Cdefault%3E ./lib/DebugMono/NDesk.DBus.dll
