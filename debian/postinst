@@ -25,6 +25,7 @@ case "$1" in
 			ARCH="$(/usr/bin/arch)"
 			unzip Mercurial-${ARCH}.zip
 			chmod +x Mercurial/hg
+			echo "fixutf8=/usr/lib/flexbridge/MercurialExtensions/fixutf8/fixutf8.py" >> Mercurial/mercurial.ini
 		fi
 
 		UID_MIN=$(sed -n '/^UID_MIN[ \t][ \t]*/s///p' /etc/login.defs)
