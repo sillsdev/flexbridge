@@ -73,12 +73,15 @@
   <ItemGroup>
 	<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
 	<IcuDotNetFiles Include="$(RootDir)/lib/$(Configuration)/icu.net.dll*"/>
+	<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
+	<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 	<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
   </ItemGroup>
 
   <Target Name="CopyExtraFilesToOutput">
 	<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	<Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
   </Target>
 
