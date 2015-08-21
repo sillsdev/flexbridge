@@ -17,7 +17,7 @@ Package: flexbridge
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7), python (<< 2.8),
  fieldworks-mono, libgtk2.0-dev, libgtkmm-2.4-1c2a, libgtkmm-2.4-dev,
- libgtksourceview2.0-0, libgtksourceview2.0-common, geckofx, unzip
+ libgtksourceview2.0-0, libgtksourceview2.0-common, geckofx, unzip,
  fieldworks-applications (>= 8.0.5~beta6), fieldworks-applications (<< 8.2)
 Description: Allow multiple FieldWorks users to collaborate remotely
  FLEx Bridge is an application that allows multiple FieldWorks 8.0 users
