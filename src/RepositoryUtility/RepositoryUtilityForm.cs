@@ -39,6 +39,7 @@ namespace RepositoryUtility
 		public RepositoryUtilityForm()
 		{
 			InitializeComponent();
+			pullFileFromRevisionRangeToolStripMenuItem.Enabled = false;
 			_repoHoldingFolder = Path.Combine(
 				Utilities.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
 				@"RepositoryUtilityProjects");
@@ -356,6 +357,7 @@ namespace RepositoryUtility
 			_historyPage.Dock = DockStyle.Fill;
 
 			ResumeLayout(true);
+			pullFileFromRevisionRangeToolStripMenuItem.Enabled = true;
 		}
 
 		private void HistoryPageRevisionSelectionChanged(object sender, RevisionEventArgs e)
@@ -445,6 +447,16 @@ namespace RepositoryUtility
 			FLEx,
 
 			NotSupported,
+		}
+
+		private void HandlePullFileFromRangeMenuClick(object sender, EventArgs e)
+		{
+			if(string.IsNullOrWhiteSpace(_repoFolder) || _chorusSystem == null)
+				return;
+			using(var getFileFromRevRangeDlg = new GetFileFromRevisionRange(_repoFolder, _chorusSystem))
+			{
+				getFileFromRevRangeDlg.ShowDialog(this);
+			}
 		}
 	}
 }

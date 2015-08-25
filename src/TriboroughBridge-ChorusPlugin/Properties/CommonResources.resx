@@ -179,4 +179,8 @@ You probably have a Conflict Report open. It will need to be closed before you c
   <data name="chorus" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>..\Resources\chorus.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="kNoCommandLineOptions" xml:space="preserve">
+    <value>It looks like you've run FLEx Bridge directly, either at the command line or by double-clicking. If you are trying to Send/Receive your project, please open your project in FLEx and choose the appropriate option from the Send/Receive menu. To learn how to use FLEx Bridge, please open FLEx and choose Send/Receive &gt; Help...</value>
+    <comment>Message displayed when FLEx Bridge is run without any command line options</comment>
+  </data>
 </root>
