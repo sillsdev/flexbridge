@@ -1,4 +1,8 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* L10NSharp: Improve debug information for linux localization
+## 2.3.2
+* FLEx Bridge: Enhance Windows installer
+## 2.3.0
 * Chorus: Upgrade Mercurial to version 3
 ## 2.2.15 4/May/2015
 * Chorus: Fix overflow error when receiving very large project data with resumable option
