@@ -78,6 +78,7 @@
 	<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
 	<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
 	<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
+	<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
   </ItemGroup>
 
   <Target Name="CopyExtraFilesToOutput">
@@ -86,6 +87,7 @@
 	<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
 	<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
   </Target>
 
   <Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
