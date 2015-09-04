@@ -6,12 +6,24 @@
 # this one, and that the FieldWorks repo is in C:/fwrepo.
 # It copies the needed libraries into the lib folder.
 
+CHORUS_DIR=../chorus
+
+if [ ! -d ${CHORUS_DIR} ]
+then
+	exit
+fi
+
 if [ "$1"=="" ]
 then
 		BUILD_CONFIG=Debug
 else
 		BUILD_CONFIG=$1
 fi
+
+pushd ${CHORUS_DIR}
+./UpdateDependencies.sh ${BUILD_CONFIG}
+build/TestBuird.sh ${BUILD_CONFIG}
+popd
 
 if [ ! -d output/${BUILD_CONFIG}Mono ]
 then
@@ -22,34 +34,34 @@ then
 	mkdir output/${BUILD_CONFIG}Mono
 fi
 
-cp ../chorus/lib/${BUILD_CONFIG}Mono/L10NSharp.dll* lib/common/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/L10NSharp.dll* lib/common/
 # Uncomment these two lines if you are working on L10NSharp
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.dll lib/common/
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.* lib/${BUILD_CONFIG}Mono/
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/common
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/common
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* output/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.dll* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.dll* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.dll* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/Chorus.exe* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/Chorus.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}.exe* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/ChorusMerge.exe* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/ChorusMerge.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Merge.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Merge.exe* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/ChorusHub.exe* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/output/${BUILD_CONFIG}Mono/ChorusHub.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Hub.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Hub.exe* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/lib/${BUILD_CONFIG}Mono/Palaso*.dll* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/lib/${BUILD_CONFIG}Mono/Palaso*.dll* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/Palaso*.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/Palaso*.dll* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/lib/${BUILD_CONFIG}Mono/SIL.*.dll* lib/${BUILD_CONFIG}Mono/
-cp ../chorus/lib/${BUILD_CONFIG}Mono/SIL.*.dll* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* output/${BUILD_CONFIG}Mono/
 
-cp ../chorus/lib/${BUILD_CONFIG}Mono/icu*.dll* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/icu*.dll* lib/${BUILD_CONFIG}Mono/
 
-cp ../chorus/lib/common/Vulcan.Uczniowie.HelpProvider.dll* lib/common
+cp ${CHORUS_DIR}/lib/common/Vulcan.Uczniowie.HelpProvider.dll* lib/common
