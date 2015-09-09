@@ -15,14 +15,14 @@ fi
 
 if [ "$1"=="" ]
 then
-		BUILD_CONFIG=Debug
+	BUILD_CONFIG=Debug
 else
-		BUILD_CONFIG=$1
+	BUILD_CONFIG=$1
 fi
 
 pushd ${CHORUS_DIR}
 ./UpdateDependencies.sh ${BUILD_CONFIG}
-build/TestBuird.sh ${BUILD_CONFIG}
+build/TestBuild.sh ${BUILD_CONFIG}
 popd
 
 if [ ! -d output/${BUILD_CONFIG}Mono ]
