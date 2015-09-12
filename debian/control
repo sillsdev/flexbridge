@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 8.0.0),
  geckofx29, unzip, wget,
  pkg-config,
  curl,
+ ca-certificates,
  adduser (>= 3.11)
 Standards-Version: 3.9.2
 Homepage: http://projects.palaso.org/projects/fwbridge
