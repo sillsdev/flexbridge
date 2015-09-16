@@ -47,14 +47,16 @@ cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* output/
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.dll* output/${BUILD_CONFIG}Mono/
 
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}.exe* lib/${BUILD_CONFIG}Mono/
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Chorus.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Chorus.exe* output/${BUILD_CONFIG}Mono/
 
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Merge.exe* lib/${BUILD_CONFIG}Mono/
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Merge.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/ChorusMerge.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/ChorusMerge.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/chorusmerge lib/common/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/chorusmerge output/${BUILD_CONFIG}Mono/
 
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Hub.exe* lib/${BUILD_CONFIG}Mono/
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mo${CHORUS_DIR}Hub.exe* output/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/ChorusHub.exe* lib/${BUILD_CONFIG}Mono/
+cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/ChorusHub.exe* output/${BUILD_CONFIG}Mono/
 
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/Palaso*.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/Palaso*.dll* output/${BUILD_CONFIG}Mono/
