@@ -33,6 +33,7 @@ install: release
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install lib/common/run-app-service $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install -m644 lib/ReleaseMono/Mercurial-$(CPUARCH).zip $(DESTDIR)/usr/lib/flexbridge
 	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
