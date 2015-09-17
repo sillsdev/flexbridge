@@ -7,9 +7,13 @@ prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/flexbridge
 fwlib=$prefix/lib/fieldworks
 
-# Run ChorusHub as a mono service
+# Allow running ChorusHub as a mono service
 
-[[ "$1" = "--service" ]] && SERVICE=true
+if [[ "$1" = "--service" ]]
+then
+	shift
+	SERVICE=true
+fi
 
 # Environment settings for running with FieldWorks mono
 
