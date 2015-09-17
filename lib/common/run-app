@@ -7,6 +7,10 @@ prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/flexbridge
 fwlib=$prefix/lib/fieldworks
 
+# Run ChorusHub as a mono service
+
+[[ "$1" = "--service" ]] && SERVICE=true
+
 # Environment settings for running with FieldWorks mono
 
 ARCH=$(uname -m)
@@ -87,4 +91,7 @@ export \
 #sets keyboard input method to none
 unset XMODIFIERS
 
-exec mono --debug "$lib"/"$@"
+COMMAND=mono
+[[ -n $SERVICE ]] && COMMAND=mono-service
+
+exec $COMMAND --debug "$lib"/"$@"
