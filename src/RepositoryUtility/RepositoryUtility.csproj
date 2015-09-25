@@ -196,6 +196,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryUtilitySychronizerAdjunct.cs" />
+    <Compile Include="RevertHgrcProjectFolderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RevertHgrcProjectFolderForm.Designer.cs">
+      <DependentUpon>RevertHgrcProjectFolderForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="GetFileFromRevisionRange.resx">
       <DependentUpon>GetFileFromRevisionRange.cs</DependentUpon>
     </EmbeddedResource>
@@ -217,6 +223,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RevertHgrcProjectFolderForm.resx">
+      <DependentUpon>RevertHgrcProjectFolderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

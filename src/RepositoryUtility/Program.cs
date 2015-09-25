@@ -36,6 +36,9 @@ namespace RepositoryUtility
 				return;
 			}
 
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+
 			using (var hotspot = new HotSpotProvider())
 			{
 				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
@@ -52,8 +55,6 @@ namespace RepositoryUtility
 			}
 
 			SetUpErrorHandling();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 
 #if MONO
 			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
