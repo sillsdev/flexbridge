@@ -10,6 +10,7 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHanders.lift;
@@ -18,6 +19,8 @@ using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using Nini.Ini;
+using Palaso.IO;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
@@ -457,6 +460,87 @@ namespace RepositoryUtility
 			{
 				getFileFromRevRangeDlg.ShowDialog(this);
 			}
+		}
+
+		private void HandleRevertHgrcFiles(object sender, EventArgs e)
+		{
+			using(var revertHgrcDialog = new RevertHgrcProjectFolderForm())
+			{
+				var result = revertHgrcDialog.ShowDialog(this);
+				if(result == DialogResult.OK)
+				{
+					foreach(var folder in revertHgrcDialog.CheckedProjects)
+					{
+						DowngradeHgrcForFolder(folder, revertHgrcDialog.HgVersion);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// This will downgrade the hgrc file for any flex or lift repositories found in a folder.
+		/// </summary>
+		private void DowngradeHgrcForFolder(string currentFwdataPathname, string chorusHgVersion)
+		{
+			var extensions = new Dictionary<string, string>();
+			var format = new Dictionary<string, string>();
+			switch(chorusHgVersion)
+			{
+				case "1.5.1":
+					extensions.Add("hgext.win32text", "");
+					extensions.Add("hgext.graphlog", "");
+					extensions.Add("convert", "");
+					format.Add("dotencode", "True");
+					break;
+				case "3.3":
+					extensions.Add("eol", "");
+					extensions.Add("hgext.graphlog", "");
+					extensions.Add("convert", "");
+					break;
+				default:
+					throw new ArgumentException("I didn't know how to downgrade to your new version future developer person.");
+			}
+			var fixUtfFolder = FileLocator.GetDirectoryDistributedWithApplication(false, "MercurialExtensions", "fixutf8");
+			if(!string.IsNullOrEmpty(fixUtfFolder))
+				extensions.Add("fixutf8", Path.Combine(fixUtfFolder, "fixutf8.py"));
+			DowngradeHgrcForProject(currentFwdataPathname, format, extensions);
+			var otherRepoPath = Path.Combine(currentFwdataPathname, "OtherRepositories");
+			if(Directory.Exists(otherRepoPath))
+			{
+				foreach(var repo in Directory.EnumerateDirectories(otherRepoPath))
+				{
+					DowngradeHgrcForProject(repo, format, extensions);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Downgrades the hgrc for an single chorus project
+		/// </summary>
+		private void DowngradeHgrcForProject(string projectPath, Dictionary<string, string> format, Dictionary<string, string> extensions)
+		{
+			if(!Directory.Exists(Path.Combine(projectPath, ".hg")))
+				return;
+			var repo = new HgRepository(projectPath, false, new NullProgress());
+			var getConfigForRepository = (typeof(HgRepository)).GetMethod("GetMercurialConfigForRepository",
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			var hgrcFile = (IniDocument)getConfigForRepository.Invoke(repo, new object[] { });
+			if(hgrcFile == null)
+				return;
+			// Clear the existing items in the format section
+			hgrcFile.Sections.RemoveSection("format");
+			var formatSection = hgrcFile.Sections.GetOrCreate("format");
+			// Set any format arguments to the required
+			foreach(var pair in format)
+			{
+				formatSection.Set(pair.Key, pair.Value);
+			}
+			// Set the extensions in the hgrc to match extensions
+			var hgrcSettingMethod = (typeof(HgRepository)).GetMethod("SetExtensions",
+				BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Any,
+				new[] { typeof(IniDocument), typeof(IEnumerable<KeyValuePair<string, string>>) }, null);
+			hgrcSettingMethod.Invoke(null, new object[] { hgrcFile, extensions });
+			hgrcFile.Save();
 		}
 	}
 }
