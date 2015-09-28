@@ -1,4 +1,12 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Update documentation of Chorus Hub
+* FLExBridge: Update documentation of recent fixes
+## 2.3.8 24/Sep/2015
+* Chorus: Make large internet Send/Receive options more robust (Warning instead of error when retrying a failed Chunk)
+* Chorus: Improve Chorus Hub Instructions
+* FLExBridge: Provide Chorus Hub Service option on Linux
+* FLExBridge: Various linux installer enhancements
+## 2.3.5 3/Sep/2015
 * L10NSharp: Improve debug information for linux localization
 ## 2.3.2
 * FLEx Bridge: Enhance Windows installer
