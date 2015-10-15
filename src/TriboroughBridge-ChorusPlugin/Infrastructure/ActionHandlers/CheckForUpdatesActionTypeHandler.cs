@@ -28,7 +28,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
 #if !MONO
-			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/appcast.xml", CommonResources.chorus32x32))
+			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/Alpha/appcast.xml", CommonResources.chorus32x32))
 			{
 				sparkle.DoLaunchAfterUpdate = false;
 				sparkle.CheckForUpdatesAtUserRequest();

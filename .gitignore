@@ -70,3 +70,4 @@ lib/*.msm
 /Mercurial
 build/.nuget/*
 packages/*
+*.dll

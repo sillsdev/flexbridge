@@ -1,15 +1,48 @@
+flexbridge (2.3.8) unstable; urgency=low
+
+  * Release.
+
+ -- MarkS <marksvc@gmail.com>  Thu, 24 Sep 2015 10:28:52 -0600
+
+flexbridge (2.3.5~beta) unstable; urgency=low
+
+  * Bump version.
+
+ -- MarkS <marksvc@gmail.com>  Wed, 09 Sep 2015 12:28:51 -0400
+
+flexbridge (2.3.5~alpha) unstable; urgency=low
+
+  * Added L10NSharp debugging via 'export env L10NSHARPDEBUGGING=true'
+
+ -- Jason Naylor <jason_naylor@sil.org>  Thu, 03 Sep 2015 12:48:14 -0400
+
 flexbridge (2.3.0~alpha1) unstable; urgency=low
 
   * Chorus: Upgrade mercurial version used by Chorus to 3.0.1 to fix serious
     bugs in Send/Receive
 
- flexbridge (2.2.13) unstable; urgency=low
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 27 Mar 2015 18:23:08 -0600
+
+flexbridge (2.2.15) unstable; urgency=low
+
+  * Chorus: Fix overflow error when receiving very large project data with resumable option
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 27 Apr 2015 11:25:00 -0600
+
+flexbridge (2.2.14) unstable; urgency=low
+
+  * Update localization files for Spanish, French, Chinese and English
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 03 Feb 2015 14:00:04 -0600
+
+flexbridge (2.2.13) unstable; urgency=low
+
   * Chorus: Improve exception message for unexpected duplicate children.
   * Palaso: Fix broken 'Show characters' behavior in Settings Protection.
 
  -- Jason Naylor <jason_naylor@sil.org>  Fri, 23 Jan 2015 13:21:23 -0600
 
- flexbridge (2.2.12) unstable; urgency=low
+flexbridge (2.2.12) unstable; urgency=low
 
   * New version.
 

@@ -1,6 +1,20 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* Chorus: Update documentation of Chorus Hub
+* FLExBridge: Update documentation of recent fixes
+## 2.3.8 24/Sep/2015
+* Chorus: Make large internet Send/Receive options more robust (Warning instead of error when retrying a failed Chunk)
+* Chorus: Improve Chorus Hub Instructions
+* FLExBridge: Provide Chorus Hub Service option on Linux
+* FLExBridge: Various linux installer enhancements
+## 2.3.5 3/Sep/2015
+* L10NSharp: Improve debug information for linux localization
+## 2.3.2
+* FLEx Bridge: Enhance Windows installer
+## 2.3.0
 * Chorus: Upgrade Mercurial to version 3
-## 2.2.14 23/Jan/2015
+## 2.2.15 4/May/2015
+* Chorus: Fix overflow error when receiving very large project data with resumable option
+## 2.2.14 3/Feb/2015
 * FLEx Bridge: Update localization files for Spanish, French, Chinese and English
 ## 2.2.13 23/Jan/2015
 * Chorus: Improve exception message for unexpected duplicate children.
@@ -114,6 +128,5 @@ Flex Bridge: Fix crash getting an empty repository.
 This version has the following limitations (and probably many others). Feel free to suggest your priorities and suggest additions to the list.
 
 * Only works with FLEx 8+.
-* Not available yet for Linux.
 * Some merge reports may not be the easiest to read and understand.
 * Some types of lexical relations appear to not merge correctly in both Lift data and in the main FLEx data set. The issues are more complex than merging.

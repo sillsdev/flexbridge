@@ -138,6 +138,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
+	<Reference Include="PalasoUIWindowsForms.GeckoBrowserAdapter">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
+	</Reference>
     <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
@@ -166,6 +170,10 @@
 	<Reference Include="SIL.Windows.Forms">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
+	</Reference>
+	<Reference Include="PalasoUIWindowsForms.GeckoBrowserAdapter">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
 	</Reference>
     <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
