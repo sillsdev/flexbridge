@@ -2,8 +2,8 @@
 
 CPUARCH=$(shell /usr/bin/arch)
 # this needs to be in sync with debian/changelog and build/build.common.proj
-BUILD_NUMBER=$(< ../version)
-BUILD_VCS_NUMBER=`git rev-parse HEAD`
+BUILD_NUMBER=$(< version)
+BUILD_VCS_NUMBER=$(shell git rev-parse HEAD)
 UploadFolder="Alpha"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
