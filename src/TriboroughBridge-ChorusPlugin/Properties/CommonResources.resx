@@ -171,13 +171,13 @@ You probably have a Conflict Report open. It will need to be closed before you c
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="chorus32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-	<value>..\Resources\chorus32x32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+	<value>../Resources/chorus32x32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kInvalidCommandLineOptions" xml:space="preserve">
 	<value>Invalid command line options. Please launch from FLEx.</value>
   </data>
   <data name="chorus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-	<value>..\Resources\chorus.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+	<value>../Resources/chorus.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kNoCommandLineOptions" xml:space="preserve">
     <value>It looks like you've run FLEx Bridge directly, either at the command line or by double-clicking. If you are trying to Send/Receive your project, please open your project in FLEx and choose the appropriate option from the Send/Receive menu. To learn how to use FLEx Bridge, please open FLEx and choose Send/Receive &gt; Help...</value>
