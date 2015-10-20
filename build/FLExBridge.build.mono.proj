@@ -105,18 +105,4 @@
 			ExcludeCategory="SkipOnTeamCity;UnknownMonoIssue"
 			NUnitVersion="NUnit-2.6.3" />
   </Target>
-
-  <Target Name="Prepackaging" DependsOnTargets="CreateDirectories;VersionNumbers">
-	<Message Text="Prepackaging fix version numbers: Version=$(Version)"/>
-	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm"
-		  DestinationFolder="$(RootDir)\output\$(Configuration)"/>
-	<FileUpdate File="$(RootDir)\output\$(Configuration)\about.htm"
-				DatePlaceholder="DEV_RELEASE_DATE"
-				Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-	<Copy SourceFiles="$(RootDir)\src\Installer\ReleaseNotes.md"
-		  DestinationFolder="$(RootDir)\output\$(Configuration)"/>
-	<FileUpdate File="$(RootDir)\output\$(Configuration)\ReleaseNotes.md"
-				DatePlaceholder="DEV_RELEASE_DATE"
-				Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-  </Target>
 </Project>
