@@ -20,7 +20,7 @@
 
   <Import Project="$(RootDir)/build/build.common.proj"/>
 
-  <Target Name="Build" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile">
+  <Target Name="Build" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
 	<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
 		 but it remembers not to call targets a second time via dependencies. -->
 	<Message Text="Build Complete"/>
@@ -92,6 +92,10 @@
 
   <Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
 	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
+	<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
