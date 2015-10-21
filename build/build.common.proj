@@ -17,10 +17,7 @@
 	<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
   </Target>
 
-
-
   <Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers">
-
 	<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
 	<Copy SourceFiles="$(RootDir)\DistFiles\about.htm" DestinationFolder="$(RootDir)\output\Installer"/>
 	<FileUpdate File="$(RootDir)\output\Installer\about.htm" DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
@@ -30,7 +27,9 @@
 	<FileUpdate File="$(RootDir)\output\Installer\appcast.xml" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
   </Target>
   
-  <Target Name="PreparePublishingArtifacts" DependsOnTargets="VersionNumbers">
+  <Target Name="PreparePublishingArtifacts" DependsOnTargets="VersionNumbers; CheckPreRequisites">
+	<Exec Command='$(NuGetCommand) install MarkdownDeep.NET -ExcludeVersion -OutputDirectory $(RootDir)\build'/>
+	<Copy SourceFiles="$(RootDir)\build\MarkdownDeep.NET\lib\.NetFramework 3.5\MarkdownDeep.dll" DestinationFolder="$(RootDir)\build\"/>
 	<GenerateReleaseArtifacts MarkdownFile="$(RootDir)\src\Installer\ReleaseNotes.md" HtmlFile="$(RootDir)\src\Installer\$(UploadFolder).htm" StampMarkdownFile="True" VersionNumber="$(Version)" ProductName="flexbridge" DebianChangeLog="$(RootDir)\debian\changelog" ChangeLogAuthorInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
   </Target>
 </Project>
