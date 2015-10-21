@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+SCRIPTLOCATION="$(dirname "$0")"
+
+if (( $# != 2 )); then
+    echo update-version: Incorrect number of arguments.
+    echo Usage:   update-version NEWVERSION CHANNEL
+    echo Example: update-version 2.3.9 Alpha
+    exit 1
+fi
+
+NEWVERSION="$1"
+CHANNEL="$2"
+
+cd $SCRIPTLOCATION
+
+OLDVERSION="$(cat version)"
+echo Changing version from $OLDVERSION to $NEWVERSION
+echo Using channel $CHANNEL
+
+echo $NEWVERSION > "version"
+source environ && cd build && xbuild build.common.proj /t:PreparePublishingArtifacts /p:RootDir=.. /p:UploadFolder=$CHANNEL
+echo update-version finished successfully.
+
