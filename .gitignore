@@ -69,5 +69,9 @@ lib/*/L10NSharp.xml
 lib/*.msm
 /Mercurial
 build/.nuget/*
+build/Nuget.exe
 packages/*
 *.dll
+src/Installer/output/
+src/Installer/obj/
+vcs_version

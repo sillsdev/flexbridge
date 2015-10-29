@@ -1,3 +1,10 @@
+flexbridge (2.3.9) unstable; urgency=low
+
+  * Chorus: Update documentation of Chorus Hub
+  * FLExBridge: Update documentation of recent fixes
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 16 Oct 2015 10:02:22 -0500
+
 flexbridge (2.3.8) unstable; urgency=low
 
   * Release.
