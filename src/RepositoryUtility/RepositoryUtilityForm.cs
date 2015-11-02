@@ -19,9 +19,9 @@ using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using SIL.Progress;
 using Nini.Ini;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 

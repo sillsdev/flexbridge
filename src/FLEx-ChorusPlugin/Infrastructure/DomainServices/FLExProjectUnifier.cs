@@ -12,9 +12,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using FLEx_ChorusPlugin.Contexts;
-using Palaso.Code;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.Code;
+using SIL.IO;
+using SIL.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {

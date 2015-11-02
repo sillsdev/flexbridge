@@ -12,7 +12,7 @@ using Chorus.FileTypeHanders;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.Anthropology
 {

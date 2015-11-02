@@ -10,8 +10,8 @@ using System.Xml;
 using Chorus.sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
-using Palaso.Progress;
-using Palaso.Xml;
+using SIL.Progress;
+using SIL.Xml;
 
 namespace RepositoryUtility
 {

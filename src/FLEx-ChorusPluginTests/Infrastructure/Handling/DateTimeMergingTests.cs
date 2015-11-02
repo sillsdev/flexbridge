@@ -13,7 +13,7 @@ using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.Handling;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 {

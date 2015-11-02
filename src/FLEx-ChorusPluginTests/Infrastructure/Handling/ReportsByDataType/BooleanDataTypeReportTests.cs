@@ -12,7 +12,7 @@ using Chorus.merge.xml.generic;
 using FLEx_ChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ReportsByDataType
 {

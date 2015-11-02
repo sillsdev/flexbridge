@@ -12,7 +12,7 @@ using Chorus.FileTypeHanders.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.IO;
+using SIL.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 {

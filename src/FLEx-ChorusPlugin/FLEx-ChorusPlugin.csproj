@@ -64,13 +64,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
+	<Reference Include="SIL.Core">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
+	<Reference Include="SIL.Windows.Forms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Release\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
    <Reference Include="icu.net">
 	  <SpecificVersion>False</SpecificVersion>
@@ -101,13 +101,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
+	<Reference Include="SIL.Core">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
+	<Reference Include="SIL.Windows.Forms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\Debug\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
    <Reference Include="icu.net">
 	  <SpecificVersion>False</SpecificVersion>
@@ -138,13 +138,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
+	<Reference Include="SIL.Core">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
+	<Reference Include="SIL.Windows.Forms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
    <Reference Include="icu.net">
 	  <SpecificVersion>False</SpecificVersion>
@@ -174,13 +174,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso">
+	<Reference Include="SIL.Core">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+	  <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
 	</Reference>
-	<Reference Include="PalasoUIWindowsForms">
+	<Reference Include="SIL.Windows.Forms">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.dll</HintPath>
+	  <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
 	</Reference>
    <Reference Include="icu.net">
 	  <SpecificVersion>False</SpecificVersion>

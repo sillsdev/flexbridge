@@ -89,13 +89,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Release\LibChorus.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
+    <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+      <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.TestUtilities">
+    <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Release\Palaso.TestUtilities.dll</HintPath>
+      <HintPath>..\..\lib\Release\SIL.TestUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -116,13 +116,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Debug\LibChorus.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
+    <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.TestUtilities">
+    <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Debug\Palaso.TestUtilities.dll</HintPath>
+      <HintPath>..\..\lib\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
@@ -143,13 +143,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\ReleaseMono\LibChorus.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
+    <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.TestUtilities">
+    <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\ReleaseMono\Palaso.TestUtilities.dll</HintPath>
+      <HintPath>..\..\lib\ReleaseMono\SIL.TestUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
@@ -170,13 +170,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\DebugMono\LibChorus.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
+    <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+      <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.TestUtilities">
+    <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\DebugMono\Palaso.TestUtilities.dll</HintPath>
+      <HintPath>..\..\lib\DebugMono\SIL.TestUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

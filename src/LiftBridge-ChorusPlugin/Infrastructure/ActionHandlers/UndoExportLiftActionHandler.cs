@@ -9,7 +9,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.Progress;
+using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 

@@ -22,8 +22,8 @@ using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.Reversal;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.TextCorpus;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Linguistics.WordformInventory;
 using FLEx_ChorusPlugin.Infrastructure.Handling.Scripture;
-using Palaso.Code;
-using Palaso.Network;
+using SIL.Code;
+using SIL.Network;
 
 namespace FLEx_ChorusPlugin.Infrastructure.DomainServices
 {

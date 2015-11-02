@@ -11,8 +11,8 @@ using System.Linq;
 using Chorus.FileTypeHanders.xml;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
+using SIL.Progress;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.TextCorpus
 {

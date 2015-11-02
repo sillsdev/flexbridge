@@ -12,7 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.Progress;
+using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using L10NSharp;
