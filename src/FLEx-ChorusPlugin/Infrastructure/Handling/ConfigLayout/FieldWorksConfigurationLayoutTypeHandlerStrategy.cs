@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;

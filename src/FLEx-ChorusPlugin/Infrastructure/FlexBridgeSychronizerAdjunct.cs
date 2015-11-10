@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using Chorus.FileTypeHanders.lift;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;

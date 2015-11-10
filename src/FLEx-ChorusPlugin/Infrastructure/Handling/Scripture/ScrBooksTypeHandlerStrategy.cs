@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;

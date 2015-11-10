@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
-using Chorus.FileTypeHanders.lift;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Review;
 using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
