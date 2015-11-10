@@ -12,6 +12,7 @@ using System.Text;
 using System.Windows.Forms;
 using Chorus.UI.Clone;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -77,7 +78,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			{
 				var getSharedProjectModel = new GetSharedProjectModel();
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, _pathToRepository, Utilities.OtherRepositories,
+					ChorusHubQuery, _pathToRepository, SharedConstants.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 

@@ -20,10 +20,13 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using SIL.Xml;
 using TriboroughBridge_ChorusPlugin;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace FwdataTestApp
 {
@@ -35,7 +38,7 @@ namespace FwdataTestApp
 
 		public NestFwdataFile()
 		{
-			if (Utilities.IsUnix)
+			if (TriboroughBridge_ChorusPlugin.Utilities.IsUnix)
 			{
 				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
 			}
@@ -215,14 +218,16 @@ namespace FwdataTestApp
 
 			danglingRefsTimer.Start();
 			var danglingRefGuids = new Dictionary<string, HashSet<string>>();
-			foreach (var kvp in classData.Values.SelectMany(innerDict => innerDict).ToDictionary(innerKvp => innerKvp.Key, innerKvp => Utilities.CreateFromBytes(innerKvp.Value)))
+			foreach (var kvp in classData.Values.SelectMany(innerDict => innerDict)
+				.ToDictionary(innerKvp => innerKvp.Key,
+					innerKvp => TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(innerKvp.Value)))
 			{
 				var haveWrittenMainObjInfo = false;
 				var currentMainGuid = kvp.Key;
 				var currentMainObject = kvp.Value;
 				foreach (var objsurRefElement in currentMainObject.Descendants("objsur").Where(objsurElement => objsurElement.Attribute("t").Value == "r"))
 				{
-					var danglingRefGuid = objsurRefElement.Attribute(SharedConstants.GuidStr).Value;
+					var danglingRefGuid = objsurRefElement.Attribute(FlexBridgeConstants.GuidStr).Value;
 					if (guidToClassMapping.ContainsKey(danglingRefGuid))
 						continue;
 					// Dangling reference.
@@ -249,7 +254,7 @@ namespace FwdataTestApp
 		private MetadataCache GetFreshMdc()
 		{
 			var mdc = MetadataCache.TestOnlyNewCache;
-			var modelVersionPathname = Path.Combine(_workingDir, SharedConstants.ModelVersionFilename);
+			var modelVersionPathname = Path.Combine(_workingDir, FlexBridgeConstants.ModelVersionFilename);
 			if (!File.Exists(modelVersionPathname))
 			{
 				FLExProjectSplitter.WriteVersionFile(_srcFwdataPathname);
@@ -257,7 +262,7 @@ namespace FwdataTestApp
 				{
 					bool foundOptionalFirstElement;
 					// NB: The main input file *does* have to deal with the optional first element.
-					foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+					foreach (var record in fastSplitter.GetSecondLevelElementBytes(FlexBridgeConstants.AdditionalFieldsTag, FlexBridgeConstants.RtTag, out foundOptionalFirstElement))
 					{
 						if (foundOptionalFirstElement)
 						{
@@ -267,7 +272,7 @@ namespace FwdataTestApp
 						else
 						{
 							// Write empty custom properties file.
-							FileWriterService.WriteCustomPropertyFile(Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename), null);
+							FileWriterService.WriteCustomPropertyFile(Path.Combine(_workingDir, FlexBridgeConstants.CustomPropertiesFilename), null);
 						}
 						break;
 					}
@@ -275,7 +280,7 @@ namespace FwdataTestApp
 			}
 			var modelData = File.ReadAllText(modelVersionPathname);
 			mdc.UpgradeToVersion(Int32.Parse(modelData.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries)[1]));
-			var customPropPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
+			var customPropPathname = Path.Combine(_workingDir, FlexBridgeConstants.CustomPropertiesFilename);
 			mdc.AddCustomPropInfo(new MergeOrder(
 					customPropPathname, customPropPathname, customPropPathname,
 					new MergeSituation(customPropPathname, "", "", "", "", MergeOrder.ConflictHandlingModeChoices.WeWin)));
@@ -286,13 +291,13 @@ namespace FwdataTestApp
 		{
 			var attrValues = XmlUtils.GetAttributes(record, new HashSet<string>
 				{
-					SharedConstants.GuidStr,
-					SharedConstants.Class,
-					SharedConstants.OwnerGuid
+					FlexBridgeConstants.GuidStr,
+					FlexBridgeConstants.Class,
+					FlexBridgeConstants.OwnerGuid
 				});
-			var guid = attrValues[SharedConstants.GuidStr].ToLowerInvariant();
-			var className = attrValues[SharedConstants.Class];
-			if (attrValues[SharedConstants.OwnerGuid] == null)
+			var guid = attrValues[FlexBridgeConstants.GuidStr].ToLowerInvariant();
+			var className = attrValues[FlexBridgeConstants.Class];
+			if (attrValues[FlexBridgeConstants.OwnerGuid] == null)
 			{
 				SortedDictionary<string, byte[]> unownedForCurrentClassName;
 				if (!unownedObjects.TryGetValue(className, out unownedForCurrentClassName))
@@ -307,11 +312,11 @@ namespace FwdataTestApp
 			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
-				var wfElement = Utilities.CreateFromBytes(record);
+				var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(record);
 				var csElement = wfElement.Element("Checksum");
 				if (csElement != null)
 				{
-					csElement.Attribute(SharedConstants.Val).Value = "0";
+					csElement.Attribute(FlexBridgeConstants.Val).Value = "0";
 					record = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 				}
 			}
@@ -408,79 +413,79 @@ namespace FwdataTestApp
 					string mainRecordName = null;
 					switch (extension)
 					{
-						case SharedConstants.Style:
-							mainRecordName = SharedConstants.StStyle;
+						case FlexBridgeConstants.Style:
+							mainRecordName = FlexBridgeConstants.StStyle;
 							break;
-						case SharedConstants.List:
-							mainRecordName = SharedConstants.CmPossibilityList;
+						case FlexBridgeConstants.List:
+							mainRecordName = FlexBridgeConstants.CmPossibilityList;
 							break;
-						case SharedConstants.langproj:
-							mainRecordName = SharedConstants.LangProject;
+						case FlexBridgeConstants.langproj:
+							mainRecordName = FlexBridgeConstants.LangProject;
 							break;
-						case SharedConstants.Annotation:
-							mainRecordName = SharedConstants.CmAnnotation;
+						case FlexBridgeConstants.Annotation:
+							mainRecordName = FlexBridgeConstants.CmAnnotation;
 							break;
-						case SharedConstants.Filter:
-							mainRecordName = SharedConstants.CmFilter;
+						case FlexBridgeConstants.Filter:
+							mainRecordName = FlexBridgeConstants.CmFilter;
 							break;
-						case SharedConstants.orderings:
-							mainRecordName = SharedConstants.VirtualOrdering;
+						case FlexBridgeConstants.orderings:
+							mainRecordName = FlexBridgeConstants.VirtualOrdering;
 							break;
-						case SharedConstants.pictures:
-							mainRecordName = SharedConstants.CmPicture;
+						case FlexBridgeConstants.pictures:
+							mainRecordName = FlexBridgeConstants.CmPicture;
 							break;
-						case SharedConstants.ArchivedDraft:
-							mainRecordName = SharedConstants.ScrDraft;
+						case FlexBridgeConstants.ArchivedDraft:
+							mainRecordName = FlexBridgeConstants.ScrDraft;
 							break;
-						case SharedConstants.ImportSetting:
-							mainRecordName = SharedConstants.ScrImportSet;
+						case FlexBridgeConstants.ImportSetting:
+							mainRecordName = FlexBridgeConstants.ScrImportSet;
 							break;
-						case SharedConstants.Srs:
-							mainRecordName = SharedConstants.ScrRefSystem;
+						case FlexBridgeConstants.Srs:
+							mainRecordName = FlexBridgeConstants.ScrRefSystem;
 							break;
-						case SharedConstants.Trans:
-							mainRecordName = SharedConstants.Scripture;
+						case FlexBridgeConstants.Trans:
+							mainRecordName = FlexBridgeConstants.Scripture;
 							break;
-						case SharedConstants.bookannotations:
-							mainRecordName = SharedConstants.ScrBookAnnotations;
+						case FlexBridgeConstants.bookannotations:
+							mainRecordName = FlexBridgeConstants.ScrBookAnnotations;
 							break;
-						case SharedConstants.book:
-							mainRecordName = SharedConstants.ScrBook;
+						case FlexBridgeConstants.book:
+							mainRecordName = FlexBridgeConstants.ScrBook;
 							break;
-						case SharedConstants.Ntbk:
-							optionalElementName = SharedConstants.Header;
-							mainRecordName = SharedConstants.RnGenericRec;
+						case FlexBridgeConstants.Ntbk:
+							optionalElementName = FlexBridgeConstants.Header;
+							mainRecordName = FlexBridgeConstants.RnGenericRec;
 							break;
-						case SharedConstants.Reversal:
-							optionalElementName = SharedConstants.Header;
-							mainRecordName = SharedConstants.ReversalIndexEntry;
+						case FlexBridgeConstants.Reversal:
+							optionalElementName = FlexBridgeConstants.Header;
+							mainRecordName = FlexBridgeConstants.ReversalIndexEntry;
 							break;
-						case SharedConstants.Lexdb:
-							optionalElementName = SharedConstants.Header;
-							mainRecordName = SharedConstants.LexEntry;
+						case FlexBridgeConstants.Lexdb:
+							optionalElementName = FlexBridgeConstants.Header;
+							mainRecordName = FlexBridgeConstants.LexEntry;
 							break;
-						case SharedConstants.TextInCorpus:
-							mainRecordName = SharedConstants.Text;
+						case FlexBridgeConstants.TextInCorpus:
+							mainRecordName = FlexBridgeConstants.Text;
 							break;
-						case SharedConstants.Inventory:
-							optionalElementName = SharedConstants.Header;
-							mainRecordName = SharedConstants.WfiWordform;
+						case FlexBridgeConstants.Inventory:
+							optionalElementName = FlexBridgeConstants.Header;
+							mainRecordName = FlexBridgeConstants.WfiWordform;
 							break;
-						case SharedConstants.DiscourseExt:
-							optionalElementName = SharedConstants.Header;
-							mainRecordName = SharedConstants.DsChart;
+						case FlexBridgeConstants.DiscourseExt:
+							optionalElementName = FlexBridgeConstants.Header;
+							mainRecordName = FlexBridgeConstants.DsChart;
 							break;
-						case SharedConstants.Featsys:
-							mainRecordName = SharedConstants.FsFeatureSystem;
+						case FlexBridgeConstants.Featsys:
+							mainRecordName = FlexBridgeConstants.FsFeatureSystem;
 							break;
-						case SharedConstants.Phondata:
-							mainRecordName = SharedConstants.PhPhonData;
+						case FlexBridgeConstants.Phondata:
+							mainRecordName = FlexBridgeConstants.PhPhonData;
 							break;
-						case SharedConstants.Morphdata:
-							mainRecordName = SharedConstants.MoMorphData;
+						case FlexBridgeConstants.Morphdata:
+							mainRecordName = FlexBridgeConstants.MoMorphData;
 							break;
-						case SharedConstants.Agents:
-							mainRecordName = SharedConstants.CmAgent;
+						case FlexBridgeConstants.Agents:
+							mainRecordName = FlexBridgeConstants.CmAgent;
 							break;
 					}
 					using (var fastSplitter = new FastXmlElementSplitter(dataFile))
@@ -528,7 +533,7 @@ namespace FwdataTestApp
 							 where handler.GetType().Name == "FieldWorksCommonFileHandler"
 							 select handler).First();
 			// Custom properties file.
-			var currentPathname = Path.Combine(_workingDir, SharedConstants.CustomPropertiesFilename);
+			var currentPathname = Path.Combine(_workingDir, FlexBridgeConstants.CustomPropertiesFilename);
 			var validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
 			if (validationError != null)
 			{
@@ -538,7 +543,7 @@ namespace FwdataTestApp
 				sb.AppendLine();
 			}
 			// Model version file.
-			currentPathname = Path.Combine(_workingDir, SharedConstants.ModelVersionFilename);
+			currentPathname = Path.Combine(_workingDir, FlexBridgeConstants.ModelVersionFilename);
 			validationError = fbHandler.ValidateFile(currentPathname, new NullProgress());
 			if (validationError != null)
 			{
@@ -616,7 +621,7 @@ namespace FwdataTestApp
 			{
 				var foundOrigOptionalFirstElement = false;
 				var testedforExistanceOfOrigOptionalFirstElement = false;
-				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag))
+				foreach (var origRecord in fastSplitterOrig.GetSecondLevelElementBytes(FlexBridgeConstants.AdditionalFieldsTag, FlexBridgeConstants.RtTag))
 				{
 					if (!testedforExistanceOfOrigOptionalFirstElement)
 					{
@@ -625,11 +630,11 @@ namespace FwdataTestApp
 					}
 					if (foundOrigOptionalFirstElement)
 					{
-						origData.Add(SharedConstants.AdditionalFieldsTag, origRecord);
+						origData.Add(FlexBridgeConstants.AdditionalFieldsTag, origRecord);
 						foundOrigOptionalFirstElement = false;
 						continue;
 					}
-					origData.Add(XmlUtils.GetAttributes(origRecord, new HashSet<string> { SharedConstants.GuidStr })[SharedConstants.GuidStr].ToLowerInvariant(), origRecord);
+					origData.Add(XmlUtils.GetAttributes(origRecord, new HashSet<string> { FlexBridgeConstants.GuidStr })[FlexBridgeConstants.GuidStr].ToLowerInvariant(), origRecord);
 				}
 			}
 			verifyTimer.Stop();
@@ -641,7 +646,7 @@ namespace FwdataTestApp
 				//var counter = 0;
 				var foundNewOptionalFirstElement = false;
 				var testedforExistanceOfNewOptionalFirstElement = false;
-				foreach (var newRecordAsBytes in fastSplitterNew.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag))
+				foreach (var newRecordAsBytes in fastSplitterNew.GetSecondLevelElementBytes(FlexBridgeConstants.AdditionalFieldsTag, FlexBridgeConstants.RtTag))
 				{
 					if (!testedforExistanceOfNewOptionalFirstElement)
 					{
@@ -653,23 +658,23 @@ namespace FwdataTestApp
 					string srcGuid = null;
 					if (foundNewOptionalFirstElement)
 					{
-						origRecAsBytes = origData[SharedConstants.AdditionalFieldsTag];
-						origData.Remove(SharedConstants.AdditionalFieldsTag);
+						origRecAsBytes = origData[FlexBridgeConstants.AdditionalFieldsTag];
+						origData.Remove(FlexBridgeConstants.AdditionalFieldsTag);
 						foundNewOptionalFirstElement = false;
 					}
 					else
 					{
-						var attrValues = XmlUtils.GetAttributes(newRecordAsBytes, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class });
-						srcGuid = attrValues[SharedConstants.GuidStr];
+						var attrValues = XmlUtils.GetAttributes(newRecordAsBytes, new HashSet<string> { FlexBridgeConstants.GuidStr, FlexBridgeConstants.Class });
+						srcGuid = attrValues[FlexBridgeConstants.GuidStr];
 						origRecAsBytes = origData[srcGuid];
 						origData.Remove(srcGuid);
-						if (attrValues[SharedConstants.Class] == "WfiWordform")
+						if (attrValues[FlexBridgeConstants.Class] == "WfiWordform")
 						{
-							var wfElement = Utilities.CreateFromBytes(origRecAsBytes);
+							var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(origRecAsBytes);
 							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
 							{
-								csProp.Attribute(SharedConstants.Val).Value = "0";
+								csProp.Attribute(FlexBridgeConstants.Val).Value = "0";
 								origRecAsBytes = SharedConstants.Utf8.GetBytes(wfElement.ToString());
 							}
 						}
@@ -728,9 +733,9 @@ namespace FwdataTestApp
 			{
 				sb.AppendFormat("Hmm, there are {0} more <rt> elements in the original than in the rebuilt fwdata file.", origData.Count);
 				sb.AppendLine();
-				foreach (var attrs in origData.Values.Select(byteData => XmlUtils.GetAttributes(byteData, new HashSet<string> { SharedConstants.GuidStr, SharedConstants.Class })))
+				foreach (var attrs in origData.Values.Select(byteData => XmlUtils.GetAttributes(byteData, new HashSet<string> { FlexBridgeConstants.GuidStr, FlexBridgeConstants.Class })))
 				{
-					sb.AppendFormat("\t\t'{0}' of class '{1}' is not in rebuilt file.", attrs[SharedConstants.GuidStr], attrs[SharedConstants.Class]);
+					sb.AppendFormat("\t\t'{0}' of class '{1}' is not in rebuilt file.", attrs[FlexBridgeConstants.GuidStr], attrs[FlexBridgeConstants.Class]);
 					sb.AppendLine();
 				}
 			}
@@ -769,7 +774,7 @@ namespace FwdataTestApp
 				var unownedElementDict = unownedElementKvp.Value;
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
-					var element = Utilities.CreateFromBytes(unownedElement);
+					var element = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(unownedElement);
 					classElement.Add(element);
 					CmObjectNestingService.NestObject(false, element,
 												  classData,
@@ -786,17 +791,17 @@ namespace FwdataTestApp
 			{
 				bool foundOptionalFirstElement;
 				// NB: The main input file *does* have to deal with the optional first element.
-				foreach (var record in fastSplitter.GetSecondLevelElementBytes(SharedConstants.AdditionalFieldsTag, SharedConstants.RtTag, out foundOptionalFirstElement))
+				foreach (var record in fastSplitter.GetSecondLevelElementBytes(FlexBridgeConstants.AdditionalFieldsTag, FlexBridgeConstants.RtTag, out foundOptionalFirstElement))
 					{
 					if (foundOptionalFirstElement)
 						{
 							// Cache custom prop file for later write.
 							var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
 							// Add custom property info to MDC, since it may need to be sorted in the data files.
-							foreach (var propElement in cpElement.Elements(SharedConstants.CustomField))
+							foreach (var propElement in cpElement.Elements(FlexBridgeConstants.CustomField))
 							{
-								var className = propElement.Attribute(SharedConstants.Class).Value;
-								var propName = propElement.Attribute(SharedConstants.Name).Value;
+								var className = propElement.Attribute(FlexBridgeConstants.Class).Value;
+								var propName = propElement.Attribute(FlexBridgeConstants.Name).Value;
 								var typeAttr = propElement.Attribute("type");
 								var adjustedTypeValue = MetadataCache.AdjustedPropertyType(typeAttr.Value);
 								if (adjustedTypeValue != typeAttr.Value)
@@ -840,7 +845,8 @@ namespace FwdataTestApp
 							 .Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
-					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" + Utilities.FwXmlExtension).FirstOrDefault());
+					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" +
+						SharedConstants.FwXmlExtension).FirstOrDefault());
 				}
 			}
 			finally
@@ -855,10 +861,14 @@ namespace FwdataTestApp
 				return;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
+			if (currentFilename.ToLowerInvariant() == "zpi" + SharedConstants.FwXmlExtension ||
+				projectDirName.ToLowerInvariant() == "zpi")
+			{
 				return; // Don't even think of wiping out my ZPI folder.
+			}
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
+			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + SharedConstants.FwXmlExtension,
+				SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;

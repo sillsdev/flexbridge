@@ -12,6 +12,7 @@ using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using SIL.Progress;
 using SIL.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace RepositoryUtility
 {

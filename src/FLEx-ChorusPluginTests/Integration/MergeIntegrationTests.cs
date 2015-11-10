@@ -9,7 +9,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
-using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 
@@ -136,15 +136,15 @@ namespace FLEx_ChorusPluginTests.Integration
 </AdditionalFields>";
 
 			var mdc = MetadataCache.TestOnlyNewCache;
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), commonAncestor))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", FlexBridgeConstants.Lexicon, FlexBridgeConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.
-				var modelVersionPathname = Path.Combine(sueProjPath, SharedConstants.ModelVersionFilename);
+				var modelVersionPathname = Path.Combine(sueProjPath, FlexBridgeConstants.ModelVersionFilename);
 				File.WriteAllText(modelVersionPathname, AnnotationImages.kModelVersion);
 				sueRepo.Repository.TestOnlyAddSansCommit(modelVersionPathname);
 				// Add custom property data file.
-				var customPropsPathname = Path.Combine(sueProjPath, SharedConstants.CustomPropertiesFilename);
+				var customPropsPathname = Path.Combine(sueProjPath, FlexBridgeConstants.CustomPropertiesFilename);
 				File.WriteAllText(customPropsPathname, customPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
 				sueRepo.AddAndCheckIn();
