@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chorus;
-using Chorus.FileTypeHanders.lift;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
 using SIL.Network;

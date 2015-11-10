@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Text;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ModelVersion
 {

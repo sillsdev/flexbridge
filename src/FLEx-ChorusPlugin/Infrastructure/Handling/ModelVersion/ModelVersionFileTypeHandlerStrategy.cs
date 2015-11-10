@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Chorus.FileTypeHanders;
-using Chorus.FileTypeHanders.xml;
+using Chorus.FileTypeHandlers;
+using Chorus.FileTypeHandlers.xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
