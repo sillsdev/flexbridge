@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 

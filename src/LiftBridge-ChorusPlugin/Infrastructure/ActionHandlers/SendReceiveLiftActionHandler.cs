@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
-using Chorus.FileTypeHanders.lift;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Sync;
 using Chorus.sync;
 using SIL.LiftBridge.Properties;

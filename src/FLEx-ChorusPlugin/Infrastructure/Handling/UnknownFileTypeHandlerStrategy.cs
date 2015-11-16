@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
 
