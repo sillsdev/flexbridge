@@ -208,6 +208,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Infrastructure\FlexBridgeConstants.cs" />
+    <Compile Include="Infrastructure\UpdateBranchHelperFlex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -16,6 +16,7 @@ using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using L10NSharp;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -47,7 +48,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// </summary>
 		public void StartWorking(Dictionary<string, string> commandLineArgs)
 		{
-			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
+			_baseLiftDir = TriboroughBridge_ChorusPlugin.Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
 			var fwLangProjGuid = commandLineArgs["-g"];
 			var basePathForOldLiftRepos = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -93,7 +94,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
 
-				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, Utilities.hg))))
+				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, TriboroughBridge_ChorusPlugin.Utilities.hg))))
 				{
 					var repo = new HgRepository(directory, new NullProgress());
 					if (repo.Identifier != repoId)

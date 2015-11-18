@@ -3,9 +3,7 @@
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
-
 using System.Collections.Generic;
-using Chorus.UI.Clone;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure
 {
@@ -22,20 +20,5 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 		void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository);
 		void TellFlexAboutIt();
 		ActionType SupportedActionType { get; }
-	}
-
-	public class ActualCloneResult
-	{
-		public FinalCloneResult FinalCloneResult { get; set; }
-		public string ActualCloneFolder { get; set; }
-		public CloneResult CloneResult { get; set; }
-		public string Message { get; set; }
-	}
-
-	public enum FinalCloneResult
-	{
-		Cloned,
-		ExistingCloneTargetFolder,
-		FlexVersionIsTooOld
 	}
 }
