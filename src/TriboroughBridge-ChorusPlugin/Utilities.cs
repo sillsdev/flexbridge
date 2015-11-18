@@ -140,43 +140,6 @@ namespace TriboroughBridge_ChorusPlugin
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		public static Dictionary<string, Revision> CollectAllBranchHeads(string repoPath)
-		{
-			var retval = new Dictionary<string, Revision>();
-
-			var repo = new HgRepository(repoPath, new NullProgress());
-			foreach (var head in repo.GetHeads())
-			{
-				var branch = head.Branch;
-				if (branch == String.Empty)
-				{
-					branch = "default";
-				}
-				if (retval.ContainsKey(branch))
-				{
-					// Use the higher rev number since it has more than one head of the same branch.
-					var extantRevNumber = Int32.Parse(retval[branch].Number.LocalRevisionNumber);
-					var currentRevNumber = Int32.Parse(head.Number.LocalRevisionNumber);
-					if (currentRevNumber > extantRevNumber)
-					{
-						// Use the newer head of a branch.
-						retval[branch] = head;
-					}
-					//else
-					//{
-					//    // 'else' case: The one we already have is newer, so keep it.
-					//}
-				}
-				else
-				{
-					// New branch, so add it.
-					retval.Add(branch, head);
-				}
-			}
-
-			return retval;
-		}
-
 		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);

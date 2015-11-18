@@ -93,6 +93,11 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedConstants.cs" />
+    <Compile Include="Infrastructure\UpdateBranchHelper.cs" />
+    <Compile Include="Infrastructure\ActualCloneResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
 </Project>
