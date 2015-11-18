@@ -78,7 +78,7 @@ namespace LibFLExBridgeChorusPlugin
 
 #if DEBUG
 			// Enable ONLY for testing a round trip.
-			// FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
+			// FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
 #endif
 		}
 

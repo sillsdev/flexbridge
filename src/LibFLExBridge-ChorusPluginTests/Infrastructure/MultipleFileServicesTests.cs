@@ -70,21 +70,21 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 		[Test]
 		public void NullPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(
+			Assert.Throws<ApplicationException>(() => FLEx.ProjectUnifier.PutHumptyTogetherAgain(
 				new NullProgress(), null));
 		}
 
 		[Test]
 		public void EmptyPathnameForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(
+			Assert.Throws<ApplicationException>(() => FLEx.ProjectUnifier.PutHumptyTogetherAgain(
 				new NullProgress(), ""));
 		}
 
 		[Test]
 		public void NonExistingFileForRestoreShouldThrow()
 		{
-			Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(
+			Assert.Throws<ApplicationException>(() => FLEx.ProjectUnifier.PutHumptyTogetherAgain(
 				new NullProgress(), "Bogus" + SharedConstants.FwXmlExtension));
 		}
 
@@ -94,7 +94,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 			using (var tempFile = new TempFile())
 			{
 				var pathname = tempFile.Path;
-				Assert.Throws<ApplicationException>(() => FLExProjectUnifier.PutHumptyTogetherAgain(
+				Assert.Throws<ApplicationException>(() => FLEx.ProjectUnifier.PutHumptyTogetherAgain(
 					new NullProgress(), Path.Combine(pathname, "Itaintthere")));
 			}
 		}

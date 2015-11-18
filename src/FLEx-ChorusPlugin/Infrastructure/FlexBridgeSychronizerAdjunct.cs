@@ -45,7 +45,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			WasUpdated = true;
 			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
-			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
 		}
 

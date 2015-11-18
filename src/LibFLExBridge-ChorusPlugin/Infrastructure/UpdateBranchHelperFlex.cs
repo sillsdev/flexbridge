@@ -22,7 +22,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		protected override string GetFullModelVersion(string cloneLocation)
 		{
-			return FLExProjectUnifier.GetModelVersion(cloneLocation);
+			return FLEx.ProjectUnifier.GetModelVersion(cloneLocation);
 		}
 	}
 }

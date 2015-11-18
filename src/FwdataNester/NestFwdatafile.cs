@@ -339,7 +339,7 @@ namespace FwdataTestApp
 		{
 			GetFreshMdc(); // Want it fresh.
 			restoreTimer.Start();
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();
 		}
 
@@ -508,7 +508,7 @@ namespace FwdataTestApp
 				GC.Collect(2, GCCollectionMode.Forced);
 			}
 			restoreTimer.Start();
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
 			restoreTimer.Stop();
 			GC.Collect(2, GCCollectionMode.Forced);
 		}

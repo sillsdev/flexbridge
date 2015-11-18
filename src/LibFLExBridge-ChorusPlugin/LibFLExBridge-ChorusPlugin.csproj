@@ -209,6 +209,7 @@
     </Compile>
     <Compile Include="Infrastructure\FlexBridgeConstants.cs" />
     <Compile Include="Infrastructure\UpdateBranchHelperFlex.cs" />
+    <Compile Include="IProjectUnifier.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

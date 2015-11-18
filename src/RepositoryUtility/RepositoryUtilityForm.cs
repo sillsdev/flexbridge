@@ -288,7 +288,7 @@ namespace RepositoryUtility
 			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + SharedConstants.FwXmlExtension);
 			if (!File.Exists(fwdataPathname))
 				File.WriteAllText(fwdataPathname, @"");
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
 		}
 
 		/// <summary>
