@@ -16,6 +16,7 @@ using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -56,13 +57,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			//		as we have no real control over the actual folder of 'cloneLocation' from Chorus.
 			//		'expectedPathToClonedRepository' is where it is supposed to be.
 			// It may not be in the right, fixed folder, so rename/move, as needed
-			var actualCloneResult = new ActualCloneResult
-			{
-				// Be a bit pessimistic at first.
-				CloneResult = null,
-				ActualCloneFolder = null,
-				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
-			};
+			var actualCloneResult = new ActualCloneResult();
 
 			// Update to the head of the desired branch, if possible.
 			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(cloneLocation, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
