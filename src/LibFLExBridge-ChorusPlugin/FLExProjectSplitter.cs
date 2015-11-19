@@ -36,22 +36,22 @@ namespace LibFLExBridgeChorusPlugin
 	///		B. One file for the model version
 	///		C. Various files for the CmObject data.
 	/// </summary>
-	public static class FLExProjectSplitter
+	internal class FLExProjectSplitter: IProjectSplitter
 	{
-		public static readonly byte[] AdditionalFieldsArray = SharedConstants.Utf8.GetBytes("<" + FlexBridgeConstants.AdditionalFieldsTag);
+		internal readonly byte[] AdditionalFieldsArray = SharedConstants.Utf8.GetBytes("<" + FlexBridgeConstants.AdditionalFieldsTag);
 
-		public static void CheckForUserCancelRequested(IProgress progress)
+		internal static void CheckForUserCancelRequested(IProgress progress)
 		{
 			if (progress.CancelRequested)
 				throw new UserCancelledException(); // the Chorus Synchorinizer class catches this and does the real cancel.
 		}
 
-		public static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
+		internal static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
 		{
-			PushHumptyOffTheWall(progress, true, mainFilePathname);
+			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, true, mainFilePathname);
 		}
 
-		public static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
+		public void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckFilename(mainFilePathname);
@@ -78,7 +78,7 @@ namespace LibFLExBridgeChorusPlugin
 
 #if DEBUG
 			// Enable ONLY for testing a round trip.
-			// FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
+			// FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
 #endif
 		}
 
@@ -97,7 +97,7 @@ namespace LibFLExBridgeChorusPlugin
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
-		public static void WriteVersionFile(string mainFilePathname)
+		internal static void WriteVersionFile(string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var version = FieldWorksProjectServices.GetVersionNumber(mainFilePathname);
@@ -181,7 +181,7 @@ namespace LibFLExBridgeChorusPlugin
 			}
 		}
 
-		public static bool IsOptionalFirstElement(byte[] record)
+		internal bool IsOptionalFirstElement(byte[] record)
 		{
 			return AdditionalFieldsArray.AreByteArraysEqual(record.SubArray(0, AdditionalFieldsArray.Length));
 		}

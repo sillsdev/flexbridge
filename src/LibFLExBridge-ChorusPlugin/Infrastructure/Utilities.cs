@@ -17,6 +17,17 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			}
 		}
 
+		public static string GetFlexModelVersion(string pathRoot)
+		{
+			var modelVersionPathname = Path.Combine(pathRoot, FlexBridgeConstants.ModelVersionFilename);
+			if (!File.Exists(modelVersionPathname))
+				return null;
+			var modelVersionData = File.ReadAllText(modelVersionPathname);
+			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
+			var version = splitModelVersionData[1].Trim();
+			return version;
+		}
+
 	}
 }
 
