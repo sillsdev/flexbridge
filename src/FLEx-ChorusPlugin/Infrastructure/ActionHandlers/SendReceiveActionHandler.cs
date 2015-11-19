@@ -9,10 +9,12 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -36,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -44,8 +46,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					// Write an empty custom prop file to get something in the default branch at rev 0.
 					// The custom prop file will always exist and can be empty, so start it as empty (null).
 					// This basic rev 0 commit will then allow for a roll back if the soon to follow main commit fails on a validation problem.
-					FileWriterService.WriteCustomPropertyFile(Path.Combine(projectDir, SharedConstants.CustomPropertiesFilename), null);
-					chorusSystem.Repository.AddAndCheckinFile(Path.Combine(projectDir, SharedConstants.CustomPropertiesFilename));
+					FileWriterService.WriteCustomPropertyFile(Path.Combine(projectDir, FlexBridgeConstants.CustomPropertiesFilename), null);
+					chorusSystem.Repository.AddAndCheckinFile(Path.Combine(projectDir, FlexBridgeConstants.CustomPropertiesFilename));
 					newlyCreated = true;
 				}
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
@@ -56,7 +58,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				try
 				{
 					File.WriteAllText(lockPathname, "");
-					var origPathname = Path.Combine(projectDir, projectName + Utilities.FwXmlExtension);
+					var origPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlExtension);
 
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))

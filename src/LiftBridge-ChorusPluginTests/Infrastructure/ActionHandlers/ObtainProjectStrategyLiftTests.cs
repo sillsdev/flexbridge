@@ -11,6 +11,8 @@ using NUnit.Framework;
 using SIL.TestUtilities;
 using SIL.LiftBridge.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin;
+using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace LiftBridgeTests.Infrastructure.ActionHandlers
 {
@@ -29,9 +31,11 @@ namespace LiftBridgeTests.Infrastructure.ActionHandlers
 				Directory.CreateDirectory(fakeProjectDir);
 				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
 				{
-					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo", Utilities.OtherRepositories, Utilities.LIFT);
+					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo",
+						SharedConstants.OtherRepositories, Utilities.LIFT);
 					Directory.CreateDirectory(extantDir);
-					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepowithoffset", Utilities.OtherRepositories, Utilities.LIFT));
+					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepowithoffset",
+						SharedConstants.OtherRepositories, Utilities.LIFT));
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "noreposansoffset"));
 					var strat = new ObtainProjectStrategyLift();
 					Assert.IsTrue(strat.ProjectFilter(sueRepo.ProjectFolder.Path));

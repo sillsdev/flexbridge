@@ -9,6 +9,8 @@ using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 using TriboroughBridge_ChorusPlugin;
+using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
 {
@@ -31,7 +33,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			const string baseProjectsDir = "Projects";
 			const string foo = "foo";
 			var fooProjectDir = Path.Combine(baseProjectsDir, foo);
-			var expectedResult = Path.Combine(fooProjectDir, Utilities.OtherRepositories, foo + "_LIFT");
+			var expectedResult = Path.Combine(fooProjectDir, SharedConstants.OtherRepositories, foo + "_LIFT");
 			Assert.AreEqual(expectedResult, Utilities.LiftOffset(fooProjectDir));
 		}
 	}

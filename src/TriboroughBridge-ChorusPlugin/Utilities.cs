@@ -18,6 +18,7 @@ using L10NSharp;
 using SIL.Progress;
 using SIL.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -32,11 +33,6 @@ namespace TriboroughBridge_ChorusPlugin
 	public static class Utilities
 	{
 // ReSharper disable InconsistentNaming
-		public const string FwXmlExtension = "." + FwXmlExtensionNoPeriod;
-		public const string FwXmlExtensionNoPeriod = "fwdata";
-		public const string FwDb4oExtension = "." + FwDb4oExtensionNoPeriod;
-		public const string FwDb4oExtensionNoPeriod = "fwdb";
-		public const string OtherRepositories = "OtherRepositories";
 		public const string LIFT = "LIFT";
 		public const string hg = ".hg";
 		private const string FlexBridge = "FlexBridge";
@@ -129,14 +125,14 @@ namespace TriboroughBridge_ChorusPlugin
 
 		public static string LiftOffset(string path)
 		{
-			var otherPath = Path.Combine(path, OtherRepositories);
+			var otherPath = Path.Combine(path, SharedConstants.OtherRepositories);
 			if (Directory.Exists(otherPath))
 			{
 				var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
 				if (extantLiftFolder != null)
 					return extantLiftFolder;
 			}
-			return Path.Combine(path, OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
+			return Path.Combine(path, SharedConstants.OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
 		}
 
 		public static bool FolderIsEmpty(string folder)

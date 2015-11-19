@@ -10,11 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -36,7 +38,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				string cloneLocation)
 		{
 			var repo = new HgRepository(cloneLocation, new NullProgress());
-			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
+			Dictionary<string, Revision> allHeads = TriboroughBridge_ChorusPlugin.Utilities.CollectAllBranchHeads(cloneLocation);
 			var desiredBranchName = commandLineArgs["-fwmodel"];
 			var desiredModelVersion = uint.Parse(desiredBranchName);
 			Revision desiredRevision;
@@ -121,7 +123,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public bool ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
+			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*._custom_properties.i").Any();
 		}
 
@@ -129,7 +131,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public bool IsRepositoryEmpty(string repositoryLocation)
 		{
-			return !File.Exists(Path.Combine(repositoryLocation, SharedConstants.CustomPropertiesFilename));
+			return !File.Exists(Path.Combine(repositoryLocation, FlexBridgeConstants.CustomPropertiesFilename));
 		}
 
 		public void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
@@ -142,7 +144,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
 				};
 
-			_newProjectFilename = Path.GetFileName(cloneLocation) + Utilities.FwXmlExtension;
+			_newProjectFilename = Path.GetFileName(cloneLocation) + SharedConstants.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
 
 			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' parm.

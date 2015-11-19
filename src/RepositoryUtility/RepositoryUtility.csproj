@@ -253,6 +253,14 @@
       <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
       <Name>TriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
+      <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
+      <Name>LibFLExBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
+      <Name>LibTriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
