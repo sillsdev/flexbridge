@@ -15,6 +15,7 @@ using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -33,7 +34,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		private static bool ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
+			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder)
 				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
 				   && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
@@ -89,7 +90,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				return;
 			}
 
-			if (!Directory.Exists(expectedPathToClonedRepository) || Utilities.FolderIsEmpty(expectedPathToClonedRepository))
+			if (!Directory.Exists(expectedPathToClonedRepository) ||
+				TriboroughBridge_ChorusPlugin.Utilities.FolderIsEmpty(expectedPathToClonedRepository))
 			{
 				if (Directory.Exists(expectedPathToClonedRepository))
 					Directory.Delete(expectedPathToClonedRepository);
@@ -118,11 +120,11 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		{
 			// -p <$fwroot>\foo where 'foo' is the project folder name
 			var pOption = commandLineArgs["-p"];
-			var otherReposDir = Path.Combine(pOption, Utilities.OtherRepositories);
+			var otherReposDir = Path.Combine(pOption, SharedConstants.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 				Directory.CreateDirectory(otherReposDir);
 
-			var desiredCloneLocation = Utilities.LiftOffset(pOption);
+			var desiredCloneLocation = TriboroughBridge_ChorusPlugin.Utilities.LiftOffset(pOption);
 			CloneResult result;
 			using (var form = new Form())
 			{
@@ -133,7 +135,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					ProjectFilter,	// Lift repo filter
 					HubQuery, // If it goes to Chorus Hub, use this filter
 					commandLineArgs["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
-					Utilities.OtherRepositories, // subfolder of each FW project folder, in which to look for additional repo ids.
+					SharedConstants.OtherRepositories, // subfolder of each FW project folder, in which to look for additional repo ids.
 					CommonResources.kHowToSendReceiveExtantRepository); // Some message to use to let user know a repo exists.
 			}
 

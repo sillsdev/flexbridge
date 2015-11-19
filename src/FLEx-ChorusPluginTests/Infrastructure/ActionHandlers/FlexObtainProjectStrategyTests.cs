@@ -6,7 +6,7 @@
 
 using System;
 using System.IO;
-using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
@@ -23,7 +23,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 		[Test, Ignore("Not doing it with the filter for now.")]
 		public void AlreadyHaveProjectFiltersOutAttemptToCloneAgain()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", FlexBridgeConstants.CustomPropertiesFilename, "contents"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
@@ -42,7 +42,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 		[Test]
 		public void DoNotHaveProjectDoesNotFilterOutRepo()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", FlexBridgeConstants.CustomPropertiesFilename, "contents"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Directory.CreateDirectory(fakeProjectDir);

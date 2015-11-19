@@ -12,6 +12,7 @@ using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
 using Palaso.Progress;
 using Palaso.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace RepositoryUtility
 {

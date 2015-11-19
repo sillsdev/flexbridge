@@ -1,60 +1,29 @@
-src/_ReSharper.LiftBridge/*
-src/LiftBridge/bin/*
-src/LiftBridge/obj/*
-src/LiftBridgeTests/bin/*
-src/LiftBridgeTests/obj/*
-src/LiftBridge/LiftBridge.csproj.ReSharper.user
-output/*
-^Mercurial/
-gexp
-Perf test  results/*.*
-test-results/*
-src/FLEx-ChorusPlugin/bin/*
-src/FLEx-ChorusPlugin/obj/*
-src/FLEx-ChorusPluginTests/bin/*
-src/FLEx-ChorusPluginTests/obj/*
-src/FwdataNester/bin/*
-src/FwdataNester/obj/*
-_ReSharper.FLExBridge VS2010/*.*
-src/FLExBridge/bin/*
-src/FLExBridge/obj/*
-src/Installer/output/*.*
-src/LiftBridgeCore/bin/*
-src/LiftBridgeCore/obj/*
-LiftBridge VS2010.5.1.ReSharper.user
-src/LiftBridge/LiftBridge.csproj.user
-src/LiftBridgeCore/LiftBridgeCore.csproj.user
-LiftBridge VS2010.suo
-src/LiftBridgeTests/LiftBridgeTests.csproj.user
-gexp
-_ReSharper.LiftBridge VS2010/*
-DistFiles/Mercurial/*
-DistFiles/Mercurial/MercurialExtensions/*
+src/_ReSharper.LiftBridge/
+bin/
+obj/
+output/
+Mercurial/
+Perf test  results/
+test-results/
+_ReSharper.*
+DistFiles/Mercurial/
+DistFiles/Mercurial/MercurialExtensions/
+MercurialExtensions/
 
 Perf test  results/*.app6results
 *.user
 *.suo
+*.userprefs
+*.pidb
+*~
 DistFiles/.guidsForInstaller.xml
 Mercurial/mercurial.ini
 **.app7results
-Patches/**
-LiftBridge VS2010.userprefs
-src/LiftBridge/LiftBridge.pidb
-src/LiftBridgeCore/LiftBridgeCore.pidb
-src/LiftBridgeTests/LiftBridgeTests.pidb
-LiftBridge VS2010.6.1.ReSharper.user
-LiftBridge VS2010.sln.DotSettings.user
-src/LiftBridge/LiftBridge.csproj.DotSettings.user
-src/LiftBridge-ChorusPlugin/obj/*
-src/LiftBridge-ChorusPluginTests/obj/*
-src/TriboroughBridge-ChorusPlugin/obj/*
-src/TriboroughBridge-ChorusPluginTests/obj/*
-**.pdb
-src/RepositoryUtility/obj/*
-src/RepositoryUtility/bin/*
+Patches/
+*.pdb
+*.mdb
 lib/*/L10NSharp.dll
 All*Files.lst
-*.userprefs
 Download/
 lib/*/Palaso*.dll
 lib/*/Chorus*.exe
@@ -66,10 +35,12 @@ lib/*/Autofac.dll
 lib/*/*HelpProvider.dll
 lib/*/L10NSharp.xml
 lib/*.msm
+lib/*/*.config
+lib/common/Chorus_Help.chm
 /Mercurial
-build/.nuget/*
+build/.nuget/
 build/Nuget.exe
-packages/*
+packages/
 *.dll
 src/Installer/output/
 src/Installer/obj/

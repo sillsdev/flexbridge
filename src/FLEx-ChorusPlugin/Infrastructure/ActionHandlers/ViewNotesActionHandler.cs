@@ -21,6 +21,7 @@ using Palaso.Network;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -230,7 +231,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				ClientSize = new Size(904, 510)
 			};
 			_chorusUser = new ChorusUser(commandLineArgs["-u"]);
-			_chorusSystem = Utilities.InitializeChorusSystem(ProjectDir, _chorusUser.Name, FlexFolderSystem.ConfigureChorusProjectFolder);
+			_chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(ProjectDir, _chorusUser.Name,
+				FlexFolderSystem.ConfigureChorusProjectFolder);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
 			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
 			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>().First();

@@ -153,14 +153,6 @@
 	<None Include="..\..\lib\ReleaseMono\icu.net.dll.config">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
 	<Reference Include="Chorus">
@@ -189,14 +181,6 @@
 	<None Include="..\..\lib\DebugMono\icu.net.dll.config">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
 	<Reference Include="Autofac">
@@ -214,114 +198,23 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
 	</Reference>
+    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Core</Package>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>Geckofx-Winforms</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\CommonAssemblyInfo.cs">
 	  <Link>Properties\CommonAssemblyInfo.cs</Link>
 	</Compile>
-	<Compile Include="Contexts\BaseDomainServices.cs" />
-	<Compile Include="Contexts\General\GeneralDomainBoundedContext.cs" />
-	<Compile Include="Contexts\General\GeneralDomainServices.cs" />
-	<Compile Include="Contexts\General\UserDefinedLists\UserDefinedListsBoundedContextService.cs" />
-	<Compile Include="Contexts\Linguistics\MorphologyAndSyntax\MorphologyAndSyntaxBoundedContextService.cs" />
-	<Compile Include="Contexts\Linguistics\Phonology\PhonologyBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ArchivedDraftsBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ImportSettingsBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ScriptureStylesBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ScriptureCheckListsBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ScriptureReferenceSystemBoundedContextService.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
 	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
-	<Compile Include="Infrastructure\DomainServices\CheckForDuplicateElementMethod.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectValidator.cs" />
-	<Compile Include="Infrastructure\DomainServices\FLExProjectSplitter.cs" />
-	<Compile Include="Infrastructure\DomainServices\FLExProjectUnifier.cs" />
-	<Compile Include="Infrastructure\DomainServices\PossibilityListOrderPolicy.cs" />
-	<Compile Include="Infrastructure\Handling\Common\LanguageProjectContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeService.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\CustomLayoutMergeStrategiesMethod.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorkCustomLayoutContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksConfigurationLayoutValidator.cs" />
-	<Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutChangePresenter.cs" />
-	<Compile Include="Infrastructure\Handling\PreferMostRecentTimePreMerger.cs" />
-	<Compile Include="Infrastructure\Handling\General\PictureFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\General\VirtualOrderingFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\PosContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalEntryContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\OwnSeqPremerger.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\StTxtParaPremerger.cs" />
-	<Compile Include="Infrastructure\Handling\MultiLingualStringsContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseChartContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\EnvironmentContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksElementToMergeStrategyKeyMapper.cs" />
-	<Compile Include="Infrastructure\Handling\FWGENERICHTMLGENERATOR.CS" />
-	<Compile Include="Infrastructure\Handling\General\AnnotationFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\General\FilterFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\General\LangProjFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\FwLinkArgs.cs" />
-	<Compile Include="Infrastructure\Handling\Common\ListFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Common\StyleFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexEntryContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Lexicon\LexiconFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Discourse\DiscourseAnalysisFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\AnalyzingAgentFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\MorphologyAndSyntax\MorphAndSynFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Phonology\PhonologyDataFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextCorpusFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\FeatureSystemFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WordformInventoryFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Common\PossibilityContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Common\PossibilityListContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Common\StyleContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Anthropology\RnGenericRecContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScrBookAnnotationsTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScrBookContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ArchivedDraftsTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\CustomProperties\CustomPropertiesTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorkObjectContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksChangePresenter.cs" />
-	<Compile Include="Infrastructure\Handling\FieldWorksCommonFileHandler.cs" />
-	<Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
-	<Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectFlatteningService.cs" />
-	<Compile Include="Infrastructure\DomainServices\CmObjectNestingService.cs" />
-	<Compile Include="Infrastructure\Handling\CustomProperties\FieldWorksCustomPropertyContextGenerator.cs" />
-	<Compile Include="Infrastructure\DataSortingService.cs" />
-	<Compile Include="Infrastructure\DataType.cs" />
-	<Compile Include="Contexts\Linguistics\Discourse\DiscourseAnalysisBoundedContextService.cs" />
-	<Compile Include="Infrastructure\FdoClassInfo.cs" />
-	<Compile Include="Infrastructure\FdoPropertyInfo.cs" />
-	<Compile Include="Infrastructure\DomainServices\FieldWorksMergeServices.cs" />
-	<Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
-	<Compile Include="Infrastructure\DomainServices\FileWriterService.cs" />
-	<Compile Include="Infrastructure\FlexFolderSystem.cs" />
-	<Compile Include="Infrastructure\Handling\IFieldWorksFileHandler.cs" />
-	<Compile Include="Infrastructure\Handling\ModelVersion\ModelVersionFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Anthropology\NtbkFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\Reversal\ReversalFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ImportSettingsTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScrBooksTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScriptureReferenceSystemTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScriptureTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Scripture\ScrSectionContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\TextCorpus\TextContextGenerator.cs" />
-	<Compile Include="Infrastructure\Handling\UnknownFileTypeHandlerStrategy.cs" />
-	<Compile Include="Infrastructure\Handling\Linguistics\WordformInventory\WfiWordformContextGenerator.cs" />
-	<Compile Include="Contexts\Linguistics\Lexicon\LexiconBoundedContextService.cs" />
-	<Compile Include="Contexts\Linguistics\LinguisticsDomainServices.cs" />
-	<Compile Include="Infrastructure\MetadataCache.cs" />
-	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangePresenter.cs" />
-	<Compile Include="Infrastructure\Handling\ModelVersion\FieldWorksModelVersionChangeReport.cs" />
-	<Compile Include="Contexts\Linguistics\Reversals\ReversalBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ScriptureBoundedContextService.cs" />
-	<Compile Include="Contexts\Scripture\ScriptureDomainServices.cs" />
-	<Compile Include="Contexts\Linguistics\TextCorpus\TextCorpusBoundedContextService.cs" />
-	<Compile Include="Contexts\Linguistics\WordformInventory\WordformInventoryBoundedContextService.cs" />
-	<Compile Include="Infrastructure\SharedConstants.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
@@ -343,6 +236,14 @@
 	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
 	</ProjectReference>
+    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
+      <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
+      <Name>LibFLExBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
+      <Name>LibTriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

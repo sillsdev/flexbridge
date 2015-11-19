@@ -142,14 +142,6 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
 	</Reference>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
 	<Reference Include="Chorus">
@@ -175,6 +167,12 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
 	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
@@ -183,12 +181,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-	<Reference Include="System" />
-	<Reference Include="System.ComponentModel.Composition" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\CommonAssemblyInfo.cs">
