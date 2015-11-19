@@ -625,7 +625,7 @@ namespace FwdataTestApp
 				{
 					if (!testedforExistanceOfOrigOptionalFirstElement)
 					{
-						foundOrigOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(origRecord);
+						foundOrigOptionalFirstElement = FLEx.ProjectSplitterInternal.IsOptionalFirstElement(origRecord);
 						testedforExistanceOfOrigOptionalFirstElement = true;
 					}
 					if (foundOrigOptionalFirstElement)
@@ -650,7 +650,7 @@ namespace FwdataTestApp
 				{
 					if (!testedforExistanceOfNewOptionalFirstElement)
 					{
-						foundNewOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(newRecordAsBytes);
+						foundNewOptionalFirstElement = FLEx.ProjectSplitterInternal.IsOptionalFirstElement(newRecordAsBytes);
 						testedforExistanceOfNewOptionalFirstElement = true;
 					}
 					var newRecCopyAsBytes = newRecordAsBytes;

@@ -35,30 +35,31 @@ namespace LibFLExBridgeChorusPlugin
 	///		but only if a Send/Receive had new information brought back into the local repo.
 	///		NB: The client of the service decides if new information was found, and decides to call the service, or not.
 	/// </summary>
-	public static class FLExProjectUnifier
+	internal class FLExProjectUnifier: IProjectUnifier
 	{
-		public static void PutHumptyTogetherAgain(IProgress progress, string mainFilePathname)
+		internal static void PutHumptyTogetherAgain(IProgress progress, string mainFilePathname)
 		{
-			PutHumptyTogetherAgain(progress, true, mainFilePathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, true, mainFilePathname);
 		}
 
-		public static void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
+		public void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckPathname(mainFilePathname);
 
 			using (var tempFile = new TempFile())
 			{
-				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings // NB: These are the FW bundle of settings, not the canonical settings.
-																		{
-																			OmitXmlDeclaration = false,
-																			CheckCharacters = true,
-																			ConformanceLevel = ConformanceLevel.Document,
-																			Encoding = new UTF8Encoding(false),
-																			Indent = true,
-																			IndentChars = (""),
-																			NewLineOnAttributes = false
-																		}))
+				using (var writer = XmlWriter.Create(tempFile.Path, new XmlWriterSettings
+					// NB: These are the FW bundle of settings, not the canonical settings.
+					{
+						OmitXmlDeclaration = false,
+						CheckCharacters = true,
+						ConformanceLevel = ConformanceLevel.Document,
+						Encoding = new UTF8Encoding(false),
+						Indent = true,
+						IndentChars = (""),
+						NewLineOnAttributes = false
+					}))
 				{
 					var pathRoot = Path.GetDirectoryName(mainFilePathname);
 					// NB: The method calls are strictly ordered.
@@ -95,7 +96,7 @@ namespace LibFLExBridgeChorusPlugin
 			SplitFileAgainIfNeeded(progress, writeVerbose, mainFilePathname);
 		}
 
-		private static void SplitFileAgainIfNeeded(IProgress progress, bool writeVerbose, string mainFilePathname)
+		private void SplitFileAgainIfNeeded(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			// Resplit mainFilePathname, if there are any temp files that mark incompatible moves exists (has 'dupid' extension).
@@ -120,34 +121,23 @@ namespace LibFLExBridgeChorusPlugin
 				File.Delete(dupidPathname);
 			var projName = Path.GetFileName(mainFilePathname);
 			progress.WriteMessage("Split up project file: {0} (again)", projName);
-			FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
+			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
 			progress.WriteMessage("Finished splitting up project file: {0} (again)", projName);
 		}
 
-		private static void UpgradeToVersion(XmlWriter writer, string pathRoot)
+		private void UpgradeToVersion(XmlWriter writer, string pathRoot)
 		{
 			writer.WriteStartElement("languageproject");
 
 			// Write out version number from the ModelVersion file.
-			var version = GetModelVersion(pathRoot);
+			var version = Utilities.GetFlexModelVersion(pathRoot);
 			writer.WriteAttributeString("version", version);
 
 			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		public static string GetModelVersion(string pathRoot)
-		{
-			var modelVersionPathname = Path.Combine(pathRoot, FlexBridgeConstants.ModelVersionFilename);
-			if (!File.Exists(modelVersionPathname))
-				return null;
-			var modelVersionData = File.ReadAllText(modelVersionPathname);
-			var splitModelVersionData = modelVersionData.Split(new[] {"{", ":", "}"}, StringSplitOptions.RemoveEmptyEntries);
-			var version = splitModelVersionData[1].Trim();
-			return version;
-		}
-
-		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
+		private void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
 		{
 			// Write out optional custom property data to the fwdata file.
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
