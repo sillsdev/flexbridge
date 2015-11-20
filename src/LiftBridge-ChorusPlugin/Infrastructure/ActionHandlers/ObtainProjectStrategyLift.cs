@@ -13,12 +13,15 @@ using System.Windows.Forms;
 using System.Xml;
 using Chorus.VcsDrivers.Mercurial;
 using SIL.IO;
+using SIL.LiftBridge.Infrastructure;
+using SIL.LiftBridge.Services;
 using SIL.Progress;
 using SIL.Xml;
-using SIL.LiftBridge.Services;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -30,7 +33,6 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private ICreateProjectFromLift _liftprojectCreator;
-		private const string Default = "default";
 		private string _liftFolder;
 
 		#region Other methods
@@ -50,82 +52,14 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 		}
 
-		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation, string desiredBranchName, ActualCloneResult cloneResult)
+		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation,
+			string desiredBranchName, ActualCloneResult cloneResult)
 		{
-			var repo = new HgRepository(cloneLocation, new NullProgress());
-			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
-			var desiredModelVersion = float.Parse(desiredBranchName.Replace("LIFT", null));
-			Revision desiredRevision;
-			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
-			{
-				// Remove any that are too high.
-				var gonerKeys = new HashSet<string>();
-				foreach (var headKvp in allHeads)
-				{
-					float currentVersion;
-					if (headKvp.Key == Default)
+			if (!new UpdateBranchHelperLift().UpdateToTheCorrectBranchHeadIfPossible(
+				desiredBranchName, cloneResult, cloneLocation))
 					{
-						repo.Update(headKvp.Value.Number.LocalRevisionNumber);
-						currentVersion = GetLiftVersionNumber(cloneLocation);
-					}
-					else
-					{
-						currentVersion = float.Parse(headKvp.Value.Branch);
-					}
-					if (currentVersion > desiredModelVersion)
-					{
-						gonerKeys.Add((headKvp.Key == Default) ? Default : headKvp.Key);
-					}
-				}
-				foreach (var goner in gonerKeys)
-				{
-					allHeads.Remove(goner);
-				}
-
-				// Replace 'default' with its real model number.
-				if (allHeads.ContainsKey(Default))
-				{
-					repo.Update(allHeads[Default].Number.LocalRevisionNumber);
-					var modelVersion = GetLiftVersionNumber(cloneLocation);
-					var fullModelVersion = "LIFT" + modelVersion;
-					if (allHeads.ContainsKey(fullModelVersion))
-					{
-						// Pick the highest revision of the two.
-						var defaultHead = allHeads[Default];
-						var otherHead = allHeads[fullModelVersion];
-						var defaultRevisionNumber = int.Parse(defaultHead.Number.LocalRevisionNumber);
-						var otherRevisionNumber = int.Parse(otherHead.Number.LocalRevisionNumber);
-						allHeads[fullModelVersion] = defaultRevisionNumber > otherRevisionNumber ? defaultHead : otherHead;
-					}
-					else
-					{
-						allHeads.Add(fullModelVersion, allHeads[Default]);
-					}
-					allHeads.Remove(Default);
-				}
-
-				// 'default' is no longer present in 'allHeads'.
-				// If all of them are higher, then it is a no go.
-				if (allHeads.Count == 0)
-				{
-					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
-					cloneResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 					cloneResult.Message = CommonResources.kFlexUpdateRequired;
-					Directory.Delete(cloneLocation, true);
-					return;
 				}
-
-				// Now. get to the real work.
-				var sortedRevisions = new SortedList<float, Revision>();
-				foreach (var kvp in allHeads)
-				{
-					sortedRevisions.Add(float.Parse(kvp.Key.Replace("LIFT", null)), kvp.Value);
-				}
-				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
-			}
-			repo.Update(desiredRevision.Number.LocalRevisionNumber);
-			cloneResult.ActualCloneFolder = cloneLocation;
-			cloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 		}
 
 		private string RemoveAppendedLiftIfNeeded(string cloneLocation)
@@ -151,7 +85,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, Utilities.hg, "hgrc"), Path.Combine(targetFolder, Utilities.hg, "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, TriboroughBridge_ChorusPlugin.Utilities.hg, "hgrc"),
+				Path.Combine(targetFolder, TriboroughBridge_ChorusPlugin.Utilities.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
 			var roadblock = Path.Combine(sourceFolder, LiftUtilties.FailureFilename);
@@ -165,7 +100,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		public bool ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = Utilities.HgDataFolder(repositoryLocation);
+			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
 		}
 
@@ -184,20 +119,14 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			// Check for Lift version compatibility.
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
-			var otherReposDir = Path.Combine(cloneLocation, Utilities.OtherRepositories);
+			var otherReposDir = Path.Combine(cloneLocation, SharedConstants.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 			{
 				Directory.CreateDirectory(otherReposDir);
 			}
-			_liftFolder = Utilities.LiftOffset(cloneLocation);
+			_liftFolder = TriboroughBridge_ChorusPlugin.Utilities.LiftOffset(cloneLocation);
 
-			var actualCloneResult = new ActualCloneResult
-			{
-				// Be a bit pessimistic at first.
-				CloneResult = null,
-				ActualCloneFolder = null,
-				FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder
-			};
+			var actualCloneResult = new ActualCloneResult();
 
 			// Move the repo from its temp home in cloneLocation into new home.
 			// The original location, may not be on the same device, so it may be a copy+delete, rather than a formal move.
@@ -207,7 +136,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 
 			// Update to the head of the desired branch, if possible.
-			UpdateToTheCorrectBranchHeadIfPossible(_liftFolder, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
+			UpdateToTheCorrectBranchHeadIfPossible(_liftFolder,
+				"LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
 
 			switch (actualCloneResult.FinalCloneResult)
 			{
@@ -224,7 +154,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 
 			// Delete all old repo folders and files from 'cloneLocation'.
-			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(Utilities.OtherRepositories)))
+			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(SharedConstants.OtherRepositories)))
 			{
 				Directory.Delete(dir, true);
 			}

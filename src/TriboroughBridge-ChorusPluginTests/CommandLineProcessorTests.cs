@@ -341,7 +341,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			_options.Remove(CommandLineProcessor.g);
 
 			string fooDir;
-			var fooFwdataPathname = CreateFooFwDataFolderAndFile(out fooDir);
+			CreateFooFwDataFolderAndFile(out fooDir);
 			_options[CommandLineProcessor.p] = fooDir;
 
 			// Has no lift folder

@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>8.0.30703</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{C036E79E-49D8-4AB3-BB9A-792C514A817F}</ProjectGuid>
@@ -31,6 +31,8 @@
 	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
 	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
 	<OutputPath>..\..\output\Release\</OutputPath>
@@ -48,6 +50,7 @@
 	<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
 	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
 	<UseVSHostingProcess>true</UseVSHostingProcess>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
 	<ApplicationIcon>chorus.ico</ApplicationIcon>
@@ -58,6 +61,7 @@
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
 	<DebugSymbols>true</DebugSymbols>
@@ -66,6 +70,8 @@
 	<DebugType>full</DebugType>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="LibChorus">
@@ -99,7 +105,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
 	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
 	</Reference>
 	<Reference Include="SIL.Core">
@@ -115,7 +120,6 @@
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />
 	<Reference Include="Vulcan.Uczniowie.HelpProvider">
-	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
 	</Reference>
   </ItemGroup>
@@ -164,6 +168,14 @@
 	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
 	  <Name>TriboroughBridge-ChorusPlugin</Name>
 	</ProjectReference>
+    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
+      <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
+      <Name>LibFLExBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
+      <Name>LibTriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<Content Include="chorus.ico" />

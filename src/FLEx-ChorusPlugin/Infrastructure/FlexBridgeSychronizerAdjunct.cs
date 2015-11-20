@@ -12,7 +12,8 @@ using System.Text.RegularExpressions;
 using Chorus.FileTypeHandlers.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using SIL.Progress;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -44,7 +45,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			WasUpdated = true;
 			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
-			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
+			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
 		}
 
@@ -59,7 +60,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return; // Only nest it one time.
 
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
-			FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
+			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished splitting up project file: {0}", ProjectFilename);
 			_needToNestMainFile = false;
 		}
@@ -89,7 +90,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (RunFixFwData(progress))
 			{
 				progress.WriteMessage("Ran fix-up utility after merge.");
-				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
+				FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			}
 		}
 
