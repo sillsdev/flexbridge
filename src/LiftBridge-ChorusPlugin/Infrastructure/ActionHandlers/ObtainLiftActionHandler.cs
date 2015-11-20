@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Chorus;
 using Chorus.UI.Clone;
 using Palaso.IO;
 using SIL.LiftBridge.Services;

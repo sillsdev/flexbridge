@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Chorus;
 using Chorus.UI.Clone;
 using TriboroughBridge_ChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;
