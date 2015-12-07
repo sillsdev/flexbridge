@@ -333,7 +333,7 @@
 	  <DependentUpon>Resources.resx</DependentUpon>
 	  <DesignTime>True</DesignTime>
 	</Compile>
-	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
+	<Compile Include="Infrastructure\FlexBridgeSynchronizerAdjunct.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="chorus.ico" />
