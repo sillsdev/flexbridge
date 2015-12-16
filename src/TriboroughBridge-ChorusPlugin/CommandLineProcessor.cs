@@ -19,15 +19,15 @@ namespace TriboroughBridge_ChorusPlugin
 	public static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming
-		internal const string u = "-u";
-		internal const string p = "-p";
-		internal const string v = "-v";
-		internal const string f = "-f";
-		internal const string g = "-g";
-		internal const string projDir = "-projDir";
-		internal const string fwAppsDir = "-fwAppsDir";
-		internal const string fwmodel = "-fwmodel";
-		internal const string liftmodel = "-liftmodel";
+		internal const string u = "-u"; // userNameActual
+		internal const string p = "-p"; // project directory
+		internal const string v = "-v"; // command
+		internal const string f = "-f"; // FixItAppPathname
+		internal const string g = "-g"; // projectGuid
+		internal const string projDir = "-projDir"; // projects directory
+		internal const string fwAppsDir = "-fwAppsDir"; // The directory containing the FW executable
+		internal const string fwmodel = "-fwmodel"; // Tell Flex Bridge which model version of data are expected by FLEx.
+		internal const string liftmodel = "-liftmodel"; // LIFT model version number
 		internal const string pipeID = "-pipeID";
 		internal const string locale = "-locale";
 
@@ -42,19 +42,6 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string move_lift = "move_lift";					// -p <$fwroot>\foo\foo.fwdata
 		internal const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
 		internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
-		/*
-			AddArg(ref args, "-u", userNameActual);
-			AddArg(ref args, "-p", projectFolder); (See above)
-			AddArg(ref args, "-v", command);
-			AddArg(ref args, "-f", FixItAppPathname);
-			AddArg(ref args, "-g", projectGuid);
-			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
-			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
-			// Tell Flex Bridge which model version of data are expected by FLEx.
-			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
-			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
-			AddArg(ref args, "-pipeID", _pipeID);
-			*/
 // ReSharper restore InconsistentNaming
 
 		public static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
