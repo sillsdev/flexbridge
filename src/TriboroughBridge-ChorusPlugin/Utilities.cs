@@ -122,6 +122,8 @@ namespace TriboroughBridge_ChorusPlugin
 			return system;
 		}
 
+		public static string FwAppsDir { get; set; }
+
 		public static string HgDataFolder(string path)
 		{
 			return Path.Combine(path, hg, "store", "data");
