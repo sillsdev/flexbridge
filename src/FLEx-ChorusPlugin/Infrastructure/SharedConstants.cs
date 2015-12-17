@@ -72,6 +72,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";
+		internal const string fwdictconfig = "fwdictconfig";
 
 		// Old style
 		internal const string RtTag = "rt";

@@ -653,17 +653,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 		}
 
 		/// <summary>
-		/// The name of the Translation Editor folder (Even though this is the same as
-		/// DirectoryFinder.ksTeFolderName and FwSubKey.TE, PLEASE do not use them interchangeably.
-		/// Use the one that is correct for your context, in case they need to be changed later.)
+		/// The name of the Translation Editor application
 		/// </summary>
 		public const string ksTeAppName = "Translation Editor";
 		/// <summary>The command-line abbreviation for Translation Editor</summary>
 		public const string ksTeAbbrev = "TE";
 		/// <summary>
-		/// The name of the Language Explorer folder (Even though this is the same as
-		/// DirectoryFinder.ksFlexFolderName and FwSubKey.LexText, PLEASE do not use them interchangeably.
-		/// Use the one that is correct for your context, in case they need to be changed later.)
+		/// The name of the Language Explorer application
 		/// </summary>
 		public const string ksFlexAppName = "Language Explorer";
 		/// <summary>The command-line abbreviation for the Language Explorer</summary>
