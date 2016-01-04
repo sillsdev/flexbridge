@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2015 SIL International. All rights reserved.
+// Copyright (C) 2015-2016 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -11,63 +11,79 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
+using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using TriboroughBridge_ChorusPlugin;
+using Palaso.IO;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {
 	internal sealed class DictionaryConfigurationHandlerStrategy : IFieldWorksFileHandler
 	{
 		private string _xsdPath;
-		private string DictionaryConfigXsdPath
+
+		private string GetXsdPath(string configFilePath)
 		{
-			get
-			{
-				if (_xsdPath == null)
-				{
-					_xsdPath = Path.Combine(Utilities.FwAppsDir, "Language Explorer", "Configuration", "DictionaryConfiguration.xsd");
-					if (!File.Exists(_xsdPath))
-						_xsdPath = Path.Combine(Utilities.FwAppsDir, "..", "..", "DistFiles",
-							"Language Explorer", "Configuration", "DictionaryConfiguration.xsd");
-				}
+			if (_xsdPath != null)
 				return _xsdPath;
+
+			var innerPath = Path.Combine("Temp", "DictionaryConfiguration.xsd");
+			var parentDir = Path.GetDirectoryName(configFilePath);
+			while (parentDir != null)
+			{
+				if (File.Exists(_xsdPath = Path.Combine(parentDir, innerPath)))
+					return _xsdPath;
+				parentDir = Path.GetDirectoryName(parentDir);
 			}
+			return _xsdPath = null;
 		}
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return File.Exists(DictionaryConfigXsdPath);
+			return FileUtils.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPath(pathToFile));
 		}
 
 		public string ValidateFile(string pathToFile)
 		{
 			var schemas = new XmlSchemaSet();
-			using(var reader = XmlReader.Create(DictionaryConfigXsdPath))
+			using(var reader = XmlReader.Create(GetXsdPath(pathToFile)))
 			{
-				schemas.Add("", reader);
-				var document = XDocument.Load(pathToFile);
-				string result = null;
-				document.Validate(schemas, (sender, args) =>
-					result = string.Format("Model saved as xml did not validate against schema: {0}", args.Message));
-				return result;
+				try
+				{
+					schemas.Add("", reader);
+					string result = null;
+					XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
+					return result;
+				}
+				catch (XmlException e)
+				{
+					return e.Message;
+				}
 			}
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
-			throw new System.NotImplementedException();
+			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
-			throw new System.NotImplementedException();
+			return Xml2WayDiffService.ReportDifferences(repository, parent, child, null, SharedConstants.ConfigurationItem, SharedConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
-			throw new System.NotImplementedException();
+			XmlMergeService.AddConflictToListener(mergeOrder.EventListener, new UnmergableFileTypeConflict(mergeOrder.MergeSituation));
+			if (mergeOrder.MergeSituation.ConflictHandlingMode == MergeOrder.ConflictHandlingModeChoices.TheyWin)
+			{
+				File.Copy(mergeOrder.pathToTheirs, mergeOrder.pathToOurs, true);
+			}
+			// else (WeWin et al.), simply leave our file in place
 		}
 
-		public string Extension { get { return SharedConstants.fwdictconfig; } }
+		public string Extension
+		{
+			get { return SharedConstants.fwdictconfig; }
+		}
 	}
 }

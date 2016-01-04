@@ -1,17 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2016 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
 using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Integration
 {
@@ -23,6 +25,35 @@ namespace FLEx_ChorusPluginTests.Integration
 	[TestFixture]
 	public class MergeIntegrationTests
 	{
+		private	const string CustomPropData = @"<?xml version='1.0' encoding='utf-8'?>
+<AdditionalFields>
+	<CustomField
+		class='LexEntry'
+		destclass='7'
+		key='LexEntryTone'
+		listRoot='53241fd4-72ae-4082-af55-6b659657083c'
+		name='Tone'
+		type='ReferenceCollection' />
+	<CustomField
+		class='LexSense'
+		key='LexSenseParadigm'
+		name='Paradigm'
+		type='MultiString'
+		wsSelector='-2' />
+	<CustomField
+		class='WfiWordform'
+		key='WfiWordformCertified'
+		name='Certified'
+		type='Boolean' />
+</AdditionalFields>";
+
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+			var baseDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			Utilities.FwAppsDir = Path.Combine(baseDir, "TestData"); // allows the Strategy to find the configuration schema
+		}
+
 		[Test]
 		[Category("UnknownMonoIssue")] // It insists on failing on mono, for some reason.
 		public void EnsureRightPersonMadeChanges()
@@ -112,30 +143,7 @@ namespace FLEx_ChorusPluginTests.Integration
 	</LexEntry>
 </Lexicon>";
 
-			const string customPropData =
-@"<?xml version='1.0' encoding='utf-8'?>
-<AdditionalFields>
-	<CustomField
-		class='LexEntry'
-		destclass='7'
-		key='LexEntryTone'
-		listRoot='53241fd4-72ae-4082-af55-6b659657083c'
-		name='Tone'
-		type='ReferenceCollection' />
-	<CustomField
-		class='LexSense'
-		key='LexSenseParadigm'
-		name='Paradigm'
-		type='MultiString'
-		wsSelector='-2' />
-	<CustomField
-		class='WfiWordform'
-		key='WfiWordformCertified'
-		name='Certified'
-		type='Boolean' />
-</AdditionalFields>";
-
-			var mdc = MetadataCache.TestOnlyNewCache;
+			//var mdc = MetadataCache.TestOnlyNewCache;
 			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
@@ -145,7 +153,7 @@ namespace FLEx_ChorusPluginTests.Integration
 				sueRepo.Repository.TestOnlyAddSansCommit(modelVersionPathname);
 				// Add custom property data file.
 				var customPropsPathname = Path.Combine(sueProjPath, SharedConstants.CustomPropertiesFilename);
-				File.WriteAllText(customPropsPathname, customPropData);
+				File.WriteAllText(customPropsPathname, CustomPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
 				sueRepo.AddAndCheckIn();
 
@@ -182,6 +190,97 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsNotNull(aStrEzpi);
 					Assert.IsTrue(aStrEzpi.Element("Run").Value == "saglo, yzaglo, rzaglo, wzaglo, nzaglo, -");
 				}
+			}
+		}
+
+		[Test]
+		public void EnsureDictionaryConfigsUseDictionaryStrategy()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='true'/>
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='true' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='false' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			const string sue = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='false'/>
+		<Option id='fr' isEnabled='true' />
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='true' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='false' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			const string randy = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='true'/>
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='false' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='true' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", SharedConstants.fwdictconfig), commonAncestor))
+			using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))
+			{
+				// By doing the clone first, we get the common starting state in both repos.
+				sueRepo.WriteNewContentsToTestFile(sue);
+				sueRepo.AddAndCheckIn();
+
+				var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
+				Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+				randyRepo.WriteNewContentsToTestFile(randy);
+				randyRepo.CheckinAndPullAndMerge(sueRepo);
+				Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+				var notesContents = File.ReadAllText(mergeConflictsNotesFile);
+				Assert.IsNotNullOrEmpty(notesContents);
+				Assert.IsTrue(notesContents.Contains(
+@"Chorus did not have the ability to merge both user's version of the file 'root.fwdictconfig'.
+The merger gave both users the copy from 'Randy'.
+The version from 'Sue' is not lost; it is available in the repository at revision "));
+				Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
+				Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));
+
+				// Make sure merged file has Randy's changes
+				var doc = XDocument.Load(randyRepo.UserFile.Path);
+				var options = doc.Root.Element("ConfigurationItem").Elements("ConfigurationItem").Last(/*Variant Forms*/)
+					.Element("ListTypeOptions").Elements("Option").ToList();
+				Assert.AreEqual(2, options.Count, "There should be two Variant Forms options");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", options[0].Attribute("id").Value, "Options are out of order");
+				Assert.AreEqual("0c4663b3-4d9a-47af-b9a1-c8565d8112ed", options[1].Attribute("id").Value, "Options are out of order");
+				Assert.AreEqual("false", options[0].Attribute("isEnabled").Value, "First option should be disabled");
+				Assert.AreEqual("true", options[1].Attribute("isEnabled").Value, "Second option should be enabled");
 			}
 		}
 	}
