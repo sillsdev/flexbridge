@@ -78,7 +78,8 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling
 				SharedConstants.Agents,				// 'agents'
 
 				// FW layouts
-				SharedConstants.fwlayout			// 'fwlayout'
+				SharedConstants.fwlayout,			// 'fwlayout'
+				SharedConstants.fwdictconfig		// 'fwdictconfig'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());

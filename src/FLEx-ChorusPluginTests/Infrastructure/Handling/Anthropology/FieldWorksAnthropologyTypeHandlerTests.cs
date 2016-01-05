@@ -17,6 +17,7 @@ using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 {
@@ -211,12 +212,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Anthropology
 		[Test, Category("UnknownMonoIssue")]
 		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-#if MONO
-			baseDir = baseDir.Replace(@"file:", null);	// Path.GetDirectoryName squeezes file:/// to file:/
-#else
-			baseDir = baseDir.Replace(@"file:\", null);
-#endif
+			var baseDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			var testDataDir = Path.Combine(baseDir, "TestData");
 			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));
