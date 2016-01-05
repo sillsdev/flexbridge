@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2016 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			Utilities.FwAppsDir = commandLineArgs["-fwAppsDir"];
+			EnsureAccessToDictionaryConfigXsd(commandLineArgs);
 			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
@@ -117,6 +117,19 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						File.Delete(lockPathname);
 				}
 			}
+		}
+
+		private static void EnsureAccessToDictionaryConfigXsd(IDictionary<string, string> commandLineArgs)
+		{
+			var fwAppsDir = commandLineArgs["-fwAppsDir"];
+			var innerXsdPath = Path.Combine("Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
+			var xsdPath = Path.Combine(fwAppsDir, innerXsdPath);
+			if (!File.Exists(xsdPath))
+				xsdPath = Path.Combine(fwAppsDir, "..", "..", "DistFiles", innerXsdPath);
+			if (!File.Exists(xsdPath))
+				return;
+			var xsdPathInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp", SharedConstants.DictConfigSchemaFilename);
+			File.Copy(xsdPath, xsdPathInProject, true);
 		}
 
 		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
