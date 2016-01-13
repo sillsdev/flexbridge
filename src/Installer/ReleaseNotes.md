@@ -1,4 +1,6 @@
-## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+## 2.3.10 13/Jan/2016
+* Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
+## 2.3.9 16/Oct/2015
 * Chorus: Update documentation of Chorus Hub
 * FLExBridge: Update documentation of recent fixes
 ## 2.3.8 24/Sep/2015
