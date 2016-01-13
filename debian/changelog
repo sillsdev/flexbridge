@@ -1,3 +1,9 @@
+flexbridge (2.3.10) unstable; urgency=low
+
+  * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 13 Jan 2016 15:09:48 -0600
+
 flexbridge (2.3.9) unstable; urgency=low
 
   * Chorus: Update documentation of Chorus Hub
