@@ -1,4 +1,6 @@
 ## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
+* FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+## 2.3.9 13/Oct/2015
 * Chorus: Update documentation of Chorus Hub
 * FLExBridge: Update documentation of recent fixes
 ## 2.3.8 24/Sep/2015
