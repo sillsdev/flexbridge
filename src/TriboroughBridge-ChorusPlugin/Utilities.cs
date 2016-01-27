@@ -188,6 +188,12 @@ namespace TriboroughBridge_ChorusPlugin
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var	installedTmxBaseDirectory = Path.Combine(
 					Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+
+			// Test for a pathological case of bad install (LT-16958)
+			if (!Directory.Exists(installedTmxBaseDirectory))
+				throw new DirectoryNotFoundException(string.Format(
+					"The localization folder {0} does not exist. This indicates a failed install for FLEx Bridge. Please uninstall and reinstall FLEx Bridge.",
+					installedTmxBaseDirectory));
 			var userTmxBaseDirectory = Path.Combine("SIL", FlexBridge);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
