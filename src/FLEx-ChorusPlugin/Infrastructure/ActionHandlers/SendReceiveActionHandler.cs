@@ -130,6 +130,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 			var xsdPathInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp", SharedConstants.DictConfigSchemaFilename);
 			File.Copy(xsdPath, xsdPathInProject, true);
+			// LT-16969 Make sure the file is not read-only, so we can copy over it next time (or when there's an update)
+			File.SetAttributes(xsdPathInProject, FileAttributes.Normal);
 		}
 
 		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
