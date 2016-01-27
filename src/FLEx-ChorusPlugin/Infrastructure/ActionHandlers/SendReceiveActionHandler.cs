@@ -128,8 +128,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				xsdPath = Path.Combine(fwAppsDir, "..", "..", "DistFiles", innerXsdPath);
 			if (!File.Exists(xsdPath))
 				return;
-			var xsdPathInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp", SharedConstants.DictConfigSchemaFilename);
+			var xsdDirInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp");
+			if (!Directory.Exists(xsdDirInProject))
+				Directory.CreateDirectory(xsdDirInProject);
+			var xsdPathInProject = Path.Combine(xsdDirInProject, SharedConstants.DictConfigSchemaFilename);
 			File.Copy(xsdPath, xsdPathInProject, true);
+			// LT-16969 Make sure the file is not read-only, so we can copy over it next time (or when there's an update)
+			File.SetAttributes(xsdPathInProject, FileAttributes.Normal);
 		}
 
 		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
