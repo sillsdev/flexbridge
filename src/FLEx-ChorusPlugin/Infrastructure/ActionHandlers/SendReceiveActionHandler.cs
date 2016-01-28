@@ -36,7 +36,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			EnsureAccessToDictionaryConfigXsd(commandLineArgs);
+			var tempXsdPath = EnsureAccessToDictionaryConfigXsd(commandLineArgs);
 			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
@@ -113,13 +113,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 				finally
 				{
+					SafelyDeleteDictConfigXsd(tempXsdPath);
 					if (File.Exists(lockPathname))
 						File.Delete(lockPathname);
 				}
 			}
 		}
 
-		private static void EnsureAccessToDictionaryConfigXsd(IDictionary<string, string> commandLineArgs)
+		private static string EnsureAccessToDictionaryConfigXsd(IDictionary<string, string> commandLineArgs)
 		{
 			var fwAppsDir = commandLineArgs["-fwAppsDir"];
 			var innerXsdPath = Path.Combine("Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
@@ -127,14 +128,22 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			if (!File.Exists(xsdPath))
 				xsdPath = Path.Combine(fwAppsDir, "..", "..", "DistFiles", innerXsdPath);
 			if (!File.Exists(xsdPath))
-				return;
+				return string.Empty;
 			var xsdDirInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp");
 			if (!Directory.Exists(xsdDirInProject))
 				Directory.CreateDirectory(xsdDirInProject);
 			var xsdPathInProject = Path.Combine(xsdDirInProject, SharedConstants.DictConfigSchemaFilename);
+			SafelyDeleteDictConfigXsd(xsdPathInProject);
 			File.Copy(xsdPath, xsdPathInProject, true);
-			// LT-16969 Make sure the file is not read-only, so we can copy over it next time (or when there's an update)
-			File.SetAttributes(xsdPathInProject, FileAttributes.Normal);
+			return xsdPathInProject;
+		}
+
+		private static void SafelyDeleteDictConfigXsd(string xsdPath)
+		{
+			if (!File.Exists(xsdPath))
+				return;
+			File.SetAttributes(xsdPath, FileAttributes.Normal);
+			File.Delete(xsdPath);
 		}
 
 		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
