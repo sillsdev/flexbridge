@@ -49,7 +49,7 @@
 	<Target Name="_DownloadNuGet" Condition=" '$(DownloadNuGetExe)' == 'true' AND !Exists('$(NuGetExePath)')">
 		<DownloadNuGet OutputFilename="$(NuGetExePath)"
 			Condition="'$(OS)' == 'Windows_NT'" />
-		<Exec Command="wget https://nuget.org/NuGet.exe || curl -O -L wget https://nuget.org/NuGet.exe"
+		<Exec Command="wget https://nuget.org/NuGet.exe || curl -O -L https://nuget.org/NuGet.exe"
 			WorkingDirectory="$(NuGetToolsPath)"
 			Condition="'$(OS)' != 'Windows_NT'" />
 	</Target>
