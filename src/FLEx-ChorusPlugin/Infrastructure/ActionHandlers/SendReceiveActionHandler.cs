@@ -134,7 +134,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				Directory.CreateDirectory(xsdDirInProject);
 			var xsdPathInProject = Path.Combine(xsdDirInProject, SharedConstants.DictConfigSchemaFilename);
 			SafelyDeleteDictConfigXsd(xsdPathInProject);
-			File.Copy(xsdPath, xsdPathInProject, true);
+			File.Copy(xsdPath, xsdPathInProject);
 			return xsdPathInProject;
 		}
 
