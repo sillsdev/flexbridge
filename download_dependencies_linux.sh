@@ -53,10 +53,14 @@ fi
 
 copy_wget() {
 echo "wget: $2 <= $1"
-f=$(basename $2)
-d=$(dirname $2)
-cd $d
+f1=$(basename $1)
+f2=$(basename $2)
+cd $(dirname $2)
 wget -q -L -N $1
+# wget has no true equivalent of curl's -o option.
+# Different versions of wget handle (or not) % escaping differently.
+# A URL query is the only reason why $f1 and $f2 should differ.
+if [ "$f1" != "$f2" ]; then mv $f2\?* $f2; fi
 cd -
 }
 
@@ -130,34 +134,34 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [9] build: icucil-precise64-Continuous (bt281)
+# [9] build: palaso-precise64-libpalaso-2.6 Continuous (PalasoPrecise64v26Cont)
+#     project: libpalaso
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoPrecise64v26Cont
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll.config"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono"}
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
+# [10] build: palaso-precise64-libpalaso-2.6 Continuous (PalasoPrecise64v26Cont)
+#     project: libpalaso
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoPrecise64v26Cont
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll.config"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono"}
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
+# [11] build: icucil-precise64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/ReleaseMono", "icu*.config"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [10] build: icucil-precise64-Continuous (bt281)
+# [12] build: icucil-precise64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [11] build: palaso-precise64-libpalaso-2.6 Continuous (PalasoPrecise64v26Cont)
-#     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoPrecise64v26Cont
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
-# [12] build: palaso-precise64-libpalaso-2.6 Continuous (PalasoPrecise64v26Cont)
-#     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoPrecise64v26Cont
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
 
 # make sure output directories exist
 mkdir -p ./MercurialExtensions
@@ -206,18 +210,20 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/DebugMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt271/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt271/latest.lastSuccessful/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/ReleaseMono/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/ReleaseMono/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/DebugMono/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/DebugMono/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/Palaso.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/Palaso.TestUtilities.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.TestUtilities.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.dll.config?branch=%3Cdefault%3E ./lib/ReleaseMono/PalasoUIWindowsForms.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/Palaso.Lift.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/Palaso.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/Palaso.TestUtilities.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.TestUtilities.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll?branch=%3Cdefault%3E ./lib/DebugMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll.config?branch=%3Cdefault%3E ./lib/DebugMono/PalasoUIWindowsForms.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll?branch=%3Cdefault%3E ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/latest.lastSuccessful/debug/Palaso.Lift.dll?branch=%3Cdefault%3E ./lib/DebugMono/Palaso.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/ReleaseMono/icu.net.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/ReleaseMono/icu.net.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/DebugMono/icu.net.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/DebugMono/icu.net.dll.config
 # End of script
