@@ -4,6 +4,7 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Windows.Forms;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Infrastructure.DomainServices;
 using FLEx_ChorusPlugin.Properties;
+using Palaso.Reporting;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 
@@ -113,11 +115,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 				finally
 				{
-					SafelyDeleteDictConfigXsd(tempXsdPath);
 					if (File.Exists(lockPathname))
 						File.Delete(lockPathname);
 				}
 			}
+			SafelyDeleteDictConfigXsd(tempXsdPath);
 		}
 
 		private static string EnsureAccessToDictionaryConfigXsd(IDictionary<string, string> commandLineArgs)
@@ -128,7 +130,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			if (!File.Exists(xsdPath))
 				xsdPath = Path.Combine(fwAppsDir, "..", "..", "DistFiles", innerXsdPath);
 			if (!File.Exists(xsdPath))
-				return string.Empty;
+				throw new FileNotFoundException(string.Format("Expected to find {0} at {1}" + Environment.NewLine + "fwAppsDir is {2}", SharedConstants.DictConfigSchemaFilename, xsdPath, fwAppsDir));
 			var xsdDirInProject = Path.Combine(Path.GetDirectoryName(commandLineArgs["-p"]), "Temp");
 			if (!Directory.Exists(xsdDirInProject))
 				Directory.CreateDirectory(xsdDirInProject);
@@ -143,6 +145,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			if (!File.Exists(xsdPath))
 				return;
 			File.SetAttributes(xsdPath, FileAttributes.Normal);
+			Logger.WriteEvent(string.Format("Deleting {0} from {1}", SharedConstants.DictConfigSchemaFilename, xsdPath));
 			File.Delete(xsdPath);
 		}
 
