@@ -35,7 +35,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 					return _xsdPath;
 				parentDir = Path.GetDirectoryName(parentDir);
 			}
-			throw new FileNotFoundException(string.Format("Could not find the Dictionary Configuration Schema file looking in {0}", configFilePath), SharedConstants.DictConfigSchemaFilename);
+			throw new FileNotFoundException(string.Format("Could not find the Dictionary Configuration Schema to validate the file {0}", configFilePath), SharedConstants.DictConfigSchemaFilename);
 		}
 
 		public bool CanValidateFile(string pathToFile)
