@@ -20,33 +20,33 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {
 	internal sealed class DictionaryConfigurationHandlerStrategy : IFieldWorksFileHandler
 	{
-		private string _xsdPath;
+		private string _xsdPathname;
 
-		private string GetXsdPath(string configFilePath)
+		private string GetXsdPathname(string configFilePathname)
 		{
-			if (_xsdPath != null)
-				return _xsdPath;
+			if (_xsdPathname != null)
+				return _xsdPathname;
 
 			var innerPath = Path.Combine("Temp", SharedConstants.DictConfigSchemaFilename);
-			var parentDir = Path.GetDirectoryName(configFilePath);
+			var parentDir = Path.GetDirectoryName(configFilePathname);
 			while (parentDir != null)
 			{
-				if (File.Exists(_xsdPath = Path.Combine(parentDir, innerPath)))
-					return _xsdPath;
+				if (File.Exists(_xsdPathname = Path.Combine(parentDir, innerPath)))
+					return _xsdPathname;
 				parentDir = Path.GetDirectoryName(parentDir);
 			}
-			throw new FileNotFoundException(string.Format("Could not find the Dictionary Configuration Schema file looking in {0}", configFilePath), SharedConstants.DictConfigSchemaFilename);
+			return _xsdPathname = string.Empty;
 		}
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPath(pathToFile));
+			return FileUtils.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPathname(pathToFile));
 		}
 
 		public string ValidateFile(string pathToFile)
 		{
 			var schemas = new XmlSchemaSet();
-			using(var reader = XmlReader.Create(GetXsdPath(pathToFile)))
+			using(var reader = XmlReader.Create(GetXsdPathname(pathToFile)))
 			{
 				try
 				{
