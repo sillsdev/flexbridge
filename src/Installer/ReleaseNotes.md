@@ -1,3 +1,5 @@
+## 2.3.11 03/Feb/2016
+* FLEx Bridge: Update the windows installer dependencies to fix upgrade bug
 ## 2.3.10 13/Jan/2016
 * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
 ## 2.3.9 16/Oct/2015
