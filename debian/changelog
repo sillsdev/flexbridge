@@ -1,3 +1,9 @@
+flexbridge (2.3.11) unstable; urgency=low
+
+  * FLEx Bridge: Update the windows installer dependencies to fix upgrade bug
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 03 Feb 2016 11:09:19 -0600
+
 flexbridge (2.3.10) unstable; urgency=low
 
   * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
