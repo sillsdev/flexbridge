@@ -4,7 +4,8 @@
   <Import Project="$(RootDir)\build\NuGet.targets"/>
 
   <Target Name="VersionNumbers">
-    <ReadLinesFromFile File="$(RootDir)/version">
+	<Message Text="Version Property: $(Version)" Importance="high"/>
+    <ReadLinesFromFile Condition="'$(Version)' == ''" File="$(RootDir)/version">
         <Output TaskParameter="Lines" PropertyName="Version" />
     </ReadLinesFromFile>
 	<Message Text="Version: $(Version)" Importance="high"/>
