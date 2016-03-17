@@ -34,7 +34,7 @@ then
 	MONO_PATH="${BASE}:${MONO_PATH}"
 else
 	# Add the build output to paths
-	PATH="${BASE}/output/${BUILD}:${BASE}/Mercurial:${PATH}"
+	PATH="${BASE}/output/${BUILD}:${PATH}"
 	LD_LIBRARY_PATH="${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
 	MONO_PATH="${BASE}/output/${BUILD}:${MONO_PATH}"
 fi
