@@ -1,3 +1,4 @@
+#!/bin/sh
 # Environment settings for running programs with the SIL version of mono
 # Set MONO_ENVIRON to this file's pathname, then run, for example,
 #
