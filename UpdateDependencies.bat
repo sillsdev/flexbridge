@@ -31,9 +31,6 @@ REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.dll lib\common\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
 REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
 
-copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\Autofac.dll lib\%BUILD_CONFIG%\
-copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\Autofac.dll lib\common
-
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\LibChorus.TestUtilities.dll lib\%BUILD_CONFIG%\
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\LibChorus.dll lib\%BUILD_CONFIG%\
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\LibChorus.pdb output\%BUILD_CONFIG%\

@@ -15,8 +15,6 @@ IF "%1"=="" (
 mkdir \fwrepo\fw\Downloads
 mkdir \fwrepo\fw\Output\${BUILD_CONFIG}
 
-copy /Y ..\chorus\output\${BUILD_CONFIG}\Autofac.dll \fwrepo\fw\Downloads\
-
 copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.dll \fwrepo\fw\Downloads\
 copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.dll \fwrepo\fw\Output\${BUILD_CONFIG}\
 copy /Y ..\chorus\output\${BUILD_CONFIG}\LibChorus.pdb \fwrepo\fw\Output\${BUILD_CONFIG}\
