@@ -29,8 +29,6 @@ then
 	mkdir ~/fwrepo/fw/Output_x86_64/${BUILD_CONFIG}
 fi
 
-cp ../chorus/output/${BUILD_CONFIG}Mono/Autofac.dll* ~/fwrepo/fw/Downloads/
-
 cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.dll* ~/fwrepo/fw/Downloads/
 cp ../chorus/output/${BUILD_CONFIG}Mono/LibChorus.dll* ~/fwrepo/fw/Output_x86_64/${BUILD_CONFIG}/
 

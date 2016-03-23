@@ -186,10 +186,6 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
@@ -209,8 +205,12 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
     </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
 	<Compile Include="..\CommonAssemblyInfo.cs">
 	  <Link>Properties\CommonAssemblyInfo.cs</Link>
 	</Compile>
