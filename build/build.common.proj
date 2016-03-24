@@ -1,4 +1,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
+  </PropertyGroup>
+
   <UsingTask TaskName="GenerateReleaseArtifacts" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
   
   <Import Project="$(RootDir)\build\NuGet.targets"/>
