@@ -6,7 +6,7 @@
 # Alternatively, use ./run-in-environ rather than manually sourcing environ.
 
 BASE="$(pwd)"
-[ -z "$BUILD" ] && BUILD=Debug
+[ -z "$BUILD" ] && BUILD=DebugMono
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
 
 # Dependency locations
