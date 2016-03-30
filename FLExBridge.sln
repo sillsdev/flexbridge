@@ -6,12 +6,10 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
 	ProjectSection(SolutionItems) = preProject
 		DistFiles\about.htm = DistFiles\about.htm
-		build\build.common.proj = build\build.common.proj
-		build\FLExBridge.build.mono.proj = build\FLExBridge.build.mono.proj
-		build\FLExBridge.build.win.proj = build\FLExBridge.build.win.proj
 		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
 		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
+		build\FLExBridge.proj = build\FLExBridge.proj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLExBridge", "src\FLExBridge\FLExBridge.csproj", "{A40E1224-6159-4FE6-B78E-4094BD05DAF6}"

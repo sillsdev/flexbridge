@@ -1,0 +1,248 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
+		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
+		<Solution>FLExBridge.sln</Solution>
+		<ApplicationName>FLEx Bridge</ApplicationName>
+		<Configuration Condition="'$(OS)'!='Windows_NT'">ReleaseMono</Configuration>
+		<Configuration Condition="'$(OS)'=='Windows_NT'">Release</Configuration>
+		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
+		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
+		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
+		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
+		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
+		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
+	</PropertyGroup>
+
+	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+	<UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"
+		Condition="'$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="GenerateReleaseArtifacts" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+
+	<PropertyGroup>
+		<MSBuildTasksTargets>..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
+	</PropertyGroup>
+
+	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
+	<Import Project="NuGet.targets"/>
+
+	<!-- ***************** Main build ***************** -->
+
+	<Target Name="Build" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
+		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
+		 but it remembers not to call targets a second time via dependencies. -->
+		<Message Text="Build Complete"/>
+	</Target>
+
+	<ItemGroup>
+		<OutputFiles
+			Include="$(RootDir)/output/**/*"
+			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
+		/>
+		<ObjFiles
+			Include="$(RootDir)/**/obj/*"
+			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
+		/>
+		<OutputDirectory Include="$(RootDir)/output/"/>
+	</ItemGroup>
+
+	<Target Name="Clean">
+		<Message Text="Starting Clean"/>
+		<Exec Command="find . -name obj -type d -print0 | xargs -0 rm -rf" WorkingDirectory="$(RootDir)"
+			Condition="'$(OS)'!='Windows_NT'"/>
+		<Delete Files="@(ObjFiles)" Condition="'$(OS)'=='Windows_NT'" />
+		<Delete Files="@(OutputFiles)" />
+		<RemoveDir Directories="$(OutputDirectory)"/>
+		<Message Text="End Clean"/>
+	</Target>
+
+	<Target Name="CreateDirectories">
+		<MakeDir Directories="$(RootDir)/output/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
+		<MakeDir Directories="$(RootDir)/output/Common" Condition="'$(OS)'=='Windows_NT'"/>
+		<MakeDir Directories="$(RootDir)/output/Installer/" />
+	</Target>
+
+	<ItemGroup>
+		<MyMercurialFiles Include="$(RootDir)/Mercurial/**/*.*"/>
+		<MyMercurialExtensionFiles Include="$(RootDir)/MercurialExtensions/**/*.*"/>
+	</ItemGroup>
+
+	<Target Name="CopyMercurialFolders">
+		<Copy SourceFiles="@(MyMercurialFiles)"
+			DestinationFiles="@(MyMercurialFiles->'$(RootDir)/output/$(Configuration)/Mercurial/%(RecursiveDir)%(Filename)%(Extension)')"/>
+		<Copy SourceFiles="@(MyMercurialExtensionFiles)"
+			DestinationFiles="@(MyMercurialExtensionFiles->'$(RootDir)/output/$(Configuration)/MercurialExtensions/%(RecursiveDir)%(Filename)%(Extension)')"/>
+	</Target>
+
+	<Target Name="UnzipMercurial" DependsOnTargets="UnzipMercurialWindows;UnzipMercurialLinux"/>
+
+	<Target Name="UnzipMercurialWindows" Condition="'$(OS)'=='Windows_NT'">
+		<!-- Extract a zip file-->
+		<Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
+	</Target>
+	<Target Name="UnzipMercurialLinux" Condition="'$(OS)'!='Windows_NT'">
+		<!-- Remember, Unix/Linux commands return 0 for success ("true") -->
+		<Exec Command="/usr/bin/test `arch` = x86_64" ContinueOnError="true" IgnoreExitCode="true">
+			<Output TaskParameter="ExitCode" PropertyName="ZeroIf64BitCpu"/>
+		</Exec>
+		<Exec Command="/usr/bin/test `arch` = i686" ContinueOnError="true" IgnoreExitCode="true">
+			<Output TaskParameter="ExitCode" PropertyName="ZeroIf32BitCpu"/>
+		</Exec>
+		<!-- Extract the appropriate zip file. -->
+		<Exec Command="/bin/rm -rf ../Mercurial" />
+		<Exec Condition="'$(ZeroIf64BitCpu)'=='0'"
+			Command="/usr/bin/unzip -uq $(RootDir)/lib/$(Configuration)/Mercurial-x86_64.zip -d $(RootDir)" />
+		<Exec Condition="'$(ZeroIf32BitCpu)'=='0'"
+			Command="/usr/bin/unzip -uq $(RootDir)/lib/$(Configuration)/Mercurial-i686.zip -d $(RootDir)" />
+		<!-- Zip doesn't seem to retain the permission bits we need. -->
+		<Exec Command="/bin/chmod +x $(RootDir)/Mercurial/hg*" ContinueOnError="true"/>
+	</Target>
+
+	<ItemGroup>
+		<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
+		<IcuDotNetFiles Include="$(RootDir)/lib/$(Configuration)/icu.net.dll*"/>
+		<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
+		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
+		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
+		<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
+		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
+		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
+		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
+	</ItemGroup>
+
+	<Target Name="CopyExtraFilesToOutput" Condition="'$(OS)'!='Windows_NT'">
+		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
+		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	</Target>
+
+	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	</Target>
+
+	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
+		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+	</Target>
+
+	<Target Name="VersionNumbers">
+		<Message Text="Version Property: $(Version)" Importance="high"/>
+		<ReadLinesFromFile File="$(RootDir)/version" Condition="'$(Version)' == ''">
+			<Output TaskParameter="Lines" PropertyName="Version" />
+		</ReadLinesFromFile>
+		<Message Text="Version: $(Version)" Importance="high"/>
+	</Target>
+
+	<ItemGroup>
+		<AssemblyInfoFiles Include="$(RootDir)/src/CommonAssemblyInfo.cs"/>
+	</ItemGroup>
+
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers; StampReleaseFiles">
+		<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
+	</Target>
+
+	<Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers">
+		<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
+		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
+			DestinationFolder="$(RootDir)/output/Installer"/>
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
+			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
+			ReplacementText="$(BUILD_VCS_NUMBER)"/>
+
+		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
+			DestinationFolder="$(RootDir)/output/Installer"/>
+		<FileUpdate File="$(RootDir)/output/Installer/appcast.xml"
+			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+	</Target>
+
+	<Target Name="PreparePublishingArtifacts" DependsOnTargets="VersionNumbers; CheckPreRequisites">
+		<Exec Command='$(NuGetCommand) install MarkdownDeep.NET -ExcludeVersion -OutputDirectory $(RootDir)/build'/>
+		<Copy SourceFiles="$(RootDir)/build/MarkdownDeep.NET/lib/.NetFramework 3.5/MarkdownDeep.dll"
+			DestinationFolder="$(RootDir)/build/"/>
+		<GenerateReleaseArtifacts MarkdownFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" StampMarkdownFile="True" VersionNumber="$(Version)"
+			ProductName="flexbridge" DebianChangeLog="$(RootDir)/debian/changelog"
+			ChangeLogAuthorInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="Build">
+		<CallTarget Targets="TestOnly"/>
+	</Target>
+
+	<Target Name="TestOnly">
+		<PropertyGroup>
+			<NUnitVersion>2.6.4</NUnitVersion>
+			<NUnitRunnerPackage>$(RootDir)/packages/NUnit.Runners.Net4.$(NUnitVersion)</NUnitRunnerPackage>
+		</PropertyGroup>
+		<ItemGroup>
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*Tests.dll" />
+			<NUnitAddinFiles Include="$(teamcity_dotnet_nunitaddin)-$(NUnitVersion).*" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(NUnitRunnerPackage)/tools/addins" Condition="'$(teamcity_version)' != ''"/>
+		<Copy SourceFiles="@(NUnitAddinFiles)" Condition="'$(teamcity_version)' != ''"
+			DestinationFolder="$(NUnitRunnerPackage)/tools/addins" />
+		<NUnit Assemblies="@(TestAssemblies)"
+			ToolPath="$(NUnitRunnerPackage)/tools"
+			TestInNewThread="false"
+			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"/>
+		<Message Text="##teamcity[importData type='nunit' path='$(RootDir)/output/$(Configuration)/TestResults.xml']"
+			Condition="'$(teamcity_version)' != '' and '$(OS)'!='Windows_NT'"/>
+	</Target>
+
+	<!-- *********************** Installer stuff below.  ******************************* -->
+
+	<!-- For building an an installer on TC -->
+	<Target Name="Installer" DependsOnTargets="DevelopInstaller; Test" Condition="'$(OS)'=='Windows_NT'"/>
+
+	<!-- For use when working on installer development -->
+	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
+	<!-- msbuild FLExBridge.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+	<!-- If no Version is specified, reads from "$(RootDir)/version". -->
+	<Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build" Condition="'$(OS)'=='Windows_NT'">
+		<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
+		<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs"
+			Regex="Property_ProductVersion = &quot;.*&quot;"
+			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
+
+		<Message Text="Making Installer Version: $(Version)" Importance="high"/>
+		<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
+
+		<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
+		<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
+	</Target>
+
+	<Target Name="Upload" DependsOnTargets="CreateDirectories" Condition="'$(OS)'=='Windows_NT'">
+		<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/FLExBridgeInstaller.msi"/>
+
+		<Message Text="Attempting rsync of ReleaseNotes.md" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/ReleaseNotes.md"/>
+
+		<Message Text="Attempting rsync of appcast.xml" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/appcast.xml&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/appcast.xml"/>
+
+		<Message Text="Attempting rsync of flexbridge.css" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/flexbridge.css&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/flexbridge.css"/>
+
+		<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
+
+		<Message Text="Attempting rsync of index.htm" Importance="high"/>
+		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.htm"/>
+	</Target>
+
+</Project>
