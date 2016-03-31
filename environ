@@ -9,7 +9,7 @@
 
 # the sourcing script should cd/pushd to the directory containing this script
 BASE="$(pwd)"
-[ -z "$BUILD" ] && BUILD=Debug
+[ -z "$BUILD" ] && BUILD=DebugMono
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
 
 # Dependency locations

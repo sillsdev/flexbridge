@@ -39,7 +39,7 @@ lib/*/*.config
 lib/common/Chorus_Help.chm
 /Mercurial
 build/.nuget/
-build/Nuget.exe
+build/NuGet.exe
 packages/
 *.dll
 src/Installer/output/
