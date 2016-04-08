@@ -39,9 +39,6 @@ cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/L10NSharp.dll* lib/common/
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.dll lib/common/
 # cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.* lib/${BUILD_CONFIG}Mono/
 
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/${BUILD_CONFIG}Mono/
-cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/common
-
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.TestUtilities.dll* output/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/LibChorus.dll* lib/${BUILD_CONFIG}Mono/

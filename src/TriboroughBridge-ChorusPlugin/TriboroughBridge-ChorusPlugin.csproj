@@ -34,22 +34,24 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>True</Optimize>
-	<DebugType>none</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>True</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>True</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<Optimize>False</Optimize>
+    <DebugSymbols>True</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>False</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="Chorus">

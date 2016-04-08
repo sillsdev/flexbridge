@@ -35,7 +35,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		private FLExConnectionHelper _connectionHelper;
 
 		private IChorusUser _chorusUser;
-		private ChorusSystem _chorusSystem;
+
+		[Import]
+		private IChorusSystem _chorusSystem;
+
 		private NotesBrowserPage _notesBrowser;
 
 		public event JumpEventHandler JumpUrlChanged;
@@ -45,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		private void JumpToFlexObject(string url)
 		{
-			//// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
+			// Flex expects the query to be UrlEncoded (I think so it can be used as a command line argument).
 			var hostLength = url.IndexOf("?", StringComparison.InvariantCulture);
 			if (hostLength < 0)
 				return; // can't do it, not a valid FLEx url.
@@ -231,10 +234,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				ClientSize = new Size(904, 510)
 			};
 			_chorusUser = new ChorusUser(commandLineArgs["-u"]);
-			_chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(ProjectDir, _chorusUser.Name,
-				FlexFolderSystem.ConfigureChorusProjectFolder);
+			_chorusSystem.Init(ProjectDir, _chorusUser.Name);
+			FlexFolderSystem.ConfigureChorusProjectFolder(_chorusSystem.ProjectFolderConfiguration);
+
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
-			_notesBrowser = _chorusSystem.WinForms.CreateNotesBrowser();
+			var chorusSystem = _chorusSystem as ChorusSystem;
+			_notesBrowser = chorusSystem.WinForms.CreateNotesBrowser();
 			var conflictHandler = _notesBrowser.MessageContentHandlerRepository.KnownHandlers.OfType<MergeConflictEmbeddedMessageContentHandler>().First();
 
 			// _currentStrategy.InitializeStrategy(ChorusSystem, conflictHandler);
@@ -332,17 +337,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				{
 					_notesBrowser.Dispose();
 				}
-				if (_chorusSystem != null)
-				{
-					_chorusSystem.Dispose();
-				}
 				if (_connectionHelper != null)
 				{
 					JumpUrlChanged -= _connectionHelper.SendJumpUrlToFlex;
-				}
-				if (_chorusSystem != null)
-				{
-					_chorusSystem.Dispose();
 				}
 			}
 			_connectionHelper = null;

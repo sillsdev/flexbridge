@@ -36,21 +36,24 @@
 	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
 	<Reference Include="Chorus">
@@ -183,10 +186,6 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.ComponentModel.Composition" />
 	<Reference Include="System.Core" />
@@ -206,36 +205,40 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
     </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	</Compile>
-	<Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
+    <None Include="packages.config" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Infrastructure\FLExBridgeChorusSystem.cs" />
   </ItemGroup>
   <ItemGroup>
-	<Content Include="chorus.ico" />
+    <Content Include="chorus.ico" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
-	  <Name>TriboroughBridge-ChorusPlugin</Name>
-	</ProjectReference>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
       <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
       <Name>LibFLExBridge-ChorusPlugin</Name>

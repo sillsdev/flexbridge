@@ -15,18 +15,17 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHandlers;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
-using FLEx_ChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.Infrastructure;
-using Palaso.Progress;
-using Palaso.Xml;
-using TriboroughBridge_ChorusPlugin;
+using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using Palaso.PlatformUtilities;
+using Palaso.Progress;
+using Palaso.Xml;
 
 namespace FwdataTestApp
 {
@@ -38,7 +37,7 @@ namespace FwdataTestApp
 
 		public NestFwdataFile()
 		{
-			if (TriboroughBridge_ChorusPlugin.Utilities.IsUnix)
+			if (Platform.IsUnix)
 			{
 				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
 			}
