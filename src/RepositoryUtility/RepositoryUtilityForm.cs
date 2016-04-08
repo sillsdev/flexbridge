@@ -14,19 +14,21 @@ using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHandlers.lift;
+using Chorus.Review;
 using Chorus.UI.Review;
 using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using Nini.Ini;
 using Palaso.IO;
+using Palaso.PlatformUtilities;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
-using LibFLExBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin;
-using LibTriboroughBridgeChorusPlugin;
 
 namespace RepositoryUtility
 {
@@ -47,7 +49,7 @@ namespace RepositoryUtility
 			InitializeComponent();
 			pullFileFromRevisionRangeToolStripMenuItem.Enabled = false;
 			_repoHoldingFolder = Path.Combine(
-				TriboroughBridge_ChorusPlugin.Utilities.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
+				Platform.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
 				@"RepositoryUtilityProjects");
 		}
 

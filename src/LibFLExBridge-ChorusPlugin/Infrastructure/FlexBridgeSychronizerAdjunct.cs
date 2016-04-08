@@ -6,19 +6,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using Chorus.FileTypeHandlers.lift;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
+using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
 using Palaso.Progress;
-using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
 	internal sealed class FlexBridgeSychronizerAdjunct : ISychronizerAdjunct
 	{
@@ -27,8 +25,12 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		private bool _needToNestMainFile = true;
 		private readonly string _fixitPathname;
 
-		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose)
+		private Action<IEnumerable<Revision>, IProgress, string> CheckRepositoryBranchesFunc { get; set; }
+
+		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname,
+			bool writeVerbose, Action<IEnumerable<Revision>, IProgress, string> checkRepoBranchesFunc)
 		{
+			CheckRepositoryBranchesFunc = checkRepoBranchesFunc;
 			if (!File.Exists(fixitPathname))
 				throw new InvalidOperationException("The FLEx 'fix it' program was not found.");
 			_fwdataPathname = fwdataPathname;
@@ -128,12 +130,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// </summary>
 		public void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress)
 		{
-			var savedSettings = Settings.Default.OtherBranchRevisions;
-			var conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, BranchName, ref savedSettings);
-			Settings.Default.OtherBranchRevisions = savedSettings;
-			Settings.Default.Save();
-			if (!string.IsNullOrEmpty(conflictingUser))
-				progress.WriteWarning(string.Format(Resources.ksOtherRevisionWarning, conflictingUser));
+			CheckRepositoryBranchesFunc(branches, progress, BranchName);
 		}
 
 		/// <summary>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C083D4E1-D803-4380-9876-0DC32F0DBA8D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LfMergeBridge</RootNamespace>
+    <AssemblyName>LfMergeBridge</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;MONO</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine">
+      <HintPath>..\..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="LibChorus" Condition="'$(Configuration)' == 'DebugMono'">
+      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus" Condition="'$(Configuration)' == 'ReleaseMono'">
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus" Condition="'$(Configuration)' == 'Debug'">
+      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus" Condition="'$(Configuration)' == 'Release'">
+      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso" Condition="'$(Configuration)' == 'DebugMono'">
+      <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso" Condition="'$(Configuration)' == 'ReleaseMono'">
+      <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso" Condition="'$(Configuration)' == 'Debug'">
+      <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso" Condition="'$(Configuration)' == 'Release'">
+      <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\ILfMergeBridgeActionTypeHandler.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\ActionHandlers\LfMergeSendReceiveActionHandler.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="LfMergeBridge.cs" />
+    <Compile Include="ILfMergeBridgeDataProvider.cs" />
+    <Compile Include="Infrastructure\LfMergeBridgeChorusSystem.cs" />
+    <Compile Include="Infrastructure\ActionType.cs" />
+    <Compile Include="Infrastructure\ActionTypeHandlerRepository.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\ActionHandlers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
+      <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
+      <Name>LibFLExBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
+      <Name>LibTriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

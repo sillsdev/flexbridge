@@ -212,6 +212,8 @@
     <Compile Include="IProjectUnifier.cs" />
     <Compile Include="FLEx.cs" />
     <Compile Include="IProjectSplitter.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\SendReceiveAction.cs" />
+    <Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -220,5 +222,8 @@
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Infrastructure\ActionHandlers\" />
   </ItemGroup>
 </Project>
