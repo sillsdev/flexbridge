@@ -1,3 +1,5 @@
+## 2.3.12 20/Apr/2016
+* Chorus: Fix problem with internet S/R on windows when using Frech UI
 ## 2.3.11 03/Feb/2016
 * FLEx Bridge: Update the windows installer dependencies to fix upgrade bug
 ## 2.3.10 13/Jan/2016
