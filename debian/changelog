@@ -1,3 +1,9 @@
+flexbridge (2.3.12) unstable; urgency=low
+
+  * Chorus: Fix problem with internet S/R on windows when using French UI
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 20 Apr 2016 11:53:35 -0500
+
 flexbridge (2.3.11) unstable; urgency=low
 
   * FLEx Bridge: Update the windows installer dependencies to fix upgrade bug

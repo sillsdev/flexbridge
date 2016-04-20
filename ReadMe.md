@@ -44,9 +44,11 @@ Also, if you are working on Chorus:
    UpdateFLExDependencies.bat script in the flexbridge repo
 These steps are required for only those dependencies bound at compile time (e.g. API changes):
 - Rebuild FLEx
+
 ## Release Notes:
 When releasing FLExBridge be sure to do the following:
-### Update the ReleaseNotes.md and [ReleaseType].htm for the ReleaseType e.g. Alpha, Beta, Stable with the user facing change information.
-### If you are making a major or minor version number jump update the the first two digits in build/build.common.proj
-### The windows version is released through two jobs in TeamCity, "Installer-sans Publish" and "Publish Installer", the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
-### For the Linux release update the Makefile and add a debian/changelog entry and then use the Jenkins FLExBridge release package build to make packages from the commit where the changelog entry was updated.
+- Update the 'version' file with the latest version
+- Run the PreparePublishingArtifacts build task: 
+	e.g. msbuild build/FLExBridge.build.mono.proj /t:PreparePublishingArtifacts /p:RootDir=C:\Repositories\flexbridge /p:UploadFolder=Alpha
+- The windows version is released through two jobs in TeamCity, "Installer-sans Publish" and "Publish Installer", the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
+- For the Linux release use the Jenkins FLExBridge release package build to make packages from the commit where the changelog entry was updated.
