@@ -12,13 +12,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using L10NSharp;
-using Palaso.Progress;
+using LibTriboroughBridgeChorusPlugin;
+using Palaso.PlatformUtilities;
 using Palaso.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
-using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -75,7 +74,7 @@ namespace TriboroughBridge_ChorusPlugin
 			// Trim any number of beginning slashes
 			path = path.TrimStart('/');
 			// Prepend slash on Linux
-			if (IsUnix)
+			if (Platform.IsUnix)
 				path = '/' + path;
 
 			return path;
@@ -93,17 +92,19 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Returns <c>true</c> if we're running on Unix, otherwise <c>false</c>.
 		/// </summary>
+		[Obsolete("Use Palaso.PlatformUtilities.Platform.IsUnix instead")]
 		public static bool IsUnix
 		{
-			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
+			get { return Platform.IsUnix; }
 		}
 
 		/// <summary>
 		/// Returns <c>true</c> if we're running on Windows NT or later, otherwise <c>false</c>.
 		/// </summary>
+		[Obsolete("Use Palaso.PlatformUtilities.Platform.IsWindows instead")]
 		public static bool IsWindows
 		{
-			get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
+			get { return Platform.IsWindows; }
 		}
 
 		/// <summary>
