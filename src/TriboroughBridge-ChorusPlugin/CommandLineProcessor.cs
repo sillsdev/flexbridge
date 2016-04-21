@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Palaso.PlatformUtilities;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
@@ -67,7 +68,7 @@ namespace TriboroughBridge_ChorusPlugin
 				{
 					//not all options are followed by input, so just add them as a key
 					if (arg.StartsWith("-") ||
-						(Utilities.IsWindows && arg.StartsWith("/")))
+						(Platform.IsWindows && arg.StartsWith("/")))
 					{
 						currentKey = arg.Trim();
 						commandLineArgs[currentKey] = null;

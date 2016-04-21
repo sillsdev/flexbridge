@@ -27,6 +27,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin;
+using Palaso.PlatformUtilities;
 
 namespace RepositoryUtility
 {
@@ -47,7 +48,7 @@ namespace RepositoryUtility
 			InitializeComponent();
 			pullFileFromRevisionRangeToolStripMenuItem.Enabled = false;
 			_repoHoldingFolder = Path.Combine(
-				TriboroughBridge_ChorusPlugin.Utilities.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
+				Platform.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
 				@"RepositoryUtilityProjects");
 		}
 
