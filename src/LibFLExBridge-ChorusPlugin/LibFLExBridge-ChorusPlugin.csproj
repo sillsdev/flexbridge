@@ -212,6 +212,7 @@
     <Compile Include="IProjectUnifier.cs" />
     <Compile Include="FLEx.cs" />
     <Compile Include="IProjectSplitter.cs" />
+    <Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

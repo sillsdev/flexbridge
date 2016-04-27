@@ -4,17 +4,22 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Sync;
+using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Properties;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
+using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
-using LibTriboroughBridgeChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -118,6 +123,23 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						File.Delete(lockPathname);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Maybe let the user know about the need to update, or that other team members are still
+		/// using an older version.
+		/// </summary>
+		[Export(typeof(Action<IEnumerable<Revision>, IProgress, string>))]
+		private static void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress,
+			string branchName)
+		{
+			var savedSettings = Settings.Default.OtherBranchRevisions;
+			var conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches,
+				branchName, ref savedSettings);
+			Settings.Default.OtherBranchRevisions = savedSettings;
+			Settings.Default.Save();
+			if (!string.IsNullOrEmpty(conflictingUser))
+				progress.WriteWarning(string.Format(Resources.ksOtherRevisionWarning, conflictingUser));
 		}
 
 		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
