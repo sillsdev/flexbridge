@@ -20,41 +20,50 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 	[TestFixture]
 	public class FlexObtainProjectStrategyTests
 	{
-		[Test, Ignore("Not doing it with the filter for now.")]
-		public void AlreadyHaveProjectFiltersOutAttemptToCloneAgain()
+		private RepositoryWithFilesSetup _sueRepo;
+		private TemporaryFolder _tempDir;
+
+		[SetUp]
+		public void Setup()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
-			{
-				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
-				{
-					var sue = sueRepo.GetRepository();
-					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
-					Directory.CreateDirectory(extantDir);
-					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-					sue.CloneLocalWithoutUpdate(extantDir);
-					var strat = new ObtainProjectStrategyFlex();
-					Assert.IsFalse(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
-				}
-			}
+			_sueRepo = new RepositoryWithFilesSetup("Sue",
+				SharedConstants.CustomPropertiesFilename, "<AdditionalFields></AdditionalFields>");
+
+			var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+			_tempDir = TemporaryFolder.TrackExisting(fakeProjectDir);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			_tempDir.Dispose();
+			_sueRepo.Dispose();
+		}
+
+		[Test]
+		public void AlreadyHaveProjectFiltersOutRepo()
+		{
+			// Setup
+			var repo = _sueRepo.GetRepository();
+			var extantDir = Path.Combine(_tempDir.Path, "extantmatchingrepo");
+			Directory.CreateDirectory(extantDir);
+			repo.CloneLocalWithoutUpdate(extantDir);
+			var sut = new ObtainProjectStrategyFlex();
+
+			// Exercise/Verify
+			Assert.IsTrue(sut.ProjectFilter(extantDir));
 		}
 
 		[Test]
 		public void DoNotHaveProjectDoesNotFilterOutRepo()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", SharedConstants.CustomPropertiesFilename, "contents"))
-			{
-				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-				Directory.CreateDirectory(fakeProjectDir);
-				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
-				{
-					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
-					Directory.CreateDirectory(extantDir);
-					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-					var strat = new ObtainProjectStrategyFlex();
-					Assert.IsTrue(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
-				}
-			}
+			// Setup
+			var extantDir = Path.Combine(_tempDir.Path, "extantmatchingrepo");
+			Directory.CreateDirectory(extantDir);
+			var sut = new ObtainProjectStrategyFlex();
+
+			// Exercise/Verify
+			Assert.IsFalse(sut.ProjectFilter(extantDir));
 		}
 	}
 }
