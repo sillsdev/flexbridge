@@ -10,7 +10,7 @@ using Palaso.Progress;
 namespace LfMergeBridge
 {
 	[Export(typeof(ICheckRepositoryBranches))]
-	internal sealed class CheckRepositoryBranchesNoOp
+	internal sealed class CheckRepositoryBranchesNoOp: ICheckRepositoryBranches
 	{
 		#region ICheckRepositoryBranches implementation
 
