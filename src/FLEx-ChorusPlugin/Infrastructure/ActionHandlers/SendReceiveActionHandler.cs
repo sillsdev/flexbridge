@@ -4,17 +4,22 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Sync;
+using Chorus.VcsDrivers.Mercurial;
+using FLEx_ChorusPlugin.Properties;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
+using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
-using LibTriboroughBridgeChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -22,10 +27,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal S/R for a Flex repo.
 	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
+	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler,
+		IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+
+		[Import]
+		private FlexBridgeSychronizerAdjunct _syncAdjunt;
+
 		private bool _gotChanges;
 
 		#region IBridgeActionTypeHandler impl
@@ -66,11 +76,14 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring
 						// now.  'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and the Synchronizer
 						// class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit)
-						// call.  If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct
+						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISychronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, commandLineArgs["-f"], false);
-						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
+						_syncAdjunt.FwDataPathName = origPathname;
+						_syncAdjunt.FixItPathName = commandLineArgs["-f"];
+						_syncAdjunt.WriteVerbose = false;
+
+						syncDlg.SetSynchronizerAdjunct(_syncAdjunt);
 
 						// Chorus does it in this order:
 						// Local Commit
@@ -94,7 +107,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
 								BackOutOfRepoCreation(projectDir);
 							}
-							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+							else if (syncDlg.SyncResult.DidGetChangesFromOthers || _syncAdjunt.WasUpdated)
 							{
 								_gotChanges = true;
 							}

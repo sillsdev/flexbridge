@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("LibFLExBridge-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPlugin")]
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
+[assembly: InternalsVisibleTo("LfMergeBridge")]
 [assembly: InternalsVisibleTo("RepositoryUtility")]
 [assembly: InternalsVisibleTo("FwdataTestApp")]
 [assembly: InternalsVisibleTo("TheTurtle")]
