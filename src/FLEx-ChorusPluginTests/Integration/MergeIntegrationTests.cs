@@ -24,7 +24,6 @@ namespace FLEx_ChorusPluginTests.Integration
 	public class MergeIntegrationTests
 	{
 		[Test]
-		[Category("UnknownMonoIssue")] // It insists on failing on mono, for some reason.
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =

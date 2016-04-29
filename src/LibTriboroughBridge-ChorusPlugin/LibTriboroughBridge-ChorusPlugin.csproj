@@ -100,4 +100,10 @@
   <ItemGroup>
     <Folder Include="Infrastructure\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\lib\common\chorusmerge" Condition="'$(OS)'!='Windows_NT'">
+      <Link>chorusmerge</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
