@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibFLExBridge-ChorusPluginT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTriboroughBridge-ChorusPlugin", "src\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj", "{8E6DD218-7BA1-4119-82D2-535C05A0923C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfMergeBridge", "src\LfMergeBridge\LfMergeBridge.csproj", "{4F0ECF1E-3C41-4564-A629-02C3455C71D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,14 @@ Global
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
+		{4F0ECF1E-3C41-4564-A629-02C3455C71D3}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
