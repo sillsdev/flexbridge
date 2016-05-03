@@ -1,25 +1,18 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
-using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Sync;
-using Chorus.VcsDrivers.Mercurial;
 using FLEx_ChorusPlugin.Properties;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
-using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -34,7 +27,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		private FLExConnectionHelper _connectionHelper;
 
 		[Import]
-		private FlexBridgeSychronizerAdjunct _syncAdjunt;
+		private FlexBridgeSychronizerAdjunct _syncAdjunct;
 
 		private bool _gotChanges;
 
@@ -44,11 +37,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		public void StartWorking(IProgress progress, Dictionary<string, string> options)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
-			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			var projectDir = Path.GetDirectoryName(options["-p"]);
+			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -63,7 +56,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 				// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-				var projectName = Path.GetFileNameWithoutExtension(commandLineArgs["-p"]);
+				var projectName = Path.GetFileNameWithoutExtension(options["-p"]);
 				var lockPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlLockExtension);
 				try
 				{
@@ -79,11 +72,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISychronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						_syncAdjunt.FwDataPathName = origPathname;
-						_syncAdjunt.FixItPathName = commandLineArgs["-f"];
-						_syncAdjunt.WriteVerbose = false;
+						_syncAdjunct.FwDataPathName = origPathname;
+						_syncAdjunct.FixItPathName = options["-f"];
+						_syncAdjunct.WriteVerbose = false;
 
-						syncDlg.SetSynchronizerAdjunct(_syncAdjunt);
+						syncDlg.SetSynchronizerAdjunct(_syncAdjunct);
 
 						// Chorus does it in this order:
 						// Local Commit
@@ -107,7 +100,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
 								BackOutOfRepoCreation(projectDir);
 							}
-							else if (syncDlg.SyncResult.DidGetChangesFromOthers || _syncAdjunt.WasUpdated)
+							else if (syncDlg.SyncResult.DidGetChangesFromOthers || _syncAdjunct.WasUpdated)
 							{
 								_gotChanges = true;
 							}

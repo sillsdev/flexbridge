@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2016 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +7,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using Chorus.FileTypeHandlers.lift;
 using Chorus.sync;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
@@ -104,27 +100,31 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		/// <returns>true if problems were fixed</returns>
 		private bool RunFixFwData(IProgress progress)
 		{
-			var process = new Process();
-			var startInfo = process.StartInfo;
-			startInfo.FileName = _fixitPathname.Replace("\"", null);
-			startInfo.Arguments = "\"" + FwDataPathName.Replace("\"", null) + "\"";
-			startInfo.CreateNoWindow = false;
-			startInfo.UseShellExecute = false;
-			startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
-			startInfo.RedirectStandardOutput = true;
-			process.Start();
-			var mergeOutput = process.StandardOutput.ReadToEnd();
-			process.WaitForExit();
-			// If the user requests verbose output they can see all the fixup reports.
-			// Unfortunately this includes sequences of dots intended to show progress on the console.
-			// They always occur at the start of a line. The Replace gets rid of them.
-			progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
-			// 0 means fixup ran but fixed nothing, 1 means it ran and fixed something, anything else is a problem
-			if(process.ExitCode != 0 && process.ExitCode != 1)
+			using (var process = new Process())
 			{
-				throw new Exception("Merge fixing program has crashed.");
+				var startInfo = process.StartInfo;
+				startInfo.FileName = _fixitPathname.Replace("\"", null);
+				startInfo.Arguments = "\"" + FwDataPathName.Replace("\"", null) + "\"";
+// REVIEW Eberhard(RandyR): Are either of the next two options a problem on the LF server?
+				startInfo.CreateNoWindow = false;
+				startInfo.UseShellExecute = false;
+				startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
+				startInfo.RedirectStandardOutput = true;
+				process.Start();
+				var mergeOutput = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
+				// If the user requests verbose output they can see all the fixup reports.
+				// Unfortunately this includes sequences of dots intended to show progress on the console.
+				// They always occur at the start of a line. The Replace gets rid of them.
+				progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
+// REVIEW Eberhard(RandyR): Please make sure your new fix it app uses these exit codes.
+				// 0 means fixup ran but fixed nothing, 1 means it ran and fixed something, anything else is a problem
+				if (process.ExitCode != 0 && process.ExitCode != 1)
+				{
+					throw new Exception("Merge fixing program has crashed.");
+				}
+				return process.ExitCode == 1;
 			}
-			return process.ExitCode == 1;
 		}
 
 		/// <summary>

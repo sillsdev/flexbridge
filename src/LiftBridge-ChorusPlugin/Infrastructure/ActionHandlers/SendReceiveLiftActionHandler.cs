@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -11,9 +8,11 @@ using System.Windows.Forms;
 using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Sync;
 using Chorus.sync;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using Palaso.Progress;
 using SIL.LiftBridge.Properties;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -29,15 +28,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		public void StartWorking(IProgress progress, Dictionary<string, string> options)
 		{
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
+			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 
-			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, commandLineArgs["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
+			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)

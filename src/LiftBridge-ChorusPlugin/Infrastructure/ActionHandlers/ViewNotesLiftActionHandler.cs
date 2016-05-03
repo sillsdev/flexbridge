@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +12,10 @@ using Chorus;
 using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Notes;
 using Chorus.UI.Notes.Browser;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using Palaso.Network;
+using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
@@ -71,15 +71,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		public void StartWorking(IProgress progress, Dictionary<string, string> options)
 		{
-			_fwProjectFolder = Path.GetDirectoryName(commandLineArgs["-p"]);
+			_fwProjectFolder = Path.GetDirectoryName(options["-p"]);
 
 			MainForm = new MainBridgeForm
 				{
 					ClientSize = new Size(904, 510)
 				};
-			_chorusUser = new ChorusUser(commandLineArgs["-u"]);
+			_chorusUser = new ChorusUser(options["-u"]);
 			_chorusSystem = Utilities.InitializeChorusSystem(Utilities.LiftOffset(_fwProjectFolder), _chorusUser.Name, LiftFolder.AddLiftFileInfoToFolderConfiguration);
 			_chorusSystem.EnsureAllNotesRepositoriesLoaded();
 

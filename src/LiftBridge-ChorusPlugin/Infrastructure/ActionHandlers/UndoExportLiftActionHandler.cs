@@ -1,17 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -30,11 +28,11 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		public void StartWorking(IProgress progress, Dictionary<string, string> options)
 		{
 			// undo_export_lift: -p <$fwroot>\foo where 'foo' is the project folder name
 			// Calling Utilities.LiftOffset(commandLineArgs["-p"]) will use the folder: <$fwroot>\foo\OtherRepositories\foo_Lift
-			var pathToRepository = Utilities.LiftOffset(commandLineArgs["-p"]);
+			var pathToRepository = Utilities.LiftOffset(options["-p"]);
 			var repo = new HgRepository(pathToRepository, new NullProgress());
 			repo.Update();
 			// Delete any new files (except import failure notifier file).

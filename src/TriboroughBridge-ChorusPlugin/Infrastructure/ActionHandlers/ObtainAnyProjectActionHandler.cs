@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -14,6 +11,8 @@ using Chorus;
 using Chorus.UI.Clone;
 using TriboroughBridge_ChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -70,10 +69,10 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
 		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		public void StartWorking(IProgress progress, Dictionary<string, string> options)
 		{
 			// "obtain"; // -p <$fwroot>
-			_pathToRepository = commandLineArgs[CommandLineProcessor.projDir];
+			_pathToRepository = options[CommandLineProcessor.projDir];
 			CloneResult result;
 			using (var form = new Form())
 			{
@@ -99,7 +98,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 			}
 
-			_currentStrategy.FinishCloning(commandLineArgs, result.ActualLocation, null);
+			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
 		}
 
 		/// <summary>
