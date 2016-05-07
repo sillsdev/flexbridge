@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +14,7 @@ namespace TriboroughBridge_ChorusPlugin
 	/// This class validates all of the varoius command line options that can be fed into the FLEx Bridge program.
 	/// Some options are always expected, but others are used only in combination with another option.
 	/// </summary>
-	public static class CommandLineProcessor
+	internal static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming
 		internal const string u = "-u";

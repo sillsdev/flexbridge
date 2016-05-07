@@ -25,7 +25,7 @@ namespace LiftBridgeTests.Infrastructure.ActionHandlers
 		[Test]
 		public void DoNotHaveProjectDoesNotFilterOutRepo()
 		{
-			using (var sueRepo = new RepositoryWithFilesSetup("SueForLift", "Sue.lift", "contents"))
+			using (var sueRepo = new RepositoryWithFilesSetup("SueForLift", "Sue.lift", "<bogusliftstuff />"))
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Directory.CreateDirectory(fakeProjectDir);

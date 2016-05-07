@@ -1,11 +1,12 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using Palaso.Progress;
 #if !MONO
 using NetSparkle;
 #endif
@@ -23,9 +24,12 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		#region IBridgeActionTypeHandler impl
 
 		/// <summary>
-		/// Start doing whatever is needed for the supported type of action.
+		/// See if FLEx Brdige can be updated.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		/// <remarks>
+		/// Only works on Windows, since Linux updates another way.
+		/// </remarks>
+		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 #if !MONO
 			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/Alpha/appcast.xml", CommonResources.chorus32x32))

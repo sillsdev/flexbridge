@@ -1,15 +1,11 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
@@ -47,8 +43,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		public bool ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*._custom_properties.i").Any();
+			return LibFLExBridgeChorusPlugin.Infrastructure.Utilities.IsFlexProjectRepository(repositoryLocation);
 		}
 
 		public string HubQuery { get { return "*.CustomProperties"; } }
