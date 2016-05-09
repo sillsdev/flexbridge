@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -17,16 +14,14 @@ using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Review;
 using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.DomainServices;
 using Nini.Ini;
 using Palaso.IO;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
 using Palaso.PlatformUtilities;
 
 namespace RepositoryUtility
@@ -81,7 +76,7 @@ namespace RepositoryUtility
 
 		private void GetClone(uint modelVersion)
 		{
-			var commandLineArgs = new Dictionary<string, string>
+			var options = new Dictionary<string, string>
 			{
 				{CommandLineProcessor.v, CommandLineProcessor.obtain},
 				{CommandLineProcessor.fwmodel, modelVersion.ToString(CultureInfo.InvariantCulture)},
@@ -89,8 +84,9 @@ namespace RepositoryUtility
 				{CommandLineProcessor.projDir, _repoHoldingFolder}
 			};
 
-			var obtainHandler = _actionTypeHandlerRepository.GetHandler(commandLineArgs);
-			obtainHandler.StartWorking(commandLineArgs);
+			var obtainHandler = _actionTypeHandlerRepository.GetHandler(StringToActionTypeConverter.GetActionType(options["-v"]));
+			var somethingForClient = string.Empty;
+			obtainHandler.StartWorking(new NullProgress(), options, ref somethingForClient);
 		}
 
 		private IEnumerable<string> ExtantDirectories

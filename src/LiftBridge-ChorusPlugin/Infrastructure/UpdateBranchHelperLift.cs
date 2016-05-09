@@ -1,6 +1,6 @@
-﻿// Copyright (c) 2015 SIL International
-// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-using System;
+﻿// Copyright (c) 2015-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
+
 using System.Xml;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using Palaso.Xml;

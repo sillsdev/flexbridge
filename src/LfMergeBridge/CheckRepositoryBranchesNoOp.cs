@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2016 SIL International
-// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-using System;
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
+
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Chorus.VcsDrivers.Mercurial;

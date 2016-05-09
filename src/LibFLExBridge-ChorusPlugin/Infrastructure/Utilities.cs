@@ -1,8 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+
 using System;
 using System.Xml.Linq;
 using System.IO;
+using System.Linq;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
@@ -28,6 +30,16 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			return version;
 		}
 
+		public static bool IsFlexProjectRepository(string repositoryLocation)
+		{
+			const string hg = ".hg";
+			const string store = "store";
+			const string data = "data";
+			const string customPropertiesFilter = "*._custom_properties.i";
+
+			var hgDataFolder = Path.Combine(repositoryLocation, hg, store, data);
+			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, customPropertiesFilter).Any();
+		}
 	}
 }
 

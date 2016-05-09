@@ -66,6 +66,9 @@
     <Reference Include="Palaso">
       <HintPath>..\..\lib\Debug\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\lib\Debug\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
     </Reference>
@@ -76,6 +79,9 @@
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <Reference Include="Palaso">
       <HintPath>..\..\lib\Release\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\lib\Release\Palaso.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
@@ -88,6 +94,9 @@
     <Reference Include="Palaso">
       <HintPath>..\..\lib\DebugMono\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\lib\DebugMono\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
     </Reference>
@@ -98,6 +107,9 @@
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
     <Reference Include="Palaso">
       <HintPath>..\..\lib\ReleaseMono\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities">
+      <HintPath>..\..\lib\ReleaseMono\Palaso.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
@@ -173,6 +185,7 @@
     <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
     <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
+    <Compile Include="Infrastructure\UtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
   </ItemGroup>
   <ItemGroup>
