@@ -1,8 +1,10 @@
 // Copyright (c) 2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
@@ -20,6 +22,12 @@ namespace LfMergeBridge
 	/// then leave the workspace where it is, and report an error in the provided progress indicator.
 	/// </para>
 	/// </summary>
+	/// <remarks>
+	/// 1. When it has succeeded to update to the given long hash, keep in mind that may not be the head of its branch.
+	///
+	/// 2. If it is not on a head after this handler finishes, then the next commit will results in two heads of the same branch.
+	/// Chorus does not support pushing two heads of the same branch, so that may need to do a local merge, and then send the merged head.
+	/// </remarks>
 	internal sealed class LanguageForgeUpdateToLongHashActionHandler : IBridgeActionTypeHandler
 	{
 		/// <summary>
@@ -32,12 +40,24 @@ namespace LfMergeBridge
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.LongHashToSyncWithKey), @"Missing required 'longHashToSyncWith' key in 'options'.");
 
 			var projectPath = options[LfMergeBridgeUtilities.ProjectPathKey];
-			if (!LfMergeBridgeUtilities.UpdateToLongHash(progress, projectPath, options[LfMergeBridgeUtilities.LongHashToSyncWithKey], ref somethingForClient))
+			var desiredLongHash = options[LfMergeBridgeUtilities.LongHashToSyncWithKey];
+			var hgRepository = new HgRepository(projectPath, progress);
+			var updateResults = hgRepository.UpdateToLongHash(desiredLongHash);
+
+			switch (updateResults)
 			{
-				// It may already be set to the long hash commit (so do nothing more),
-				// Or, it may be that there is no such long hash, so we cannot update to it,
-				// in which error condition, 'UpdateToLongHash' has already written an error to 'progress'.
-				return;
+				case HgRepository.UpdateResults.NoCommitsInRepository:
+					throw new ArgumentException("No commits in repository, and LF merge does not yet support adding the first commit.");
+				case HgRepository.UpdateResults.AlreadyOnIt:
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format(@"Already on long SHA '{0}'.", desiredLongHash));
+					return;
+				case HgRepository.UpdateResults.NoSuchRevision:
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format(@"Cannot update to long SHA '{0}', since it is not in the repository.", desiredLongHash));
+					return;
+				case HgRepository.UpdateResults.Success:
+					var currentRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
+					LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, currentRevision, currentRevision.Branch, ref somethingForClient);
+					break;
 			}
 
 			// Working set has been updated, so now, update the fwdata file to match.

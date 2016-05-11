@@ -19,7 +19,14 @@ namespace LfMergeBridge
 	/// <summary>
 	/// Action handler used for Language Forge's Send/Receive.
 	/// </summary>
-	/// <remarks>This class does not (yet(?) support creating a new repository.</remarks>
+	/// <remarks>
+	/// 1. This class does not (yet(?) support creating a new repository.
+	///
+	/// 2. Given that LF can reset the working set back to a previous long hash's commit,
+	/// then the initial commit here may create a second head of the current branch.
+	/// That should be fine here, since Chorus will merge those two heads, before sending it off to LD,
+	/// even if nothing new came in from LD.
+	/// </remarks>
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class LanguageForgeSendReceiveActionHandler : IBridgeActionTypeHandler
 	{
@@ -90,15 +97,17 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, message);
 				return;
 			}
-			progress.WriteVerbose(syncResults.DidGetChangesFromOthers
-				? "Received changes from others"
-				: "No changes from others");
+			var gotChangesText = syncResults.DidGetChangesFromOthers ? "Received changes from others" : "No changes from others";
+			// LF Merge needs to know if anything came from LD. Since new stuff did come in, then LF has to rebuild its FdoCache.
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, gotChangesText);
+			progress.WriteVerbose(gotChangesText);
 
 			// The fwdata file will have been updated by the FW adjunct by now, if anything came in the sync 'pull'.
 			// Write long SHA.
 			var hgRepository = synchronizer.Repository;
-			var currentTip = hgRepository.GetTip();
-			LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, currentTip, ref somethingForClient);
+			var revisionWorkingSetIsBasedOn = hgRepository.GetRevisionWorkingSetIsBasedOn();
+			// The long hash will be different, even if only a local commit was done.
+			LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, revisionWorkingSetIsBasedOn, ref somethingForClient);
 		}
 
 		/// <summary>
