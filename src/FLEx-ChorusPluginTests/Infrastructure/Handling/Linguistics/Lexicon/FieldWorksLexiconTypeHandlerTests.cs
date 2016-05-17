@@ -757,6 +757,117 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.Linguistics.Lexicon
 		}
 
 		[Test]
+		public void MoStemMsaOneDeletesOtherMakesNoChanges()
+		{
+			const string beforeMsas =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>";
+			const string afterMsas = @"
+		</MorphoSyntaxAnalyses>
+	</LexEntry>
+</Lexicon>";
+			const string commonAncestor = beforeMsas +
+	@"<MoStemMsa guid='70ae40b8-d7f8-4d25-b632-0b457323c07e'>
+		<PartOfSpeech>
+			<objsur guid='252c1fc7-2d97-40f6-816e-cb73a6f3446d' t='r' />
+		</PartOfSpeech>
+	</MoStemMsa>
+	<MoStemMsa guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6'>
+		<PartOfSpeech>
+			<objsur guid='daf5f5d8-c697-4a0a-b125-a1b4eac926de' t='r' />
+		</PartOfSpeech>
+	</MoStemMsa>" + afterMsas;
+			var ourContent = commonAncestor;
+			const string theirContent = beforeMsas +
+	@"<MoStemMsa guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6'>
+		<PartOfSpeech>
+		 <objsur guid='daf5f5d8-c697-4a0a-b125-a1b4eac926de' t='r' />
+		</PartOfSpeech>
+	</MoStemMsa>" + afterMsas;
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa" },
+				new List<string> { @"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa[@guid='70ae40b8-d7f8-4d25-b632-0b457323c07e']" },
+				0, new List<Type> (),
+				1, new List<Type> { typeof(XmlDeletionChangeReport) });
+		}
+
+		[Test]
+		public void MoStemMsaOneChangesOtherMakesNoChanges()
+		{
+			const string beforeMsas =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<MorphoSyntaxAnalyses>";
+			const string afterMsas = @"
+		</MorphoSyntaxAnalyses>
+		<LexSense guid='a1ed94c5-e383-1bde-8a39-0800200c9a66'>
+			<MorphoSyntaxAnalysis><objsur guid='70ae40b8-d7f8-4d25-b632-0b457323c07e' t='r' /></MorphoSyntaxAnalysis>
+		</LexSense>
+		<LexSense guid='b1ed94c5-e385-a1de-8a39-0800200c9a66'>
+			<MorphoSyntaxAnalysis><objsur guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6' t='r' /></MorphoSyntaxAnalysis>
+		</LexSense>
+	</LexEntry>
+</Lexicon>";
+			const string changedOneMsa = @"<MoStemMsa guid='70ae40b8-d7f8-4d25-b632-0b457323c07e'>
+		<PartOfSpeech>
+		 <objsur guid='252c1fc7-2d97-40f6-816e-cb73a6f3446d' t='r' />
+		</PartOfSpeech>
+	   </MoStemMsa>
+	   <MoStemMsa guid='bba330f1-61e2-7752-a424-3f0b3d63c5d5'>
+		<PartOfSpeech>
+		 <objsur guid='daf5f5d8-c697-4a0a-b125-a1b4eac926de' t='r' />
+		</PartOfSpeech>
+	   </MoStemMsa>";
+			const string twoOriginalMsas = @"<MoStemMsa guid='70ae40b8-d7f8-4d25-b632-0b457323c07e'>
+		<PartOfSpeech>
+		 <objsur guid='252c1fc7-2d97-40f6-816e-cb73a6f3446d' t='r' />
+		</PartOfSpeech>
+	   </MoStemMsa>
+	   <MoStemMsa guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6'>
+		<PartOfSpeech>
+		 <objsur guid='daf5f5d8-c697-4a0a-b125-a1b4eac926de' t='r' />
+		</PartOfSpeech>
+	   </MoStemMsa>";
+
+			const string commonAncestor = beforeMsas + twoOriginalMsas + afterMsas;
+			var ourContent = beforeMsas.Replace("66'>", @"66'><Comment><AStr ws='en'><Run ws='en'>xx</Run></AStr></Comment>") + twoOriginalMsas + afterMsas;
+			var theirContent = beforeMsas + changedOneMsa + afterMsas.Replace("ffc330f1-61e2-4452-a424-3f0b3d63c5f6", "bba330f1-61e2-7752-a424-3f0b3d63c5d5");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string>
+				{
+					@"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa[@guid='70ae40b8-d7f8-4d25-b632-0b457323c07e']",
+					@"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa[@guid='bba330f1-61e2-7752-a424-3f0b3d63c5d5']",
+					@"Lexicon/LexEntry/LexSense/MorphoSyntaxAnalysis/objsur[@guid='bba330f1-61e2-7752-a424-3f0b3d63c5d5']"
+				},
+				new List<string>
+				{
+					@"Lexicon/LexEntry/MorphoSyntaxAnalyses/MoStemMsa[@guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6']",
+					@"//objsur[guid='ffc330f1-61e2-4452-a424-3f0b3d63c5f6']"
+				},
+				0, new List<Type> (),
+				4, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlDeletionChangeReport), typeof(XmlAdditionChangeReport), typeof(XmlChangedRecordReport) });
+		}
+
+		[Test]
 		public void BothEditedEmptyImportResidueHasConflictReport1()
 		{
 			const string commonAncestor =
