@@ -22,7 +22,8 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			XmlNode theirs;
 			XmlNode common;
 			DoPreMerge(mergeOrder, out ours, out theirs, out common);
-			var results = merger.Merge(ours, theirs, common);
+			// The document element is being returned here, so our parent isn't relevant and won't be used by the merge
+			var results = merger.Merge(null, ours, theirs, common);
 			DoPostMerge(mergeOrder.pathToOurs, results.MergedNode);
 		}
 
