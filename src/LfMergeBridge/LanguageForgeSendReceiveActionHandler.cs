@@ -87,7 +87,8 @@ namespace LfMergeBridge
 				CheckinDescription = string.Format("[{0}: {1}] sync", assemblyName.Name, assemblyName.Version)
 			};
 			syncOptions.RepositorySourcesToTry.Clear(); // Get rid of any default ones, since LF only sends off to the internet (Language Depot).
-			syncOptions.RepositorySourcesToTry.Add(new HttpRepositoryPath(options[LfMergeBridgeUtilities.LanguageDepotRepoNameKey], options[LfMergeBridgeUtilities.LanguageDepotRepoUriKey], false));
+			// We use the generic creation code here to make testing easier. In the real world we will only create "HttpRepositoryPath".
+			syncOptions.RepositorySourcesToTry.Add(RepositoryAddress.Create(options[LfMergeBridgeUtilities.LanguageDepotRepoNameKey], options[LfMergeBridgeUtilities.LanguageDepotRepoUriKey], false));
 
 			var syncResults = synchronizer.SyncNow(syncOptions);
 			if (!syncResults.Succeeded)
