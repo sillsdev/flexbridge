@@ -1,3 +1,7 @@
+## 2.3.13 17/May/2016
+* Flex Bridge: Update to work with new Chorus to fix LT-17461
+* Chorus: Fix Bug in password entry field with internet S/R
+* Chorus: Fix data loss bug when merging certain types of elements
 ## 2.3.12 20/Apr/2016
 * Chorus: Fix problem with internet S/R on windows when using French UI
 ## 2.3.11 03/Feb/2016
