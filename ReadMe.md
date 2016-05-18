@@ -48,6 +48,7 @@ These steps are required for only those dependencies bound at compile time (e.g.
 ## Release Notes:
 When releasing FLExBridge be sure to do the following:
 - Update the 'version' file with the latest version
+- Add a line to the src/Installer/ReleaseNotes.md describing the change
 - Run the PreparePublishingArtifacts build task: 
 	e.g. msbuild build/FLExBridge.build.mono.proj /t:PreparePublishingArtifacts /p:RootDir=C:\Repositories\flexbridge /p:UploadFolder=Alpha
 - The windows version is released through two jobs in TeamCity, "Installer-sans Publish" and "Publish Installer", the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
