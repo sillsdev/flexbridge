@@ -2,7 +2,33 @@ flexbridge (2.4.0) unstable; urgency=low
 
   * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
 
- -- Jason Naylor <jason_naylor@sil.org>  Tue, 19 Jan 2016 10:53:34 -0600
+  -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
+
+flexbridge (2.3.13) unstable; urgency=low
+
+  * Flex Bridge: Update to work with new Chorus to fix LT-17461
+  * Chorus: Fix Bug in password entry field with internet S/R
+  * Chorus: Fix data loss bug when merging certain types of elements
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
+
+flexbridge (2.3.12) unstable; urgency=low
+
+  * Chorus: Fix problem with internet S/R on windows when using French UI
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 20 Apr 2016 11:53:35 -0500
+
+flexbridge (2.3.11) unstable; urgency=low
+
+  * FLEx Bridge: Update the windows installer dependencies to fix upgrade bug
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 03 Feb 2016 11:09:19 -0600
+
+flexbridge (2.3.10) unstable; urgency=low
+
+  * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 13 Jan 2016 15:09:48 -0600
 
 flexbridge (2.3.9) unstable; urgency=low
 
