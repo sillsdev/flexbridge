@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Chorus.VcsDrivers.Mercurial;
-using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using Palaso.Code;
@@ -30,46 +30,84 @@ namespace LfMergeBridge
 	/// </remarks>
 	internal sealed class LanguageForgeUpdateToLongHashActionHandler : IBridgeActionTypeHandler
 	{
+		private const string LongHashToSyncWithKey = "longHashToSyncWith";
+		private const string updateToLongHashBase = "Update to long hash";
+
 		/// <summary>
 		/// Update the given project to the given long hash (SHA) commit, if present in repository).
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// Make sure required parameters are in 'options'.
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.ProjectPathKey), @"Missing required 'projectPath' key in 'options'.");
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.LongHashToSyncWithKey), @"Missing required 'longHashToSyncWith' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.FullPathToProjectKey), @"Missing required 'fullPathToProject' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.FdoDataModelVersionKey), @"Missing required 'fdoDataModelVersionKey' key in 'options'.");
+			Require.That(options.ContainsKey(LongHashToSyncWithKey), @"Missing required 'longHashToSyncWith' key in 'options'.");
 
-			var projectPath = options[LfMergeBridgeUtilities.ProjectPathKey];
-			var desiredLongHash = options[LfMergeBridgeUtilities.LongHashToSyncWithKey];
-			var hgRepository = new HgRepository(projectPath, progress);
+			var fullPathToProject = options[LfMergeBridgeUtilities.FullPathToProjectKey];
+			var desiredLongHash = options[LongHashToSyncWithKey];
+			var desiredBranch = options[LfMergeBridgeUtilities.FdoDataModelVersionKey];
+			var hgRepository = new HgRepository(fullPathToProject, progress);
+			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
 			var updateResults = hgRepository.UpdateToLongHash(desiredLongHash);
+			var updateRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
 
 			switch (updateResults)
 			{
 				case HgRepository.UpdateResults.NoCommitsInRepository:
-					throw new ArgumentException("No commits in repository, and LF merge does not yet support adding the first commit.");
+					Directory.Delete(fullPathToProject, true);
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("{0} {1}: new repository with no commits. {2}.", updateToLongHashBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
+					return;
 				case HgRepository.UpdateResults.AlreadyOnIt:
-					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format(@"Already on long SHA '{0}'.", desiredLongHash));
+					if (CheckExpectedBranch(hgRepository, startingRevision, updateRevision, desiredBranch, desiredLongHash, ref somethingForClient))
+					{
+						// No need to rebuild fwdata file, since it is still that of 'startingRevision'.
+						return;
+					}
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("{0} {1}: already on long SHA '{2}'.", updateToLongHashBase, LfMergeBridgeUtilities.warning, desiredLongHash));
+					// No need to rebuild fwdata file, since it is still that of 'startingRevision'.
 					return;
 				case HgRepository.UpdateResults.NoSuchRevision:
-					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format(@"Cannot update to long SHA '{0}', since it is not in the repository.", desiredLongHash));
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("{0} {1}: '{2}' not in the repository.", updateToLongHashBase, LfMergeBridgeUtilities.failure, desiredLongHash));
+					// No need to rebuild fwdata file, since it is still that of 'startingRevision'.
 					return;
 				case HgRepository.UpdateResults.Success:
-					var currentRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-					LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, currentRevision, currentRevision.Branch, ref somethingForClient);
+					if (CheckExpectedBranch(hgRepository, startingRevision, updateRevision, desiredBranch, desiredLongHash, ref somethingForClient))
+					{
+						// It worked, but we don't want it to, since the expected branch was different than that of the long hash.
+						// No need to rebuild fwdata file, since it is still that of 'startingRevision'.
+						return;
+					}
 					break;
 			}
 
 			// Working set has been updated, so now, update the fwdata file to match.
-			FLExProjectUnifier.PutHumptyTogetherAgain(progress, Path.Combine(projectPath, new DirectoryInfo(projectPath).Name + SharedConstants.FwXmlExtension));
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, true, Path.Combine(fullPathToProject, new DirectoryInfo(fullPathToProject).Name + LibTriboroughBridgeSharedConstants.FwXmlExtension));
+
+			// Notify LF.
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("{0} {1}: updated to long hash '{2}' on branch '{3}'.", updateToLongHashBase, LfMergeBridgeUtilities.success, desiredLongHash, desiredBranch));
+			LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, updateRevision, updateRevision.Branch, ref somethingForClient);
 		}
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.LanguageForgeUpdateToLongHash; }
+		}
+
+		private static bool CheckExpectedBranch(HgRepository hgRepository, Revision startingRevision, Revision updateRevision, string expectedBranch, string desiredLongHash, ref string somethingForClient)
+		{
+			if (updateRevision.Branch == expectedBranch)
+			{
+				return true;
+			}
+
+			// Long hash is *not* in the expected branch.
+			// Go back to starting revision.
+			hgRepository.Update(startingRevision.Number.LocalRevisionNumber);
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("{0} {1}: long SHA '{2}' is on different branch '{3}' than expected.", updateToLongHashBase, LfMergeBridgeUtilities.failure, desiredLongHash, updateRevision.Branch));
+			return false;
 		}
 	}
 }

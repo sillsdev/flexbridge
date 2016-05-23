@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016  SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-using System;
+
 using Chorus;
 
 namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 {
-	public class ActualCloneResult
+	internal sealed class ActualCloneResult
 	{
-		public ActualCloneResult()
+		internal ActualCloneResult()
 		{
 			// Be a bit pessimistic at first.
 			CloneResult = null;
@@ -15,17 +15,10 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 			FinalCloneResult = FinalCloneResult.ExistingCloneTargetFolder;
 		}
 
-		public FinalCloneResult FinalCloneResult { get; set; }
-		public string ActualCloneFolder { get; set; }
-		public CloneResult CloneResult { get; set; }
-		public string Message { get; set; }
-	}
-
-	public enum FinalCloneResult
-	{
-		Cloned,
-		ExistingCloneTargetFolder,
-		FlexVersionIsTooOld
+		internal FinalCloneResult FinalCloneResult { get; set; }
+		internal string ActualCloneFolder { get; set; }
+		internal CloneResult CloneResult { get; set; }
+		internal string Message { get; set; }
 	}
 }
 

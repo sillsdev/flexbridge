@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
+using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 
@@ -12,13 +13,16 @@ namespace LfMergeBridge
 	/// </summary>
 	internal static class LfMergeBridgeUtilities
 	{
-		internal const string ProjectPathKey = "projectPath";
+		internal const string FullPathToProjectKey = "fullPathToProject";
 		internal const string FwdataFilenameKey = "fwdataFilename";
 		internal const string LanguageDepotRepoUriKey = "languageDepotRepoUri";
 		internal const string LanguageDepotRepoNameKey = "languageDepotRepoName";
-		internal const string FwDataExe = "FixFwData.exe";
 		internal const string FdoDataModelVersionKey = "fdoDataModelVersion";
-		internal const string LongHashToSyncWithKey = "longHashToSyncWith";
+
+		internal const string failure = "failure";
+		internal const string warning = "warning";
+		internal const string success = "success";
+		internal const string cloneDeleted = "Clone deleted";
 
 		/// <summary>
 		/// Write out long SHA, so LF can record it.
@@ -52,6 +56,32 @@ namespace LfMergeBridge
 				somethingForClient += Environment.NewLine;
 			}
 			somethingForClient += newInformation;
+		}
+
+		internal static Revision GetHighestRevision(HgRepository hgRepository)
+		{
+			if (string.IsNullOrEmpty(hgRepository.Identifier))
+				return null;
+			Revision highestRevision = null;
+			var highestLocalRevisionNumber = 0;
+			foreach (var head in hgRepository.GetHeads())
+			{
+				if (highestRevision == null)
+				{
+					highestRevision = head;
+					highestLocalRevisionNumber = int.Parse(highestRevision.Number.LocalRevisionNumber);
+					continue;
+				}
+
+				var currentLocalRevisionNumber = int.Parse(head.Number.LocalRevisionNumber);
+				if (currentLocalRevisionNumber <= highestLocalRevisionNumber)
+				{
+					continue;
+				}
+				highestRevision = head;
+				highestLocalRevisionNumber = currentLocalRevisionNumber;
+			}
+			return highestRevision;
 		}
 	}
 }

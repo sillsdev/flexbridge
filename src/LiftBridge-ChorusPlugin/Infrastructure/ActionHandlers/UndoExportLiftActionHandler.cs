@@ -28,11 +28,11 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// undo_export_lift: -p <$fwroot>\foo where 'foo' is the project folder name
 			// Calling Utilities.LiftOffset(commandLineArgs["-p"]) will use the folder: <$fwroot>\foo\OtherRepositories\foo_Lift
-			var pathToRepository = Utilities.LiftOffset(options["-p"]);
+			var pathToRepository = TriboroughBridgeUtilities.LiftOffset(options["-p"]);
 			var repo = new HgRepository(pathToRepository, new NullProgress());
 			repo.Update();
 			// Delete any new files (except import failure notifier file).
@@ -46,7 +46,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.UndoExportLift; }
 		}
@@ -58,7 +58,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			_connectionHelper.SignalBridgeWorkComplete(false);
 		}

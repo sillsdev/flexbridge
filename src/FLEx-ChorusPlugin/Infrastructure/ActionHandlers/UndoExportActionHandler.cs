@@ -24,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			throw new NotSupportedException("The Undo Export handler is not supported");
 		}
@@ -32,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.UndoExport; }
 		}

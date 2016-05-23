@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Linq;
 using System.Xml;
@@ -25,6 +22,16 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 	/// ----------------------------------------------------------------------------------------
 	internal sealed class StyleContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
+		internal IGenerateHtmlContext AsIGenerateHtmlContext
+		{
+			get { return this; }
+		}
+
+		internal IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
+		{
+			get { return this; }
+		}
+
 		private const string Space = " ";
 		private const string Quote = "\"";
 		private const string Slash = "/";
@@ -134,18 +141,18 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 
 		#region IGenerateContextDescriptor Members
 
-		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptor.GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var doc = new XmlDocument();
 			doc.LoadXml(mergeElement);
-			return GenerateContextDescriptor(doc.DocumentElement, filePath);
+			return AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(doc.DocumentElement, filePath);
 		}
 
 		#endregion
 
 		#region IGenerateContextDescriptorFromNode Members
 
-		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptorFromNode.GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
 			return FieldWorksMergeServices.GenerateContextDescriptor(filePath,
 																			 FieldWorksMergeServices.GetGuid(mergeElement),
@@ -161,7 +168,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 		/// We come in here once each for Ancestor, Ours and Theirs with different mergeElement.
 		/// </summary>
 		/// <param name="mergeElement">The element whose content is to be detailed enough to show things that can change.</param>
-		public string HtmlContext(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContext(XmlNode mergeElement)
 		{
 			// mergeElement is never null since the 2 places that call it in LibChorus\merge\xml\generic\Conflicts.cs guard against it.
 			string image = "<div class='" + FlexBridgeConstants.StStyle + "'>";
@@ -261,7 +268,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 		/// <param name="classname">Class name that is supposed to contain the given custom property.</param>
 		/// <param name="customPropertyName">Name from Custom element which is an ancestor of styleRules (for a custom field)</param>
 		/// <returns>The label of the custom field if it has one. Otherwise, the custom property name.</returns>
-		public string GetDisplayName(string classname, string customPropertyName)
+		internal string GetDisplayName(string classname, string customPropertyName)
 		{
 			var mdc = MetadataCache.MdCache;
 			FdoClassInfo classInfo = null;
@@ -292,7 +299,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 					   : customPropertyName;
 		}
 
-		public string HtmlContextStyles(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContextStyles(XmlNode mergeElement)
 		{
 			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
 		}

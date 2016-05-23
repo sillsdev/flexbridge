@@ -8,7 +8,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 	/// if the action handler needs to contact Flex (or another client), after finishing its work.
 	/// If no contact is needed, then there is no need to add an implementation of this interface.
 	/// </summary>
-	public interface IBridgeActionTypeHandlerCallEndWork
+	internal interface IBridgeActionTypeHandlerCallEndWork
 	{
 		/// <summary>
 		/// Perform ending work for the supported action.

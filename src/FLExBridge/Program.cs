@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
+using LibTriboroughBridge_ChorusPlugin.Properties;
 using Palaso.Progress;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
@@ -68,7 +69,7 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(TriboroughBridgeUtilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
@@ -85,7 +86,7 @@ namespace FLExBridge
 						return;
 					}
 
-					var l10Managers = Utilities.SetupLocalization(options);
+					var l10Managers = TriboroughBridgeUtilities.SetupLocalization(options);
 
 					try
 					{
@@ -129,7 +130,7 @@ namespace FLExBridge
 
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = Utilities.FlexBridgeEmailAddress;
+			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 		}

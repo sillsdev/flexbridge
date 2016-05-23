@@ -1,10 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
+using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin.Handling;
 using NUnit.Framework;
 
@@ -24,8 +22,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void UnknownMultiStringDefault()
 		{
-			string source =
-				@"<RootClass>
+			const string source = @"<RootClass>
 					<HomographNumber
 						val='0' />
 					<Outer>
@@ -46,7 +43,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			var generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
 			var html = generator.HtmlContext(input);
 			Assert.That(html.StartsWith("<div>"));
 			Assert.That(html, Contains.Substring("<div><span class=\"ws\">en</span>: abcdefghijk</div>"));
@@ -66,8 +63,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void UnknownMultiStringDefaultSingleAlternative()
 		{
-			string source =
-				@"<RootClass>
+			const string source = @"<RootClass>
 					<HomographNumber
 						val='0' />
 					<Outer>
@@ -87,7 +83,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			var generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo("<span class=\"ws\">en</span>: abcdefghijk"));
 
@@ -103,8 +99,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void UnicodeStringJustShowsText()
 		{
-			string source =
-				@"<RootClass>
+			const string source = @"<RootClass>
 					<HomographNumber
 						val='0' />
 					<Outer>
@@ -118,7 +113,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			var generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo("abcdefghijk"));
 
@@ -131,8 +126,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void LastResortIsGenericHtmlGenerator()
 		{
-			string source =
-			@"<RootClass>
+			const string source = @"<RootClass>
 					<Outer>
 						<Mid>
 							<Target>
@@ -143,14 +137,14 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the Target element.
-			var generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo(new FwGenericHtmlGenerator().MakeHtml(input)));
 		}
 
-		XmlNode GetNode(string input)
+		static XmlNode GetNode(string input)
 		{
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			return doc.DocumentElement;
 		}

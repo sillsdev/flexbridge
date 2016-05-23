@@ -55,7 +55,7 @@ namespace TriboroughBridge_ChorusPlugin
 			*/
 // ReSharper restore InconsistentNaming
 
-		public static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
+		internal static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
 		{
 			var commandLineArgs = new Dictionary<string, string>();
 			if (args != null && args.Count > 0)
@@ -163,7 +163,7 @@ namespace TriboroughBridge_ChorusPlugin
 					if (Path.GetExtension(pOption) == ".fwdata")
 						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
-					liftFolder = Utilities.LiftOffset(pOption);
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(pOption);
 					if (Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is an extant Lift repository");
 					break;
@@ -179,7 +179,7 @@ namespace TriboroughBridge_ChorusPlugin
 				case send_receive_lift:
 					// internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
-					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder");
 					if (!Directory.GetFiles(liftFolder, "*.lift").Any())
@@ -193,7 +193,7 @@ namespace TriboroughBridge_ChorusPlugin
 					// internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
 					// xml or Db4o isn't relevant for this option.
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
-					liftFolder = Utilities.LiftOffset(pOption);
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(pOption);
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder");
 					if (!Directory.Exists(Path.Combine(liftFolder, ".hg")))
@@ -210,7 +210,7 @@ namespace TriboroughBridge_ChorusPlugin
 				case view_notes_lift:
 					// internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
-					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder, and thus, no Lift notes");
 					if (!Directory.Exists(Path.Combine(liftFolder, ".hg")))

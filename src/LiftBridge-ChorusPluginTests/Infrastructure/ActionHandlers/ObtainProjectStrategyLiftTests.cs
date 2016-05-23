@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.IO;
@@ -10,9 +7,9 @@ using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.LiftBridge.Infrastructure.ActionHandlers;
-using TriboroughBridge_ChorusPlugin;
-using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 using LibTriboroughBridgeChorusPlugin;
+using TriboroughBridge_ChorusPlugin;
+using TriboroughBridge_ChorusPlugin.Infrastructure;
 
 namespace LiftBridgeTests.Infrastructure.ActionHandlers
 {
@@ -29,15 +26,15 @@ namespace LiftBridgeTests.Infrastructure.ActionHandlers
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Directory.CreateDirectory(fakeProjectDir);
-				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
+				using (TemporaryFolder.TrackExisting(fakeProjectDir))
 				{
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo",
-						SharedConstants.OtherRepositories, Utilities.LIFT);
+						LibTriboroughBridgeSharedConstants.OtherRepositories, TriboroughBridgeUtilities.LIFT);
 					Directory.CreateDirectory(extantDir);
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepowithoffset",
-						SharedConstants.OtherRepositories, Utilities.LIFT));
+						LibTriboroughBridgeSharedConstants.OtherRepositories, TriboroughBridgeUtilities.LIFT));
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "noreposansoffset"));
-					var strat = new ObtainProjectStrategyLift();
+					IObtainProjectStrategy strat = new ObtainProjectStrategyLift();
 					Assert.IsTrue(strat.ProjectFilter(sueRepo.ProjectFolder.Path));
 				}
 			}

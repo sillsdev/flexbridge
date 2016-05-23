@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Globalization;
@@ -23,9 +20,9 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// and (b) because if one is missing, premerge probably won't be called; it will just be processed as an add or delete.
 	/// But it seems more robust to leave the tests in.)
 	/// </summary>
-	internal class PreferMostRecentTimePreMerger : IPremerger
+	internal sealed class PreferMostRecentTimePreMerger : IPremerger
 	{
-		public void Premerge(IMergeEventListener listener, ref XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
+		void IPremerger.Premerge(IMergeEventListener listener, ref XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
 		{
 			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, ourDateTimeNode);
 			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, theirDateTimeNode);
@@ -82,7 +79,5 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			var date2 = DateTime.Parse(newest);
 			return (date1 > date2) ? date1String : newest;
 		}
-
-
 	}
 }

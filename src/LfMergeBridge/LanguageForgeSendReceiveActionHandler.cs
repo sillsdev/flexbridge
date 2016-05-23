@@ -30,8 +30,8 @@ namespace LfMergeBridge
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class LanguageForgeSendReceiveActionHandler : IBridgeActionTypeHandler
 	{
-		[Import]
-		private FlexBridgeSychronizerAdjunct _syncAdjunct;
+		private const string FwDataExe = "FixFwData.exe";
+		private const string syncBase = "Sync";
 
 		/// <summary>
 		/// Do a Send/Receive with the matching Language Depot project for the given Language Forge project's repository.
@@ -44,68 +44,101 @@ namespace LfMergeBridge
 		/// which will reset the workspace, and then LF can write new changes to the fwdata file,
 		/// and *then* call this action.
 		/// </remarks>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// Make sure required parameters are in 'options'.
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.ProjectPathKey), @"Missing required 'projectPath' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.FullPathToProjectKey), @"Missing required 'fullPathToProject' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.FwdataFilenameKey), @"Missing required 'fwdataFilename' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.FdoDataModelVersionKey), @"Missing required 'fdoDataModelVersionKey' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.LanguageDepotRepoNameKey), @"Missing required 'languageDepotRepoName' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.LanguageDepotRepoUriKey), @"Missing required 'languageDepotRepoUri' key in 'options'.");
 
-			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), LfMergeBridgeUtilities.FwDataExe);
+			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), FwDataExe);
 			if (!File.Exists(fwDataExePathname))
 			{
-				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory", LfMergeBridgeUtilities.FwDataExe));
+				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory", FwDataExe));
 			}
-			// Syncing of a new repo (created here) is not supported.
-			var projectPath = options[LfMergeBridgeUtilities.ProjectPathKey];
-			if (!Directory.Exists(Path.Combine(projectPath, ".hg")))
+
+			// Syncing of a new repo (actually created here) is not supported.
+			var fullPathToProject = options[LfMergeBridgeUtilities.FullPathToProjectKey];
+			if (!Directory.Exists(Path.Combine(fullPathToProject, ".hg")))
 			{
-				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, "Sync failed: Cannot create a repository at this point in LF development.");
+				Directory.Delete(fullPathToProject, true);
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot create a repository at this point in LF development. {2}", syncBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
 
-			progress.WriteVerbose("Syncing");
-			var projectFolderConfiguration = new ProjectFolderConfiguration(projectPath);
+			var projectFolderConfiguration = new ProjectFolderConfiguration(fullPathToProject);
 			FlexFolderSystem.ConfigureChorusProjectFolder(projectFolderConfiguration);
 
 			var synchronizer = Synchronizer.FromProjectConfiguration(projectFolderConfiguration, progress);
+			// Initial commit zero creation is not supported.
+			var hgRepository = synchronizer.Repository;
+			if (string.IsNullOrEmpty(hgRepository.Identifier))
+			{
+				Directory.Delete(fullPathToProject, true);
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot do first commit. {2}.", syncBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
+				return;
+			}
+			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
+			var desiredBranchName = options[LfMergeBridgeUtilities.FdoDataModelVersionKey];
+			if (startingRevision.Branch != desiredBranchName)
+			{
+				// Not being the same could create a new branch, and LF doesn't allow that.
+				// It may be that LF ought to have first asked for a branch change.
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot commit to current branch {2}, because LF wants branch {3}, and that could possibly create a new branch.", syncBase, LfMergeBridgeUtilities.failure, startingRevision.Branch, desiredBranchName));
+				return;
+			}
+
+			// Do a pull first, to see if FLEx user has upgraded.
+			var uri = options[LfMergeBridgeUtilities.LanguageDepotRepoUriKey];
+			var repositoryAddress = RepositoryAddress.Create(options[LfMergeBridgeUtilities.LanguageDepotRepoNameKey], uri, false);
+			if (hgRepository.Pull(repositoryAddress, uri))
+			{
+				// Check for a higher branch that came in.
+				var highestHead = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
+				if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
+				{
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: pulled a higher higher model '{2}' than LF asked for '{3}': {4}.", syncBase, LfMergeBridgeUtilities.failure, highestHead, desiredBranchName, "Sync stopped before local commit"));
+					return;
+				}
+			}
 
 			// Set up adjunct.
-			_syncAdjunct.FwDataPathName = Path.Combine(projectPath, options[LfMergeBridgeUtilities.FwdataFilenameKey]);
-			_syncAdjunct.FixItPathName = fwDataExePathname;
-			_syncAdjunct.WriteVerbose = true;
-			synchronizer.SynchronizerAdjunct = _syncAdjunct;
-
+			var syncAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(fullPathToProject, options[LfMergeBridgeUtilities.FwdataFilenameKey]), options[FwDataExe], false, false);
+			synchronizer.SynchronizerAdjunct = syncAdjunct;
 			// Set up sync options.
 			var assemblyName = Assembly.GetExecutingAssembly().GetName();
 			var syncOptions = new SyncOptions
 			{
-				DoPullFromOthers = true,
+				DoPullFromOthers = false, // Already did the pull
 				DoMergeWithOthers = true,
 				DoSendToOthers = true,
 				CheckinDescription = string.Format("[{0}: {1}] sync", assemblyName.Name, assemblyName.Version)
 			};
 			syncOptions.RepositorySourcesToTry.Clear(); // Get rid of any default ones, since LF only sends off to the internet (Language Depot).
 			// We use the generic creation code here to make testing easier. In the real world we will only create "HttpRepositoryPath".
-			syncOptions.RepositorySourcesToTry.Add(RepositoryAddress.Create(options[LfMergeBridgeUtilities.LanguageDepotRepoNameKey], options[LfMergeBridgeUtilities.LanguageDepotRepoUriKey], false));
+			syncOptions.RepositorySourcesToTry.Add(repositoryAddress);
 
+			progress.WriteVerbose("Syncing");
 			var syncResults = synchronizer.SyncNow(syncOptions);
+
 			if (!syncResults.Succeeded)
 			{
-				var message = string.Format("Sync failed - {0}", syncResults.ErrorEncountered);
+				var message = string.Format("{0} {1}: {2}", syncBase, LfMergeBridgeUtilities.failure, syncResults.ErrorEncountered);
 				progress.WriteError(message);
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, message);
 				return;
 			}
+
+			// Fwdata file has been restored by this point.
 			var gotChangesText = syncResults.DidGetChangesFromOthers ? "Received changes from others" : "No changes from others";
 			// LF Merge needs to know if anything came from LD. Since new stuff did come in, then LF has to rebuild its FdoCache.
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, gotChangesText);
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: {2}", syncBase, LfMergeBridgeUtilities.success, gotChangesText));
 			progress.WriteVerbose(gotChangesText);
 
 			// The fwdata file will have been updated by the FW adjunct by now, if anything came in the sync 'pull'.
 			// Write long SHA.
-			var hgRepository = synchronizer.Repository;
 			var revisionWorkingSetIsBasedOn = hgRepository.GetRevisionWorkingSetIsBasedOn();
 			// The long hash will be different, even if only a local commit was done.
 			LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, revisionWorkingSetIsBasedOn, ref somethingForClient);
@@ -114,7 +147,7 @@ namespace LfMergeBridge
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.LanguageForgeSendReceive; }
 		}
