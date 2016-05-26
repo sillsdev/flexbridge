@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +24,7 @@ namespace SIL.LiftBridge.Services
 
 			foreach (var dirName in Directory.GetDirectories(baseDirPath))
 			{
-				if (dirName.EndsWith(Utilities.hg) || dirName.EndsWith(LiftUtilties.git))
+				if (dirName.EndsWith(TriboroughBridgeUtilities.hg) || dirName.EndsWith(LiftUtilties.git))
 					continue; // Skip the repo file (for Hg or Git, if it becomes an option).
 
 				results.UnionWith(EnumerateExtantFiles(dirName));

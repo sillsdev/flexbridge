@@ -1,7 +1,6 @@
 // Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using LibTriboroughBridgeChorusPlugin;
@@ -29,7 +28,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <remarks>
 		/// Only works on Windows, since Linux updates another way.
 		/// </remarks>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 #if !MONO
 			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/Alpha/appcast.xml", CommonResources.chorus32x32))
@@ -43,7 +42,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.CheckForUpdates; }
 		}

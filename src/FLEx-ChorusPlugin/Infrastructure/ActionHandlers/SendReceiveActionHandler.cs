@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Sync;
 using FLEx_ChorusPlugin.Properties;
-using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
@@ -20,27 +20,37 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal S/R for a Flex repo.
 	/// </summary>
 	[Export(typeof(IBridgeActionTypeHandler))]
-	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler,
-		IBridgeActionTypeHandlerCallEndWork
+	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 
-		[Import]
-		private FlexBridgeSychronizerAdjunct _syncAdjunct;
-
 		private bool _gotChanges;
+
+		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
+		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
+		private static void BackOutOfRepoCreation(string projectDir)
+		{
+			foreach (var subDir in new[] { ".hg", "Anthropology", "General", "Linguistics" })
+			{
+				var fullPath = Path.Combine(projectDir, subDir);
+				if (Directory.Exists(fullPath))
+					Directory.Delete(fullPath, true);
+			}
+			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
+			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
+		}
 
 		#region IBridgeActionTypeHandler impl
 
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(options["-p"]);
-			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			using (var chorusSystem = TriboroughBridgeUtilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -56,11 +66,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 				// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
 				var projectName = Path.GetFileNameWithoutExtension(options["-p"]);
-				var lockPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlLockExtension);
+				var lockPathname = Path.Combine(projectDir, projectName + LibTriboroughBridgeSharedConstants.FwXmlLockExtension);
 				try
 				{
 					File.WriteAllText(lockPathname, "");
-					var origPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlExtension);
+					var origPathname = Path.Combine(projectDir, projectName + LibTriboroughBridgeSharedConstants.FwXmlExtension);
 
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
@@ -71,11 +81,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISychronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						_syncAdjunct.FwDataPathName = origPathname;
-						_syncAdjunct.FixItPathName = options["-f"];
-						_syncAdjunct.WriteVerbose = false;
-
-						syncDlg.SetSynchronizerAdjunct(_syncAdjunct);
+						var syncAdjunct = new FlexBridgeSychronizerAdjunct(origPathname, options["-f"], false, true);
+						syncDlg.SetSynchronizerAdjunct(syncAdjunct);
 
 						// Chorus does it in this order:
 						// Local Commit
@@ -99,7 +106,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
 								BackOutOfRepoCreation(projectDir);
 							}
-							else if (syncDlg.SyncResult.DidGetChangesFromOthers || _syncAdjunct.WasUpdated)
+							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunct.WasUpdated)
 							{
 								_gotChanges = true;
 							}
@@ -125,24 +132,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
-		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
-		private static void BackOutOfRepoCreation(string projectDir)
-		{
-			foreach (var subDir in new[] {".hg", "Anthropology", "General", "Linguistics"})
-			{
-				var fullPath = Path.Combine(projectDir, subDir);
-				if (Directory.Exists(fullPath))
-					Directory.Delete(fullPath, true);
-			}
-			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
-			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
-		}
-
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.SendReceive; }
 		}
@@ -154,7 +147,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
 		}

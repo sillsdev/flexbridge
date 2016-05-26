@@ -33,7 +33,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		private static bool ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
+			var hgDataFolder = TriboroughBridgeUtilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder)
 				/* && !Utilities.AlreadyHasLocalRepository(Utilities.ProjectsPath, repositoryLocation) */
 				   && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
@@ -84,7 +84,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 
 			if (!Directory.Exists(expectedPathToClonedRepository) ||
-				TriboroughBridge_ChorusPlugin.Utilities.FolderIsEmpty(expectedPathToClonedRepository))
+				TriboroughBridgeUtilities.FolderIsEmpty(expectedPathToClonedRepository))
 			{
 				if (Directory.Exists(expectedPathToClonedRepository))
 					Directory.Delete(expectedPathToClonedRepository);
@@ -109,15 +109,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// -p <$fwroot>\foo where 'foo' is the project folder name
 			var pOption = options["-p"];
-			var otherReposDir = Path.Combine(pOption, SharedConstants.OtherRepositories);
+			var otherReposDir = Path.Combine(pOption, LibTriboroughBridgeSharedConstants.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 				Directory.CreateDirectory(otherReposDir);
 
-			var desiredCloneLocation = TriboroughBridge_ChorusPlugin.Utilities.LiftOffset(pOption);
+			var desiredCloneLocation = TriboroughBridgeUtilities.LiftOffset(pOption);
 			CloneResult result;
 			using (var form = new Form())
 			{
@@ -128,7 +128,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					ProjectFilter,	// Lift repo filter
 					HubQuery, // If it goes to Chorus Hub, use this filter
 					options["-projDir"], // <$fwroot> main project folder, used to find all main project repo ids.
-					SharedConstants.OtherRepositories, // subfolder of each FW project folder, in which to look for additional repo ids.
+					LibTriboroughBridgeSharedConstants.OtherRepositories, // subfolder of each FW project folder, in which to look for additional repo ids.
 					CommonResources.kHowToSendReceiveExtantRepository); // Some message to use to let user know a repo exists.
 			}
 
@@ -152,7 +152,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.ObtainLift; }
 		}
@@ -164,7 +164,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			if (_gotClone && (_liftFolder != null))
 			{

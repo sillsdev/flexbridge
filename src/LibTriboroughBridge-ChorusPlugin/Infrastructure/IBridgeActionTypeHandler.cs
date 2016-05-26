@@ -15,7 +15,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 	/// The IBridgeActionTypeHandler implementation can then include one or two of the optional interfaces (IBridgeActionTypeHandlerShowWindow or IBridgeActionTypeHandlerCallEndWork),
 	/// depending on the needs of the main implementation.
 	/// </summary>
-	public interface IBridgeActionTypeHandler
+	internal interface IBridgeActionTypeHandler
 	{
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.

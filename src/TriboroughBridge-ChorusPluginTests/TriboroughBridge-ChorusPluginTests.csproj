@@ -140,7 +140,7 @@
     <Compile Include="BridgeConflictControllerTests.cs" />
     <Compile Include="CommandLineProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UtilitiesTests.cs" />
+    <Compile Include="TriboroughBridgeUtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">

@@ -71,7 +71,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <remarks>
 		/// The LIFT repo is used by FLEx to create a full FLEX project.
 		/// </remarks>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = options[CommandLineProcessor.projDir];
@@ -80,7 +80,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			{
 				var getSharedProjectModel = new GetSharedProjectModel();
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, _pathToRepository, SharedConstants.OtherRepositories,
+					ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
@@ -106,7 +106,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.Obtain; }
 		}
@@ -118,7 +118,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			// notifyFlex = true;
 			// changes = false;

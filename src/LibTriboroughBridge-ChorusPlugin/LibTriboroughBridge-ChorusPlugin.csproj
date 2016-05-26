@@ -95,10 +95,17 @@
     <Compile Include="ActionType.cs" />
     <Compile Include="Infrastructure\ActionHandlers\ActionTypeHandlerRepository.cs" />
     <Compile Include="Infrastructure\ActionHandlers\StringToActionTypeConverter.cs" />
+    <Compile Include="Infrastructure\FinalCloneResult.cs" />
     <Compile Include="Infrastructure\IBridgeActionTypeHandler.cs" />
     <Compile Include="Infrastructure\IBridgeActionTypeHandlerCallEndWork.cs" />
+    <Compile Include="Infrastructure\IUpdateBranchHelperStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharedConstants.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <DependentUpon>Settings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="LibTriboroughBridgeSharedConstants.cs" />
     <Compile Include="Infrastructure\UpdateBranchHelper.cs" />
     <Compile Include="Infrastructure\ActualCloneResult.cs" />
   </ItemGroup>
@@ -108,6 +115,10 @@
     <None Include="..\..\lib\common\chorusmerge" Condition="'$(OS)'!='Windows_NT'">
       <Link>chorusmerge</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 </Project>

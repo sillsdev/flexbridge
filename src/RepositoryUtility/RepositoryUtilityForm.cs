@@ -19,7 +19,7 @@ using Palaso.IO;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
 using Palaso.PlatformUtilities;
@@ -27,7 +27,7 @@ using Palaso.PlatformUtilities;
 namespace RepositoryUtility
 {
 	[Export(typeof(RepositoryUtilityForm))]
-	public partial class RepositoryUtilityForm : Form
+	public sealed partial class RepositoryUtilityForm : Form
 	{
 		[Import]
 		private ActionTypeHandlerRepository _actionTypeHandlerRepository;
@@ -247,7 +247,7 @@ namespace RepositoryUtility
 				var syncAdjunt = new RepositoryUtilitySychronizerAdjunct(
 						(repoType == RepoType.LIFT)
 							? Directory.GetFiles(_repoFolder, "*.lift").First()
-							: Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + SharedConstants.FwXmlExtension),
+							: Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + LibTriboroughBridgeSharedConstants.FwXmlExtension),
 						repoType);
 				syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
@@ -282,10 +282,10 @@ namespace RepositoryUtility
 			if (GetRepoType() != RepoType.FLEx)
 				return;
 
-			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + SharedConstants.FwXmlExtension);
+			var fwdataPathname = Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + LibTriboroughBridgeSharedConstants.FwXmlExtension);
 			if (!File.Exists(fwdataPathname))
 				File.WriteAllText(fwdataPathname, @"");
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), fwdataPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), true, fwdataPathname);
 		}
 
 		/// <summary>
@@ -321,10 +321,10 @@ namespace RepositoryUtility
 						MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				case RepoType.LIFT:
-					newChorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(_repoFolder, Environment.UserName, LiftFolder.AddLiftFileInfoToFolderConfiguration);
+					newChorusSystem = TriboroughBridgeUtilities.InitializeChorusSystem(_repoFolder, Environment.UserName, LiftFolder.AddLiftFileInfoToFolderConfiguration);
 					break;
 				case RepoType.FLEx:
-					newChorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(_repoFolder, Environment.UserName, FlexFolderSystem.ConfigureChorusProjectFolder);
+					newChorusSystem = TriboroughBridgeUtilities.InitializeChorusSystem(_repoFolder, Environment.UserName, FlexFolderSystem.ConfigureChorusProjectFolder);
 					break;
 				default:
 					MessageBox.Show(this, "The selected repository is recognized, but not yet supported.", "Unsupported Repository Type",
@@ -426,11 +426,11 @@ namespace RepositoryUtility
 			{
 				_repoType = RepoType.None;
 			}
-			else if (Directory.GetFiles(TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(_repoFolder), "*.lift.i").Any())
+			else if (Directory.GetFiles(TriboroughBridgeUtilities.HgDataFolder(_repoFolder), "*.lift.i").Any())
 			{
 				_repoType = RepoType.LIFT;
 			}
-			else if (Directory.GetFiles(TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(_repoFolder), "*._custom_properties.i").Any())
+			else if (Directory.GetFiles(TriboroughBridgeUtilities.HgDataFolder(_repoFolder), "*._custom_properties.i").Any())
 			{
 				_repoType = RepoType.FLEx;
 			}

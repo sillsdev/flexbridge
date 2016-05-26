@@ -43,9 +43,9 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			_baseLiftDir = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 			var fwLangProjGuid = options["-g"];
 			var basePathForOldLiftRepos = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -91,7 +91,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
 
-				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, TriboroughBridge_ChorusPlugin.Utilities.hg))))
+				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, TriboroughBridgeUtilities.hg))))
 				{
 					var repo = new HgRepository(directory, new NullProgress());
 					if (repo.Identifier != repoId)
@@ -136,7 +136,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.MoveLift; }
 		}
@@ -148,7 +148,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			var liftPathname = Directory.Exists(_baseLiftDir)
 				? Directory.GetFiles(_baseLiftDir, "*" + LiftUtilties.LiftExtension).FirstOrDefault()

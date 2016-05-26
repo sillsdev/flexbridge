@@ -1,12 +1,8 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 using Chorus.merge.xml.generic;
-using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax;
 using NUnit.Framework;
 
@@ -292,11 +288,21 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSynta
 	/// <summary>
 	/// Wrapper to allow tests to use expanded PosContextGenerator function.
 	/// </summary>
-	public class MockPosContextGenerator
+	internal sealed class MockPosContextGenerator
 	{
+		internal IGenerateHtmlContext GeneratorAsIGenerateHtmlContext
+		{
+			get { return m_generator; }
+		}
+
+		internal IGenerateContextDescriptorFromNode GeneratorAsIGenerateContextDescriptorFromNode
+		{
+			get { return m_generator; }
+		}
+
 		internal PosContextGenerator m_generator;
 
-		public MockPosContextGenerator(XmlNode morphSynData)
+		internal MockPosContextGenerator(XmlNode morphSynData)
 		{
 			m_generator = new PosContextGenerator();
 			LoadPosList(morphSynData);
@@ -309,12 +315,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSynta
 
 		internal ContextDescriptor GenerateContextDescriptor(XmlNode input, string filepath)
 		{
-			return m_generator.GenerateContextDescriptor(input, filepath);
+			return GeneratorAsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, filepath);
 		}
 
 		internal string HtmlContext(XmlNode input)
 		{
-			return m_generator.HtmlContext(input);
+			return GeneratorAsIGenerateHtmlContext.HtmlContext(input);
 		}
 	}
 }

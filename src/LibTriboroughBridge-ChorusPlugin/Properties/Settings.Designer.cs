@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TriboroughBridge_ChorusPlugin.Properties {
+namespace LibTriboroughBridge_ChorusPlugin.Properties {
 
 
 	[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
