@@ -28,15 +28,15 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandler impl
 
-		public void StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// As per the API, -p will be the main FW data file.
 			// REVIEW (RandyR): What if it is the DB4o file?
 			// REVIEW (RandyR): What is sent if the user is a client of the DB4o server?
 			// -p <$fwroot>\foo\foo.fwdata
-			var pathToLiftProject = Utilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			var pathToLiftProject = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
 
-			using (var chorusSystem = Utilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
+			using (var chorusSystem = TriboroughBridgeUtilities.InitializeChorusSystem(pathToLiftProject, options["-u"], LiftFolder.AddLiftFileInfoToFolderConfiguration))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -99,7 +99,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 		}
 
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.SendReceiveLift; }
 		}
@@ -108,7 +108,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IBridgeActionTypeHandlerCallEndWork impl
 
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
 		}

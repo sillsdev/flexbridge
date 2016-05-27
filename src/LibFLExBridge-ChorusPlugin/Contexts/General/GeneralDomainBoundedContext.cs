@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -12,11 +9,10 @@ using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using Palaso.Xml;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.General
 {
-	internal class GeneralDomainBoundedContext
+	internal sealed class GeneralDomainBoundedContext
 	{
 		internal static void NestContext(string generalBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
@@ -47,7 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				{
 					var filterGuid = filterObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
-					var filterElement = Utilities.CreateFromBytes(classData[className][filterGuid]);
+					var filterElement = LibFLExBridgeUtilities.CreateFromBytes(classData[className][filterGuid]);
 					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
@@ -66,7 +62,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				{
 					var annotationGuid = annotationObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
-					var annotationElement = Utilities.CreateFromBytes(classData[className][annotationGuid]);
+					var annotationElement = LibFLExBridgeUtilities.CreateFromBytes(classData[className][annotationGuid]);
 					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(FlexBridgeConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
@@ -80,7 +76,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			var unownedPictures = classData[FlexBridgeConstants.CmPicture].Values.Where(listElement => XmlUtils.GetAttributes(listElement, new HashSet<string> { FlexBridgeConstants.OwnerGuid })[FlexBridgeConstants.OwnerGuid] == null).ToList();
 			foreach (var unownedPictureBytes in unownedPictures)
 			{
-				var element = Utilities.CreateFromBytes(unownedPictureBytes);
+				var element = LibFLExBridgeUtilities.CreateFromBytes(unownedPictureBytes);
 				CmObjectNestingService.NestObject(
 					false,
 					element,
@@ -94,7 +90,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
 			{
 				rootElement = new XElement(FlexBridgeConstants.VirtualOrderings);
-				foreach (var element in classData[FlexBridgeConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => Utilities.CreateFromBytes(virtualOrderingBytes)))
+				foreach (var element in classData[FlexBridgeConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => LibFLExBridgeUtilities.CreateFromBytes(virtualOrderingBytes)))
 				{
 					CmObjectNestingService.NestObject(
 						false,

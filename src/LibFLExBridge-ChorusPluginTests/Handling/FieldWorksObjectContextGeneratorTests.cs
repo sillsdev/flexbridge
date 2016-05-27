@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using Chorus.merge.xml.generic;
-using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Handling;
 using LibFLExBridgeChorusPlugin.Handling.Anthropology;
@@ -24,7 +20,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	[TestFixture]
 	public class FieldWorksObjectContextGeneratorTests
 	{
-		private static FieldWorkObjectContextGenerator MakeGenerator()
+		private static IGenerateContextDescriptorFromNode MakeGenerator()
 		{
 			var result = new FieldWorkObjectContextGenerator();
 			var strategies = new MergeStrategies();

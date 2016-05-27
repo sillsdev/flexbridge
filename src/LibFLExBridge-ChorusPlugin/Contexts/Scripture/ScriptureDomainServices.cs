@@ -1,19 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 using Palaso.Progress;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
@@ -69,7 +65,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			// // Lela Teli-3 has null.
 			if (scrAsBytes != null)
 			{
-				var scripture = Utilities.CreateFromBytes(scrAsBytes);
+				var scripture = LibFLExBridgeUtilities.CreateFromBytes(scrAsBytes);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
 				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(FlexBridgeConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);

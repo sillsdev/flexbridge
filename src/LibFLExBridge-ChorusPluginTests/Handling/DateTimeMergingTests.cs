@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +9,6 @@ using Chorus.merge.xml.generic;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
-using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Handling;
 
@@ -56,7 +52,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
 			var ourNode = XmlUtilities.GetDocumentNodeFromRawXml(ourContent, new XmlDocument());
 			var ourModPropNode = ourNode.SelectSingleNode("DateModified");
-			var premerger = new PreferMostRecentTimePreMerger();
+			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			premerger.Premerge(new ListenerForUnitTests(), ref ourModPropNode, null, ancestorModPropNode);
 
 			Assert.AreEqual("2000-1-1 23:59:59.000", ourModPropNode.Attributes["val"].Value);
@@ -79,7 +75,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
 			var ourNode = XmlUtilities.GetDocumentNodeFromRawXml(ourContent, new XmlDocument());
 			var ourModPropNode = ourNode.SelectSingleNode("DateModified");
-			var premerger = new PreferMostRecentTimePreMerger();
+			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			premerger.Premerge(new ListenerForUnitTests(), ref ourModPropNode, null, ancestorModPropNode);
 
 			Assert.AreEqual("2002-1-1 23:59:59.000", ourModPropNode.Attributes["val"].Value);
@@ -102,7 +98,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
 			var theirNode = XmlUtilities.GetDocumentNodeFromRawXml(theirContent, new XmlDocument());
 			var theirModPropNode = theirNode.SelectSingleNode("DateModified");
-			var premerger = new PreferMostRecentTimePreMerger();
+			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			XmlNode ourNode = null;
 			premerger.Premerge(new ListenerForUnitTests(), ref ourNode, theirModPropNode, ancestorModPropNode);
 
@@ -126,7 +122,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
 			var theirNode = XmlUtilities.GetDocumentNodeFromRawXml(theirContent, new XmlDocument());
 			var theirModPropNode = theirNode.SelectSingleNode("DateModified");
-			var premerger = new PreferMostRecentTimePreMerger();
+			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			XmlNode ourNode = null;
 			premerger.Premerge(new ListenerForUnitTests(), ref ourNode, theirModPropNode, ancestorModPropNode);
 

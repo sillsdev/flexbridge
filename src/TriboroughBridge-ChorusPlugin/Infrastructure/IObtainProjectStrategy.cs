@@ -11,7 +11,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 	///
 	/// Do not use this interface, if the implementation cannot be used to create a new language project.
 	/// </summary>
-	public interface IObtainProjectStrategy
+	internal interface IObtainProjectStrategy
 	{
 		bool ProjectFilter(string repositoryLocation);
 		string HubQuery { get; }

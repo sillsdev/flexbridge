@@ -21,14 +21,14 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers
 	internal sealed class ActionTypeHandlerRepository
 	{
 		[ImportMany]
-		public IEnumerable<IBridgeActionTypeHandler> Handlers { get; private set; }
+		private IEnumerable<IBridgeActionTypeHandler> Handlers { get; set; }
 
 		/// <summary>
 		/// Get the handler for the given <paramref name="actionType"/>.
 		/// </summary>
 		/// <param name="actionType">The <see cref="ActionType"/> needed.</param>
 		/// <returns>The <see cref="ActionType"/> for the given <paramref name="actionType"/>, or null if none found.</returns>
-		public IBridgeActionTypeHandler GetHandler(ActionType actionType)
+		internal IBridgeActionTypeHandler GetHandler(ActionType actionType)
 		{
 			return Handlers.FirstOrDefault(handler => handler.SupportedActionType == actionType);
 		}

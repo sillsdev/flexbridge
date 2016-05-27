@@ -95,8 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FLExProjectSplitter.cs" />
-    <Compile Include="FLExProjectUnifier.cs" />
+    <Compile Include="DomainServices\FLExProjectSplitter.cs" />
+    <Compile Include="DomainServices\FLExProjectUnifier.cs" />
     <Compile Include="Contexts\BaseDomainServices.cs" />
     <Compile Include="Contexts\Anthropology\AnthropologyBoundedContextService.cs" />
     <Compile Include="Contexts\Anthropology\AnthropologyDomainServices.cs" />
@@ -201,19 +201,15 @@
     <Compile Include="Infrastructure\FdoPropertyInfo.cs" />
     <Compile Include="Infrastructure\FieldWorksProjectServices.cs" />
     <Compile Include="Infrastructure\MetadataCache.cs" />
-    <Compile Include="Infrastructure\Utilities.cs" />
-    <Compile Include="FileWriterService.cs" />
+    <Compile Include="Infrastructure\LibFLExBridgeUtilities.cs" />
+    <Compile Include="DomainServices\FileWriterService.cs" />
     <Compile Include="Infrastructure\FlexFolderSystem.cs" />
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Infrastructure\FlexBridgeConstants.cs" />
-    <Compile Include="Infrastructure\UpdateBranchHelperFlex.cs" />
-    <Compile Include="IProjectUnifier.cs" />
-    <Compile Include="FLEx.cs" />
-    <Compile Include="IProjectSplitter.cs" />
+    <Compile Include="Infrastructure\FlexUpdateBranchHelperStrategy.cs" />
     <Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
-    <Compile Include="Infrastructure\ICheckRepositoryBranches.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

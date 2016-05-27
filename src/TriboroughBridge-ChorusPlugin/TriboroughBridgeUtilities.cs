@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -29,14 +26,14 @@ namespace TriboroughBridge_ChorusPlugin
 	/// Some of the remaining constants could yet be moved at the cost of having duplciates in each bridge's project.
 	/// It may be worth that to be rid of bridge-specific stuff in this project.
 	/// </summary>
-	public static class Utilities
+	internal static class TriboroughBridgeUtilities
 	{
 // ReSharper disable InconsistentNaming
-		public const string LIFT = "LIFT";
-		public const string hg = ".hg";
+		internal const string LIFT = "LIFT";
+		internal const string hg = ".hg";
 		private const string FlexBridge = "FlexBridge";
 		private const string localizations = "localizations";
-		public const string FlexBridgeEmailAddress = "flex_errors@sil.org";
+		internal const string FlexBridgeEmailAddress = "flex_errors@sil.org";
 // ReSharper restore InconsistentNaming
 
 		/// <summary>
@@ -60,7 +57,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// See uri.LocalPath, http://en.wikipedia.org/wiki/File_URI , and
 		/// http://blogs.msdn.com/b/ie/archive/2006/12/06/file-uris-in-windows.aspx .
 		/// </summary>
-		public static string StripFilePrefix(string fileString)
+		internal static string StripFilePrefix(string fileString)
 		{
 			if (String.IsNullOrEmpty(fileString))
 				return fileString;
@@ -80,7 +77,7 @@ namespace TriboroughBridge_ChorusPlugin
 			return path;
 		}
 
-		public static XElement CreateFromBytes(byte[] xmlData)
+		internal static XElement CreateFromBytes(byte[] xmlData)
 		{
 			using (var memStream = new MemoryStream(xmlData))
 			{
@@ -92,7 +89,7 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		internal static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
 		{
 			var system = new ChorusSystem(directoryName);
 			system.Init(user);
@@ -101,29 +98,29 @@ namespace TriboroughBridge_ChorusPlugin
 			return system;
 		}
 
-		public static string HgDataFolder(string path)
+		internal static string HgDataFolder(string path)
 		{
 			return Path.Combine(path, hg, "store", "data");
 		}
 
-		public static string LiftOffset(string path)
+		internal static string LiftOffset(string path)
 		{
-			var otherPath = Path.Combine(path, SharedConstants.OtherRepositories);
+			var otherPath = Path.Combine(path, LibTriboroughBridgeSharedConstants.OtherRepositories);
 			if (Directory.Exists(otherPath))
 			{
 				var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
 				if (extantLiftFolder != null)
 					return extantLiftFolder;
 			}
-			return Path.Combine(path, SharedConstants.OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
+			return Path.Combine(path, LibTriboroughBridgeSharedConstants.OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
 		}
 
-		public static bool FolderIsEmpty(string folder)
+		internal static bool FolderIsEmpty(string folder)
 		{
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
+		internal static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
 

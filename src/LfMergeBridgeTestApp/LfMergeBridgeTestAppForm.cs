@@ -10,16 +10,11 @@ using Palaso.Progress;
 
 namespace LfMergeBridgeTestApp
 {
-	public partial class LfMergeBridgeTestAppForm : Form
+	public sealed partial class LfMergeBridgeTestAppForm : Form
 	{
 		public LfMergeBridgeTestAppForm()
 		{
 			InitializeComponent();
-		}
-
-		private void TestOriginalMethod(object sender, EventArgs e)
-		{
-			LfMergeBridge.LfMergeBridge.DoSendReceive(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), new NullProgress(), "Language Depot", "http://CHANGE_ME:ME_TOO@resumable.languagedepot.org/ME_THREE");
 		}
 
 		private void TestNewMethod(object sender, EventArgs e)

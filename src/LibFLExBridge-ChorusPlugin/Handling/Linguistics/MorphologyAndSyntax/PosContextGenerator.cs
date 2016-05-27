@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +27,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 		private string[] _posGuidStrs;
 		private Dictionary<string, string> _guidPosNameDict;
 
-		public bool IsListLoaded
+		private IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
+		{
+			get { return this; }
+		}
+
+		internal bool IsListLoaded
 		{
 			get { return _guidPosNameDict != null && _guidPosNameDict.Count != 0; }
 		}
@@ -48,7 +50,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 			return result + GetLabelForPos(_posGuidStrs[0]);
 		}
 
-		private bool SetTwoPosFlag(string[] posGuids)
+		private static bool SetTwoPosFlag(IList<string> posGuids)
 		{
 			return posGuids[1] != NotLoaded;
 		}
@@ -64,7 +66,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 			get { return Resources.kLexEntryClassLabel; }
 		}
 
-		private string LexEntryName(XmlNode start)
+		private static string LexEntryName(XmlNode start)
 		{
 			var entryNode = GetLexEntryNode(start);
 			//grab the form from the stem (if available) to give a user understandable message
@@ -102,7 +104,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		public string HtmlContext(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContext(XmlNode mergeElement)
 		{
 			// The normal case is for the ParentNode to be an MSA, but there is at least one case
 			// (where both users are adding a POS to a sense), where ParentNode is an 'ownseq' and
@@ -176,19 +178,19 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 			return objsurNode == null ? Unknown : objsurNode.Attributes[FlexBridgeConstants.GuidStr].Value;
 		}
 
-		public string HtmlContextStyles(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContextStyles(XmlNode mergeElement)
 		{
 			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
 		}
 
-		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptor.GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var doc = new XmlDocument();
 			doc.LoadXml(mergeElement);
-			return GenerateContextDescriptor(doc.DocumentElement, filePath);
+			return AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(doc.DocumentElement, filePath);
 		}
 
-		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptorFromNode.GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
 			LoadPosList();
 			return FieldWorksMergeServices.GenerateContextDescriptor(filePath,
@@ -196,7 +198,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 																			 GetLabel(mergeElement));
 		}
 
-		public void LoadPosList()
+		internal void LoadPosList()
 		{
 			if (IsListLoaded)
 				return;
@@ -213,7 +215,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 			LoadPosList(doc.DocumentElement);
 		}
 
-		public void LoadPosList(XmlNode data)
+		internal void LoadPosList(XmlNode data)
 		{
 			_guidPosNameDict = new Dictionary<string, string>();
 			// In the CmPossibilityList we want all the nodes under Possibilities. They are 'ownseq' nodes of class PartOfSpeech,

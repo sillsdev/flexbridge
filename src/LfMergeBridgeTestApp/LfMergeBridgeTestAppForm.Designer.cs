@@ -28,20 +28,9 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._originalSRmethod = new System.Windows.Forms.Button();
 			this._newSRmethod = new System.Windows.Forms.Button();
 			this._cloneMethod = new System.Windows.Forms.Button();
 			this.SuspendLayout();
-			// 
-			// _originalSRmethod
-			// 
-			this._originalSRmethod.Location = new System.Drawing.Point(9, 12);
-			this._originalSRmethod.Name = "_originalSRmethod";
-			this._originalSRmethod.Size = new System.Drawing.Size(176, 23);
-			this._originalSRmethod.TabIndex = 0;
-			this._originalSRmethod.Text = "Test original S/R method";
-			this._originalSRmethod.UseVisualStyleBackColor = true;
-			this._originalSRmethod.Click += new System.EventHandler(this.TestOriginalMethod);
 			// 
 			// _newSRmethod
 			// 
@@ -63,15 +52,14 @@
 			this._cloneMethod.UseVisualStyleBackColor = true;
 			this._cloneMethod.Click += new System.EventHandler(this.TestCloneOption);
 			// 
-			// Form1
+			// LfMergeBridgeTestAppForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(284, 261);
 			this.Controls.Add(this._cloneMethod);
 			this.Controls.Add(this._newSRmethod);
-			this.Controls.Add(this._originalSRmethod);
-			this.Name = "Form1";
+			this.Name = "LfMergeBridgeTestAppForm";
 			this.Text = "Form1";
 			this.ResumeLayout(false);
 
@@ -79,7 +67,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button _originalSRmethod;
 		private System.Windows.Forms.Button _newSRmethod;
 		private System.Windows.Forms.Button _cloneMethod;
 	}

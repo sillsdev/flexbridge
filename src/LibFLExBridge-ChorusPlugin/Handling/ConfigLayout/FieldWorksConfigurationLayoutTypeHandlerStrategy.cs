@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using Chorus.FileTypeHandlers;
@@ -18,31 +15,36 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class FieldWorksConfigurationLayoutTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		#region Implementation of IFieldWorksFileHandler
-
-		public bool CanValidateFile(string pathToFile)
+		private IFieldWorksFileHandler AsIFieldWorksFileHandler
 		{
-			return FileUtils.CheckValidPathname(pathToFile, Extension);
+			get { return this; }
 		}
 
-		public string ValidateFile(string pathToFile)
+		#region Implementation of IFieldWorksFileHandler
+
+		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
+		{
+			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension);
+		}
+
+		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
 		{
 			return FieldWorksConfigurationLayoutValidator.Validate(pathToFile);
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IFieldWorksFileHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			return FieldWorksCustomLayoutChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IFieldWorksFileHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(
 				parent, CustomLayoutDataCollectorMethod.GetDataFromRevision(parent, repository),
 				child, CustomLayoutDataCollectorMethod.GetDataFromRevision(child, repository));
 		}
 
-		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
+		void IFieldWorksFileHandler.Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
 			var merger = new XmlMerger(mergeOrder.MergeSituation)
 				{
@@ -52,7 +54,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			CustomLayoutMergeService.DoMerge(mergeOrder, merger);
 		}
 
-		public string Extension
+		string IFieldWorksFileHandler.Extension
 		{
 			get { return FlexBridgeConstants.fwlayout; }
 		}

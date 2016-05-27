@@ -12,7 +12,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure
 	///
 	/// Add this interface, if the action handler needs to show a window. Otherwise, skip this one.
 	/// </summary>
-	public interface IBridgeActionTypeHandlerShowWindow : IDisposable
+	internal interface IBridgeActionTypeHandlerShowWindow : IDisposable
 	{
 		/// <summary>
 		/// Get the main window for the application.

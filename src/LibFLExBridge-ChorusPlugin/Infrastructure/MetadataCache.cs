@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (C) 2010-2016 SIL International. All rights reserved.
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +15,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 	/// <summary>
 	/// Cache to hold metadata about the CmObject classes.
 	/// </summary>
-	public sealed class MetadataCache
+	internal sealed class MetadataCache
 	{
 		internal const int StartingModelVersion = 7000037;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
@@ -334,7 +331,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000068;
+		internal const int MaximumModelVersion = 7000068;
 
 		///<summary>
 		/// Get the FDO class information for the given class.

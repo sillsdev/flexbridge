@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
@@ -14,7 +14,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 	/// Test the FB Utilities class.
 	/// </summary>
 	[TestFixture]
-	public class UtilitiesTests
+	public class LibFLExBridgeUtilitiesTests
 	{
 		[Test]
 		public void IsNotFlexProjectRepository()
@@ -28,7 +28,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
 					Directory.CreateDirectory(extantDir);
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-					Assert.That(Utilities.IsFlexProjectRepository(sueRepo.ProjectFolder.Path), Is.False);
+					Assert.That(LibFLExBridgeUtilities.IsFlexProjectRepository(sueRepo.ProjectFolder.Path), Is.False);
 				}
 			}
 		}
@@ -45,7 +45,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo");
 					Directory.CreateDirectory(extantDir);
 					Directory.CreateDirectory(Path.Combine(fakeProjectDir, "norepo"));
-					Assert.That(Utilities.IsFlexProjectRepository(sueRepo.ProjectFolder.Path), Is.True);
+					Assert.That(LibFLExBridgeUtilities.IsFlexProjectRepository(sueRepo.ProjectFolder.Path), Is.True);
 				}
 			}
 		}

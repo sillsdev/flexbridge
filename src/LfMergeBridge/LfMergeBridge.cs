@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
@@ -71,32 +70,6 @@ namespace LfMergeBridge
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		/// Does the Language Forge send_receive.
-		/// </summary>
-		/// <param name="projectPath">Full path to the project, including the filename and extension.</param>
-		/// <param name="progress">Progress reporting object.</param>
-		/// <param name="languageDepotRepoName">Language Depot repo name.</param>
-		/// <param name="languageDepotRepoUri">Language Depot repo URI.</param>
-		[Obsolete("'DoSendReceive' is deprecated, please use 'Execute' instead.", false)]
-		public static void DoSendReceive(string projectPath, IProgress progress,
-			string languageDepotRepoName, string languageDepotRepoUri)
-		{
-			var options = new Dictionary<string, string>
-			{
-				{"projectPath", Path.GetDirectoryName(projectPath)}, // Ugh. 'projectPath' needs to have the fwdata file removed to only have the project path.
-				{"fwdataFilename", Path.GetFileName(projectPath) }, // Feed the fwdata file separately. (Needs to be added in LfMerge, when it switches to the new method.)
-				{"languageDepotRepoName", languageDepotRepoName},
-				{"languageDepotRepoUri", languageDepotRepoUri}
-			};
-
-			// Any messages to client have been written to 'progress', so nothing more needs to be done here.
-			// At least there is no more that can be sent back to LfMerge from here (other than adding 'somethingForClient' to 'progress'),
-			// given the original method return value of null, and the parameters it provided.
-			string somethingForClient; // No reasonable way to get this back to LfMerge.
-			Execute("Language_Forge_Send_Receive", progress, options, out somethingForClient);
 		}
 	}
 }

@@ -3,49 +3,48 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using Chorus.FileTypeHandlers.lift;
 using Chorus.sync;
 using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Properties;
+using LibTriboroughBridge_ChorusPlugin.Properties;
 using Palaso.Progress;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
-	[Export(typeof(FlexBridgeSychronizerAdjunct))]
 	internal sealed class FlexBridgeSychronizerAdjunct : ISychronizerAdjunct
 	{
+		private readonly bool _wantToCheckRepositoryBranches;
+		private readonly string _fwdataPathname;
+		private readonly bool _writeVerbose;
 		private bool _needToNestMainFile = true;
-		private string _fixitPathname;
+		private readonly string _fixitPathname;
 
-		[Import]
-		private ICheckRepositoryBranches CheckRepositoryBranchesMethod { get; set; }
-
-		public string FwDataPathName { get; set; }
-		public bool WriteVerbose { get; set; }
-
-		public string FixItPathName
+		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose, bool wantToCheckRepositoryBranches)
 		{
-			get { return _fixitPathname; }
-			set
-			{
-				if (!File.Exists(value))
-					throw new InvalidOperationException("The FLEx 'fix it' program was not found.");
-				_fixitPathname = value;
-			}
+			if (!File.Exists(fixitPathname))
+				throw new InvalidOperationException("The FLEx 'fix it' program was not found.");
+
+			_fwdataPathname = fwdataPathname;
+			_fixitPathname = fixitPathname;
+			_writeVerbose = writeVerbose;
+			_wantToCheckRepositoryBranches = wantToCheckRepositoryBranches;
 		}
 
 		private string ProjectFilename
 		{
-			get { return Path.GetFileName(FwDataPathName); }
+			get { return Path.GetFileName(_fwdataPathname); }
 		}
 
 		private void RestoreProjectFile(IProgress progress)
 		{
 			WasUpdated = true;
 			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
-			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, WriteVerbose, FwDataPathName);
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
 		}
 
@@ -60,7 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 				return; // Only nest it one time.
 
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
-			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, WriteVerbose, FwDataPathName);
+			FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished splitting up project file: {0}", ProjectFilename);
 			_needToNestMainFile = false;
 		}
@@ -90,7 +89,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			if (RunFixFwData(progress))
 			{
 				progress.WriteMessage("Ran fix-up utility after merge.");
-				FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, WriteVerbose, FwDataPathName);
+				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			}
 		}
 
@@ -104,7 +103,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			{
 				var startInfo = process.StartInfo;
 				startInfo.FileName = _fixitPathname.Replace("\"", null);
-				startInfo.Arguments = "\"" + FwDataPathName.Replace("\"", null) + "\"";
+				startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
 				startInfo.CreateNoWindow = false;
 				startInfo.UseShellExecute = false;
 				startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
@@ -130,7 +129,17 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		/// </summary>
 		public void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress)
 		{
-			CheckRepositoryBranchesMethod.Run(branches, progress, BranchName);
+			if (!_wantToCheckRepositoryBranches)
+			{
+				return;
+			}
+
+			var savedSettings = Settings.Default.OtherBranchRevisions;
+			var conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, BranchName, ref savedSettings);
+			Settings.Default.OtherBranchRevisions = savedSettings;
+			Settings.Default.Save();
+			if (!string.IsNullOrEmpty(conflictingUser))
+				progress.WriteWarning(string.Format(Resources.ksOtherRevisionWarning, conflictingUser));
 		}
 
 		/// <summary>
@@ -140,7 +149,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		{
 			get
 			{
-				return FieldWorksProjectServices.GetVersionNumber(FwDataPathName);
+				return FieldWorksProjectServices.GetVersionNumber(_fwdataPathname);
 			}
 		}
 
