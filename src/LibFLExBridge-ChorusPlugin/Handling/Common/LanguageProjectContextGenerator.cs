@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 
@@ -12,7 +9,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 	/// Context generator for the language project itself. This is the root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class LanguageProjectContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class LanguageProjectContextGenerator : FieldWorkObjectContextGenerator
 	{
 		protected override string GetLabel(XmlNode start)
 		{

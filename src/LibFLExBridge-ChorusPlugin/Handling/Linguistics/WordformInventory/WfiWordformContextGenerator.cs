@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 using LibFLExBridgeChorusPlugin.Properties;
@@ -15,13 +12,13 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.WordformInventory
 	/// </summary>
 	internal sealed class WfiWordformContextGenerator : FieldWorkObjectContextGenerator
 	{
-		protected override string GetLabel(System.Xml.XmlNode start)
+		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForWordform(start);
 		}
 
 
-		string WordformLabel
+		internal string WordformLabel
 		{
 			get { return Resources.kWfiWordFormClassLabel; }
 		}

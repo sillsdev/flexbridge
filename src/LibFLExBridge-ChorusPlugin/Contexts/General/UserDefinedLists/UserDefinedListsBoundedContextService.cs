@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.IO;
@@ -11,11 +8,10 @@ using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using Palaso.Xml;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 {
-	internal class UserDefinedListsBoundedContextService
+	internal static class UserDefinedListsBoundedContextService
 	{
 		internal static void NestContext(string generalBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
@@ -33,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 
 			foreach (var userDefinedListBytes in userDefinedLists)
 			{
-				var element = Utilities.CreateFromBytes(userDefinedListBytes);
+				var element = LibFLExBridgeUtilities.CreateFromBytes(userDefinedListBytes);
 				CmObjectNestingService.NestObject(
 					false,
 					element,

@@ -1,15 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.IO;
 using System.Linq;
-using TriboroughBridge_ChorusPlugin;
 using LibTriboroughBridgeChorusPlugin;
-
 
 namespace SIL.LiftBridge.Infrastructure
 {
@@ -25,9 +20,9 @@ namespace SIL.LiftBridge.Infrastructure
 
 		private static string PathToFirstFwFile(string fwProjectPath)
 		{
-			var fwFiles = Directory.GetFiles(fwProjectPath, "*" + SharedConstants.FwXmlExtension).ToList();
+			var fwFiles = Directory.GetFiles(fwProjectPath, "*" + LibTriboroughBridgeSharedConstants.FwXmlExtension).ToList();
 			if (fwFiles.Count == 0)
-				fwFiles = Directory.GetFiles(fwProjectPath, "*" + SharedConstants.FwDb4oExtension).ToList();
+				fwFiles = Directory.GetFiles(fwProjectPath, "*" + LibTriboroughBridgeSharedConstants.FwDb4oExtension).ToList();
 			return fwFiles.Count == 0 ? null : (from file in fwFiles
 												where HasOnlyOneDot(file)
 												select file).FirstOrDefault();

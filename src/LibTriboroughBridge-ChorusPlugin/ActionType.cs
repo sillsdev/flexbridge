@@ -7,7 +7,7 @@ namespace LibTriboroughBridgeChorusPlugin
 	/// These are all of the expected command line options for the "-v" option,
 	/// except for "Unknown", which is the never-to-be-used default enum value.
 	/// </summary>
-	public enum ActionType
+	internal enum ActionType
 	{
 		Unknown,
 

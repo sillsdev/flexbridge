@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
@@ -41,7 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 		///<summary>
 		/// Get the FDO model version number for the change report.
 		///</summary>
-		public int NewModelVersion { get; private set; }
+		internal int NewModelVersion { get; private set; }
 	}
 
 	///<summary>
@@ -82,7 +79,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 		///</summary>
 		public override string GetFullHumanReadableDescription()
 		{
-			return string.Format(string.Format("Added a version number file for version: {0}", NewModelVersion));
+			return string.Format("Added a version number file for version: {0}", NewModelVersion);
 		}
 	}
 
@@ -109,7 +106,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 		///<summary>
 		/// Get the previous model version.
 		///</summary>
-		public int OldModelVersion { get; private set; }
+		internal int OldModelVersion { get; private set; }
 
 		///<summary>
 		/// The model was updated to a new version.
@@ -124,7 +121,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 		///</summary>
 		public override string GetFullHumanReadableDescription()
 		{
-			return string.Format(string.Format("Updated from {0} to {1}", OldModelVersion, NewModelVersion));
+			return string.Format("Updated from {0} to {1}", OldModelVersion, NewModelVersion);
 		}
 	}
 }

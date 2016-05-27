@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 {
@@ -41,7 +37,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 				srcDataCopy = new SortedDictionary<string, byte[]>(sortedPunctuationFormInstanceData);
 				foreach (var punctFormStringData in srcDataCopy.Values)
 				{
-					var pfElement = Utilities.CreateFromBytes(punctFormStringData);
+					var pfElement = LibFLExBridgeUtilities.CreateFromBytes(punctFormStringData);
 					header.Add(pfElement);
 					CmObjectNestingService.NestObject(false,
 						pfElement,
@@ -57,7 +53,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 				srcDataCopy = new SortedDictionary<string, byte[]>(sortedWfiWordformInstanceData);
 				foreach (var wordFormElement in srcDataCopy.Values)
 				{
-					var wfElement = Utilities.CreateFromBytes(wordFormElement);
+					var wfElement = LibFLExBridgeUtilities.CreateFromBytes(wordFormElement);
 					var checksumProperty = wfElement.Element("Checksum");
 					if (checksumProperty != null)
 					{

@@ -183,9 +183,10 @@
     <Compile Include="Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
     <Compile Include="FieldWorksTestServices.cs" />
     <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectSplitterTests.cs" />
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
-    <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
-    <Compile Include="Infrastructure\UtilitiesTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
+    <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
   </ItemGroup>
   <ItemGroup>

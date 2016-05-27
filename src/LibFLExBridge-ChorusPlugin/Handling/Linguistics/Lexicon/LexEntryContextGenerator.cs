@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 using LibFLExBridgeChorusPlugin.Properties;
@@ -13,7 +10,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Lexicon
 	/// Context generator for LexEntry elements. These are a root element, so we generate a label directly,
 	/// without needing to look further up the chain.
 	/// </summary>
-	class LexEntryContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class LexEntryContextGenerator : FieldWorkObjectContextGenerator
 	{
 		protected override string GetLabel(XmlNode start)
 		{
@@ -21,7 +18,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Lexicon
 		}
 
 
-		string EntryLabel
+		internal string EntryLabel
 		{
 			get { return Resources.kLexEntryClassLabel; }
 		}

@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 {
@@ -39,7 +35,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			//		Remove objsur node from LP.
 			var morphologicalDataPropElement = langProjElement.Element("MorphologicalData");
 			morphologicalDataPropElement.RemoveNodes();
-			var morphDataElement = Utilities.CreateFromBytes(classData["MoMorphData"].Values.First());
+			var morphDataElement = LibFLExBridgeUtilities.CreateFromBytes(classData["MoMorphData"].Values.First());
 			CmObjectNestingService.NestObject(
 				false,
 				morphDataElement,
@@ -50,7 +46,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			// 2. Nest: LP's MsFeatureSystem(FsFeatureSystem OA)
 			//		Remove objsur node from LP.
 			var morphFeatureSystemPropElement = langProjElement.Element("MsFeatureSystem");
-			var morphFeatureSystemElement = Utilities.CreateFromBytes(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
+			var morphFeatureSystemElement = LibFLExBridgeUtilities.CreateFromBytes(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
 			morphFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,
@@ -71,7 +67,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var rootElement = new XElement(FlexBridgeConstants.AnalyzingAgents);
 			foreach (var agentGuid in BaseDomainServices.GetGuids(langProjElement, FlexBridgeConstants.AnalyzingAgents))
 			{
-				var agentElement = Utilities.CreateFromBytes(agents[agentGuid]);
+				var agentElement = LibFLExBridgeUtilities.CreateFromBytes(agents[agentGuid]);
 				rootElement.Add(agentElement);
 				CmObjectNestingService.NestObject(
 					false,

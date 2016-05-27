@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +7,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 {
@@ -30,7 +26,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 			// 1. Nest: LP's PhonologicalData(PhPhonData OA) (Also does PhPhonData's PhonRuleFeats(CmPossibilityList)
 			// NB: PhPhonData is a singleton
 			var phonDataPropElement = langProjElement.Element("PhonologicalData");
-			var phonDataElement = Utilities.CreateFromBytes(classData["PhPhonData"].Values.First());
+			var phonDataElement = LibFLExBridgeUtilities.CreateFromBytes(classData["PhPhonData"].Values.First());
 			// 1.A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If it exists, but *before* nesting "PhPhonData".)
 			FileWriterService.WriteNestedListFileIfItExists(
 				classData, guidToClassMapping,
@@ -44,7 +40,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 				guidToClassMapping);
 			// 2. Nest: LP's PhFeatureSystem(FsFeatureSystem OA)
 			var phonFeatureSystemPropElement = langProjElement.Element("PhFeatureSystem");
-			var phonFeatureSystemElement = Utilities.CreateFromBytes(classData["FsFeatureSystem"][phonFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
+			var phonFeatureSystemElement = LibFLExBridgeUtilities.CreateFromBytes(classData["FsFeatureSystem"][phonFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
 			phonFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
 				false,

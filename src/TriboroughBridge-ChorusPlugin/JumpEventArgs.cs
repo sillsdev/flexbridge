@@ -1,23 +1,20 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 
 namespace TriboroughBridge_ChorusPlugin
 {
-	public class JumpEventArgs : EventArgs
+	internal sealed class JumpEventArgs : EventArgs
 	{
 		private readonly string _jumpUrl;
 
-		public JumpEventArgs(string jumpUrl)
+		internal JumpEventArgs(string jumpUrl)
 		{
 			_jumpUrl = jumpUrl;
 		}
 
-		public string JumpUrl
+		internal string JumpUrl
 		{
 			get { return _jumpUrl; }
 		}

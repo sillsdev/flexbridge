@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Linq;
 using System.Xml;
@@ -16,9 +13,9 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.TextCorpus
 	/// It also seemed a more logical place to put the logic for handling them, though the real way it gets invoked is
 	/// through a case in OwnSeqPremerger.
 	/// </summary>
-	internal class StTxtParaPremerger : IPremerger
+	internal sealed class StTxtParaPremerger : IPremerger
 	{
-		public void Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
+		void IPremerger.Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
 		{
 			PreMergeStTxtPara(listener, ref ours, theirs, ancestor);
 		}
