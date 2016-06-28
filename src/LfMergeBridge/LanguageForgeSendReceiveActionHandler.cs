@@ -56,7 +56,7 @@ namespace LfMergeBridge
 			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), FwDataExe);
 			if (!File.Exists(fwDataExePathname))
 			{
-				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory", FwDataExe));
+				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory ({1})", FwDataExe, Directory.GetCurrentDirectory()));
 			}
 
 			// Syncing of a new repo (actually created here) is not supported.

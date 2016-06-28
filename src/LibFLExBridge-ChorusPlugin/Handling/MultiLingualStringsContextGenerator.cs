@@ -35,7 +35,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return m_objectNameForLabel + Space + Quote + objectNameOrAbbr + Quote;
 		}
 
-		protected string GetNameOrAbbreviationOrOther(XmlNode parent)
+		private string GetNameOrAbbreviationOrOther(XmlNode parent)
 		{
 			var dataToReturn = "";
 			//var index = 0;
