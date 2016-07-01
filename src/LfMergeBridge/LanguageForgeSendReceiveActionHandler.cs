@@ -56,7 +56,7 @@ namespace LfMergeBridge
 			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), FwDataExe);
 			if (!File.Exists(fwDataExePathname))
 			{
-				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory", FwDataExe));
+				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory ({1})", FwDataExe, Directory.GetCurrentDirectory()));
 			}
 
 			// Syncing of a new repo (actually created here) is not supported.
@@ -93,7 +93,8 @@ namespace LfMergeBridge
 			// Do a pull first, to see if FLEx user has upgraded.
 			var uri = options[LfMergeBridgeUtilities.languageDepotRepoUri];
 			var repositoryAddress = RepositoryAddress.Create(options[LfMergeBridgeUtilities.languageDepotRepoName], uri, false);
-			if (hgRepository.Pull(repositoryAddress, uri))
+			var pulledChangesFromOthers = hgRepository.Pull(repositoryAddress, uri);
+			if (pulledChangesFromOthers)
 			{
 				// Check for a higher branch that came in.
 				var highestHead = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
@@ -131,8 +132,18 @@ namespace LfMergeBridge
 				return;
 			}
 
+			if (pulledChangesFromOthers)
+			{
+				// ENHANCE: A better fix would be in Chorus. Chorus should notice there was no new
+				// commit on the local branch, but that there is a higher head of the same branch
+				// than that of the current working set, and thus, it should tell the adjunct to
+				// do its simple update.
+				hgRepository.UpdateToBranchHead(desiredBranchName);
+				syncAdjunct.SimpleUpdate(progress, false);
+			}
+
 			// Fwdata file has been restored by this point.
-			var gotChangesText = syncResults.DidGetChangesFromOthers ? "Received changes from others" : "No changes from others";
+			var gotChangesText = (pulledChangesFromOthers || syncResults.DidGetChangesFromOthers) ? "Received changes from others" : "No changes from others";
 			// LF Merge needs to know if anything came from LD. Since new stuff did come in, then LF has to rebuild its FdoCache.
 			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: {2}", syncBase, LfMergeBridgeUtilities.success, gotChangesText));
 			progress.WriteVerbose(gotChangesText);
