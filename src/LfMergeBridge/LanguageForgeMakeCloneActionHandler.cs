@@ -48,6 +48,7 @@ namespace LfMergeBridge
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoName), @"Missing required 'languageDepotRepoName' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fdoDataModelVersion), @"Missing required 'fdoDataModelVersion' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoUri), @"Missing required 'languageDepotRepoUri' key in 'options'.");
+			// LfMergeBridgeUtilities.user is an optional parameter
 
 			var expectedFullPathToProjectCloneFolder = options[LfMergeBridgeUtilities.fullPathToProject];
 			var actualClonePath = HgRepository.Clone(RepositoryAddress.Create(options[LfMergeBridgeUtilities.languageDepotRepoName], options[LfMergeBridgeUtilities.languageDepotRepoUri], false), expectedFullPathToProjectCloneFolder, progress);
@@ -62,6 +63,11 @@ namespace LfMergeBridge
 
 			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
 			var hgRepository = new HgRepository(actualClonePath, progress);
+
+			if (options.ContainsKey(LfMergeBridgeUtilities.user))
+			{
+				hgRepository.SetUserNameInIni(options[LfMergeBridgeUtilities.user], progress);
+			}
 
 			// Have Chorus do the main work.
 			var updateResults = hgRepository.UpdateToBranchHead(desiredBranchName);
