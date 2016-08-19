@@ -52,6 +52,9 @@ namespace LfMergeBridge
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fdoDataModelVersion), @"Missing required 'fdoDataModelVersion' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoName), @"Missing required 'languageDepotRepoName' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoUri), @"Missing required 'languageDepotRepoUri' key in 'options'.");
+			// LfMergeBridgeUtilities.commitMessage is optional
+
+			var commitMessage = options.ContainsKey(LfMergeBridgeUtilities.commitMessage) ? options[LfMergeBridgeUtilities.commitMessage] : "sync";
 
 			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), FwDataExe);
 			if (!File.Exists(fwDataExePathname))
@@ -115,7 +118,7 @@ namespace LfMergeBridge
 				DoPullFromOthers = false, // Already did the pull
 				DoMergeWithOthers = true,
 				DoSendToOthers = true,
-				CheckinDescription = string.Format("[{0}: {1}] sync", assemblyName.Name, assemblyName.Version)
+				CheckinDescription = string.Format("[{0}: {1}] {2}", assemblyName.Name, assemblyName.Version, commitMessage)
 			};
 			syncOptions.RepositorySourcesToTry.Clear(); // Get rid of any default ones, since LF only sends off to the internet (Language Depot).
 			// We use the generic creation code here to make testing easier. In the real world we will only create "HttpRepositoryPath".
