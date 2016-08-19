@@ -18,6 +18,7 @@ namespace LfMergeBridge
 		internal const string languageDepotRepoUri = "languageDepotRepoUri";
 		internal const string languageDepotRepoName = "languageDepotRepoName";
 		internal const string fdoDataModelVersion = "fdoDataModelVersion";
+		internal const string user = "user";
 
 		internal const string failure = "failure";
 		internal const string warning = "warning";
