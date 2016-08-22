@@ -51,5 +51,5 @@ When releasing FLExBridge be sure to do the following:
 - Add a line to the src/Installer/ReleaseNotes.md describing the change
 - Run the PreparePublishingArtifacts build task: 
 	e.g. msbuild build/FLExBridge.build.mono.proj /t:PreparePublishingArtifacts /p:RootDir=C:\Repositories\flexbridge /p:UploadFolder=Alpha
-- The windows version is released through two jobs in TeamCity, "Installer-sans Publish" and "Publish Installer", the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
+- The windows version is released through two jobs in TeamCity, "Installer-sans Publish" and "Publish Installer", the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing you can avoid incrementing the version number by setting the build counter back on the Installer-sans Publish job and re-running it before running the publish job.
 - For the Linux release use the Jenkins FLExBridge release package build to make packages from the commit where the changelog entry was updated.
