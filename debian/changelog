@@ -2,7 +2,7 @@ flexbridge (2.4.0) unstable; urgency=low
 
   * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
 
-  -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
 
 flexbridge (2.3.13) unstable; urgency=low
 
