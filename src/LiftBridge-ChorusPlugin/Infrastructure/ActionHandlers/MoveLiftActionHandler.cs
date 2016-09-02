@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -14,8 +11,9 @@ using System.Xml.Linq;
 using Chorus.VcsDrivers.Mercurial;
 using Palaso.Progress;
 using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 using L10NSharp;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
 
 namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
@@ -45,10 +43,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-			_baseLiftDir = Utilities.LiftOffset(Path.GetDirectoryName(commandLineArgs["-p"]));
-			var fwLangProjGuid = commandLineArgs["-g"];
+			_baseLiftDir = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(options["-p"]));
+			var fwLangProjGuid = options["-g"];
 			var basePathForOldLiftRepos = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 						"LiftBridge");
@@ -93,7 +91,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
 
-				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, Utilities.hg))))
+				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, TriboroughBridgeUtilities.hg))))
 				{
 					var repo = new HgRepository(directory, new NullProgress());
 					if (repo.Identifier != repoId)
@@ -117,7 +115,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 
 			// Update to the head of the desired branch, if possible.
-			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(_baseLiftDir, "LIFT" + commandLineArgs["-liftmodel"], actualCloneResult);
+			ObtainProjectStrategyLift.UpdateToTheCorrectBranchHeadIfPossible(_baseLiftDir, "LIFT" + options["-liftmodel"], actualCloneResult);
 			if(actualCloneResult.FinalCloneResult != FinalCloneResult.Cloned)
 			{
 				MessageBox.Show(actualCloneResult.Message, LocalizationManager.GetString("LiftBridge_MoveFailed_Title",
@@ -138,7 +136,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.MoveLift; }
 		}
@@ -150,7 +148,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			var liftPathname = Directory.Exists(_baseLiftDir)
 				? Directory.GetFiles(_baseLiftDir, "*" + LiftUtilties.LiftExtension).FirstOrDefault()

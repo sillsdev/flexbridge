@@ -26,7 +26,7 @@ clean:
 	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
 	/bin/rm -rf output Download Mercurial
 
-install: release
+install:
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install output/ReleaseMono/*.* $(DESTDIR)/usr/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
@@ -55,7 +55,8 @@ install: release
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*Bridge-ChorusPluginTests.*
+	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*Tests.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/nunit.framework.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/TheTurtle.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/NetSparkle.*
+	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/LfMergeBridge.*

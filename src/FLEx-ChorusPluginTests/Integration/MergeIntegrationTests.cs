@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2016 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.IO;
 using System.Linq;
@@ -10,11 +7,11 @@ using System.Reflection;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
-using FLEx_ChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using Palaso.TestUtilities;
-using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Integration
 {
@@ -49,7 +46,6 @@ namespace FLEx_ChorusPluginTests.Integration
 </AdditionalFields>";
 
 		[Test]
-		[Category("UnknownMonoIssue")] // It insists on failing on mono, for some reason.
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =
@@ -138,15 +134,19 @@ namespace FLEx_ChorusPluginTests.Integration
 </Lexicon>";
 
 			var mdc = MetadataCache.TestOnlyNewCache;
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", SharedConstants.Lexicon, SharedConstants.Lexdb), commonAncestor))
+			mdc.AddCustomPropInfo("LexEntry", new FdoPropertyInfo("Tone", DataType.ReferenceCollection, true));
+			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
+			mdc.ResetCaches();
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", FlexBridgeConstants.Lexicon, FlexBridgeConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.
-				var modelVersionPathname = Path.Combine(sueProjPath, SharedConstants.ModelVersionFilename);
+				var modelVersionPathname = Path.Combine(sueProjPath, FlexBridgeConstants.ModelVersionFilename);
 				File.WriteAllText(modelVersionPathname, AnnotationImages.kModelVersion);
 				sueRepo.Repository.TestOnlyAddSansCommit(modelVersionPathname);
 				// Add custom property data file.
-				var customPropsPathname = Path.Combine(sueProjPath, SharedConstants.CustomPropertiesFilename);
+				var customPropsPathname = Path.Combine(sueProjPath, FlexBridgeConstants.CustomPropertiesFilename);
 				File.WriteAllText(customPropsPathname, CustomPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
 				sueRepo.AddAndCheckIn();
@@ -250,11 +250,11 @@ namespace FLEx_ChorusPluginTests.Integration
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
 				var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
-				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
-				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", SharedConstants.fwdictconfig), commonAncestor))
+				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), commonAncestor))
 				using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))
 				{
 					// By doing the clone before making Sue's changes, we get the common starting state in both repos.

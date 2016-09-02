@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -10,8 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Chorus;
 using Chorus.UI.Clone;
 using TriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -65,19 +66,21 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		#region IBridgeActionTypeHandler impl
 
 		/// <summary>
-		/// Start doing whatever is needed for the supported type of action.
+		/// Get full FLEx repo or a LIFT repo.
 		/// </summary>
-		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		/// <remarks>
+		/// The LIFT repo is used by FLEx to create a full FLEX project.
+		/// </remarks>
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// "obtain"; // -p <$fwroot>
-			_pathToRepository = commandLineArgs[CommandLineProcessor.projDir];
+			_pathToRepository = options[CommandLineProcessor.projDir];
 			CloneResult result;
 			using (var form = new Form())
 			{
 				var getSharedProjectModel = new GetSharedProjectModel();
 				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, _pathToRepository, Utilities.OtherRepositories,
+					ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
 					CommonResources.kHowToSendReceiveExtantRepository);
 			}
 
@@ -97,13 +100,13 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 				return;
 			}
 
-			_currentStrategy.FinishCloning(commandLineArgs, result.ActualLocation, null);
+			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
 		}
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.Obtain; }
 		}
@@ -115,7 +118,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			// notifyFlex = true;
 			// changes = false;

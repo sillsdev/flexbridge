@@ -4,12 +4,11 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Windows.Forms;
 
 namespace RepositoryUtility
 {
-	public partial class OptionalCommentDlg : Form
+	public sealed partial class OptionalCommentDlg : Form
 	{
 		public OptionalCommentDlg()
 		{

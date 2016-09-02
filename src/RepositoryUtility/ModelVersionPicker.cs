@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RepositoryUtility
 {
-	public partial class ModelVersionPicker : Form
+	public sealed partial class ModelVersionPicker : Form
 	{
 		public ModelVersionPicker()
 		{

@@ -1,4 +1,3 @@
-## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
 * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive## 2.3.13 17/May/2016
 ## 2.3.13 17/May/2016
 * Flex Bridge: Update to work with new Chorus to fix LT-17461

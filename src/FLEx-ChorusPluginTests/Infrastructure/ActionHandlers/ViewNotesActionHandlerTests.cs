@@ -1,11 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.IO;
-using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using NUnit.Framework;
 
@@ -112,7 +109,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 
 
 			Assert.That(result, Is.EqualTo((@"<root>some irrelevant <span class='ws'>English (Audio)</span> stuff <span class='ws'><span style='"
-				+ SharedConstants.ConflictInsertStyle + @"'>English (Cherokee, Australia, International Phonetic Alphabet)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span></root>").Replace("'", "\"")));
+				+ FlexBridgeConstants.ConflictInsertStyle + @"'>English (Cherokee, Australia, International Phonetic Alphabet)</span></span> more <span class='ws'>en</span>irrelevant <span class='ws'>en-trash</span> stuff.<span class='ws'>Spn (IPA)</span></root>").Replace("'", "\"")));
 		}
 
 		[Test]
@@ -124,13 +121,13 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 					<div class='property'>Child: SomeText
 					</div>
 					<div class='checksum'>SomeAtomic: abcdefg</div>
-					<div class='checksum'>SomeCol: <span style='" + SharedConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
-					<div class='checksum'>SomeSeq: <span style='" + SharedConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
+					<div class='checksum'>SomeCol: <span style='" + FlexBridgeConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
+					<div class='checksum'>SomeSeq: <span style='" + FlexBridgeConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
 				</div>
 				<div class='property'>anotherParent:
 					<div class='checksum'>SomeAtomic: abcdefg</div>
-					<div class='checksum'>SomeCol: <span style='" + SharedConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
-					<div class='checksum'>SomeSeq: <span style='" + SharedConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
+					<div class='checksum'>SomeCol: <span style='" + FlexBridgeConstants.ConflictInsertStyle + @"'>abcdefgh</span></div>
+					<div class='checksum'>SomeSeq: <span style='" + FlexBridgeConstants.ConflictDeleteStyle + @"'>qwxyz</span></div>
 				</div>
 				<div class='property'>yetAnother:<div class='checksum'>SomeAtomic: abcdefg</div>
 					<div class='checksum'>SomeCol: abcdefgh</div>
