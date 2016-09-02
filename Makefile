@@ -53,7 +53,8 @@ install:
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*Bridge-ChorusPluginTests.*
+	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*Tests.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/nunit.framework.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/TheTurtle.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/NetSparkle.*
+	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/LfMergeBridge.*
