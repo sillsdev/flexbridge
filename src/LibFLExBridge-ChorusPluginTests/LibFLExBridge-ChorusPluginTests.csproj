@@ -121,6 +121,9 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -188,6 +191,7 @@
     <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
     <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
@@ -198,5 +202,8 @@
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 </Project>

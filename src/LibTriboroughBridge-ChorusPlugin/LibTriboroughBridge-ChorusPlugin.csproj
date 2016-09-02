@@ -108,6 +108,7 @@
     <Compile Include="LibTriboroughBridgeSharedConstants.cs" />
     <Compile Include="Infrastructure\UpdateBranchHelper.cs" />
     <Compile Include="Infrastructure\ActualCloneResult.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

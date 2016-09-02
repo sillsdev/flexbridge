@@ -139,6 +139,7 @@
     <Compile Include="Handling\ConfigLayout\CustomLayoutDataCollectorMethod.cs" />
     <Compile Include="Handling\ConfigLayout\CustomLayoutMergeService.cs" />
     <Compile Include="Handling\ConfigLayout\CustomLayoutMergeStrategiesMethod.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategy.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorkCustomLayoutContextGenerator.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksConfigurationLayoutTypeHandlerStrategy.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksConfigurationLayoutValidator.cs" />
@@ -209,7 +210,7 @@
     </Compile>
     <Compile Include="Infrastructure\FlexBridgeConstants.cs" />
     <Compile Include="Infrastructure\FlexUpdateBranchHelperStrategy.cs" />
-    <Compile Include="Infrastructure\FlexBridgeSychronizerAdjunct.cs" />
+    <Compile Include="Infrastructure\FlexBridgeSynchronizerAdjunct.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -7,12 +7,13 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridge_ChorusPlugin.Properties;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
-#if MONO
+#if __MonoCS__
 using Gecko;
 #endif
 
@@ -66,7 +67,7 @@ namespace RepositoryUtility
 			{
 				var thisAssembly = Assembly.GetExecutingAssembly();
 				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(TriboroughBridgeUtilities.StripFilePrefix(thisAssembly.CodeBase)),
+					Path.GetDirectoryName(Utilities.StripFilePrefix(thisAssembly.CodeBase)),
 					"*-ChorusPlugin.dll"));
 				catalog.Catalogs.Add(new AssemblyCatalog(thisAssembly));
 

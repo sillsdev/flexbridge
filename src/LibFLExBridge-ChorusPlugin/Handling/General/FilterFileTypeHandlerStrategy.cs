@@ -3,16 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.FileTypeHandlers;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
+using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using Palaso.IO;
-using System.ComponentModel.Composition;
 
 namespace LibFLExBridgeChorusPlugin.Handling.General
 {

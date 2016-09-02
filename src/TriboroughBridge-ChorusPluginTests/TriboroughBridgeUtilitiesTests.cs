@@ -19,7 +19,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			var prefix = Uri.UriSchemeFile + ":";
 			var fullPathname = Assembly.GetExecutingAssembly().CodeBase;
 			Assert.IsTrue(fullPathname.StartsWith(prefix));
-			var reducedPathname = TriboroughBridgeUtilities.StripFilePrefix(fullPathname);
+			var reducedPathname = Utilities.StripFilePrefix(fullPathname);
 			Assert.IsFalse(reducedPathname.StartsWith(prefix));
 		}
 

@@ -16,7 +16,7 @@ namespace LibFLExBridgeChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 26;
+		internal const int ExpectedExtensionCount = 27;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
