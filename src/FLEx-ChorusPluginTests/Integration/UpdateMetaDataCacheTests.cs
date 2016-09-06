@@ -272,6 +272,32 @@ namespace FLEx_ChorusPluginTests.Integration
 			Assert.AreEqual(DataType.OwningCollection, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 			DoMerge(fileHandler, 7000068);
 			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
+			// 7000069: All the 7000069 changes
+			CheckClassDoesNotExistBeforeUpGrade(mdc, "ExtendedNote");
+			DoMerge(fileHandler, 7000069);
+			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "LexExtendedNote");
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "ExtendedNoteType", DataType.ReferenceAtomic);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "Examples", DataType.OwningSequence);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "Discussion", DataType.MultiString);
+			// Check that the type of Restrictions and Etymology were changed on LexEntry
+			Assert.AreEqual(DataType.MultiString, mdc.GetClassInfo("LexEntry").GetProperty("Restrictions").DataType);
+			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("LexEntry").GetProperty("Etymology").DataType);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEntry"), "DialectLabels", DataType.ReferenceSequence);
+			Assert.AreEqual(DataType.MultiString, mdc.GetClassInfo("LexSense").GetProperty("Restrictions").DataType);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "UsageNote", DataType.MultiString);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "Exemplar", DataType.MultiUnicode);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "ExtendedNote", DataType.OwningSequence);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "DialectLabels", DataType.ReferenceSequence);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEntryType"), "ReverseName", DataType.MultiUnicode);
+			CheckPropertyRemovedAfterUpGrade(mdc, "LexEtymology", "Source");
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEtymology"), "Language", DataType.ReferenceSequence);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEtymology"), "PrecComment", DataType.MultiString);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEtymology"), "Bibliography", DataType.MultiString);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEtymology"), "LanguageNotes", DataType.MultiString);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEtymology"), "Note", DataType.MultiString);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "Languages", DataType.OwningAtomic);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "ExtendedNoteTypes", DataType.OwningAtomic);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "DialectLabels", DataType.OwningAtomic);
 		}
 
 		[Test]
@@ -284,7 +310,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		private static FdoClassInfo CheckClassDoesExistAfterUpGrade(MetadataCache mdc, FdoClassInfo superclass, string newClassname)
 		{
 			var result = mdc.GetClassInfo(newClassname);
-			Assert.IsNotNull(result);
+			Assert.IsNotNull(result, newClassname + " did not get created during upgrade");
 			Assert.AreSame(superclass, result.Superclass);
 			return result;
 		}
