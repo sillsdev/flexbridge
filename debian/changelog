@@ -1,3 +1,10 @@
+flexbridge (2.4.1) unstable; urgency=low
+
+  * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+  * FLExBridge: Add support for FLEx data model version 7000069
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 06 Sep 2016 13:12:45 -0500
+
 flexbridge (2.4.0) unstable; urgency=low
 
   * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive

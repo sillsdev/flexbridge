@@ -1,5 +1,8 @@
-## DEV_VERSION_NUMBER: DEV_RELEASE_DATE
-* FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive## 2.3.13 17/May/2016
+## 2.4.1 06/Sep/2016
+* FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+* FLExBridge: Add support for FLEx data model version 7000069
+## 2.3.14 26/Aug/2016
+* Fix linux packaging for 32bit version
 ## 2.3.13 17/May/2016
 * Flex Bridge: Update to work with new Chorus to fix LT-17461
 * Chorus: Fix Bug in password entry field with internet S/R
