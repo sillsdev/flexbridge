@@ -26,7 +26,7 @@ clean:
 	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
 	/bin/rm -rf output Download Mercurial
 
-install: release
+install:
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install output/ReleaseMono/*.* $(DESTDIR)/usr/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
