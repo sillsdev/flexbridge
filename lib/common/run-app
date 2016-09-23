@@ -24,10 +24,21 @@ ARCH=$(uname -m)
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 # (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
-XULRUNNER=/usr/lib/xulrunner-geckofx-29
+
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+	XULRUNNER=/usr/lib/fieldworks/Firefox
+else
+	XULRUNNER="$(find "$HOME" -name libxul.so -path */fw/Output*/Debug/Firefox* -prune)"
+fi
 LD_LIBRARY_PATH="${XULRUNNER}:/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
-GECKOFX=/usr/lib/cli/geckofx-29
-LD_PRELOAD=${GECKOFX}/geckofix.so
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+	GECKOFX=/usr/lib/fieldworks
+else
+	GECKOFX="${XULRUNNER}/.."
+fi
+LD_PRELOAD=libgeckofix.so
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
 MONO_RUNTIME=v4.0.30319
