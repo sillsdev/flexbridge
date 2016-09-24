@@ -60,12 +60,8 @@ namespace FLExBridge
 
 #if MONO
 			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
-#if DEBUG
 			var xulrunner = Environment.GetEnvironmentVariable("XULRUNNER");
 			Xpcom.Initialize(xulrunner);
-#else			
-			Xpcom.Initialize("/usr/lib/fieldworks/Firefox");
-#endif			
 			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
 			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
 #endif
