@@ -7,16 +7,16 @@ if [ "${PKG_CONFIG_LIBDIR+set}" = set ]; then
 	unset PKG_CONFIG_LIBDIR
 fi
 
-if [ -z "$XULRUNNER" ]; then
-	if [ -d /usr/lib/xulrunner-geckofx-29 ]; then
-		export XULRUNNER=/usr/lib/xulrunner-geckofx-29
-	else
-		export XULRUNNER=/usr/lib/xulrunner-29
-	fi
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+	XULRUNNER=/usr/lib/fieldworks/Firefox
+else
+	LIBXUL=$(find "$HOME" -name libxul.so -path *fwrepo/fw/Output_*/Debug/Firefox* -prune)
+	XULRUNNER=$(dirname "${LIBXUL}")
 fi
+GECKOFX="${XULRUNNER}/.."
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-GECKOFX="$(pkg-config --variable assemblies_dir Geckofx-Core)"
-export LD_PRELOAD=${GECKOFX}/geckofix.so
+export LD_PRELOAD=libgeckofix.so
 
 if [ "${OLD_PKG_CONFIG_LIBDIR+set}" = set ]; then
 	export PKG_CONFIG_LIBDIR="${OLD_PKG_CONFIG_LIBDIR}"
