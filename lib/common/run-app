@@ -20,9 +20,18 @@ fi
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
 
+
+# Dependency locations
+# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
+# (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
+XULRUNNER=/usr/lib/xulrunner-geckofx-29
+LD_LIBRARY_PATH="${XULRUNNER}:/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
+GECKOFX=/usr/lib/cli/geckofx-29
+LD_PRELOAD=${GECKOFX}/geckofix.so
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
 MONO_RUNTIME=v4.0.30319
+MONO_PATH="${GDK_SHARP}:${GECKOFX}"
 MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-0=-gshared"
 
@@ -35,23 +44,6 @@ else
 	MONO_PREFIX=/usr/local
 	BASE=${HOME}/fwrepo/fw
 fi
-
-# Dependency locations
-# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
-# (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
-
-if [ "$RUNMODE" = "INSTALLED" ]
-then
-	XULRUNNER=/usr/lib/fieldworks/Firefox
-else
-	LIBXUL=$(find "$HOME" -name libxul.so -path *fwrepo/fw/Output_*/Debug/Firefox* -prune)
-	XULRUNNER=$(dirname "${LIBXUL}")
-fi
-GECKOFX="${XULRUNNER}/.."
-LD_LIBRARY_PATH="${XULRUNNER}:/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
-LD_PRELOAD=libgeckofix.so
-
-MONO_PATH="${GDK_SHARP}:${GECKOFX}"
 
 # Add packaged mono items to paths
 
@@ -90,7 +82,7 @@ MONO_MWF_SCALING=disable
 #DEBUG_ENABLE_PTR_VALIDATION=1
 
 export \
-	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD XULRUNNER \
+	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD \
 	COMPONENTS_MAP_PATH \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
