@@ -273,7 +273,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			DoMerge(fileHandler, 7000068);
 			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 			// 7000069: All the 7000069 changes
-			CheckClassDoesNotExistBeforeUpGrade(mdc, "ExtendedNote");
+			CheckClassDoesNotExistBeforeUpGrade(mdc, "LexExtendedNote");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "CmPicture", "DoNotPublishIn");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexPronunciation", "DoNotPublishIn");
 			DoMerge(fileHandler, 7000069);
 			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "LexExtendedNote");
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "ExtendedNoteType", DataType.ReferenceAtomic);
@@ -298,6 +300,8 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "Languages", DataType.OwningAtomic);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "ExtendedNoteTypes", DataType.OwningAtomic);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexDb"), "DialectLabels", DataType.OwningAtomic);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("CmPicture"), "DoNotPublishIn", DataType.ReferenceCollection);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexPronunciation"), "DoNotPublishIn", DataType.ReferenceCollection);
 		}
 
 		[Test]
