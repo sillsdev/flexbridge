@@ -285,7 +285,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEntry"), "DialectLabels", DataType.ReferenceSequence);
 			Assert.AreEqual(DataType.MultiString, mdc.GetClassInfo("LexSense").GetProperty("Restrictions").DataType);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "UsageNote", DataType.MultiString);
-			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "Exemplar", DataType.MultiUnicode);
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "Exemplar", DataType.MultiString);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "ExtendedNote", DataType.OwningSequence);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexSense"), "DialectLabels", DataType.ReferenceSequence);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexEntryType"), "ReverseName", DataType.MultiUnicode);

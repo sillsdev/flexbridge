@@ -342,7 +342,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("Restrictions", DataType.MultiString));
 						// Add UsageNote, Exemplar, LexExtendendNotes, and DialectLabels to LexSense
 						newClass.AddProperty(new FdoPropertyInfo("UsageNote", DataType.MultiString));
-						newClass.AddProperty(new FdoPropertyInfo("Exemplar", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("Exemplar", DataType.MultiString));
 						newClass.AddProperty(new FdoPropertyInfo("ExtendedNote", DataType.OwningSequence));
 						newClass.AddProperty(new FdoPropertyInfo("DialectLabels", DataType.ReferenceSequence));
 						// Add ReverseName to LexEntryType
