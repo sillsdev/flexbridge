@@ -273,8 +273,36 @@ namespace FLEx_ChorusPluginTests.Integration
 			DoMerge(fileHandler, 7000068);
 			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 			// 7000069: All the 7000069 changes
+			// Make sure prior model is expected.
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "LexExtendedNote");
+
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEntry", "Restrictions", DataType.MultiUnicode);
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEntry", "Etymology", DataType.OwningAtomic);
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEntry", "DialectLabels");
+
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexSense", "Restrictions", DataType.MultiUnicode);
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "UsageNote");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "Exemplar");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "ExtendedNote");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "DialectLabels");
+
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEntryType", "ReverseName");
+
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEtymology", "Form", DataType.MultiUnicode);
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEtymology", "Gloss", DataType.MultiUnicode);
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexEtymology", "Source");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEtymology", "LanguageNotes");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEtymology", "PrecComment");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEtymology", "Bibliography");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEtymology", "Note");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexEtymology", "Language");
+
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "Languages");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "ExtendedNoteTypes");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexDb", "DialectLabels");
+
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "CmPicture", "DoNotPublishIn");
+
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexPronunciation", "DoNotPublishIn");
 			DoMerge(fileHandler, 7000069);
 			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "LexExtendedNote");
@@ -303,7 +331,65 @@ namespace FLEx_ChorusPluginTests.Integration
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("CmPicture"), "DoNotPublishIn", DataType.ReferenceCollection);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexPronunciation"), "DoNotPublishIn", DataType.ReferenceCollection);
 		}
-
+#if RANDY_SENT_THIS_VIA_SKYPE
++  private static FdoPropertyInfo GetProperty(MetadataCache mdc, string className, string propertyName)
++  {
++   return GetProperty(mdc.GetClassInfo(className), propertyName); // May be null.
++  }
++
++  private static FdoPropertyInfo GetProperty(FdoClassInfo classInfo, string propertyName)
++  {
++   return (from propInfo in classInfo.AllProperties
++     where propInfo.PropertyName == propertyName
++     select propInfo).FirstOrDefault(); // May be null.
++  }
++
+   private static void CheckPropertyExistsBeforeUpGrade(MetadataCache mdc, string className, string extantPropName)
+   {
+-   var classInfo = mdc.GetClassInfo(className);
+-   var newProperty = (from propInfo in classInfo.AllProperties
+-          where propInfo.PropertyName == extantPropName
+-          select propInfo).FirstOrDefault();
++   Assert.IsNotNull(GetProperty(mdc, className, extantPropName), string.Format("{0} {1} should exist, before upgrade.", className, extantPropName));
++  }
++
++  private static void CheckPropertyExistsBeforeUpGrade(MetadataCache mdc, string className, string extantPropName, DataType datatype)
++  {
++   var newProperty = GetProperty(mdc, className, extantPropName);
+    Assert.IsNotNull(newProperty, string.Format("{0} {1} should exist, before upgrade.", className, extantPropName));
++   Assert.AreEqual(newProperty.DataType, datatype, string.Format("{0} {1} should have data type {2}, before upgrade, but it was {3}.", className, extantPropName, datatype, newProperty.DataType));
+   }
+ 
+   private static void CheckPropertyRemovedAfterUpGrade(MetadataCache mdc, string className, string removedPropName)
+   {
+-   var classInfo = mdc.GetClassInfo(className);
+-   var newProperty = (from propInfo in classInfo.AllProperties
+-          where propInfo.PropertyName == removedPropName
+-          select propInfo).FirstOrDefault();
+-   Assert.IsNull(newProperty, string.Format("{0} {1} should not exist, after upgrade.", className, removedPropName));
++   Assert.IsNull(GetProperty(mdc.GetClassInfo(className), removedPropName), string.Format("{0} {1} should not exist, after upgrade.", className, removedPropName));
+   }
+ 
+   private static void CheckPropertyDoesNotExistBeforeUpGrade(MetadataCache mdc, string className, string newPropName)
+   {
+-   var classInfo = mdc.GetClassInfo(className);
+-   var newProperty = (from propInfo in classInfo.AllProperties
+-          where propInfo.PropertyName == newPropName
+-          select propInfo).FirstOrDefault();
+-   Assert.IsNull(newProperty, string.Format("{0} {1} should not exist yet.", className, newPropName));
++   Assert.IsNull(GetProperty(mdc, className, newPropName), string.Format("{0} {1} should not exist yet.", className, newPropName));
+   }
+ 
+   private static void CheckNewPropertyAfterUpgrade(FdoClassInfo classInfo, string newPropName, DataType dataType)
+   {
+-   var newProperty = (from propInfo in classInfo.AllProperties
+-         where propInfo.PropertyName == newPropName
+-         select propInfo).FirstOrDefault();
++   var newProperty = GetProperty(classInfo, newPropName);
+    Assert.IsNotNull(newProperty, string.Format("{0} {1} should exist now.", classInfo.ClassName, newPropName));
+    Assert.AreEqual(dataType, newProperty.DataType, string.Format("{0} {1} data type should be {2}.", classInfo.ClassName, newPropName, dataType));
+   }
+#endif
 		[Test]
 		public void UnsupportedUpdateThrows()
 		{
@@ -342,13 +428,17 @@ namespace FLEx_ChorusPluginTests.Integration
 			Assert.IsNull(mdc.GetClassInfo(className));
 		}
 
-		private static void CheckPropertyExistsBeforeUpGrade(MetadataCache mdc, string className, string extantPropName)
+		private static void CheckPropertyExistsBeforeUpGrade(MetadataCache mdc, string className, string extantPropName,
+			DataType dataType = DataType.None)
 		{
 			var classInfo = mdc.GetClassInfo(className);
 			var newProperty = (from propInfo in classInfo.AllProperties
 							   where propInfo.PropertyName == extantPropName
 							   select propInfo).FirstOrDefault();
 			Assert.IsNotNull(newProperty, string.Format("{0} {1} should exist, before upgrade.", className, extantPropName));
+			if (dataType != DataType.None)
+				Assert.AreEqual(dataType, newProperty.DataType,
+					string.Format("{0} {1} data type should be {2}.", classInfo.ClassName, extantPropName, dataType));
 		}
 
 		private static void CheckPropertyRemovedAfterUpGrade(MetadataCache mdc, string className, string removedPropName)

@@ -11,6 +11,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 	/// </summary>
 	internal enum DataType
 	{
+		/// <summary>TESTING</summary>
+		None = -1,
 		/// <summary></summary>
 		OwningCollection,
 		/// <summary></summary>
