@@ -46,7 +46,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling
 			_handlers = handlers;
 		}
 
-		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
+		internal IFieldWorksFileHandler GetHandlerfromExtension(string extension)
 		{
 			return _handlers.FirstOrDefault(handlerCandidate => handlerCandidate.Extension == extension) ?? _unknownFileTypeHandler;
 		}

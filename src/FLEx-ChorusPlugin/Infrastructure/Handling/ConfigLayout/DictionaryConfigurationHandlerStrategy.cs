@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,9 +19,10 @@ using Palaso.Xml;
 
 namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 {
+	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class DictionaryConfigurationHandlerStrategy : IFieldWorksFileHandler
 	{
-		private string _xsdPathname;
+		internal string _xsdPathname;
 
 		private string GetXsdPathname(string configFilePathname)
 		{
