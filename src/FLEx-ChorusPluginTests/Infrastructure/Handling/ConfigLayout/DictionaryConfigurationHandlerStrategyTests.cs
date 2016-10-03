@@ -15,6 +15,10 @@ using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 {
+	/// <summary>
+	/// Tests the validation code for FW Dict Config files. Data is dated (we do not store a current copy of the schema anywhere in this repo);
+	/// this tests only that we locate and use a schema definition when FLEx has put it in the S/R repo in a folder named Temp near the config file.
+	/// </summary>
 	[TestFixture]
 	public class DictionaryConfigurationHandlerStrategyTests : BaseFieldWorksTypeHandlerTests
 	{
