@@ -282,6 +282,13 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.AreEqual("0c4663b3-4d9a-47af-b9a1-c8565d8112ed", options[1].Attribute("id").Value, "Options are out of order");
 					Assert.AreEqual("false", options[0].Attribute("isEnabled").Value, "First option should be disabled");
 					Assert.AreEqual("true", options[1].Attribute("isEnabled").Value, "Second option should be enabled");
+
+					// Make sure merged file does *not* have Sue's changes
+					options = doc.Root.Element("ConfigurationItem").Element("ConfigurationItem" /*Headword*/)
+						.Element("WritingSystemOptions").Elements("Option").ToList();
+					Assert.AreEqual(1, options.Count, "There should be only one WS Option");
+					Assert.AreEqual("vernacular", options[0].Attribute("id").Value, "should be default vernacular");
+					Assert.AreEqual("true", options[0].Attribute("isEnabled").Value, "should be enabled");
 				}
 			}
 		}
