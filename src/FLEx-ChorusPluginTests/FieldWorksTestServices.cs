@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Chorus.FileTypeHanders;
 using Chorus.merge;
@@ -199,6 +200,13 @@ namespace FLEx_ChorusPluginTests
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			return doc.DocumentElement;
+		}
+
+		internal static IChorusFileTypeHandler CreateChorusFileHandlers()
+		{
+			return (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			 where handler.GetType().Name == "FieldWorksCommonFileHandler"
+			 select handler).First();
 		}
 	}
 }

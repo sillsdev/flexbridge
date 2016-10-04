@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Chorus.FileTypeHanders;
 using FLEx_ChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using Palaso.IO;
@@ -17,70 +18,92 @@ using TriboroughBridge_ChorusPlugin;
 namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 {
 	[TestFixture]
-	public class DictionaryConfigurationHandlerStrategyTests : BaseFieldWorksTypeHandlerTests
+	public class DictionaryConfigurationHandlerStrategyTests
 	{
+		private IChorusFileTypeHandler _fileHandler;
 		private TempFile _configFile;
+		private TemporaryFolder _tempFolder;
 		private string _xsdSourcePath;
 
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			// Copy the schema file to where the Strategy looks
 			var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
+			MetadataCache.TestOnlyNewCache.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 		}
 
-		[TestFixtureTearDown]
-		public override void FixtureTearDown() {} // mask base.FixtureTearDown (it is called by this.TestTearDown)
-
 		[SetUp]
-		public override void TestSetup()
+		public void TestSetup()
 		{
-			// set up the fixture for each test, so each starts with a fresh HandlerStrategy, because DictionaryConfigurationHandlerStrategy
-			// caches the path to the schema, but some tests require the schema's presence and others require its absence.
-			base.FixtureSetup();
-			base.TestSetup();
+			// Each starts with a fresh FileHandler, because DictionaryConfigurationHandlerStrategy caches the path to the schema,
+			// but some tests require the schema's presence and others require its absence.
+			_fileHandler = FieldWorksTestServices.CreateChorusFileHandlers();
 			_configFile = TempFile.WithExtension("." + SharedConstants.fwdictconfig);
 		}
 
 		[TearDown]
-		public override void TestTearDown()
+		public void TestTearDown()
 		{
+			RemoveOptionalStuff();
+
 			_configFile.Dispose();
 			_configFile = null;
-			base.TestTearDown();
-			base.FixtureTearDown();
+			_fileHandler = null;
 		}
-		
-		[Test]
-		public void CanValidateFiles() // Config File and Schema both exist
+
+		private void RemoveOptionalStuff()
 		{
-			using (TempFolderWithSchema())
-				Assert.That(FileHandler.CanValidateFile(_configFile.Path), "Should be able to validate against the schema");
+			if (_tempFolder != null)
+			{
+				_tempFolder.Dispose();
+				_tempFolder = null;
+			}
+		}
+
+		private void CopySchema()
+		{
+			RemoveOptionalStuff();
+
+			// Copy the schema file to where the Strategy looks
+			// We are pretending to do what FLEx does (provides the schema).
+			_tempFolder = new TemporaryFolder("Temp");
+			var xsdPathInProjRepo = Path.Combine(_tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+			File.Copy(_xsdSourcePath, xsdPathInProjRepo, true);
 		}
 
 		[Test]
-		public void CantValidateOtherFiles() // Config File is of the wrong type
+		public void CanValidateFiles()
 		{
-			using (TempFolderWithSchema())
+			// Config File and Schema both exist
+			CopySchema();
+			Assert.That(_fileHandler.CanValidateFile(_configFile.Path), "Should be able to validate against the schema");
+		}
+
+		[Test]
+		public void CantValidateOtherFiles()
+		{
+			// Config File is of the wrong type
+			CopySchema();
 			using (var configFile = TempFile.WithExtension(".incorrect"))
-				Assert.False(FileHandler.CanValidateFile(configFile.Path));
+			{
+				Assert.False(_fileHandler.CanValidateFile(configFile.Path));
+			}
 		}
 
 		[Test]
-		public void CantValidateNonexistentFiles() // Config File does not exist
+		public void CantValidateNonexistentFiles()
 		{
-			string path;
-			using (var configFile = TempFile.WithExtension(SharedConstants.fwdictconfig))
-				path = configFile.Path;
-			using (TempFolderWithSchema())
-				Assert.False(FileHandler.CanValidateFile(path));
+			// Config File does not exist
+			CopySchema();
+			Assert.False(_fileHandler.CanValidateFile(Path.Combine(_tempFolder.Path, "nonexistent_file." + SharedConstants.fwdictconfig)));
 		}
 
 		[Test]
-		public void CantValidateWithoutSchema() // Schema does not exist
+		public void CantValidateWithoutSchema()
 		{
-			Assert.False(FileHandler.CanValidateFile(_configFile.Path), "Should not be able to validate without the schema");
+			// Schema does not exist
+			Assert.False(_fileHandler.CanValidateFile(_configFile.Path), "Should not be able to validate without the schema");
 		}
 
 		private const string ValidConfigXml = @"<?xml version='1.0' encoding='utf-8'?>
@@ -102,52 +125,49 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 </DictionaryConfiguration>";
 
 		/// <summary>
-		/// Tests the validation code for FW Dict Config files. Data is dated (we do not store a current copy of the schema anywhere in this repo);
+		/// Tests the validation code for FW Dict Config files.
+		/// Schema and data are dated (we do not store a current copy of the schema anywhere in this repo);
 		/// tests only that we locate and use a schema definition when FLEx has put it in the S/R repo in a folder named Temp near the config file.
 		/// </summary>
 		[Test]
 		public void ValidatesValidFile()
 		{
+			CopySchema();
+
 			File.WriteAllText(_configFile.Path, ValidConfigXml);
-			using (TempFolderWithSchema())
-				Assert.IsNullOrEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should validate against the schema");
+			Assert.IsNullOrEmpty(_fileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should validate against the schema");
 		}
 
 		[Test]
-		public void DoesNotValidateWithoutSchema()
+		public void ThrowsWithoutSchema()
 		{
 			File.WriteAllText(_configFile.Path, ValidConfigXml);
-			Assert.Throws<ArgumentException>(() => FileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should not validate w/o schema");
+			Assert.Throws<ArgumentException>(() => _fileHandler.ValidateFile(_configFile.Path, new NullProgress()),
+					"Should not validate w/o schema");
 		}
 
 		[Test]
 		public void DoesNotValidateMalformedXmlFile()
 		{
+			CopySchema();
+
 			const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
   </ConfigurationItem>
 </DictionaryConfiguration>";
 			File.WriteAllText(_configFile.Path, configXml);
-			using (TempFolderWithSchema())
-				Assert.IsNotEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()));
+			Assert.IsNotEmpty(_fileHandler.ValidateFile(_configFile.Path, new NullProgress()));
 		}
 
 		[Test]
 		public void DoesNotValidateInvalidConfigFile()
 		{
+			CopySchema();
+
 			const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' badAttribute='prohibited'/>";
 			File.WriteAllText(_configFile.Path, configXml);
-			using (TempFolderWithSchema())
-				Assert.IsNotEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()));
-		}
-
-		private TemporaryFolder TempFolderWithSchema()
-		{
-			var tempFolder = new TemporaryFolder("Temp");
-			var xsdPathInProjRepo = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
-			File.Copy(_xsdSourcePath, xsdPathInProjRepo, true);
-			return tempFolder;
+			Assert.IsNotEmpty(_fileHandler.ValidateFile(_configFile.Path, new NullProgress()));
 		}
 	}
 }
