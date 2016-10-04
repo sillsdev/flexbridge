@@ -342,7 +342,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						newClass.AddProperty(new FdoPropertyInfo("Restrictions", DataType.MultiString));
 						// Add UsageNote, Exemplar, LexExtendendNotes, and DialectLabels to LexSense
 						newClass.AddProperty(new FdoPropertyInfo("UsageNote", DataType.MultiString));
-						newClass.AddProperty(new FdoPropertyInfo("Exemplar", DataType.MultiUnicode));
+						newClass.AddProperty(new FdoPropertyInfo("Exemplar", DataType.MultiString));
 						newClass.AddProperty(new FdoPropertyInfo("ExtendedNote", DataType.OwningSequence));
 						newClass.AddProperty(new FdoPropertyInfo("DialectLabels", DataType.ReferenceSequence));
 						// Add ReverseName to LexEntryType
@@ -372,6 +372,11 @@ namespace FLEx_ChorusPlugin.Infrastructure
 						GetClassInfo("LexDb").AddProperty(new FdoPropertyInfo("DialectLabels", DataType.OwningAtomic));
 						// Add Languages list to the LexDB [CmPossibilityList]
 						GetClassInfo("LexDb").AddProperty(new FdoPropertyInfo("Languages", DataType.OwningAtomic));
+						// Add DoNotPublishIn fields to CmPicture and LexPronunciation.
+						newClass = GetClassInfo("CmPicture");
+						newClass.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
+						newClass = GetClassInfo("LexPronunciation");
+						newClass.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 						break;
 						//NB: Update MaximumModelVersion to highest supported number.
 				}
