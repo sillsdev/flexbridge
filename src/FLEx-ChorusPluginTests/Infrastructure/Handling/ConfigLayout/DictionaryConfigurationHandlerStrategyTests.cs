@@ -7,10 +7,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.Handling;
-using FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress;
@@ -23,33 +20,25 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 	public class DictionaryConfigurationHandlerStrategyTests : BaseFieldWorksTypeHandlerTests
 	{
 		private TempFile _configFile;
-		private TemporaryFolder _tempFolder;
-		private string _xsdPathInProjRepo;
+		private string _xsdSourcePath;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			base.FixtureSetup();
 			// Copy the schema file to where the Strategy looks
 			var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
-			_tempFolder = new TemporaryFolder("Temp");
-			_xsdPathInProjRepo = Path.Combine(_tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
-			File.Copy(xsdPath, _xsdPathInProjRepo, true);
+			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
 		}
 
 		[TestFixtureTearDown]
-		public override void FixtureTearDown()
-		{
-			ClearCachedSchemaPathFromHandler();
-			_tempFolder.Dispose();
-			_tempFolder = null;
-			base.FixtureTearDown();
-		}
+		public override void FixtureTearDown() {} // mask base.FixtureTearDown (it is called by this.TestTearDown)
 
 		[SetUp]
 		public override void TestSetup()
 		{
+			// set up the fixture for each test, so each starts with a fresh HandlerStrategy, because DictionaryConfigurationHandlerStrategy
+			// caches the path to the schema, but some tests require the schema's presence and others require its absence.
+			base.FixtureSetup();
 			base.TestSetup();
 			_configFile = TempFile.WithExtension("." + SharedConstants.fwdictconfig);
 		}
@@ -60,47 +49,41 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 			_configFile.Dispose();
 			_configFile = null;
 			base.TestTearDown();
+			base.FixtureTearDown();
 		}
 		
 		[Test]
 		public void CanValidateFiles() // Config File and Schema both exist
 		{
-			RunOneAtATime(() =>Assert.That(FileHandler.CanValidateFile(_configFile.Path), "Should be able to validate against the schema"));
+			using (TempFolderWithSchema())
+				Assert.That(FileHandler.CanValidateFile(_configFile.Path), "Should be able to validate against the schema");
 		}
 
 		[Test]
 		public void CantValidateOtherFiles() // Config File is of the wrong type
 		{
-			RunOneAtATime(() =>
-			{
-				using (var configFile = TempFile.WithExtension(".incorrect"))
-					Assert.False(FileHandler.CanValidateFile(configFile.Path));
-			});
+			using (TempFolderWithSchema())
+			using (var configFile = TempFile.WithExtension(".incorrect"))
+				Assert.False(FileHandler.CanValidateFile(configFile.Path));
 		}
 
 		[Test]
 		public void CantValidateNonexistentFiles() // Config File does not exist
 		{
-			RunOneAtATime(() =>
-			{
-				string path;
-				using (var configFile = TempFile.WithExtension(SharedConstants.fwdictconfig))
-					path = configFile.Path;
+			string path;
+			using (var configFile = TempFile.WithExtension(SharedConstants.fwdictconfig))
+				path = configFile.Path;
+			using (TempFolderWithSchema())
 				Assert.False(FileHandler.CanValidateFile(path));
-			});
 		}
 
 		[Test]
 		public void CantValidateWithoutSchema() // Schema does not exist
 		{
-			RunOneAtATime(() =>
-			{
-				using (new SchemaSuppressor(_xsdPathInProjRepo))
-					Assert.False(FileHandler.CanValidateFile(_configFile.Path), "Should not be able to validate without the schema");
-			});
+			Assert.False(FileHandler.CanValidateFile(_configFile.Path), "Should not be able to validate without the schema");
 		}
 
-			const string ValidConfigXml = @"<?xml version='1.0' encoding='utf-8'?>
+		private const string ValidConfigXml = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
   <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
   <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
@@ -125,82 +108,46 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 		[Test]
 		public void ValidatesValidFile()
 		{
-			RunOneAtATime(() =>
-			{
-				File.WriteAllText(_configFile.Path, ValidConfigXml);
+			File.WriteAllText(_configFile.Path, ValidConfigXml);
+			using (TempFolderWithSchema())
 				Assert.IsNullOrEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should validate against the schema");
-			});
 		}
 
 		[Test]
 		public void DoesNotValidateWithoutSchema()
 		{
-			RunOneAtATime(() =>
-			{
-				File.WriteAllText(_configFile.Path, ValidConfigXml);
-				using (new SchemaSuppressor(_xsdPathInProjRepo))
-					Assert.Throws<ArgumentException>(() => FileHandler.ValidateFile(_configFile.Path, new NullProgress()),
-						"Should not validate w/o schema");
-			});
+			File.WriteAllText(_configFile.Path, ValidConfigXml);
+			Assert.Throws<ArgumentException>(() => FileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should not validate w/o schema");
 		}
 
 		[Test]
 		public void DoesNotValidateMalformedXmlFile()
 		{
-			RunOneAtATime(() =>
-			{
-				const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
+			const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
   </ConfigurationItem>
 </DictionaryConfiguration>";
-				File.WriteAllText(_configFile.Path, configXml);
+			File.WriteAllText(_configFile.Path, configXml);
+			using (TempFolderWithSchema())
 				Assert.IsNotEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()));
-			});
 		}
 
 		[Test]
 		public void DoesNotValidateInvalidConfigFile()
 		{
-			RunOneAtATime(() =>
-			{
-				const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
+			const string configXml = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' badAttribute='prohibited'/>";
-				File.WriteAllText(_configFile.Path, configXml);
+			File.WriteAllText(_configFile.Path, configXml);
+			using (TempFolderWithSchema())
 				Assert.IsNotEmpty(FileHandler.ValidateFile(_configFile.Path, new NullProgress()));
-			});
 		}
 
-		private void RunOneAtATime(Action test)
+		private TemporaryFolder TempFolderWithSchema()
 		{
-			lock (_tempFolder)
-			{
-				ClearCachedSchemaPathFromHandler();
-				test();
-				while (!File.Exists(_xsdPathInProjRepo))
-					Thread.Sleep(10);
-			}
-		}
-
-		private void ClearCachedSchemaPathFromHandler()
-		{
-			var handler = ((FieldWorksCommonFileHandler)FileHandler).GetHandlerfromExtension(SharedConstants.fwdictconfig);
-			((DictionaryConfigurationHandlerStrategy)handler)._xsdPathname = null;
-		}
-
-		private sealed class SchemaSuppressor : IDisposable
-		{
-			private readonly string _suppressedSchemaPath;
-
-			public SchemaSuppressor(string schemaPath)
-			{
-				_suppressedSchemaPath = Path.ChangeExtension(schemaPath, "hidden");
-				File.Move(schemaPath, _suppressedSchemaPath);
-			}
-
-			public void Dispose()
-			{
-				File.Move(_suppressedSchemaPath, Path.ChangeExtension(_suppressedSchemaPath, "xsd"));
-			}
+			var tempFolder = new TemporaryFolder("Temp");
+			var xsdPathInProjRepo = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+			File.Copy(_xsdSourcePath, xsdPathInProjRepo, true);
+			return tempFolder;
 		}
 	}
 }
