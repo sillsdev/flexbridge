@@ -1,3 +1,5 @@
+## 2.4.2 05/Oct/2016
+* FLExBridge: Fix handling of data model version 7000069
 ## 2.4.1 06/Sep/2016
 * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
 * FLExBridge: Add support for FLEx data model version 7000069

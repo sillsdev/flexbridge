@@ -1,3 +1,9 @@
+flexbridge (2.4.2) unstable; urgency=low
+
+  * FLExBridge: Fix handling of data model version 7000069
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 05 Oct 2016 11:03:49 -0500
+
 flexbridge (2.4.1) unstable; urgency=low
 
   * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
