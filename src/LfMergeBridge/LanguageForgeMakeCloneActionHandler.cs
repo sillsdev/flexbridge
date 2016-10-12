@@ -32,6 +32,12 @@ namespace LfMergeBridge
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class LanguageForgeMakeCloneActionHandler : IBridgeActionTypeHandler
 	{
+		private static bool DeleteRepoIfNoSuchBranch(IDictionary<string, string> options)
+		{
+			string deleteRepoIfNoSuchBranch;
+			return !options.TryGetValue(LfMergeBridgeUtilities.deleteRepoIfNoSuchBranch, out deleteRepoIfNoSuchBranch) || deleteRepoIfNoSuchBranch.ToLowerInvariant() == "true";
+		}
+
 		#region IBridgeActionTypeHandler impl
 		/// <summary>
 		/// Get a clone of a Language Depot project.
@@ -49,6 +55,7 @@ namespace LfMergeBridge
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fdoDataModelVersion), @"Missing required 'fdoDataModelVersion' key in 'options'.");
 			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoUri), @"Missing required 'languageDepotRepoUri' key in 'options'.");
 			// LfMergeBridgeUtilities.user is an optional parameter
+			// LfMergeBridgeUtilities.deleteRepoIfNoSuchBranch is an optional parameter, defaulting to "true"
 
 			var expectedFullPathToProjectCloneFolder = options[LfMergeBridgeUtilities.fullPathToProject];
 			var actualClonePath = HgRepository.Clone(RepositoryAddress.Create(options[LfMergeBridgeUtilities.languageDepotRepoName], options[LfMergeBridgeUtilities.languageDepotRepoUri], false), expectedFullPathToProjectCloneFolder, progress);
@@ -80,8 +87,17 @@ namespace LfMergeBridge
 					break;
 				case HgRepository.UpdateResults.NoSuchBranch:
 					// Bail out, since LF doesn't support data migration, which would require creation of a new branch.
-					Directory.Delete(actualClonePath, true);
-					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: no such branch '{2}': {3}.", cloneBase, LfMergeBridgeUtilities.failure, desiredBranchName, LfMergeBridgeUtilities.cloneDeleted));
+					if (DeleteRepoIfNoSuchBranch(options))
+					{
+						Directory.Delete(actualClonePath, true);
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: no such branch '{2}': {3}.", cloneBase, LfMergeBridgeUtilities.failure, desiredBranchName, LfMergeBridgeUtilities.cloneDeleted));
+					}
+					else
+					{
+						// Don't delete the repo - LF will take care of that if necessary
+						var highestRevision = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: no such branch '{2}'. Highest available model '{3}' in folder '{4}'.", cloneBase, LfMergeBridgeUtilities.failure, desiredBranchName, highestRevision.Branch, actualClonePath));
+					}
 					return;
 				case HgRepository.UpdateResults.Success:
 					// Messages and more work to follow.
