@@ -53,14 +53,10 @@ fi
 
 copy_wget() {
 echo "wget: $2 <= $1"
-f1=$(basename $1)
-f2=$(basename $2)
-cd $(dirname $2)
+f=$(basename $2)
+d=$(dirname $2)
+cd $d
 wget -q -L -N $1
-# wget has no true equivalent of curl's -o option.
-# Different versions of wget handle (or not) % escaping differently.
-# A URL query is the only reason why $f1 and $f2 should differ.
-if [ "$f1" != "$f2" ]; then mv $f2\?* $f2; fi
 cd -
 }
 
@@ -112,14 +108,14 @@ cd -
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release"}
-#     VCS: https://bitbucket.org/sillsdev/l10nsharp []
+#     VCS: https://github.com/sillsdev/l10nsharp [master]
 # [6] build: L10NSharp continuous (bt196)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"L10NSharp.dll"=>"lib/Debug", "L10NSharp.pdb"=>"lib/Debug"}
-#     VCS: https://bitbucket.org/sillsdev/l10nsharp []
+#     VCS: https://github.com/sillsdev/l10nsharp [master]
 # [7] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
