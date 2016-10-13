@@ -53,10 +53,14 @@ fi
 
 copy_wget() {
 echo "wget: $2 <= $1"
-f=$(basename $2)
-d=$(dirname $2)
-cd $d
+f1=$(basename $1)
+f2=$(basename $2)
+cd $(dirname $2)
 wget -q -L -N $1
+# wget has no true equivalent of curl's -o option.
+# Different versions of wget handle (or not) % escaping differently.
+# A URL query is the only reason why $f1 and $f2 should differ.
+if [ "$f1" != "$f2" ]; then mv $f2\?* $f2; fi
 cd -
 }
 
@@ -79,7 +83,7 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusPrecise64v25Cont
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Autofac.dll"=>"lib/common", "Chorus.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono", "debug/Chorus.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono", "MercurialExtensions/**"=>"MercurialExtensions"}
+#     paths: {"Autofac.dll"=>"lib/common", "MercurialExtensions/**"=>"MercurialExtensions", ""=>"", "Chorus.exe"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "debug/Chorus.exe"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [2] build: Helpprovider (bt225)
 #     project: Helpprovider
@@ -155,18 +159,6 @@ mkdir -p ./lib/common
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Autofac.dll?branch=%3Cdefault%3E ./lib/common/Autofac.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Chorus.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/LibChorus.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/ChorusHub.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/ChorusMerge.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Mercurial-i686.zip?branch=%3Cdefault%3E ./lib/DebugMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Mercurial-x86_64.zip?branch=%3Cdefault%3E ./lib/DebugMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/LibChorus.TestUtilities.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/Chorus.exe?branch=%3Cdefault%3E ./lib/DebugMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/LibChorus.dll?branch=%3Cdefault%3E ./lib/DebugMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/ChorusHub.exe?branch=%3Cdefault%3E ./lib/DebugMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/ChorusMerge.exe?branch=%3Cdefault%3E ./lib/DebugMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/LibChorus.TestUtilities.dll?branch=%3Cdefault%3E ./lib/DebugMono/LibChorus.TestUtilities.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/.guidsForInstaller.xml?branch=%3Cdefault%3E ./MercurialExtensions/.guidsForInstaller.xml
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/Dummy.txt?branch=%3Cdefault%3E ./MercurialExtensions/Dummy.txt
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/fixutf8/.gitignore?branch=%3Cdefault%3E ./MercurialExtensions/fixutf8/.gitignore
@@ -185,6 +177,18 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.py?branch=%3Cdefault%3E ./MercurialExtensions/fixutf8/win32helper.py
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyc?branch=%3Cdefault%3E ./MercurialExtensions/fixutf8/win32helper.pyc
 copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyo?branch=%3Cdefault%3E ./MercurialExtensions/fixutf8/win32helper.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Chorus.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/ChorusHub.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/ChorusMerge.exe?branch=%3Cdefault%3E ./lib/ReleaseMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/LibChorus.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/LibChorus.TestUtilities.dll?branch=%3Cdefault%3E ./lib/ReleaseMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Mercurial-i686.zip?branch=%3Cdefault%3E ./lib/DebugMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/Mercurial-x86_64.zip?branch=%3Cdefault%3E ./lib/DebugMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/Chorus.exe?branch=%3Cdefault%3E ./lib/DebugMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/ChorusHub.exe?branch=%3Cdefault%3E ./lib/DebugMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/ChorusMerge.exe?branch=%3Cdefault%3E ./lib/DebugMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/LibChorus.dll?branch=%3Cdefault%3E ./lib/DebugMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/latest.lastSuccessful/debug/LibChorus.TestUtilities.dll?branch=%3Cdefault%3E ./lib/DebugMono/LibChorus.TestUtilities.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/ReleaseMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/DebugMono/IPCFramework.dll
