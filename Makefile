@@ -10,14 +10,14 @@ no_proxy := $(no_proxy),*.local
 all: release
 
 release: vcs_version
-	./download_dependencies_linux.sh && cd build && ../run-in-environ xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
+	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
 	cp -a run-in-environ environ environ-xulrunner output/ReleaseMono
 
 debug: vcs_version
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
-	./download_dependencies_linux.sh && cd build && ../run-in-environ xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
+	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
 	# Put run-in-environment next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
 	cp -a run-in-environ environ environ-xulrunner output/DebugMono
 
