@@ -1,3 +1,6 @@
+## 2.5.0 14/Oct/2016
+* FLExBridge: Fix Linux localization issues
+* Chorus: Update Send/Receive options to avoid confusion about Language Forge
 ## 2.4.2 05/Oct/2016
 * FLExBridge: Fix handling of data model version 7000069
 ## 2.4.1 06/Sep/2016
