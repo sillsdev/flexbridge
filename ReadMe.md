@@ -53,6 +53,6 @@ When releasing FLExBridge be sure to do the following:
 	@REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
 	"%VS120COMNTOOLS%vsvars32.bat"
 	@REM Replace Alpha here with Beta or Stable as appropriate.
-	msbuild build/build.common.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:RootDir/..
+	msbuild build/build.common.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:RootDir=..
 - The windows version is released through two jobs in TeamCity: "Installer-sans Publish" and "Publish Installer"; the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing, you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
 - For the Linux release, use the Jenkins FLExBridge release package build to make packages from the commit where the changelog entry was updated.

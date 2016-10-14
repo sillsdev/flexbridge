@@ -1,3 +1,10 @@
+flexbridge (2.5.0) unstable; urgency=low
+
+  * FLExBridge: Fix Linux localization issues
+  * Chorus: Update Send/Receive options to avoid confusion about Language Forge
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 14 Oct 2016 15:03:46 -0500
+
 flexbridge (2.4.2) unstable; urgency=low
 
   * FLExBridge: Fix handling of data model version 7000069
