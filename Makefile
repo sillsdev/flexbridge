@@ -11,15 +11,15 @@ all: release
 
 release: vcs_version
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
-	cp -a run-in-environ environ environ-xulrunner output/ReleaseMono
+	cp -a flexbridge environ environ-xulrunner output/ReleaseMono
 
 debug: vcs_version
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
-	# Put run-in-environment next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
-	cp -a run-in-environ environ environ-xulrunner output/DebugMono
+	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
+	cp -a flexbridge environ environ-xulrunner output/DebugMono
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 vcs_version:
@@ -36,7 +36,7 @@ install:
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
-	/usr/bin/install environ environ-xulrunner run-in-environ $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install flexbridge environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	# Copy mercurial for both architectures since flexbridge is an any architecture package.
