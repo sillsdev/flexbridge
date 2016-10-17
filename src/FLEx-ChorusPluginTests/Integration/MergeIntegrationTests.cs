@@ -3,12 +3,16 @@
 
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
+using Palaso.IO;
+using Palaso.TestUtilities;
 
 namespace FLEx_ChorusPluginTests.Integration
 {
@@ -20,6 +24,28 @@ namespace FLEx_ChorusPluginTests.Integration
 	[TestFixture]
 	public class MergeIntegrationTests
 	{
+		private	const string CustomPropData = @"<?xml version='1.0' encoding='utf-8'?>
+<AdditionalFields>
+	<CustomField
+		class='LexEntry'
+		destclass='7'
+		key='LexEntryTone'
+		listRoot='53241fd4-72ae-4082-af55-6b659657083c'
+		name='Tone'
+		type='ReferenceCollection' />
+	<CustomField
+		class='LexSense'
+		key='LexSenseParadigm'
+		name='Paradigm'
+		type='MultiString'
+		wsSelector='-2' />
+	<CustomField
+		class='WfiWordform'
+		key='WfiWordformCertified'
+		name='Certified'
+		type='Boolean' />
+</AdditionalFields>";
+
 		[Test]
 		public void EnsureRightPersonMadeChanges()
 		{
@@ -108,29 +134,6 @@ namespace FLEx_ChorusPluginTests.Integration
 	</LexEntry>
 </Lexicon>";
 
-			const string customPropData =
-@"<?xml version='1.0' encoding='utf-8'?>
-<AdditionalFields>
-	<CustomField
-		class='LexEntry'
-		destclass='7'
-		key='LexEntryTone'
-		listRoot='53241fd4-72ae-4082-af55-6b659657083c'
-		name='Tone'
-		type='ReferenceCollection' />
-	<CustomField
-		class='LexSense'
-		key='LexSenseParadigm'
-		name='Paradigm'
-		type='MultiString'
-		wsSelector='-2' />
-	<CustomField
-		class='WfiWordform'
-		key='WfiWordformCertified'
-		name='Certified'
-		type='Boolean' />
-</AdditionalFields>";
-
 			var mdc = MetadataCache.TestOnlyNewCache;
 			mdc.AddCustomPropInfo("LexEntry", new FdoPropertyInfo("Tone", DataType.ReferenceCollection, true));
 			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
@@ -145,7 +148,7 @@ namespace FLEx_ChorusPluginTests.Integration
 				sueRepo.Repository.TestOnlyAddSansCommit(modelVersionPathname);
 				// Add custom property data file.
 				var customPropsPathname = Path.Combine(sueProjPath, FlexBridgeConstants.CustomPropertiesFilename);
-				File.WriteAllText(customPropsPathname, customPropData);
+				File.WriteAllText(customPropsPathname, CustomPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
 				sueRepo.AddAndCheckIn();
 
@@ -162,13 +165,13 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
 					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
 					Assert.IsNotNullOrEmpty(notesContents);
-					Assert.IsTrue(notesContents.Contains("Removed Vs Edited Element Conflict"));
-					Assert.IsTrue(notesContents.Contains("Randy deleted this element"));
-					Assert.IsTrue(notesContents.Contains("Sue edited it"));
-					Assert.IsTrue(notesContents.Contains("The merger kept the change made by Sue."));
-					Assert.IsTrue(notesContents.Contains("whoWon=\"Sue\""));
-					Assert.IsTrue(notesContents.Contains("alphaUserId=\"Randy\""));
-					Assert.IsTrue(notesContents.Contains("betaUserId=\"Sue\""));
+					Assert.That(notesContents, Is.StringContaining("Removed Vs Edited Element Conflict"));
+					Assert.That(notesContents, Is.StringContaining("Randy deleted this element"));
+					Assert.That(notesContents, Is.StringContaining("Sue edited it"));
+					Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Sue."));
+					Assert.That(notesContents, Is.StringContaining("whoWon=\"Sue\""));
+					Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
+					Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
 
 					// Make sure merged file has both alts.
 					var doc = XDocument.Load(randyRepo.UserFile.Path);
@@ -181,6 +184,112 @@ namespace FLEx_ChorusPluginTests.Integration
 					var aStrEzpi = aStrElements.FirstOrDefault(el => el.Attribute("ws").Value == "qaa-x-ezpi");
 					Assert.IsNotNull(aStrEzpi);
 					Assert.IsTrue(aStrEzpi.Element("Run").Value == "saglo, yzaglo, rzaglo, wzaglo, nzaglo, -");
+				}
+			}
+		}
+
+		[Test]
+		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
+		public void EnsureDictionaryConfigsUseDictionaryStrategy()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='true'/>
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='true' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='false' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			const string sue = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='false'/>
+		<Option id='fr' isEnabled='true' />
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='true' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='false' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			const string randy = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' allPublications='true' version='1' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='true'/>
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='false' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='true' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			using( var tempFolder = new TemporaryFolder("Temp"))
+			{
+				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
+				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
+				File.Copy(xsdPath, xsdPathInProj, true);
+
+				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), commonAncestor))
+				using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))
+				{
+					// By doing the clone before making Sue's changes, we get the common starting state in both repos.
+					sueRepo.WriteNewContentsToTestFile(sue);
+					sueRepo.AddAndCheckIn();
+
+					var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
+					Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+					randyRepo.WriteNewContentsToTestFile(randy);
+					randyRepo.CheckinAndPullAndMerge(sueRepo);
+					Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
+					Assert.IsNotNullOrEmpty(notesContents);
+					Assert.That(notesContents, Is.StringContaining("Randy and Sue edited the same part of this data."));
+					Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Randy."));
+					Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
+					Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
+
+					// Make sure merged file has Randy's changes
+					var doc = XDocument.Load(randyRepo.UserFile.Path);
+					var options = doc.Root.Element("ConfigurationItem").Elements("ConfigurationItem").Last(/*Variant Forms*/)
+						.Element("ListTypeOptions").Elements("Option").ToList();
+					Assert.AreEqual(2, options.Count, "There should be two Variant Forms options");
+					Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", options[0].Attribute("id").Value, "Options are out of order");
+					Assert.AreEqual("0c4663b3-4d9a-47af-b9a1-c8565d8112ed", options[1].Attribute("id").Value, "Options are out of order");
+					Assert.AreEqual("false", options[0].Attribute("isEnabled").Value, "First option should be disabled");
+					Assert.AreEqual("true", options[1].Attribute("isEnabled").Value, "Second option should be enabled");
+
+					// Make sure merged file does *not* have Sue's changes
+					options = doc.Root.Element("ConfigurationItem").Element("ConfigurationItem" /*Headword*/)
+						.Element("WritingSystemOptions").Elements("Option").ToList();
+					Assert.AreEqual(1, options.Count, "There should be only one WS Option");
+					Assert.AreEqual("vernacular", options[0].Attribute("id").Value, "should be default vernacular");
+					Assert.AreEqual("true", options[0].Attribute("isEnabled").Value, "should be enabled");
 				}
 			}
 		}

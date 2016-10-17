@@ -2,3 +2,39 @@
 	<Import Project="FLExBridge.proj"/>
 </Project>
 
+  <!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+  <!-- If no Version is specified, reads from "$(RootDir)/version". -->
+  <Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build">
+	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
+	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
+
+	<Message Text="Making Installer Version: $(Version)" Importance="high"/>
+	<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
+
+	<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
+	<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
+  </Target>
+
+  <Target Name="Upload" DependsOnTargets="CreateDirectories">
+
+	<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/FLExBridgeInstaller.msi"/>
+
+	<Message Text="Attempting rsync of ReleaseNotes.md" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/ReleaseNotes.md"/>
+
+	<Message Text="Attempting rsync of appcast.xml" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/appcast.xml&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/appcast.xml"/>
+
+	<Message Text="Attempting rsync of flexbridge.css" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/flexbridge.css&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/flexbridge.css"/>
+
+	<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
+
+	<Message Text="Attempting rsync of index.htm" Importance="high"/>
+	<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.htm"/>
+
+  </Target>
+
+</Project>

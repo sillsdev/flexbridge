@@ -74,11 +74,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				FlexBridgeConstants.Agents,				// 'agents'
 
 				// FW layouts
-				FlexBridgeConstants.fwlayout			// 'fwlayout'
+				FlexBridgeConstants.fwlayout,			// 'fwlayout'
+				FlexBridgeConstants.fwdictconfig		// 'fwdictconfig'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());
-			Assert.IsTrue(knownExtensions.SetEquals(supportedExtensions));
+			Assert.That(knownExtensions, Is.EquivalentTo(supportedExtensions));
 		}
 	}
 }

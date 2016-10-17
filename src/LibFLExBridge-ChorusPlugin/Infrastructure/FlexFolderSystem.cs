@@ -59,6 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "**.fwdictconfig"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "**.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "**.*"));

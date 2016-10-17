@@ -150,6 +150,8 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			//// 1. Sort <rt>
 			//DataSortingService.SortMainRtElement(rtElement);
 
+			try
+			{
 			// 2. Cache it.
 			switch (className)
 			{
@@ -164,6 +166,12 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 					wellUsedElements[FlexBridgeConstants.LexDb] = LibFLExBridgeUtilities.CreateFromBytes(record);
 					//classData.Remove(SharedConstants.LexDb);
 					break;
+			}
+		}
+			catch (KeyNotFoundException knf)
+			{
+				throw new InvalidDataException(string.Format("The metadata cache does not know about the class {0}. There must be a problem in a model version update.",
+					className), knf);
 			}
 		}
 

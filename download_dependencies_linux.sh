@@ -106,32 +106,32 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
 #     VCS: http://hg.palaso.org/helpprovider []
+# [4] build: IPC-Precise64 (bt279)
+#     project: IPC Library
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
+#     clean: false
+#     revision: fw-8.3.tcbuildtag
+#     paths: {"IPCFramework.*"=>"lib/ReleaseMono"}
+#     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
 # [5] build: IPC-Precise64 (bt279)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
 #     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"IPCFramework.*"=>"lib/ReleaseMono"}
-#     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: IPC-Precise64 (bt279)
-#     project: IPC Library
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
-#     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fw-8.3.tcbuildtag
 #     paths: {"IPCFramework.*"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
+# [6] build: L10NSharp Mono continuous (bt271)
+#     project: L10NSharp
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
+#     clean: false
+#     revision: fw-8.3.tcbuildtag
+#     paths: {"L10NSharp.dll"=>"lib/ReleaseMono"}
+#     VCS: https://github.com/sillsdev/l10nsharp [master]
 # [7] build: L10NSharp Mono continuous (bt271)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
 #     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"L10NSharp.dll"=>"lib/ReleaseMono"}
-#     VCS: https://bitbucket.org/sillsdev/l10nsharp []
-# [8] build: L10NSharp Mono continuous (bt271)
-#     project: L10NSharp
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
-#     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fw-8.3.tcbuildtag
 #     paths: {"L10NSharp.dll"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/sillsdev/l10nsharp []
 # [9] build: palaso-precise64-lfmerge Continuous (Libpalaso_PalasoPrecise64lfmergeContinuous)
@@ -152,14 +152,14 @@ cd -
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fw-8.3.1.tcbuildtag
 #     paths: {"icu*.dll"=>"lib/ReleaseMono", "icu*.config"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
 # [12] build: icucil-precise64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fw-8.3.1.tcbuildtag
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
 

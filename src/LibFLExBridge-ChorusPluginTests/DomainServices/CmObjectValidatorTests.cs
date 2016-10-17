@@ -415,7 +415,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			runElement.Add(badAttr);
 			result = CmObjectValidator.ValidateObject(_mdc, element);
 			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Contains("Invalid attribute for <Run> element"));
+			Assert.IsTrue(result.Contains("Element <Run> has invalid attribute(s) 'bogusAttr'"));
 			badAttr.Remove();
 		}
 

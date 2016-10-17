@@ -9,8 +9,9 @@ using System.Reflection;
 using Chorus.FileTypeHandlers;
 using Chorus.FileTypeHandlers.xml;
 using Chorus.merge.xml.generic;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Progress;
@@ -208,8 +209,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 		[Test, Category("UnknownMonoIssue")]
 		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase
-				.Substring(Palaso.PlatformUtilities.Platform.IsLinux ? 7 : 8));
+			var baseDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			var testDataDir = Path.Combine(baseDir, "TestData");
 			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));

@@ -109,7 +109,7 @@ namespace LfMergeBridge
 			}
 
 			// Set up adjunct.
-			var syncAdjunct = new FlexBridgeSychronizerAdjunct(Path.Combine(fullPathToProject, options[LfMergeBridgeUtilities.fwdataFilename]), fwDataExePathname, true, false);
+			var syncAdjunct = new FlexBridgeSynchronizerAdjunct(Path.Combine(fullPathToProject, options[LfMergeBridgeUtilities.fwdataFilename]), fwDataExePathname, true, false);
 			synchronizer.SynchronizerAdjunct = syncAdjunct;
 			// Set up sync options.
 			var assemblyName = Assembly.GetExecutingAssembly().GetName();

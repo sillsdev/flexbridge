@@ -121,6 +121,9 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -138,6 +141,7 @@
     <Compile Include="Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\StyleContextGeneratorTests.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
     <Compile Include="Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
@@ -198,5 +202,8 @@
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 </Project>

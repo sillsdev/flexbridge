@@ -412,9 +412,14 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			if (propElement == null)
 				return null;
 			var set = attrs;
-			return propElement.Attributes().Any(attr => !set.Contains(attr.Name.LocalName))
-				? string.Format("Invalid attribute for <{0}> element", propElement.Name.LocalName)
-				: null;
+			var invalidAttributes = from attr in propElement.Attributes() where !set.Contains(attr.Name.LocalName) select attr;
+			var xAttributes = invalidAttributes as XAttribute[] ?? invalidAttributes.ToArray();
+			if (xAttributes.Any())
+			{
+				return string.Format("Element <{0}> has invalid attribute(s) '{1}'", propElement.Name.LocalName,
+					string.Join("', '", from el in xAttributes select el.Name.LocalName));
+			}
+			return null;
 		}
 
 		private static string ValidateBinaryProperty(bool isCustomProperty, XElement propertyElement)
