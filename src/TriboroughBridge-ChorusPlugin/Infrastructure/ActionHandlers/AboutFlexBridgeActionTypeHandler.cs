@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using Palaso.IO;
 using Palaso.Progress;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
@@ -28,7 +29,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// </remarks>
 		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-			Process.Start(Path.Combine(Path.GetDirectoryName(TriboroughBridgeUtilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
+			Process.Start(Path.Combine(Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
 		}
 
 		/// <summary>

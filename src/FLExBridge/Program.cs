@@ -9,12 +9,15 @@ using Chorus.VcsDrivers.Mercurial;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
 using LibTriboroughBridge_ChorusPlugin.Properties;
+using Palaso.IO;
 using Palaso.Progress;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
+
+
 #if MONO
 using Gecko;
 #endif
@@ -69,7 +72,7 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(TriboroughBridgeUtilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(FileUtils.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))

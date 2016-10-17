@@ -3,26 +3,15 @@
 
 using System;
 using System.IO;
-using System.Reflection;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using TriboroughBridge_ChorusPlugin;
-using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests
 {
 	[TestFixture]
 	public class TriboroughBridgeUtilitiesTests
 	{
-		[Test]
-		public void EnsureFilePrefixIsRemoved()
-		{
-			var prefix = Uri.UriSchemeFile + ":";
-			var fullPathname = Assembly.GetExecutingAssembly().CodeBase;
-			Assert.IsTrue(fullPathname.StartsWith(prefix));
-			var reducedPathname = TriboroughBridgeUtilities.StripFilePrefix(fullPathname);
-			Assert.IsFalse(reducedPathname.StartsWith(prefix));
-		}
-
 		[Test]
 		public void LiftOffsetUsesNewLiftFolder()
 		{
