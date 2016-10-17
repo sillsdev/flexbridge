@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
   <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="2.0.6.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">2.5.1067</prop>
+    <prop type="x-appversion">2.5.1068</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
