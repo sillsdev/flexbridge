@@ -66,6 +66,7 @@ lib/*/Autofac.dll
 lib/*/*HelpProvider.dll
 lib/*/L10NSharp.xml
 lib/*.msm
+lib/*/*.pdb
 /Mercurial
 build/.nuget/*
 build/Nuget.exe
