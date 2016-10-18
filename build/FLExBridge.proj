@@ -220,7 +220,8 @@
 
 	<!-- For use when working on installer development -->
 	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
-	<!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:BuildCounter=99 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+	<!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+	<!-- If no Version is specified, reads from "$(RootDir)/version". -->
 	<Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build" Condition="'$(OS)'=='Windows_NT'">
 		<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 		<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs"
