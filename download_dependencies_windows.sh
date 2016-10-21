@@ -113,40 +113,26 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: L10NSharp continuous (bt196)
-#     project: L10NSharp
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
-# [7] build: L10NSharp continuous (bt196)
-#     project: L10NSharp
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"L10NSharp.dll"=>"lib/Debug", "L10NSharp.pdb"=>"lib/Debug"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
-# [8] build: icucil-win32-default Continuous (bt14)
+# [6] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Release", "icu*.config"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: icucil-win32-default Continuous (bt14)
+# [7] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/Debug", "icu*.config"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [10] build: palaso-win32-lfmerge Continuous (PalasoWin32lfmergeContinuous)
+# [8] build: palaso-win32-lfmerge Continuous (PalasoWin32lfmergeContinuous)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoWin32lfmergeContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Palaso.BuildTasks.dll"=>"lib/Release", "Palaso.dll"=>"lib/Release", "Palaso.pdb"=>"lib/Release", "Palaso.TestUtilities.dll"=>"lib/Release", "Palaso.TestUtilities.pdb"=>"lib/Release", "PalasoUIWindowsForms.dll"=>"lib/Release", "PalasoUIWindowsForms.pdb"=>"lib/Release", "Palaso.Lift.dll"=>"lib/Release", "Palaso.Lift.pdb"=>"lib/Release", "debug/Palaso.BuildTasks.dll"=>"lib/Debug", "debug/Palaso.dll"=>"lib/Debug", "debug/Palaso.pdb"=>"lib/Debug", "debug/Palaso.TestUtilities.dll"=>"lib/Debug", "debug/Palaso.TestUtilities.pdb"=>"lib/Debug", "debug/PalasoUIWindowsForms.dll"=>"lib/Debug", "debug/PalasoUIWindowsForms.pdb"=>"lib/Debug", "debug/Palaso.Lift.dll"=>"lib/Debug", "debug/Palaso.Lift.pdb"=>"lib/Debug"}
+#     paths: {"Palaso.BuildTasks.dll"=>"lib/Release", "Palaso.dll"=>"lib/Release", "Palaso.pdb"=>"lib/Release", "Palaso.TestUtilities.dll"=>"lib/Release", "Palaso.TestUtilities.pdb"=>"lib/Release", "PalasoUIWindowsForms.dll"=>"lib/Release", "PalasoUIWindowsForms.pdb"=>"lib/Release", "Palaso.Lift.dll"=>"lib/Release", "Palaso.Lift.pdb"=>"lib/Release", "L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release", "debug/Palaso.BuildTasks.dll"=>"lib/Debug", "debug/Palaso.dll"=>"lib/Debug", "debug/Palaso.pdb"=>"lib/Debug", "debug/Palaso.TestUtilities.dll"=>"lib/Debug", "debug/Palaso.TestUtilities.pdb"=>"lib/Debug", "debug/PalasoUIWindowsForms.dll"=>"lib/Debug", "debug/PalasoUIWindowsForms.pdb"=>"lib/Debug", "debug/Palaso.Lift.dll"=>"lib/Debug", "debug/Palaso.Lift.pdb"=>"lib/Debug", "debug/L10NSharp.dll"=>"lib/Debug", "debug/L10NSharp.pdb"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/libpalaso.git []
 
 # make sure output directories exist
@@ -184,10 +170,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32Lfmer
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Release/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Debug/IPCFramework.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.dll ./lib/Release/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.dll ./lib/Debug/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/latest.lastSuccessful/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Release/icu.net.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt54.dll ./lib/Release/icudt54.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin54.dll ./lib/Release/icuin54.dll
@@ -207,6 +189,8 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmer
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.pdb ./lib/Release/PalasoUIWindowsForms.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/Palaso.Lift.dll ./lib/Release/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/Palaso.Lift.pdb ./lib/Release/Palaso.Lift.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/L10NSharp.dll ./lib/Release/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/Palaso.BuildTasks.dll ./lib/Debug/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/Palaso.dll ./lib/Debug/Palaso.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/Palaso.pdb ./lib/Debug/Palaso.pdb
@@ -216,4 +200,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmer
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.pdb ./lib/Debug/PalasoUIWindowsForms.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/Palaso.Lift.dll ./lib/Debug/Palaso.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/Palaso.Lift.pdb ./lib/Debug/Palaso.Lift.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/L10NSharp.dll ./lib/Debug/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeContinuous/latest.lastSuccessful/debug/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
 # End of script
