@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Chorus.Properties;
 using Chorus.merge;
+using Chorus.Properties;
 using Palaso.Code;
+using Palaso.IO;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
@@ -495,13 +496,13 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		private static string GetMetaDataCacheOffsetFolder(string pathToOurs)
 		{
 			var currentPathname = pathToOurs;
-			if (currentPathname.Contains(FlexBridgeConstants.General))
+			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.General))
 				return FlexBridgeConstants.General;
-			if (currentPathname.Contains(FlexBridgeConstants.Other))
+			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Other))
 				return FlexBridgeConstants.Other;
-			if (currentPathname.Contains(FlexBridgeConstants.Linguistics))
+			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Linguistics))
 				return FlexBridgeConstants.Linguistics;
-			if (currentPathname.Contains(FlexBridgeConstants.Anthropology))
+			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Anthropology))
 				return FlexBridgeConstants.Anthropology;
 			return currentPathname; // Must be a test.
 		}
