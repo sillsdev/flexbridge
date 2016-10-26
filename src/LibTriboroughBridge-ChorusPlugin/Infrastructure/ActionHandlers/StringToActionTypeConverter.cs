@@ -14,6 +14,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers
 		private const string Language_Forge_Send_Receive = "Language_Forge_Send_Receive";
 		private const string Language_Forge_Clone = "Language_Forge_Clone";
 		private const string Language_Forge_Update_To_Long_Hash = "Language_Forge_Update_To_Long_Hash";
+		private const string Language_Forge_Auxiliary_Commit = "Language_Forge_Auxiliary_Commit";
 
 		// Support for FLEx
 		// Support for both FLEx full project & LIFT
@@ -47,6 +48,8 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers
 					return ActionType.LanguageForgeClone;
 				case Language_Forge_Update_To_Long_Hash:
 					return ActionType.LanguageForgeUpdateToLongHash;
+				case Language_Forge_Auxiliary_Commit:
+					return ActionType.LanguageForgeAuxiliaryCommit;
 
 				case obtain:
 					return ActionType.Obtain;

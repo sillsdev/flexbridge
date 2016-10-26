@@ -15,6 +15,8 @@ namespace LibTriboroughBridgeChorusPlugin
 
 		LanguageForgeUpdateToLongHash,
 
+		LanguageForgeAuxiliaryCommit,
+
 		Obtain,
 		ObtainLift,
 
