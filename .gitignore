@@ -60,6 +60,7 @@ lib/*/Palaso*.dll
 lib/*/Chorus*.exe
 lib/*/LibChorus*.dll
 lib/*/Mercurial*.zip
+lib/*/NDesk.DBus.dll*
 lib/*/icu*.dll*
 lib/*/IPCFramework.dll
 lib/*/Autofac.dll
