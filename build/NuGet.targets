@@ -55,7 +55,10 @@
 	</Target>
 
 	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
-		<Exec Command='$(NuGetCommand) restore "$(SolutionPath)"'/>
+		<!-- NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
+		     just setting -ConfigFile is not enough to make nuget not work with config files in the home directory.
+		     Setting XDG_CONFIG_HOME prevents nuget from working with config files the home directory. -->
+		<Exec Command='[ -d $HOME ] || export XDG_CONFIG_HOME=$(mktemp -d); $(NuGetCommand) restore "$(SolutionPath)"'/>
 	</Target>
 
 	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
