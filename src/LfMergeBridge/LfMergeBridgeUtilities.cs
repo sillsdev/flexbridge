@@ -20,6 +20,7 @@ namespace LfMergeBridge
 		internal const string fdoDataModelVersion = "fdoDataModelVersion";
 		internal const string user = "user";
 		internal const string deleteRepoIfNoSuchBranch = "deleteRepoIfNoSuchBranch";
+		internal const string onlyRepairRepo = "onlyRepairRepo";
 		internal const string commitMessage = "commitMessage";
 
 		internal const string failure = "failure";

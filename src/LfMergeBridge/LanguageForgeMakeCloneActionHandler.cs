@@ -38,28 +38,14 @@ namespace LfMergeBridge
 			return !options.TryGetValue(LfMergeBridgeUtilities.deleteRepoIfNoSuchBranch, out deleteRepoIfNoSuchBranch) || deleteRepoIfNoSuchBranch.ToLowerInvariant() == "true";
 		}
 
-		#region IBridgeActionTypeHandler impl
-		/// <summary>
-		/// Get a clone of a Language Depot project.
-		/// </summary>
-		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		private static bool OnlyRepairRepo(IDictionary<string, string> options)
 		{
-			const string cloneBase = "Clone";
+			string onlyRepairRepo;
+			return options.TryGetValue(LfMergeBridgeUtilities.onlyRepairRepo, out onlyRepairRepo) && onlyRepairRepo.ToLowerInvariant() == "true";
+		}
 
-			Guard.AgainstNull(progress, "progress");
-			Guard.AgainstNull(options, "options");
-
-			// Make sure required parameters are in 'options'.
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fullPathToProject), @"Missing required 'fullPathToProject' key in 'options'.");
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoName), @"Missing required 'languageDepotRepoName' key in 'options'.");
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fdoDataModelVersion), @"Missing required 'fdoDataModelVersion' key in 'options'.");
-			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoUri), @"Missing required 'languageDepotRepoUri' key in 'options'.");
-			// LfMergeBridgeUtilities.user is an optional parameter
-			// LfMergeBridgeUtilities.deleteRepoIfNoSuchBranch is an optional parameter, defaulting to "true"
-
-			var expectedFullPathToProjectCloneFolder = options[LfMergeBridgeUtilities.fullPathToProject];
-			var actualClonePath = HgRepository.Clone(RepositoryAddress.Create(options[LfMergeBridgeUtilities.languageDepotRepoName], options[LfMergeBridgeUtilities.languageDepotRepoUri], false), expectedFullPathToProjectCloneFolder, progress);
-
+		private static void FinishClone(IProgress progress, ref string somethingForClient, string cloneBase, string actualClonePath, string desiredBranchName, string user, bool deleteRepoIfNoSuchBranch)
+		{
 			// Just because we got a new clone, doesn't mean LF can use it.
 			if (!LibFLExBridgeUtilities.IsFlexProjectRepository(actualClonePath))
 			{
@@ -67,15 +53,9 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: clone is not a FLEx project: {2}.", cloneBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
-
-			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
 			var hgRepository = new HgRepository(actualClonePath, progress);
-
-			if (options.ContainsKey(LfMergeBridgeUtilities.user))
-			{
-				hgRepository.SetUserNameInIni(options[LfMergeBridgeUtilities.user], progress);
-			}
-
+			if (!string.IsNullOrEmpty(user))
+				hgRepository.SetUserNameInIni(user, progress);
 			// Have Chorus do the main work.
 			var updateResults = hgRepository.UpdateToBranchHead(desiredBranchName);
 			var alreadyOnIt = false;
@@ -87,16 +67,17 @@ namespace LfMergeBridge
 					break;
 				case HgRepository.UpdateResults.NoSuchBranch:
 					// Bail out, since LF doesn't support data migration, which would require creation of a new branch.
-					if (DeleteRepoIfNoSuchBranch(options))
+					if (deleteRepoIfNoSuchBranch)
 					{
 						Directory.Delete(actualClonePath, true);
 						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: no such branch '{2}': {3}.", cloneBase, LfMergeBridgeUtilities.failure, desiredBranchName, LfMergeBridgeUtilities.cloneDeleted));
 					}
 					else
 					{
-						// Don't delete the repo - LF will take care of that if necessary
+						// Finish the clone for the highest revision and report that back
 						var highestRevision = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
 						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: no such branch '{2}'. Highest available model '{3}' in folder '{4}'.", cloneBase, LfMergeBridgeUtilities.failure, desiredBranchName, highestRevision.Branch, actualClonePath));
+						FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, highestRevision.Branch, user, deleteRepoIfNoSuchBranch);
 					}
 					return;
 				case HgRepository.UpdateResults.Success:
@@ -107,7 +88,6 @@ namespace LfMergeBridge
 					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: new repository with no commits. {2}.", cloneBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 					return;
 			}
-
 			// See if repo has higher branch than LF called for.
 			var highestHead = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
 			if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
@@ -117,8 +97,7 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: clone has higher model '{2}' than LF asked for '{3}': {4}.", cloneBase, LfMergeBridgeUtilities.failure, highestHead.Branch, desiredBranchName, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
-
-/* For now, Lfmerge will store the clone path, whether in the provided location or the one decided upon by Chorus.
+			/* For now, Lfmerge will store the clone path, whether in the provided location or the one decided upon by Chorus.
 						if (expectedFullPathToProjectCloneFolder != actualClonePath)
 						{
 							// Chorus decided to make it in some other folder. These are some ideas about how to hanlde this case:
@@ -143,19 +122,44 @@ namespace LfMergeBridge
 						}
 */
 			var workingSetRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-
 			if (!alreadyOnIt)
 			{
 				hgRepository.Update(workingSetRevision.Number.LocalRevisionNumber);
 			}
-
 			// At this point, we have a clone, and it is updated to the desired branch's head.
 			// So, reconstruct the fwdata file.
 			FLExProjectUnifier.PutHumptyTogetherAgain(progress, true, Path.Combine(actualClonePath, new DirectoryInfo(actualClonePath).Name + LibTriboroughBridgeSharedConstants.FwXmlExtension));
-
 			// Notify LF.
 			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: new clone created on branch '{2}' in folder '{3}'.", cloneBase, LfMergeBridgeUtilities.success, workingSetRevision.Branch, actualClonePath));
 			LfMergeBridgeUtilities.WriteLongHash(progress, hgRepository, workingSetRevision, desiredBranchName, ref somethingForClient);
+		}
+
+		#region IBridgeActionTypeHandler impl
+		/// <summary>
+		/// Get a clone of a Language Depot project.
+		/// </summary>
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
+		{
+			const string cloneBase = "Clone";
+
+			Guard.AgainstNull(progress, "progress");
+			Guard.AgainstNull(options, "options");
+
+			// Make sure required parameters are in 'options'.
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fullPathToProject), @"Missing required 'fullPathToProject' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoName), @"Missing required 'languageDepotRepoName' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.fdoDataModelVersion), @"Missing required 'fdoDataModelVersion' key in 'options'.");
+			Require.That(options.ContainsKey(LfMergeBridgeUtilities.languageDepotRepoUri), @"Missing required 'languageDepotRepoUri' key in 'options'.");
+			// LfMergeBridgeUtilities.user is an optional parameter
+			// LfMergeBridgeUtilities.deleteRepoIfNoSuchBranch is an optional parameter, defaulting to "true"
+			// LfMergeBridgeUtilities.onlyRepairRepo is an optional parameter, defaulting to "false"
+
+			var expectedFullPathToProjectCloneFolder = options[LfMergeBridgeUtilities.fullPathToProject];
+			var actualClonePath = OnlyRepairRepo(options) ? expectedFullPathToProjectCloneFolder : HgRepository.Clone(RepositoryAddress.Create(options[LfMergeBridgeUtilities.languageDepotRepoName], options[LfMergeBridgeUtilities.languageDepotRepoUri], false), expectedFullPathToProjectCloneFolder, progress);
+
+			var user = options.ContainsKey(LfMergeBridgeUtilities.user) ? options[LfMergeBridgeUtilities.user] : null;
+
+			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, options[LfMergeBridgeUtilities.fdoDataModelVersion], user, DeleteRepoIfNoSuchBranch(options));
 		}
 
 		/// <summary>
