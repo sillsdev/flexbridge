@@ -46,3 +46,4 @@ src/Installer/output/
 src/Installer/obj/
 vcs_version
 *.swp
+icu4c.readme.txt
