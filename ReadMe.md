@@ -67,12 +67,14 @@ When releasing FLExBridge be sure to do the following:
 
             `echo 2.5.1 > version`
 
-        * Create a template atop ReleaseNotes.md to be filled in in a moment:
+        * Create an entry atop ReleaseNotes.md:
 
             `sed -i '1i ##\n* New version.' src/Installer/ReleaseNotes.md`
 
+        * Edit src/Installer/ReleaseNotes.md , replacing 'New version.'
+
         * `CHANNEL=Alpha` # or Beta or Stable. On 2016-12-16 we are using Alpha for Dictionary branch.
-        * Fill in debian/changelog and ReleaseNotes.md:
+        * Fill in debian/changelog and ReleaseNotes.md, make html file:
 
             `(source environ && cd build && xbuild build.common.proj /t:PreparePublishingArtifacts /p:RootDir=.. /p:UploadFolder=$CHANNEL)`
 
