@@ -1,3 +1,5 @@
+## 2.5.1 16/Dec/2016
+* Support FLEx 8.3 Beta 2 Data model version
 ## 2.5.0 14/Oct/2016
 * FLExBridge: Fix Linux localization issues
 * Chorus: Update Send/Receive options to avoid confusion about Language Forge
