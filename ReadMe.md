@@ -79,4 +79,11 @@ When releasing FLExBridge be sure to do the following:
             `(source environ && cd build && xbuild build.common.proj /t:PreparePublishingArtifacts /p:RootDir=.. /p:UploadFolder=$CHANNEL)`
 
 - The windows version is released through two jobs in TeamCity: "Installer-sans Publish" and "Publish Installer"; the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing, you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
-- For the Linux release, use the Jenkins FLExBridge release package build to make packages from the commit where the changelog entry was updated.
+- Make a Linux package for release by doing the following.
+
+    1. Go to the Jenkins job for this branch of flexbridge.
+    * Click Build with Parameters.
+    * Change Suite to "main" (or maybe "updates" for a hotfix).
+    * Unselect AppendNightlyToVersion.
+    * Optionally set Committish to an older commit, such as where the changelog entry was updated.
+    * Click Build.
