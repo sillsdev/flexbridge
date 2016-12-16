@@ -1,3 +1,9 @@
+flexbridge (2.5.1) unstable; urgency=low
+
+  * Support FLEx 8.3 Beta 2 Data model version
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 16 Dec 2016 21:25:33 +0000
+
 flexbridge (2.5.0) unstable; urgency=low
 
   * FLExBridge: Fix Linux localization issues
