@@ -136,6 +136,7 @@
     <Compile Include="Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\FieldWorksObjectContextGeneratorTests.cs" />
     <Compile Include="Handling\LoadHandlersTests.cs" />
+    <Compile Include="Handling\PreferMostRecentTimePreMergerTests.cs" />
     <Compile Include="Handling\UnknownFileTypeHandlerTests.cs" />
     <Compile Include="Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\FieldWorksListsTypeHandlerTests.cs" />

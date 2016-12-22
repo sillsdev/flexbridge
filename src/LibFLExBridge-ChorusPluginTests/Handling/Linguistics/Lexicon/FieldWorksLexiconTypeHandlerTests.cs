@@ -1181,5 +1181,44 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
 		}
+
+		[Test]
+		public void BothEditedDifferentParts_MergedWithoutConflict()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<CitationForm>
+			<AUni
+				ws='seh'>ambuka</AUni>
+		</CitationForm>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>Comment</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace(">Comment<", ">Our comment<");
+			var theirContent = commonAncestor.Replace("ambuka", "their change");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> {
+					@"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Our comment']",
+					@"Lexicon/LexEntry/CitationForm/AUni[@ws='seh'][text()='their change']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Comment']" },
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlTextChangedReport), typeof(XmlChangedRecordReport)});
+		}
 	}
 }
