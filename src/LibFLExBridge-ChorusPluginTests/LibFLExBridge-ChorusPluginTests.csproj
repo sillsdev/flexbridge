@@ -192,6 +192,7 @@
     <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
     <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
+    <Compile Include="Handling\PreferMostRecentTimePreMergerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
