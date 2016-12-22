@@ -1,8 +1,10 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
-using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
 
@@ -24,26 +26,40 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	{
 		void IPremerger.Premerge(IMergeEventListener listener, ref XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
 		{
-			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, ourDateTimeNode);
-			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, theirDateTimeNode);
+			var ourOnlyTimestampChange = RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, ourDateTimeNode);
+			var theirOnlyTimestampChange = RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, theirDateTimeNode);
 
-			var newest = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
-			newest = GetMostRecentVal(newest, ourDateTimeNode);
-			newest = GetMostRecentVal(newest, theirDateTimeNode);
-			UpdateDateTimeVal(newest, ourDateTimeNode);
-			UpdateDateTimeVal(newest, theirDateTimeNode);
+			DateTime newestDateTime;
+			if (ourOnlyTimestampChange && theirOnlyTimestampChange)
+			{
+				// timestamp was the only change. Use the newer timestamp.
+				newestDateTime = DateTime.MinValue;
+				newestDateTime = GetMostRecentVal(newestDateTime, ourDateTimeNode);
+				newestDateTime = GetMostRecentVal(newestDateTime, theirDateTimeNode);
+			}
+			else
+			{
+				// something else besides the timestamp changed. Set timestamp to current time.
+				newestDateTime = DateTime.UtcNow;
+			}
+			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.FFF");
+			UpdateDateTimeVal(newestDateTimeString, ourDateTimeNode);
+			UpdateDateTimeVal(newestDateTimeString, theirDateTimeNode);
 		}
 
-		private static void RestoreOriginalIfTimestampIsTheOnlyChange(XmlNode ancestorDateTimeNode, XmlNode otherDateTimeNode)
+		private static bool RestoreOriginalIfTimestampIsTheOnlyChange(XmlNode ancestorDateTimeNode, XmlNode otherDateTimeNode)
 		{
-			if (ancestorDateTimeNode == null || otherDateTimeNode == null)
-				return;
+			if (ancestorDateTimeNode == null)
+				return false;
+
+			if (otherDateTimeNode == null)
+				return true;
 
 			// Values that are are the same are not of interest.
 			var ancestorAttr = ancestorDateTimeNode.Attributes["val"];
 			var otherAttr = otherDateTimeNode.Attributes["val"];
 			if (ancestorAttr.Value == otherAttr.Value)
-				return;
+				return true;
 
 			// Get parents of both nodes
 			var ancestorDateTimeNodeParent = ancestorDateTimeNode.ParentNode;
@@ -54,10 +70,11 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			otherAttr.Value = ancestorAttr.Value;
 
 			if (XmlUtilities.AreXmlElementsEqual(ancestorDateTimeNodeParent, otherDateTimeNodeParent))
-				return; // Only change was the timestamp, so keep it.
+				return true; // Only change was the timestamp, so keep it.
 
 			// Restore the original value.
 			otherAttr.Value = originalOtherValue;
+			return false;
 		}
 
 		private static void UpdateDateTimeVal(string newest, XmlNode currentDateTimeNode)
@@ -68,16 +85,15 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			elt.SetAttribute("val", newest);
 		}
 
-		private static string GetMostRecentVal(string newest, XmlNode currentDateTimeNode)
+		private static DateTime GetMostRecentVal(DateTime date1, XmlNode currentDateTimeNode)
 		{
 			if (currentDateTimeNode == null)
-				return newest;
-			DateTime date1;
+				return date1;
+			DateTime date2;
 			var date1String = XmlUtilities.GetStringAttribute(currentDateTimeNode, "val");
-			if (!DateTime.TryParse(date1String, out date1))
-				return newest;
-			var date2 = DateTime.Parse(newest);
-			return (date1 > date2) ? date1String : newest;
+			if (!DateTime.TryParse(date1String, out date2))
+				return date1;
+			return (date2 > date1) ? date2 : date1;
 		}
 	}
 }
