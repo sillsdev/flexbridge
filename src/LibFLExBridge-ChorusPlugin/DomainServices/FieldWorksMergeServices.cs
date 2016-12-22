@@ -282,7 +282,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 							propStrategy.IsImmutable = true;
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 						break;
-					case DataType.Integer: // Fall through
+					case DataType.Integer:
 						if (propertyInfo.PropertyName == "HomographNumber")
 						{
 							// Don't fret about conflicts in merging the homograph numbers.

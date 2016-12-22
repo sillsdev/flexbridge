@@ -141,13 +141,11 @@ namespace LibFLExBridgeChorusPluginTests
 					XmlTestHelper.AssertXPathIsNull(result, query);
 			}
 			eventListener.AssertExpectedConflictCount(expectedConflictCount);
-			Assert.AreEqual(conflictTypes.Count, eventListener.Conflicts.Count);
-			for (var idx = 0; idx < conflictTypes.Count; ++idx)
-				Assert.AreSame(conflictTypes[idx], eventListener.Conflicts[idx].GetType());
+			Assert.That(eventListener.Conflicts.Select(x => x.GetType()), Is.EqualTo(conflictTypes));
+
 			eventListener.AssertExpectedChangesCount(expectedChangesCount);
-			Assert.AreEqual(changeTypes.Count, eventListener.Changes.Count);
-			for (var idx = 0; idx < changeTypes.Count; ++idx)
-				Assert.AreSame(changeTypes[idx], eventListener.Changes[idx].GetType());
+			Assert.That(eventListener.Changes.Select(x => x.GetType()), Is.EqualTo(changeTypes));
+
 			resultingConflicts = eventListener.Conflicts;
 			return result;
 		}
