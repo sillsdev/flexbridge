@@ -229,7 +229,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		}
 
 		[Test]
-		public void NewestTimestampKeptIfBothChangedSameFields()
+		public void TimestampUpdatedIfBothChangedSameFields()
 		{
 			var ourContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2011-1-1 23:59:59.123").Replace(">Comment<", ">Our comment<").Replace("ambuka", "our change");
 			var theirContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2012-2-2 23:59:59.123").Replace(">Comment<", ">Their comment<").Replace("ambuka", "their change");
@@ -242,13 +242,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				_theirFile, theirContent,
 				new List<string> {
 					@"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Our comment']",
-					@"Lexicon/LexEntry/CitationForm/AUni[@ws='seh'][text()='our change']",
-					@"Lexicon/LexEntry/DateModified[@val='2012-2-2 23:59:59.123']"},
+					@"Lexicon/LexEntry/CitationForm/AUni[@ws='seh'][text()='our change']"},
 				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Comment']" },
 				2, new List<Type> { typeof(XmlTextBothEditedTextConflict), typeof(BothEditedTheSameAtomicElement) },
 				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport)});
 
-			Assert.That(GetMergedTime(_ourFile.Path), Is.LessThan(utcNow));
+			Assert.That(GetMergedTime(_ourFile.Path), Is.GreaterThan(utcNow));
 		}
 
 		[Test]

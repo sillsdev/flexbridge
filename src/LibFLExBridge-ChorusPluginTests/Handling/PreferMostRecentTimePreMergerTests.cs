@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_NoAncestorAddedSame_ReturnsFalse()
+		public void ShouldUpdateTimestamp_NoAncestorAddedSame_ReturnsFalse()
 		{
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
 	<HomographNumber val='0' />
@@ -34,12 +34,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, null),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, null),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_NoAncestorAddedConflictingChangeOnSameChild_ReturnsFalse()
+		public void ShouldUpdateTimestamp_NoAncestorAddedConflictingChangeOnSameChild_ReturnsFalse()
 		{
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
 	<HomographNumber val='0' />
@@ -48,12 +48,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='1' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, null),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, null),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_NoAncestorAddedDifferentNodes_ReturnsTrue()
+		public void ShouldUpdateTimestamp_NoAncestorAddedDifferentNodes_ReturnsTrue()
 		{
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
 	<LiteralMeaning>
@@ -64,36 +64,36 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='1' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, null),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, null),
 				Is.True);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorNoTheir_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorNoTheir_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var ours = CreateNode(CommonAncestor.Replace("</root>", @"
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, null, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, null, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorNoOur_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorNoOur_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(null, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(null, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorWeAdded_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorWeAdded_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor);
@@ -101,12 +101,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorTheyAdded_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorTheyAdded_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
@@ -114,12 +114,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 			var ours = CreateNode(CommonAncestor);
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorWeDeleted_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorWeDeleted_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor);
@@ -129,12 +129,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	</SummaryDefinition>
 </root>", @"</root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorTheyDeleted_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorTheyDeleted_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace(@"
@@ -144,12 +144,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>", @"</root>"));
 			var ours = CreateNode(CommonAncestor);
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorAddedSame_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorAddedSame_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
@@ -159,12 +159,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorAddedConflictingChangeOnSameChild_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorAddedConflictingChangeOnSameChild_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
@@ -174,12 +174,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='1' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorDifferentChildrenAdded_ReturnsTrue()
+		public void ShouldUpdateTimestamp_WithAncestorDifferentChildrenAdded_ReturnsTrue()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</root>", @"
@@ -191,12 +191,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<HomographNumber val='0' />
 </root>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.True);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorDifferentChildrenModified_ReturnsTrue()
+		public void ShouldUpdateTimestamp_WithAncestorDifferentChildrenModified_ReturnsTrue()
 		{
 			var ancestor = CreateNode(CommonAncestor.Replace("</root>", @"
 	<Custom name='first custom'/>
@@ -212,12 +212,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<AStr ws='fr'><Run ws='fr'>French summary</Run></AStr>
 </SummaryDefinition>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.True);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorSameChildModified_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorSameChildModified_ReturnsTrue()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</SummaryDefinition>", @"
@@ -227,12 +227,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<AStr ws='fr'><Run ws='fr'>French summary</Run></AStr>
 </SummaryDefinition>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
-				Is.False);
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
+				Is.True);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorWeModifiedChild_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorWeModifiedChild_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor);
@@ -240,12 +240,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	<AStr ws='fr'><Run ws='fr'>French summary</Run></AStr>
 </SummaryDefinition>"));
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
 		}
 
 		[Test]
-		public void BothChangedDifferentChildrenOfParent_WithAncestorTheyModifiedChild_ReturnsFalse()
+		public void ShouldUpdateTimestamp_WithAncestorTheyModifiedChild_ReturnsFalse()
 		{
 			var ancestor = CreateNode(CommonAncestor);
 			var theirs = CreateNode(CommonAncestor.Replace("</SummaryDefinition>", @"
@@ -253,8 +253,32 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </SummaryDefinition>"));
 			var ours = CreateNode(CommonAncestor);
 
-			Assert.That(PreferMostRecentTimePreMerger.BothChangedDifferentChildrenOfParent(ours, theirs, ancestor),
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
 				Is.False);
+		}
+
+		[Test]
+		public void ShouldUpdateTimestamp_WithAncestorTheyModifiedWeDeletedChild_ReturnsTrue()
+		{
+			var ancestor = CreateNode(CommonAncestor);
+			var theirs = CreateNode(CommonAncestor.Replace("English summary", "Modified summary"));
+			var ours = CreateNode(CommonAncestor.Replace(@"<SummaryDefinition>
+		<AStr ws='en'><Run ws='en'>English summary</Run></AStr>
+	</SummaryDefinition>", @""));
+						
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
+				Is.True);
+		}
+
+		[Test]
+		public void ShouldUpdateTimestamp_WithAncestorTheyModifiedWeDeletedChildOfChild_ReturnsTrue()
+		{
+			var ancestor = CreateNode(CommonAncestor);
+			var theirs = CreateNode(CommonAncestor.Replace("English summary", "Modified summary"));
+			var ours = CreateNode(CommonAncestor.Replace(@"<AStr ws='en'><Run ws='en'>English summary</Run></AStr>", @""));
+
+			Assert.That(PreferMostRecentTimePreMerger.ShouldUpdateTimestamp(ours, theirs, ancestor),
+				Is.True);
 		}
 	}
 }

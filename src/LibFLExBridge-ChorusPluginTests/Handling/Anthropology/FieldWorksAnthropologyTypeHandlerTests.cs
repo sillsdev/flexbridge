@@ -230,7 +230,11 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 					},
 				null,
 				0, new List<Type>(),
-				2, new List<Type> { typeof(XmlBothDeletionChangeReport), typeof(XmlAdditionChangeReport) });
+				// besides the actual change we get three changes in DateModified: for the StText, the Text, and the RnGenericRec
+				5, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport),
+					typeof(XmlAttributeBothMadeSameChangeReport),
+					typeof(XmlBothDeletionChangeReport), typeof(XmlAdditionChangeReport),
+					typeof(XmlAttributeBothMadeSameChangeReport) });
 		}
 
 		[Test]

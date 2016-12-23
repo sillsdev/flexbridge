@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			RestoreOriginalIfTimestampIsTheOnlyChange(ancestorDateTimeNode, theirDateTimeNode);
 
 			var newest = DateTime.MinValue;
-			if (BothChangedDifferentChildrenOfParent(ourDateTimeNode, theirDateTimeNode, ancestorDateTimeNode))
+			if (ShouldUpdateTimestamp(ourDateTimeNode, theirDateTimeNode, ancestorDateTimeNode))
 				newest = DateTime.UtcNow;
 			else
 			{
@@ -52,17 +52,18 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return sibling.Name == "Custom" ? "Custom_" + sibling.Attributes.GetNamedItem("name").Value : sibling.Name;
 		}
 
-		internal static bool BothChangedDifferentChildrenOfParent(XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
+		internal static bool ShouldUpdateTimestamp(XmlNode ourDateTimeNode, XmlNode theirDateTimeNode, XmlNode ancestorDateTimeNode)
 		{
 			if (ourDateTimeNode == null || theirDateTimeNode == null)
 				return false;
 
 			var ourSiblings = ourDateTimeNode.ParentNode.ChildNodes;
 			var theirSiblings = theirDateTimeNode.ParentNode.ChildNodes;
+			var ancestorSiblings = ancestorDateTimeNode != null ? ancestorDateTimeNode.ParentNode.ChildNodes : null;
 
 			var theirSiblingsDict = ConvertToDictionary(theirSiblings);
-			var ancestorSiblingsDict = ancestorDateTimeNode != null
-				? ConvertToDictionary(ancestorDateTimeNode.ParentNode.ChildNodes)
+			var ancestorSiblingsDict = ancestorSiblings != null
+				? ConvertToDictionary(ancestorSiblings)
 				: null;
 
 			var seenNodes = new List<string>();
@@ -99,7 +100,11 @@ namespace LibFLExBridgeChorusPlugin.Handling
 					!XmlUtilities.AreXmlElementsEqual(ancestorSibling, theirSibling))
 				{
 					// we and they made a change to the same sibling
-					continue;
+					if (XmlUtilities.AreXmlElementsEqual(ourSibling, theirSibling))
+						continue;
+
+					// merge conflict
+					return true;
 				}
 
 				if (XmlUtilities.AreXmlElementsEqual(ourSibling, theirSibling))
@@ -119,6 +124,19 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				break;
 			}
 
+			if (ancestorSiblings != null)
+			{
+				foreach (XmlNode ancestorSibling in ancestorSiblings)
+				{
+					if (!seenNodes.Contains(GetKeyName(ancestorSibling)))
+					{
+						// we deleted this sibling
+						weMadeAChange = true;
+						break;
+					}
+				}
+			}
+
 			if (!weMadeAChange)
 				return false;
 
@@ -126,7 +144,19 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			foreach (XmlNode theirSibling in theirSiblings)
 			{
 				if (!seenNodes.Contains(GetKeyName(theirSibling)))
+				{
+					XmlNode ancestorSibling;
+					if (ancestorSiblingsDict != null)
+					{
+						if (ancestorSiblingsDict.TryGetValue(GetKeyName(theirSibling), out ancestorSibling)
+							&& XmlUtilities.AreXmlElementsEqual(ancestorSibling, theirSibling))
+						{
+							continue;
+						}
+					}
+					// they made changes to the node
 					return true;
+				}
 			}
 
 			return false;

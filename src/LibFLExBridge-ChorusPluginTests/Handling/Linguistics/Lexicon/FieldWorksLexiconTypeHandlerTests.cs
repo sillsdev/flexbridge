@@ -265,7 +265,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport) });
 			Assert.IsTrue(results.Contains("MY first paragraph"));
 		}
 
