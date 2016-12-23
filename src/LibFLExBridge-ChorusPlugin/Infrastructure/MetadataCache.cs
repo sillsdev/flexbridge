@@ -376,7 +376,10 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 						newClass = GetClassInfo("LexPronunciation");
 						newClass.AddProperty(new FdoPropertyInfo("DoNotPublishIn", DataType.ReferenceCollection));
 						break;
-					//NB: Update MaximumModelVersion to highest supported number.
+					case 7000070:
+						// 7000070: No actual model change.
+						break;
+						//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
 
@@ -384,7 +387,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		internal const int MaximumModelVersion = 7000069;
+		internal const int MaximumModelVersion = 7000070;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
