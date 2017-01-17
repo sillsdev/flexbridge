@@ -41,7 +41,7 @@ namespace LfMergeBridge
 			var readinessMessage = HgRepository.GetEnvironmentReadinessMessage("en");
 			if (!string.IsNullOrEmpty(readinessMessage))
 			{
-				somethingForClient = @"Mercurial is not set up properly";
+				somethingForClient = @"Mercurial is not set up properly: " + readinessMessage;
 				return false;
 			}
 
