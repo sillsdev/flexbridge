@@ -56,7 +56,7 @@ namespace LfMergeBridge
 					var currentHandler = handlerRepository.GetHandler(StringToActionTypeConverter.GetActionType(actionType));
 					if (currentHandler == null)
 					{
-						somethingForClient = string.Format(@"Requested action type '{0}' is not supported in Language Forge Merge Bridge.", options[actionType]);
+						somethingForClient = string.Format(@"Requested action type '{0}' is not supported in Language Forge Merge Bridge.", actionType);
 						return false;
 					}
 					somethingForClient = string.Empty;
