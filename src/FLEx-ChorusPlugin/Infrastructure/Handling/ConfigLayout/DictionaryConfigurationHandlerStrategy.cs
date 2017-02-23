@@ -68,7 +68,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 		{
 			if (string.IsNullOrEmpty(message))
 				return null;
-			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, reader.ReadContentAsString(), schemata.Count);
+			reader.MoveToElement();
+			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, reader.ReadOuterXml(), schemata.Count);
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
