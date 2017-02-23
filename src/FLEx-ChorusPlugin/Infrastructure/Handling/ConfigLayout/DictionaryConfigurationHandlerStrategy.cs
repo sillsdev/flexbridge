@@ -52,10 +52,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 			{
 				try
 				{
-					//schemas.Add("", reader);
-					//string result = null;
-					//XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
-					return FormatMessage("uh-oh", schemas, reader);
+					schemas.Add("", reader);
+					string result = null;
+					XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
+					return FormatMessage(result, schemas, reader);
 				}
 				catch (XmlException e)
 				{
@@ -68,7 +68,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 		{
 			if (string.IsNullOrEmpty(message))
 				return null;
-			reader.MoveToElement();
+			reader.Read();
 			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, reader.ReadOuterXml(), schemata.Count);
 		}
 
