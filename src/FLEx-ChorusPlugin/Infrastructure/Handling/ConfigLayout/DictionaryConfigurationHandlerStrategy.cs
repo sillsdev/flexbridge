@@ -52,10 +52,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 			{
 				try
 				{
-					schemas.Add("", reader);
-					string result = null;
-					XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
-					return FormatMessage(result, schemas, reader);
+					//schemas.Add("", reader);
+					//string result = null;
+					//XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
+					return FormatMessage("uh-oh", schemas, reader);
 				}
 				catch (XmlException e)
 				{
