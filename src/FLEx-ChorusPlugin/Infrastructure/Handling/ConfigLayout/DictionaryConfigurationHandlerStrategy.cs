@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -46,14 +47,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 
 		public string ValidateFile(string pathToFile)
 		{
-			var message = ValidateFileInternal(pathToFile);
-			if (string.IsNullOrEmpty(message))
-				return null;
-			return string.Format("{1}{0}Contents of {2}:{0}{3}", Environment.NewLine, message, _xsdPathname, File.ReadAllText(_xsdPathname));
-		}
-
-		private string ValidateFileInternal(string pathToFile)
-		{
 			var schemas = new XmlSchemaSet();
 			using(var reader = XmlReader.Create(GetXsdPathname(pathToFile)))
 			{
@@ -62,13 +55,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 					schemas.Add("", reader);
 					string result = null;
 					XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
-					return result;
+					return FormatMessage(result, schemas, reader);
 				}
 				catch (XmlException e)
 				{
-					return e.Message;
+					return FormatMessage(e.Message, schemas, reader);
 				}
 			}
+		}
+
+		private string FormatMessage(string message, XmlSchemaSet schemata, XmlReader reader)
+		{
+			if (string.IsNullOrEmpty(message))
+				return null;
+			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, reader.ReadContentAsString(), schemata.Count);
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
