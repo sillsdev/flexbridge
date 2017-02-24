@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -55,6 +56,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 					schemas.Add("", reader);
 					string result = null;
 					XDocument.Load(pathToFile).Validate(schemas, (sender, args) => result = args.Message);
+					//var result = "uh-oh";
 					return FormatMessage(result, schemas, reader);
 				}
 				catch (XmlException e)
@@ -68,8 +70,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 		{
 			if (string.IsNullOrEmpty(message))
 				return null;
-			reader.Read();
-			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, reader.ReadOuterXml(), schemata.Count);
+			var xml = new StringBuilder();
+			while (reader.Read())
+				xml.Append(reader.ReadOuterXml());
+			return string.Format("{1}{0}{4} Contents of {2}:{0}{3}", Environment.NewLine, message, reader.BaseURI, xml, schemata.Count);
 		}
 
 		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
