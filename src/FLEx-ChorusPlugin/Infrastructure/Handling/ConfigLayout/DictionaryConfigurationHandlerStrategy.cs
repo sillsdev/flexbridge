@@ -4,7 +4,6 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -45,14 +44,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 		}
 
 		public string ValidateFile(string pathToFile)
-		{
-			var message = ValidateFileInternal(pathToFile);
-			if (string.IsNullOrEmpty(message))
-				return null;
-			return string.Format("{1}{0}Contents of {2}:{0}{3}", Environment.NewLine, message, _xsdPathname, File.ReadAllText(_xsdPathname));
-		}
-
-		private string ValidateFileInternal(string pathToFile)
 		{
 			var schemas = new XmlSchemaSet();
 			using(var reader = XmlReader.Create(GetXsdPathname(pathToFile)))
