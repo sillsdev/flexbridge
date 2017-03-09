@@ -42,7 +42,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				// something else besides the timestamp changed. Set timestamp to current time.
 				newestDateTime = DateTime.UtcNow;
 			}
-			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.FFF");
+			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.fff");
 			UpdateDateTimeVal(newestDateTimeString, ourDateTimeNode);
 			UpdateDateTimeVal(newestDateTimeString, theirDateTimeNode);
 		}
