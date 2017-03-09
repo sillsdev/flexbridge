@@ -206,7 +206,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
-		[Test, Category("UnknownMonoIssue")]
+		[Test]
 		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
 			var baseDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
