@@ -52,7 +52,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		{
 			get
 			{
-				var dateTimeNow = DateTime.UtcNow.ToString("yyyy-M-d H:m:s.FFF");
+				var dateTimeNow = DateTime.UtcNow.ToString("yyyy-M-d H:m:s.fff");
 				return dateTimeNow;
 			}
 		}
