@@ -186,15 +186,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="TestData\DataNotebook_Ann.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="TestData\DataNotebook_Common.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="TestData\DataNotebook_Susanna.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
