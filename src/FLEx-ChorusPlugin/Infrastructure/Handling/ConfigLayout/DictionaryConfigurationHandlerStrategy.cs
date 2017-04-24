@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -80,10 +81,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 			merger.MergeStrategies.SetStrategy("DictionaryConfiguration", rootStrategy);
 			var mergeResults = merger.MergeFiles(mergeOrder.pathToOurs, mergeOrder.pathToTheirs, mergeOrder.pathToCommonAncestor);
 			// Write merged data
-			using (var writer = XmlWriter.Create(mergeOrder.pathToOurs, CanonicalXmlSettings.CreateXmlWriterSettings()))
-			{
-				XmlUtils.WriteNode(writer, mergeResults.MergedNode.OuterXml, new HashSet<string>());
-			}
+			File.WriteAllText(mergeOrder.pathToOurs, mergeResults.MergedNode.OuterXml, Encoding.UTF8);
 		}
 
 		public string Extension
