@@ -66,9 +66,9 @@ cd -
 
 
 # *** Results ***
-# build: FLEx Bridge-Dictionary-Precise64-Continuous (FBrDictPrecise64Cont)
+# build: FLEx Bridge-Dictionary-Linux64-Continuous (FBrDictPrecise64Cont)
 # project: FLEx Bridge
-# URL: http://build.palaso.org/viewType.html?buildTypeId=FBrDictPrecise64Cont
+# URL: http://build.palaso.org/viewType.html?buildTypeId=FBrDictLinux64Cont
 # VCS: https://github.com/sillsdev/flexbridge.git [Dictionary]
 # dependencies:
 # [0] build: Chorus-Documentation (bt216)
@@ -78,18 +78,18 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus_Help.chm"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorushelp.git [master]
-# [1] build: chorus-precise64-chorus-2.5 Continuous (ChorusPrecise64v25Cont)
+# [1] build: chorus-linux64-chorus-2.5 Continuous (ChorusLinux64v25Cont)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusPrecise64v25Cont
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
 #     clean: false
-#     revision: fw-8.3.1.tcbuildtag
+#     revision: fw-8.3.7.tcbuildtag
 #     paths: {"Autofac.dll"=>"lib/common", "MercurialExtensions/**"=>"MercurialExtensions", ""=>"", "Chorus.exe"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/ReleaseMono", "Mercurial-x86_64.zip"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
-# [2] build: chorus-precise64-chorus-2.5 Continuous (ChorusPrecise64v25Cont)
+# [2] build: chorus-linux64-chorus-2.5 Continuous (ChorusLinux64v25Cont)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusPrecise64v25Cont
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
 #     clean: false
-#     revision: fw-8.3.1.tcbuildtag
+#     revision: fw-8.3.7.tcbuildtag
 #     paths: {"debug/Chorus.exe"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [3] build: Helpprovider (bt225)
@@ -113,40 +113,47 @@ cd -
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"IPCFramework.*"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: L10NSharp Mono continuous (bt271)
+# [6] build: L10NSharp Version2.0 Mono continuous (bt271)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
 #     clean: false
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"L10NSharp.dll"=>"lib/ReleaseMono"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
-# [7] build: L10NSharp Mono continuous (bt271)
+#     VCS: https://github.com/sillsdev/l10nsharp [Version2.0]
+# [7] build: L10NSharp Version2.0 Mono continuous (bt271)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt271
 #     clean: false
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"L10NSharp.dll"=>"lib/DebugMono"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
-# [8] build: icucil-precise64-Continuous (bt281)
+#     VCS: https://github.com/sillsdev/l10nsharp [Version2.0]
+# [8] build: icucil-linux64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: fw-8.3.1.tcbuildtag
 #     paths: {"icu*.dll"=>"lib/ReleaseMono", "icu*.config"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: icucil-precise64-Continuous (bt281)
+# [9] build: icucil-linux64-Continuous (bt281)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: fw-8.3.1.tcbuildtag
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [10] build: palaso-precise64-libpalaso-2.6 Continuous (PalasoPrecise64v26Cont)
+# [10] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoPrecise64v26Cont
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
 #     clean: false
 #     revision: fw-8.3.1.tcbuildtag
-#     paths: {"NDesk.DBus.dll"=>"lib/ReleaseMono", "NDesk.DBus.dll.config"=>"lib/ReleaseMono", "Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll.config"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono", ""=>"", "debug/NDesk.DBus.dll"=>"lib/DebugMono", "debug/NDesk.DBus.dll.config"=>"lib/DebugMono", "debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll.config"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono"}
+#     paths: {"Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll.config"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono", ""=>""}
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
+# [11] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
+#     project: libpalaso
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
+#     clean: false
+#     revision: fw-8.3.1.tcbuildtag
+#     paths: {"debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll.config"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
 
 # make sure output directories exist
@@ -158,39 +165,39 @@ mkdir -p ./lib/common
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/.guidsForInstaller.xml ./MercurialExtensions/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/Dummy.txt ./MercurialExtensions/Dummy.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/.gitignore ./MercurialExtensions/fixutf8/.gitignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/.guidsForInstaller.xml ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/.hg_archival.txt ./MercurialExtensions/fixutf8/.hg_archival.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/.hgignore ./MercurialExtensions/fixutf8/.hgignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/README. ./MercurialExtensions/fixutf8/README.
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/buildcpmap.py ./MercurialExtensions/fixutf8/buildcpmap.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/cpmap.pyc ./MercurialExtensions/fixutf8/cpmap.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.py ./MercurialExtensions/fixutf8/fixutf8.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyc ./MercurialExtensions/fixutf8/fixutf8.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyo ./MercurialExtensions/fixutf8/fixutf8.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/osutil.py ./MercurialExtensions/fixutf8/osutil.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyc ./MercurialExtensions/fixutf8/osutil.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyo ./MercurialExtensions/fixutf8/osutil.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/win32helper.py ./MercurialExtensions/fixutf8/win32helper.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyc ./MercurialExtensions/fixutf8/win32helper.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyo ./MercurialExtensions/fixutf8/win32helper.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Chorus.exe ./lib/ReleaseMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/ChorusHub.exe ./lib/ReleaseMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/ChorusMerge.exe ./lib/ReleaseMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/LibChorus.TestUtilities.dll ./lib/ReleaseMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Mercurial-i686.zip ./lib/ReleaseMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Mercurial-x86_64.zip ./lib/ReleaseMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/debug/Chorus.exe ./lib/DebugMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/debug/ChorusHub.exe ./lib/DebugMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/debug/ChorusMerge.exe ./lib/DebugMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/debug/LibChorus.dll ./lib/DebugMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/debug/LibChorus.TestUtilities.dll ./lib/DebugMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Mercurial-i686.zip ./lib/DebugMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag/Mercurial-x86_64.zip ./lib/DebugMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/.guidsForInstaller.xml ./MercurialExtensions/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/Dummy.txt ./MercurialExtensions/Dummy.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/.gitignore ./MercurialExtensions/fixutf8/.gitignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/.guidsForInstaller.xml ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/.hg_archival.txt ./MercurialExtensions/fixutf8/.hg_archival.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/.hgignore ./MercurialExtensions/fixutf8/.hgignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/README. ./MercurialExtensions/fixutf8/README.
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/buildcpmap.py ./MercurialExtensions/fixutf8/buildcpmap.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/cpmap.pyc ./MercurialExtensions/fixutf8/cpmap.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.py ./MercurialExtensions/fixutf8/fixutf8.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyc ./MercurialExtensions/fixutf8/fixutf8.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyo ./MercurialExtensions/fixutf8/fixutf8.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/osutil.py ./MercurialExtensions/fixutf8/osutil.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyc ./MercurialExtensions/fixutf8/osutil.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyo ./MercurialExtensions/fixutf8/osutil.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/win32helper.py ./MercurialExtensions/fixutf8/win32helper.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyc ./MercurialExtensions/fixutf8/win32helper.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyo ./MercurialExtensions/fixutf8/win32helper.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Chorus.exe ./lib/ReleaseMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/ChorusHub.exe ./lib/ReleaseMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/ChorusMerge.exe ./lib/ReleaseMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/LibChorus.TestUtilities.dll ./lib/ReleaseMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Mercurial-i686.zip ./lib/ReleaseMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Mercurial-x86_64.zip ./lib/ReleaseMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/debug/Chorus.exe ./lib/DebugMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/debug/ChorusHub.exe ./lib/DebugMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/debug/ChorusMerge.exe ./lib/DebugMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/debug/LibChorus.dll ./lib/DebugMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/debug/LibChorus.TestUtilities.dll ./lib/DebugMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Mercurial-i686.zip ./lib/DebugMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusLinux64v25Cont/fw-8.3.7.tcbuildtag/Mercurial-x86_64.zip ./lib/DebugMono/Mercurial-x86_64.zip
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/ReleaseMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/DebugMono/IPCFramework.dll
@@ -200,20 +207,16 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/fw-8.3.1.t
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/ReleaseMono/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/fw-8.3.1.tcbuildtag/icu.net.dll ./lib/DebugMono/icu.net.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/DebugMono/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/Palaso.dll ./lib/ReleaseMono/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.dll ./lib/ReleaseMono/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll ./lib/ReleaseMono/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll.config ./lib/ReleaseMono/PalasoUIWindowsForms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/Palaso.Lift.dll ./lib/ReleaseMono/Palaso.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.dll ./lib/DebugMono/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.dll ./lib/DebugMono/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll ./lib/DebugMono/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll.config ./lib/DebugMono/PalasoUIWindowsForms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.dll ./lib/DebugMono/Palaso.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/Palaso.dll ./lib/ReleaseMono/Palaso.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.dll ./lib/ReleaseMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll ./lib/ReleaseMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll.config ./lib/ReleaseMono/PalasoUIWindowsForms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/Palaso.Lift.dll ./lib/ReleaseMono/Palaso.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.dll ./lib/DebugMono/Palaso.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.dll ./lib/DebugMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll ./lib/DebugMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll.config ./lib/DebugMono/PalasoUIWindowsForms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.dll ./lib/DebugMono/Palaso.Lift.dll
 # End of script
