@@ -85,8 +85,16 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					}
 					else
 					{
+						// We don't have a C# 6 compiler in our build infrastructure, so we have to do this the hard(er) way.
+						string guidForLog = lfAnnotation == null ? "(no guid)" :
+							lfAnnotation.Guid == null ? "(no guid)" :
+							lfAnnotation.Guid.ToString();
+						string contentForLog = lfAnnotation == null ? "(no content)" : lfAnnotation.Content ?? "(no content)";
 						LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
-							lfAnnotation?.Guid ?? "(no guid)", lfAnnotation?.Content ?? "(no content)"));
+							guidForLog, contentForLog));
+						// The easy way would have been able to skip creating guidForLog and contentForLog; that would have looked like:
+						// LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
+						// 	lfAnnotation?.Guid ?? "(no guid)", lfAnnotation?.Content ?? "(no content)"));
 					}
 					continue;
 				}
