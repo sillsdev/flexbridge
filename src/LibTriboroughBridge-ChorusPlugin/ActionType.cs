@@ -17,6 +17,9 @@ namespace LibTriboroughBridgeChorusPlugin
 
 		LanguageForgeAuxiliaryCommit,
 
+		LanguageForgeGetChorusNotes,
+		LanguageForgeWriteToChorusNotes,
+
 		Obtain,
 		ObtainLift,
 

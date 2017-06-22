@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Chorus.VcsDrivers.Mercurial;
+using Newtonsoft.Json;
 using Palaso.Progress;
 
 namespace LfMergeBridge
@@ -22,6 +23,7 @@ namespace LfMergeBridge
 		internal const string deleteRepoIfNoSuchBranch = "deleteRepoIfNoSuchBranch";
 		internal const string onlyRepairRepo = "onlyRepairRepo";
 		internal const string commitMessage = "commitMessage";
+		internal const string serializedCommentsFromLfMerge = "serializedCommentsFromLfMerge";
 
 		internal const string failure = "failure";
 		internal const string warning = "warning";
@@ -86,6 +88,12 @@ namespace LfMergeBridge
 				highestLocalRevisionNumber = currentLocalRevisionNumber;
 			}
 			return highestRevision;
+		}
+
+		public static T DecodeJsonFile<T>(string inputFilename)
+		{
+			string data = System.IO.File.ReadAllText(inputFilename, System.Text.Encoding.UTF8);
+			return JsonConvert.DeserializeObject<T>(data);
 		}
 	}
 }
