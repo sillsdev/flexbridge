@@ -468,7 +468,7 @@
     </tu>
     <tu tuid="Messages.ChorusServerIncompatible">
       <tuv xml:lang="en">
-        <seg>The Chorus Server is not compatible with this client.</seg>
+        <seg>The Chorus Server is not compatible with ths client.</seg>
       </tuv>
     </tu>
     <tu tuid="Messages.ChorusServerNA">
