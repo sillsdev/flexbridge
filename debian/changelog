@@ -1,3 +1,9 @@
+flexbridge (2.5.2) unstable; urgency=low
+
+  * Update localization files
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 05 Jul 2017 11:19:52 -0500
+
 flexbridge (2.5.1) unstable; urgency=low
 
   * Support FLEx 8.3 Beta 2 Data model version
