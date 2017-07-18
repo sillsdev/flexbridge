@@ -1,3 +1,5 @@
+## 2.5.3 18/Jul/2017
+* Fix dependency problem on Linux
 ## 2.5.2 05/Jul/2017
 * Update localization files
 ## 2.5.1 16/Dec/2016
