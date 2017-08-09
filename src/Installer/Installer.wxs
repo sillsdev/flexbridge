@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME  (in quotes)-->
-<?define Property_ProductVersion = ".*" ?>
+<?define Property_ProductVersion = "2.3.14" ?>
 <!-- Generate a new one for each installer, since it only uses the major upgrade approach for msi installers.
 cf: http://wix.sourceforge.net/manual-wix3/major_upgrade.htm
 and http://www.joyofsetup.com/2010/01/16/major-upgrades-now-easier-than-ever/
@@ -83,62 +83,62 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Directory Id="INSTALLDIR" Name="FLEx Bridge">
 			<!-- Main bridge assemblies -->
 			<Component Id="FLExBridge.exe" Guid="3D9BF2DF-4A25-11DF-9879-0800200C9A66">
-			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Release\FLExBridge.exe"/>
+			  <File Id="FLExBridge.exe" Name="FLExBridge.exe" Source="..\..\output\Debug\FLExBridge.exe"/>
 			</Component>
 			<Component Id="FLExBridge.pdb" Guid="C1EDBBD2-E382-11DE-8A39-0800200C9A66">
-			  <File Id="FLExBridge.pdb" Name="FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Release\FLExBridge.pdb"/>
+			  <File Id="FLExBridge.pdb" Name="FLExBridge.pdb" KeyPath="yes" Source="..\..\output\Debug\FLExBridge.pdb"/>
 			</Component>
 			<Component Id="app.config" Guid="C1EE581C-E382-11DE-8A39-0800200C9A66">
-			  <File Id="app.config" Name="app.config" Source="..\..\output\Release\app.config"/>
+			  <File Id="app.config" Name="app.config" Source="..\..\output\Debug\app.config"/>
 			</Component>
 			<Component Id="FLExChorusPlugin.dll" Guid="C1ED6DB1-E382-11DE-8A39-0800200C9A66">
-			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
+			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Debug\FLEx-ChorusPlugin.dll"/>
 			</Component>
 			<Component Id="FLExChorusPlugin.pdb" Guid="C1EDBBD3-E382-11DE-8A39-0800200C9A66">
-			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
+			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Debug\FLEx-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.dll" Guid="C1EDE2FA-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.dll"/>
+			  <File Id="LiftBridgeChorusPlugin.dll" Name="LiftBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Debug\LiftBridge-ChorusPlugin.dll"/>
 			</Component>
 			<Component Id="LiftBridgeChorusPlugin.pdb" Guid="C1EDE2FB-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LiftBridgeChorusPlugin.pdb" Name="LiftBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\LiftBridge-ChorusPlugin.pdb"/>
+			  <File Id="LiftBridgeChorusPlugin.pdb" Name="LiftBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Debug\LiftBridge-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="TriboroughBridgeChorusPlugin.dll" Guid="C1EE09F0-E382-11DE-8A39-0800200C9A66">
-			  <File Id="TriboroughBridgeChorusPlugin.dll" Name="TriboroughBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.dll"/>
+			  <File Id="TriboroughBridgeChorusPlugin.dll" Name="TriboroughBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Debug\TriboroughBridge-ChorusPlugin.dll"/>
 			</Component>
 			<Component Id="TriboroughBridgeChorusPlugin.pdb" Guid="C1EE09F1-E382-11DE-8A39-0800200C9A66">
-			  <File Id="TriboroughBridgeChorusPlugin.pdb" Name="TriboroughBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.pdb"/>
+			  <File Id="TriboroughBridgeChorusPlugin.pdb" Name="TriboroughBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Debug\TriboroughBridge-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
-			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FLEX Bridge\8">
+			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FLEX Bridge\9">
 				<RegistryValue Id="FLExBridgeInstallationDir" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
 			  </RegistryKey>
 			</Component>
 
 			<!-- Desired Chorus pdb files not in the Chorus merge module. -->
 			<Component Id="Chorus.pdb" Guid="C1EDBBD4-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Release\Chorus.pdb"/>
+			  <File Id="Chorus.pdb" Name="Chorus.pdb" KeyPath="yes" Source="..\..\output\Debug\Chorus.pdb"/>
 			</Component>
 			<Component Id="ChorusMerge.pdb" Guid="C1EDBBD5-E382-11DE-8A39-0800200C9A66">
-			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Release\ChorusMerge.pdb"/>
+			  <File Id="ChorusMerge.pdb" Name="ChorusMerge.pdb" KeyPath="yes" Source="..\..\output\Debug\ChorusMerge.pdb"/>
 			</Component>
 			<Component Id="LibChorus.pdb" Guid="C1EDBBD6-E382-11DE-8A39-0800200C9A66">
-			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
+			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Debug\LibChorus.pdb"/>
 			</Component>
 
 			<!-- Desired Palaso pdb files not in the Chorus merge module. -->
 			<Component Id="Palaso.pdb" Guid="C1EDE2F8-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.pdb"/>
+			  <File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\Debug\Palaso.pdb"/>
 			</Component>
 			<Component Id="PalasoUIWindowsForms.pdb" Guid="C1EDE2F9-E382-11DE-8A39-0800200C9A66">
-			  <File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.pdb"/>
+			  <File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\Debug\PalasoUIWindowsForms.pdb"/>
 			</Component>
 			<Component Id="Palaso.Lift.pdb" Guid="C1EE09F3-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Palaso.Lift.pdb" Name="Palaso.Lift.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.Lift.pdb"/>
+			  <File Id="Palaso.Lift.pdb" Name="Palaso.Lift.pdb" KeyPath="yes" Source="..\..\output\Debug\Palaso.Lift.pdb"/>
 			</Component>
 
 			<Component Id="NetSparkle.Net40.dll" Guid="C1EE311B-E382-11DE-8A39-0800200C9A66">
-			  <File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\Release\NetSparkle.Net40.dll"/>
+			  <File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\Debug\NetSparkle.Net40.dll"/>
 			</Component>
 
 			<Component Id="L10NSharp.dll" Guid="C1EE581A-E382-11DE-8A39-0800200C9A66">
@@ -214,7 +214,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentGroupRef Id="DistFiles"/>
 	</Feature>
 
-	<Icon Id="FLExBridge.ico" SourceFile="..\..\output\Release\FLExBridge.exe"/>
+	<Icon Id="FLExBridge.ico" SourceFile="..\..\output\Debug\FLExBridge.exe"/>
 	<!-- what you see in add/remove programs control panel -->
 	<Property Id="ARPPRODUCTICON" Value="FLExBridge.ico"/>
   </Product>
