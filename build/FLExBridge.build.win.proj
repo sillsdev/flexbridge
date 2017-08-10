@@ -9,7 +9,7 @@
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
   <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <Import Project="..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets"/>
 
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
@@ -55,7 +55,7 @@
   </Target>
 
   <Target Name="Compile" DependsOnTargets="RestorePackages">
-	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+	<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);Platform=Any CPU"/>
   </Target>
 
   <!-- ***************** Testing ***************** -->
