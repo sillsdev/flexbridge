@@ -110,7 +110,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="TriboroughBridgeChorusPlugin.pdb" Name="TriboroughBridge-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\TriboroughBridge-ChorusPlugin.pdb"/>
 			</Component>
 			<Component Id="RegInstallationDir" Guid="C1EDBBD7-E382-11DE-8A39-0800200C9A66">
-			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FLEX Bridge\8">
+			  <RegistryKey Id="keyFLExBridge.exe" Action="createAndRemoveOnUninstall" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FLEX Bridge\9">
 				<RegistryValue Id="FLExBridgeInstallationDir" Type="string" Value="[INSTALLDIR]" Name="InstallationDir"/>
 			  </RegistryKey>
 			</Component>
@@ -126,16 +126,17 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			  <File Id="LibChorus.pdb" Name="LibChorus.pdb" KeyPath="yes" Source="..\..\output\Release\LibChorus.pdb"/>
 			</Component>
 
-			<!-- Desired Palaso pdb files not in the Chorus merge module. -->
-			<Component Id="Palaso.pdb" Guid="C1EDE2F8-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.pdb"/>
+			<!-- Desired SIL pdb files not in the Chorus merge module. -->
+			<Component Id="SIL.Windows.Forms.pdb" Guid="0FBA86CD-E104-4117-A3DB-135C1FF22FEC">
+			 <File Id="SIL.Windows.Forms.pdb" Name="SIL.Windows.Forms.pdb" KeyPath="yes" Source="..\..\output\Release\SIL.Windows.Forms.pdb"/>
 			</Component>
-			<Component Id="PalasoUIWindowsForms.pdb" Guid="C1EDE2F9-E382-11DE-8A39-0800200C9A66">
-			  <File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\Release\PalasoUIWindowsForms.pdb"/>
+			<Component Id="SIL.Core.pdb" Guid="1C51C23E-DE70-4200-8D45-6795B95A706F">
+			 <File Id="SIL.Core.pdb" Name="SIL.Core.pdb" KeyPath="yes" Source="..\..\output\Release\SIL.Core.pdb"/>
 			</Component>
-			<Component Id="Palaso.Lift.pdb" Guid="C1EE09F3-E382-11DE-8A39-0800200C9A66">
-			  <File Id="Palaso.Lift.pdb" Name="Palaso.Lift.pdb" KeyPath="yes" Source="..\..\output\Release\Palaso.Lift.pdb"/>
+			<Component Id="SIL.Lift.pdb" Guid="6850EBC7-50B6-4B09-85D7-5DC7EEC39E76">
+			 <File Id="SIL.Lift.pdb" Name="SIL.Lift.pdb" KeyPath="yes" Source="..\..\output\Release\SIL.Lift.pdb"/>
 			</Component>
+
 
 			<Component Id="NetSparkle.Net40.dll" Guid="C1EE311B-E382-11DE-8A39-0800200C9A66">
 			  <File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\Release\NetSparkle.Net40.dll"/>
@@ -195,9 +196,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="LibChorus.pdb"/>
 	  <ComponentRef Id="Chorus.pdb"/>
 	  <ComponentRef Id="ChorusMerge.pdb"/>
-	  <ComponentRef Id="Palaso.pdb"/>
-	  <ComponentRef Id="Palaso.Lift.pdb"/>
-	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
+	  <ComponentRef Id="SIL.Windows.Forms.pdb"/>
+	  <ComponentRef Id="SIL.Core.pdb"/>
+	  <ComponentRef Id="SIL.Lift.pdb"/>
 
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
 	  <ComponentRef Id="L10NSharp.dll"/>
