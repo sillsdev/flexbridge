@@ -82,14 +82,14 @@ cd -
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusWin32v25nostrongCont
 #     clean: false
-#     revision: fw-8.3.1.tcbuildtag
+#     revision: fw-8.3.7.tcbuildtag
 #     paths: {"MercurialExtensions"=>"MercurialExtensions", "Autofac.dll"=>"lib/common", "Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Release", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [2] build: chorus-win32-chorus-2.5-nostrongname Continuous (ChorusWin32v25nostrongCont)
 #     project: Chorus
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusWin32v25nostrongCont
 #     clean: false
-#     revision: fw-8.3.1.tcbuildtag
+#     revision: fw-8.3.7.tcbuildtag
 #     paths: {"Chorus.exe"=>"lib/Debug", "LibChorus.dll"=>"lib/Debug", "ChorusMerge.exe"=>"lib/Debug", "Mercurial.zip"=>"lib/Debug", "LibChorus.TestUtilities.dll"=>"lib/Debug", "*.pdb"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [3] build: Helpprovider (bt225)
@@ -98,7 +98,7 @@ cd -
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
-#     VCS: http://hg.palaso.org/helpprovider []
+#     VCS: https://github.com/sillsdev/helpprovider.git [refs/heads/master]
 # [4] build: IPC continuous (bt278)
 #     project: IPC Library
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt278
@@ -113,20 +113,20 @@ cd -
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"IPCFramework.*"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: L10NSharp continuous (bt196)
+# [6] build: L10NSharp Version2.0 continuous (bt196)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
 #     clean: false
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
-# [7] build: L10NSharp continuous (bt196)
+#     VCS: https://github.com/sillsdev/l10nsharp [Version2.0]
+# [7] build: L10NSharp Version2.0 continuous (bt196)
 #     project: L10NSharp
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt196
 #     clean: false
 #     revision: fw-8.3.tcbuildtag
 #     paths: {"L10NSharp.dll"=>"lib/Debug", "L10NSharp.pdb"=>"lib/Debug"}
-#     VCS: https://github.com/sillsdev/l10nsharp [master]
+#     VCS: https://github.com/sillsdev/l10nsharp [Version2.0]
 # [8] build: icucil-win32-default Continuous (bt14)
 #     project: Libraries
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
@@ -156,64 +156,74 @@ mkdir -p ./lib/Release
 mkdir -p ./lib/common
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/MercurialExtensions ./MercurialExtensions/MercurialExtensions
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Chorus.exe ./lib/Release/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.dll ./lib/Release/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusMerge.exe ./lib/Release/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Mercurial.zip ./lib/Release/Mercurial.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Release/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Chorus.pdb ./lib/Release/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusHubApp.pdb ./lib/Release/ChorusHubApp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.pdb ./lib/Release/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Chorus.exe ./lib/Debug/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.dll ./lib/Debug/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusMerge.exe ./lib/Debug/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Mercurial.zip ./lib/Debug/Mercurial.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Debug/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/Chorus.pdb ./lib/Debug/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusHubApp.pdb ./lib/Debug/ChorusHubApp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag/LibChorus.pdb ./lib/Debug/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/Release/IPCFramework.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/Debug/IPCFramework.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.dll ./lib/Release/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.dll ./lib/Debug/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll ./lib/Release/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icudt54.dll ./lib/Release/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuin54.dll ./lib/Release/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuuc54.dll ./lib/Release/icuuc54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/Release/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll ./lib/Debug/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icudt54.dll ./lib/Debug/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuin54.dll ./lib/Debug/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuuc54.dll ./lib/Debug/icuuc54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/Debug/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.BuildTasks.dll ./lib/Release/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.dll ./lib/Release/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.pdb ./lib/Release/Palaso.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.dll ./lib/Release/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.pdb ./lib/Release/Palaso.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll ./lib/Release/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.pdb ./lib/Release/PalasoUIWindowsForms.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.Lift.dll ./lib/Release/Palaso.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.Lift.pdb ./lib/Release/Palaso.Lift.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.BuildTasks.dll ./lib/Debug/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.dll ./lib/Debug/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.pdb ./lib/Debug/Palaso.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.dll ./lib/Debug/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.pdb ./lib/Debug/Palaso.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll ./lib/Debug/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.pdb ./lib/Debug/PalasoUIWindowsForms.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.dll ./lib/Debug/Palaso.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.pdb ./lib/Debug/Palaso.Lift.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/MercurialExtensions ./MercurialExtensions/MercurialExtensions
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Chorus.exe ./lib/Release/Chorus.exe
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.dll ./lib/Release/LibChorus.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusMerge.exe ./lib/Release/ChorusMerge.exe
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Mercurial.zip ./lib/Release/Mercurial.zip
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Release/LibChorus.TestUtilities.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Chorus.pdb ./lib/Release/Chorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusHubApp.pdb ./lib/Release/ChorusHubApp.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.pdb ./lib/Release/LibChorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/Chorus.pdb ./lib/Release/Chorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/LibChorus.pdb ./lib/Release/LibChorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Chorus.exe ./lib/Debug/Chorus.exe
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.dll ./lib/Debug/LibChorus.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusMerge.exe ./lib/Debug/ChorusMerge.exe
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Mercurial.zip ./lib/Debug/Mercurial.zip
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Debug/LibChorus.TestUtilities.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/Chorus.pdb ./lib/Debug/Chorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusHubApp.pdb ./lib/Debug/ChorusHubApp.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/LibChorus.pdb ./lib/Debug/LibChorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/Chorus.pdb ./lib/Debug/Chorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.7.tcbuildtag/debug/LibChorus.pdb ./lib/Debug/LibChorus.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt278/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/Release/IPCFramework.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt278/fw-8.3.tcbuildtag/IPCFramework.dll ./lib/Debug/IPCFramework.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.dll ./lib/Release/L10NSharp.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.dll ./lib/Debug/L10NSharp.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt196/fw-8.3.tcbuildtag/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll ./lib/Release/icu.net.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icudt54.dll ./lib/Release/icudt54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuin54.dll ./lib/Release/icuin54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuuc54.dll ./lib/Release/icuuc54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/Release/icu.net.dll.config
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll ./lib/Debug/icu.net.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icudt54.dll ./lib/Debug/icudt54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuin54.dll ./lib/Debug/icuin54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icuuc54.dll ./lib/Debug/icuuc54.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/bt14/fw-8.3.1.tcbuildtag/icu.net.dll.config ./lib/Debug/icu.net.dll.config
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.BuildTasks.dll ./lib/Release/Palaso.BuildTasks.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.dll ./lib/Release/Palaso.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.pdb ./lib/Release/Palaso.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.dll ./lib/Release/Palaso.TestUtilities.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.TestUtilities.pdb ./lib/Release/Palaso.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.dll ./lib/Release/PalasoUIWindowsForms.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/PalasoUIWindowsForms.pdb ./lib/Release/PalasoUIWindowsForms.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.Lift.dll ./lib/Release/Palaso.Lift.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/Palaso.Lift.pdb ./lib/Release/Palaso.Lift.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.BuildTasks.dll ./lib/Debug/Palaso.BuildTasks.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.dll ./lib/Debug/Palaso.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.pdb ./lib/Debug/Palaso.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.dll ./lib/Debug/Palaso.TestUtilities.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.TestUtilities.pdb ./lib/Debug/Palaso.TestUtilities.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.dll ./lib/Debug/PalasoUIWindowsForms.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/PalasoUIWindowsForms.pdb ./lib/Debug/PalasoUIWindowsForms.pdb
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.dll ./lib/Debug/Palaso.Lift.dll
+copy_auto https://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag/debug/Palaso.Lift.pdb ./lib/Debug/Palaso.Lift.pdb
 # End of script
