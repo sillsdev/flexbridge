@@ -39,11 +39,7 @@ Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: e
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
 
-Also, if you are working on Chorus:
-- Copy Chorus.exe, LibChorus.dll, and Palaso dll's to C:\fwrepo\fw\output\Debug (or Release).  You can do this using the
-   UpdateFLExDependencies.bat script in the flexbridge repo
-These steps are required for only those dependencies bound at compile time (e.g. API changes):
-- Rebuild FLEx
+Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts (instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki))
 
 ## Updating Release Notes for a new version
 
