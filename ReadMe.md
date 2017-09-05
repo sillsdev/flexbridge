@@ -19,7 +19,7 @@ If you plan to work on Chorus,
    same parent directory as flexbridge without changing their repository names
 - run GetAndBuildThis.bat to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes),
    GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge,
-   and build FLExBridge
+   and build FLExBridge (this doesn't always work as smoothly as we might like)
 
 ### Special Mono dependencies:
         $ cp ../libpalaso/lib/Debug/icu.net.dll* ../libpalaso/lib/DebugMono
@@ -40,10 +40,8 @@ Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: e
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
 
 Also, if you are working on Chorus:
-- Copy Chorus.exe, LibChorus.dll, and Palaso dll's to C:\fwrepo\fw\output\Debug (or Release).  You can do this using the
-   UpdateFLExDependencies.bat script in the flexbridge repo
-These steps are required for only those dependencies bound at compile time (e.g. API changes):
-- Rebuild FLEx
+- Copy Chorus.exe, LibChorus.dll, and Palaso dll's to the FieldWorks output directory (instructions at https://github.com/sillsdev/FwDocumentation/wiki/Dependency-sources-and-branches#building-dependencies-locally)
+Rebuilding FLEx is required for only those dependencies bound at compile time (e.g. API changes); otherwise, `build /t:copyDlls` should be enough.
 ## Release Notes:
 When releasing FLExBridge be sure to do the following:
 - Update the 'version' file with the latest version
