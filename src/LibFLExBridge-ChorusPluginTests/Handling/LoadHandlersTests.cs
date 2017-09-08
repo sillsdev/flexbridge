@@ -78,6 +78,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 
 				// FW layouts
 				FlexBridgeConstants.fwlayout			// 'fwlayout'
+				FlexBridgeConstants.fwdictconfig		// 'fwdictconfig'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());

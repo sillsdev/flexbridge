@@ -164,20 +164,28 @@ namespace LibFLExBridgeChorusPlugin
 			//// 1. Sort <rt>
 			//DataSortingService.SortMainRtElement(rtElement);
 
-			// 2. Cache it.
-			switch (className)
+			try
 			{
-				default:
-					classData[className].Add(guid, record);
-					break;
-				case  FlexBridgeConstants.LangProject:
-					wellUsedElements[FlexBridgeConstants.LangProject] = Utilities.CreateFromBytes(record);
-					//classData.Remove(SharedConstants.LangProject);
-					break;
-				case FlexBridgeConstants.LexDb:
-					wellUsedElements[FlexBridgeConstants.LexDb] = Utilities.CreateFromBytes(record);
-					//classData.Remove(SharedConstants.LexDb);
-					break;
+				// 2. Cache it.
+				switch (className)
+				{
+					default:
+						classData[className].Add(guid, record);
+						break;
+					case SharedConstants.LangProject:
+						wellUsedElements[SharedConstants.LangProject] = Utilities.CreateFromBytes(record);
+						//classData.Remove(SharedConstants.LangProject);
+						break;
+					case SharedConstants.LexDb:
+						wellUsedElements[SharedConstants.LexDb] = Utilities.CreateFromBytes(record);
+						//classData.Remove(SharedConstants.LexDb);
+						break;
+				}
+			}
+			catch (KeyNotFoundException knf)
+			{
+				throw new InvalidDataException(string.Format("The metadata cache does not know about the class {0}. There must be a problem in a model version update.",
+					className), knf);
 			}
 		}
 

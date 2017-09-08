@@ -1,173 +1,169 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>8.0.30703</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{C036E79E-49D8-4AB3-BB9A-792C514A817F}</ProjectGuid>
-	<OutputType>WinExe</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FwdataTestApp</RootNamespace>
-	<AssemblyName>FwdataTestApp</AssemblyName>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C036E79E-49D8-4AB3-BB9A-792C514A817F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FwdataTestApp</RootNamespace>
+    <AssemblyName>FwdataTestApp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DebugType>full</DebugType>
-	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
-	<CodeAnalysisLogFile>..\..\output\Debug\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-	<CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <CodeAnalysisLogFile>..\..\output\Debug\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-	<OutputPath>..\..\output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<PlatformTarget>x86</PlatformTarget>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
-	<CodeAnalysisLogFile>..\..\output\Release\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-	<CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-	<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-	<CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-	<UseVSHostingProcess>true</UseVSHostingProcess>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <CodeAnalysisLogFile>..\..\output\Release\FwdataNester.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-	<ApplicationIcon>chorus.ico</ApplicationIcon>
+    <ApplicationIcon>chorus.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<DebugType>pdbonly</DebugType>
-	<ErrorReport>prompt</ErrorReport>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
-	</Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
-	</Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
-	</Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-	<Reference Include="LibChorus">
-	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
-	</Reference>
+    <Reference Include="LibChorus">
+      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="System" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Xml.Linq" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml" />
-	<Reference Include="Vulcan.Uczniowie.HelpProvider">
-	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
-	</Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Vulcan.Uczniowie.HelpProvider">
+      <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="NestFwdatafile.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="NestFwdatafile.Designer.cs">
-	  <DependentUpon>NestFwdatafile.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Program.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<EmbeddedResource Include="NestFwdatafile.resx">
-	  <DependentUpon>NestFwdatafile.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	</Compile>
-	<None Include="app.config" />
-	<None Include="Properties\Settings.settings">
-	  <Generator>SettingsSingleFileGenerator</Generator>
-	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	</None>
-	<Compile Include="Properties\Settings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Settings.settings</DependentUpon>
-	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	</Compile>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="NestFwdatafile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NestFwdatafile.Designer.cs">
+      <DependentUpon>NestFwdatafile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="NestFwdatafile.resx">
+      <DependentUpon>NestFwdatafile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
-	  <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
-	  <Name>FLEx-ChorusPlugin</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
-	  <Name>TriboroughBridge-ChorusPlugin</Name>
-	</ProjectReference>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
       <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
       <Name>LibFLExBridge-ChorusPlugin</Name>
@@ -178,7 +174,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<Content Include="chorus.ico" />
+    <Content Include="chorus.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

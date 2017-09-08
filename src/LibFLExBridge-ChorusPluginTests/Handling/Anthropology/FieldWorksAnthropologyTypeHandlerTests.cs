@@ -18,6 +18,7 @@ using LibChorus.TestUtilities;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 {

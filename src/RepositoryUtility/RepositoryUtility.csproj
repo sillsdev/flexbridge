@@ -241,10 +241,6 @@
     <Content Include="chorus32x32.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
-      <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
-      <Name>FLEx-ChorusPlugin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj">
       <Project>{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}</Project>
       <Name>LiftBridge-ChorusPlugin</Name>

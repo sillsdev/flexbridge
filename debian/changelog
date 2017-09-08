@@ -1,3 +1,47 @@
+flexbridge (2.5.3) unstable; urgency=low
+
+  * Fix dependency problem on Linux
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 18 Jul 2017 16:04:22 -0500
+
+flexbridge (2.5.2) unstable; urgency=low
+
+  * Update localization files
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 05 Jul 2017 11:19:52 -0500
+
+flexbridge (2.5.1) unstable; urgency=low
+
+  * Support FLEx 8.3 Beta 2 Data model version
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 16 Dec 2016 21:25:33 +0000
+
+flexbridge (2.5.0) unstable; urgency=low
+
+  * FLExBridge: Fix Linux localization issues
+  * Chorus: Update Send/Receive options to avoid confusion about Language Forge
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 14 Oct 2016 15:03:46 -0500
+
+flexbridge (2.4.2) unstable; urgency=low
+
+  * FLExBridge: Fix handling of data model version 7000069
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 05 Oct 2016 11:03:49 -0500
+
+flexbridge (2.4.1) unstable; urgency=low
+
+  * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+  * FLExBridge: Add support for FLEx data model version 7000069
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 06 Sep 2016 13:12:45 -0500
+
+flexbridge (2.4.0) unstable; urgency=low
+
+  * FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
+
 flexbridge (2.3.13) unstable; urgency=low
 
   * Flex Bridge: Update to work with new Chorus to fix LT-17461
@@ -5,6 +49,24 @@ flexbridge (2.3.13) unstable; urgency=low
   * Chorus: Fix data loss bug when merging certain types of elements
 
  -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
+
+flexbridge (2.3.12) unstable; urgency=low
+
+  * Chorus: Fix problem with internet S/R on windows when using French UI
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 20 Apr 2016 11:53:35 -0500
+
+flexbridge (2.3.11) unstable; urgency=low
+
+  * FLEx Bridge: Update the windows installer dependencies to fix upgrade bug
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 03 Feb 2016 11:09:19 -0600
+
+flexbridge (2.3.10) unstable; urgency=low
+
+  * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 13 Jan 2016 15:09:48 -0600
 
 flexbridge (2.3.9) unstable; urgency=low
 
