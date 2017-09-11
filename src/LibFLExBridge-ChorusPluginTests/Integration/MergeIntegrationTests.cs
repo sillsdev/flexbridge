@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2016 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -10,13 +10,14 @@ using System.Reflection;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
-using Palaso.TestUtilities;
-using TriboroughBridge_ChorusPlugin;
+using SIL.TestUtilities;
+using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 
-namespace FLEx_ChorusPluginTests.Integration
+namespace LibFLExBridgeChorusPluginTests.Integration
 {
 	/// <summary>
 	/// This class tests a complete series of operations over several units including:
@@ -254,7 +255,7 @@ namespace FLEx_ChorusPluginTests.Integration
 				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
-				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", SharedConstants.fwdictconfig), commonAncestor))
+				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), commonAncestor))
 				using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))
 				{
 					// By doing the clone before making Sue's changes, we get the common starting state in both repos.
@@ -350,12 +351,12 @@ namespace FLEx_ChorusPluginTests.Integration
 					using (var randyRepo = new RepositorySetup("Randy", sueRepo))
 					{
 						// By doing the clone before making Sue's changes, we get the common starting state in both repos.
-						sueRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), sue);
+						sueRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), sue);
 
-						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", SharedConstants.fwdictconfig));
+						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", FlexBridgeConstants.fwdictconfig));
 						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
 						Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
-						randyRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), randy);
+						randyRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), randy);
 						randyRepo.CheckinAndPullAndMerge(sueRepo);
 						Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
 						var notesContents = File.ReadAllText(mergeConflictsNotesFile);

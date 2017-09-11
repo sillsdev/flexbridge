@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Text;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
@@ -53,7 +52,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		public const string LanguageProject = "LanguageProject";
 		public const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		public const string LangProject = "LangProject";
-		internal const string ConfigurationItem = "ConfigurationItem"; // REVIEW (Hasso) 2017.09: still in use?
+		public const string ConfigurationItem = "ConfigurationItem";
 		public const string Label = "label";
 		public const string Title = "Title";
 		public const string NamedStyle = "namedStyle";

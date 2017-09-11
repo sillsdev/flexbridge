@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2015-2016 SIL International. All rights reserved.
+// Copyright (C) 2015-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -10,14 +10,15 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using Chorus.FileTypeHanders;
+using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using Palaso.IO;
-using Palaso.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
+using SIL.IO;
 
-namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
+namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 {
 	internal sealed class DictionaryConfigurationHandlerStrategy : IFieldWorksFileHandler
 	{
@@ -70,7 +71,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 
 		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
-			return Xml2WayDiffService.ReportDifferences(repository, parent, child, null, SharedConstants.ConfigurationItem, SharedConstants.GuidStr);
+			return Xml2WayDiffService.ReportDifferences(repository, parent, child, null, FlexBridgeConstants.ConfigurationItem, FlexBridgeConstants.GuidStr);
 		}
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
@@ -86,7 +87,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.Handling.ConfigLayout
 
 		public string Extension
 		{
-			get { return SharedConstants.fwdictconfig; }
+			get { return FlexBridgeConstants.fwdictconfig; }
 		}
 	}
 }

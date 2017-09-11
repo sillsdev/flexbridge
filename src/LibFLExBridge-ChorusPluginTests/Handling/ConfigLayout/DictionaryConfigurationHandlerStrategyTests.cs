@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2016 SIL International. All rights reserved.
+// Copyright (C) 2016-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -7,15 +7,15 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Chorus.FileTypeHanders;
-using FLEx_ChorusPlugin.Infrastructure;
+using Chorus.FileTypeHandlers;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.Progress;
-using Palaso.TestUtilities;
-using TriboroughBridge_ChorusPlugin;
+using SIL.IO;
+using SIL.Progress;
+using SIL.TestUtilities;
 
-namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
+namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 {
 	[TestFixture]
 	public class DictionaryConfigurationHandlerStrategyTests
@@ -28,7 +28,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var appsDir = Path.GetDirectoryName(TriboroughBridge_ChorusPlugin.Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
 			MetadataCache.TestOnlyNewCache.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 		}
@@ -39,7 +39,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 			// Each starts with a fresh FileHandler, because DictionaryConfigurationHandlerStrategy caches the path to the schema,
 			// but some tests require the schema's presence and others require its absence.
 			_fileHandler = FieldWorksTestServices.CreateChorusFileHandlers();
-			_configFile = TempFile.WithExtension("." + SharedConstants.fwdictconfig);
+			_configFile = TempFile.WithExtension("." + FlexBridgeConstants.fwdictconfig);
 		}
 
 		[TearDown]
@@ -96,7 +96,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.Handling.ConfigLayout
 		{
 			// Config File does not exist
 			CopySchema();
-			Assert.False(_fileHandler.CanValidateFile(Path.Combine(_tempFolder.Path, "nonexistent_file." + SharedConstants.fwdictconfig)));
+			Assert.False(_fileHandler.CanValidateFile(Path.Combine(_tempFolder.Path, "nonexistent_file." + FlexBridgeConstants.fwdictconfig)));
 		}
 
 		[Test]

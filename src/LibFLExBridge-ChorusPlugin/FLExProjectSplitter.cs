@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -172,12 +172,12 @@ namespace LibFLExBridgeChorusPlugin
 					default:
 						classData[className].Add(guid, record);
 						break;
-					case SharedConstants.LangProject:
-						wellUsedElements[SharedConstants.LangProject] = Utilities.CreateFromBytes(record);
+					case FlexBridgeConstants.LangProject:
+						wellUsedElements[FlexBridgeConstants.LangProject] = Utilities.CreateFromBytes(record);
 						//classData.Remove(SharedConstants.LangProject);
 						break;
-					case SharedConstants.LexDb:
-						wellUsedElements[SharedConstants.LexDb] = Utilities.CreateFromBytes(record);
+					case FlexBridgeConstants.LexDb:
+						wellUsedElements[FlexBridgeConstants.LexDb] = Utilities.CreateFromBytes(record);
 						//classData.Remove(SharedConstants.LexDb);
 						break;
 				}
