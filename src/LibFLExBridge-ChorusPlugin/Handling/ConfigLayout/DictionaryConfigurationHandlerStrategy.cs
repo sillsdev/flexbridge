@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -20,6 +21,7 @@ using SIL.IO;
 
 namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 {
+	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class DictionaryConfigurationHandlerStrategy : IFieldWorksFileHandler
 	{
 		private string _xsdPathname;
