@@ -468,7 +468,7 @@
     </tu>
     <tu tuid="Messages.ChorusServerIncompatible">
       <tuv xml:lang="en">
-        <seg>The Chorus Server is not compatible with this client.</seg>
+        <seg>The Chorus Server is not compatible with ths client.</seg>
       </tuv>
     </tu>
     <tu tuid="Messages.ChorusServerNA">
@@ -604,7 +604,7 @@
     </tu>
     <tu tuid="Messages.ProblemStoringAddresses">
       <tuv xml:lang="en">
-        <seg>Chorus encountered a problem while trying to store these addresses:</seg>
+        <seg>Chorus encounterd a problem while trying to store these addresses:</seg>
       </tuv>
     </tu>
     <tu tuid="Messages.Project">
@@ -654,7 +654,7 @@
     </tu>
     <tu tuid="Messages.ServerRejectedLogon">
       <tuv xml:lang="en">
-        <seg>The server {0} did not accept the request of {1} to clone from {2} using password {3}.</seg>
+        <seg>The server {0} did not accept the reqest of {1} to clone from {2} using password {3}.</seg>
       </tuv>
     </tu>
     <tu tuid="Messages.SettingsProblem">

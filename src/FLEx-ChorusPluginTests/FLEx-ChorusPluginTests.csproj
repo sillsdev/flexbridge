@@ -156,6 +156,7 @@
     </Compile>
     <Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandlerTests.cs" />
     <Compile Include="Infrastructure\ActionHandlers\FlexObtainProjectStrategyTests.cs" />
+    <Compile Include="Infrastructure\Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Infrastructure\Handling\DateTimeMergingTests.cs" />
     <Compile Include="Infrastructure\DomainServices\CmObjectValidatorTests.cs" />
     <Compile Include="Infrastructure\Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
@@ -240,15 +241,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="TestData\DataNotebook_Ann.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="TestData\DataNotebook_Common.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="TestData\DataNotebook_Susanna.ntbk">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <None Include="TestData\DataNotebook_Ann.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\DataNotebook_Common.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\DataNotebook_Susanna.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\TestResources.resx">

@@ -22,21 +22,21 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension + "-replaced");
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwXmlExtension + "-x");
 			projectFolderConfiguration.ExcludePatterns.Add("**" + Utilities.FwDb4oExtension);
+			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
+			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
+			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwbackup");
 			projectFolderConfiguration.ExcludePatterns.Add("**.fwstub");
+			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
+			projectFolderConfiguration.ExcludePatterns.Add("**.log");
 			projectFolderConfiguration.ExcludePatterns.Add("**.orig");
-			projectFolderConfiguration.ExcludePatterns.Add("**.zip");
+			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxes");
 			projectFolderConfiguration.ExcludePatterns.Add("**.oxesa");
-			projectFolderConfiguration.ExcludePatterns.Add("**.oxekt");
-			projectFolderConfiguration.ExcludePatterns.Add("**.lint");
-			projectFolderConfiguration.ExcludePatterns.Add("**.flextext");
-			projectFolderConfiguration.ExcludePatterns.Add("**.bak");
-			projectFolderConfiguration.ExcludePatterns.Add("**.bad");
-			projectFolderConfiguration.ExcludePatterns.Add("**" + SharedConstants.FwXmlLockExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**.tmp");
 			projectFolderConfiguration.ExcludePatterns.Add("**.xml");
-			projectFolderConfiguration.ExcludePatterns.Add("**.log");
+			projectFolderConfiguration.ExcludePatterns.Add("**.zip");
+			projectFolderConfiguration.ExcludePatterns.Add("**" + SharedConstants.FwXmlLockExtension);
 			projectFolderConfiguration.ExcludePatterns.Add("**." + SharedConstants.dupid);
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("Temp", "**.*"));
 			projectFolderConfiguration.ExcludePatterns.Add(Path.Combine("BackupSettings", "**.*"));
@@ -62,6 +62,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 			// Misc required files.
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "**.fwdictconfig"));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "**Overrides.css"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "**.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "**.*"));

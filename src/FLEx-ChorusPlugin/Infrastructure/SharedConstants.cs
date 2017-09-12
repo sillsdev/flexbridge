@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2016 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -17,6 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string dupid = "dupid";
 		public const string FwLockExtension = ".lock";
 		public const string FwXmlLockExtension = Utilities.FwXmlExtension + FwLockExtension;
+		public const string DictConfigSchemaFilename = "DictionaryConfiguration.xsd";
 
 		// General
 		internal const string Str = "Str";
@@ -58,6 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		internal const string LanguageProject = "LanguageProject";
 		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		internal const string LangProject = "LangProject";
+		internal const string ConfigurationItem = "ConfigurationItem";
 		internal const string Label = "label";
 		internal const string Title = "Title";
 		internal const string NamedStyle = "namedStyle";
@@ -72,6 +74,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 
 		// FW layouts
 		internal const string fwlayout = "fwlayout";
+		internal const string fwdictconfig = "fwdictconfig";
 
 		// Old style
 		internal const string RtTag = "rt";
