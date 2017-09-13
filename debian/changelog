@@ -42,6 +42,12 @@ flexbridge (2.4.0) unstable; urgency=low
 
  -- Jason Naylor <jason_naylor@sil.org>  Tue, 17 May 2016 15:51:33 -0500
 
+flexbridge (2.3.14) unstable; urgency=low
+
+  * Fix linux packaging for 32bit version
+
+ -- Jason Naylor <jason_naylor@sil.org>  Fri, 26 Aug 2016 14:48:27 -0500
+
 flexbridge (2.3.13) unstable; urgency=low
 
   * Flex Bridge: Update to work with new Chorus to fix LT-17461
