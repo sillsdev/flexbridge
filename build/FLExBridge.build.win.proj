@@ -10,8 +10,8 @@
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
   <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
   <PropertyGroup>
-	<MSBuildTasksTargets>..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets"</MSBuildTasksTargets>
-  </PropertyGroup
+	<MSBuildTasksTargets>..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
+  </PropertyGroup>
   <Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 
   <!-- ***************** Main build ***************** -->
