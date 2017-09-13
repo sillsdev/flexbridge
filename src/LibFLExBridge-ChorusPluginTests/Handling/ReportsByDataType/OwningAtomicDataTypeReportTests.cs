@@ -90,11 +90,11 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 	</header>
 
 	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
-		<Etymology>
-			<LexEtymology
+		<LexemeForm>
+			<MoStemAllomorph
 				guid='76dbd844-915a-4cbd-886f-eebef34fa04e'>
-			</LexEtymology>
-		</Etymology>
+			</MoStemAllomorph>
+		</LexemeForm>
 		<Senses>
 			<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' />
 		</Senses>
@@ -109,11 +109,11 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 	</header>
 
 	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
-		<Etymology>
-			<LexEtymology
+		<LexemeForm>
+			<MoStemAllomorph
 				guid='c909553a-aa91-4695-8fda-c708ec969a02'>
-			</LexEtymology>
-		</Etymology>
+			</MoStemAllomorph>
+		</LexemeForm>
 		<Senses>
 			<ownseq class='LexSense' guid='c1ed94cb-e382-11de-8a39-0800200c9a66' />
 		</Senses>
@@ -123,8 +123,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 			FieldWorksTestServices.DoMerge(FileHandler,
 				"lexdb",
 				commonAncestor, ours, theirs,
-				new[] { "Lexicon/LexEntry/Etymology/LexEtymology", "Lexicon/LexEntry/Etymology/LexEtymology[@guid='76dbd844-915a-4cbd-886f-eebef34fa04e']" },
-				new[] { "Lexicon/LexEntry/Etymology/LexEtymology[@guid='c909553a-aa91-4695-8fda-c708ec969a02']" },
+				new[] { "Lexicon/LexEntry/LexemeForm/MoStemAllomorph", "Lexicon/LexEntry/LexemeForm/MoStemAllomorph[@guid='76dbd844-915a-4cbd-886f-eebef34fa04e']" },
+				new[] { "Lexicon/LexEntry/LexemeForm/MoStemAllomorph[@guid='c909553a-aa91-4695-8fda-c708ec969a02']" },
 				1, new List<Type> { typeof(BothAddedMainElementButWithDifferentContentConflict) },
 				1, new List<Type> { typeof(XmlBothAddedSameChangeReport) });
 		}
