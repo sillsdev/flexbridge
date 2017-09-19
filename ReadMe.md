@@ -1,4 +1,4 @@
-**FLExBridge** is an add-on to FieldWorks (http://fieldworks.sil.org; https://github.com/sillsdev/FwDocumentation/wiki)
+**FLExBridge** is an add-on to FieldWorks (https://software.sil.org/fieldworks/; https://github.com/sillsdev/FwDocumentation/wiki)
 that supports using Chorus (https://github.com/sillsdev/chorus) to allow multiple users to share data.
 
 ## Build notes:
@@ -6,11 +6,9 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.
 Therefore, to build FLEx Bridge, you must get the latest versions of these assemblies by running this in a Bash window:
 
-Windows
-download_dependencies_windows.sh
+Windows	`download_dependencies_windows.sh`
 
-Linux
-download_dependencies_linux.sh
+Linux	`download_dependencies_linux.sh`
 
 If necessary, both download_dependencies can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
 
@@ -19,7 +17,7 @@ If you plan to work on Chorus,
    same parent directory as flexbridge without changing their repository names
 - run GetAndBuildThis.bat to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes),
    GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge,
-   and build FLExBridge
+   and build FLExBridge (this doesn't always work as smoothly as we might like)
 
 ### Special Mono dependencies:
 	$ cp ../libpalaso/lib/Debug/icu.net.dll* ../libpalaso/lib/DebugMono
@@ -83,3 +81,7 @@ When releasing FLExBridge be sure to do the following:
     * Unselect AppendNightlyToVersion.
     * Optionally set Committish to an older commit, such as where the changelog entry was updated.
     * Click Build.
+
+## TriboroughBridge
+
+Named after the RFK Triborough Bridge complex connecting three boroughs in New York, the **TriboroughBridge** project contains pieces that are applicable to both FLExBridge (Full LCModel) and LiftBridge (LIFT model, also compatible with WeSay).
