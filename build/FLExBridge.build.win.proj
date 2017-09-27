@@ -3,10 +3,10 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
   <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
   <PropertyGroup>
@@ -16,7 +16,7 @@
 
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
-	<Solution>FLExBridge VS2010.sln</Solution>
+	<Solution>FLExBridge.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
 	<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
   </PropertyGroup>
@@ -52,7 +52,7 @@
 	<Message Text="Build Complete"/>
   </Target>
 
-  <Target Name="UnzipMercurial">
+  <Target Name="UnzipMercurial" DependsOnTargets="RestorePackages">
 	<!-- Extract a zip file-->
 	<MSBuild.Community.Tasks.Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
   </Target>
