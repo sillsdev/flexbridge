@@ -52,6 +52,9 @@
 	<Message Text="Build Complete"/>
   </Target>
 
+  <!-- It is necessary to restore NuGet packages before using the script so that the UnZip command can work. This can be done
+		from the build folder on the command line with a command like: msbuild FLExBridge.build.win.proj /t:RestorePackages 
+		/p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none -->
   <Target Name="UnzipMercurial" DependsOnTargets="RestorePackages">
 	<!-- Extract a zip file-->
 	<MSBuild.Community.Tasks.Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
