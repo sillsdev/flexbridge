@@ -54,7 +54,7 @@
 
   <Target Name="UnzipMercurial">
 	<!-- Extract a zip file-->
-	<Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
+	<MSBuild.Community.Tasks.Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
   </Target>
 
   <Target Name="Compile" DependsOnTargets="RestorePackages">
