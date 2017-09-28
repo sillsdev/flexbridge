@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -46,7 +47,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
-				return float.Parse(reader.Value);
+				return float.Parse(reader.Value, NumberFormatInfo.InvariantInfo);
 			}
 		}
 
@@ -54,7 +55,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		{
 			var repo = new HgRepository(cloneLocation, new NullProgress());
 			Dictionary<string, Revision> allHeads = Utilities.CollectAllBranchHeads(cloneLocation);
-			var desiredModelVersion = float.Parse(desiredBranchName.Replace("LIFT", null));
+			var desiredModelVersion = float.Parse(desiredBranchName.Replace("LIFT", null), NumberFormatInfo.InvariantInfo);
 			Revision desiredRevision;
 			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
 			{
@@ -70,7 +71,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					}
 					else
 					{
-						currentVersion = float.Parse(headKvp.Value.Branch);
+						currentVersion = float.Parse(headKvp.Value.Branch, NumberFormatInfo.InvariantInfo);
 					}
 					if (currentVersion > desiredModelVersion)
 					{
@@ -119,7 +120,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				var sortedRevisions = new SortedList<float, Revision>();
 				foreach (var kvp in allHeads)
 				{
-					sortedRevisions.Add(float.Parse(kvp.Key.Replace("LIFT", null)), kvp.Value);
+					sortedRevisions.Add(float.Parse(kvp.Key.Replace("LIFT", null), NumberFormatInfo.InvariantInfo), kvp.Value);
 				}
 				desiredRevision = sortedRevisions.Values[sortedRevisions.Count - 1];
 			}
