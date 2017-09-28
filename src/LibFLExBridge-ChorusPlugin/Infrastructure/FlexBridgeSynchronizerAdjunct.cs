@@ -12,13 +12,11 @@ using System.Text.RegularExpressions;
 using Chorus.FileTypeHandlers.lift;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
-using LibFLExBridgeChorusPlugin;
-using LibFLExBridgeChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
+using LibFLExBridgeChorusPlugin.Properties;
 using SIL.Progress;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
 	internal sealed class FlexBridgeSynchronizerAdjunct : ISychronizerAdjunct
 	{
