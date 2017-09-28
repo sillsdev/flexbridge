@@ -381,7 +381,10 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 					case 7000070:
 						// 7000070: No actual model change.
 						break;
-					//NB: Update MaximumModelVersion to highest supported number.
+					case 7000071:
+						// 7000071: Changes made to LDML repo
+						break;
+						//NB: Update MaximumModelVersion to highest supported number.
 				}
 			}
 
@@ -389,7 +392,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		public const int MaximumModelVersion = 7000070;
+		public const int MaximumModelVersion = 7000071;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
