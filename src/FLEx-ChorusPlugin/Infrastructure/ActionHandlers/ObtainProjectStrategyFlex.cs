@@ -9,6 +9,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using TriboroughBridge_ChorusPlugin;
@@ -16,7 +19,7 @@ using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;
 
-namespace LibFLExBridgeChorusPlugin.Infrastructure.ActionHandlers
+namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	/// <summary>
 	/// This IObtainProjectStrategy implementation handles the FLEx type of repo that the user selected in a generic 'obtain' call.

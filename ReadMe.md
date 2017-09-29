@@ -1,6 +1,19 @@
 **FLExBridge** is an add-on to FieldWorks (https://software.sil.org/fieldworks/; https://github.com/sillsdev/FwDocumentation/wiki)
 that supports using Chorus (https://github.com/sillsdev/chorus) to allow multiple users to share data.
 
+## Architecture
+The "big idea" for the bridge system is that clients do not have to know how talk to Chorus directly to do Send/Receive(S/R), or even know that Chorus is involved. I designed the architecture to allow for any number of "bridges" between clients and Chorus, with a new bridge being needed for each major kind of xml data (e.g., LIFT or Flex's fwdata). Each bridge needs to define "Handlers" for the xml file extensions it will have in its data. Chorus uses those handlers in its work. Each bridge also needs to define "Actions", which are the kinds of things it wants to do for S/R.
+
+In the case of Language Forge (LF), it does S/R on the full Flex data set (fwdata file). (But, to my knowledge, it does not do Lift S/R, so that part of your chart is off.) LF needed a Winforms free environment on its server, so the LF devs spun off those two "Lib" assemblies.
+
+It is an unfortunate artifact of development history that Flex uses the exe called FlexBridge for S/R for its own data set and for Lift. There really should be a second one Flex calls called LiftBridge with the lift related stuff taken out of the FB exe. (There could also be two dll 'bridge' entry points, instead of exes, to bring it all into the main Flex process, now that Flex is moving into the 64 bit world on Windows.)
+WeSay does not use FlexBridge, as the picture suggests. WeSay talks directly to Chorus.
+
+LfMergeBridge is on the lfmerge branch.
+
+See diagram:
+![FlexBridge Projects Relationships](src/FlexBridgeProjectsRelationships.PNG)
+
 ## Build notes:
 FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.

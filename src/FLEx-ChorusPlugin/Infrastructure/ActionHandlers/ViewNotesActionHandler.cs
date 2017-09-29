@@ -21,8 +21,9 @@ using SIL.Network;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.View;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
-namespace LibFLExBridgeChorusPlugin.Infrastructure.ActionHandlers
+namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles everything needed for viewing the notes of a Flex repo.
