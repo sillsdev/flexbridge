@@ -9,12 +9,14 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Sync;
-using LibFLExBridgeChorusPlugin.Properties;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 
-namespace LibFLExBridgeChorusPlugin.Infrastructure.ActionHandlers
+namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles everything needed for a normal S/R for a Flex repo.
@@ -67,7 +69,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure.ActionHandlers
 						// call.  If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						var syncAdjunt = new FlexBridgeSynchronizerAdjunct(origPathname, commandLineArgs["-f"], false);
+						var syncAdjunt = new FlexBridgeSychronizerAdjunct(origPathname, commandLineArgs["-f"], false);
 						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
 
 						// Chorus does it in this order:

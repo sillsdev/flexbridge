@@ -20,14 +20,14 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace FLEx_ChorusPlugin.Infrastructure
 {
-	internal sealed class FlexBridgeSynchronizerAdjunct : ISychronizerAdjunct
+	internal sealed class FlexBridgeSychronizerAdjunct : ISychronizerAdjunct
 	{
 		private readonly string _fwdataPathname;
 		private readonly bool _writeVerbose;
 		private bool _needToNestMainFile = true;
 		private readonly string _fixitPathname;
 
-		internal FlexBridgeSynchronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose)
+		internal FlexBridgeSychronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose)
 		{
 			if (!File.Exists(fixitPathname))
 				throw new InvalidOperationException("The FLEx 'fix it' program was not found.");

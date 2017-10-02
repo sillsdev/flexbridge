@@ -1,6 +1,18 @@
 **FLExBridge** is an add-on to FieldWorks (https://software.sil.org/fieldworks/; https://github.com/sillsdev/FwDocumentation/wiki)
 that supports using Chorus (https://github.com/sillsdev/chorus) to allow multiple users to share data.
 
+## Architecture
+The "big idea" for the bridge system is that clients do not have to know how talk to _Chorus_ directly to do Send/Receive(S/R), or even know that _Chorus_ is involved. The architecture allows for any number of "bridges" between clients and _Chorus_, with a new bridge being needed for each major kind of xml data (e.g., _LIFT_ or _Flex_'s fwdata). Each bridge needs to define _Handlers_ for the xml file extensions it will have in its data. _Chorus_ uses those handlers in its work. Each bridge also needs to define _Actions_, which are the kinds of things it wants to do for S/R.
+
+In the case of _Language Forge_ (LF), it uses _LfMergeBridge_ on the _lfmerge_ branch to S/R on the full _Flex_ data set (fwdata file). LF needs a _Windows.Forms_ free environment since it runs on a server.
+
+It is an artifact of development history that _Flex_ uses the  _FlexBridge_ exe to S/R for its own data set and for _LIFT_. _WeSay_ talks directly to _Chorus_ and does not use the _FlexBridge.exe_
+
+Named after the RFK Triborough Bridge complex connecting three boroughs in New York, the _TriboroughBridge_ project contains pieces that are applicable to both _FLExBridge_ (Full LCModel) and _LiftBridge_ (_LIFT_ model, also compatible with _WeSay_).
+
+See diagram:
+![FlexBridge Projects Relationships](src/FlexBridgeRepo.svg)
+
 ## Build notes:
 FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.
@@ -81,7 +93,3 @@ When releasing FLExBridge be sure to do the following:
     * Unselect AppendNightlyToVersion.
     * Optionally set Committish to an older commit, such as where the changelog entry was updated.
     * Click Build.
-
-## TriboroughBridge
-
-Named after the RFK Triborough Bridge complex connecting three boroughs in New York, the **TriboroughBridge** project contains pieces that are applicable to both FLExBridge (Full LCModel) and LiftBridge (LIFT model, also compatible with WeSay).

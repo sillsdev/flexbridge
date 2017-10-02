@@ -91,6 +91,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="app.config" Guid="C1EE581C-E382-11DE-8A39-0800200C9A66">
 			  <File Id="app.config" Name="app.config" Source="..\..\output\Release\app.config"/>
 			</Component>
+			<Component Id="FLExChorusPlugin.dll" Guid="669757A9-F608-4B37-86A2-2F64C0C05DE2">
+			  <File Id="FLExChorusPlugin.dll" Name="FLEx-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.dll"/>
+			</Component>
+			<Component Id="FLExChorusPlugin.pdb" Guid="42E0D87A-37C2-4599-B87B-333AAE4896DE">
+			  <File Id="FLExChorusPlugin.pdb" Name="FLEx-ChorusPlugin.pdb" KeyPath="yes" Source="..\..\output\Release\FLEx-ChorusPlugin.pdb"/>
+			</Component>
 			<Component Id="LibFLExBridgeChorusPlugin.dll" Guid="5A362239-BD5F-44A2-9CEC-C18422785D20">
 			  <File Id="LibFLExBridgeChorusPlugin.dll" Name="LibFLExBridge-ChorusPlugin.dll" KeyPath="yes" Source="..\..\output\Release\LibFLExBridge-ChorusPlugin.dll"/>
 			</Component>
@@ -189,6 +195,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="FLExBridge.exe"/>
 	  <ComponentRef Id="FLExBridge.pdb"/>
 	  <ComponentRef Id="app.config"/>
+	  <ComponentRef Id="FLExChorusPlugin.dll"/>
+	  <ComponentRef Id="FLExChorusPlugin.pdb"/>
 	  <ComponentRef Id="LibFLExBridgeChorusPlugin.dll"/>
 	  <ComponentRef Id="LibFLExBridgeChorusPlugin.pdb"/>
 
