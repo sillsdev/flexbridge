@@ -55,6 +55,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\output\Debug\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -110,7 +114,20 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="TestData\DataNotebook_Ann.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\DataNotebook_Common.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\DataNotebook_Susanna.ntbk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="DomainServices\CmObjectFlatteningServiceTests.cs" />
     <Compile Include="DomainServices\CmObjectNestingServiceTests.cs" />
@@ -128,6 +145,7 @@
     <Compile Include="Handling\Common\StyleContextGeneratorTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
@@ -174,6 +192,8 @@
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
     <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
+    <Compile Include="Integration\MergeIntegrationTests.cs" />
+    <Compile Include="WinFormsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
@@ -183,6 +203,10 @@
     <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8f9f6c42-2bb6-49e1-831d-7414ca411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

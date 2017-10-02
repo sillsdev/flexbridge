@@ -4,7 +4,6 @@
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
-using System.Linq;
 using Chorus.FileTypeHandlers;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
@@ -19,9 +18,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
 		{
-			FileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-						   where handler.GetType().Name == "FieldWorksCommonFileHandler"
-						   select handler).First();
+			FileHandler = FieldWorksTestServices.CreateChorusFileHandlers();
 		}
 
 		[TestFixtureTearDown]

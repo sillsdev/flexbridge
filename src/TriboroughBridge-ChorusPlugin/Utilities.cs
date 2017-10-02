@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -12,10 +12,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Chorus;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
 using L10NSharp;
-using SIL.Progress;
 using SIL.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;

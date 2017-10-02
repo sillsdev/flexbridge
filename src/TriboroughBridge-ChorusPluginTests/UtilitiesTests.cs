@@ -9,7 +9,6 @@ using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 using TriboroughBridge_ChorusPlugin;
-using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPluginTests

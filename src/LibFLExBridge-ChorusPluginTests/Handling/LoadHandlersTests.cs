@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -77,7 +77,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				FlexBridgeConstants.Agents,				// 'agents'
 
 				// FW layouts
-				FlexBridgeConstants.fwlayout			// 'fwlayout'
+				FlexBridgeConstants.fwlayout,			// 'fwlayout'
+				FlexBridgeConstants.fwdictconfig		// 'fwdictconfig'
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());

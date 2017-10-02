@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -164,20 +164,28 @@ namespace LibFLExBridgeChorusPlugin
 			//// 1. Sort <rt>
 			//DataSortingService.SortMainRtElement(rtElement);
 
-			// 2. Cache it.
-			switch (className)
+			try
 			{
-				default:
-					classData[className].Add(guid, record);
-					break;
-				case  FlexBridgeConstants.LangProject:
-					wellUsedElements[FlexBridgeConstants.LangProject] = Utilities.CreateFromBytes(record);
-					//classData.Remove(SharedConstants.LangProject);
-					break;
-				case FlexBridgeConstants.LexDb:
-					wellUsedElements[FlexBridgeConstants.LexDb] = Utilities.CreateFromBytes(record);
-					//classData.Remove(SharedConstants.LexDb);
-					break;
+				// 2. Cache it.
+				switch (className)
+				{
+					default:
+						classData[className].Add(guid, record);
+						break;
+					case FlexBridgeConstants.LangProject:
+						wellUsedElements[FlexBridgeConstants.LangProject] = Utilities.CreateFromBytes(record);
+						//classData.Remove(SharedConstants.LangProject);
+						break;
+					case FlexBridgeConstants.LexDb:
+						wellUsedElements[FlexBridgeConstants.LexDb] = Utilities.CreateFromBytes(record);
+						//classData.Remove(SharedConstants.LexDb);
+						break;
+				}
+			}
+			catch (KeyNotFoundException knf)
+			{
+				throw new InvalidDataException(string.Format("The metadata cache does not know about the class {0}. There must be a problem in a model version update.",
+					className), knf);
 			}
 		}
 
