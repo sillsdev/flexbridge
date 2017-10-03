@@ -1,3 +1,19 @@
+## 2.5.3 18/Jul/2017
+* Fix dependency problem on Linux
+## 2.5.2 05/Jul/2017
+* Update localization files
+## 2.5.1 16/Dec/2016
+* Support FLEx 8.3 Beta 2 Data model version
+## 2.5.0 14/Oct/2016
+* FLExBridge: Fix Linux localization issues
+* Chorus: Update Send/Receive options to avoid confusion about Language Forge
+## 2.4.2 05/Oct/2016
+* FLExBridge: Fix handling of data model version 7000069
+## 2.4.1 06/Sep/2016
+* FLExBridge: Include new Dictionary and Reversal Index Configurations in Send/Receive
+* FLExBridge: Add support for FLEx data model version 7000069
+## 2.3.14 26/Aug/2016
+* Fix linux packaging for 32bit version
 ## 2.3.13 17/May/2016
 * Flex Bridge: Update to work with new Chorus to fix LT-17461
 * Chorus: Fix Bug in password entry field with internet S/R

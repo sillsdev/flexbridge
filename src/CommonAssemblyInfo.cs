@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2015 SIL International. All rights reserved.
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ using System.Reflection;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("FLEx Bridge")]
-[assembly: AssemblyCopyright("Copyright � SIL 2010-2015")]
+[assembly: AssemblyCopyright("Copyright © SIL 2010-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

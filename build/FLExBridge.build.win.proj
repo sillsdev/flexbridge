@@ -3,17 +3,20 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/lib/$(Configuration)/Palaso.BuildTasks.dll"/>
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
   <!-- From http://msbuildtasks.tigris.org/ Has UnZip task -->
-  <Import Project="..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets"/>
+  <PropertyGroup>
+	<MSBuildTasksTargets>..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
+  </PropertyGroup>
+  <Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
-	<Solution>FLExBridge VS2010.sln</Solution>
+	<Solution>FLExBridge.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
 	<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
   </PropertyGroup>
@@ -49,9 +52,12 @@
 	<Message Text="Build Complete"/>
   </Target>
 
-  <Target Name="UnzipMercurial">
+  <!-- It is necessary to restore NuGet packages before using the script so that the UnZip command can work. This can be done
+		from the build folder on the command line with a command like: msbuild FLExBridge.build.win.proj /t:RestorePackages 
+		/p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none -->
+  <Target Name="UnzipMercurial" DependsOnTargets="RestorePackages">
 	<!-- Extract a zip file-->
-	<Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
+	<MSBuild.Community.Tasks.Unzip ZipFileName="$(RootDir)\lib\Debug\Mercurial.zip" TargetDirectory="$(RootDir)"/>
   </Target>
 
   <Target Name="Compile" DependsOnTargets="RestorePackages">
@@ -74,7 +80,8 @@
 
   <!-- For use when working on installer development -->
   <!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
-  <!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:BuildCounter=99 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+  <!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+  <!-- If no Version is specified, reads from "$(RootDir)/version". -->
   <Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build">
 	<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
 	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex="Property_ProductVersion = &quot;.*&quot;" ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>

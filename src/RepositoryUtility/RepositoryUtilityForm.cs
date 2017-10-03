@@ -17,8 +17,6 @@ using Chorus.FileTypeHandlers.lift;
 using Chorus.UI.Review;
 using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
-using FLEx_ChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.DomainServices;
 using SIL.Progress;
 using Nini.Ini;
 using SIL.IO;
