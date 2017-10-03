@@ -43,6 +43,9 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 							"References",
 							"VariantEntryTypes",
 							"ComplexEntryTypes",
+							"Languages",
+							"DialectLabels",
+							"ExtendedNoteTypes",
 							"PublicationTypes"
 						});
 

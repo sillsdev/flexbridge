@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2016 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Chorus.FileTypeHandlers;
 using Chorus.merge;
@@ -19,7 +20,7 @@ namespace LibFLExBridgeChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 26;
+		internal const int ExpectedExtensionCount = 27;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
@@ -199,6 +200,13 @@ namespace LibFLExBridgeChorusPluginTests
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			return doc.DocumentElement;
+		}
+
+		internal static IChorusFileTypeHandler CreateChorusFileHandlers()
+		{
+			return (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
+			 where handler.GetType().Name == "FieldWorksCommonFileHandler"
+			 select handler).First();
 		}
 	}
 }
