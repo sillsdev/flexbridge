@@ -1,11 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Text;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
@@ -53,6 +52,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		public const string LanguageProject = "LanguageProject";
 		public const string LanguageProjectFilename = LanguageProject + "." + langproj;
 		public const string LangProject = "LangProject";
+		public const string ConfigurationItem = "ConfigurationItem";
 		public const string Label = "label";
 		public const string Title = "Title";
 		public const string NamedStyle = "namedStyle";
@@ -67,6 +67,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		// FW layouts
 		public const string fwlayout = "fwlayout";
+		public const string fwdictconfig = "fwdictconfig";
 
 		// Old style
 		public const string RtTag = "rt";

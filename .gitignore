@@ -36,7 +36,7 @@ lib/*/IPCFramework.dll
 lib/*/Autofac.dll
 lib/*/*HelpProvider.dll
 lib/*/L10NSharp.xml
-lib/*.msm
+lib/Release/*.msm
 lib/*/*.config
 lib/common/Chorus_Help.chm
 /Mercurial

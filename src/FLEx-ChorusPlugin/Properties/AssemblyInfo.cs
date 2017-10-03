@@ -14,5 +14,3 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
 [assembly: InternalsVisibleTo("RepositoryUtility")]
 [assembly: InternalsVisibleTo("FwdataTestApp")]
-[assembly: InternalsVisibleTo("TheTurtle")]
-[assembly: InternalsVisibleTo("TheTurtleTests")]

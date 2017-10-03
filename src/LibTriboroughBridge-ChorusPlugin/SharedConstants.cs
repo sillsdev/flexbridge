@@ -1,10 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2015 SIL International. All rights reserved.
+// Copyright (C) 2010-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License, as specified in the license.rtf file.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Text;
 
 namespace LibTriboroughBridgeChorusPlugin
@@ -20,5 +19,6 @@ namespace LibTriboroughBridgeChorusPlugin
 		public const string FwXmlLockExtension = FwXmlExtension + FwLockExtension;
 		public const string FwDb4oExtension = "." + FwDb4oExtensionNoPeriod;
 		public const string FwDb4oExtensionNoPeriod = "fwdb";
+		public const string DictConfigSchemaFilename = "DictionaryConfiguration.xsd";
 	}
 }

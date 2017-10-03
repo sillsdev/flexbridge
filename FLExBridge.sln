@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
 	ProjectSection(SolutionItems) = preProject
@@ -59,41 +59,49 @@ Global
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Debug|x86.Build.0 = Debug|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|Mixed Platforms.ActiveCfg = DebugMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|Mixed Platforms.Build.0 = DebugMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|x86.ActiveCfg = DebugMono|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.DebugMono|x86.Build.0 = DebugMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|x86.ActiveCfg = Release|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.Release|x86.Build.0 = Release|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Mixed Platforms.ActiveCfg = ReleaseMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|Mixed Platforms.Build.0 = ReleaseMono|Any CPU
 		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|x86.ActiveCfg = ReleaseMono|Any CPU
+		{133981BF-62BF-453A-8ED0-AEFA386FEBB8}.ReleaseMono|x86.Build.0 = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Debug|x86.Build.0 = Debug|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|Mixed Platforms.ActiveCfg = DebugMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|Mixed Platforms.Build.0 = DebugMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|x86.ActiveCfg = DebugMono|Any CPU
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.DebugMono|x86.Build.0 = DebugMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|x86.ActiveCfg = Release|Any CPU
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.Release|x86.Build.0 = Release|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|Mixed Platforms.ActiveCfg = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|Mixed Platforms.Build.0 = ReleaseMono|Any CPU
 		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|x86.ActiveCfg = ReleaseMono|Any CPU
+		{5512542B-6423-4221-90AC-CF12CC73E96F}.ReleaseMono|x86.Build.0 = ReleaseMono|Any CPU
 		{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -309,8 +317,6 @@ Global
 		{FC668C72-7472-4774-8501-8E021ECF3BEA}.ReleaseMono|Mixed Platforms.Build.0 = ReleaseMono|Any CPU
 		{FC668C72-7472-4774-8501-8E021ECF3BEA}.ReleaseMono|x86.ActiveCfg = ReleaseMono|Any CPU
 		{FC668C72-7472-4774-8501-8E021ECF3BEA}.ReleaseMono|x86.Build.0 = ReleaseMono|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

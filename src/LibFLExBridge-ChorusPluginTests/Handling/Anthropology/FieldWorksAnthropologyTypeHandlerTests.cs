@@ -12,7 +12,6 @@ using System.Reflection;
 using Chorus.FileTypeHandlers;
 using Chorus.FileTypeHandlers.xml;
 using Chorus.merge.xml.generic;
-using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;

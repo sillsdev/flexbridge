@@ -11,7 +11,6 @@ using NUnit.Framework;
 using SIL.TestUtilities;
 using SIL.LiftBridge.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin;
-using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 using LibTriboroughBridgeChorusPlugin;
 
 namespace LiftBridgeTests.Infrastructure.ActionHandlers
@@ -29,7 +28,7 @@ namespace LiftBridgeTests.Infrastructure.ActionHandlers
 			{
 				var fakeProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 				Directory.CreateDirectory(fakeProjectDir);
-				using (var tempDir = TemporaryFolder.TrackExisting(fakeProjectDir))
+				using (TemporaryFolder.TrackExisting(fakeProjectDir))
 				{
 					var extantDir = Path.Combine(fakeProjectDir, "extantmatchingrepo",
 						SharedConstants.OtherRepositories, Utilities.LIFT);
