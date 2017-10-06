@@ -17,7 +17,7 @@
 
   <!-- ***************** Main build ***************** -->
   <PropertyGroup>
-	<Solution>FLExBridge VS2010.sln</Solution>
+	<Solution>FLExBridge.sln</Solution>
 	<ApplicationName>FLEx Bridge</ApplicationName>
 	<Configuration>ReleaseMono</Configuration>
 	<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
