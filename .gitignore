@@ -47,3 +47,4 @@ packages/
 src/Installer/output/
 src/Installer/obj/
 vcs_version
+.idea/
