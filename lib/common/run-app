@@ -6,6 +6,7 @@ scriptdir=$(dirname "$0")
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/flexbridge
 fwlib=$prefix/lib/fieldworks
+MONO_PREFIX=/opt/mono4-sil
 
 # Allow running ChorusHub as a mono service
 
@@ -25,7 +26,7 @@ ARCH=$(uname -m)
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 # (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
 XULRUNNER=/usr/lib/xulrunner-geckofx-29
-LD_LIBRARY_PATH="${XULRUNNER}:/opt/mono-sil/lib:${LD_LIBRARY_PATH}"
+LD_LIBRARY_PATH="${XULRUNNER}:${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
 GECKOFX=/usr/lib/cli/geckofx-29
 LD_PRELOAD=${GECKOFX}/geckofix.so
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
@@ -35,9 +36,8 @@ MONO_PATH="${GDK_SHARP}:${GECKOFX}"
 MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-0=-gshared"
 
-if [ -f /opt/mono-sil/bin/mono ]
+if [ -f ${MONO_PREFIX}/bin/mono ]
 then
-	MONO_PREFIX=/opt/mono-sil
 	BASE=$fwlib
 	RUNMODE=INSTALLED
 else
