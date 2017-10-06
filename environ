@@ -7,7 +7,7 @@
 
 BASE="$(pwd)"
 [ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono4-sil
 
 # Dependency locations
 # Search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH.
