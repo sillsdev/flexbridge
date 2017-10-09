@@ -2,6 +2,9 @@
 	<PropertyGroup>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
+		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'=='Windows_NT'">Debug</Configuration>
+		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'!='Windows_NT'">DebugMono</Configuration>
+		<Platform Condition="'$(Platform)'==''">Any CPU</Platform>
 		<Solution>FLExBridge.sln</Solution>
 		<ApplicationName>FLEx Bridge</ApplicationName>
 		<Configuration Condition="'$(OS)'!='Windows_NT'">ReleaseMono</Configuration>
@@ -28,6 +31,7 @@
 
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
+	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
 
 	<!-- ***************** Main build ***************** -->
 
@@ -38,14 +42,8 @@
 	</Target>
 
 	<ItemGroup>
-		<OutputFiles
-			Include="$(RootDir)/output/**/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
-		<ObjFiles
-			Include="$(RootDir)/**/obj/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
+		<OutputFiles Include="$(RootDir)/output/**/*" Exclude="$(RootDir)/.git/**/*"/>
+		<ObjFiles Include="$(RootDir)/**/obj/*" Exclude="$(RootDir)/.git/**/*"/>
 		<OutputDirectory Include="$(RootDir)/output/"/>
 	</ItemGroup>
 
@@ -138,6 +136,9 @@
 		<ReadLinesFromFile File="$(RootDir)/version" Condition="'$(Version)' == ''">
 			<Output TaskParameter="Lines" PropertyName="Version" />
 		</ReadLinesFromFile>
+	<CreateProperty Condition="'$(BUILD_VCS_NUMBER)' != ''" Value="$(Version).$(BUILD_VCS_NUMBER)">
+		<Output TaskParameter="Value" PropertyName="Version"/>
+	</CreateProperty>
 		<Message Text="Version: $(Version)" Importance="high"/>
 	</Target>
 
@@ -210,7 +211,7 @@
 
 	<!-- For use when working on installer development -->
 	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
-	<!-- msbuild FLExBridge.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
+	<!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:BUILD_VCS_NUMBER=24445 /p:Configuration=Release /p:Platform="Any CPU" -->
 	<!-- If no Version is specified, reads from "$(RootDir)/version". -->
 	<Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build" Condition="'$(OS)'=='Windows_NT'">
 		<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
@@ -224,25 +225,4 @@
 		<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
 		<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
 	</Target>
-
-	<Target Name="Upload" DependsOnTargets="CreateDirectories" Condition="'$(OS)'=='Windows_NT'">
-		<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/FLExBridgeInstaller.msi"/>
-
-		<Message Text="Attempting rsync of ReleaseNotes.md" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/ReleaseNotes.md"/>
-
-		<Message Text="Attempting rsync of appcast.xml" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/appcast.xml&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/appcast.xml"/>
-
-		<Message Text="Attempting rsync of flexbridge.css" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/flexbridge.css&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/flexbridge.css"/>
-
-		<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
-
-		<Message Text="Attempting rsync of index.htm" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.htm"/>
-	</Target>
-
 </Project>
