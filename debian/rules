@@ -3,6 +3,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+export XDG_CONFIG_HOME=/tmp/.config
+
 %:
 	dh $@ --with cli
 
