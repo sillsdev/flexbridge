@@ -3,6 +3,7 @@
 CPUARCH=$(shell /usr/bin/arch)
 BUILD_NUMBER=$(shell cat version)
 BUILD_VCS_NUMBER=$(shell cat vcs_version)
+XDG_CONFIG_HOME ?= /tmp/.config
 UploadFolder="Alpha"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
