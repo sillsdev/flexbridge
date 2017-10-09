@@ -1,3 +1,9 @@
+flexbridge (3.0.0) UNRELEASED; urgency=low
+
+  * Support FieldWorks 9
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 10 Oct 2017 16:27:05 +0200
+
 flexbridge (2.5.3) unstable; urgency=low
 
   * Fix dependency problem on Linux

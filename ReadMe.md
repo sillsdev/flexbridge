@@ -72,8 +72,8 @@ When releasing FLEx Bridge be sure to do the following:
 
 				@REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
 				"%VS120COMNTOOLS%vsvars32.bat"
-				@REM Replace Alpha here with Beta or Stable as appropriate.
-				msbuild build/build.common.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:RootDir=..
+				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
+				msbuild build/FLExBridge.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
 	- For Linux:
 
@@ -84,12 +84,13 @@ When releasing FLEx Bridge be sure to do the following:
 
 		- Create an entry atop ReleaseNotes.md:
 
-			`sed -i '1i ##\n* New version.' src/Installer/ReleaseNotes.md`
+			`sed -i "1i ## $(cat version) UNRELEASED\n\n* New version\n" src/Installer/ReleaseNotes.md`
 
 		- Edit src/Installer/ReleaseNotes.md , replacing 'New version.'
 
 		- `CHANNEL=Alpha` # or Beta or Stable. On 2016-12-16 we are using Alpha for Dictionary branch.
-		- Fill in debian/changelog and ReleaseNotes.md, make html file:
+
+		- Fill in debian/changelog and ReleaseNotes.md, make html file (for a pre-release pass `/p:Release=false` as additional property):
 
 			`(source environ && cd build && xbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
 
