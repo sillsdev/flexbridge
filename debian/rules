@@ -10,5 +10,13 @@ export XDG_CONFIG_HOME=/tmp/.config
 
 override_dh_clideps:
 	dh_clideps \
-		--exclude-moduleref=icuuc48.dll \
-		--exclude-moduleref=icuin48.dll
+		--exclude-moduleref=icuuc60.dll --exclude-moduleref=icuin60.dll \
+		--exclude-moduleref=icuuc59.dll --exclude-moduleref=icuin59.dll \
+		--exclude-moduleref=icuuc58.dll --exclude-moduleref=icuin58.dll \
+		--exclude-moduleref=icuuc57.dll --exclude-moduleref=icuin57.dll \
+		--exclude-moduleref=icuuc56.dll --exclude-moduleref=icuin56.dll \
+		--exclude-moduleref=icuuc55.dll --exclude-moduleref=icuin55.dll \
+		--exclude-moduleref=icuuc54.dll --exclude-moduleref=icuin54.dll \
+		--exclude-moduleref=icuuc52.dll --exclude-moduleref=icuin52.dll \
+		--exclude-moduleref=icuuc48.dll --exclude-moduleref=icuin48.dll \
+		--exclude-moduleref=libicuuc.so --exclude-moduleref=libicui18n.so
