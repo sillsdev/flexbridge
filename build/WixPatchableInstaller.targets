@@ -98,15 +98,16 @@
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
 
+	<!-- called only once, at the first release of a major version -->
 	<Target Name="BuildRelease">
-		<!--CallTarget Targets="GetDotNetFiles" />
-		<CallTarget Targets="ResetBuildNumberFile" /-->
+		<!--CallTarget Targets="GetDotNetFiles" />-->
 		<CallTarget Targets="CleanMasterOutputDir" />
 		<CallTarget Targets="BuildProductMain" />
 		<CallTarget Targets="BuildProductBaseMsi" />
 		<CallTarget Targets="CopyBuildToMaster" />
 	</Target>
 
+	<!-- called at each minor release to build both full and patch installers -->
 	<Target Name="BuildPatch">
 		<CallTarget Targets="BuildProductMain" />
 		<CallTarget Targets="BuildProductPatchMsp" />
@@ -118,14 +119,9 @@
 	<!-- ########################################################################################################## -->
 
 	<Target Name="BuildProductMain">
-		<CallTarget Targets="BuildProduct" />
-		<CallTarget Targets="MakeInstallBuildFolders" />
-		<CallTarget Targets="CopyFilesToInstall" />
-	</Target>
-
-	<Target Name="BuildProduct">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="ProductCompile" />
+		<CallTarget Targets="CopyFilesToInstall" />
 	</Target>
 
 	<!-- ########################################################################################################## -->
@@ -153,17 +149,14 @@
 		<RemoveDir Directories="$(AppBuildMasterDir)" />
 	</Target>
 
-	<Target Name="MakeInstallBuildFolders" DependsOnTargets="InstallerVersionNumbers">
-		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
-
-		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(ApplicationName) 1.0 Build -->
-	</Target>
-
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
+		<!-- prepare the directory -->
+		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
+		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(ApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<ItemGroup>
-			<BinFiles Include="$(RootDir)/$(ApplicationName)/bin/$(Platform)/$(Configuration)/**/*"/>
-			<DataFiles Include="$(RootDir)/$(ApplicationName) Data Folder/**/*"/>
+			<BinFiles Include="$(RootDir)/$(ApplicationName)/output/$(Configuration)/**/*"/>
+			<!-- TODO? DataFiles Include="$(RootDir)/$(ApplicationName) Data Folder/**/*"/-->
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName) Data Folder"/>
@@ -171,7 +164,7 @@
 
 	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
 		<ItemGroup>
-			<ObjectFiles Include="$(AppBuildDir)/Objects/**/*"/>
+			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)"/>
 	</Target>
@@ -253,6 +246,7 @@
 		<PropertyGroup>
 			<MsiFile>$(ApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/$(ApplicationName)/WixInstaller/BaseInstallerBuild</BaseBuildDir>
+			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/Objects/$(ApplicationName) deserves a variable -->
 			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/Objects/$(ApplicationName)" "$(AppBuildDir)/Objects/$(ApplicationName) Data Folder" "$(CertPath)" "@(CertPass)" $(CopyrightYear) "$(Manufacturer)"]]></BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
