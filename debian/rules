@@ -17,4 +17,11 @@ override_dh_clideps:
 		--exclude-moduleref=icuuc54.dll --exclude-moduleref=icuin54.dll \
 		--exclude-moduleref=icuuc52.dll --exclude-moduleref=icuin52.dll \
 		--exclude-moduleref=icuuc48.dll --exclude-moduleref=icuin48.dll \
-		--exclude-moduleref=libicuuc.so --exclude-moduleref=libicui18n.so
+		--exclude-moduleref=libicuuc.so --exclude-moduleref=libicui18n.so \
+		--exclude-moduleref=icu.net --exclude-moduleref=libdl.so \
+		--exclude-moduleref=xul --exclude-moduleref=libxul.so \
+		--exclude-moduleref=mozjs --exclude-moduleref=mozglue \
+		--exclude-moduleref=libgeckofix.so --exclude-moduleref=Geckofx-Core.dll \
+		--exclude-moduleref=libgobject-2.0.so --exclude-moduleref=libgio-2.0.so \
+		--exclude-moduleref=libglib-2.0.so --exclude-moduleref=libxklavier \
+		--exclude-moduleref=Autofac --exclude-moduleref=NDesk.DBus
