@@ -29,7 +29,7 @@ vcs_version:
 	[ -d .git ] && git rev-parse --short HEAD >vcs_version
 
 clean:
-	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
+	. ./environ && cd build && xbuild FLExBridge.proj /t:Clean
 	/bin/rm -rf output Download Mercurial
 
 install:
