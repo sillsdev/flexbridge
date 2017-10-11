@@ -23,8 +23,10 @@ debug: vcs_version
 	cp -a flexbridge environ environ-xulrunner output/DebugMono
 
 # generate the vcs_version file, this hash is used to update the about.htm information
+# when building the package we don't have a git repo, so we rely to get the information from the
+# build agent
 vcs_version:
-	git rev-parse --short HEAD >vcs_version
+	[ -d .git ] && git rev-parse --short HEAD >vcs_version
 
 clean:
 	. ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Clean /p:RootDir=..
