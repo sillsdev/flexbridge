@@ -26,7 +26,7 @@ debug: vcs_version
 # when building the package we don't have a git repo, so we rely to get the information from the
 # build agent
 vcs_version:
-	[ -d .git ] && git rev-parse --short HEAD >vcs_version
+	[ -d .git ] && git rev-parse --short HEAD >vcs_version || true
 
 clean:
 	. ./environ && cd build && xbuild FLExBridge.proj /t:Clean
