@@ -11,6 +11,7 @@ no_proxy := $(no_proxy),*.local
 all: release
 
 release: vcs_version
+	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
 	cp -a flexbridge environ environ-xulrunner output/ReleaseMono
 
