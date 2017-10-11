@@ -131,7 +131,7 @@
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
-		<Copy SourceFiles="$(RootDir)/output/Installer/About.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
 	<Target Name="VersionNumbers">
@@ -150,14 +150,13 @@
 		<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
 	</Target>
 
-	<Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers"
-		Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers">
 		<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
-		<Copy SourceFiles="$(RootDir)/DistFiles/About.htm"
+		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
-		<FileUpdate File="$(RootDir)/output/Installer/About.htm"
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/About.htm" Regex="FBCOMMITID"
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
 			ReplacementText="$(BUILD_VCS_NUMBER)"/>
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
