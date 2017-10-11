@@ -154,6 +154,7 @@
 		<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
+		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
 		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
