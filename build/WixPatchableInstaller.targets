@@ -156,7 +156,7 @@
 		<!-- copy in new stuff -->
 		<ItemGroup>
 			<BinFiles Include="$(RootDir)/$(ApplicationName)/output/$(Configuration)/**/*"/>
-			<!-- TODO? DataFiles Include="$(RootDir)/$(ApplicationName) Data Folder/**/*"/-->
+			<!-- TODO (Hasso) 2017.10: we use only a few of these, I'm pretty sure: DataFiles Include="$(RootDir)/DistFiles/**/*"/-->
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName) Data Folder"/>
