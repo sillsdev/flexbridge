@@ -39,6 +39,7 @@
 		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
 		 but it remembers not to call targets a second time via dependencies. -->
 		<Message Text="Build Complete"/>
+		<Message Text="teamcity_build_checkoutDir = '$(teamcity_build_checkoutDir)' #TODO (Hasso) 2017.10: ensure absolute"/>
 	</Target>
 
 	<ItemGroup>
@@ -62,7 +63,6 @@
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
 		<MakeDir Directories="$(RootDir)/output/Common" Condition="'$(OS)'=='Windows_NT'"/>
-		<MakeDir Directories="$(RootDir)/output/Installer/" />
 	</Target>
 
 	<ItemGroup>
@@ -207,7 +207,7 @@
 	<!-- *********************** Installer stuff below.  ******************************* -->
 
 	<!-- For building an an installer on TC -->
-	<Target Name="Installer" DependsOnTargets="DevelopInstaller; Test" Condition="'$(OS)'=='Windows_NT'"/>
+	<Target Name="Installer" DependsOnTargets="BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
 
 	<!-- For use when working on installer development -->
 	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->

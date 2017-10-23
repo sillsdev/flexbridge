@@ -1,5 +1,6 @@
 src/_ReSharper.LiftBridge/
 bin/
+BuildDir
 obj/
 output/
 Mercurial/

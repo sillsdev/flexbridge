@@ -101,45 +101,30 @@
 	<!-- called only once, at the first release of a major version -->
 	<Target Name="BuildRelease">
 		<!--CallTarget Targets="GetDotNetFiles" />-->
-		<CallTarget Targets="CleanMasterOutputDir" />
-		<CallTarget Targets="BuildProductMain" />
-		<CallTarget Targets="BuildProductBaseMsi" />
-		<CallTarget Targets="CopyBuildToMaster" />
+		<CallTarget Targets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster" />
 	</Target>
 
 	<!-- called at each minor release to build both full and patch installers -->
-	<Target Name="BuildPatch">
-		<CallTarget Targets="BuildProductMain" />
-		<CallTarget Targets="BuildProductPatchMsp" />
-	</Target>
+	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ### TODO (Hasso) 2107.10: assimilate with main targets                                                 ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain">
-		<CallTarget Targets="Clean" />
-		<CallTarget Targets="ProductCompile" />
-		<CallTarget Targets="CopyFilesToInstall" />
-	</Target>
+	<Target Name="BuildProductMain" DependsOnTargets="Clean;ProductCompile;CopyFilesToInstall" />
 
 	<!-- ########################################################################################################## -->
-	<!-- ### Compile Targets                                                                                    ### -->
+	<!-- ### Compile Product and Installer Custom Actions                                                       ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile">
-		<!-- REVIEW (Hasso) 2017.10: needed? MSBuild Projects="$(ApplicationName)/WixInstaller/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=$(Configuration);Platform=$(Platform)" /-->
+	<Target Name="ProductCompile" DependsOnTargets="Build">
+		<MSBuild Projects="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions.sln" Properties="Configuration=release;Platform=x86" />
 	</Target>
 
-	<!-- As new compile Targets are added, include the relative file path below so they can be cleaned -->
-	<Target Name="Clean">
-		<ItemGroup>
-			<ProjectsToClean Include="$(ApplicationName)"/>
-			<ProjectsToClean Include="$(ApplicationName)/WixInstaller/CustomActions/CustomActions"/>
-		</ItemGroup>
-		<RemoveDir Directories="@(ProjectsToClean -> '%(Identity)/bin')" />
-		<RemoveDir Directories="@(ProjectsToClean -> '%(Identity)/obj')" />
-	</Target>
+	<!-- used by target Clean in FLExBridge.proj -->
+	<ItemGroup>
+		<OutputFiles Include="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions/bin/**/*"/>
+	</ItemGroup>
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Folders and Copy Targets                                                                     ### -->
@@ -155,8 +140,8 @@
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(ApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<ItemGroup>
-			<BinFiles Include="$(RootDir)/$(ApplicationName)/output/$(Configuration)/**/*"/>
-			<!-- TODO (Hasso) 2017.10: we use only a few of these, I'm pretty sure: DataFiles Include="$(RootDir)/DistFiles/**/*"/-->
+			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*"/>
+			<DataFiles Include="$(RootDir)/DistFiles/license.rtf"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName) Data Folder"/>
@@ -171,7 +156,7 @@
 
 	<Target Name="GetDotNetFiles" >
 		<PropertyGroup>
-			<WixLibsDir>$(RootDir)/$(ApplicationName)/WixInstaller/libs</WixLibsDir>
+			<WixLibsDir>$(RootDir)/src/WiXInstaller/libs</WixLibsDir>
 		</PropertyGroup>
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
@@ -189,6 +174,7 @@
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Download FwBuildTasks; needed for cross-platform DownloadFile task.                                ### -->
+	<!-- ### NB (Hasso) 2017.10: this is *super* important, since WiX is for Windows :P                         ### -->
 	<!-- ########################################################################################################## -->
 	
 	<PropertyGroup>
@@ -202,8 +188,7 @@
 	</Target>
 
 	<UsingTask TaskName="DownloadFileOnWindows" TaskFactory="CodeTaskFactory"
-		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll"
-		Condition=" '$(OS)' == 'Windows_NT' ">
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" Condition=" '$(OS)' == 'Windows_NT' ">
 		<ParameterGroup>
 			<Address ParameterType="System.String" Required="true" />
 			<OutputFilename ParameterType="System.String" Required="true" />
@@ -245,9 +230,9 @@
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="ReadCertPassFile; InstallerVersionNumbers">
 		<PropertyGroup>
 			<MsiFile>$(ApplicationName)_$(Revision).msi</MsiFile>
-			<BaseBuildDir>$(RootDir)/$(ApplicationName)/WixInstaller/BaseInstallerBuild</BaseBuildDir>
-			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/Objects/$(ApplicationName) deserves a variable -->
-			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/Objects/$(ApplicationName)" "$(AppBuildDir)/Objects/$(ApplicationName) Data Folder" "$(CertPath)" "@(CertPass)" $(CopyrightYear) "$(Manufacturer)"]]></BaseBuildArgs>
+			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
+			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/objects/$(ApplicationName) deserves a variable -->
+			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" "$(CertPath)" "@(CertPass)" $(CopyrightYear) "$(Manufacturer)"]]></BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -260,13 +245,13 @@
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="ReadCertPassFile; InstallerVersionNumbers">
 		<!-- TODO (Hasso) 2017.10: ensure this file exists -->
-		<ReadLinesFromFile File="$(AppBuildMasterDir)/Objects/$(ApplicationName)/CurrentVersion.number">
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/objects/$(ApplicationName)/CurrentVersion.number">
 			<Output TaskParameter="Lines" ItemName="BaseVersion" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(ApplicationName)_$(Revision).msp</MspFile>
-			<PatchDir>$(RootDir)/$(ApplicationName)/WixInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs><![CDATA["$(ApplicationName)" @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/Objects/$(ApplicationName)" "$(AppBuildDir)/Objects/$(ApplicationName)" "$(AppBuildMasterDir)/Objects/$(ApplicationName) Data Folder" "$(AppBuildDir)/Objects/$(ApplicationName) Data Folder" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(CertPath)" "@(CertPass)" "$(Manufacturer)"]]></PatchArgs>
+			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
+			<PatchArgs><![CDATA["$(ApplicationName)" @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildMasterDir)/objects/$(ApplicationName) Data Folder" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(CertPath)" "@(CertPass)" "$(Manufacturer)"]]></PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
