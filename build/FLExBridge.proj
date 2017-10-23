@@ -39,7 +39,6 @@
 		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
 		 but it remembers not to call targets a second time via dependencies. -->
 		<Message Text="Build Complete"/>
-		<Message Text="teamcity_build_checkoutDir = '$(teamcity_build_checkoutDir)' #TODO (Hasso) 2017.10: ensure absolute"/>
 	</Target>
 
 	<ItemGroup>

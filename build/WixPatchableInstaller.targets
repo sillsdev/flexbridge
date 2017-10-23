@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-
-	<PropertyGroup>
-		<MSBuildExtensionTargets>$(RootDir)/packages/MSBuild.Extension.Pack.1.9.0/build/net40/MSBuild.Extension.Pack.targets</MSBuildExtensionTargets>
-	</PropertyGroup>
-	<!--Import Project="$(MSBuildExtensionTargets)" Condition="Exists('$(MSBuildExtensionTargets)')"/-->
-
 	<!-- ########################################################################################################## -->
 	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
 	<!-- ########################################################################################################## -->
@@ -99,10 +92,7 @@
 	<!-- ########################################################################################################## -->
 
 	<!-- called only once, at the first release of a major version -->
-	<Target Name="BuildRelease">
-		<!--CallTarget Targets="GetDotNetFiles" />-->
-		<CallTarget Targets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster" />
-	</Target>
+	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 
 	<!-- called at each minor release to build both full and patch installers -->
 	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
@@ -158,40 +148,21 @@
 		<PropertyGroup>
 			<WixLibsDir>$(RootDir)/src/WiXInstaller/libs</WixLibsDir>
 		</PropertyGroup>
-		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
-			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')"/> <!-- .net 4.5.1 -->
-		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_x86.exe')"/>			<!-- VisualC++ 10 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x86.exe')"/>	<!-- VisualC++ 11 runtime -->
-		<DownloadFile Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x86.exe')"/>	<!-- VisualC++ 12 runtime -->
+		<DownloadFileOnce Address="http://go.microsoft.com/fwlink/?LinkId=322115"
+			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"/> <!-- .net 4.5.1 -->
+		<DownloadFileOnce Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"/>			<!-- VisualC++ 10 runtime -->
+		<DownloadFileOnce Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"/>		<!-- VisualC++ 11 runtime -->
+		<DownloadFileOnce Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"/>		<!-- VisualC++ 12 runtime -->
 	</Target>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Download FwBuildTasks; needed for cross-platform DownloadFile task.                                ### -->
-	<!-- ### NB (Hasso) 2017.10: this is *super* important, since WiX is for Windows :P                         ### -->
-	<!-- ########################################################################################################## -->
-	
-	<PropertyGroup>
-		<FwBuildTasksUrl>https://github.com/sillsdev/FieldWorks/raw/master/Build/FwBuildTasks.dll</FwBuildTasksUrl>
-		<FwBuildTasksPath>$(RootDir)/FwBuildTasks.dll</FwBuildTasksPath>
-	</PropertyGroup>
-
-	<Target Name="DownloadBuildTasks" Condition="!Exists($(FwBuildTasksPath))">
-		<DownloadFileOnWindows Address="$(FwBuildTasksUrl)" OutputFilename="$(FwBuildTasksPath)" Condition="'$(OS)' == 'Windows_NT'" />
-		<Exec Command="wget -O $(FwBuildTasksPath) $(FwBuildTasksUrl) || curl -o $(FwBuildTasksPath) -L $(FwBuildTasksUrl)" Condition="'$(OS)' != 'Windows_NT'" />
-	</Target>
-
-	<UsingTask TaskName="DownloadFileOnWindows" TaskFactory="CodeTaskFactory"
+	<UsingTask TaskName="DownloadFileOnce" TaskFactory="CodeTaskFactory"
 		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" Condition=" '$(OS)' == 'Windows_NT' ">
 		<ParameterGroup>
 			<Address ParameterType="System.String" Required="true" />
-			<OutputFilename ParameterType="System.String" Required="true" />
+			<LocalFilename ParameterType="System.String" Required="true" />
 		</ParameterGroup>
 		<Task>
 			<Reference Include="System.Core" />
@@ -202,23 +173,25 @@
 			<Using Namespace="Microsoft.Build.Utilities" />
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
-				try
-				{
-					OutputFilename = Path.GetFullPath(OutputFilename);
-
-					Log.LogMessage(string.Format("Downloading {0}...", Path.GetFileName(OutputFilename)));
-					using (var webClient = new WebClient())
+					try
 					{
-						webClient.DownloadFile(Address, OutputFilename);
+						LocalFilename = Path.GetFullPath(LocalFilename);
+						if (File.Exists(LocalFilename))
+							return true;
+
+						Log.LogMessage(string.Format("Downloading {0}...", Path.GetFileName(LocalFilename)));
+						using (var webClient = new WebClient())
+						{
+							webClient.DownloadFile(Address, LocalFilename);
+						}
+						return true;
 					}
-					return true;
-				}
-				catch (Exception ex)
-				{
-					Log.LogErrorFromException(ex);
-					return false;
-				}
-			]]>
+					catch (Exception ex)
+					{
+						Log.LogErrorFromException(ex);
+						return false;
+					}
+				]]>
 			</Code>
 		</Task>
 	</UsingTask>
@@ -227,7 +200,7 @@
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductBaseMsi" DependsOnTargets="ReadCertPassFile; InstallerVersionNumbers">
+	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; ReadCertPassFile; InstallerVersionNumbers">
 		<PropertyGroup>
 			<MsiFile>$(ApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
@@ -243,7 +216,7 @@
 		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
 	</Target>
 
-	<Target Name="BuildProductPatchMsp" DependsOnTargets="ReadCertPassFile; InstallerVersionNumbers">
+	<Target Name="BuildProductPatchMsp" DependsOnTargets="GetDotNetFiles; ReadCertPassFile; InstallerVersionNumbers">
 		<!-- TODO (Hasso) 2017.10: ensure this file exists -->
 		<ReadLinesFromFile File="$(AppBuildMasterDir)/objects/$(ApplicationName)/CurrentVersion.number">
 			<Output TaskParameter="Lines" ItemName="BaseVersion" />
