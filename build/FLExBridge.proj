@@ -135,9 +135,9 @@
 		<ReadLinesFromFile File="$(RootDir)/version" Condition="'$(Version)' == ''">
 			<Output TaskParameter="Lines" PropertyName="Version" />
 		</ReadLinesFromFile>
-	<CreateProperty Condition="'$(BUILD_VCS_NUMBER)' != ''" Value="$(Version).$(BUILD_VCS_NUMBER)">
-		<Output TaskParameter="Value" PropertyName="Version"/>
-	</CreateProperty>
+		<CreateProperty Condition="'$(BuildCounter)' != ''" Value="$(Version).$(BuildCounter)">
+			<Output TaskParameter="Value" PropertyName="Version"/>
+		</CreateProperty>
 		<Message Text="Version: $(Version)" Importance="high"/>
 	</Target>
 
