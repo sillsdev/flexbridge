@@ -199,7 +199,7 @@
 			<MsiFile>$(ApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
 			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/objects/$(ApplicationName) deserves a variable -->
-			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" "$(CertPath)" "@(CertPass)" $(CopyrightYear) "$(Manufacturer)"]]></BaseBuildArgs>
+			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -218,7 +218,7 @@
 		<PropertyGroup>
 			<MspFile>$(ApplicationName)_$(Revision).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs><![CDATA["$(ApplicationName)" @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildMasterDir)/objects/$(ApplicationName) Data Folder" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(CertPath)" "@(CertPass)" "$(Manufacturer)"]]></PatchArgs>
+			<PatchArgs><![CDATA["$(ApplicationName)" @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildMasterDir)/objects/$(ApplicationName) Data Folder" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
@@ -226,6 +226,6 @@
 		<ItemGroup>
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
 		</ItemGroup>
-		<Move SourceFiles="" DestinationFolder="$(InstallersBaseDir)"/>
+		<Move SourceFiles="@(PatchFiles)" DestinationFolder="$(InstallersBaseDir)"/>
 	</Target>
 </Project>
