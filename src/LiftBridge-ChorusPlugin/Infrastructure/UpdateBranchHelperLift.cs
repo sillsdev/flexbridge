@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
+using System.Globalization;
 using SIL.LiftBridge.Services;
 using SIL.Xml;
 using System.Xml;
@@ -12,7 +13,7 @@ namespace SIL.LiftBridge.Infrastructure
 	{
 		protected override float GetModelVersionFromBranchName(string branchName)
 		{
-			return float.Parse(branchName.Replace("LIFT", null));
+			return float.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
 		}
 
 		protected override float GetModelVersionFromClone(string cloneLocation)
@@ -23,7 +24,7 @@ namespace SIL.LiftBridge.Infrastructure
 		protected override string GetFullModelVersion(string cloneLocation)
 		{
 			var modelVersion = GetModelVersionFromClone(cloneLocation);
-			return "LIFT" + modelVersion;
+			return "LIFT" + modelVersion + "_ldml3";
 		}
 
 		private static float GetLiftVersionNumber(string repoLocation)
@@ -37,7 +38,7 @@ namespace SIL.LiftBridge.Infrastructure
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
-				return float.Parse(reader.Value);
+				return float.Parse(reader.Value, NumberFormatInfo.InvariantInfo);
 			}
 		}
 
