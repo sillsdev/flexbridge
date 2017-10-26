@@ -255,7 +255,8 @@ namespace TriboroughBridge_ChorusPlugin
 			// Required
 			if (!commandLineArgs.ContainsKey(liftmodel) || String.IsNullOrEmpty(commandLineArgs[liftmodel]))
 				throw new CommandLineException("-liftmodel", "is missing");
-			if (commandLineArgs[liftmodel] != "0.13")
+			// So that we can support a liftmodel parameter that looks like "0.13_ldml3"
+			if (!commandLineArgs[liftmodel].StartsWith("0.13"))
 				throw new CommandLineException("-liftmodel", "is not the supported FLEx LIFT model version of 0.13");
 
 			// AddArg(ref args, "-pipeID", _pipeID);

@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using SIL.Progress;
 using Chorus.VcsDrivers.Mercurial;
@@ -96,7 +97,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 					}
 					else
 					{
-						currentVersion = float.Parse(headKvp.Value.Branch);
+						currentVersion = float.Parse(headKvp.Value.Branch.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
 					}
 					if (currentVersion > desiredModelVersion)
 					{
