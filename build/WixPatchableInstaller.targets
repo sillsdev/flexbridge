@@ -88,7 +88,7 @@
 	<!-- called only once, at the first release of a major version -->
 	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 
-	<!-- called at each minor release to build both full and patch installers -->
+	<!-- called at each minor release to build a patch installer -->
 	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
 
 	<!-- ########################################################################################################## -->

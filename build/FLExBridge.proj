@@ -205,23 +205,7 @@
 
 	<!-- *********************** Installer stuff below.  ******************************* -->
 
-	<!-- For building an an installer on TC -->
+	<!-- For building an an installer on TeamCity (use TestInstallerBuild.bat to run locally) -->
 	<Target Name="Installer" DependsOnTargets="BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
-
-	<!-- For use when working on installer development -->
-	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
-	<!-- msbuild FLExBridge.build.win.proj /t:DevelopInstaller /p:BUILD_VCS_NUMBER=24445 /p:Configuration=Release /p:Platform="Any CPU" -->
-	<!-- If no Version is specified, reads from "$(RootDir)/version". -->
-	<Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build" Condition="'$(OS)'=='Windows_NT'">
-		<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
-		<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs"
-			Regex="Property_ProductVersion = &quot;.*&quot;"
-			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
-
-		<Message Text="Making Installer Version: $(Version)" Importance="high"/>
-		<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
-
-		<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
-		<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
-	</Target>
+	<Target Name="Patcher" DependsOnTargets="BuildPatch; Test" Condition="'$(OS)'=='Windows_NT'"/>
 </Project>
