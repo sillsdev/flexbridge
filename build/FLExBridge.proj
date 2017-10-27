@@ -158,6 +158,11 @@
 		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
 			ReplacementText="$(BUILD_VCS_NUMBER)"/>
 
+		<Copy SourceFiles="$(RootDir)/DistFiles/License.htm"
+			DestinationFolder="$(RootDir)/output/Installer"/>
+		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<FileUpdate File="$(RootDir)/output/Installer/appcast.xml"

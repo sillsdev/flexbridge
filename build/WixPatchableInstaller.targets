@@ -125,10 +125,12 @@
 		<!-- copy in new stuff -->
 		<ItemGroup>
 			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*"/>
-			<DataFiles Include="$(RootDir)/DistFiles/license.rtf"/>
+			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName) Data Folder"/>
+		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
