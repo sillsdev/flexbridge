@@ -42,9 +42,8 @@
 	</Target>
 
 	<ItemGroup>
-		<OutputFiles Include="$(RootDir)/output/**/*" Exclude="$(RootDir)/.git/**/*"/>
 		<ObjFiles Include="$(RootDir)/**/obj/*" Exclude="$(RootDir)/.git/**/*"/>
-		<OutputDirectory Include="$(RootDir)/output/"/>
+		<OutputDirectories Include="$(RootDir)/output/"/>
 	</ItemGroup>
 
 	<Target Name="Clean">
@@ -52,8 +51,7 @@
 		<Exec Command="find . -name obj -type d -print0 | xargs -0 rm -rf" WorkingDirectory="$(RootDir)"
 			Condition="'$(OS)'!='Windows_NT'"/>
 		<Delete Files="@(ObjFiles)" Condition="'$(OS)'=='Windows_NT'" />
-		<Delete Files="@(OutputFiles)" />
-		<RemoveDir Directories="$(OutputDirectory)"/>
+		<RemoveDir Directories="@(OutputDirectories)"/>
 		<Message Text="End Clean"/>
 	</Target>
 
@@ -61,7 +59,6 @@
 		<MakeDir Directories="$(RootDir)/output/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
-		<MakeDir Directories="$(RootDir)/output/Common" Condition="'$(OS)'=='Windows_NT'"/>
 	</Target>
 
 	<ItemGroup>
