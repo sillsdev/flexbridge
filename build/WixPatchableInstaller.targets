@@ -7,6 +7,7 @@
 	<PropertyGroup>
 		<CopyrightYear>2017</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
+		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
 	</PropertyGroup>
 
@@ -71,14 +72,16 @@
 			<Revision>$(MinorVersion).$(VersionSeg4)</Revision>
 
 			<!-- Build Directories -->
-			<AppBuildDir>$(InstallersBaseDir)/$(ApplicationName) $(MajorVersion) Build</AppBuildDir>
+			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MajorVersion)_Build</AppBuildDir>
 		</PropertyGroup>
 	</Target>
 
 	<!-- Build Directories -->
 	<PropertyGroup>
 		<InstallersBaseDir>$(RootDir)/BuildDir</InstallersBaseDir>
-		<AppBuildMasterDir>$(InstallersBaseDir)/$(ApplicationName) Build Master</AppBuildMasterDir>
+		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master</AppBuildMasterDir>
+		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
+		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -121,15 +124,15 @@
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- prepare the directory -->
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
-		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(ApplicationName) 1.0 Build -->
+		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<ItemGroup>
 			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName)"/>
-		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/objects/$(ApplicationName) Data Folder"/>
+		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)"/>
+		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)"/>
 		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
 	</Target>
 
@@ -198,29 +201,29 @@
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
 		<PropertyGroup>
-			<MsiFile>$(ApplicationName)_$(Revision).msi</MsiFile>
+			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/objects/$(ApplicationName) deserves a variable -->
-			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></BaseBuildArgs>
+			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/objects/$(SafeApplicationName) deserves a variable -->
+			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
 		<ItemGroup>
-			<InstallerFiles Include="$(BaseBuildDir)/**/$(ApplicationName)_*.exe"/>
-			<InstallerFiles Include="$(BaseBuildDir)/**/$(ApplicationName)_*.msi"/>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
 		</ItemGroup>
 		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
 		<!-- TODO (Hasso) 2017.10: ensure this file exists -->
-		<ReadLinesFromFile File="$(AppBuildMasterDir)/objects/$(ApplicationName)/CurrentVersion.number">
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/$(BinDirSuffix)/CurrentVersion.number">
 			<Output TaskParameter="Lines" ItemName="BaseVersion" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
-			<MspFile>$(ApplicationName)_$(Revision).msp</MspFile>
+			<MspFile>$(SafeApplicationName)_$(Revision).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs><![CDATA["$(ApplicationName)" @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/objects/$(ApplicationName)" "$(AppBuildDir)/objects/$(ApplicationName)" "$(AppBuildMasterDir)/objects/$(ApplicationName) Data Folder" "$(AppBuildDir)/objects/$(ApplicationName) Data Folder" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
+			<PatchArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
