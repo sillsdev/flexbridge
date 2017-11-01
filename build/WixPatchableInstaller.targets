@@ -64,7 +64,7 @@
 			<!-- set default values for trailing version numbers -->
 			<VersionSeg2 Condition="'$(VersionSeg2)'==''">0</VersionSeg2>
 			<VersionSeg3 Condition="'$(VersionSeg3)'==''">0</VersionSeg3>
-			<VersionSeg4 Condition="'$(VersionSeg4)'==''">0</VersionSeg4>
+			<VersionSeg4 Condition="'$(VersionSeg4)'==''">1</VersionSeg4> <!-- 1 is the base build number. It may be a NAnt thing... -->
 
 			<!-- REVIEW (Hasso) 2017.09: what do we call each segment again? Major.Minor.(Build|Patch).(Revision|Build) -->
 			<MajorVersion>$(VersionSeg1).$(VersionSeg2)</MajorVersion>
@@ -203,7 +203,6 @@
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<!-- REVIEW (Hasso) 2017.10: $(AppBuildDir)/objects/$(SafeApplicationName) deserves a variable -->
 			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
@@ -216,14 +215,11 @@
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
-		<!-- TODO (Hasso) 2017.10: ensure this file exists -->
-		<ReadLinesFromFile File="$(AppBuildMasterDir)/$(BinDirSuffix)/CurrentVersion.number">
-			<Output TaskParameter="Lines" ItemName="BaseVersion" />
-		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(Revision).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) @(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
+			<BaseVersion>$(VersionSeg1).$(VersionSeg2).$(VersionSeg3).1</BaseVersion>
+			<PatchArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
