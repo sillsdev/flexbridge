@@ -1,3 +1,11 @@
+flexbridge (2.5.4) unstable; urgency=low
+
+  * FLExBridge: Make sure assembly is properly stamped so that Send/Receive log has useful version info
+  * FLExBridge: Fix bug LT-18624 - Handle number formats regardless of current culture
+  * Chorus: Improvement for large projects in resumable Send/Receive
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 01 Nov 2017 10:23:03 -0500
+
 flexbridge (2.5.3) unstable; urgency=low
 
   * Fix dependency problem on Linux
