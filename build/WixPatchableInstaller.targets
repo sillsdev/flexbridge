@@ -110,7 +110,7 @@
 
 	<!-- used by target Clean in FLExBridge.proj -->
 	<ItemGroup>
-		<OutputFiles Include="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions/bin/**/*"/>
+		<OutputDirectories Include="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions/bin"/>
 	</ItemGroup>
 
 	<!-- ########################################################################################################## -->
@@ -127,12 +127,12 @@
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<ItemGroup>
-			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*"/>
+			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/output/$(Configuration)/TestData/**/*"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)"/>
-		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)"/>
+		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
 		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
 	</Target>
 
@@ -140,7 +140,7 @@
 		<ItemGroup>
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)"/>
+		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >

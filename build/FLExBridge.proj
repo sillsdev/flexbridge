@@ -7,8 +7,6 @@
 		<Platform Condition="'$(Platform)'==''">Any CPU</Platform>
 		<Solution>FLExBridge.sln</Solution>
 		<ApplicationName>FLEx Bridge</ApplicationName>
-		<Configuration Condition="'$(OS)'!='Windows_NT'">ReleaseMono</Configuration>
-		<Configuration Condition="'$(OS)'=='Windows_NT'">Release</Configuration>
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
 		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
 		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
