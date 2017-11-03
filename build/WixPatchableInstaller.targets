@@ -127,7 +127,7 @@
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<ItemGroup>
-			<BinFiles Include="$(RootDir)/output/$(Configuration)/**/*" Exclude="$(RootDir)/output/$(Configuration)/TestData/**/*"/>
+			<BinFiles Include="$(RootDir)/output/$(Configuration)\**\*" Exclude="$(RootDir)/output/$(Configuration)\TestData\**\*"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 		</ItemGroup>
