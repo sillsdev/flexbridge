@@ -75,6 +75,8 @@ When releasing FLEx Bridge be sure to do the following:
 				@REM Replace Alpha here with Beta or Stable as appropriate.
 				msbuild build/build.common.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:RootDir=..
 
+		- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
+
 	- For Linux:
 
 		1. `cd ~/fwrepo/flexbridge`
