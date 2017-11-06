@@ -164,16 +164,6 @@
 			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 	</Target>
 
-	<Target Name="PreparePublishingArtifacts" DependsOnTargets="VersionNumbers; CheckPreRequisites">
-		<Exec Command='$(NuGetCommand) install MarkdownDeep.NET -ExcludeVersion -OutputDirectory $(RootDir)/build'/>
-		<Copy SourceFiles="$(RootDir)/build/MarkdownDeep.NET/lib/.NetFramework 3.5/MarkdownDeep.dll"
-			DestinationFolder="$(RootDir)/build/"/>
-		<GenerateReleaseArtifacts MarkdownFile="$(RootDir)/src/Installer/ReleaseNotes.md"
-			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" StampMarkdownFile="True" VersionNumber="$(Version)"
-			ProductName="flexbridge" DebianChangeLog="$(RootDir)/debian/changelog"
-			ChangeLogAuthorInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
-	</Target>
-
 	<Target Name="Test" DependsOnTargets="Build">
 		<CallTarget Targets="TestOnly"/>
 	</Target>
