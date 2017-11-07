@@ -76,6 +76,7 @@ When releasing FLEx Bridge be sure to do the following:
 				msbuild build/build.common.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:RootDir=..
 
 		- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
+		- Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
 
 	- For Linux:
 
