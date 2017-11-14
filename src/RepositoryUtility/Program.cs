@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.ComponentModel.Composition.Hosting;
@@ -10,10 +7,13 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using LibTriboroughBridge_ChorusPlugin.Properties;
+using SIL.IO;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
+
 #if MONO
 using Gecko;
 #endif
@@ -68,7 +68,7 @@ namespace RepositoryUtility
 			{
 				var thisAssembly = Assembly.GetExecutingAssembly();
 				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(Utilities.StripFilePrefix(thisAssembly.CodeBase)),
+					Path.GetDirectoryName(FileUtils.StripFilePrefix(thisAssembly.CodeBase)),
 					"*-ChorusPlugin.dll"));
 				catalog.Catalogs.Add(new AssemblyCatalog(thisAssembly));
 
@@ -83,7 +83,7 @@ namespace RepositoryUtility
 
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = Utilities.FlexBridgeEmailAddress;
+			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 		}

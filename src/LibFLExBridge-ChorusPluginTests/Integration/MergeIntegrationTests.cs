@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2017 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.IO;
 using System.Linq;
@@ -14,8 +11,8 @@ using LibChorus.TestUtilities;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
+using SIL.IO;
 using SIL.TestUtilities;
-using Utilities = TriboroughBridge_ChorusPlugin.Utilities;
 
 namespace LibFLExBridgeChorusPluginTests.Integration
 {
@@ -50,7 +47,6 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 </AdditionalFields>";
 
 		[Test]
-		[Category("UnknownMonoIssue")] // It insists on failing on mono, for some reason.
 		public void EnsureRightPersonMadeChanges()
 		{
 			const string commonAncestor =
@@ -139,6 +135,10 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 </Lexicon>";
 
 			var mdc = MetadataCache.TestOnlyNewCache;
+			mdc.AddCustomPropInfo("LexEntry", new FdoPropertyInfo("Tone", DataType.ReferenceCollection, true));
+			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
+			mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
+			mdc.ResetCaches();
 			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", FlexBridgeConstants.Lexicon, FlexBridgeConstants.Lexdb), commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
@@ -250,9 +250,9 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			using( var tempFolder = new TemporaryFolder("Temp"))
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
-				var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
-				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
 				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), commonAncestor))
@@ -298,7 +298,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
 		public void DictConfigMerge_DifferentUpradePathKeepsFileFormat()
 		{
-			const string commonAncestor = null;
+			//const string commonAncestor = null;
 
 			const string sue = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' allPublications='true' version='14' lastModified='2014-10-07'>
@@ -340,9 +340,9 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			using (var tempFolder = new TemporaryFolder("Temp"))
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
-				var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
-				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
 				using (var sueRepo = new RepositorySetup("Sue", true))

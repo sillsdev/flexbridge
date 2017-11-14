@@ -42,6 +42,7 @@ lib/common/Chorus_Help.chm
 /Mercurial
 build/.nuget/
 build/NuGet.exe
+build/nuget.exe
 packages/
 *.dll
 src/Installer/output/
@@ -50,3 +51,5 @@ vcs_version
 .idea/
 build/MarkdownDeep.NET/
 *.old
+*.swp
+icu4c.readme.txt

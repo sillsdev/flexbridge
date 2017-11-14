@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 using Chorus.merge.xml.generic;
@@ -11,20 +8,25 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 {
 	internal sealed class FieldWorkCustomLayoutContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
+		private IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
+		{
+			get { return this; }
+		}
+
 		#region Implementation of IGenerateContextDescriptor
 
-		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptor.GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			var doc = new XmlDocument();
 			doc.LoadXml(mergeElement);
-			return GenerateContextDescriptor(doc.DocumentElement, filePath);
+			return AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(doc.DocumentElement, filePath);
 		}
 
 		#endregion
 
 		#region Implementation of IGenerateContextDescriptorFromNode
 
-		public ContextDescriptor GenerateContextDescriptor(XmlNode mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptorFromNode.GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
 			string label;
 			var uri = "";
@@ -45,12 +47,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 
 		#region Implementation of IGenerateHtmlContext
 
-		public string HtmlContext(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContext(XmlNode mergeElement)
 		{
 			return "<div>" + XmlUtilities.GetXmlForShowingInHtml(mergeElement.OuterXml) + "</div>";
 		}
 
-		public string HtmlContextStyles(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContextStyles(XmlNode mergeElement)
 		{
 			return "div {margin-left:  0.2in}";
 		}

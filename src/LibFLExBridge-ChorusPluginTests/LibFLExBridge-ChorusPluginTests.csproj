@@ -113,8 +113,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="TestData\DataNotebook_Ann.ntbk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -128,12 +126,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="DomainServices\CmObjectFlatteningServiceTests.cs" />
     <Compile Include="DomainServices\CmObjectNestingServiceTests.cs" />
     <Compile Include="DomainServices\CmObjectValidatorTests.cs" />
     <Compile Include="Handling\BaseFieldWorksTypeHandlerTests.cs" />
-    <Compile Include="Handling\DateTimeMergingTests.cs" />
     <Compile Include="Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
     <Compile Include="Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\FieldWorksObjectContextGeneratorTests.cs" />
@@ -143,9 +141,9 @@
     <Compile Include="Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\StyleContextGeneratorTests.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
-    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
@@ -189,11 +187,12 @@
     <Compile Include="Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
     <Compile Include="FieldWorksTestServices.cs" />
     <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectSplitterTests.cs" />
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
-    <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
+    <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
-    <Compile Include="Integration\MergeIntegrationTests.cs" />
-    <Compile Include="WinFormsTest.cs" />
+    <Compile Include="Handling\PreferMostRecentTimePreMergerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
@@ -204,9 +203,8 @@
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-      <Project>{8f9f6c42-2bb6-49e1-831d-7414ca411845}</Project>
-      <Name>TriboroughBridge-ChorusPlugin</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 </Project>

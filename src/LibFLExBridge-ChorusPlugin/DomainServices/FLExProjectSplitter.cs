@@ -1,44 +1,40 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2017 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
-﻿﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-﻿﻿using System.Xml.Linq;
-﻿﻿using Chorus.Utilities;
-﻿﻿using SIL.Code;
-﻿﻿using SIL.Extensions;
-﻿﻿using SIL.Progress;
-using SIL.Xml;
-﻿﻿using LibFLExBridgeChorusPlugin.Contexts;
+using System.Xml.Linq;
+using Chorus.Utilities;
+using LibFLExBridgeChorusPlugin.Contexts;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using SIL.Code;
+using SIL.Extensions;
+using SIL.Progress;
+using SIL.Xml;
 
-namespace LibFLExBridgeChorusPlugin
+namespace LibFLExBridgeChorusPlugin.DomainServices
 {
 	/// <summary>
-	/// Encapsulates the splitting of a fieldworks project file as a state machine.
-	/// The task is quantized to make use of a palaso progress bar.
-	/// Most of the subtasks need to share two dictionaries that are protected
-	/// from "public static" access in this class. (ie., main reason to encapsulate)
-	/// The subtasks vary greatly in granulatity with most of the time
-	/// spent in writing and caching xml "properties" and writing out files.
-	/// Two static methods from MultipleFileServices were moved here since
-	/// they are only used in this task.
-	///
-	/// Randy's summary:
-	///  1. Break up the main fwdata file into multiple files
+	/// Break up the main fwdata file into multiple files:
 	///		A. One file for the custom property declarations (even if there are no custom properties), and
 	///		B. One file for the model version
 	///		C. Various files for the CmObject data.
 	/// </summary>
-	internal class FLExProjectSplitter: IProjectSplitter
+	/// <remarks>
+	/// This code only has the most supericial of unit testing.
+	/// 
+	/// The real tests are done using the FwdataTestApp over my (RandyR) collection of real and sample Flex projects.
+	/// Among other things, that app does a round trip (split & join) operation on slected fwdata files,
+	/// including removal of all 'ambiguous' elements.
+	/// The person running that app is then expected to use a diff program on the proginal file and the rejoined file,
+	/// and must be able to account for any differences.
+	/// </remarks>
+	internal static class FLExProjectSplitter
 	{
-		internal readonly byte[] AdditionalFieldsArray = SharedConstants.Utf8.GetBytes("<" + FlexBridgeConstants.AdditionalFieldsTag);
+		internal static readonly byte[] AdditionalFieldsArray = LibTriboroughBridgeSharedConstants.Utf8.GetBytes("<" + FlexBridgeConstants.AdditionalFieldsTag);
 
 		internal static void CheckForUserCancelRequested(IProgress progress)
 		{
@@ -46,12 +42,7 @@ namespace LibFLExBridgeChorusPlugin
 				throw new UserCancelledException(); // the Chorus Synchorinizer class catches this and does the real cancel.
 		}
 
-		internal static void PushHumptyOffTheWall(IProgress progress, string mainFilePathname)
-		{
-			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, true, mainFilePathname);
-		}
-
-		public void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
+		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckFilename(mainFilePathname);
@@ -75,11 +66,6 @@ namespace LibFLExBridgeChorusPlugin
 			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData, wellUsedElements);
 			CheckForUserCancelRequested(progress);
 			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, wellUsedElements, classData, guidToClassMapping);
-
-#if DEBUG
-			// Enable ONLY for testing a round trip.
-			// FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
-#endif
 		}
 
 		private static void DeleteOldFiles(string pathRoot)
@@ -166,22 +152,22 @@ namespace LibFLExBridgeChorusPlugin
 
 			try
 			{
-				// 2. Cache it.
-				switch (className)
-				{
-					default:
-						classData[className].Add(guid, record);
-						break;
-					case FlexBridgeConstants.LangProject:
-						wellUsedElements[FlexBridgeConstants.LangProject] = Utilities.CreateFromBytes(record);
-						//classData.Remove(SharedConstants.LangProject);
-						break;
-					case FlexBridgeConstants.LexDb:
-						wellUsedElements[FlexBridgeConstants.LexDb] = Utilities.CreateFromBytes(record);
-						//classData.Remove(SharedConstants.LexDb);
-						break;
-				}
+			// 2. Cache it.
+			switch (className)
+			{
+				default:
+					classData[className].Add(guid, record);
+					break;
+				case  FlexBridgeConstants.LangProject:
+					wellUsedElements[FlexBridgeConstants.LangProject] = LibFLExBridgeUtilities.CreateFromBytes(record);
+					//classData.Remove(SharedConstants.LangProject);
+					break;
+				case FlexBridgeConstants.LexDb:
+					wellUsedElements[FlexBridgeConstants.LexDb] = LibFLExBridgeUtilities.CreateFromBytes(record);
+					//classData.Remove(SharedConstants.LexDb);
+					break;
 			}
+		}
 			catch (KeyNotFoundException knf)
 			{
 				throw new InvalidDataException(string.Format("The metadata cache does not know about the class {0}. There must be a problem in a model version update.",
@@ -189,7 +175,7 @@ namespace LibFLExBridgeChorusPlugin
 			}
 		}
 
-		internal bool IsOptionalFirstElement(byte[] record)
+		internal static bool IsOptionalFirstElement(byte[] record)
 		{
 			return AdditionalFieldsArray.AreByteArraysEqual(record.SubArray(0, AdditionalFieldsArray.Length));
 		}

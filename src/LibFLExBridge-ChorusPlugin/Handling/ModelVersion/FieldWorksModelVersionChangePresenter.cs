@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Text;
 using Chorus.FileTypeHandlers;
@@ -25,17 +22,17 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 
 		#region Implementation of IChangePresenter
 
-		public string GetDataLabel()
+		string IChangePresenter.GetDataLabel()
 		{
 			return "FDO model version";
 		}
 
-		public string GetActionLabel()
+		string IChangePresenter.GetActionLabel()
 		{
 			return _report.ActionLabel;
 		}
 
-		public string GetHtml(string style, string styleSheet)
+		string IChangePresenter.GetHtml(string style, string styleSheet)
 		{
 			var builder = new StringBuilder();
 			builder.Append("<html><head>" + styleSheet + "</head>");
@@ -58,12 +55,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 			return builder.ToString();
 		}
 
-		public string GetTypeLabel()
+		string IChangePresenter.GetTypeLabel()
 		{
 			return "FieldWorks data model version";
 		}
 
-		public string GetIconName()
+		string IChangePresenter.GetIconName()
 		{
 			return "file";
 		}

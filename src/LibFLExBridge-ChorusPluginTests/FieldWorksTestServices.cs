@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2016 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -144,13 +141,11 @@ namespace LibFLExBridgeChorusPluginTests
 					XmlTestHelper.AssertXPathIsNull(result, query);
 			}
 			eventListener.AssertExpectedConflictCount(expectedConflictCount);
-			Assert.AreEqual(conflictTypes.Count, eventListener.Conflicts.Count);
-			for (var idx = 0; idx < conflictTypes.Count; ++idx)
-				Assert.AreSame(conflictTypes[idx], eventListener.Conflicts[idx].GetType());
+			Assert.That(eventListener.Conflicts.Select(x => x.GetType()), Is.EqualTo(conflictTypes));
+
 			eventListener.AssertExpectedChangesCount(expectedChangesCount);
-			Assert.AreEqual(changeTypes.Count, eventListener.Changes.Count);
-			for (var idx = 0; idx < changeTypes.Count; ++idx)
-				Assert.AreSame(changeTypes[idx], eventListener.Changes[idx].GetType());
+			Assert.That(eventListener.Changes.Select(x => x.GetType()), Is.EqualTo(changeTypes));
+
 			resultingConflicts = eventListener.Conflicts;
 			return result;
 		}

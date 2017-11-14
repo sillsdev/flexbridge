@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -26,15 +23,20 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class PictureFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
+		private IFieldWorksFileHandler AsIFieldWorksFileHandler
+		{
+			get { return this; }
+		}
+
 		#region Implementation of IFieldWorksFileHandler
 
-		public bool CanValidateFile(string pathToFile)
+		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.pictures) &&
+			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.FLExUnownedPicturesFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
 		{
 			try
 			{
@@ -56,24 +58,24 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 			}
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IFieldWorksFileHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IFieldWorksFileHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
 				FlexBridgeConstants.CmPicture, FlexBridgeConstants.GuidStr);
 		}
 
-		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
+		void IFieldWorksFileHandler.Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
 			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc, true);
 		}
 
-		public string Extension
+		string IFieldWorksFileHandler.Extension
 		{
 			get { return FlexBridgeConstants.pictures; }
 		}

@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Handling.Common;
@@ -28,13 +25,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // Rules
 			var generator = new StyleContextGenerator();
-			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Style \"Normal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> backcolor (white) fontsize (20000) forecolor (993300) spaceAfter (6000)</div>"));
 		}
 
@@ -61,13 +58,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // Rules
 			var generator = new StyleContextGenerator();
-			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Style \"Abnormal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> backcolor (white) fontsize (14000) forecolor (green) spaceAfter (6000) undercolor (red) underline (double)" +
 					@" ws (en [backcolor (red) fontFamily (Verdana) fontsize (12000) fontsizeUnit (mpt) offset (-3000) offsetUnit (mpt) undercolor (yellow) underline (single)])" +
 					@" ws (ru [backcolor (white) fontFamily (Vladamir) fontsize (18000) fontsizeUnit (mpt) offsetUnit (mpt) undercolor (black) underline (double)])" +
@@ -111,24 +108,24 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // Custom//StyleRules
 			var generator = new StyleContextGenerator();
-			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Data Notebook Record \"Type\" Custom Field \"Like\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("silfw://localhost/link?app=flex&d"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> namedStyle (Block Quote)</div>"));
 
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // Description//StyleRules
 			generator = new StyleContextGenerator();
-			descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Data Notebook Record \"Type\" Description"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("silfw://localhost/link?app=flex&d"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> namedStyle (Heading 2)</div>"));
 		}
 
@@ -151,13 +148,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // SomeWsRules  - the comment is [0]
 			var generator = new StyleContextGenerator();
-			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform [untitled]"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> backcolor (green) fontsize (24000) forecolor (yellow) spaceAfter (9000) undercolor (blue) underline (red) "
 					+ @"ws (aa [backcolor (beet) fontFamily (NanoPrint) fontsize (0.00002) fontsizeUnit (mi) offset (-0.003) offsetUnit (m) undercolor (yellow) underline (none)]) "
 					+ @"ws (bb [backcolor (carrot) fontFamily (ReallyLarge) fontsize (98E-57) fontsizeUnit (au) offset (0.050) offsetUnit (cm) underline (tripple)])</div>"));
@@ -185,13 +182,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[2]; // SomeWsRules  - the comment is [0]
 			var generator = new StyleContextGenerator();
-			var descriptor = generator.GenerateContextDescriptor(input, "myfile");
+			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform \"Abnormal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("guid=" + "d9aa70f0-ea5e-11de-8efb-0013722f8dec"));
 
 			// verify the html context generation
-			Assert.That(generator.HtmlContext(input.ChildNodes[0]), // Prop
+			Assert.That(generator.AsIGenerateHtmlContext.HtmlContext(input.ChildNodes[0]), // Prop
 				Is.EqualTo(@"<div class='StStyle'> backcolor (green) fontsize (24000) forecolor (yellow) spaceAfter (9000) undercolor (blue) underline (red) "
 					+ @"ws (aa [backcolor (beet) fontFamily (NanoPrint) fontsize (0.00002) fontsizeUnit (mi) offset (-0.003) offsetUnit (m) undercolor (yellow) underline (none)]) "
 					+ @"ws (bb [backcolor (carrot) fontFamily (ReallyLarge) fontsize (98E-57) fontsizeUnit (au) offset (0.050) offsetUnit (cm) underline (tripple)])</div>"));

@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,13 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.Xml;
-using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 using LibTriboroughBridgeChorusPlugin;
+using SIL.Xml;
 
-namespace LibFLExBridgeChorusPlugin
+namespace LibFLExBridgeChorusPlugin.DomainServices
 {
 	internal static class FileWriterService
 	{
@@ -36,11 +32,6 @@ namespace LibFLExBridgeChorusPlugin
 				writer.WriteStartDocument();
 				WriteElement(writer, root);
 			}
-		}
-
-		internal static void WriteElement(XmlWriter writer, string data)
-		{
-			WriteElement(writer, XElement.Parse(data));
 		}
 
 		internal static void WriteElement(XmlWriter writer, XElement element)
@@ -146,7 +137,7 @@ namespace LibFLExBridgeChorusPlugin
 													 string pathRoot,
 													 byte[] record)
 		{
-			WriteCustomPropertyFile(mdc, pathRoot, SharedConstants.Utf8.GetString(record));
+			WriteCustomPropertyFile(mdc, pathRoot, LibTriboroughBridgeSharedConstants.Utf8.GetString(record));
 		}
 
 		internal static void WriteCustomPropertyFile(MetadataCache mdc,
@@ -194,7 +185,7 @@ namespace LibFLExBridgeChorusPlugin
 			// Just because all of this is true, doesn't mean it is a FW 7.0 related file. :-(
 			if (!String.IsNullOrEmpty(mainFilePathname) // No null or empty string can be valid.
 				&& File.Exists(mainFilePathname) // There has to be an actual file,
-				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == SharedConstants.FwXmlExtension)
+				&& Path.GetExtension(mainFilePathname).ToLowerInvariant() == LibTriboroughBridgeSharedConstants.FwXmlExtension)
 				return;
 
 			throw new ApplicationException("Cannot process the given file.");
@@ -223,7 +214,7 @@ namespace LibFLExBridgeChorusPlugin
 			if (listPropElement == null || !listPropElement.HasElements)
 				return;
 
-			var listElement = Utilities.CreateFromBytes(classData[FlexBridgeConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
+			var listElement = LibFLExBridgeUtilities.CreateFromBytes(classData[FlexBridgeConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
 			CmObjectNestingService.NestObject(false,
 											  listElement,
 											  classData,

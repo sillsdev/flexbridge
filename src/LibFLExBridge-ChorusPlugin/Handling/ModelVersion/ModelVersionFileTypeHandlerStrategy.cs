@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -21,15 +18,25 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class ModelVersionFileTypeHandlerStrategy : IFieldWorksFileHandler
 	{
+		private IFieldWorksFileHandler AsIFieldWorksFileHandler
+		{
+			get { return this; }
+		}
+
+		internal static string[] SplitData(string data)
+		{
+			return data.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
+		}
+
 		#region Implementation of IFieldWorksFileHandler
 
-		public bool CanValidateFile(string pathToFile)
+		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.ModelVersion) &&
+			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.ModelVersionFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
 		{
 			try
 			{
@@ -46,7 +53,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 			}
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IFieldWorksFileHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			var fieldWorksModelVersionChangeReport = report as FieldWorksModelVersionChangeReport;
 			if (fieldWorksModelVersionChangeReport != null)
@@ -58,7 +65,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 			return new DefaultChangePresenter(report, repository);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IFieldWorksFileHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			var diffReports = new List<IChangeReport>(1);
 
@@ -84,7 +91,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 			return diffReports;
 		}
 
-		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
+		void IFieldWorksFileHandler.Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
 			// NB: Doesn't need the mdc updated with custom props.
 			if (mergeOrder.EventListener is NullMergeEventListener)
@@ -124,16 +131,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 			mdc.UpgradeToVersion(mergedNumber);
 		}
 
-		public string Extension
+		string IFieldWorksFileHandler.Extension
 		{
 			get { return FlexBridgeConstants.ModelVersion; }
 		}
 
 		#endregion
-
-		internal static string[] SplitData(string data)
-		{
-			return data.Split(new[] { "{", ":", "}" }, StringSplitOptions.RemoveEmptyEntries);
-		}
 	}
 }

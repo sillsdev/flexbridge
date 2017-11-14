@@ -6,6 +6,7 @@
 	<SchemaVersion>2.0</SchemaVersion>
 	<OutputName>FLExBridgeInstaller</OutputName>
 	<OutputType>Package</OutputType>
+
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 	<OutputPath>..\..\output\Installer\</OutputPath>

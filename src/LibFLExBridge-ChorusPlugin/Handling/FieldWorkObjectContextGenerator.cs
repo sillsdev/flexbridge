@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Globalization;
@@ -26,6 +23,10 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// </summary>
 	internal class FieldWorkObjectContextGenerator : IGenerateContextDescriptor, IGenerateContextDescriptorFromNode, IGenerateHtmlContext
 	{
+		private IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
+		{
+			get { return this; }
+		}
 		private const string PathSep = " ";
 
 		// These two constants are for use in the subclass context generators for generating labels.
@@ -37,7 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// </summary>
 		internal MergeStrategies MergeStrategies { get; set; }
 
-		public ContextDescriptor GenerateContextDescriptor(XmlNode element, string filePath)
+		ContextDescriptor IGenerateContextDescriptorFromNode.GenerateContextDescriptor(XmlNode element, string filePath)
 		{
 			var name = element.Name;
 			string label;
@@ -129,7 +130,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		}
 
 		// If the start node is a child of current, generate a path from current to start, with a leading space.
-		private string GetPathAppend(XmlNode current, XmlNode start)
+		private static string GetPathAppend(XmlNode current, XmlNode start)
 		{
 			if (current == start)
 				return "";
@@ -139,7 +140,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return " " + path;
 		}
 
-		private string PathToChild(XmlNode parent, XmlNode mergeElement)
+		private static string PathToChild(XmlNode parent, XmlNode mergeElement)
 		{
 			var path = "";
 			for (var ancestor = mergeElement;
@@ -218,12 +219,12 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// We have to implement IGenerateContextDescriptor, since that is the definining interface for a ContextGenerator.
 		/// However, since we also implement IGenerateContextDescriptorFromNode, this method should never be called.
 		/// </summary>
-		public ContextDescriptor GenerateContextDescriptor(string mergeElement, string filePath)
+		ContextDescriptor IGenerateContextDescriptor.GenerateContextDescriptor(string mergeElement, string filePath)
 		{
 			//throw new NotImplementedException();
 			var doc = new XmlDocument();
 			doc.LoadXml(mergeElement);
-			return GenerateContextDescriptor(doc.DocumentElement, filePath);
+			return AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(doc.DocumentElement, filePath);
 		}
 
 		/// <summary>
@@ -237,7 +238,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// the user-recognizable element that the context name is based on. Various defaults are also employed,
 		/// to give answers as helpful as possible when we don't have a really pretty one created.
 		/// </summary>
-		public string HtmlContext(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContext(XmlNode mergeElement)
 		{
 			// I expect the following code will eventually just be a default, if we can't match something better.
 			if (IsMultiString(mergeElement))
@@ -267,7 +268,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				case @"CurVernWss":
 				case @"VernWss":
 					var sb = new StringBuilder();
-					foreach (var ws in result.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries))
+					foreach (var ws in result.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries))
 					{
 						if (sb.Length > 0)
 							sb.Append("; "); // Makes it a little more readable than just putting the space back in
@@ -281,12 +282,12 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			}
 		}
 
-		public string HtmlContextStyles(XmlNode mergeElement)
+		string IGenerateHtmlContext.HtmlContextStyles(XmlNode mergeElement)
 		{
 			return DefaultHtmlContextStyles(mergeElement);
 		}
 
-		public static string DefaultHtmlContextStyles(XmlNode mergeElement)
+		internal static string DefaultHtmlContextStyles(XmlNode mergeElement)
 		{
 			return "div.alternative {margin-left:  0.25in} div.ws {margin-left:  0.25in} div.property {margin-left:  0.25in} div.checksum {margin-left:  0.25in}";
 		}

@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,38 +8,32 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.Code;
-using SIL.IO;
-using SIL.Progress;
 using LibFLExBridgeChorusPlugin.Contexts;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using SIL.Code;
+using SIL.IO;
+using SIL.Progress;
 
-namespace LibFLExBridgeChorusPlugin
+namespace LibFLExBridgeChorusPlugin.DomainServices
 {
 	/// <summary>
-	/// Encapsulates, as a state machine, the joining of split fieldworks project files.
-	/// The task is quantized to make use of a palaso progress bar.
-	/// Most of the subtasks need to share two dictionaries that are protected
-	/// from "public static" access in this class. (ie., main reason to encapsulate)
-	/// The subtasks vary greatly in granulatity with most of the time
-	/// spent in writing and caching xml "properties" and writing out files.
-	/// Two static methods from MultipleFileServices were moved here since
-	/// they are only used in this task.
-	///
-	/// Randy's summary:
-	///  2. Put the multiple files back together into the main fwdata file,
-	///		but only if a Send/Receive had new information brought back into the local repo.
-	///		NB: The client of the service decides if new information was found, and decides to call the service, or not.
+	/// Put the multiple files back together into the main fwdata file,
+	/// but only if a Send/Receive had new information brought back into the local repo.
+	/// NB: The client of the service decides if new information was found, and decides to call the service, or not.
 	/// </summary>
-	internal class FLExProjectUnifier: IProjectUnifier
+	/// <remarks>
+	/// This code only has the most supericial of unit testing.
+	/// 
+	/// The real tests are done using the FwdataTestApp over my (RandyR) collection of real and sample Flex projects.
+	/// Among other things, that app does a round trip (split & join) operation on slected fwdata files,
+	/// including removal of all 'ambiguous' elements.
+	/// The person running that app is then expected to use a diff program on the proginal file and the rejoined file,
+	/// and must be able to account for any differences.
+	/// </remarks>
+	internal static class FLExProjectUnifier
 	{
-		internal static void PutHumptyTogetherAgain(IProgress progress, string mainFilePathname)
-		{
-			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, true, mainFilePathname);
-		}
-
-		public void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
+		internal static void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckPathname(mainFilePathname);
@@ -96,7 +87,7 @@ namespace LibFLExBridgeChorusPlugin
 			SplitFileAgainIfNeeded(progress, writeVerbose, mainFilePathname);
 		}
 
-		private void SplitFileAgainIfNeeded(IProgress progress, bool writeVerbose, string mainFilePathname)
+		private static void SplitFileAgainIfNeeded(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			// Resplit mainFilePathname, if there are any temp files that mark incompatible moves exists (has 'dupid' extension).
@@ -112,7 +103,7 @@ namespace LibFLExBridgeChorusPlugin
 			{
 				var nestedFolder = Path.Combine(pathRoot, nestedFolderBase);
 				if (Directory.Exists(nestedFolder))
-					dupidPathnames.AddRange(Directory.GetFiles(nestedFolder, "*." + SharedConstants.dupid, SearchOption.AllDirectories));
+					dupidPathnames.AddRange(Directory.GetFiles(nestedFolder, "*." + LibTriboroughBridgeSharedConstants.dupid, SearchOption.AllDirectories));
 			}
 			if (dupidPathnames.Count == 0)
 				return;
@@ -121,23 +112,23 @@ namespace LibFLExBridgeChorusPlugin
 				File.Delete(dupidPathname);
 			var projName = Path.GetFileName(mainFilePathname);
 			progress.WriteMessage("Split up project file: {0} (again)", projName);
-			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
+			FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
 			progress.WriteMessage("Finished splitting up project file: {0} (again)", projName);
 		}
 
-		private void UpgradeToVersion(XmlWriter writer, string pathRoot)
+		private static void UpgradeToVersion(XmlWriter writer, string pathRoot)
 		{
 			writer.WriteStartElement("languageproject");
 
 			// Write out version number from the ModelVersion file.
-			var version = Utilities.GetFlexModelVersion(pathRoot);
+			var version = LibFLExBridgeUtilities.GetFlexModelVersion(pathRoot);
 			writer.WriteAttributeString("version", version);
 
 			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		private void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
+		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
 		{
 			// Write out optional custom property data to the fwdata file.
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.

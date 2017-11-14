@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -139,7 +136,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 						continue;
 					}
 					guidToClassMapping.Remove(guid);
-					var ownedElement = Utilities.CreateFromBytes(classData[classOfOwnedObject][guid]);
+					var ownedElement = LibFLExBridgeUtilities.CreateFromBytes(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
 					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);

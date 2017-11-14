@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -10,30 +7,32 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using Chorus.FileTypeHandlers.lift;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.sync;
-using LibFLExBridgeChorusPlugin;
-using LibFLExBridgeChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Properties;
+using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Properties;
+using LibTriboroughBridge_ChorusPlugin.Properties;
 using SIL.Progress;
-using TriboroughBridge_ChorusPlugin.Properties;
 
-namespace FLEx_ChorusPlugin.Infrastructure
+namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
 	internal sealed class FlexBridgeSynchronizerAdjunct : ISychronizerAdjunct
 	{
+		private readonly bool _wantToCheckRepositoryBranches;
 		private readonly string _fwdataPathname;
 		private readonly bool _writeVerbose;
 		private bool _needToNestMainFile = true;
 		private readonly string _fixitPathname;
 
-		internal FlexBridgeSynchronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose)
+		internal FlexBridgeSynchronizerAdjunct(string fwdataPathname, string fixitPathname, bool writeVerbose, bool wantToCheckRepositoryBranches)
 		{
 			if (!File.Exists(fixitPathname))
 				throw new InvalidOperationException("The FLEx 'fix it' program was not found.");
+
 			_fwdataPathname = fwdataPathname;
 			_fixitPathname = fixitPathname;
 			_writeVerbose = writeVerbose;
+			_wantToCheckRepositoryBranches = wantToCheckRepositoryBranches;
 		}
 
 		private string ProjectFilename
@@ -45,7 +44,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		{
 			WasUpdated = true;
 			progress.WriteMessage("Rebuild project file '{0}'", ProjectFilename);
-			FLEx.ProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished rebuilding project file '{0}'", ProjectFilename);
 		}
 
@@ -60,7 +59,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 				return; // Only nest it one time.
 
 			progress.WriteMessage("Split up project file: {0}", ProjectFilename);
-			FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
+			FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			progress.WriteMessage("Finished splitting up project file: {0}", ProjectFilename);
 			_needToNestMainFile = false;
 		}
@@ -90,7 +89,7 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			if (RunFixFwData(progress))
 			{
 				progress.WriteMessage("Ran fix-up utility after merge.");
-				FLEx.ProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
+				FLExProjectSplitter.PushHumptyOffTheWall(progress, _writeVerbose, _fwdataPathname);
 			}
 		}
 
@@ -100,7 +99,8 @@ namespace FLEx_ChorusPlugin.Infrastructure
 		/// <returns>true if problems were fixed</returns>
 		private bool RunFixFwData(IProgress progress)
 		{
-			var process = new Process();
+			using (var process = new Process())
+			{
 			var startInfo = process.StartInfo;
 			startInfo.FileName = _fixitPathname.Replace("\"", null);
 			startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
@@ -122,12 +122,18 @@ namespace FLEx_ChorusPlugin.Infrastructure
 			}
 			return process.ExitCode == 1;
 		}
+		}
 
 		/// <summary>
 		/// Maybe let the user know about the need to update, or that other team members are still using an older version.
 		/// </summary>
 		public void CheckRepositoryBranches(IEnumerable<Revision> branches, IProgress progress)
 		{
+			if (!_wantToCheckRepositoryBranches)
+			{
+				return;
+			}
+
 			var savedSettings = Settings.Default.OtherBranchRevisions;
 			var conflictingUser = LiftSynchronizerAdjunct.GetRepositoryBranchCheckData(branches, BranchName, ref savedSettings);
 			Settings.Default.OtherBranchRevisions = savedSettings;

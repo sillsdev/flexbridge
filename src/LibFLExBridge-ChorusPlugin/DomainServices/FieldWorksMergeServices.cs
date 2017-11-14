@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -285,7 +282,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 							propStrategy.IsImmutable = true;
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 						break;
-					case DataType.Integer: // Fall through
+					case DataType.Integer:
 						if (propertyInfo.PropertyName == "HomographNumber")
 						{
 							// Don't fret about conflicts in merging the homograph numbers.

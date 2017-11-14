@@ -1,8 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
+//#define RunStandAlone
 
 using System;
 using System.Collections.Generic;
@@ -21,11 +19,11 @@ namespace TriboroughBridge_ChorusPlugin
 	/// </summary>
 	[Export(typeof(FLExConnectionHelper))]
 	[Export(typeof(ICreateProjectFromLift))]
-	public class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
+	internal sealed class FLExConnectionHelper : IDisposable, ICreateProjectFromLift
 	{
 		private IIPCHost _host;
 		private IIPCClient _client;
-#if DEBUG
+#if RunStandAlone
 		private bool _runStandAlone; // debug mode, run with message boxes instead of connection to FLEx.
 #endif
 		/// <summary>
@@ -34,9 +32,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <param name="commandLineArgs">The entire FieldWorks project folder path is in the '-p' option, if not 'obtain' operation.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		public bool Init(Dictionary<string, string> commandLineArgs)
+		internal bool Init(Dictionary<string, string> commandLineArgs)
 		{
-#if DEBUG // this command line argument is only for debugging.
+#if RunStandAlone // this command line argument is only for debugging.
 			if (commandLineArgs.ContainsKey("-runStandAlone"))
 			{
 				_runStandAlone = true;
@@ -80,9 +78,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// The Obtain was cancelled or failed, so tell Felx to forget about it.
 		/// </summary>
-		public void TellFlexNoNewProjectObtained()
+		internal void TellFlexNoNewProjectObtained()
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("TellFlexNoNewProjectObtained");
@@ -102,9 +100,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// to FieldWorks.
 		/// </summary>
 		/// <param name="fwProjectName">The whole FW project path, or null, if nothing was created.</param>
-		public void CreateProjectFromFlex(string fwProjectName)
+		internal void CreateProjectFromFlex(string fwProjectName)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("CreateProjectFromFlex " + fwProjectName);
@@ -117,9 +115,9 @@ namespace TriboroughBridge_ChorusPlugin
 				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 		}
 
-		public void ImportLiftFileSafely(string liftPathname)
+		internal void ImportLiftFileSafely(string liftPathname)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("ImportLiftFileSafely " + liftPathname);
@@ -132,9 +130,9 @@ namespace TriboroughBridge_ChorusPlugin
 				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 		}
 
-		public void SendLiftPathnameToFlex(string liftPathname)
+		internal void SendLiftPathnameToFlex(string liftPathname)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("SendLiftPathnameToFlex " + liftPathname);
@@ -151,9 +149,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// Signals FLEx through 2 means that the bridge work has been completed.
 		/// A direct message to FLEx if it is listening, and by allowing the BridgeWorkOngoing method to complete
 		/// </summary>
-		public void SignalBridgeWorkComplete(bool changesReceived)
+		internal void SignalBridgeWorkComplete(bool changesReceived)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("SignalBridgeWorkComplete: " + (changesReceived ? "changes" : "no changes"));
@@ -172,9 +170,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// <summary>
 		/// Signals FLEx that the bridge sent a jump URL to process.
 		/// </summary>
-		public void SendJumpUrlToFlex(object sender, JumpEventArgs e)
+		internal void SendJumpUrlToFlex(object sender, JumpEventArgs e)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("SendJumpUrlToFlex " + e.JumpUrl ?? "");
@@ -194,9 +192,9 @@ namespace TriboroughBridge_ChorusPlugin
 		/// to FieldWorks.
 		/// </summary>
 		/// <param name="liftPath">The whole LIFT pathname, or null, if nothing was created.</param>
-		public bool CreateProjectFromLift(string liftPath)
+		bool ICreateProjectFromLift.CreateProjectFromLift(string liftPath)
 		{
-#if DEBUG
+#if RunStandAlone
 			if (_runStandAlone)
 			{
 				MessageBox.Show ("CreateProjectFromLift " + liftPath);

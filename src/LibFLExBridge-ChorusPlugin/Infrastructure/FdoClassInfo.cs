@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +41,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			SuperclassName = superclassName;
 		}
 
-		public FdoClassInfo(FdoClassInfo superclass, string newClassName, bool isAbstract)
+		internal FdoClassInfo(FdoClassInfo superclass, string newClassName, bool isAbstract)
 		{
 			Superclass = superclass;
 			ClassName = newClassName;
@@ -68,22 +65,6 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			return (from propInfo in AllProperties
 						  where propInfo.PropertyName == propertyName
 						  select propInfo).FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Get a collection of all subclasses if this class (not including this class).
-		/// </summary>
-		internal IEnumerable<FdoClassInfo> AllSubclasses
-		{
-			get
-			{
-				var subclasses = new List<FdoClassInfo>(_allDirectSubclass);
-				foreach (var subclass in _allDirectSubclass)
-				{
-					subclasses.AddRange(subclass.AllSubclasses);
-				}
-				return subclasses;
-			}
 		}
 
 		internal bool IsOrInheritsFrom(string name)
@@ -181,7 +162,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		/// </summary>
 		internal FdoClassInfo Superclass { get; set; }
 
-		public void ResetCaches(Dictionary<string, FdoClassInfo> classes)
+		internal void ResetCaches(Dictionary<string, FdoClassInfo> classes)
 		{
 			// No. _directProperties.Clear();
 			_allProperties.Clear();

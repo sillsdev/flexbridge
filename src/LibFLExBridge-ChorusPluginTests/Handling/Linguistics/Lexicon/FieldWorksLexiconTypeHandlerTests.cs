@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -214,7 +211,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 <LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
 </Lexicon>";
 
-			var ourContent = commonAncestor.Replace("True", "False");
+			var ourContent = commonAncestor.Replace("True", "False").Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829");
 			const string theirContent = commonAncestor;
 
 			var results = FieldWorksTestServices.DoMerge(
@@ -224,7 +221,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				0, new List<Type>(),
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport)});
 				// Originally this produced one change of type XmlAttributeChangedReport.
 				// This is now suppressed by the special handling of ParseIsCurrent.
 				//1, new List<Type> { typeof(XmlAttributeChangedReport) });
@@ -259,8 +256,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 <LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
 </Lexicon>";
 
-			var ourContent = commonAncestor.Replace("the first paragraph", "MY first paragraph");
-			var theirContent = commonAncestor.Replace("the first paragraph", "THEIR first paragraph");
+			var ourContent = commonAncestor.Replace("the first paragraph", "MY first paragraph").Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829");
+			var theirContent = commonAncestor.Replace("the first paragraph", "THEIR first paragraph").Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -269,14 +266,11 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				_theirFile, theirContent,
 				null, null,
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
-				0, new List<Type>());
+				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport) });
 			Assert.IsTrue(results.Contains("MY first paragraph"));
 		}
 
-		[Test]
-		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsMostRecent()
-		{
-			const string commonAncestor =
+		private const string baseDocument =
 @"<?xml version='1.0' encoding='utf-8'?>
 <Lexicon>
 <header>
@@ -296,8 +290,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 <LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
 </Lexicon>";
 
+		[Test]
+		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsMostRecent()
+		{
+			const string commonAncestor = baseDocument;
 			var ourContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829").Replace("False", "True");
 			var theirContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829").Replace("False", "True");
+			var dateTimeNow = DateTimeNowString;
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -307,37 +306,19 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlAttributeBothMadeSameChangeReport) });
-			Assert.IsTrue(results.Contains("2013-2-2 19:39:28.829"));
+			Assert.That(GetXPathNodeFrom(results, "Lexicon/header/LexDb/Introduction/StText/DateModified/@val"), Is.GreaterThan(dateTimeNow));
 		}
 
 		[Test]
 		public void SampleMergeWithConflicts()
 		{
-			const string commonAncestor =
-@"<?xml version='1.0' encoding='utf-8'?>
-<Lexicon>
-<header>
-<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
-	  <Introduction>
-		<StText guid='45b78bcf-2400-48d5-a9c1-973447d36d4e'>
-		  <DateModified val='2011-2-2 19:39:28.829' />
-		  <Paragraphs>
-			<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
-			  <ParseIsCurrent val='False' />
-			</ownseq>
-		  </Paragraphs>
-		</StText>
-	  </Introduction>
+			var commonAncestor = baseDocument.Replace("</Introduction>", @"</Introduction>
 	  <Name>
 		<AUni ws='en'>Original Dictionary</AUni>
-	  </Name>
-</LexDb>
-</header>
-<LexEntry guid='016f2759-ed12-42a5-abcb-7fe3f53d05b0' />
-</Lexicon>";
+				</Name>");
 
-			var ourContent = commonAncestor.Replace("Original Dictionary", "My Dictionary");
-			var theirContent = commonAncestor.Replace("Original Dictionary", "Their Dictionary");
+			var ourContent = commonAncestor.Replace("Original Dictionary", "My Dictionary").Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829");
+			var theirContent = commonAncestor.Replace("Original Dictionary", "Their Dictionary").Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -1184,6 +1165,45 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='TheirAddition']" },
 				1, new List<Type> { typeof(BothEditedTheSameAtomicElement) },
 				0, new List<Type>());
+		}
+
+		[Test]
+		public void BothEditedDifferentParts_MergedWithoutConflict()
+		{
+			const string commonAncestor =
+				@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='lexdb' />
+	</header>
+	<LexEntry guid='c1ed94c5-e382-11de-8a39-0800200c9a66'>
+		<CitationForm>
+			<AUni
+				ws='seh'>ambuka</AUni>
+		</CitationForm>
+		<Comment>
+			<AStr
+				ws='en'>
+				<Run
+					ws='en'>Comment</Run>
+			</AStr>
+		</Comment>
+	</LexEntry>
+</Lexicon>";
+			var ourContent = commonAncestor.Replace(">Comment<", ">Our comment<");
+			var theirContent = commonAncestor.Replace("ambuka", "their change");
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				new List<string> {
+					@"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Our comment']",
+					@"Lexicon/LexEntry/CitationForm/AUni[@ws='seh'][text()='their change']" },
+				new List<string> { @"Lexicon/LexEntry/Comment/AStr[@ws='en']/Run[text()='Comment']" },
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlTextChangedReport), typeof(XmlChangedRecordReport)});
 		}
 	}
 }

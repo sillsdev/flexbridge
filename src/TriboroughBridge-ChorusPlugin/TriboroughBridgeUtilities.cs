@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2017 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -14,9 +11,11 @@ using System.Xml.Linq;
 using Chorus;
 using Chorus.sync;
 using L10NSharp;
+using LibTriboroughBridgeChorusPlugin;
+using SIL.IO;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
-using LibTriboroughBridgeChorusPlugin;
 
 namespace TriboroughBridge_ChorusPlugin
 {
@@ -28,58 +27,17 @@ namespace TriboroughBridge_ChorusPlugin
 	/// Some of the remaining constants could yet be moved at the cost of having duplciates in each bridge's project.
 	/// It may be worth that to be rid of bridge-specific stuff in this project.
 	/// </summary>
-	public static class Utilities
+	internal static class TriboroughBridgeUtilities
 	{
 // ReSharper disable InconsistentNaming
-		public const string LIFT = "LIFT";
-		public const string hg = ".hg";
+		internal const string LIFT = "LIFT";
+		internal const string hg = ".hg";
 		private const string FlexBridge = "FlexBridge";
 		private const string localizations = "localizations";
-		public const string FlexBridgeEmailAddress = "flex_errors@sil.org";
+		internal const string FlexBridgeEmailAddress = "flex_errors@sil.org";
 // ReSharper restore InconsistentNaming
 
-		/// <summary>
-		/// Strips file URI prefix from the beginning of a file URI string, and keeps
-		/// a beginning slash if in Linux.
-		/// eg "file:///C:/Windows" becomes "C:/Windows" in Windows, and
-		/// "file:///usr/bin" becomes "/usr/bin" in Linux.
-		/// Returns the input unchanged if it does not begin with "file:".
-		///
-		/// Does not convert the result into a valid path or a path using current platform
-		/// path separators.
-		/// fileString does not neet to be a valid URI. We would like to treat it as one
-		/// but since we import files with file URIs that can be produced by other
-		/// tools (eg LIFT) we can't guarantee that they will always be valid.
-		///
-		/// File URIs, and their conversation to paths, are more complex, with hosts,
-		/// forward slashes, and escapes, but just stripping the file URI prefix is
-		/// what's currently needed.
-		/// Different places in code need "file://', or "file:///" removed.
-		///
-		/// See uri.LocalPath, http://en.wikipedia.org/wiki/File_URI , and
-		/// http://blogs.msdn.com/b/ie/archive/2006/12/06/file-uris-in-windows.aspx .
-		/// </summary>
-		public static string StripFilePrefix(string fileString)
-		{
-			if (String.IsNullOrEmpty(fileString))
-				return fileString;
-
-			var prefix = Uri.UriSchemeFile + ":";
-
-			if (!fileString.StartsWith(prefix))
-				return fileString;
-
-			var path = fileString.Substring(prefix.Length);
-			// Trim any number of beginning slashes
-			path = path.TrimStart('/');
-			// Prepend slash on Linux
-			if (IsUnix)
-				path = '/' + path;
-
-			return path;
-		}
-
-		public static XElement CreateFromBytes(byte[] xmlData)
+		internal static XElement CreateFromBytes(byte[] xmlData)
 		{
 			using (var memStream = new MemoryStream(xmlData))
 			{
@@ -89,25 +47,9 @@ namespace TriboroughBridge_ChorusPlugin
 		}
 
 		/// <summary>
-		/// Returns <c>true</c> if we're running on Unix, otherwise <c>false</c>.
-		/// </summary>
-		public static bool IsUnix
-		{
-			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
-		}
-
-		/// <summary>
-		/// Returns <c>true</c> if we're running on Windows NT or later, otherwise <c>false</c>.
-		/// </summary>
-		public static bool IsWindows
-		{
-			get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
-		}
-
-		/// <summary>
 		/// Creates and initializes the ChorusSystem for use in FLExBridge
 		/// </summary>
-		public static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
+		internal static ChorusSystem InitializeChorusSystem(string directoryName, string user, Action<ProjectFolderConfiguration> configure)
 		{
 			var system = new ChorusSystem(directoryName);
 			system.Init(user);
@@ -116,35 +58,35 @@ namespace TriboroughBridge_ChorusPlugin
 			return system;
 		}
 
-		public static string HgDataFolder(string path)
+		internal static string HgDataFolder(string path)
 		{
 			return Path.Combine(path, hg, "store", "data");
 		}
 
-		public static string LiftOffset(string path)
+		internal static string LiftOffset(string path)
 		{
-			var otherPath = Path.Combine(path, SharedConstants.OtherRepositories);
+			var otherPath = Path.Combine(path, LibTriboroughBridgeSharedConstants.OtherRepositories);
 			if (Directory.Exists(otherPath))
 			{
 				var extantLiftFolder = Directory.GetDirectories(otherPath).FirstOrDefault(subfolder => subfolder.EndsWith("_LIFT"));
 				if (extantLiftFolder != null)
 					return extantLiftFolder;
 			}
-			return Path.Combine(path, SharedConstants.OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
+			return Path.Combine(path, LibTriboroughBridgeSharedConstants.OtherRepositories, Path.GetFileName(path) + "_" + LIFT);
 		}
 
-		public static bool FolderIsEmpty(string folder)
+		internal static bool FolderIsEmpty(string folder)
 		{
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		public static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
+		internal static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
 			var results = new Dictionary<string, LocalizationManager>(3);
 
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var	installedTmxBaseDirectory = Path.Combine(
-					Path.GetDirectoryName(StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+					Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
 			var userTmxBaseDirectory = Path.Combine("SIL", FlexBridge);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.

@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -13,13 +10,13 @@ using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge.xml.generic;
-using SIL.IO;
-using SIL.Progress;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Handling.ModelVersion;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using SIL.IO;
+using SIL.Progress;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
@@ -37,11 +34,15 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			using (var catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly()))
 			{
 				using (var container = new CompositionContainer(catalog))
-			{
+				{
 					container.ComposeParts(this);
 				}
 			}
-			//_unknownFileTypeHandler = _handlers.First(h => h.GetType().Name == "UnknownFileTypeHandlerStrategy");
+		}
+
+		private IChorusFileTypeHandler AsIChorusFileTypeHandler
+		{
+			get { return this; }
 		}
 
 		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
@@ -70,22 +71,22 @@ namespace LibFLExBridgeChorusPlugin.Handling
 
 		#region Implementation of IChorusFileTypeHandler
 
-		public bool CanDiffFile(string pathToFile)
+		bool IChorusFileTypeHandler.CanDiffFile(string pathToFile)
 		{
-			return CanValidateFile(pathToFile);
+			return AsIChorusFileTypeHandler.CanValidateFile(pathToFile);
 		}
 
-		public bool CanMergeFile(string pathToFile)
+		bool IChorusFileTypeHandler.CanMergeFile(string pathToFile)
 		{
-			return CanValidateFile(pathToFile);
+			return AsIChorusFileTypeHandler.CanValidateFile(pathToFile);
 		}
 
-		public bool CanPresentFile(string pathToFile)
+		bool IChorusFileTypeHandler.CanPresentFile(string pathToFile)
 		{
-			return CanValidateFile(pathToFile);
+			return AsIChorusFileTypeHandler.CanValidateFile(pathToFile);
 		}
 
-		public bool CanValidateFile(string pathToFile)
+		bool IChorusFileTypeHandler.CanValidateFile(string pathToFile)
 		{
 			if (string.IsNullOrEmpty(pathToFile))
 				return false;
@@ -101,7 +102,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return handler.CanValidateFile(pathToFile);
 		}
 
-		public void Do3WayMerge(MergeOrder mergeOrder)
+		void IChorusFileTypeHandler.Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder == null)
 				throw new ArgumentNullException("mergeOrder");
@@ -136,7 +137,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			GetHandlerfromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IChorusFileTypeHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			if (parent == null)
 				throw new ArgumentNullException("parent"); // Parent seems not be optional in Chorus usage.
@@ -149,7 +150,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return GetHandlerfromExtension(extension).Find2WayDifferences(parent, child, repository);
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IChorusFileTypeHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			if (report == null)
 				throw new ArgumentNullException("report");
@@ -160,7 +161,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return GetHandlerfromExtension(extension).GetChangePresenter(report, repository);
 		}
 
-		public string ValidateFile(string pathToFile, IProgress progress)
+		string IChorusFileTypeHandler.ValidateFile(string pathToFile, IProgress progress)
 		{
 			if (progress == null)
 				throw new ArgumentNullException("progress");
@@ -185,7 +186,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return results;
 		}
 
-		public IEnumerable<IChangeReport> DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
+		IEnumerable<IChangeReport> IChorusFileTypeHandler.DescribeInitialContents(FileInRevision fileInRevision, TempFile file)
 		{
 			// Skip check, since DefaultChangeReport doesn't require it.
 			//if (fileInRevision == null)
@@ -198,12 +199,12 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return new IChangeReport[] { new DefaultChangeReport(fileInRevision, "Added") };
 		}
 
-		public IEnumerable<string> GetExtensionsOfKnownTextFileTypes()
+		IEnumerable<string> IChorusFileTypeHandler.GetExtensionsOfKnownTextFileTypes()
 		{
 			return _handlers.Select(handlerStrategy => handlerStrategy.Extension);
 		}
 
-		public uint MaximumFileSize
+		uint IChorusFileTypeHandler.MaximumFileSize
 		{
 			get { return int.MaxValue; }
 		}

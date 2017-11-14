@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
@@ -42,7 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			for (var canonicalBookNumber = 1; canonicalBookNumber < 67; ++canonicalBookNumber)
 			{
 				var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(canonicalBookNumber);
-				var currentAnnotationElement = Utilities.CreateFromBytes(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(FlexBridgeConstants.GuidStr).Value]);
+				var currentAnnotationElement = LibFLExBridgeUtilities.CreateFromBytes(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(FlexBridgeConstants.GuidStr).Value]);
 				CmObjectNestingService.NestObject(false, currentAnnotationElement,
 					classData,
 					guidToClassMapping);
@@ -60,7 +56,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				scriptureElement.Element(FlexBridgeConstants.ScriptureBooks).RemoveNodes();
 				foreach (var objsurEl in bookObjSurElements)
 				{
-					var currentBookElement = Utilities.CreateFromBytes(allBooks[objsurEl.Attribute(FlexBridgeConstants.GuidStr).Value]);
+					var currentBookElement = LibFLExBridgeUtilities.CreateFromBytes(allBooks[objsurEl.Attribute(FlexBridgeConstants.GuidStr).Value]);
 					var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(Int32.Parse(currentBookElement.Element("CanonicalNum").Attribute("val").Value));
 					CmObjectNestingService.NestObject(false, currentBookElement,
 						classData,

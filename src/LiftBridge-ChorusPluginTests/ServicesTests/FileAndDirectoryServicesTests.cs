@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.IO;
 using NUnit.Framework;
@@ -32,7 +29,7 @@ namespace LiftBridgeTests.ServicesTests
 			_baseDir = Path.Combine(tempSysFolder, "FileServicesTestBase");
 			Directory.CreateDirectory(_baseDir);
 			// Add .hg folder and one file in it.
-			Directory.CreateDirectory(Path.Combine(_baseDir, Utilities.hg));
+			Directory.CreateDirectory(Path.Combine(_baseDir, TriboroughBridgeUtilities.hg));
 			// Add .git folder and one file in it.
 			Directory.CreateDirectory(Path.Combine(_baseDir, LiftUtilties.git));
 
@@ -59,7 +56,7 @@ namespace LiftBridgeTests.ServicesTests
 		{
 			var allFilesAndDirs = FileAndDirectoryServices.EnumerateExtantFiles(_baseDir);
 
-			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, TriboroughBridgeUtilities.hg)));
 			Assert.IsFalse(allFilesAndDirs.Contains(Path.Combine(_baseDir, LiftUtilties.git)));
 
 			Assert.IsTrue(allFilesAndDirs.Contains(_newBaseFolderPathname));
@@ -104,11 +101,11 @@ namespace LiftBridgeTests.ServicesTests
 			Assert.IsTrue(File.Exists(_newBaseFolderPathname));
 			Assert.IsTrue(File.Exists(_newLdmlPathname));
 
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, TriboroughBridgeUtilities.hg)));
 			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, LiftUtilties.git)));
 			Assert.IsTrue(Directory.Exists(_newAudioDirName));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
-			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, Utilities.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, TriboroughBridgeUtilities.hg)));
+			Assert.IsTrue(Directory.Exists(Path.Combine(_baseDir, TriboroughBridgeUtilities.hg)));
 			Assert.IsTrue(Directory.Exists(_newWsDirName));
 		}
 	}
