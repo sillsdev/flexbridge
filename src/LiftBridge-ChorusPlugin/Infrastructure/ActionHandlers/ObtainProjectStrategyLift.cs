@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -36,8 +37,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		{
 			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new UpdateBranchHelperLift(), desiredBranchName, cloneResult, cloneLocation))
 					{
-				cloneResult.Message = CommonResources.kFlexUpdateRequired;
-			}
+					cloneResult.Message = CommonResources.kFlexUpdateRequired;
+				}
 		}
 
 		private string RemoveAppendedLiftIfNeeded(string cloneLocation)

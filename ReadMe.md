@@ -37,6 +37,8 @@ Also, if you are working on Chorus, set up the FieldWorks build to copy locally-
 
 ## Updating Release Notes for a new version
 
+FLExBridge is following the gitflow model for branching
+
 When releasing FLExBridge be sure to do the following:
 
 1. Update the version and changelogs / release notes.

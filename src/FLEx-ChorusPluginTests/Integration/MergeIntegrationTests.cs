@@ -298,7 +298,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
 		public void DictConfigMerge_DifferentUpradePathKeepsFileFormat()
 		{
-			const string commonAncestor = null;
+			//const string commonAncestor = null;
 
 			const string sue = @"<?xml version='1.0' encoding='utf-8'?>
 <DictionaryConfiguration name='Root-based (complex forms as subentries)' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' allPublications='true' version='14' lastModified='2014-10-07'>
@@ -340,9 +340,9 @@ namespace FLEx_ChorusPluginTests.Integration
 			using (var tempFolder = new TemporaryFolder("Temp"))
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
-				var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
-				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
 				using (var sueRepo = new RepositorySetup("Sue", true))
@@ -351,12 +351,12 @@ namespace FLEx_ChorusPluginTests.Integration
 					using (var randyRepo = new RepositorySetup("Randy", sueRepo))
 					{
 						// By doing the clone before making Sue's changes, we get the common starting state in both repos.
-						sueRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), sue);
+						sueRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), sue);
 
-						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", SharedConstants.fwdictconfig));
+						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", FlexBridgeConstants.fwdictconfig));
 						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
 						Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
-						randyRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), randy);
+						randyRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), randy);
 						randyRepo.CheckinAndPullAndMerge(sueRepo);
 						Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
 						var notesContents = File.ReadAllText(mergeConflictsNotesFile);
