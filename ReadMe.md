@@ -32,10 +32,8 @@ Note that this is in addition to unzipping this folder per the Chorus ReadMe.
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
 - In **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
 
-Also, if you are working on Chorus:
-
-- Copy Chorus.exe, LibChorus.dll, and Palaso dll's to C:\fwrepo\fw\output\Debug (or Release).  You can do this in **Windows** using the    `UpdateFLExDependencies.bat` script in the flexbridge repo (in **Linux**, run `UpdateFLExDependencies.sh`) . These steps are required for only those dependencies bound at compile time (e.g. API changes):
-- Rebuild FLEx
+Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
+(instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
 
 ## Updating Release Notes for a new version
 

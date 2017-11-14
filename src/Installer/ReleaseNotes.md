@@ -1,3 +1,7 @@
+## 2.5.3 18/Jul/2017
+* Fix dependency problem on Linux
+## 2.5.2 05/Jul/2017
+* Update localization files
 ## 2.5.1 16/Dec/2016
 * Support FLEx 8.3 Beta 2 Data model version
 ## 2.5.0 14/Oct/2016

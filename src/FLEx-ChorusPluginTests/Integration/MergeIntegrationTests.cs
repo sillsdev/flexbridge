@@ -293,5 +293,111 @@ namespace FLEx_ChorusPluginTests.Integration
 				}
 			}
 		}
+
+		[Test]
+		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
+		public void DictConfigMerge_DifferentUpradePathKeepsFileFormat()
+		{
+			const string commonAncestor = null;
+
+			const string sue = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration name='Root-based (complex forms as subentries)' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' allPublications='true' version='14' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='false'/>
+		<Option id='fr' isEnabled='true' />
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='true' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='false' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			const string randy = @"<?xml version='1.0' encoding='utf-8'?>
+<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' name='Root-based (complex forms as subentries)' allPublications='true' version='17' lastModified='2014-10-07'>
+  <ConfigurationItem name='Main Entry' style='Dictionary-Normal' isEnabled='true' field='LexEntry' cssClassNameOverride='entry'>
+  <ParagraphOptions paragraphStyle='Dictionary-Normal' continuationParagraphStyle='Dictionary-Continuation' />
+	<ConfigurationItem name='Headword' between=' ' after='  ' style='Dictionary-Headword' isEnabled='true' field='MLHeadWord' cssClassNameOverride='mainheadword'>
+	  <WritingSystemOptions writingSystemType='vernacular' displayWSAbreviation='false'>
+		<Option id='vernacular' isEnabled='true'/>
+	  </WritingSystemOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name='Variant Forms' before='(' between='; ' after=') ' isEnabled='true' field='VariantFormEntryBackRefs'>
+	  <ListTypeOptions list='variant'>
+		<Option isEnabled='false' id='b0000000-c40e-433e-80b5-31da08771344'/>
+		<Option isEnabled='true' id='0c4663b3-4d9a-47af-b9a1-c8565d8112ed'/>
+	  </ListTypeOptions>
+	</ConfigurationItem>
+  </ConfigurationItem>
+</DictionaryConfiguration>";
+
+			using (var tempFolder = new TemporaryFolder("Temp"))
+			{
+				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
+				var appsDir = Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
+				var xsdPathInProj = Path.Combine(tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+				File.Copy(xsdPath, xsdPathInProj, true);
+
+				using (var sueRepo = new RepositorySetup("Sue", true))
+				{
+					sueRepo.AddAndCheckinFile("unrelated.txt", "unrelated to SUT, here to get us rev 0 so repos are related");
+					using (var randyRepo = new RepositorySetup("Randy", sueRepo))
+					{
+						// By doing the clone before making Sue's changes, we get the common starting state in both repos.
+						sueRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), sue);
+
+						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", SharedConstants.fwdictconfig));
+						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
+						Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+						randyRepo.AddAndCheckinFile(string.Format("root.{0}", SharedConstants.fwdictconfig), randy);
+						randyRepo.CheckinAndPullAndMerge(sueRepo);
+						Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+						var notesContents = File.ReadAllText(mergeConflictsNotesFile);
+						Assert.IsNotNullOrEmpty(notesContents);
+						Assert.That(notesContents, Is.StringContaining("Both added the same element, but with different content"));
+						Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Randy."));
+						Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
+						Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
+
+						// Make sure merged file has Randy's changes
+						var doc = XDocument.Load(randyDictConfigInRepoPath);
+						var options = doc.Root.Element("ConfigurationItem").Elements("ConfigurationItem").Last(/*Variant Forms*/)
+							.Element("ListTypeOptions").Elements("Option").ToList();
+						Assert.AreEqual(2, options.Count, "There should be two Variant Forms options");
+						Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", options[0].Attribute("id").Value, "Options are out of order");
+						Assert.AreEqual("0c4663b3-4d9a-47af-b9a1-c8565d8112ed", options[1].Attribute("id").Value, "Options are out of order");
+						Assert.AreEqual("false", options[0].Attribute("isEnabled").Value, "First option should be disabled");
+						Assert.AreEqual("true", options[1].Attribute("isEnabled").Value, "Second option should be enabled");
+
+						// Make sure merged file does *not* have Sue's changes
+						options = doc.Root.Element("ConfigurationItem").Element("ConfigurationItem" /*Headword*/)
+							.Element("WritingSystemOptions").Elements("Option").ToList();
+						Assert.AreEqual(1, options.Count, "There should be only one WS Option");
+						Assert.AreEqual("vernacular", options[0].Attribute("id").Value, "should be default vernacular");
+						Assert.AreEqual("true", options[0].Attribute("isEnabled").Value, "should be enabled");
+
+						// Make sure the merged file has proper xsd namespace attributes
+						var xsiAttr = doc.Root.Attribute("xsi");
+						var xsdAttr = doc.Root.Attribute("xsd");
+						Assert.Null(xsiAttr, "xsi missing namespace");
+						Assert.Null(xsdAttr, "xsd missing namespace");
+						// 
+						XNamespace xsiNs = "http://www.w3.org/2001/XMLSchema-instance";
+						XNamespace xsdNs = "http://www.w3.org/2001/XMLSchema";
+						xsiAttr = doc.Root.Attribute(xsiNs + "xsi");
+						xsdAttr = doc.Root.Attribute(xsdNs + "xsd");
+						Assert.Null(xsiAttr, "xsi attribute missing entirely from result");
+						Assert.Null(xsdAttr, "xsd attribute missing entirely from result");
+					}
+				}
+			}
+		}
 	}
 }
