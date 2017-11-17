@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.Xml;
@@ -12,7 +9,7 @@ using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
-	internal class FieldWorksElementToMergeStrategyKeyMapper : IElementToMergeStrategyKeyMapper
+	internal sealed class FieldWorksElementToMergeStrategyKeyMapper : IElementToMergeStrategyKeyMapper
 	{
 		private readonly HashSet<string> _oddElementNames = new HashSet<string>
 										{
@@ -24,9 +21,9 @@ namespace LibFLExBridgeChorusPlugin.Handling
 											FlexBridgeConstants.DsChart
 										};
 
-		#region Implementation of IKeyFinder
+		#region Implementation of IElementToMergeStrategyKeyMapper
 
-		public string GetKeyFromElement(HashSet<string> keys, XmlNode element)
+		string IElementToMergeStrategyKeyMapper.GetKeyFromElement(HashSet<string> keys, XmlNode element)
 		{
 			Guard.AgainstNull(keys, "The 'keys' parameter is null.");
 			Guard.AgainstNull(element, "The 'element' parameter is null.");

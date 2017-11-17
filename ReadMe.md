@@ -22,24 +22,17 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.
 Therefore, to build FLEx Bridge, you must get the latest versions of these assemblies by running this in a Bash window:
 
-Windows	`download_dependencies_windows.sh`
+- In **Windows**, run `download_dependencies_windows.sh`
+- In **Linux**, run `download_dependencies_linux.sh`
 
-Linux	`download_dependencies_linux.sh`
+If necessary, both *download_dependencies* scripts can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
 
-If necessary, both download_dependencies can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
+If you plan to work on Chorus:
 
-If you plan to work on Chorus,
+- Clone the Chorus and LibPalaso repos from https://github.com/sillsdev/chorus and https://github.com/sillsdev/libpalaso into the same parent directory as flexbridge without changing their repository names.
+- In **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge, and build FLExBridge.
+- In **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
 
-- clone the Chorus and LibPalaso repos from https://github.com/sillsdev/chorus and https://github.com/sillsdev/libpalaso into the
-   same parent directory as flexbridge without changing their repository names
-- run GetAndBuildThis.bat to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes),
-   GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge,
-   and build FLExBridge (this doesn't always work as smoothly as we might like)
-
-### Special Mono dependencies
-
-	$ cp ../libpalaso/lib/Debug/icu.net.dll* ../libpalaso/lib/DebugMono
-	$ PATH=/usr/bin:$PATH make [debug|release] #This will prefer the System Mono over fieldworks-mono
 
 ### Mercurial
 
@@ -52,35 +45,39 @@ Note that this is in addition to unzipping this folder per the Chorus ReadMe.
 
 ## Connecting FieldWorks to FLExBridge
 
-Add the following keys to your registry (32-bit OS: omit 'Wow6432Node\', Mono: export env var FLEXBRIDGEDIR):
 
+- In **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
+- In **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
 
-Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts (instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki))
+Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
+(instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
 
 ## Updating Release Notes for a new version
 
-When releasing FLEx Bridge be sure to do the following:
+FLExBridge is following the gitflow model for branching
+
+When releasing FLExBridge be sure to do the following:
 
 1. Update the version and changelogs / release notes.
 
 	- For Windows:
-		1. If you are making a major or minor version number jump, update the the first two digits in `version`
-		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
-		- Run the following to update dependant Release Notes files:
+        1. If you are making a major or minor version number jump, update the the first two digits in `version`
+        - Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
+        - Run the following to update dependant Release Notes files:
 
-				@REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
-				"%VS120COMNTOOLS%vsvars32.bat"
+                @REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
+                "%VS120COMNTOOLS%vsvars32.bat"
 				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
 				msbuild build/FLExBridge.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
 	- For Linux:
 
-		1. `cd ~/fwrepo/flexbridge`
+        1. `cd ~/fwrepo/flexbridge`
 		- Set new version number, such as:
 
-			`echo 2.5.1 > version`
+            `echo 2.5.1 > version`
 
 		- Create an entry atop ReleaseNotes.md:
 

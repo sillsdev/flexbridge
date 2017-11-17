@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Linq;
 using System.Xml;
@@ -14,9 +11,9 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 	/// The order of the possibilities in CmPossibilityList.Possibilities or CmPossibility.SubPossibilities
 	/// is significant only if the list is not sorted. This class implements that policy.
 	/// </summary>
-	class PossibilityListOrderPolicy : IChildOrderPolicy
+	internal sealed class PossibilityListOrderPolicy : IChildOrderPolicy
 	{
-		public ChildOrder OrderSignificance(XmlNode parent)
+		ChildOrder IChildOrderPolicy.OrderSignificance(XmlNode parent)
 		{
 			var listNode = parent.ParentNode;
 			while (listNode != null && listNode.Name != "CmPossibilityList")

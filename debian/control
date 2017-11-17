@@ -16,8 +16,8 @@ Build-Depends: debhelper (>= 9.0.0),
  git
 Standards-Version: 3.9.6
 Homepage: http://projects.palaso.org/projects/fwbridge
-#Vcs-Git: git://git.debian.org/collab-maint/flexbridge.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/flexbridge.git;a=summary
+Vcs-Git: https://github.com/sillsdev/flexbridge.git
+Vcs-Browser: https://github.com/sillsdev/flexbridge
 
 Package: flexbridge
 Architecture: all

@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +7,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 /*
 BC 1. ScrRefSystem (no owner)
@@ -32,7 +28,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(baseDirectory))
 				Directory.CreateDirectory(baseDirectory);
 
-			var refSystem = Utilities.CreateFromBytes(sortedInstanceData.First().Value);
+			var refSystem = LibFLExBridgeUtilities.CreateFromBytes(sortedInstanceData.First().Value);
 
 			CmObjectNestingService.NestObject(false, refSystem,
 				classData,

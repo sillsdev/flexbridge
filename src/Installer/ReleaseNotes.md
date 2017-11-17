@@ -2,6 +2,13 @@
 
 * Support FieldWorks 9
 
+## 2.6.0 09/Nov/2017
+* Update version to 2.6.0 to enable updating from the version shipped with
+  FieldWorks 8.3.9
+## 2.5.4 01/Nov/2017
+* FLExBridge: Make sure assembly is properly stamped so that Send/Receive log has useful version info
+* FLExBridge: Fix bug LT-18624 - Handle number formats regardless of current culture
+* Chorus: Improvement for large projects in resumable Send/Receive
 ## 2.5.3 18/Jul/2017
 * Fix dependency problem on Linux
 ## 2.5.2 05/Jul/2017

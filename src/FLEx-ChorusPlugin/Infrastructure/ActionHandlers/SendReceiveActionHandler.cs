@@ -1,20 +1,18 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Sync;
-using LibFLExBridgeChorusPlugin;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using SIL.Progress;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -26,19 +24,33 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+
 		private bool _gotChanges;
+
+		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
+		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
+		private static void BackOutOfRepoCreation(string projectDir)
+		{
+			foreach (var subDir in new[] { ".hg", "Anthropology", "General", "Linguistics" })
+			{
+				var fullPath = Path.Combine(projectDir, subDir);
+				if (Directory.Exists(fullPath))
+					Directory.Delete(fullPath, true);
+			}
+			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
+			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
+		}
 
 		#region IBridgeActionTypeHandler impl
 
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		/// <returns>'true' if the caller expects the main window to be shown, otherwise 'false'.</returns>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			// -p <$fwroot>\foo\foo.fwdata
-			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			var projectDir = Path.GetDirectoryName(options["-p"]);
+			using (var chorusSystem = TriboroughBridgeUtilities.InitializeChorusSystem(projectDir, options["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -53,12 +65,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				chorusSystem.EnsureAllNotesRepositoriesLoaded();
 
 				// Add the 'lock' file to keep FW apps from starting up at such an inopportune moment.
-				var projectName = Path.GetFileNameWithoutExtension(commandLineArgs["-p"]);
-				var lockPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlLockExtension);
+				var projectName = Path.GetFileNameWithoutExtension(options["-p"]);
+				var lockPathname = Path.Combine(projectDir, projectName + LibTriboroughBridgeSharedConstants.FwXmlLockExtension);
 				try
 				{
 					File.WriteAllText(lockPathname, "");
-					var origPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlExtension);
+					var origPathname = Path.Combine(projectDir, projectName + LibTriboroughBridgeSharedConstants.FwXmlExtension);
 
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
@@ -66,11 +78,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring
 						// now.  'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and the Synchronizer
 						// class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit)
-						// call.  If two heads are merged, then the Synchoronizer class calls the second method of the ISychronizerAdjunct
+						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISychronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
-						var syncAdjunt = new FlexBridgeSynchronizerAdjunct(origPathname, commandLineArgs["-f"], false);
-						syncDlg.SetSynchronizerAdjunct(syncAdjunt);
+						var syncAdjunct = new FlexBridgeSynchronizerAdjunct(origPathname, options["-f"], false, true);
+						syncDlg.SetSynchronizerAdjunct(syncAdjunct);
 
 						// Chorus does it in this order:
 						// Local Commit
@@ -94,7 +106,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 								// and we don't want to leave the user in a sad state (cf. LT-14751, LT-14957).
 								BackOutOfRepoCreation(projectDir);
 							}
-							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunt.WasUpdated)
+							else if (syncDlg.SyncResult.DidGetChangesFromOthers || syncAdjunct.WasUpdated)
 							{
 								_gotChanges = true;
 							}
@@ -120,24 +132,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		/// <summary>Removes .hg repo and other files and folders created by S/R Project</summary>
-		/// <remarks>Directory.Delete throws if the directory does not exist; File.Delete does not.</remarks>
-		private static void BackOutOfRepoCreation(string projectDir)
-		{
-			foreach (var subDir in new[] {".hg", "Anthropology", "General", "Linguistics"})
-			{
-				var fullPath = Path.Combine(projectDir, subDir);
-				if (Directory.Exists(fullPath))
-					Directory.Delete(fullPath, true);
-			}
-			File.Delete(Path.Combine(projectDir, "FLExProject.CustomProperties"));
-			File.Delete(Path.Combine(projectDir, "FLExProject.ModelVersion"));
-		}
-
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.SendReceive; }
 		}
@@ -149,7 +147,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Perform ending work for the supported action.
 		/// </summary>
-		public void EndWork()
+		void IBridgeActionTypeHandlerCallEndWork.EndWork()
 		{
 			_connectionHelper.SignalBridgeWorkComplete(_gotChanges);
 		}

@@ -1,6 +1,6 @@
 ﻿namespace RepositoryUtility
 {
-	partial class GetFileFromRevisionRange
+	sealed partial class GetFileFromRevisionRange
 	{
 		/// <summary>
 		/// Required designer variable.

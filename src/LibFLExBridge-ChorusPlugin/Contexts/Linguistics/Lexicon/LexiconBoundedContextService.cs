@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 {
@@ -73,7 +69,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 				var srcDataCopy = new SortedDictionary<string, byte[]>(sortedEntryInstanceData);
 				foreach (var entry in srcDataCopy.Values)
 				{
-					var entryElement = Utilities.CreateFromBytes(entry);
+					var entryElement = LibFLExBridgeUtilities.CreateFromBytes(entry);
 					CmObjectNestingService.NestObject(false, entryElement,
 													  classData,
 													  guidToClassMapping);
@@ -179,7 +175,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 					continue;
 
 				var root = new XElement(propName);
-				var listElement = Utilities.CreateFromBytes(posLists[listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
+				var listElement = LibFLExBridgeUtilities.CreateFromBytes(posLists[listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
 				CmObjectNestingService.NestObject(false,
 					listElement,
 					classData,

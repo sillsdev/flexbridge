@@ -1,195 +1,193 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2017 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
-	public static class FlexBridgeConstants
+	internal static class FlexBridgeConstants
 	{
-		public static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
+		internal static readonly string EmptyGuid = Guid.Empty.ToString().ToLowerInvariant();
+		public const string DictConfigSchemaFilename = "DictionaryConfiguration.xsd";
 
 		// General
-		public const string Str = "Str";
-		public const string AStr = "AStr";
-		public const string Uni = "Uni";
-		public const string AUni = "AUni";
-		public const string Run = "Run";
-		public const string Ws = "ws";
-		public const string Binary = "Binary";
-		public const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
-		public const string Collections = "Collections";
-		public const string MultiAlt = "MultiAlt";
-		public const string Owning = "Owning";
-		public const string Val = "val";
-		public const string Objsur = "objsur";
-		public const string GuidStr = "guid";
-		public const string Header = "header";
-		public const string OwnerGuid = "ownerguid";
-		public const string Class = "class";
-		public const string Name = "name";
-		public const string InitialCapitalName = "Name";
-		public const string Ownseq = "ownseq";
-		public const string Refseq = "refseq";
-		public const string Refcol = "refcol";
-		public const string Custom = "Custom";
-		public const string CustomField = "CustomField";
-		public const string General = "General";
-		public const string CmPossibilityList = "CmPossibilityList";
-		public const string AnnotationDefs = "AnnotationDefs";
-		public const string AnnotationDefsListFilename = AnnotationDefs + "." + List;
-		public const string FLExStylesFilename = "FLExStyles." + Style;
-		public const string Filter = "filter";
-		public const string Filters = "Filters";
-		public const string FLExFiltersFilename = "FLExFilters." + Filter;
-		public const string Annotation = "annotation";
-		public const string Annotations = "Annotations";
-		public const string FLExAnnotationsFilename = "FLExAnnotations." + Annotation;
-		public const string langproj = "langproj";
-		public const string LanguageProject = "LanguageProject";
-		public const string LanguageProjectFilename = LanguageProject + "." + langproj;
-		public const string LangProject = "LangProject";
-		public const string ConfigurationItem = "ConfigurationItem";
-		public const string Label = "label";
-		public const string Title = "Title";
-		public const string NamedStyle = "namedStyle";
-		public const string Pictures = "Pictures";
-		public const string CmPicture = "CmPicture";
-		public const string pictures = "pictures";
-		public const string FLExUnownedPicturesFilename = "UnownedPictures." + pictures;
-		public const string orderings = "orderings";
-		public const string VirtualOrderings = "VirtualOrderings";
-		public const string VirtualOrdering = "VirtualOrdering";
-		public const string FLExVirtualOrderingFilename = "VirtualOrdering." + orderings;
+		internal const string Str = "Str";
+		internal const string AStr = "AStr";
+		internal const string Uni = "Uni";
+		internal const string AUni = "AUni";
+		internal const string Run = "Run";
+		internal const string Ws = "ws";
+		internal const string Binary = "Binary";
+		internal const string Prop = "Prop"; // TextPropBinary data type's inner element name (Child of TextPropBinary property).
+		internal const string Collections = "Collections";
+		internal const string MultiAlt = "MultiAlt";
+		internal const string Owning = "Owning";
+		internal const string Val = "val";
+		internal const string Objsur = "objsur";
+		internal const string GuidStr = "guid";
+		internal const string Header = "header";
+		internal const string OwnerGuid = "ownerguid";
+		internal const string Class = "class";
+		internal const string Name = "name";
+		internal const string InitialCapitalName = "Name";
+		internal const string Ownseq = "ownseq";
+		internal const string Refseq = "refseq";
+		internal const string Refcol = "refcol";
+		internal const string Custom = "Custom";
+		internal const string CustomField = "CustomField";
+		internal const string General = "General";
+		internal const string CmPossibilityList = "CmPossibilityList";
+		internal const string AnnotationDefs = "AnnotationDefs";
+		internal const string AnnotationDefsListFilename = AnnotationDefs + "." + List;
+		internal const string FLExStylesFilename = "FLExStyles." + Style;
+		internal const string Filter = "filter";
+		internal const string Filters = "Filters";
+		internal const string FLExFiltersFilename = "FLExFilters." + Filter;
+		internal const string Annotation = "annotation";
+		internal const string Annotations = "Annotations";
+		internal const string FLExAnnotationsFilename = "FLExAnnotations." + Annotation;
+		internal const string langproj = "langproj";
+		internal const string LanguageProject = "LanguageProject";
+		internal const string LanguageProjectFilename = LanguageProject + "." + langproj;
+		internal const string LangProject = "LangProject";
+		internal const string ConfigurationItem = "ConfigurationItem";
+		internal const string Label = "label";
+		internal const string Title = "Title";
+		internal const string NamedStyle = "namedStyle";
+		internal const string Pictures = "Pictures";
+		internal const string CmPicture = "CmPicture";
+		internal const string pictures = "pictures";
+		internal const string FLExUnownedPicturesFilename = "UnownedPictures." + pictures;
+		internal const string orderings = "orderings";
+		internal const string VirtualOrderings = "VirtualOrderings";
+		internal const string VirtualOrdering = "VirtualOrdering";
+		internal const string FLExVirtualOrderingFilename = "VirtualOrdering." + orderings;
 
 		// FW layouts
-		public const string fwlayout = "fwlayout";
-		public const string fwdictconfig = "fwdictconfig";
+		internal const string fwlayout = "fwlayout";
+		internal const string fwdictconfig = "fwdictconfig";
 
 		// Old style
-		public const string RtTag = "rt";
+		internal const string RtTag = "rt";
 
 		// Model Version
-		public const string ModelVersion = "ModelVersion";
-		public const string ModelVersionFilename = "FLExProject." + ModelVersion;
+		internal const string ModelVersion = "ModelVersion";
+		internal const string ModelVersionFilename = "FLExProject." + ModelVersion;
 
 		// Custom Properties
-		public const string AdditionalFieldsTag = "AdditionalFields";
-		public const string CustomProperties = "CustomProperties";
-		public const string CustomPropertiesFilename = "FLExProject." + CustomProperties;
+		internal const string AdditionalFieldsTag = "AdditionalFields";
+		internal const string CustomProperties = "CustomProperties";
+		internal const string CustomPropertiesFilename = "FLExProject." + CustomProperties;
 
 		// Common
-		public const string List = "list";
-		public const string Styles = "Styles";
-		public const string Style = "style";
-		public const string StStyle = "StStyle";
-		public const string CmFilter = "CmFilter";
+		internal const string List = "list";
+		internal const string Styles = "Styles";
+		internal const string Style = "style";
+		internal const string StStyle = "StStyle";
+		internal const string CmFilter = "CmFilter";
 		// The style applied to spans of added text by diff tool
-		public const string ConflictInsertStyle = "background: Yellow";
-		public const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
+		internal const string ConflictInsertStyle = "background: Yellow";
+		internal const string ConflictDeleteStyle = "text-decoration: line-through; color: red";
 
 		// Linguistics
-		public const string Linguistics = "Linguistics";
-		public const string ReversalIndexEntry = "ReversalIndexEntry";
-		public const string Reversal = "reversal";
-		public const string Lexicon = "Lexicon";
-		public const string Lexdb = "lexdb";
-		public const string LexDb = "LexDb";
-		public const string LexEntry = "LexEntry";
-		public const string LexemeForm = "LexemeForm";
-		public const string Form = "Form";
-		public const string TextInCorpus = "textincorpus";
-		public const string TextCorpus = "TextCorpus";
-		public const string GenreList = "GenreList";
-		public const string GenreListFilename = GenreList + "." + List;
-		public const string Text = "Text";
-		public const string TextMarkupTags = "TextMarkupTags";
-		public const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
-		public const string TranslationTags = "TranslationTags";
-		public const string TranslationTagsListFilename = TranslationTags + "." + List;
-		public const string Inventory = "inventory";
-		public const string WordformInventoryRootFolder = "Inventory";
-		public const string WordformInventory = "WordformInventory";
-		public const string WfiWordform = "WfiWordform";
-		public const string DiscourseRootFolder = "Discourse";
-		public const string ConstChartTempl = "ConstChartTempl";
-		public const string ConstChartTemplFilename = ConstChartTempl + "." + List;
-		public const string ChartMarkers = "ChartMarkers";
-		public const string ChartMarkersFilename = ChartMarkers + "." + List;
-		public const string CmAnnotation = "CmAnnotation";
-		public const string DsChart = "DsChart";
-		public const string DiscourseExt = "discourse";
-		public const string DiscourseChartFilename = "Charting." + DiscourseExt;
-		public const string Phonology = "Phonology";
-		public const string PhonRuleFeaturesFilename = "PhonRuleFeatures" + "." + List;
-		public const string Phondata = "phondata";
-		public const string PhPhonData = "PhPhonData";
-		public const string PhonologicalData = "PhonologicalData";
-		public const string PhonologicalDataFilename = PhonologicalData + "." + Phondata;
-		public const string PhonologyFeaturesFilename = "PhonologyFeatures." + Featsys;
-		public const string FeatureSystem = "FeatureSystem";
-		public const string FsFeatureSystem = "FsFeatureSystem";
-		public const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
-		public const string MorphologyAndSyntax = "MorphologyAndSyntax";
-		public const string Msa = "MorphoSyntaxAnalysis";
-		public const string Msas = "MorphoSyntaxAnalyses";
-		public const string MoDerivAffMsa = "MoDerivAffMsa";
-		public const string PartOfSpeech = "PartOfSpeech";
-		public const string PartsOfSpeech = "PartsOfSpeech";
-		public const string FromPartOfSpeech = "FromPartOfSpeech";
-		public const string ToPartOfSpeech = "ToPartOfSpeech";
-		public const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
-		public const string Agents = "agents";
-		public const string AnalyzingAgents = "AnalyzingAgents";
-		public const string CmAgent = "CmAgent";
-		public const string AnalyzingAgentsFilename = AnalyzingAgents + "." + Agents;
-		public const string MorphAndSynFeaturesFilename = "MorphAndSynFeatureSystem." + Featsys;
-		public const string Morphdata = "morphdata";
-		public const string MoMorphData = "MoMorphData";
-		public const string MorphAndSynData = "MorphAndSynData";
-		public const string MorphAndSynDataFilename = MorphAndSynData + "." + Morphdata;
-		public const string MorphTypes = "MorphTypes";
-		public const string MorphTypesListFilename = MorphTypes + "." + List;
+		internal const string Linguistics = "Linguistics";
+		internal const string ReversalIndexEntry = "ReversalIndexEntry";
+		internal const string Reversal = "reversal";
+		internal const string Lexicon = "Lexicon";
+		internal const string Lexdb = "lexdb";
+		internal const string LexDb = "LexDb";
+		internal const string LexEntry = "LexEntry";
+		internal const string LexemeForm = "LexemeForm";
+		internal const string Form = "Form";
+		internal const string TextInCorpus = "textincorpus";
+		internal const string TextCorpus = "TextCorpus";
+		internal const string GenreList = "GenreList";
+		internal const string GenreListFilename = GenreList + "." + List;
+		internal const string Text = "Text";
+		internal const string TextMarkupTags = "TextMarkupTags";
+		internal const string TextMarkupTagsListFilename = TextMarkupTags + "." + List;
+		internal const string TranslationTags = "TranslationTags";
+		internal const string TranslationTagsListFilename = TranslationTags + "." + List;
+		internal const string Inventory = "inventory";
+		internal const string WordformInventoryRootFolder = "Inventory";
+		internal const string WordformInventory = "WordformInventory";
+		internal const string WfiWordform = "WfiWordform";
+		internal const string DiscourseRootFolder = "Discourse";
+		internal const string ConstChartTempl = "ConstChartTempl";
+		internal const string ConstChartTemplFilename = ConstChartTempl + "." + List;
+		internal const string ChartMarkers = "ChartMarkers";
+		internal const string ChartMarkersFilename = ChartMarkers + "." + List;
+		internal const string CmAnnotation = "CmAnnotation";
+		internal const string DsChart = "DsChart";
+		internal const string DiscourseExt = "discourse";
+		internal const string DiscourseChartFilename = "Charting." + DiscourseExt;
+		internal const string Phonology = "Phonology";
+		internal const string PhonRuleFeaturesFilename = "PhonRuleFeatures" + "." + List;
+		internal const string Phondata = "phondata";
+		internal const string PhPhonData = "PhPhonData";
+		internal const string PhonologicalData = "PhonologicalData";
+		internal const string PhonologicalDataFilename = PhonologicalData + "." + Phondata;
+		internal const string PhonologyFeaturesFilename = "PhonologyFeatures." + Featsys;
+		internal const string FeatureSystem = "FeatureSystem";
+		internal const string FsFeatureSystem = "FsFeatureSystem";
+		internal const string Featsys = "featsys"; // Shared with the MorphAndSyn feature file.
+		internal const string MorphologyAndSyntax = "MorphologyAndSyntax";
+		internal const string Msa = "MorphoSyntaxAnalysis";
+		internal const string Msas = "MorphoSyntaxAnalyses";
+		internal const string MoDerivAffMsa = "MoDerivAffMsa";
+		internal const string PartOfSpeech = "PartOfSpeech";
+		internal const string PartsOfSpeech = "PartsOfSpeech";
+		internal const string FromPartOfSpeech = "FromPartOfSpeech";
+		internal const string ToPartOfSpeech = "ToPartOfSpeech";
+		internal const string PartsOfSpeechFilename = PartsOfSpeech + "." + List;
+		internal const string Agents = "agents";
+		internal const string AnalyzingAgents = "AnalyzingAgents";
+		internal const string CmAgent = "CmAgent";
+		internal const string AnalyzingAgentsFilename = AnalyzingAgents + "." + Agents;
+		internal const string MorphAndSynFeaturesFilename = "MorphAndSynFeatureSystem." + Featsys;
+		internal const string Morphdata = "morphdata";
+		internal const string MoMorphData = "MoMorphData";
+		internal const string MorphAndSynData = "MorphAndSynData";
+		internal const string MorphAndSynDataFilename = MorphAndSynData + "." + Morphdata;
+		internal const string MorphTypes = "MorphTypes";
+		internal const string MorphTypesListFilename = MorphTypes + "." + List;
 
 		// Anthropology
-		public const string DataNotebook = "DataNotebook";
-		public const string Ntbk = "ntbk";
-		public const string DataNotebookFilename = DataNotebook + "." + Ntbk;
-		public const string Anthropology = "Anthropology";
-		public const string RnGenericRec = "RnGenericRec";
+		internal const string DataNotebook = "DataNotebook";
+		internal const string Ntbk = "ntbk";
+		internal const string DataNotebookFilename = DataNotebook + "." + Ntbk;
+		internal const string Anthropology = "Anthropology";
+		internal const string RnGenericRec = "RnGenericRec";
 
 		// Scripture
-		public const string TranslatedScripture = "TranslatedScripture";
-		public const string ScriptureReferenceSystem = "ReferenceSystem";
-		public const string ArchivedDrafts = "ArchivedDrafts";
-		public const string ArchivedDraft = "ArchivedDraft";
-		public const string Draft = "Draft";
-		public const string ScrDraft = "ScrDraft";
-		public const string ImportSettingsFilename = "Settings." + ImportSetting;
-		public const string ImportSettings = "ImportSettings";
-		public const string ImportSetting = "ImportSetting";
-		public const string ScrImportSet = "ScrImportSet";
-		public const string Trans = "trans";
-		public const string Scripture = "Scripture";
-		public const string Other = "Other";
-		public const string Srs = "srs";
-		public const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
-		public const string ScriptureTranslation = "Translations";
-		public const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
-		public const string NoteCategories = "NoteCategories";
-		public const string NoteCategoriesListFilename = NoteCategories + "." + List;
-		public const string bookannotations = "bookannotations";
-		public const string book = "book";
-		public const string Book = "Book";
-		public const string ScrBook = "ScrBook";
-		public const string Books = "Books";
-		public const string ScrBookAnnotations = "ScrBookAnnotations";
-		public const string BookAnnotations = "BookAnnotations";
-		public const string ScriptureBooks = "ScriptureBooks";
-		public const string ScrRefSystem = "ScrRefSystem";
+		internal const string TranslatedScripture = "TranslatedScripture";
+		internal const string ScriptureReferenceSystem = "ReferenceSystem";
+		internal const string ArchivedDrafts = "ArchivedDrafts";
+		internal const string ArchivedDraft = "ArchivedDraft";
+		internal const string Draft = "Draft";
+		internal const string ScrDraft = "ScrDraft";
+		internal const string ImportSettingsFilename = "Settings." + ImportSetting;
+		internal const string ImportSettings = "ImportSettings";
+		internal const string ImportSetting = "ImportSetting";
+		internal const string ScrImportSet = "ScrImportSet";
+		internal const string Trans = "trans";
+		internal const string Scripture = "Scripture";
+		internal const string Other = "Other";
+		internal const string Srs = "srs";
+		internal const string ScriptureReferenceSystemFilename = ScriptureReferenceSystem + "." + Srs;
+		internal const string ScriptureTranslation = "Translations";
+		internal const string ScriptureTransFilename = ScriptureTranslation + "." + Trans;
+		internal const string NoteCategories = "NoteCategories";
+		internal const string NoteCategoriesListFilename = NoteCategories + "." + List;
+		internal const string bookannotations = "bookannotations";
+		internal const string book = "book";
+		internal const string Book = "Book";
+		internal const string ScrBook = "ScrBook";
+		internal const string Books = "Books";
+		internal const string ScrBookAnnotations = "ScrBookAnnotations";
+		internal const string BookAnnotations = "BookAnnotations";
+		internal const string ScriptureBooks = "ScriptureBooks";
+		internal const string ScrRefSystem = "ScrRefSystem";
 
 		/***** Relocate ones that get added below here. *****/
 	}

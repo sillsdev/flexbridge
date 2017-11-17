@@ -15,6 +15,7 @@ using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin.Handling;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using SIL.IO;
@@ -31,9 +32,9 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			if (_xsdPathname != null)
 				return _xsdPathname;
 
-			var innerPath = Path.Combine("Temp", SharedConstants.DictConfigSchemaFilename);
+			var innerPath = Path.Combine("Temp", FlexBridgeConstants.DictConfigSchemaFilename);
 			var parentDir = Path.GetDirectoryName(configFilePathname);
-			while (parentDir != null)
+			while (!string.IsNullOrEmpty(parentDir))
 			{
 				if (File.Exists(_xsdPathname = Path.Combine(parentDir, innerPath)))
 					return _xsdPathname;

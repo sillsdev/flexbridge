@@ -1,23 +1,19 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
-using System;
 using System.Xml;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
-	internal class MultiLingualStringsContextGenerator : FieldWorkObjectContextGenerator
+	internal sealed class MultiLingualStringsContextGenerator : FieldWorkObjectContextGenerator
 	{
 		//This array is used to determine which strings to look for and the order to search for them
 		//which will be returned in the contextLabel
-		private String[] m_valuesToCheckFor;
+		private readonly string[] m_valuesToCheckFor;
 
-		private string m_objectNameForLabel = "";
+		private readonly string m_objectNameForLabel = "";
 
-		public MultiLingualStringsContextGenerator(string startOfContextLabel, params String[] valuesToGet)
+		internal MultiLingualStringsContextGenerator(string startOfContextLabel, params string[] valuesToGet)
 		{
 			m_objectNameForLabel = startOfContextLabel;
 			m_valuesToCheckFor = valuesToGet;
@@ -39,7 +35,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return m_objectNameForLabel + Space + Quote + objectNameOrAbbr + Quote;
 		}
 
-		protected string GetNameOrAbbreviationOrOther(XmlNode parent)
+		private string GetNameOrAbbreviationOrOther(XmlNode parent)
 		{
 			var dataToReturn = "";
 			//var index = 0;
@@ -50,13 +46,10 @@ namespace LibFLExBridgeChorusPlugin.Handling
 					continue;
 
 				dataToReturn = FirstNonBlankChildsData(nodeToCheck);
-				if (!String.IsNullOrEmpty(dataToReturn))
+				if (!string.IsNullOrEmpty(dataToReturn))
 					break;
 			}
-			if (String.IsNullOrEmpty(dataToReturn))
-				return UnidentifiableLabel;
-			else
-				return dataToReturn;
+			return string.IsNullOrEmpty(dataToReturn) ? UnidentifiableLabel : dataToReturn;
 		}
 	}
 }

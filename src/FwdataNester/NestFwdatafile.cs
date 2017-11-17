@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -15,20 +12,25 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHandlers;
-using Chorus.VcsDrivers.Mercurial;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
+using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using SIL.Xml;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibTriboroughBridgeChorusPlugin;
+using SIL.PlatformUtilities;
+using SIL.Progress;
+using SIL.Xml;
+using TriboroughBridge_ChorusPlugin;
 
 namespace FwdataTestApp
 {
-	public partial class NestFwdataFile : Form
+	public sealed partial class NestFwdataFile : Form
 	{
 		private static string CurrentBaseFolder = @"D:\TestProjects";
 		private string _srcFwdataPathname;
@@ -36,7 +38,7 @@ namespace FwdataTestApp
 
 		public NestFwdataFile()
 		{
-			if (TriboroughBridge_ChorusPlugin.Utilities.IsUnix)
+			if (Platform.IsUnix)
 			{
 				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
 			}
@@ -94,20 +96,21 @@ namespace FwdataTestApp
 		{
 			Cursor = Cursors.WaitCursor;
 			var totalRunTimer = new Stopwatch();
+			var sbTopLevel = new StringBuilder();
 			totalRunTimer.Start();
 			foreach (ListViewItem selectedItem in _listView.CheckedItems)
 			{
-				GC.Collect(2, GCCollectionMode.Forced);
-				RunSelected(Path.Combine((string)selectedItem.Tag, selectedItem.Text + ".fwdata"));
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+				RunSelected(Path.Combine((string)selectedItem.Tag, selectedItem.Text + ".fwdata"), sbTopLevel);
 			}
 			totalRunTimer.Stop();
-			var totalTxt = String.Format(@"Time to run everything: {0}", totalRunTimer.Elapsed);
-			File.WriteAllText(Path.Combine(CurrentBaseFolder, "TotalTime.log"), totalTxt);
+			sbTopLevel.AppendFormat(@"Time to run everything: {0}", totalRunTimer.Elapsed);
+			File.WriteAllText(Path.Combine(CurrentBaseFolder, "TotalTime.log"), sbTopLevel.ToString());
 			Cursor = Cursors.Default;
 			Close();
 		}
 
-		private void RunSelected(string currentFwdataPathname)
+		private void RunSelected(string currentFwdataPathname, StringBuilder sbTopLevel)
 		{
 			_srcFwdataPathname = currentFwdataPathname;
 			_workingDir = Path.GetDirectoryName(_srcFwdataPathname);
@@ -159,7 +162,7 @@ namespace FwdataTestApp
 			}
 			catch (Exception err)
 			{
-				GC.Collect(2, GCCollectionMode.Forced);
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 				File.WriteAllText(Path.Combine(_workingDir, "StackTrace.log"),
 								  err.GetType().Name + Environment.NewLine + err.StackTrace);
 				if (File.Exists(_srcFwdataPathname + ".orig"))
@@ -170,7 +173,8 @@ namespace FwdataTestApp
 			}
 			finally
 			{
-				var compTxt = String.Format(
+				var comparisonNotes = sb.ToString();
+				var compTxt = string.Format(
 					"Time to nest file: {1}{0}Time to check nested file: {2}{0}Own objsur Found: {3}{0}Time to breakup file: {4}.{0}Time to restore file: {5}.{0}Time to verify restoration: {6}.{0}Time to validate files: {7}.{0}Time to check ambiguous data: {8}.{0}Time to check dangling refs in main file: {9}.{0}{0}{10}",
 					Environment.NewLine,
 					nestTimer.ElapsedMilliseconds > 0 ? nestTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture) : "Not run",
@@ -196,11 +200,21 @@ namespace FwdataTestApp
 					danglingRefsTimer.ElapsedMilliseconds > 0
 						? danglingRefsTimer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture)
 						: "Not run",
-						sb);
-				File.WriteAllText(Path.Combine(_workingDir, "Comparison.log"), compTxt);
+						comparisonNotes);
+				var projectComparisonLogPathname = Path.Combine(_workingDir, "Comparison.log");
+				File.WriteAllText(projectComparisonLogPathname, compTxt);
+				if (comparisonNotes.Length > 0)
+				{
+					sbTopLevel.AppendFormat("See comparison log: '{0}'", projectComparisonLogPathname);
+					File.WriteAllText(projectComparisonLogPathname, comparisonNotes);
+				}
 				var validationErrors = sbValidation.ToString();
 				if (validationErrors.Length > 0)
-					File.WriteAllText(Path.Combine(_workingDir, "Validation.log"), validationErrors);
+				{
+					var projectValidationLogPathname = Path.Combine(_workingDir, "Validation.log");
+					sbTopLevel.AppendFormat("See validation log: '{0}'", projectValidationLogPathname);
+					File.WriteAllText(projectValidationLogPathname, validationErrors);
+				}
 			}
 		}
 
@@ -218,7 +232,7 @@ namespace FwdataTestApp
 			var danglingRefGuids = new Dictionary<string, HashSet<string>>();
 			foreach (var kvp in classData.Values.SelectMany(innerDict => innerDict)
 				.ToDictionary(innerKvp => innerKvp.Key,
-					innerKvp => TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(innerKvp.Value)))
+					innerKvp => TriboroughBridgeUtilities.CreateFromBytes(innerKvp.Value)))
 			{
 				var haveWrittenMainObjInfo = false;
 				var currentMainGuid = kvp.Key;
@@ -310,12 +324,12 @@ namespace FwdataTestApp
 			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
-				var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(record);
+				var wfElement = TriboroughBridgeUtilities.CreateFromBytes(record);
 				var csElement = wfElement.Element("Checksum");
 				if (csElement != null)
 				{
 					csElement.Attribute(FlexBridgeConstants.Val).Value = "0";
-					record = SharedConstants.Utf8.GetBytes(wfElement.ToString());
+					record = LibTriboroughBridgeSharedConstants.Utf8.GetBytes(wfElement.ToString());
 				}
 			}
 
@@ -337,7 +351,7 @@ namespace FwdataTestApp
 		{
 			GetFreshMdc(); // Want it fresh.
 			restoreTimer.Start();
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), true, _srcFwdataPathname);
 			restoreTimer.Stop();
 		}
 
@@ -347,7 +361,7 @@ namespace FwdataTestApp
 			nestTimer.Start();
 			NestFile(_srcFwdataPathname);
 			nestTimer.Stop();
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 			if (cbCheckOwnObjsurChecked)
 			{
 				checkOwnObjsurTimer.Start();
@@ -362,9 +376,9 @@ namespace FwdataTestApp
 			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
 			GetFreshMdc(); // Want it fresh.
 			breakupTimer.Start();
-			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), _srcFwdataPathname);
+			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), false, _srcFwdataPathname);
 			breakupTimer.Stop();
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
 			if (_cbCheckAmbiguousElements.Checked)
 			{
@@ -503,12 +517,12 @@ namespace FwdataTestApp
 					sbValidation.AppendLine(warning.HtmlDetails);
 					sbValidation.AppendLine();
 				}
-				GC.Collect(2, GCCollectionMode.Forced);
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 			}
 			restoreTimer.Start();
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), _srcFwdataPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), true, _srcFwdataPathname);
 			restoreTimer.Stop();
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 		}
 
 		private static XmlNode CreateXmlNodeFromBytes(byte[] xmlData)
@@ -611,7 +625,7 @@ namespace FwdataTestApp
 
 		private void Verify(Stopwatch verifyTimer, StringBuilder sb)
 		{
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 			verifyTimer.Start();
 			GetFreshMdc(); // Want it fresh.
 			var origData = new Dictionary<string, byte[]>(StringComparer.InvariantCultureIgnoreCase);
@@ -623,7 +637,7 @@ namespace FwdataTestApp
 				{
 					if (!testedforExistanceOfOrigOptionalFirstElement)
 					{
-						foundOrigOptionalFirstElement = FLEx.ProjectSplitterInternal.IsOptionalFirstElement(origRecord);
+						foundOrigOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(origRecord);
 						testedforExistanceOfOrigOptionalFirstElement = true;
 					}
 					if (foundOrigOptionalFirstElement)
@@ -636,7 +650,7 @@ namespace FwdataTestApp
 				}
 			}
 			verifyTimer.Stop();
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 			verifyTimer.Start();
 			using (var fastSplitterNew = new FastXmlElementSplitter(_srcFwdataPathname))
 			{
@@ -648,7 +662,7 @@ namespace FwdataTestApp
 				{
 					if (!testedforExistanceOfNewOptionalFirstElement)
 					{
-						foundNewOptionalFirstElement = FLEx.ProjectSplitterInternal.IsOptionalFirstElement(newRecordAsBytes);
+						foundNewOptionalFirstElement = FLExProjectSplitter.IsOptionalFirstElement(newRecordAsBytes);
 						testedforExistanceOfNewOptionalFirstElement = true;
 					}
 					var newRecCopyAsBytes = newRecordAsBytes;
@@ -668,12 +682,12 @@ namespace FwdataTestApp
 						origData.Remove(srcGuid);
 						if (attrValues[FlexBridgeConstants.Class] == "WfiWordform")
 						{
-							var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(origRecAsBytes);
+							var wfElement = TriboroughBridgeUtilities.CreateFromBytes(origRecAsBytes);
 							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
 							{
 								csProp.Attribute(FlexBridgeConstants.Val).Value = "0";
-								origRecAsBytes = SharedConstants.Utf8.GetBytes(wfElement.ToString());
+								origRecAsBytes = LibTriboroughBridgeSharedConstants.Utf8.GetBytes(wfElement.ToString());
 							}
 						}
 					}
@@ -681,7 +695,7 @@ namespace FwdataTestApp
 					//if (counter == 1000)
 					//{
 					//    verifyTimer.Stop();
-					//    GC.Collect(2, GCCollectionMode.Forced);
+					//    GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 					//    verifyTimer.Start();
 					//    counter = 0;
 					//}
@@ -690,8 +704,8 @@ namespace FwdataTestApp
 					//    counter++;
 					//}
 					// Way too slow, since it has to always make the XmlNodes.
-					// Just feeding strings to XmlUtilities.AreXmlElementsEqual is faster,
-					// since it skips making them, if the strings are the same.
+					// Just feeding byte arrays to XmlUtilities.AreXmlElementsEqual is faster,
+					// since it skips making them, if the byte arrays are the same.
 					//var origNode = CreateXmlNodeFromBytes(origRecAsBytes);
 					//var newNode = CreateXmlNodeFromBytes(newRecCopyAsBytes);
 					//if (XmlUtilities.AreXmlElementsEqual(origNode, newNode))
@@ -772,7 +786,7 @@ namespace FwdataTestApp
 				var unownedElementDict = unownedElementKvp.Value;
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
-					var element = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(unownedElement);
+					var element = TriboroughBridgeUtilities.CreateFromBytes(unownedElement);
 					classElement.Add(element);
 					CmObjectNestingService.NestObject(false, element,
 												  classData,
@@ -794,7 +808,7 @@ namespace FwdataTestApp
 					if (foundOptionalFirstElement)
 						{
 							// Cache custom prop file for later write.
-							var cpElement = DataSortingService.SortCustomPropertiesRecord(SharedConstants.Utf8.GetString(record));
+							var cpElement = DataSortingService.SortCustomPropertiesRecord(LibTriboroughBridgeSharedConstants.Utf8.GetString(record));
 							// Add custom property info to MDC, since it may need to be sorted in the data files.
 							foreach (var propElement in cpElement.Elements(FlexBridgeConstants.CustomField))
 							{
@@ -822,7 +836,7 @@ namespace FwdataTestApp
 					}
 				}
 			}
-			GC.Collect(2, GCCollectionMode.Forced);
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 		}
 
 		private void RestoreProjects(object sender, EventArgs e)
@@ -844,7 +858,7 @@ namespace FwdataTestApp
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
 					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" +
-						SharedConstants.FwXmlExtension).FirstOrDefault());
+						LibTriboroughBridgeSharedConstants.FwXmlExtension).FirstOrDefault());
 				}
 			}
 			finally
@@ -859,13 +873,13 @@ namespace FwdataTestApp
 				return;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi" + SharedConstants.FwXmlExtension ||
+			if (currentFilename.ToLowerInvariant() == "zpi" + LibTriboroughBridgeSharedConstants.FwXmlExtension ||
 				projectDirName.ToLowerInvariant() == "zpi")
 			{
 				return; // Don't even think of wiping out my ZPI folder.
 			}
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + SharedConstants.FwXmlExtension,
+			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + LibTriboroughBridgeSharedConstants.FwXmlExtension,
 				SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))

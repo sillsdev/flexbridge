@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 {
@@ -63,7 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 			var srcDataCopy = new SortedDictionary<string, byte[]>(sortedInstanceData);
 			foreach (var reversalIndexKvp in srcDataCopy)
 			{
-				var revIndexElement = Utilities.CreateFromBytes(reversalIndexKvp.Value);
+				var revIndexElement = LibFLExBridgeUtilities.CreateFromBytes(reversalIndexKvp.Value);
 				var ws = revIndexElement.Element("WritingSystem").Element("Uni").Value;
 				var revIndexDir = Path.Combine(reversalDir, ws);
 				if (!Directory.Exists(revIndexDir))
