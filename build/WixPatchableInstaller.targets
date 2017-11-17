@@ -30,9 +30,10 @@
 	<!-- ### UPGRADE CODE GUID definition : This value must be the same for every version of this product.      ### -->
 	<!-- ### Each product should have its own upgrade code.  This allows installers and patches to upgrade      ### -->
 	<!-- ### one another because they share a common upgrade code.                                              ### -->
+	<!-- ### Don't even THINK about changing the Upgrade Code. Ever.                                            ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
-		<UpgradeCodeGuid>01D480E3-1EC7-406C-943E-32C721C049A4</UpgradeCodeGuid>
+		<UpgradeCodeGuid>C1EDBBD1-E382-11DE-8A39-0800200C9A66</UpgradeCodeGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -130,10 +131,12 @@
 			<BinFiles Include="$(RootDir)/output/$(Configuration)\**\*" Exclude="$(RootDir)/output/$(Configuration)\TestData\**\*"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/Overrides.wxi"/> <!-- specifying, because others may go elsewhere -->
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
 		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
+		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
