@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -16,7 +13,6 @@ using LibFLExBridgeChorusPlugin.Contexts.Scripture;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using SIL.Progress;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts
 {
@@ -147,7 +143,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 			{
 				var styleGuid = styleObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
-				var style = Utilities.CreateFromBytes(classData[className][styleGuid]);
+				var style = LibFLExBridgeUtilities.CreateFromBytes(classData[className][styleGuid]);
 				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}

@@ -1,37 +1,27 @@
-﻿// Copyright (c) 2015 SIL International
-// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+﻿// Copyright (c) 2015-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
+
 using System;
 using System.Globalization;
-using SIL.LiftBridge.Services;
-using SIL.Xml;
 using System.Xml;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using SIL.Xml;
+using SIL.LiftBridge.Services;
 
 namespace SIL.LiftBridge.Infrastructure
 {
-	public class UpdateBranchHelperLift: UpdateBranchHelper
+	internal sealed class UpdateBranchHelperLift : IUpdateBranchHelperStrategy
 	{
-		protected override float GetModelVersionFromBranchName(string branchName)
+		private IUpdateBranchHelperStrategy AsIUpdateBranchHelperStrategy
 		{
-			return float.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
-		}
-
-		protected override float GetModelVersionFromClone(string cloneLocation)
-		{
-			return GetLiftVersionNumber(cloneLocation);
-		}
-
-		protected override string GetFullModelVersion(string cloneLocation)
-		{
-			var modelVersion = GetModelVersionFromClone(cloneLocation);
-			return "LIFT" + modelVersion + "_ldml3";
+			get { return this; }
 		}
 
 		private static float GetLiftVersionNumber(string repoLocation)
 		{
 			// Return 0.13 if there is no lift file or it has no 'version' attr on the main 'lift' element.
 			var firstLiftFile = FileAndDirectoryServices.GetPathToFirstLiftFile(repoLocation);
-			if (firstLiftFile == null)
+			if (string.IsNullOrEmpty(firstLiftFile))
 				return float.MaxValue;
 
 			using (var reader = XmlReader.Create(firstLiftFile, CanonicalXmlSettings.CreateXmlReaderSettings()))
@@ -42,6 +32,25 @@ namespace SIL.LiftBridge.Infrastructure
 			}
 		}
 
+		#region IUpdateBranchHelperStrategy impl
+
+		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
+		{
+			return float.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
+		}
+
+		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
+		{
+			return GetLiftVersionNumber(cloneLocation);
+		}
+
+		string IUpdateBranchHelperStrategy.GetFullModelVersion(string cloneLocation)
+		{
+			var modelVersion = AsIUpdateBranchHelperStrategy.GetModelVersionFromClone(cloneLocation);
+			return "LIFT" + modelVersion + "_ldml3";
+		}
+
+		#endregion IUpdateBranchHelperStrategy impl
 	}
 }
 

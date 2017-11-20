@@ -39,9 +39,10 @@
     <OutputPath>..\..\output\ReleaseMono\</OutputPath>
     <DefineConstants>TRACE;MONO</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Reference Include="Chorus">
@@ -154,7 +156,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandlerTests.cs" />
-    <Compile Include="Infrastructure\ActionHandlers\FlexObtainProjectStrategyTests.cs" />
+    <Compile Include="Integration\MergeIntegrationTests.cs" />
     <Compile Include="Mocks\MockedConflictView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -169,6 +171,10 @@
     <ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj">
       <Project>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</Project>
       <Name>FLEx-ChorusPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8e6dd218-7ba1-4119-82d2-535c05a0923c}</Project>
+      <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
     <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
       <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>

@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +18,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			var data = doc.Root.Elements("layout")
 				.ToDictionary(layoutElement =>
 							  layoutElement.Attribute("class").Value + layoutElement.Attribute("type").Value + layoutElement.Attribute("name").Value,
-					layoutElement => SharedConstants.Utf8.GetBytes(layoutElement.ToString()));
+					layoutElement => LibTriboroughBridgeSharedConstants.Utf8.GetBytes(layoutElement.ToString()));
 
 			var layoutTypeElement = doc.Root.Element("layoutType");
 			if (layoutTypeElement != null)
-				data.Add("layoutType", SharedConstants.Utf8.GetBytes(doc.Root.Element("layoutType").ToString()));
+				data.Add("layoutType", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(doc.Root.Element("layoutType").ToString()));
 
 			return data;
 		}

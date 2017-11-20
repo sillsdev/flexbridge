@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Text;
@@ -56,7 +53,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 
 		#region Implementation of IChangePresenter
 
-		public string GetDataLabel()
+		string IChangePresenter.GetDataLabel()
 		{
 			var firstNode = FirstNonNullNode;
 			var nodeLocalName = firstNode.LocalName;
@@ -76,12 +73,12 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return label;
 		}
 
-		public string GetActionLabel()
+		string IChangePresenter.GetActionLabel()
 		{
 			return ((IChangeReport)_report).ActionLabel;
 		}
 
-		public string GetHtml(string style, string styleSheet)
+		string IChangePresenter.GetHtml(string style, string styleSheet)
 		{
 			var builder = new StringBuilder();
 			builder.Append("<html><head>" + styleSheet + "</head>");
@@ -150,12 +147,12 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return builder.ToString();
 		}
 
-		public string GetTypeLabel()
+		string IChangePresenter.GetTypeLabel()
 		{
 			return "FLEx data object";
 		}
 
-		public string GetIconName()
+		string IChangePresenter.GetIconName()
 		{
 			return "file";
 		}

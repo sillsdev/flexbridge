@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +35,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 										"ReversalIndex",
 										new SortedDictionary<string, byte[]>
 											{
-												{revIdxGuid, SharedConstants.Utf8.GetBytes(_rt.ToString())}
+												{revIdxGuid, LibTriboroughBridgeSharedConstants.Utf8.GetBytes(_rt.ToString())}
 											}
 									}
 								};
@@ -125,7 +122,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			var data = new SortedDictionary<string, byte[]>
 						{
-							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", SharedConstants.Utf8.GetBytes(rt.ToString())}
+							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(rt.ToString())}
 						};
 			classData.Add("Segment", data);
 			var guidToClassMapping = new Dictionary<string, string> {{"c1ed6dc8-e382-11de-8a39-0800200c9a66", "Segment"}};
@@ -148,7 +145,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			var classData = new Dictionary<string, SortedDictionary<string, byte[]>>();
 			var data = new SortedDictionary<string, byte[]>
 						{
-							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", SharedConstants.Utf8.GetBytes(rt.ToString())}
+							{"c1ed6dc8-e382-11de-8a39-0800200c9a66", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(rt.ToString())}
 						};
 			classData.Add("CmPossibility", data);
 			var guidToClassMapping = new Dictionary<string, string> { { "c1ed6dc8-e382-11de-8a39-0800200c9a66", "CmPossibility" } };
@@ -164,7 +161,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		{
 			AddOwnedObjects();
 			foreach (var originalElement in _classData.Values.SelectMany(top => top.Values))
-				Assert.IsTrue(SharedConstants.Utf8.GetString(originalElement).Contains(FlexBridgeConstants.OwnerGuid));
+				Assert.IsTrue(LibTriboroughBridgeSharedConstants.Utf8.GetString(originalElement).Contains(FlexBridgeConstants.OwnerGuid));
 
 			CmObjectNestingService.NestObject(false, _rt,
 				_classData,
@@ -181,19 +178,19 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 									  new XAttribute(FlexBridgeConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(FlexBridgeConstants.GuidStr, "0039739a-7fcf-4838-8b75-566b8815a29f"),
 									  new XAttribute(FlexBridgeConstants.OwnerGuid, rtGuid));
-			data.Add("0039739a-7fcf-4838-8b75-566b8815a29f", SharedConstants.Utf8.GetBytes(entry1.ToString()));
+			data.Add("0039739a-7fcf-4838-8b75-566b8815a29f", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(entry1.ToString()));
 			_guidToClassMapping.Add("0039739a-7fcf-4838-8b75-566b8815a29f", "ReversalIndexEntry");
 			var subentry1 = new XElement(FlexBridgeConstants.RtTag,
 									  new XAttribute(FlexBridgeConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(FlexBridgeConstants.GuidStr, "14a6b4bc-1bb3-4c67-b70c-5a195e411e27"),
 									  new XAttribute(FlexBridgeConstants.OwnerGuid, "0039739a-7fcf-4838-8b75-566b8815a29f"));
-			data.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", SharedConstants.Utf8.GetBytes(subentry1.ToString()));
+			data.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(subentry1.ToString()));
 			_guidToClassMapping.Add("14a6b4bc-1bb3-4c67-b70c-5a195e411e27", "ReversalIndexEntry");
 			var entry2 = new XElement(FlexBridgeConstants.RtTag,
 									  new XAttribute(FlexBridgeConstants.Class, "ReversalIndexEntry"),
 									  new XAttribute(FlexBridgeConstants.GuidStr, "00b560a2-9af0-4185-bbeb-c0eb3c5e3769"),
 									  new XAttribute(FlexBridgeConstants.OwnerGuid, rtGuid));
-			data.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", SharedConstants.Utf8.GetBytes(entry2.ToString()));
+			data.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(entry2.ToString()));
 			_guidToClassMapping.Add("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "ReversalIndexEntry");
 			_classData.Add("ReversalIndexEntry", data);
 			var entriesElement = new XElement("Entries",
@@ -227,8 +224,8 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			_guidToClassMapping.Add("c1ed6dc7-e382-11de-8a39-0800200c9a66", "PartOfSpeech");
 			data = new SortedDictionary<string, byte[]>
 					{
-						{"c1ed6dc6-e382-11de-8a39-0800200c9a66", SharedConstants.Utf8.GetBytes(pos1.ToString())},
-						{"c1ed6dc7-e382-11de-8a39-0800200c9a66", SharedConstants.Utf8.GetBytes(pos2.ToString())}
+						{"c1ed6dc6-e382-11de-8a39-0800200c9a66", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(pos1.ToString())},
+						{"c1ed6dc7-e382-11de-8a39-0800200c9a66", LibTriboroughBridgeSharedConstants.Utf8.GetBytes(pos2.ToString())}
 					};
 			_classData.Add("PartOfSpeech", data);
 			posList.Add(entriesElement);
@@ -238,7 +235,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			_guidToClassMapping.Add(posListGuid, FlexBridgeConstants.CmPossibilityList);
 			data = new SortedDictionary<string, byte[]>
 					{
-						{posListGuid, SharedConstants.Utf8.GetBytes(posList.ToString())}
+						{posListGuid, LibTriboroughBridgeSharedConstants.Utf8.GetBytes(posList.ToString())}
 					};
 			_classData.Add(FlexBridgeConstants.CmPossibilityList, data);
 			_rt.Add(entriesElement);

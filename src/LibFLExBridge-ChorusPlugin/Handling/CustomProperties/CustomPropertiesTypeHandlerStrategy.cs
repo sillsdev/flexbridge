@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -21,17 +18,22 @@ namespace LibFLExBridgeChorusPlugin.Handling.CustomProperties
 	[Export(typeof(IFieldWorksFileHandler))]
 	internal sealed class CustomPropertiesTypeHandlerStrategy : IFieldWorksFileHandler
 	{
-		#region Implementation of IFieldWorksFileHandler
-
 		private const string Key = "key";
 
-		public bool CanValidateFile(string pathToFile)
+		private IFieldWorksFileHandler AsIFieldWorksFileHandler
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.CustomProperties) &&
-				   Path.GetFileName(pathToFile) == FlexBridgeConstants.CustomPropertiesFilename;
+			get { return this; }
 		}
 
-		public string ValidateFile(string pathToFile)
+		#region Implementation of IFieldWorksFileHandler
+
+		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
+		{
+			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension) &&
+					Path.GetFileName(pathToFile) == FlexBridgeConstants.CustomPropertiesFilename;
+		}
+
+		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
 		{
 			try
 			{
@@ -90,26 +92,26 @@ namespace LibFLExBridgeChorusPlugin.Handling.CustomProperties
 			}
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IFieldWorksFileHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			return FieldWorksChangePresenter.GetCommonChangePresenter(report, repository);
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IFieldWorksFileHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			return Xml2WayDiffService.ReportDifferences(repository, parent, child,
 				null,
 				FlexBridgeConstants.CustomField, Key);
 		}
 
-		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
+		void IFieldWorksFileHandler.Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
 			FieldWorksCommonFileHandler.Do3WayMerge(mergeOrder, mdc,
 				false); // We don't want (or even need) the custom properties to be added to the MDC, while merging the custom props file itself.
 						// We won't even know what they are until after the merge is done.
 		}
 
-		public string Extension
+		string IFieldWorksFileHandler.Extension
 		{
 			get { return FlexBridgeConstants.CustomProperties; }
 		}

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace RepositoryUtility
 {
-	public partial class RevertHgrcProjectFolderForm : Form
+	public sealed partial class RevertHgrcProjectFolderForm : Form
 	{
 		private FolderBrowserDialog _folderBrowserDialog = new FolderBrowserDialog();
 

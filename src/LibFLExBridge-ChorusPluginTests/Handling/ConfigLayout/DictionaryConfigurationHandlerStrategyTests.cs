@@ -28,8 +28,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			var appsDir = Path.GetDirectoryName(TriboroughBridge_ChorusPlugin.Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", SharedConstants.DictConfigSchemaFilename);
+			var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
 			MetadataCache.TestOnlyNewCache.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 		}
 
@@ -68,7 +68,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 			// Copy the schema file to where the Strategy looks
 			// We are pretending to do what FLEx does (provides the schema).
 			_tempFolder = new TemporaryFolder("Temp");
-			var xsdPathInProjRepo = Path.Combine(_tempFolder.Path, SharedConstants.DictConfigSchemaFilename);
+			var xsdPathInProjRepo = Path.Combine(_tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 			File.Copy(_xsdSourcePath, xsdPathInProjRepo, true);
 		}
 

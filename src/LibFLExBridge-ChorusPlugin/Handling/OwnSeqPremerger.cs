@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Xml;
 using Chorus.merge.xml.generic;
@@ -13,9 +10,9 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// <summary>
 	/// This is the pre-merger for OwnSeq elements, but for now, the only special case is owned elements that are StTxtParas.
 	/// </summary>
-	internal class OwnSeqPremerger : IPremerger
+	internal sealed class OwnSeqPremerger : IPremerger
 	{
-		public void Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
+		void IPremerger.Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
 		{
 			var keyElt = ours ?? theirs ?? ancestor;
 			if (keyElt == null)

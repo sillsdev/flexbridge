@@ -1,16 +1,11 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using Chorus.VcsDrivers.Mercurial;
-using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
@@ -25,7 +20,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	/// This IObtainProjectStrategy implementation handles the FLEx type of repo that the user selected in a generic 'obtain' call.
 	/// </summary>
 	[Export(typeof(IObtainProjectStrategy))]
-	internal class ObtainProjectStrategyFlex : IObtainProjectStrategy
+	internal sealed class ObtainProjectStrategyFlex : IObtainProjectStrategy
 	{
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
@@ -36,33 +31,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		private static void UpdateToTheCorrectBranchHeadIfPossible(Dictionary<string, string> commandLineArgs,
 			ActualCloneResult cloneResult, string cloneLocation)
 		{
-			if (!new UpdateBranchHelperFlex().UpdateToTheCorrectBranchHeadIfPossible(
-				commandLineArgs["-fwmodel"], cloneResult, cloneLocation))
+			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), commandLineArgs["-fwmodel"], cloneResult, cloneLocation))
 			{
-				cloneResult.Message = CommonResources.kFlexUpdateRequired;
+					cloneResult.Message = CommonResources.kFlexUpdateRequired;
 			}
 		}
 
 		#region IObtainProjectStrategy impl
 
-		public bool ProjectFilter(string repositoryLocation)
+		bool IObtainProjectStrategy.ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
-			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*._custom_properties.i").Any();
+			return LibFLExBridgeUtilities.IsFlexProjectRepository(repositoryLocation);
 		}
 
-		public string HubQuery { get { return "*.CustomProperties"; } }
+		string IObtainProjectStrategy.HubQuery { get { return "*.CustomProperties"; } }
 
-		public bool IsRepositoryEmpty(string repositoryLocation)
+		bool IObtainProjectStrategy.IsRepositoryEmpty(string repositoryLocation)
 		{
 			return !File.Exists(Path.Combine(repositoryLocation, FlexBridgeConstants.CustomPropertiesFilename));
 		}
 
-		public void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
+		void IObtainProjectStrategy.FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			var actualCloneResult = new ActualCloneResult();
 
-			_newProjectFilename = Path.GetFileName(cloneLocation) + SharedConstants.FwXmlExtension;
+			_newProjectFilename = Path.GetFileName(cloneLocation) + LibTriboroughBridgeSharedConstants.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
 
 			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' parm.
@@ -87,10 +80,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					break;
 			}
 
-			FLEx.ProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _newFwProjectPathname);
 		}
 
-		public void TellFlexAboutIt()
+		void IObtainProjectStrategy.TellFlexAboutIt()
 		{
 			if (_gotClone)
 			{
@@ -102,7 +95,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		public ActionType SupportedActionType
+		ActionType IObtainProjectStrategy.SupportedActionType
 		{
 			get { return ActionType.Obtain; }
 		}

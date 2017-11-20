@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +7,6 @@ using System.IO;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
@@ -34,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			{
 				var checkListGuid = checkListObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[checkListGuid];
-				var checkList = Utilities.CreateFromBytes(classData[className][checkListGuid]);
+				var checkList = LibFLExBridgeUtilities.CreateFromBytes(classData[className][checkListGuid]);
 
 				CmObjectNestingService.NestObject(false, checkList,
 					classData,

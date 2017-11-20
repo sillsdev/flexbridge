@@ -1,19 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using Chorus.VcsDrivers.Mercurial;
 using SIL.IO;
-using SIL.LiftBridge.Infrastructure;
 using SIL.LiftBridge.Services;
 using SIL.Progress;
 using SIL.Xml;
@@ -29,7 +25,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	/// This IObtainProjectStrategy implementation handles the Lift type of repo that the user selected in a generic 'obtain' call.
 	/// </summary>
 	[Export(typeof(IObtainProjectStrategy))]
-	public class ObtainProjectStrategyLift : IObtainProjectStrategy
+	internal sealed class ObtainProjectStrategyLift : IObtainProjectStrategy
 	{
 		[Import]
 		private ICreateProjectFromLift _liftprojectCreator;
@@ -37,29 +33,13 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region Other methods
 
-		private static float GetLiftVersionNumber(string repoLocation)
-		{
-			// Return 0.13 if there is no lift file or it has no 'version' attr on the main 'lift' element.
-			var firstLiftFile = FileAndDirectoryServices.GetPathToFirstLiftFile(repoLocation);
-			if (firstLiftFile == null)
-				return float.MaxValue;
-
-			using (var reader = XmlReader.Create(firstLiftFile, CanonicalXmlSettings.CreateXmlReaderSettings()))
-			{
-				reader.MoveToContent();
-				reader.MoveToAttribute("version");
-				return float.Parse(reader.Value);
-			}
-		}
-
 		internal static void UpdateToTheCorrectBranchHeadIfPossible(string cloneLocation,
 			string desiredBranchName, ActualCloneResult cloneResult)
 		{
-			if (!new UpdateBranchHelperLift().UpdateToTheCorrectBranchHeadIfPossible(
-				desiredBranchName, cloneResult, cloneLocation))
-					{
-					cloneResult.Message = CommonResources.kFlexUpdateRequired;
-				}
+			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new UpdateBranchHelperLift(), desiredBranchName, cloneResult, cloneLocation))
+			{
+				cloneResult.Message = CommonResources.kFlexUpdateRequired;
+			}
 		}
 
 		private string RemoveAppendedLiftIfNeeded(string cloneLocation)
@@ -85,8 +65,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			oldRepo.CloneLocalWithoutUpdate(targetFolder);
 
 			// Now copy the original hgrc file into the new location.
-			File.Copy(Path.Combine(sourceFolder, TriboroughBridge_ChorusPlugin.Utilities.hg, "hgrc"),
-				Path.Combine(targetFolder, TriboroughBridge_ChorusPlugin.Utilities.hg, "hgrc"), true);
+			File.Copy(Path.Combine(sourceFolder, TriboroughBridgeUtilities.hg, "hgrc"),
+				Path.Combine(targetFolder, TriboroughBridgeUtilities.hg, "hgrc"), true);
 
 			// Move the import failure notification file, if it exists.
 			var roadblock = Path.Combine(sourceFolder, LiftUtilties.FailureFilename);
@@ -98,20 +78,20 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		#region IObtainProjectStrategy impl
 
-		public bool ProjectFilter(string repositoryLocation)
+		bool IObtainProjectStrategy.ProjectFilter(string repositoryLocation)
 		{
-			var hgDataFolder = TriboroughBridge_ChorusPlugin.Utilities.HgDataFolder(repositoryLocation);
+			var hgDataFolder = TriboroughBridgeUtilities.HgDataFolder(repositoryLocation);
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
 		}
 
-		public string HubQuery { get { return "*.lift"; } }
+		string IObtainProjectStrategy.HubQuery { get { return "*.lift"; } }
 
-		public bool IsRepositoryEmpty(string repositoryLocation)
+		bool IObtainProjectStrategy.IsRepositoryEmpty(string repositoryLocation)
 		{
 			return !Directory.GetFiles(repositoryLocation, "*" + LiftUtilties.LiftExtension).Any();
 		}
 
-		public void FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
+		void IObtainProjectStrategy.FinishCloning(Dictionary<string, string> commandLineArgs, string cloneLocation, string expectedPathToClonedRepository)
 		{
 			// "obtain"
 			//		'cloneLocation' will be a new folder at the $fwroot main project location, such as $fwroot\foo.
@@ -119,12 +99,12 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 			// Check for Lift version compatibility.
 			cloneLocation = RemoveAppendedLiftIfNeeded(cloneLocation);
-			var otherReposDir = Path.Combine(cloneLocation, SharedConstants.OtherRepositories);
+			var otherReposDir = Path.Combine(cloneLocation, LibTriboroughBridgeSharedConstants.OtherRepositories);
 			if (!Directory.Exists(otherReposDir))
 			{
 				Directory.CreateDirectory(otherReposDir);
 			}
-			_liftFolder = TriboroughBridge_ChorusPlugin.Utilities.LiftOffset(cloneLocation);
+			_liftFolder = TriboroughBridgeUtilities.LiftOffset(cloneLocation);
 
 			var actualCloneResult = new ActualCloneResult();
 
@@ -154,7 +134,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 
 			// Delete all old repo folders and files from 'cloneLocation'.
-			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(SharedConstants.OtherRepositories)))
+			foreach (var dir in Directory.GetDirectories(cloneLocation).Where(directory => !directory.Contains(LibTriboroughBridgeSharedConstants.OtherRepositories)))
 			{
 				Directory.Delete(dir, true);
 			}
@@ -164,13 +144,13 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 		}
 
-		public void TellFlexAboutIt()
+		void IObtainProjectStrategy.TellFlexAboutIt()
 		{
 			_liftprojectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
-			//Caller does it. _connectionHelper.SignalBridgeWorkComplete(false);
+																													 //Caller does it. _connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		public ActionType SupportedActionType
+		ActionType IObtainProjectStrategy.SupportedActionType
 		{
 			get { return ActionType.ObtainLift; }
 		}

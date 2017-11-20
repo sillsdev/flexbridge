@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -14,6 +11,8 @@ using Chorus.FileTypeHandlers.xml;
 using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
@@ -208,11 +207,10 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
 
-		[Test, Category("UnknownMonoIssue")]
+		[Test]
 		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase
-				.Substring(SIL.PlatformUtilities.Platform.IsLinux ? 7 : 8));
+			var baseDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			var testDataDir = Path.Combine(baseDir, "TestData");
 			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));
