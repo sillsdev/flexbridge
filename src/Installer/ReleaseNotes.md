@@ -1,3 +1,14 @@
+## 3.0.0 UNRELEASED
+
+* Support FieldWorks 9
+
+## 2.6.0 09/Nov/2017
+* Update version to 2.6.0 to enable updating from the version shipped with
+  FieldWorks 8.3.9
+## 2.5.4 01/Nov/2017
+* FLExBridge: Make sure assembly is properly stamped so that Send/Receive log has useful version info
+* FLExBridge: Fix bug LT-18624 - Handle number formats regardless of current culture
+* Chorus: Improvement for large projects in resumable Send/Receive
 ## 2.5.3 18/Jul/2017
 * Fix dependency problem on Linux
 ## 2.5.2 05/Jul/2017
@@ -25,6 +36,9 @@
 ## 2.3.10 13/Jan/2016
 * Flex Bridge: Update Palaso Localizations so that Linux will initialize successfully
 ## 2.3.9 16/Oct/2015
+* Flex Bridge: Update to work with new Chorus to fix LT-17461
+* Chorus: Fix Bug in password entry field with internet S/R
+* Chorus: Fix data loss bug when merging certain types of elements
 * Chorus: Update documentation of Chorus Hub
 * FLExBridge: Update documentation of recent fixes
 ## 2.3.8 24/Sep/2015

@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -25,32 +22,32 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	{
 		#region Implementation of IFieldWorksFileHandler
 
-		public bool CanValidateFile(string pathToFile)
+		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
 		{
 			return false;
 		}
 
-		public string ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
 		{
 			throw new NotSupportedException("'ValidateFile' method is not supported for unknown file types.");
 		}
 
-		public IChangePresenter GetChangePresenter(IChangeReport report, HgRepository repository)
+		IChangePresenter IFieldWorksFileHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			throw new NotSupportedException("'GetChangePresenter' method is not supported for unknown file types.");
 		}
 
-		public IEnumerable<IChangeReport> Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
+		IEnumerable<IChangeReport> IFieldWorksFileHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			throw new NotSupportedException("'Find2WayDifferences' method is not supported for unknown file types.");
 		}
 
-		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
+		void IFieldWorksFileHandler.Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
 			throw new NotSupportedException("'Do3WayMerge' method is not supported for unknown file types.");
 		}
 
-		public string Extension
+		string IFieldWorksFileHandler.Extension
 		{
 			get { throw new NotSupportedException("'Extension' property is not supported for unknown file types."); }
 		}

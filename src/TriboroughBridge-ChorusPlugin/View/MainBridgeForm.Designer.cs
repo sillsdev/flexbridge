@@ -6,7 +6,7 @@
 
 namespace TriboroughBridge_ChorusPlugin.View
 {
-	partial class MainBridgeForm
+	sealed partial class MainBridgeForm
 	{
 		/// <summary>
 		/// Required designer variable.

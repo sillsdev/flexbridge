@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.IO;
@@ -22,7 +19,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// usefully tell the user is that some references changed.
 	/// A few special cases make it prettier.
 	/// </summary>
-	internal class FwGenericHtmlGenerator
+	internal sealed class FwGenericHtmlGenerator
 	{
 		public string MakeHtml(XmlNode input)
 		{
@@ -146,9 +143,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// Enhance JohnT: could be made virtual method of generic baseclass, or use a configured list of attributes,
 		/// or use a strategy.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		bool SkipNodeLevel(XmlNode node)
+		private static bool SkipNodeLevel(XmlNode node)
 		{
 			if (node.Attributes[FlexBridgeConstants.GuidStr] != null)
 				return true;
@@ -172,17 +167,17 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return input.Name == FlexBridgeConstants.Refseq || input.Name == FlexBridgeConstants.Objsur || input.Name == FlexBridgeConstants.Refcol;
 		}
 
-		private void AddChecksumData(Stream s, XmlNode input)
+		private static void AddChecksumData(Stream s, XmlNode input)
 		{
-			string guid = XmlUtilities.GetOptionalAttributeString(input, "guid");
+			var guid = XmlUtilities.GetOptionalAttributeString(input, "guid");
 			if (!string.IsNullOrEmpty(guid))
 			{
-				var bytes = SharedConstants.Utf8.GetBytes(guid);
+				var bytes = LibTriboroughBridgeSharedConstants.Utf8.GetBytes(guid);
 				s.Write(bytes, 0, bytes.Length);
 			}
 		}
 
-		public string ChecksumLabel
+		internal string ChecksumLabel
 		{
 			get { return "Checksum of links to other objects: "; }
 		}

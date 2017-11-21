@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -265,7 +262,7 @@ namespace TriboroughBridge_ChorusPluginTests
 
 			// Already has a lift folder
 			_options[CommandLineProcessor.p] = fooDir;
-			var liftOffset = Utilities.LiftOffset(fooDir);
+			var liftOffset = TriboroughBridgeUtilities.LiftOffset(fooDir);
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 		}
@@ -311,7 +308,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
 			// Has Lift folder, but no Lift file.
-			var liftOffset = Utilities.LiftOffset(fooDir);
+			var liftOffset = TriboroughBridgeUtilities.LiftOffset(fooDir);
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift file");
 
@@ -348,11 +345,11 @@ namespace TriboroughBridge_ChorusPluginTests
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
 			// Has Lift folder, but no Lift repo.
-			var liftOffset = Utilities.LiftOffset(fooDir);
+			var liftOffset = TriboroughBridgeUtilities.LiftOffset(fooDir);
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
-			Directory.CreateDirectory(Path.Combine(liftOffset, Utilities.hg));
+			Directory.CreateDirectory(Path.Combine(liftOffset, TriboroughBridgeUtilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 
@@ -373,7 +370,7 @@ namespace TriboroughBridge_ChorusPluginTests
 			// Has no .hg folder
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have an '.hg' folder");
 
-			Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(fooFwdataPathname), Utilities.hg));
+			Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(fooFwdataPathname), TriboroughBridgeUtilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 
@@ -395,11 +392,11 @@ namespace TriboroughBridge_ChorusPluginTests
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
 			// Has Lift folder, but no Lift repo.
-			var liftOffset = Utilities.LiftOffset(fooDir);
+			var liftOffset = TriboroughBridgeUtilities.LiftOffset(fooDir);
 			Directory.CreateDirectory(liftOffset);
 			Assert.Throws<CommandLineException>(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to have a Lift folder");
 
-			Directory.CreateDirectory(Path.Combine(liftOffset, Utilities.hg));
+			Directory.CreateDirectory(Path.Combine(liftOffset, TriboroughBridgeUtilities.hg));
 			Assert.DoesNotThrow(() => CommandLineProcessor.ValidateCommandLineArgs(_options), "Seems to not have the Lift '.hg' folder");
 		}
 	}

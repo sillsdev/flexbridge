@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Diagnostics;
@@ -70,7 +67,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[Serializable]
-	public class FwLinkArgs
+	internal class FwLinkArgs
 	{
 		#region Constants
 		/// <summary>Internet Access Protocol identifier that indicates that this is a FieldWorks link</summary>
@@ -105,7 +102,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// The name/path of the tool or view within the specific application. Will never be null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ToolName
+		internal string ToolName
 		{
 			get
 			{
@@ -120,7 +117,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// The GUID of the object which is the target of this link.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Guid TargetGuid
+		internal Guid TargetGuid
 		{
 			get
 			{
@@ -131,7 +128,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 					return guid;
 				return Guid.NewGuid(); // For tests that don't use a real guid.
 			}
-			protected set { _guid = value.ToString().ToLowerInvariant(); }
+			set { _guid = value.ToString().ToLowerInvariant(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -151,7 +148,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// (cf. LT-7847)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Tag
+		internal string Tag
 		{
 			get
 			{
@@ -183,7 +180,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwLinkArgs(string toolName, string targetGuid)
+		internal FwLinkArgs(string toolName, string targetGuid)
 			: this(toolName, targetGuid, null)
 		{
 		}
@@ -198,7 +195,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// <param name="tag">The tag.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwLinkArgs(string toolName, string targetGuid, string tag)
+		internal FwLinkArgs(string toolName, string targetGuid, string tag)
 			: this()
 		{
 			_toolName = toolName;
@@ -226,7 +223,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// </summary>
 		/// <param name="lnk">The link to compare.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool EssentiallyEquals(FwLinkArgs lnk)
+		internal virtual bool EssentiallyEquals(FwLinkArgs lnk)
 		{
 			if (lnk == null)
 				return false;
@@ -266,7 +263,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return (ToString() == link.ToString());
 		}
 
-		public void AddProperty(string name, string val)
+		internal void AddProperty(string name, string val)
 		{
 			PropertyTableEntries.Add(new Property {Name=name, Value=val});
 		}
@@ -354,7 +351,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[Serializable]
-	public class FwAppArgs : FwLinkArgs
+	internal sealed class FwAppArgs : FwLinkArgs
 	{
 		#region Command-line switch constants
 		/// <summary>Command-line argument: The application to start (te or flex)</summary>
@@ -611,7 +608,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// </summary>
 		/// <param name="lnk">The link to compare.</param>
 		/// ------------------------------------------------------------------------------------
-		public override bool EssentiallyEquals(FwLinkArgs lnk)
+		internal override bool EssentiallyEquals(FwLinkArgs lnk)
 		{
 			var appArgs = lnk as FwAppArgs;
 			if (appArgs == null || !base.EssentiallyEquals(lnk))
@@ -695,7 +692,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 
 	internal class Property
 	{
-		public string Name;
-		public object Value;
+		internal string Name;
+		internal object Value;
 	}
 }

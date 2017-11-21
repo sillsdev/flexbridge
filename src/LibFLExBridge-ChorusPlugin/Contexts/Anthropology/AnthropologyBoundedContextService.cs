@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
-using LibFLExBridgeChorusPlugin;
 
 namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 {
@@ -43,7 +39,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 			if (sortedInstanceData.Count > 0)
 			{
 				// 1. Main RnResearchNbk element.
-				var notebookElement = Utilities.CreateFromBytes(sortedInstanceData.Values.First());
+				var notebookElement = LibFLExBridgeUtilities.CreateFromBytes(sortedInstanceData.Values.First());
 				headerElement.Add(notebookElement);
 
 				CmObjectNestingService.NestObject(false, notebookElement,

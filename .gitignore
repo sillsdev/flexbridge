@@ -40,9 +40,14 @@ lib/*/*.config
 lib/common/Chorus_Help.chm
 build/.nuget/
 build/NuGet.exe
+build/nuget.exe
 packages/
 *.dll
 src/Installer/output/
 src/Installer/obj/
 vcs_version
 .idea/
+build/MarkdownDeep.NET/
+*.old
+*.swp
+icu4c.readme.txt

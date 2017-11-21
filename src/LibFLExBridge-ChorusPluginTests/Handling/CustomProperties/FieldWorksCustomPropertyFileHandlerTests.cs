@@ -1,8 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
@@ -18,6 +15,7 @@ using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Handling.CustomProperties;
 using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Handling;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
@@ -582,7 +580,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.CustomProperties
 
 			var tempPathname = Path.Combine(Path.GetTempPath(), FlexBridgeConstants.CustomPropertiesFilename);
 			FileWriterService.WriteCustomPropertyFile(MetadataCache.TestOnlyNewCache, Path.GetTempPath(),
-				SharedConstants.Utf8.GetBytes(originalCustomData));
+				LibTriboroughBridgeSharedConstants.Utf8.GetBytes(originalCustomData));
 			using (var tempFile = TempFile.TrackExisting(tempPathname))
 			{
 				var doc = XDocument.Load(tempFile.Path);
@@ -664,7 +662,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.CustomProperties
 			{
 				EventListener = eventListener
 			};
-			var handlerStrat = new CustomPropertiesTypeHandlerStrategy();
+			IFieldWorksFileHandler handlerStrat = new CustomPropertiesTypeHandlerStrategy();
 			handlerStrat.Do3WayMerge(mdc, mergeOrder);
 
 			var doc = XDocument.Load(_ourFile.Path);

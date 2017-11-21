@@ -12,7 +12,7 @@ namespace TriboroughBridge_ChorusPlugin.View
 	/// <summary>
 	/// This class provides the view of the Conflicts that FLEx wants to see for both FLEx and Lift data.
 	/// </summary>
-	public partial class BridgeConflictView : UserControl
+	public sealed partial class BridgeConflictView : UserControl
 	{
 		private NotesBrowserPage _notesBrowser;
 

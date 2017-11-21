@@ -55,10 +55,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\output\Debug\SIL.TestUtilities.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -69,6 +65,9 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities">
+      <HintPath>..\..\lib\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
@@ -81,6 +80,9 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities">
+      <HintPath>..\..\lib\Release\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
     </Reference>
@@ -91,6 +93,9 @@
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities">
+      <HintPath>..\..\lib\DebugMono\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
@@ -103,6 +108,9 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities">
+      <HintPath>..\..\lib\ReleaseMono\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
     </Reference>
@@ -113,8 +121,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="TestData\DataNotebook_Ann.ntbk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -128,6 +134,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="DomainServices\CmObjectFlatteningServiceTests.cs" />
     <Compile Include="DomainServices\CmObjectNestingServiceTests.cs" />
@@ -143,9 +150,9 @@
     <Compile Include="Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
     <Compile Include="Handling\Common\StyleContextGeneratorTests.cs" />
+    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
     <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
-    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
     <Compile Include="Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
     <Compile Include="Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
@@ -189,10 +196,12 @@
     <Compile Include="Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
     <Compile Include="FieldWorksTestServices.cs" />
     <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectSplitterTests.cs" />
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
-    <Compile Include="Infrastructure\MultipleFileServicesTests.cs" />
+    <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
+    <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
     <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
-    <Compile Include="Integration\MergeIntegrationTests.cs" />
+    <Compile Include="Handling\PreferMostRecentTimePreMergerTests.cs" />
     <Compile Include="WinFormsTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -204,9 +213,8 @@
       <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
       <Name>LibTriboroughBridge-ChorusPlugin</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-      <Project>{8f9f6c42-2bb6-49e1-831d-7414ca411845}</Project>
-      <Name>TriboroughBridge-ChorusPlugin</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 </Project>

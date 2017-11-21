@@ -1,13 +1,11 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SIL.PlatformUtilities;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin
@@ -16,7 +14,7 @@ namespace TriboroughBridge_ChorusPlugin
 	/// This class validates all of the varoius command line options that can be fed into the FLEx Bridge program.
 	/// Some options are always expected, but others are used only in combination with another option.
 	/// </summary>
-	public static class CommandLineProcessor
+	internal static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming
 		internal const string u = "-u"; // userNameActual
@@ -44,7 +42,7 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
 // ReSharper restore InconsistentNaming
 
-		public static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
+		internal static Dictionary<string, string> ParseCommandLineArgs(ICollection<string> args)
 		{
 			var commandLineArgs = new Dictionary<string, string>();
 			if (args != null && args.Count > 0)
@@ -54,7 +52,7 @@ namespace TriboroughBridge_ChorusPlugin
 				{
 					//not all options are followed by input, so just add them as a key
 					if (arg.StartsWith("-") ||
-						(Utilities.IsWindows && arg.StartsWith("/")))
+						(Platform.IsWindows && arg.StartsWith("/")))
 					{
 						currentKey = arg.Trim();
 						commandLineArgs[currentKey] = null;
@@ -152,7 +150,7 @@ namespace TriboroughBridge_ChorusPlugin
 					if (Path.GetExtension(pOption) == ".fwdata")
 						throw new CommandLineException("-v & -p", "are incompatible, since '-p' contains a Flex fwdata file");
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
-					liftFolder = Utilities.LiftOffset(pOption);
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(pOption);
 					if (Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is an extant Lift repository");
 					break;
@@ -168,7 +166,7 @@ namespace TriboroughBridge_ChorusPlugin
 				case send_receive_lift:
 					// internal const string send_receive_lift = "send_receive_lift";	// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
-					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder");
 					if (!Directory.GetFiles(liftFolder, "*.lift").Any())
@@ -182,7 +180,7 @@ namespace TriboroughBridge_ChorusPlugin
 					// internal const string undo_export_lift = "undo_export_lift";	// -p <$fwroot>\foo where 'foo' is the project folder name
 					// xml or Db4o isn't relevant for this option.
 					ValidatePOptionIsExtantFwProjectFolder(projDirOption, pOption);
-					liftFolder = Utilities.LiftOffset(pOption);
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(pOption);
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder");
 					if (!Directory.Exists(Path.Combine(liftFolder, ".hg")))
@@ -199,7 +197,7 @@ namespace TriboroughBridge_ChorusPlugin
 				case view_notes_lift:
 					// internal const string view_notes_lift = "view_notes_lift";		// -p <$fwroot>\foo\foo.fwdata OR -p <$fwroot>\foo\foo.fwdb
 					ValidatePOptionIsExtantFwXmlOrDb4oFile(pOption);
-					liftFolder = Utilities.LiftOffset(Path.GetDirectoryName(pOption));
+					liftFolder = TriboroughBridgeUtilities.LiftOffset(Path.GetDirectoryName(pOption));
 					if (!Directory.Exists(liftFolder))
 						throw new CommandLineException("-v & -p", "are incompatible, since there is no extant Lift folder, and thus, no Lift notes");
 					if (!Directory.Exists(Path.Combine(liftFolder, ".hg")))
@@ -255,7 +253,8 @@ namespace TriboroughBridge_ChorusPlugin
 			// Required
 			if (!commandLineArgs.ContainsKey(liftmodel) || String.IsNullOrEmpty(commandLineArgs[liftmodel]))
 				throw new CommandLineException("-liftmodel", "is missing");
-			if (commandLineArgs[liftmodel] != "0.13")
+			// So that we can support a liftmodel parameter that looks like "0.13_ldml3"
+			if (!commandLineArgs[liftmodel].StartsWith("0.13"))
 				throw new CommandLineException("-liftmodel", "is not the supported FLEx LIFT model version of 0.13");
 
 			// AddArg(ref args, "-pipeID", _pipeID);

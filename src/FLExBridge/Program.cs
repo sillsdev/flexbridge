@@ -1,20 +1,23 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
+using LibTriboroughBridge_ChorusPlugin.Properties;
+using SIL.IO;
+using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
-using TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers;
 using TriboroughBridge_ChorusPlugin.Properties;
+
+
 #if MONO
 using Gecko;
 #endif
@@ -29,6 +32,7 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
+			// Enable the next line if you neext to attach the FB process to your debugger.
 			//MessageBox.Show(@"Get ready to debug FB exe.");
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -39,7 +43,7 @@ namespace FLExBridge
 				return;
 			}
 
-			using (var hotspot = new HotSpotProvider())
+			using (new HotSpotProvider())
 			{
 				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
 				// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
@@ -56,7 +60,7 @@ namespace FLExBridge
 
 			SetUpErrorHandling();
 
-			var commandLineArgs = CommandLineProcessor.ParseCommandLineArgs(args);
+			var options = CommandLineProcessor.ParseCommandLineArgs(args);
 
 #if MONO
 			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
@@ -68,15 +72,13 @@ namespace FLExBridge
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
 			{
-				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(Utilities.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)),
-					"*-ChorusPlugin.dll"));
+				catalog.Catalogs.Add(new DirectoryCatalog(Path.GetDirectoryName(FileUtils.StripFilePrefix(typeof(ActionTypeHandlerRepository).Assembly.CodeBase)), "*-ChorusPlugin.dll"));
 
 				// Create the CompositionContainer with the parts in the catalog
 				using (var container = new CompositionContainer(catalog))
 				{
 					var connHelper = container.GetExportedValue<FLExConnectionHelper>();
-					if (!connHelper.Init(commandLineArgs))
+					if (!connHelper.Init(options))
 						return;
 
 					// Is mercurial set up?
@@ -87,13 +89,19 @@ namespace FLExBridge
 						return;
 					}
 
-					var l10Managers = Utilities.SetupLocalization(commandLineArgs);
+					var l10Managers = TriboroughBridgeUtilities.SetupLocalization(options);
 
 					try
 					{
 						var handlerRepository = container.GetExportedValue<ActionTypeHandlerRepository>();
-						var currentHandler = handlerRepository.GetHandler(commandLineArgs);
-						currentHandler.StartWorking(commandLineArgs);
+						var currentHandler = handlerRepository.GetHandler(StringToActionTypeConverter.GetActionType(options["-v"]));
+						if (currentHandler == null)
+						{
+							connHelper.SignalBridgeWorkComplete(false);
+							throw new ArgumentException(string.Format(@"No handler found for {0}", options["-v"]));
+						}
+						var somethingForClient = string.Empty;
+						currentHandler.StartWorking(new NullProgress(), options, ref somethingForClient);
 						var bridgeActionTypeHandlerShowWindow = currentHandler as IBridgeActionTypeHandlerShowWindow;
 						if (bridgeActionTypeHandlerShowWindow != null)
 						{
@@ -125,7 +133,7 @@ namespace FLExBridge
 
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = Utilities.FlexBridgeEmailAddress;
+			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 		}

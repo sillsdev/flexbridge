@@ -1,14 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using SIL.Progress;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -26,7 +24,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Start doing whatever is needed for the supported type of action.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
 			throw new NotSupportedException("The Undo Export handler is not supported");
 		}
@@ -34,7 +32,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.UndoExport; }
 		}

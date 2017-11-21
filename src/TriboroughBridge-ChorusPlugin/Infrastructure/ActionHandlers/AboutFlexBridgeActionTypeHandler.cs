@@ -1,14 +1,15 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2010-2016 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using LibTriboroughBridgeChorusPlugin;
+using LibTriboroughBridgeChorusPlugin.Infrastructure;
+using SIL.IO;
+using SIL.Progress;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
@@ -21,17 +22,20 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		#region IBridgeActionTypeHandler impl
 
 		/// <summary>
-		/// Start doing whatever is needed for the supported type of action.
+		/// Show the "About FLEx Bridge" information.
 		/// </summary>
-		public void StartWorking(Dictionary<string, string> commandLineArgs)
+		/// <remarks>
+		/// None of the parameteres are used by this implementation.
+		/// </remarks>
+		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-			Process.Start(Path.Combine(Path.GetDirectoryName(Utilities.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
+			Process.Start(Path.Combine(Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().Location)), "about.htm"));
 		}
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		public ActionType SupportedActionType
+		ActionType IBridgeActionTypeHandler.SupportedActionType
 		{
 			get { return ActionType.AboutFlexBridge; }
 		}
