@@ -63,12 +63,12 @@ When releasing FLExBridge be sure to do the following:
 1. Update the version and changelogs / release notes.
 
 	- For Windows:
-        1. If you are making a major or minor version number jump, update the the first two digits in `version`
-        - Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
+		- If you are making a major or minor version number jump, update the the first two digits in `version` (the fourth-place version number is controlled by the TeamCity build counter)
+		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
         - Run the following to update dependant Release Notes files:
 
                 @REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
-                "%VS120COMNTOOLS%vsvars32.bat"
+				"%VS140COMNTOOLS%vsvars32.bat"
 				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
 				msbuild build/FLExBridge.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
@@ -77,7 +77,7 @@ When releasing FLExBridge be sure to do the following:
 
 	- For Linux:
 
-        1. `cd ~/fwrepo/flexbridge`
+		- `cd ~/fwrepo/flexbridge`
 		- Set new version number, such as:
 
             `echo 2.5.1 > version`
@@ -94,12 +94,14 @@ When releasing FLExBridge be sure to do the following:
 
 			`(source environ && cd build && xbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
 
-- The windows version is released through two jobs in TeamCity: "Installer-sans Publish" and "Publish Installer"; the final version number comes from the TC job on "Installer-sans Publish". If you need to make a fix before publishing, you can avoid incrementing the version number by setting the buid counter back on the Installer-sans Publish job and re-running it before running the publish job.
-- Make a Linux package for release by doing the following.
+2. Build
 
-	- Go to the Jenkins job for this branch of flexbridge.
-	- Click Build with Parameters.
-	- Change Suite to "main" (or maybe "updates" for a hotfix).
-	- Unselect AppendNightlyToVersion.
-	- Optionally set Committish to an older commit, such as where the changelog entry was updated.
-	- Click Build.
+	- The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer" and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you can avoid incrementing the version number by setting the buid counter back before rerunning the Patcher job.
+
+	- Make a Linux package for release by doing the following:
+		- Go to the Jenkins job for this branch of flexbridge.
+		- Click Build with Parameters.
+		- Change Suite to "main" (or maybe "updates" for a hotfix).
+		- Unselect AppendNightlyToVersion.
+		- Optionally set Committish to an older commit, such as where the changelog entry was updated.
+		- Click Build.
