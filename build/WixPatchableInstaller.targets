@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<!-- ########################################################################################################## -->
-	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
-	<!-- ########################################################################################################## -->
-
+	<!-- Configuration properties - Review and edit these values as needed. -->
 	<PropertyGroup>
 		<CopyrightYear>2017</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
@@ -11,42 +8,28 @@
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
 	</PropertyGroup>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every    ### -->
-	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
-	<!-- ########################################################################################################## -->
-
-	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
+	<!-- PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every -->
+	<!-- base build must get its own unique third number (minor version) in the version number sequence. -->
+	<!-- FLEx Bridge 3.0.0.X -->
 	<PropertyGroup>
 		<ProductIdGuid>57942FAA-4E7F-447F-8323-795CEF93FBA1</ProductIdGuid>
 	</PropertyGroup>
 
-	<!-- $(ApplicationName) 1.0.1.X ($(ApplicationName) build)-->
-	<!-- <PropertyGroup>
-	<! -	<ProductIdGuid>E4789AE1-EE7A-4488-88E2-BD3B633DA1E0</ProductIdGuid>
-	<! - </PropertyGroup> -->
-
-	<!-- ########################################################################################################## -->
-	<!-- ### UPGRADE CODE GUID definition : This value must be the same for every version of this product.      ### -->
-	<!-- ### Each product should have its own upgrade code.  This allows installers and patches to upgrade      ### -->
-	<!-- ### one another because they share a common upgrade code.                                              ### -->
-	<!-- ### Don't even THINK about changing the Upgrade Code. Ever.                                            ### -->
-	<!-- ########################################################################################################## -->
+	<!-- UPGRADE CODE GUID definition : This value must be the same for every version of this product. -->
+	<!-- Each product should have its own upgrade code.  This allows installers and patches to upgrade -->
+	<!-- one another because they share a common upgrade code. -->
+	<!-- Don't even THINK about changing the Upgrade Code. Ever. -->
 	<PropertyGroup>
 		<UpgradeCodeGuid>C1EDBBD1-E382-11DE-8A39-0800200C9A66</UpgradeCodeGuid>
 	</PropertyGroup>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### CompGGS definition : Component Generation GUID Seed. It's a WiX thing...                           ### -->
-	<!-- ### Each product should have its own CompGGS value.                                                    ### -->
-	<!-- ########################################################################################################## -->
+	<!-- CompGGS definition : Component Generation GUID Seed. It's a WiX thing... -->
+	<!-- Each product should have its own CompGGS value. -->
 	<PropertyGroup>
 		<CompGGS>02939F49-EAC5-4E88-87CB-0A2A45F80FED</CompGGS>
 	</PropertyGroup>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Property definitions                                                                               ### -->
-	<!-- ########################################################################################################## -->
+	<!-- Property definitions -->
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
 		<!-- parse the version number into segments -->
 		<Split Input="$(Version)" Delimiter="." OutputSubString="0">
@@ -85,26 +68,19 @@
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 	</PropertyGroup>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Top Level Targets                                                                                  ### -->
-	<!-- ########################################################################################################## -->
-
+	<!-- Top Level Targets -->
 	<!-- called only once, at the first release of a major version -->
 	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 
 	<!-- called at each minor release to build a patch installer -->
 	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Targets                                                                                      ### -->
-	<!-- ### TODO (Hasso) 2107.10: assimilate with main targets                                                 ### -->
-	<!-- ########################################################################################################## -->
-
+	<!-- - - - - - - - -->
+	<!-- Build Targets -->
+	<!-- - - - - - - - -->
 	<Target Name="BuildProductMain" DependsOnTargets="Clean;ProductCompile;CopyFilesToInstall" />
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Compile Product and Installer Custom Actions                                                       ### -->
-	<!-- ########################################################################################################## -->
+	<!-- Compile Product and Installer Custom Actions -->
 	<Target Name="ProductCompile" DependsOnTargets="Build">
 		<MSBuild Projects="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions.sln" Properties="Configuration=release;Platform=x86" />
 	</Target>
@@ -114,10 +90,7 @@
 		<OutputDirectories Include="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions/bin"/>
 	</ItemGroup>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Folders and Copy Targets                                                                     ### -->
-	<!-- ########################################################################################################## -->
-
+	<!-- Build Folders and Copy Targets -->
 	<Target Name="CleanMasterOutputDir">
 		<RemoveDir Directories="$(AppBuildMasterDir)" />
 	</Target>
@@ -198,15 +171,12 @@
 		</Task>
 	</UsingTask>
 
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Wix Product Targets                                                                          ### -->
-	<!-- ########################################################################################################## -->
-
+	<!-- Build Wix Product Targets -->
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -222,7 +192,7 @@
 			<MspFile>$(SafeApplicationName)_$(Revision).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
 			<BaseVersion>$(VersionSeg1).$(VersionSeg2).$(VersionSeg3).1</BaseVersion>
-			<PatchArgs><![CDATA["$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"]]></PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>

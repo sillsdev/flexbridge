@@ -1,4 +1,5 @@
-<WixVariable Id="WixUILicenseRtf" Value="..\..\DistFiles\license.rtf"/>
+<!-- This file contains some things yet TODO before the old installer disappears. -->
+
 <WixVariable Id="WixUIBannerBmp" Value="BannerWithSILLogo.bmp" />
 <WixVariable Id="WixUIDialogBmp" Value="DialogBGWithSILLogo.bmp" />
 
@@ -35,6 +36,3 @@ See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-co
 <SetProperty Id="FIELDWORKSMINIMUMINSTALLEDVERSION" Before="LaunchConditions" Value="[DEVFIELDWORKSMINIMUMINSTALLEDVERSION]">DEVFIELDWORKSMINIMUMINSTALLEDVERSION</SetProperty>
 
 ChorusHub?
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-	"InstallationDir"="C:\Dev\flexbridge\output\Debug"

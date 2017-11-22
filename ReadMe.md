@@ -96,7 +96,7 @@ When releasing FLExBridge be sure to do the following:
 
 2. Build
 
-	- The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer" and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you can avoid incrementing the version number by setting the buid counter back before rerunning the Patcher job.
+	- The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer" and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you can avoid incrementing the version number by setting the build counter back before rerunning the Patcher job.
 
 	- Make a Linux package for release by doing the following:
 		- Go to the Jenkins job for this branch of flexbridge.
