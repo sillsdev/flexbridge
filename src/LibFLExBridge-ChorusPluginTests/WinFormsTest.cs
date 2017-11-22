@@ -1,6 +1,6 @@
 ﻿// Copyright (C) 2017 SIL International. All rights reserved.
 //
-// Distributable under the terms of the MIT License, as specified in the license.rtf file.
+// Distributable under the terms of the MIT License, as specified in the License.htm file.
 
 using System.Linq;
 using System.Reflection;

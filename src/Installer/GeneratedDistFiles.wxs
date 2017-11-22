@@ -2,8 +2,8 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
 		<DirectoryRef Id="INSTALLDIR">
-			<Component Id="license.rtf" Guid="61288324-9979-40DF-9F86-DE66B2FA1B41">
-				<File Id="license.rtf" Name="license.rtf" Source="..\..\DistFiles\license.rtf" />
+			<Component Id="License.htm" Guid="61288324-9979-40DF-9F86-DE66B2FA1B41">
+				<File Id="License.htm" Name="License.htm" Source="..\..\DistFiles\License.htm" />
 			</Component>
 			<Component Id="LogoForAbout.png" Guid="C217AC6E-CDB7-4334-9D0F-BDD53F57EA21">
 				<File Id="LogoForAbout.png" Name="LogoForAbout.png" Source="..\..\DistFiles\LogoForAbout.png" />
@@ -48,7 +48,7 @@
 			</Directory>
 		</DirectoryRef>
 		<ComponentGroup Id="DistFiles">
-			<ComponentRef Id="license.rtf" />
+			<ComponentRef Id="License.htm" />
 			<ComponentRef Id="LogoForAbout.png" />
 			<ComponentRef Id="Palaso.en.tmx" />
 			<ComponentRef Id="Palaso.es.tmx" />
