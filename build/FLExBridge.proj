@@ -158,13 +158,17 @@
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
 		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
-			ReplacementText="$(BUILD_VCS_NUMBER)"/>
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
+			Regex="FBCOMMITID" ReplacementText="$(BUILD_VCS_NUMBER)"/>
 
 		<Copy SourceFiles="$(RootDir)/DistFiles/License.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+			DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
+			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+			<!-- ReplacementText is required, and must appear in the final file for date stamping to work. -->
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>
