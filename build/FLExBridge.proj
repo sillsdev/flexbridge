@@ -168,7 +168,7 @@
 		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
 			DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
 			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-			<!-- ReplacementText is required, and must appear in the final file for date stamping to work. -->
+			<!-- The FileUpdate task checks whether ReplacementText is in the updated file contents before writing the contents back to the file, but we need to replace two dates and only one Regex, so we call FileUpdate twice with the same Regex and ReplacementText. -->
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>

@@ -50,13 +50,13 @@
 			<VersionSeg3 Condition="'$(VersionSeg3)'==''">0</VersionSeg3>
 			<VersionSeg4 Condition="'$(VersionSeg4)'==''">1</VersionSeg4> <!-- 1 is the base build number. It may be a NAnt thing... -->
 
-			<!-- REVIEW (Hasso) 2017.09: what do we call each segment again? Major.Minor.(Build|Patch).(Revision|Build) -->
-			<MajorVersion>$(VersionSeg1).$(VersionSeg2)</MajorVersion>
-			<MinorVersion>$(MajorVersion).$(VersionSeg3)</MinorVersion>
-			<Revision>$(MinorVersion).$(VersionSeg4)</Revision>
+			<MajorVersion>$(VersionSeg1)</MajorVersion>
+			<MinorVersion>$(MajorVersion).$(VersionSeg2)</MinorVersion>
+			<PatchVersion>$(MinorVersion).$(VersionSeg3)</PatchVersion>
+			<BuildVersion>$(PatchVersion).$(VersionSeg4)</BuildVersion>
 
 			<!-- Build Directories -->
-			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MajorVersion)_Build</AppBuildDir>
+			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
 		</PropertyGroup>
 	</Target>
 
@@ -174,9 +174,9 @@
 	<!-- Build Wix Product Targets -->
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
 		<PropertyGroup>
-			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
+			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(Revision) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -189,10 +189,9 @@
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
 		<PropertyGroup>
-			<MspFile>$(SafeApplicationName)_$(Revision).msp</MspFile>
+			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<BaseVersion>$(VersionSeg1).$(VersionSeg2).$(VersionSeg3).1</BaseVersion>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(Revision) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
