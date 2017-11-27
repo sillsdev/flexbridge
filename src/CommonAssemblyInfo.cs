@@ -1,5 +1,5 @@
 // Copyright (C) 2010-2017 SIL International. All rights reserved.
-// This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Reflection;
 
