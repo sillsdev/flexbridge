@@ -117,6 +117,7 @@
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
+		<WriteLinesToFile File="$(AppBuildMasterDir)/version" Lines="$(BuildVersion)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
@@ -188,6 +189,9 @@
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
+			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
+		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
