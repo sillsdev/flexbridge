@@ -1,5 +1,6 @@
 src/_ReSharper.LiftBridge/
 bin/
+BuildDir/
 obj/
 output/
 Mercurial/
@@ -10,14 +11,12 @@ DistFiles/Mercurial/
 DistFiles/Mercurial/MercurialExtensions/
 MercurialExtensions/
 
-Perf test  results/*.app6results
 *.user
 *.suo
 *.userprefs
 *.pidb
 *~
 DistFiles/.guidsForInstaller.xml
-Mercurial/mercurial.ini
 **.app7results
 Patches/
 *.pdb
@@ -39,7 +38,6 @@ lib/*/L10NSharp.xml
 lib/Release/*.msm
 lib/*/*.config
 lib/common/Chorus_Help.chm
-/Mercurial
 build/.nuget/
 build/NuGet.exe
 build/nuget.exe

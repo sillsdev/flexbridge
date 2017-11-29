@@ -2,10 +2,11 @@
 	<PropertyGroup>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
+		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'=='Windows_NT'">Debug</Configuration>
+		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'!='Windows_NT'">DebugMono</Configuration>
+		<Platform Condition="'$(Platform)'==''">Any CPU</Platform>
 		<Solution>FLExBridge.sln</Solution>
 		<ApplicationName>FLEx Bridge</ApplicationName>
-		<Configuration Condition="'$(OS)'!='Windows_NT'">ReleaseMono</Configuration>
-		<Configuration Condition="'$(OS)'=='Windows_NT'">Release</Configuration>
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
 		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
 		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
@@ -35,6 +36,7 @@
 
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
+	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
 
 	<!-- ***************** Main build ***************** -->
 
@@ -45,15 +47,8 @@
 	</Target>
 
 	<ItemGroup>
-		<OutputFiles
-			Include="$(RootDir)/output/**/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
-		<ObjFiles
-			Include="$(RootDir)/**/obj/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
-		<OutputDirectory Include="$(RootDir)/output/"/>
+		<ObjFiles Include="$(RootDir)/**/obj/*" Exclude="$(RootDir)/.git/**/*"/>
+		<OutputDirectories Include="$(RootDir)/output/"/>
 	</ItemGroup>
 
 	<Target Name="Clean">
@@ -61,8 +56,7 @@
 		<Exec Command="find . -name obj -type d -print0 | xargs -0 rm -rf" WorkingDirectory="$(RootDir)"
 			Condition="'$(OS)'!='Windows_NT'"/>
 		<Delete Files="@(ObjFiles)" Condition="'$(OS)'=='Windows_NT'" />
-		<Delete Files="@(OutputFiles)" />
-		<RemoveDir Directories="$(OutputDirectory)"/>
+		<RemoveDir Directories="@(OutputDirectories)"/>
 		<Message Text="End Clean"/>
 	</Target>
 
@@ -70,8 +64,6 @@
 		<MakeDir Directories="$(RootDir)/output/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
-		<MakeDir Directories="$(RootDir)/output/Common" Condition="'$(OS)'=='Windows_NT'"/>
-		<MakeDir Directories="$(RootDir)/output/Installer/" />
 	</Target>
 
 	<ItemGroup>
@@ -145,6 +137,9 @@
 		<ReadLinesFromFile File="$(RootDir)/version" Condition="'$(Version)' == ''">
 			<Output TaskParameter="Lines" PropertyName="Version" />
 		</ReadLinesFromFile>
+		<CreateProperty Condition="'$(BuildCounter)' != ''" Value="$(Version).$(BuildCounter)">
+			<Output TaskParameter="Value" PropertyName="Version"/>
+		</CreateProperty>
 		<Message Text="Version: $(Version)" Importance="high"/>
 	</Target>
 
@@ -163,8 +158,17 @@
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
 		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/about.htm" Regex="FBCOMMITID"
-			ReplacementText="$(BUILD_VCS_NUMBER)"/>
+		<FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
+			Regex="FBCOMMITID" ReplacementText="$(BUILD_VCS_NUMBER)"/>
+
+		<Copy SourceFiles="$(RootDir)/DistFiles/License.htm"
+			DestinationFolder="$(RootDir)/output/Installer"/>
+		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+			DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
+			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
+			<!-- The FileUpdate task checks whether ReplacementText is in the updated file contents before writing the contents back to the file, but we need to replace two dates and only one Regex, so we call FileUpdate twice with the same Regex and ReplacementText. -->
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>
@@ -221,44 +225,7 @@
 
 	<!-- *********************** Installer stuff below.  ******************************* -->
 
-	<!-- For building an an installer on TC -->
-	<Target Name="Installer" DependsOnTargets="DevelopInstaller; Test" Condition="'$(OS)'=='Windows_NT'"/>
-
-	<!-- For use when working on installer development -->
-	<!-- To build the installer from the build folder to build on a developer machine use something similar to the following: -->
-	<!-- msbuild FLExBridge.proj /t:DevelopInstaller /p:Version=2.4.0 /p:BUILD_VCS_NUMBER=24445 /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=none /p:UploadFolder=Alpha/p:Configuration=Release /p:Platform="Any CPU" -->
-	<!-- If no Version is specified, reads from "$(RootDir)/version". -->
-	<Target Name="DevelopInstaller" DependsOnTargets="VersionNumbers; CreateDirectories; Build" Condition="'$(OS)'=='Windows_NT'">
-		<Copy SourceFiles="$(RootDir)\src\Installer\Installer.wxs" DestinationFolder="$(RootDir)\output\Installer"/>
-		<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs"
-			Regex="Property_ProductVersion = &quot;.*&quot;"
-			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;"/>
-
-		<Message Text="Making Installer Version: $(Version)" Importance="high"/>
-		<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
-
-		<!-- Copy Installer.wxs back so it appears we aren't modifying the original, which then is a pain on dev machines -->
-		<Copy SourceFiles="$(RootDir)\output\Installer\Installer.wxs" DestinationFolder="$(RootDir)\src\Installer"/>
-	</Target>
-
-	<Target Name="Upload" DependsOnTargets="CreateDirectories" Condition="'$(OS)'=='Windows_NT'">
-		<Message Text="Attempting rsync of FLExBridgeInstaller.msi" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/FLExBridgeInstaller.msi&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/FLExBridgeInstaller.msi"/>
-
-		<Message Text="Attempting rsync of ReleaseNotes.md" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/ReleaseNotes.md&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/ReleaseNotes.md"/>
-
-		<Message Text="Attempting rsync of appcast.xml" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/appcast.xml&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/appcast.xml"/>
-
-		<Message Text="Attempting rsync of flexbridge.css" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/flexbridge.css&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/flexbridge.css"/>
-
-		<Message Text="Attempting rsync of $(UploadFolder).htm" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../output/Installer/$(UploadFolder).htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/$(UploadFolder)/$(UploadFolder).htm"/>
-
-		<Message Text="Attempting rsync of index.htm" Importance="high"/>
-		<Exec Command="&quot;c:\program files\cwRsync\bin\rsync.exe&quot; -vz -p --chmod=ug+rw,o+r -e&quot;\&quot;c:\program files\cwRsync\bin\ssh\&quot; -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob&quot;  &quot;../src/Installer/index.htm&quot; bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/FlexBridge/index.htm"/>
-	</Target>
-
+	<!-- For building an an installer on TeamCity (use TestInstallerBuild.bat to run locally) -->
+	<Target Name="Installer" DependsOnTargets="BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
+	<Target Name="Patcher" DependsOnTargets="BuildPatch; Test" Condition="'$(OS)'=='Windows_NT'"/>
 </Project>

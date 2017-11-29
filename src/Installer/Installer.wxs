@@ -21,7 +21,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	<Package Id="*" Compressed="yes" InstallerVersion="200"/>
 
 	<UIRef Id="WixUI_Minimal"/>
-	<WixVariable Id="WixUILicenseRtf" Value="..\..\DistFiles\license.rtf"/>
+	<WixVariable Id="WixUILicenseRtf" Value="license.rtf"/>
 	<WixVariable Id="WixUIBannerBmp" Value="BannerWithSILLogo.bmp" />
 	<WixVariable Id="WixUIDialogBmp" Value="DialogBGWithSILLogo.bmp" />
 

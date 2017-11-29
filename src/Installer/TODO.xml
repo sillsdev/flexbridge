@@ -1,0 +1,38 @@
+<!-- This file contains some things yet TODO before the old installer disappears. -->
+
+<WixVariable Id="WixUIBannerBmp" Value="BannerWithSILLogo.bmp" />
+<WixVariable Id="WixUIDialogBmp" Value="DialogBGWithSILLogo.bmp" />
+
+<!-- Using afterInstallFinalize will allow the apparent downgrading of files in the Chorus merge module. -->
+<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of FLEx Bridge is already installed. Setup will now exit." Schedule="afterInstallValidate"/>
+
+<Property Id="MANUFACTURERREGKEY">SIL</Property>
+<!-- The following will set properties A[FW9INSTALLDIR] and B[FW9DEVINSTALLDIR] to the result of two different registry searches.
+If the search for B[FW9DEVINSTALLDIR] was successful, it overrides the value of A[FW9INSTALLDIR] with the value of B[FW9DEVINSTALLDIR].
+See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-condition -->
+<Property Id="FW9INSTALLDIR">
+  <!-- Real users and devs have this registry entry. But, a dev machine has it set to DistFiles. -->
+  <RegistrySearch Id="SearchForFW9" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FieldWorks\9" Name="RootCodeDir" Type="raw"/>
+</Property>
+<Property Id="FIELDWORKSMINIMUMINSTALLEDVERSION">
+  <DirectorySearch Id="FWVersion" Path="[FW9INSTALLDIR]">
+	<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+	<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
+  </DirectorySearch>
+</Property>
+<Property Id="DEVFW9BUILDDIR">
+  <!-- Devs (only) have this registry entry. -->
+  <RegistrySearch Id="SearchForFW9DevDir" Root="HKLM" Key="SOFTWARE\[MANUFACTURERREGKEY]\FieldWorks\9" Name="FwExeDir" Type="raw"/>
+</Property>
+<Property Id="DEVFIELDWORKSMINIMUMINSTALLEDVERSION">
+  <DirectorySearch Id="DevFWVersion" Path="[DEVFW9BUILDDIR]">
+				<!-- 8.0.3.41467 was the actual number the day the FW Beta 4 was released, but I understand one then needs to go one notch under that to findit. -->
+	<FileSearch Name="FieldWorks.exe" MinVersion="8.0.3.41466"/>
+  </DirectorySearch>
+</Property>
+
+<!-- Use the dev entry, but only if set.
+<SetProperty Id="FW9INSTALLDIR" Before="SetFIELDWORKSMINIMUMINSTALLEDVERSION" Value="[DEVFW9BUILDDIR]">DEVFW9BUILDDIR</SetProperty> -->
+<SetProperty Id="FIELDWORKSMINIMUMINSTALLEDVERSION" Before="LaunchConditions" Value="[DEVFIELDWORKSMINIMUMINSTALLEDVERSION]">DEVFIELDWORKSMINIMUMINSTALLEDVERSION</SetProperty>
+
+ChorusHub?

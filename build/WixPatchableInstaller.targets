@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+	<!-- Configuration properties - Review and edit these values as needed. -->
+	<PropertyGroup>
+		<CopyrightYear>2017</CopyrightYear>
+		<Manufacturer>SIL International</Manufacturer>
+		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
+		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
+	</PropertyGroup>
+
+	<!-- PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every -->
+	<!-- base build must get its own unique third number (minor version) in the version number sequence. -->
+	<!-- FLEx Bridge 3.0.0.X -->
+	<PropertyGroup>
+		<ProductIdGuid>57942FAA-4E7F-447F-8323-795CEF93FBA1</ProductIdGuid>
+	</PropertyGroup>
+
+	<!-- UPGRADE CODE GUID definition : This value must be the same for every version of this product. -->
+	<!-- Each product should have its own upgrade code.  This allows installers and patches to upgrade -->
+	<!-- one another because they share a common upgrade code. -->
+	<!-- Don't even THINK about changing the Upgrade Code. Ever. -->
+	<PropertyGroup>
+		<UpgradeCodeGuid>C1EDBBD1-E382-11DE-8A39-0800200C9A66</UpgradeCodeGuid>
+	</PropertyGroup>
+
+	<!-- CompGGS definition : Component Generation GUID Seed. It's a WiX thing... -->
+	<!-- Each product should have its own CompGGS value. -->
+	<PropertyGroup>
+		<CompGGS>02939F49-EAC5-4E88-87CB-0A2A45F80FED</CompGGS>
+	</PropertyGroup>
+
+	<!-- Property definitions -->
+	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
+		<!-- parse the version number into segments -->
+		<Split Input="$(Version)" Delimiter="." OutputSubString="0">
+			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg1"/>
+		</Split>
+		<Split Input="$(Version)" Delimiter="." OutputSubString="1" ContinueOnError="true">
+			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg2"/>
+		</Split>
+		<Split Input="$(Version)" Delimiter="." OutputSubString="2" ContinueOnError="true">
+			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg3"/>
+		</Split>
+		<Split Input="$(Version)" Delimiter="." OutputSubString="3" ContinueOnError="true">
+			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg4"/>
+		</Split>
+		<PropertyGroup>
+			<!-- set default values for trailing version numbers -->
+			<VersionSeg2 Condition="'$(VersionSeg2)'==''">0</VersionSeg2>
+			<VersionSeg3 Condition="'$(VersionSeg3)'==''">0</VersionSeg3>
+			<VersionSeg4 Condition="'$(VersionSeg4)'==''">1</VersionSeg4> <!-- 1 is the base build number. It may be a NAnt thing... -->
+
+			<MajorVersion>$(VersionSeg1)</MajorVersion>
+			<MinorVersion>$(MajorVersion).$(VersionSeg2)</MinorVersion>
+			<PatchVersion>$(MinorVersion).$(VersionSeg3)</PatchVersion>
+			<BuildVersion>$(PatchVersion).$(VersionSeg4)</BuildVersion>
+
+			<!-- Build Directories -->
+			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
+		</PropertyGroup>
+	</Target>
+
+	<!-- Build Directories -->
+	<PropertyGroup>
+		<InstallersBaseDir>$(RootDir)/BuildDir</InstallersBaseDir>
+		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master</AppBuildMasterDir>
+		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
+		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+	</PropertyGroup>
+
+	<!-- Top Level Targets -->
+	<!-- called only once, at the first release of a major version -->
+	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
+
+	<!-- called at each minor release to build a patch installer -->
+	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
+
+	<!-- - - - - - - - -->
+	<!-- Build Targets -->
+	<!-- - - - - - - - -->
+	<Target Name="BuildProductMain" DependsOnTargets="Clean;ProductCompile;CopyFilesToInstall" />
+
+	<!-- Compile Product and Installer Custom Actions -->
+	<Target Name="ProductCompile" DependsOnTargets="Build">
+		<MSBuild Projects="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions.sln" Properties="Configuration=release;Platform=x86" />
+	</Target>
+
+	<!-- used by target Clean in FLExBridge.proj -->
+	<ItemGroup>
+		<OutputDirectories Include="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions/bin"/>
+	</ItemGroup>
+
+	<!-- Build Folders and Copy Targets -->
+	<Target Name="CleanMasterOutputDir">
+		<RemoveDir Directories="$(AppBuildMasterDir)" />
+	</Target>
+
+	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
+		<!-- prepare the directory -->
+		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
+		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
+		<!-- copy in new stuff -->
+		<ItemGroup>
+			<BinFiles Include="$(RootDir)/output/$(Configuration)\**\*" Exclude="$(RootDir)/output/$(Configuration)\TestData\**\*"/>
+			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/Overrides.wxi"/> <!-- specifying, because others may go elsewhere -->
+		</ItemGroup>
+		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
+		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
+		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
+	</Target>
+
+	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
+		<ItemGroup>
+			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
+		<WriteLinesToFile File="$(AppBuildMasterDir)/version" Lines="$(BuildVersion)"/>
+	</Target>
+
+	<Target Name="GetDotNetFiles" >
+		<PropertyGroup>
+			<WixLibsDir>$(RootDir)/src/WiXInstaller/libs</WixLibsDir>
+		</PropertyGroup>
+		<DownloadFileOnce Address="http://go.microsoft.com/fwlink/?LinkId=322115"
+			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"/> <!-- .net 4.5.1 -->
+		<DownloadFileOnce Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"/>			<!-- VisualC++ 10 runtime -->
+		<DownloadFileOnce Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"/>		<!-- VisualC++ 11 runtime -->
+		<DownloadFileOnce Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"/>		<!-- VisualC++ 12 runtime -->
+	</Target>
+
+	<UsingTask TaskName="DownloadFileOnce" TaskFactory="CodeTaskFactory"
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+		<ParameterGroup>
+			<Address ParameterType="System.String" Required="true" />
+			<LocalFilename ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System.Core" />
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Net" />
+			<Using Namespace="Microsoft.Build.Framework" />
+			<Using Namespace="Microsoft.Build.Utilities" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					try
+					{
+						LocalFilename = Path.GetFullPath(LocalFilename);
+						if (File.Exists(LocalFilename))
+							return true;
+
+						Log.LogMessage(string.Format("Downloading {0}...", Path.GetFileName(LocalFilename)));
+						using (var webClient = new WebClient())
+						{
+							webClient.DownloadFile(Address, LocalFilename);
+						}
+						return true;
+					}
+					catch (Exception ex)
+					{
+						Log.LogErrorFromException(ex);
+						return false;
+					}
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+	<!-- Build Wix Product Targets -->
+	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
+		<PropertyGroup>
+			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
+			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</BaseBuildArgs>
+		</PropertyGroup>
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
+
+		<ItemGroup>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
+		</ItemGroup>
+		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+	</Target>
+
+	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
+			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
+		</ReadLinesFromFile>
+		<PropertyGroup>
+			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
+			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</PatchArgs>
+		</PropertyGroup>
+
+		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
+
+		<ItemGroup>
+			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
+		</ItemGroup>
+		<Move SourceFiles="@(PatchFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+	</Target>
+</Project>

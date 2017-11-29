@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\9"/> <!-- yes, this is the FLEx version -->
+	<Property Id="APPFOLDERREGSZNAME" Value="InstallationDir"/>
+	<Property Id='DEFDATAFOLDER' Value='%LOCALAPPDATA%\SIL_International\FLExBridge.exe_Url_zdatz30412fterv2p2mfad34bt0qo02r\$(var.VersionNumber)' />
+</Include>
