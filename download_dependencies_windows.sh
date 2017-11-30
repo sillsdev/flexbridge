@@ -156,14 +156,10 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32mast
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.pdb ./lib/Release/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/Chorus.pdb ./lib/Release/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.pdb ./lib/Release/LibChorus.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMergeModule.msm ./lib/Release/ChorusMergeModule.msm
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Microsoft_VC90_CRT_x86.msm ./lib/Release/Microsoft_VC90_CRT_x86.msm
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/policy_9_0_Microsoft_VC90_CRT_x86.msm ./lib/Release/policy_9_0_Microsoft_VC90_CRT_x86.msm
+# REVIEW (Hasso) 2017.11: since debug artifacts are available here, should we be using them?
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Chorus.exe ./lib/Debug/Chorus.exe
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.dll ./lib/Debug/LibChorus.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.exe ./lib/Debug/ChorusMerge.exe
@@ -175,11 +171,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32mast
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.pdb ./lib/Debug/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/Chorus.pdb ./lib/Debug/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.pdb ./lib/Debug/LibChorus.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Release/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Debug/IPCFramework.dll
