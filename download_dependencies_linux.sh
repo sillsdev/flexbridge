@@ -78,27 +78,27 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus_Help.chm"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorushelp.git [master]
-# [1] build: chorus-linux64-2.6 Continuous (bt323)
+# [1] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"debug/Chorus.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono", "MercurialExtensions/**"=>"MercurialExtensions"}
-#     VCS: https://github.com/sillsdev/chorus.git [chorus-2.6]
-# [2] build: chorus-linux64-2.6 Continuous (bt323)
+#     VCS: https://github.com/sillsdev/chorus.git [master]
+# [2] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/ReleaseMono", "Mercurial-x86_64.zip"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono"}
-#     VCS: https://github.com/sillsdev/chorus.git [chorus-2.6]
-# [3] build: chorus-linux64-2.6 Continuous (bt323)
+#     VCS: https://github.com/sillsdev/chorus.git [master]
+# [3] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt323
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Autofac.dll"=>"lib/common"}
-#     VCS: https://github.com/sillsdev/chorus.git [chorus-2.6]
+#     VCS: https://github.com/sillsdev/chorus.git [master]
 # [4] build: Helpprovider (bt225)
 #     project: Helpprovider
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt225
@@ -134,13 +134,13 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: palaso-linux64-libpalaso-3.1 Continuous (bt322)
+# [9] build: palaso-trusty64-master Continuous (PalasoTrusty64masterContinuous)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt322
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoTrusty64masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"SIL.Core.dll*"=>"lib/ReleaseMono", "SIL.TestUtilities.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "SIL.Lift.dll"=>"lib/ReleaseMono", "L10NSharp.dll"=>"lib/ReleaseMono", "NDesk.*"=>"lib/ReleaseMono", "debug/SIL.Core.dll*"=>"lib/DebugMono", "debug/SIL.TestUtilities.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"=>"lib/DebugMono", "debug/SIL.Lift.dll*"=>"lib/DebugMono", "debug/L10NSharp.dll"=>"lib/DebugMono", "debug/NDesk.*"=>"lib/DebugMono"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-3.1]
+#     VCS: https://github.com/sillsdev/libpalaso.git [master]
 
 # make sure output directories exist
 mkdir -p ./MercurialExtensions
@@ -151,39 +151,39 @@ mkdir -p ./lib/common
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/debug/Chorus.exe ./lib/DebugMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/debug/LibChorus.dll ./lib/DebugMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/debug/ChorusHub.exe ./lib/DebugMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/debug/ChorusMerge.exe ./lib/DebugMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Mercurial-i686.zip ./lib/DebugMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Mercurial-x86_64.zip ./lib/DebugMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/debug/LibChorus.TestUtilities.dll ./lib/DebugMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/.guidsForInstaller.xml ./MercurialExtensions/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/Dummy.txt ./MercurialExtensions/Dummy.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/.gitignore ./MercurialExtensions/fixutf8/.gitignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/.guidsForInstaller.xml ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/.hg_archival.txt ./MercurialExtensions/fixutf8/.hg_archival.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/.hgignore ./MercurialExtensions/fixutf8/.hgignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/README. ./MercurialExtensions/fixutf8/README.
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/buildcpmap.py ./MercurialExtensions/fixutf8/buildcpmap.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/cpmap.pyc ./MercurialExtensions/fixutf8/cpmap.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.py ./MercurialExtensions/fixutf8/fixutf8.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.pyc ./MercurialExtensions/fixutf8/fixutf8.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.pyo ./MercurialExtensions/fixutf8/fixutf8.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.py ./MercurialExtensions/fixutf8/osutil.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.pyc ./MercurialExtensions/fixutf8/osutil.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.pyo ./MercurialExtensions/fixutf8/osutil.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.py ./MercurialExtensions/fixutf8/win32helper.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyc ./MercurialExtensions/fixutf8/win32helper.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyo ./MercurialExtensions/fixutf8/win32helper.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Chorus.exe ./lib/ReleaseMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/ChorusHub.exe ./lib/ReleaseMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/ChorusMerge.exe ./lib/ReleaseMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Mercurial-i686.zip ./lib/ReleaseMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Mercurial-x86_64.zip ./lib/ReleaseMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/LibChorus.TestUtilities.dll ./lib/ReleaseMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt323/latest.lastSuccessful/Autofac.dll ./lib/common/Autofac.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/debug/Chorus.exe ./lib/DebugMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/debug/LibChorus.dll ./lib/DebugMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/debug/ChorusHub.exe ./lib/DebugMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/debug/ChorusMerge.exe ./lib/DebugMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Mercurial-i686.zip ./lib/DebugMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Mercurial-x86_64.zip ./lib/DebugMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.dll ./lib/DebugMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/.guidsForInstaller.xml ./MercurialExtensions/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/Dummy.txt ./MercurialExtensions/Dummy.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/.gitignore ./MercurialExtensions/fixutf8/.gitignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/.guidsForInstaller.xml ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/.hg_archival.txt ./MercurialExtensions/fixutf8/.hg_archival.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/.hgignore ./MercurialExtensions/fixutf8/.hgignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/README. ./MercurialExtensions/fixutf8/README.
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/buildcpmap.py ./MercurialExtensions/fixutf8/buildcpmap.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/cpmap.pyc ./MercurialExtensions/fixutf8/cpmap.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.py ./MercurialExtensions/fixutf8/fixutf8.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.pyc ./MercurialExtensions/fixutf8/fixutf8.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/fixutf8.pyo ./MercurialExtensions/fixutf8/fixutf8.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.py ./MercurialExtensions/fixutf8/osutil.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.pyc ./MercurialExtensions/fixutf8/osutil.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/osutil.pyo ./MercurialExtensions/fixutf8/osutil.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.py ./MercurialExtensions/fixutf8/win32helper.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyc ./MercurialExtensions/fixutf8/win32helper.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/MercurialExtensions/fixutf8/win32helper.pyo ./MercurialExtensions/fixutf8/win32helper.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Chorus.exe ./lib/ReleaseMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/ChorusHub.exe ./lib/ReleaseMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/ChorusMerge.exe ./lib/ReleaseMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Mercurial-i686.zip ./lib/ReleaseMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Mercurial-x86_64.zip ./lib/ReleaseMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.dll ./lib/ReleaseMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/latest.lastSuccessful/Autofac.dll ./lib/common/Autofac.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/ReleaseMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/DebugMono/IPCFramework.dll
@@ -191,32 +191,32 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/ReleaseMono/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/DebugMono/icu.net.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/DebugMono/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Core.dll ./lib/ReleaseMono/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Core.dll.config ./lib/ReleaseMono/SIL.Core.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Core.dll.mdb ./lib/ReleaseMono/SIL.Core.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.TestUtilities.dll ./lib/ReleaseMono/SIL.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.TestUtilities.dll.mdb ./lib/ReleaseMono/SIL.TestUtilities.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Windows.Forms.dll ./lib/ReleaseMono/SIL.Windows.Forms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Windows.Forms.dll.config ./lib/ReleaseMono/SIL.Windows.Forms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Windows.Forms.dll.mdb ./lib/ReleaseMono/SIL.Windows.Forms.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/SIL.Lift.dll ./lib/ReleaseMono/SIL.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Core.dll ./lib/DebugMono/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Core.dll.config ./lib/DebugMono/SIL.Core.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Core.dll.mdb ./lib/DebugMono/SIL.Core.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.TestUtilities.dll ./lib/DebugMono/SIL.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.TestUtilities.dll.mdb ./lib/DebugMono/SIL.TestUtilities.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Windows.Forms.dll ./lib/DebugMono/SIL.Windows.Forms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.config ./lib/DebugMono/SIL.Windows.Forms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Lift.dll ./lib/DebugMono/SIL.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/SIL.Lift.dll.mdb ./lib/DebugMono/SIL.Lift.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt322/latest.lastSuccessful/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll ./lib/ReleaseMono/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll.config ./lib/ReleaseMono/SIL.Core.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll.mdb ./lib/ReleaseMono/SIL.Core.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.TestUtilities.dll ./lib/ReleaseMono/SIL.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.TestUtilities.dll.mdb ./lib/ReleaseMono/SIL.TestUtilities.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll ./lib/ReleaseMono/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll.config ./lib/ReleaseMono/SIL.Windows.Forms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll.mdb ./lib/ReleaseMono/SIL.Windows.Forms.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Lift.dll ./lib/ReleaseMono/SIL.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll ./lib/DebugMono/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll.config ./lib/DebugMono/SIL.Core.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll.mdb ./lib/DebugMono/SIL.Core.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.TestUtilities.dll ./lib/DebugMono/SIL.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.TestUtilities.dll.mdb ./lib/DebugMono/SIL.TestUtilities.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll ./lib/DebugMono/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.config ./lib/DebugMono/SIL.Windows.Forms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Lift.dll ./lib/DebugMono/SIL.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Lift.dll.mdb ./lib/DebugMono/SIL.Lift.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
 # End of script
