@@ -16,7 +16,9 @@ The *TriboroughBridge* project (named after the RFK Triborough Bridge complex co
 See diagram:
 ![FLExBridge Projects Relationships](FLExBridgeRepo.svg)
 
-## Build notes
+## Development
+
+### Setup
 
 FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.
@@ -33,8 +35,7 @@ If you plan to work on Chorus:
 - In **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge, and build FLExBridge.
 - In **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
 
-
-### Mercurial
+#### Mercurial
 
 To run FLExBridge you must unzip `chorus/lib/common/Mercurial.zip` to the root of flexbridge.  Then, edit the `mercurial.ini`
 file in the Mercurial folder. Add a line like this (with the appropriate path for your flexbridge folder):
@@ -43,8 +44,7 @@ file in the Mercurial folder. Add a line like this (with the appropriate path fo
 
 Note that this is in addition to unzipping this folder per the Chorus ReadMe.
 
-## Connecting FieldWorks to FLExBridge
-
+#### Connecting FieldWorks to FLExBridge
 
 - In **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
@@ -53,6 +53,10 @@ Note that this is in addition to unzipping this folder per the Chorus ReadMe.
 
 Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
 (instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
+
+### Build
+
+* In **Windows**, build solution FLExBridge.sln from Visual Studio 2015 Community Edition.
 
 ## Updating Release Notes for a new version
 
