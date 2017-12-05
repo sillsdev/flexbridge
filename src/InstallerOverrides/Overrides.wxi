@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\9"/> <!-- yes, this is the FLEx version -->
+	<Property Id="REGISTRYKEY" Value="SIL\$(var.ApplicationName)\9"/> <!-- yes, this is the FLEx version -->
 	<Property Id="APPFOLDERREGSZNAME" Value="InstallationDir"/>
-	<Property Id='DEFDATAFOLDER' Value='%LOCALAPPDATA%\SIL_International\FLExBridge.exe_Url_zdatz30412fterv2p2mfad34bt0qo02r\$(var.VersionNumber)' />
+	<Property Id="APPFOLDER" Value="[ProgramFilesFolder]\SIL\$(var.SafeApplicationName)$(var.MajorVersion)\"/>
+	<!-- REVIW (Hasso) 2017.12: this is where data is kept, but the registry key is currently irrelevant. If set, it causes the installer to fail and send the user in a loop -->
+	<Property Id="DEFDATAFOLDER" Value="[%LOCALAPPDATA]\SIL_International\FLExBridge.exe_Url_zdatz30412fterv2p2mfad34bt0qo02r\$(var.VersionNumber)"/>
 </Include>

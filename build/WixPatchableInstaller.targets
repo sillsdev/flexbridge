@@ -100,13 +100,23 @@
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
+		<PropertyGroup>
+			<RootBinDir>$(RootDir)/output/$(Configuration)</RootBinDir>
+		</PropertyGroup>
 		<ItemGroup>
-			<BinFiles Include="$(RootDir)/output/$(Configuration)\**\*" Exclude="$(RootDir)/output/$(Configuration)\TestData\**\*"/>
+			<BinFiles Include="$(RootBinDir)\**\*"
+				Exclude="$(RootBinDir)\TestData\**\*;
+				$(RootBinDir)\**\*Tests.*;
+				$(RootBinDir)\**\*TestApp.*;
+				$(RootBinDir)\**\*TestUtilities.*;
+				$(RootBinDir)\RepositoryUtility.*"/>
+			<MercurialFiles Include="$(RootDir)\Mercurial\**\*"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/Overrides.wxi"/> <!-- specifying, because others may go elsewhere -->
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(MercurialFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/mercurial/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
 		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
@@ -177,7 +187,7 @@
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)"</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -195,7 +205,7 @@
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(CertPath)" "$(CertPass)"</PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)"</PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
