@@ -1,3 +1,9 @@
+flexbridge (2.6.1) unstable; urgency=low
+
+  * Update Chorus with bugfix for ChorusHub timeout problem.
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 05 Dec 2017 11:36:48 -0600
+
 flexbridge (2.6.0) unstable; urgency=low
 
   * Update version to 2.6.0 to enable updating from the version shipped with FieldWorks 8.3.9
