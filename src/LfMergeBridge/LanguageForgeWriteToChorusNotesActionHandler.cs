@@ -259,7 +259,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			{
 				author = genericAuthorName;
 			}
-			var result = new Annotation("note", MakeFlexRefURL(ownerGuidStr, ownerShortName), guid, "ignored");
+			var result = new Annotation("question", MakeFlexRefURL(ownerGuidStr, ownerShortName), guid, "ignored");
 			result.AddMessage(author, LfStatusToChorusStatus(status), content);
 			return result;
 		}
