@@ -3,7 +3,10 @@
 
 using System.IO;
 using System.Linq;
-using LibFLExBridgeChorusPlugin;
+using System.Xml.Linq;
+using Chorus.merge;
+using LibChorus.TestUtilities;
+using LibFLExBridgeChorusPlugin.Handling.Linguistics;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using SIL.IO;
@@ -130,6 +133,76 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics
 </FeatureSystem>";
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void MergeChangedFiles_TwoChildrenInFeaturesNodeConsistent()
+		{
+			const string user1 =
+@"<?xml version='1.0' encoding='utf-8'?>
+<FeatureSystem>   
+	<FsFeatureSystem   
+		guid='d6d5a99e-ea5e-11de-994c-0013722f8dec'>   
+		<Features>   
+			<FsClosedFeature
+				guid='00e226d2-743b-4e71-8663-98224b36596d'>
+				<ShowInGloss val='False' />
+			</FsClosedFeature>
+			<FsComplexFeature
+				guid='55706aa1-2381-45a6-bba2-ea489bb4a636'>
+			</FsComplexFeature>
+		</Features>
+	</FsFeatureSystem>
+</FeatureSystem>";
+
+			const string user2 =
+@"<?xml version='1.0' encoding='utf-8'?>
+<FeatureSystem>   
+	<FsFeatureSystem   
+		guid='d6d5a99e-ea5e-11de-994c-0013722f8dec'>   
+		<Features>   
+			<FsClosedFeature
+				guid='00e226d2-743b-4e71-8663-98224b36596d'>
+				<ShowInGloss val='True' />
+			</FsClosedFeature>
+			<FsComplexFeature
+				guid='55706aa1-2381-45a6-bba2-ea489bb4a636'>
+			</FsComplexFeature>
+		</Features>
+	</FsFeatureSystem>
+</FeatureSystem>";
+
+			const string ancestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<FeatureSystem>   
+	<FsFeatureSystem   
+		guid='d6d5a99e-ea5e-11de-994c-0013722f8dec'>   
+		<Features>   
+			<FsClosedFeature
+				guid='00e226d2-743b-4e71-8663-98224b36596d'>
+			</FsClosedFeature>
+			<FsComplexFeature
+				guid='55706aa1-2381-45a6-bba2-ea489bb4a636'>
+			</FsComplexFeature>
+		</Features>
+	</FsFeatureSystem>
+</FeatureSystem>";
+
+			File.WriteAllText(_ourFile.Path, user1);
+			File.WriteAllText(_theirFile.Path, user2);
+			File.WriteAllText(_commonFile.Path, ancestor);
+			var mdc = MetadataCache.TestOnlyNewCache;
+			var eventListener = new ListenerForUnitTests();
+			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation())
+			{
+				EventListener = eventListener
+			};
+			var handlerStrategy = new FeatureSystemFileTypeHandlerStrategy();
+			handlerStrategy.Do3WayMerge(mdc, mergeOrder);
+			var doc = XDocument.Load(_ourFile.Path);
+			var featureElement = doc.Root.Element("FsFeatureSystem").Element("Features");
+			Assert.IsTrue(featureElement.Nodes().Count() == 2);
+			Assert.IsTrue(featureElement.Element("FsClosedFeature").Element("ShowInGloss").Attribute("val").Value == "False");
 		}
 	}
 }
