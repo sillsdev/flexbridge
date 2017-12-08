@@ -95,7 +95,7 @@
 		<RemoveDir Directories="$(AppBuildMasterDir)" />
 	</Target>
 
-	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
+	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers;CopyMercurialFolders">
 		<!-- prepare the directory -->
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
@@ -110,13 +110,12 @@
 				$(RootBinDir)\**\*TestApp.*;
 				$(RootBinDir)\**\*TestUtilities.*;
 				$(RootBinDir)\RepositoryUtility.*"/>
-			<MercurialFiles Include="$(RootDir)\Mercurial\**\*"/>
-			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<BinFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/> <!-- REVIEW (Hasso) 2017.12: we don't need to install "data files" -->
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/Overrides.wxi"/> <!-- specifying, because others may go elsewhere -->
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(MercurialFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/mercurial/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
 		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
