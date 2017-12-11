@@ -34,5 +34,3 @@ See: http://stackoverflow.com/questions/1690162/wix-set-a-property-based-on-a-co
 <!-- Use the dev entry, but only if set.
 <SetProperty Id="FW9INSTALLDIR" Before="SetFIELDWORKSMINIMUMINSTALLEDVERSION" Value="[DEVFW9BUILDDIR]">DEVFW9BUILDDIR</SetProperty> -->
 <SetProperty Id="FIELDWORKSMINIMUMINSTALLEDVERSION" Before="LaunchConditions" Value="[DEVFIELDWORKSMINIMUMINSTALLEDVERSION]">DEVFIELDWORKSMINIMUMINSTALLEDVERSION</SetProperty>
-
-ChorusHub?
