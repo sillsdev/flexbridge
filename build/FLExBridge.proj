@@ -121,6 +121,10 @@
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
+	<Target Name="CopyExtraFilesToOutput" Condition="'$(OS)'=='Windows_NT'">
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
+	</Target>
+
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
 		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
 	</Target>
