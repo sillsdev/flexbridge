@@ -66,18 +66,6 @@
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
 	</Target>
 
-	<ItemGroup>
-		<MyMercurialFiles Include="$(RootDir)/Mercurial/**/*.*"/>
-		<MyMercurialExtensionFiles Include="$(RootDir)/MercurialExtensions/**/*.*"/>
-	</ItemGroup>
-
-	<Target Name="CopyMercurialFolders">
-		<Copy SourceFiles="@(MyMercurialFiles)"
-			DestinationFolder="$(RootDir)/output/$(Configuration)/Mercurial/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(MyMercurialExtensionFiles)"
-			DestinationFolder="$(RootDir)/output/$(Configuration)/MercurialExtensions/%(RecursiveDir)"/>
-	</Target>
-
 	<Target Name="UnzipMercurial" DependsOnTargets="UnzipMercurialWindows;UnzipMercurialLinux"/>
 
 	<Target Name="UnzipMercurialWindows" Condition="'$(OS)'=='Windows_NT'">
