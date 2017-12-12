@@ -95,7 +95,7 @@
 		<RemoveDir Directories="$(AppBuildMasterDir)" />
 	</Target>
 
-	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers;CopyMercurialFolders">
+	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- prepare the directory -->
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
@@ -104,16 +104,28 @@
 			<RootBinDir>$(RootDir)/output/$(Configuration)</RootBinDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<BinFiles Include="$(RootBinDir)\**\*"
-				Exclude="$(RootBinDir)\TestData\**\*;
-				$(RootBinDir)\**\*Tests.*;
-				$(RootBinDir)\**\*TestApp.*;
-				$(RootBinDir)\**\*TestUtilities.*;
-				$(RootBinDir)\RepositoryUtility.*"/>
+			<FilesForDevelopers Include="$(RootBinDir)\TestData\**\*"/>
+			<FilesForDevelopers Include="$(RootBinDir)\**\*Tests.*"/>
+			<FilesForDevelopers Include="$(RootBinDir)\**\*TestApp.*"/>
+			<FilesForDevelopers Include="$(RootBinDir)\**\*TestUtilities.*"/>
+			<FilesForDevelopers Include="$(RootBinDir)\RepositoryUtility.*"/>
+			<FilesInstalledByChorusMerge Include="$(RootBinDir)\Autofac.dll;
+				$(RootBinDir)\LibChorus.dll;
+				$(RootBinDir)\Chorus.exe;
+				$(RootBinDir)\ChorusMerge.exe;
+				$(RootBinDir)\Vulcan.Uczniowie.HelpProvider.dll;
+				$(RootBinDir)\icu.net.dll;
+				$(RootBinDir)\icudt54.dll;
+				$(RootBinDir)\icuin54.dll;
+				$(RootBinDir)\icuuc54.dll;
+				$(RootBinDir)\SIL.Core.dll;
+				$(RootBinDir)\SIL.Lift.dll;
+				$(RootBinDir)\SIL.Windows.Forms.dll"/>
+			<BinFiles Include="$(RootBinDir)\**\*" Exclude="@(FilesForDevelopers);@(FilesInstalledByChorusMerge)"/>
 			<BinFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/> <!-- REVIEW (Hasso) 2017.12: we don't need to install "data files" -->
 			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
-			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/Overrides.wxi"/> <!-- specifying, because others may go elsewhere -->
+			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
