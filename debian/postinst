@@ -25,6 +25,8 @@ case "$1" in
 			ARCH="$(/usr/bin/arch)"
 			unzip Mercurial-${ARCH}.zip
 			chmod +x Mercurial/hg
+			# Turn off any existing fixutf8 extensions with potentially problematic paths
+			perl -pi -e "/^fixutf8/ && s/^/#/" Mercurial/mercurial.ini
 			echo "fixutf8=/usr/lib/flexbridge/MercurialExtensions/fixutf8/fixutf8.py" >> Mercurial/mercurial.ini
 		fi
 
