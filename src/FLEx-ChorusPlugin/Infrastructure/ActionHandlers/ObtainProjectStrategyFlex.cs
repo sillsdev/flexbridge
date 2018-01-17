@@ -33,7 +33,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), commandLineArgs["-fwmodel"], cloneResult, cloneLocation))
 			{
-					cloneResult.Message = CommonResources.kFlexUpdateRequired;
+                if (string.IsNullOrEmpty(cloneResult.Message))
+                    cloneResult.Message = CommonResources.kFlexUpdateRequired;
 			}
 		}
 
@@ -75,7 +76,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					Directory.Delete(cloneLocation, true);
 					_newFwProjectPathname = null;
 					return;
-				case FinalCloneResult.Cloned:
+                case FinalCloneResult.ChosenRepositoryIsEmpty:
+                    MessageBox.Show(actualCloneResult.Message, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    Directory.Delete(cloneLocation, true);
+                    _newFwProjectPathname = null;
+                    return;
+                case FinalCloneResult.Cloned:
 					_gotClone = true;
 					break;
 			}

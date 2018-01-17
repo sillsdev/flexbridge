@@ -7,6 +7,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 	{
 		Cloned,
 		ExistingCloneTargetFolder,
-		FlexVersionIsTooOld
-	}
+		FlexVersionIsTooOld,
+        ChosenRepositoryIsEmpty
+    }
 }
