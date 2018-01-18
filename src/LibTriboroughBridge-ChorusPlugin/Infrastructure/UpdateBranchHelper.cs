@@ -87,13 +87,18 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 					allHeads.Remove(LibTriboroughBridgeSharedConstants.Default);
 				}
 
-				// 'default' is no longer present in 'allHeads'.
-				// If all of them are higher, then it is a no go.
-				if (allHeads.Count == 0)
-				{
-					// No useable model version, so bailout with a message to the user telling them they are 'toast'.
-					updateResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
-					Directory.Delete(repoPath, true);
+                // 'default' is no longer present in 'allHeads'.
+                // If all of them are higher, then it is a no go.
+                if (allHeads.Count == 0)
+                {
+                    updateResult.FinalCloneResult = FinalCloneResult.ChosenRepositoryIsEmpty;
+                    updateResult.Message = "The chosen repository is empty. Send/Receive for the first time has not yet been used.";
+                    return false;
+                }
+                else
+                {
+                    // No useable model version, so bailout with a message to the user telling them they are 'toast'.
+                    updateResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 					return false;
 				}
 
