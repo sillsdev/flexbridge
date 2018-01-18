@@ -57,6 +57,7 @@ Also, if you are working on Chorus, set up the FieldWorks build to copy locally-
 ### Build
 
 * In **Windows**, build solution FLExBridge.sln from Visual Studio 2015 Community Edition.
+* In **Linux**, `make debug`
 
 ## Updating Release Notes for a new version
 
