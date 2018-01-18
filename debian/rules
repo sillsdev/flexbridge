@@ -26,4 +26,6 @@ override_dh_clideps:
 		--exclude-moduleref=libgeckofix.so --exclude-moduleref=Geckofx-Core.dll \
 		--exclude-moduleref=libgobject-2.0.so --exclude-moduleref=libgio-2.0.so \
 		--exclude-moduleref=libglib-2.0.so --exclude-moduleref=libxklavier \
+		--exclude-moduleref=MAPI32.DLL \
+		--exclude-moduleref=__Internal \
 		--exclude-moduleref=Autofac --exclude-moduleref=NDesk.DBus
