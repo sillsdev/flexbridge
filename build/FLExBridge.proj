@@ -100,7 +100,9 @@
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
 	</ItemGroup>
 
-	<Target Name="CopyExtraFilesToOutput" Condition="'$(OS)'!='Windows_NT'">
+	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputWindows;CopyExtraFilesToOutputLinux"/>
+
+	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
 		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 		<Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
@@ -109,7 +111,7 @@
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<Target Name="CopyExtraFilesToOutput" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="CopyExtraFilesToOutputWindows" Condition="'$(OS)'=='Windows_NT'">
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
 	</Target>
 
