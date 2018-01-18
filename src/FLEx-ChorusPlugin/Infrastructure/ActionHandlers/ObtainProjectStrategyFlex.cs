@@ -71,16 +71,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					Directory.Delete(cloneLocation, true);
 					_newFwProjectPathname = null;
 					return;
+				case FinalCloneResult.ChosenRepositoryIsEmpty:
 				case FinalCloneResult.FlexVersionIsTooOld:
 					MessageBox.Show(actualCloneResult.Message, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					Directory.Delete(cloneLocation, true);
 					_newFwProjectPathname = null;
 					return;
-                case FinalCloneResult.ChosenRepositoryIsEmpty:
-                    MessageBox.Show(actualCloneResult.Message, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Directory.Delete(cloneLocation, true);
-                    _newFwProjectPathname = null;
-                    return;
                 case FinalCloneResult.Cloned:
 					_gotClone = true;
 					break;

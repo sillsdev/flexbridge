@@ -33,6 +33,13 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 		{
 			var repo = new HgRepository(repoPath, new NullProgress());
 			var allHeads = CollectAllBranchHeads(repoPath);
+			// No heads here indicates an empty repository
+			if (allHeads.Count == 0)
+			{
+				updateResult.FinalCloneResult = FinalCloneResult.ChosenRepositoryIsEmpty;
+				updateResult.Message = "The chosen repository is empty. Send/Receive for the first time has not yet been used.";
+				return false;
+			}
 			var desiredModelVersion = updateBranchHelperStrategy.GetModelVersionFromBranchName(desiredBranchName);
 			Revision desiredRevision;
 			if (!allHeads.TryGetValue(desiredBranchName, out desiredRevision))
@@ -90,13 +97,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
                 // 'default' is no longer present in 'allHeads'.
                 // If all of them are higher, then it is a no go.
                 if (allHeads.Count == 0)
-                {
-                    updateResult.FinalCloneResult = FinalCloneResult.ChosenRepositoryIsEmpty;
-                    updateResult.Message = "The chosen repository is empty. Send/Receive for the first time has not yet been used.";
-                    return false;
-                }
-                else
-                {
+				{
                     // No useable model version, so bailout with a message to the user telling them they are 'toast'.
                     updateResult.FinalCloneResult = FinalCloneResult.FlexVersionIsTooOld;
 					return false;
