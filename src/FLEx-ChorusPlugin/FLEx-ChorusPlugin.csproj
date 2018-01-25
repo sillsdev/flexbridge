@@ -153,14 +153,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
     <Reference Include="icu.net">
       <HintPath>..\..\packages\icu.net.2.0.0\lib\net40\icu.net.dll</HintPath>
     </Reference>

@@ -1,0 +1,31 @@
+# Set GECKOFX, XULRUNNER, MONO_PATH, LD_LIBRARY_PATH, and LD_PRELOAD for
+# using geckofx at compile time and run time.
+
+# Set GECKOFX to location of Geckofx assemblies. Prepend to MONO_PATH.
+# Set XULRUNNER to location of gecko .so files. Prepend to LD_LIBRARY_PATH.
+
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+    # Use the geckofx shipped with fieldworks. It is not included with
+    # flexbridge since flexbridge is architecture independent.
+    GECKOFX="/usr/lib/fieldworks"
+    XULRUNNER="${GECKOFX}/Firefox"
+else
+    if [ "$(uname -m)" == "x86_64" ]]; then
+        GECKOFX="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/lib/net40"
+        XULRUNNER="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/content/Firefox"
+    else
+        GECKOFX="${BASE}/packages/Geckofx45.32.Linux.45.0.21.0/lib/net40"
+        XULRUNNER="$(pwd)/packages/Geckofx45.32.Linux.45.0.21.0/content/Firefox"
+    fi
+fi
+MONO_PATH="$GECKOFX:$MONO_PATH"
+
+LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
+
+if [ "$RUNMODE" != "PACKAGE" ]
+then
+    LD_PRELOAD=libgeckofix.so
+fi
+
+export GECKOFX XULRUNNER MONO_PATH LD_LIBRARY_PATH LD_PRELOAD

@@ -13,7 +13,16 @@ scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
 cd "${scriptdir}"
-. environ
+# On a developer machine, we may be in output/DebugMono. If so, go to the
+# location of environ before sourcing it.
+if [ "$(basename "$scriptdir")" == "DebugMono" -o \
+     "$(basename "$scriptdir")" == "ReleaseMono" ]; then
+    cd ../..
+    . environ
+    cd -
+else
+    . environ
+fi
 
 (
 	XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
