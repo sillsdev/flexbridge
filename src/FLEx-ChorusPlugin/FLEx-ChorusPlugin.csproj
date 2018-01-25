@@ -153,11 +153,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral">
+    <Reference Include="Geckofx-Core, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
     </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral">
+    <Reference Include="Geckofx-Winforms, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
     </Reference>
