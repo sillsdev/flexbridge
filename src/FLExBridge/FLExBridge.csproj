@@ -174,11 +174,11 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
     </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
     </Reference>
