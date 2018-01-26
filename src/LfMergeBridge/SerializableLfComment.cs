@@ -20,5 +20,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		[DataMember] public string Status { get; set; }
 		[DataMember] public List<SerializableLfCommentReply> Replies { get; set; }
 		[DataMember] public bool IsDeleted { get; set; }
+
+		public SerializableLfComment() {
+			Replies = new List<SerializableLfCommentReply>();
+		}
 	}
 }

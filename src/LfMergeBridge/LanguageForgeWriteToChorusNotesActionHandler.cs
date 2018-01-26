@@ -153,13 +153,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				commentIdsThatNeedGuids[annotationObjectId] = chorusAnnotation.Guid;
 			}
 
-			if (annotationInfo.Replies == null || annotationInfo.Replies.Count <= 0)
+			string statusToSet = LfStatusToChorusStatus(annotationInfo.Status);
+			if (annotationInfo.Replies.Count <= 0 && chorusAnnotation.Status == statusToSet)
 			{
 				return;  // Nothing, or nothing else, to do!
 			}
 
 			var chorusMsgGuids = new HashSet<string>(chorusAnnotation.Messages.Select(msg => msg.Guid).Where(s => ! string.IsNullOrEmpty(s) && s != zeroGuidStr));
-			string statusToSet = LfStatusToChorusStatus(annotationInfo.Status);
 			// If we're in this function, the Chorus annotation already contains the text of the LF annotation's comment,
 			// so the only thing we need to go through are the replies.
 			foreach (SerializableLfCommentReply reply in annotationInfo.Replies)
