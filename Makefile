@@ -13,7 +13,7 @@ all: release
 release: vcs_version
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
-	cp -a flexbridge environ environ-xulrunner output/ReleaseMono
+	cp -a flexbridge environ output/ReleaseMono
 
 debug: vcs_version
 	FBCommonAppData="/tmp/flexbridge"
@@ -21,7 +21,7 @@ debug: vcs_version
 	export FBCommonAppData
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
-	cp -a flexbridge environ environ-xulrunner output/DebugMono
+	cp -a flexbridge environ output/DebugMono
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the
@@ -40,7 +40,7 @@ install:
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
-	/usr/bin/install flexbridge environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install flexbridge environ $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/setup-user.sh $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	# Copy mercurial for both architectures since flexbridge is an any architecture package.
