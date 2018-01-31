@@ -26,7 +26,6 @@ Depends: ${misc:Depends}, ${cli:Depends},
  libgdiplus4-sil,
  fieldworks-applications (>= 9.0),
  python (>= 2.7), python (<< 2.8),
- geckofx29,
  unzip,
  adduser (>= 3.11)
 Description: Allow multiple FieldWorks users to collaborate remotely
