@@ -167,7 +167,10 @@ You probably have a Conflict Report open. It will need to be closed before you c
 	<value>Check for Update Failure</value>
   </data>
   <data name="kFlexUpdateRequired" xml:space="preserve">
-	<value>You will need to update your version of Flex to obtain the requested project, since it is newer.</value>
+	<value>You will need to update your version of FLEx to obtain the requested project, since it is newer.</value>
+  </data>
+  <data name="kFlexUpdateToSupportLift" xml:space="preserve">
+    <value>Your version of FLEx supports LIFT model version {0}, but the requested project uses the newer version {1}. You will need to update your version of FLEx to obtain the requested lexicon project.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="chorus32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
