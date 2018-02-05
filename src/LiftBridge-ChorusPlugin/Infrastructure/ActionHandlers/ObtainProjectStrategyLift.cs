@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +11,6 @@ using Chorus.VcsDrivers.Mercurial;
 using SIL.IO;
 using SIL.LiftBridge.Services;
 using SIL.Progress;
-using SIL.Xml;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -127,7 +125,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					_liftFolder = null;
 					break;
 				case FinalCloneResult.FlexVersionIsTooOld:
-					MessageBox.Show(CommonResources.kFlexUpdateRequired, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					string updateFlexMessage = string.Format(CommonResources.kFlexUpdateToSupportLift, commandLineArgs["-liftmodel"], UpdateBranchHelperLift.GetLiftVersionNumber(cloneLocation));
+					MessageBox.Show(updateFlexMessage, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					Directory.Delete(cloneLocation, true);
 					_liftFolder = null;
 					break;

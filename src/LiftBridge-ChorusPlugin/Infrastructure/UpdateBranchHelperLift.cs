@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -12,14 +12,8 @@ namespace SIL.LiftBridge.Infrastructure
 {
 	internal sealed class UpdateBranchHelperLift : IUpdateBranchHelperStrategy
 	{
-		private IUpdateBranchHelperStrategy AsIUpdateBranchHelperStrategy
+		internal static float GetLiftVersionNumber(string repoLocation)
 		{
-			get { return this; }
-		}
-
-		private static float GetLiftVersionNumber(string repoLocation)
-		{
-			// Return 0.13 if there is no lift file or it has no 'version' attr on the main 'lift' element.
 			var firstLiftFile = FileAndDirectoryServices.GetPathToFirstLiftFile(repoLocation);
 			if (string.IsNullOrEmpty(firstLiftFile))
 				return float.MaxValue;
@@ -32,25 +26,21 @@ namespace SIL.LiftBridge.Infrastructure
 			}
 		}
 
-		#region IUpdateBranchHelperStrategy impl
-
-		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
+		public float GetModelVersionFromBranchName(string branchName)
 		{
 			return float.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
 		}
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
+		public float GetModelVersionFromClone(string cloneLocation)
 		{
 			return GetLiftVersionNumber(cloneLocation);
 		}
 
-		string IUpdateBranchHelperStrategy.GetFullModelVersion(string cloneLocation)
+		public string GetFullModelVersion(string cloneLocation)
 		{
-			var modelVersion = AsIUpdateBranchHelperStrategy.GetModelVersionFromClone(cloneLocation);
+			var modelVersion = GetModelVersionFromClone(cloneLocation);
 			return "LIFT" + modelVersion + "_ldml3";
 		}
-
-		#endregion IUpdateBranchHelperStrategy impl
 	}
 }
 
