@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml;
 using Chorus.VcsDrivers.Mercurial;
 using SIL.IO;
 using SIL.LiftBridge.Services;
@@ -39,6 +40,19 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new UpdateBranchHelperLift(), desiredBranchName, cloneResult, cloneLocation))
 			{
 				cloneResult.Message = CommonResources.kFlexUpdateRequired;
+			}
+		}
+
+		private static string GetLiftVersionNumberString(string repo)
+		{
+			var firstLiftRepo = FileAndDirectoryServices.GetPathToFirstLiftFile(repo);
+			if (!File.Exists(firstLiftRepo))
+				return "n/a";
+			using (var reader = XmlReader.Create(firstLiftRepo, CanonicalXmlSettings.CreateXmlReaderSettings()))
+			{
+				reader.MoveToContent();
+				reader.MoveToAttribute("version");
+				return reader.Value;
 			}
 		}
 
@@ -127,7 +141,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 					_liftFolder = null;
 					break;
 				case FinalCloneResult.FlexVersionIsTooOld:
-					MessageBox.Show(CommonResources.kFlexUpdateRequired, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					string updateFlexMessage = string.Format(CommonResources.kFlexUpdateToSupportLift, commandLineArgs["-liftmodel"], GetLiftVersionNumberString(cloneLocation));
+					MessageBox.Show(updateFlexMessage, CommonResources.kObtainProject, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					Directory.Delete(cloneLocation, true);
 					_liftFolder = null;
 					break;
