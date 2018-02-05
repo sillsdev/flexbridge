@@ -21,25 +21,24 @@ fi
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
 
-
-# Dependency locations
-# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
-# (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
-XULRUNNER=/usr/lib/xulrunner-geckofx-29
-LD_LIBRARY_PATH="${XULRUNNER}:${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
-GECKOFX=/usr/lib/cli/geckofx-29
-LD_PRELOAD=${GECKOFX}/geckofix.so
+LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
 MONO_RUNTIME=v4.0.30319
-MONO_PATH="${GDK_SHARP}:${GECKOFX}"
+MONO_PATH="${GDK_SHARP}:$MONO_PATH"
 MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-0=-gshared"
 
-if [ -f ${MONO_PREFIX}/bin/mono ]
-then
+# Are we running as installed from a package, or on a development machine?
+case "$(pwd)" in
+    /usr/*) RUNMODE=INSTALLED ;;
+    *) RUNMODE= ;;
+esac
+
+. ./environ-xulrunner
+
+if [ "$RUNMODE" = "INSTALLED" ]; then
 	BASE=$fwlib
-	RUNMODE=INSTALLED
 else
 	MONO_PREFIX=/usr/local
 	BASE=${HOME}/fwrepo/fw
@@ -72,7 +71,7 @@ else
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
-		MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}"
+	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:$MONO_PATH"
 fi
 
 MONO_TRACE_LISTENER="Console.Out"

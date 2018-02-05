@@ -4,8 +4,7 @@
 # Set GECKOFX to location of Geckofx assemblies. Prepend to MONO_PATH.
 # Set XULRUNNER to location of gecko .so files. Prepend to LD_LIBRARY_PATH.
 
-if [ "$RUNMODE" = "INSTALLED" ]
-then
+if [ "$RUNMODE" = "INSTALLED" ]; then
     # Use the geckofx shipped with fieldworks. It is not included with
     # flexbridge since flexbridge is architecture independent.
     GECKOFX="/usr/lib/fieldworks"
@@ -25,9 +24,6 @@ MONO_PATH="$GECKOFX:$MONO_PATH"
 
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
 
-if [ "$RUNMODE" != "PACKAGE" ]
-then
-    LD_PRELOAD=libgeckofix.so
-fi
+LD_PRELOAD=libgeckofix.so
 
 export GECKOFX XULRUNNER MONO_PATH LD_LIBRARY_PATH LD_PRELOAD
