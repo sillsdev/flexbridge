@@ -54,7 +54,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 			var lfComments = new List<SerializableLfComment>();
 			var lfReplies = new List<Tuple<string, List<SerializableLfCommentReply>>>();
-			var lfStatusChanges = new List<KeyValuePair<string, string>>();
+			var lfStatusChanges = new List<KeyValuePair<string, Tuple<string, string>>>();
 			// TODO: See if we want to suppress progress messages here by using a NullProgress instance instead of the IProgress instance we were given...
 			foreach (Annotation ann in GetAllAnnotations(progress, ProjectDir))
 			{
@@ -78,7 +78,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					string newStatus = ChorusStatusToLfStatus(ann.Status);
 					if (newStatus != lfComment.Status)
 					{
-						lfStatusChanges.Add(new KeyValuePair<string, string>(lfComment.Guid, newStatus));
+						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid, new Tuple<string, string>(newStatus, ann.StatusGuid)));
 					}
 				}
 				else
@@ -94,6 +94,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// Content = msg?.Text ?? string.Empty,  // C# 6 syntax would be simpler if we could count on a C# 6 compiler everywhere
 						Content = (msg == null) ? string.Empty : msg.Text,
 						Status = ChorusStatusToLfStatus(ann.Status),
+						StatusGuid = ann.StatusGuid,
 						Replies = new List<SerializableLfCommentReply>(ann.Messages.Skip(1).Where(m => ! String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
 						IsDeleted = false
 					};
