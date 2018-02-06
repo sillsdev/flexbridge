@@ -86,9 +86,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					else
 					{
 						// We don't have a C# 6 compiler in our build infrastructure, so we have to do this the hard(er) way.
-						string guidForLog = lfAnnotation == null ? "(no guid)" :
-							lfAnnotation.Guid == null ? "(no guid)" :
-							lfAnnotation.Guid.ToString();
+						string guidForLog = lfAnnotation == null ? "(no guid)" : lfAnnotation.Guid ?? "(no guid)";
 						string contentForLog = lfAnnotation == null ? "(no content)" : lfAnnotation.Content ?? "(no content)";
 						LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
 							guidForLog, contentForLog));
@@ -145,7 +143,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo, string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
+		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo,
+			string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
 		{
 			// Any LF comments that do NOT yet have GUIDs need them set from the corresponding Chorus annotation
 			if (String.IsNullOrEmpty(annotationInfo.Guid) && !String.IsNullOrEmpty(annotationObjectId))
@@ -175,16 +174,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 			}
 			// Since LF allows changing a comment's status without adding any replies, it's possible we haven't updated the Chorus status yet at this point.
-			// But first, check for a special case. Oten, the Chorus annotation's status will be blank, which corresponds to "open" in LfMerge. We don't want
+			// But first, check for a special case. Often, the Chorus annotation's status will be blank, which corresponds to "open" in LfMerge. We don't want
 			// to add a blank message just to change the Chorus status from "" (empty string) to "open", so we need to detect this situation specially.
-			if (String.IsNullOrEmpty(chorusAnnotation.Status) && statusToSet == Chorus.notes.Annotation.Open)
+			if (String.IsNullOrEmpty(chorusAnnotation.Status) && statusToSet == Annotation.Open)
 			{
 				// No need for new status here
 			}
-			else if (statusToSet != chorusAnnotation.Status)
+			else if (statusToSet != chorusAnnotation.Status && string.IsNullOrEmpty(annotationInfo.StatusGuid))
 			{
 				// LF doesn't keep track of who clicked on the "Resolved" or "Todo" buttons, so we have to be vague about authorship
 				chorusAnnotation.SetStatus(genericAuthorName, statusToSet);
+				annotationInfo.StatusGuid = chorusAnnotation.StatusGuid;
 			}
 		}
 

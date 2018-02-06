@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
@@ -18,6 +17,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		[DataMember] public DateTime DateModified { get; set; }
 		[DataMember] public string Content { get; set; }
 		[DataMember] public string Status { get; set; }
+		[DataMember] public string StatusGuid { get; set; }
 		[DataMember] public List<SerializableLfCommentReply> Replies { get; set; }
 		[DataMember] public bool IsDeleted { get; set; }
 
