@@ -9,10 +9,14 @@ BASE="$(pwd)"
 [ -z "$BUILD" ] && BUILD=Debug
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
 
+# Are we running as installed from a package, or on a development machine?
+case "$(pwd)" in
+    /usr/*) RUNMODE=INSTALLED ;;
+    *) RUNMODE= ;;
+esac
+
 # Dependency locations
-
 . ./environ-xulrunner
-
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0
 
 MONO_RUNTIME=v4.0.30319
