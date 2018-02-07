@@ -1,24 +1,33 @@
-# MonoDevelop seems to set PKG_CONFIG_LIBDIR to the empty string, which is bad
-# for us because that eliminates most packages, including geckofx29.
-# If PKG_CONFIG_LIBDIR is not set at all, then the default paths are searched.
-# To be safe, we'll preserve the old value (if it is set) and restore it.
-if [ "${PKG_CONFIG_LIBDIR+set}" = set ]; then
-	OLD_PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}"
-	unset PKG_CONFIG_LIBDIR
-fi
+# Set GECKOFX, XULRUNNER, MONO_PATH, LD_LIBRARY_PATH, and LD_PRELOAD for
+# using geckofx at compile time and run time.
 
-if [ -z "$XULRUNNER" ]; then
-	if [ -d /usr/lib/xulrunner-geckofx-29 ]; then
-		export XULRUNNER=/usr/lib/xulrunner-geckofx-29
-	else
-		export XULRUNNER=/usr/lib/xulrunner-29
-	fi
+# Set GECKOFX to location of Geckofx assemblies. Prepend to MONO_PATH.
+# Set XULRUNNER to location of gecko .so files. Prepend to LD_LIBRARY_PATH.
+
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+    # Use the geckofx shipped with fieldworks. It is not included with
+    # flexbridge since flexbridge is architecture independent.
+    GECKOFX="/usr/lib/fieldworks"
+    XULRUNNER="${GECKOFX}/Firefox"
+else
+    # Note: May need to do a different check if ever need to distinguish
+    # architectures when packaging, perhaps such as dpkg --print-architecture.
+    if [ "$(uname -m)" == "x86_64" ]]; then
+        GECKOFX="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/lib/net40"
+        XULRUNNER="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/content/Firefox"
+    else
+        GECKOFX="$(pwd)/packages/Geckofx45.32.Linux.45.0.21.0/lib/net40"
+        XULRUNNER="$(pwd)/packages/Geckofx45.32.Linux.45.0.21.0/content/Firefox"
+    fi
 fi
+MONO_PATH="$GECKOFX:$MONO_PATH"
+
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-GECKOFX="$(pkg-config --variable assemblies_dir Geckofx-Core)"
-export LD_PRELOAD=${GECKOFX}/geckofix.so
 
-if [ "${OLD_PKG_CONFIG_LIBDIR+set}" = set ]; then
-	export PKG_CONFIG_LIBDIR="${OLD_PKG_CONFIG_LIBDIR}"
-	unset OLD_PKG_CONFIG_LIBDIR
+if [ "$RUNMODE" != "PACKAGE" ]
+then
+    LD_PRELOAD=libgeckofix.so
 fi
+
+export GECKOFX XULRUNNER MONO_PATH LD_LIBRARY_PATH LD_PRELOAD
