@@ -6,7 +6,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Reflection;
 using Chorus.sync;
-using Chorus.VcsDrivers;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
