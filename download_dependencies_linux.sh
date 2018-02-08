@@ -134,20 +134,20 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"icu.net.dll*"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [9] build: palaso-Linux64-lfmerge Continuous (PalasoLinux64lfmergeContinuous)
+# [9] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64lfmergeContinuous
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Palaso.dll*"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll*"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll*"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll*"=>"lib/ReleaseMono", "Palaso.Lift.dll*"=>"lib/ReleaseMono", "NDesk.DBus.dll*"=>"lib/ReleaseMono", "L10NSharp.dll*"=>"lib/ReleaseMono"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [lfmerge]
-# [10] build: palaso-Linux64-lfmerge Continuous (PalasoLinux64lfmergeContinuous)
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
+# [10] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64lfmergeContinuous
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"debug/Palaso.dll*"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll*"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll*"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll*"=>"lib/DebugMono", "debug/Palaso.Lift.dll*"=>"lib/DebugMono", "debug/NDesk.DBus.dll*"=>"lib/DebugMono", "debug/L10NSharp.dll*"=>"lib/DebugMono"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [lfmerge]
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
 
 # make sure output directories exist
 mkdir -p ./MercurialExtensions
@@ -210,34 +210,34 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt418/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt418/latest.lastSuccessful/icu.net.dll ./lib/ReleaseMono/icu.net.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt418/latest.lastSuccessful/icu.net.dll.config ./lib/ReleaseMono/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt418/latest.lastSuccessful/icu.net.dll.mdb ./lib/ReleaseMono/icu.net.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.dll ./lib/ReleaseMono/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.dll.config ./lib/ReleaseMono/Palaso.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.dll.mdb ./lib/ReleaseMono/Palaso.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.TestUtilities.dll ./lib/ReleaseMono/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.TestUtilities.dll.mdb ./lib/ReleaseMono/Palaso.TestUtilities.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.dll ./lib/ReleaseMono/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.dll.config ./lib/ReleaseMono/PalasoUIWindowsForms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.dll.mdb ./lib/ReleaseMono/PalasoUIWindowsForms.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.Lift.dll ./lib/ReleaseMono/Palaso.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/Palaso.Lift.dll.mdb ./lib/ReleaseMono/Palaso.Lift.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.dll ./lib/DebugMono/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.dll.config ./lib/DebugMono/Palaso.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.dll.mdb ./lib/DebugMono/Palaso.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.TestUtilities.dll ./lib/DebugMono/Palaso.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.TestUtilities.dll.mdb ./lib/DebugMono/Palaso.TestUtilities.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll ./lib/DebugMono/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll.config ./lib/DebugMono/PalasoUIWindowsForms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll.mdb ./lib/DebugMono/PalasoUIWindowsForms.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.Lift.dll ./lib/DebugMono/Palaso.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/Palaso.Lift.dll.mdb ./lib/DebugMono/Palaso.Lift.dll.mdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64lfmergeContinuous/latest.lastSuccessful/debug/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.dll ./lib/ReleaseMono/Palaso.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.dll.config ./lib/ReleaseMono/Palaso.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.dll.mdb ./lib/ReleaseMono/Palaso.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.TestUtilities.dll ./lib/ReleaseMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.TestUtilities.dll.mdb ./lib/ReleaseMono/Palaso.TestUtilities.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.dll ./lib/ReleaseMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.dll.config ./lib/ReleaseMono/PalasoUIWindowsForms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.dll.mdb ./lib/ReleaseMono/PalasoUIWindowsForms.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb ./lib/ReleaseMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.Lift.dll ./lib/ReleaseMono/Palaso.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/Palaso.Lift.dll.mdb ./lib/ReleaseMono/Palaso.Lift.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.dll ./lib/DebugMono/Palaso.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.dll.config ./lib/DebugMono/Palaso.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.dll.mdb ./lib/DebugMono/Palaso.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.TestUtilities.dll ./lib/DebugMono/Palaso.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.TestUtilities.dll.mdb ./lib/DebugMono/Palaso.TestUtilities.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll ./lib/DebugMono/PalasoUIWindowsForms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll.config ./lib/DebugMono/PalasoUIWindowsForms.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.dll.mdb ./lib/DebugMono/PalasoUIWindowsForms.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb ./lib/DebugMono/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.Lift.dll ./lib/DebugMono/Palaso.Lift.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/Palaso.Lift.dll.mdb ./lib/DebugMono/Palaso.Lift.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoLinux64v26Cont/latest.lastSuccessful/debug/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
 # End of script
