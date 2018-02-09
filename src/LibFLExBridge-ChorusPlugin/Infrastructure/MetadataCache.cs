@@ -382,15 +382,21 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 					case 7000071:
 						// 7000071: Changes made to LDML repo
 						break;
-						//NB: Update MaximumModelVersion to highest supported number and add a test in UpdateMataDataCacheTests
-				}
+					case 7000072:
+						// 7000072: Removing ReversalEntries property from LexSense.
+						GetClassInfo("LexSense").RemoveProperty("ReversalEntries");
+						// 7000072: Add Senses property to ReversalIndexEntry as reference sequence.
+						GetClassInfo("ReversalIndexEntry").AddProperty(new FdoPropertyInfo("Senses", DataType.ReferenceSequence));
+						break;
+					//NB: Update MaximumModelVersion to highest supported number and add a test in UpdateMataDataCacheTests
 			}
+		}
 
 			ResetCaches();
 			ModelVersion = newVersion;
 			return ModelVersion;
 		}
-		internal const int MaximumModelVersion = 7000071;
+		internal const int MaximumModelVersion = 7000072;
 
 		///<summary>
 		/// Get the FDO class information for the given class.
