@@ -333,6 +333,16 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 
 			// 7000071: No actual model change.
 			CheckNoModelChangesUpgrade(mdc, fileHandler, 7000071);
+
+			// 7000072:
+			// Make sure prior model is expected.
+			//Removing ReversalEntries property from LexSense from owning collection to owning sequence.
+			//Adding Senses property to ReversalIndexEntry from owning collection to owning sequence.
+			CheckPropertyExistsBeforeUpGrade(mdc, "LexSense", "ReversalEntries");
+			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "ReversalIndexEntry", "Senses");
+			DoMerge(fileHandler, 7000072);
+			CheckPropertyRemovedAfterUpGrade(mdc, "LexSense", "ReversalEntries");
+			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("ReversalIndexEntry"), "Senses", DataType.ReferenceSequence);
 		}
 
 		[Test]
