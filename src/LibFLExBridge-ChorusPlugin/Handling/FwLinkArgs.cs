@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using Palaso.Network;
+using Palaso.Providers;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
@@ -126,7 +127,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				Guid guid;
 				if (Guid.TryParse(_guid, out guid))
 					return guid;
-				return Guid.NewGuid(); // For tests that don't use a real guid.
+				return GuidProvider.Current.NewGuid(); // For tests that don't use a real guid.
 			}
 			set { _guid = value.ToString().ToLowerInvariant(); }
 		}

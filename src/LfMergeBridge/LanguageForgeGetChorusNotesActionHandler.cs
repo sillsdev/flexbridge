@@ -6,21 +6,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
-using Chorus;
-using Chorus.merge;
 using Chorus.notes;
 using Chorus.Utilities;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using Palaso.Progress;
+using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 
-namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
+namespace LfMergeBridge
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles everything needed for viewing the notes of a Flex repo.
@@ -47,8 +42,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
 
-			string inputFilename = options[LfMergeBridge.LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-			List<SerializableLfComment> commentsFromLF = LfMergeBridge.LfMergeBridgeUtilities.DecodeJsonFile<List<SerializableLfComment>>(inputFilename);
+			string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
+			List<SerializableLfComment> commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<SerializableLfComment>>(inputFilename);
 			Dictionary<string, SerializableLfComment> commentsFromLFByGuid = commentsFromLF.Where(comment => comment.Guid != null).ToDictionary(comment => comment.Guid);
 			var knownReplyGuids = new HashSet<string>(commentsFromLF.Where(comment => comment.Replies != null).SelectMany(comment => comment.Replies.Where(reply => reply.Guid != null).Select(reply => reply.Guid)));
 
@@ -109,15 +104,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 			var serializedComments = new StringBuilder("New comments not yet in LF: ");
 			serializedComments.Append(JsonConvert.SerializeObject(lfComments));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
 
 			var serializedReplies = new StringBuilder("New replies on comments already in LF: ");
 			serializedReplies.Append(JsonConvert.SerializeObject(lfReplies));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
 
 			var serializedStatusChanges = new StringBuilder("New status changes on comments already in LF: ");
 			serializedStatusChanges.Append(JsonConvert.SerializeObject(lfStatusChanges));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedStatusChanges.ToString());
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedStatusChanges.ToString());
 		}
 
 		private SerializableLfCommentReply ReplyFromChorusMsg(Message msg)
