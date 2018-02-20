@@ -186,7 +186,7 @@ namespace LfMergeBridge
 		private static bool StatusChangeFromLF(Annotation chorusAnnotation, string statusGuid, string statusToSet)
 		{
 			if (string.IsNullOrEmpty(statusGuid))
-				return statusToSet != chorusAnnotation.Status;
+				return false;
 
 			foreach (var message in chorusAnnotation.Messages)
 			{

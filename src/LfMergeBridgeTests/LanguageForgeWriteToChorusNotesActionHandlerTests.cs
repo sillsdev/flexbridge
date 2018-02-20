@@ -96,8 +96,9 @@ namespace LfMergeBridgeTests
 		/// <summary>
 		/// We synced the comment before, so there is nothing new
 		/// </summary>
-		[Test]
-		public void NothingNew()
+		[TestCase("")]
+		[TestCase("c4f4df11-8dda-418e-8124-66406d67a2d1")]
+		public void NothingNew(string statusGuid)
 		{
 			// Setup
 			var notesContent = GetAnnotationXml(@"<message
@@ -106,7 +107,8 @@ namespace LfMergeBridgeTests
 					date=""2018-01-31T17:43:30Z""
 					guid=""c4f4df11-8dda-418e-8124-66406d67a2d1"">LF comment on F</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = CreateMongoDataFile("\"Status\":\"open\",\"StatusGuid\":\"c4f4df11-8dda-418e-8124-66406d67a2d1\",");
+			_inputFile = CreateMongoDataFile(string.Format(
+				"\"Status\":\"open\",\"StatusGuid\":\"{0}\",", statusGuid));
 
 			string forClient = null;
 			var options = new Dictionary<string, string>();
@@ -120,15 +122,16 @@ namespace LfMergeBridgeTests
 			// Verify
 			Assert.That(forClient, Is.EqualTo(string.Format(
 				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(notesContent);
+			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 
 		/// <summary>
 		/// The status got changed in LD, nothing changed in LF. The resulting ChorusNotes file
 		/// should look the same.
 		/// </summary>
-		[Test]
-		public void StatusChangeOnLD()
+		[TestCase("")]
+		[TestCase("c4f4df11-8dda-418e-8124-66406d67a2d1")]
+		public void StatusChangeOnLD(string statusGuid)
 		{
 			// Setup
 			var notesContent = GetAnnotationXml(
@@ -144,7 +147,7 @@ namespace LfMergeBridgeTests
 					guid=""c9bd2519-b92a-4e65-a879-00e0c8a57e1d"">
 				</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = CreateMongoDataFile("\"Status\":\"open\",\"StatusGuid\":\"c4f4df11-8dda-418e-8124-66406d67a2d1\",");
+			_inputFile = CreateMongoDataFile(string.Format("\"Status\":\"open\",\"StatusGuid\":\"{0}\",", statusGuid));
 
 			string forClient = null;
 			var options = new Dictionary<string, string>();
@@ -158,13 +161,15 @@ namespace LfMergeBridgeTests
 			// Verify
 			Assert.That(forClient, Is.EqualTo(string.Format(
 				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(notesContent);
+			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 
 		/// <summary>
 		/// The status got changed in LD, nothing changed in LF. The resulting ChorusNotes file
 		/// should look the same.
 		/// </summary>
+		/// <remarks>This test only makes sense if a prior S/R happened, which will have set the
+		/// statusGuid. Therefore we don't have to test with statusGuid=="".</remarks>
 		[Test]
 		public void StatusChangeOnLD_Reopen()
 		{
@@ -201,13 +206,15 @@ namespace LfMergeBridgeTests
 			// Verify
 			Assert.That(forClient, Is.EqualTo(string.Format(
 				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(notesContent);
+			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 
 		/// <summary>
 		/// The status got changed in LF, nothing changed in LD. The resulting ChorusNotes file
 		/// should have a new closed message.
 		/// </summary>
+		/// <remarks>This test only makes sense if a prior S/R happened, which will have set the
+		/// statusGuid. Therefore we don't have to test with statusGuid=="".</remarks>
 		[Test]
 		public void StatusChangeOnLF()
 		{
@@ -231,7 +238,7 @@ namespace LfMergeBridgeTests
 			// Verify
 			Assert.That(forClient, Is.EqualTo(string.Format(
 				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(GetAnnotationXml(
+			AssertThatXmlIn.String(GetAnnotationXml(
 @"		<message
 			author=""Language Forge""
 			status=""open""
@@ -241,13 +248,15 @@ namespace LfMergeBridgeTests
 			author=""Language Forge""
 			status=""closed""
 			date=""2018-02-01T12:13:14Z""
-			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>"));
+			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>")).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 
 		/// <summary>
 		/// The status got changed in LF, nothing changed in LD. The resulting ChorusNotes file
 		/// should have a new open message.
 		/// </summary>
+		/// <remarks>This test only makes sense if a prior S/R happened, which will have set the
+		/// statusGuid. Therefore we don't have to test with statusGuid=="".</remarks>
 		[Test]
 		public void StatusChangeOnLF_Reopen()
 		{
@@ -277,7 +286,7 @@ namespace LfMergeBridgeTests
 			// Verify
 			Assert.That(forClient, Is.EqualTo(string.Format(
 				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(GetAnnotationXml(
+			AssertThatXmlIn.String(GetAnnotationXml(
 @"		<message
 			author=""Language Forge""
 			status=""open""
@@ -292,12 +301,14 @@ namespace LfMergeBridgeTests
 			author=""Language Forge""
 			status=""open""
 			date=""2018-02-01T12:13:14Z""
-			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>"));
+			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>")).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 
 		/// <summary>
 		/// New comment on LF, no previous comments on LD. Should add the comment.
 		/// </summary>
+		/// <remarks>If we get a new comment on LF it won't exist yet on LD, so we don't have to
+		/// test the statusGuid=="" case.</remarks>
 		[Test]
 		public void NewCommentOnLF()
 		{
@@ -322,13 +333,13 @@ namespace LfMergeBridgeTests
 				"New comment ID->Guid mappings: 5a71f21c6efc676a612eb76f=1687b882-97c9-4ca0-9bc3-2a0511715400{0}" +
 				"New reply ID->Guid mappings: ", Environment.NewLine)));
 			// REVIEW: It's surprising that we ignore the DateCreated/Modified from LF
-			AssertThatXmlIn.String(ReadChorusNotesFile(projectDir)).EqualsIgnoreWhitespace(GetAnnotationXml(
+			AssertThatXmlIn.String(GetAnnotationXml(
 @"		<message
 			author=""Language Forge""
 			status=""open""
 			date=""2018-02-01T12:13:14Z""
 			guid=""1687b882-97c9-4ca0-9bc3-2a0511715401"">LF comment on F</message>",
-			"1687b882-97c9-4ca0-9bc3-2a0511715400"));
+				"1687b882-97c9-4ca0-9bc3-2a0511715400")).EqualsIgnoreWhitespace(ReadChorusNotesFile(projectDir));
 		}
 	}
 }
