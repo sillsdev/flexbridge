@@ -8,7 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{
 		DistFiles\about.htm = DistFiles\about.htm
 		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
 		src\Installer\Installer.wxs = src\Installer\Installer.wxs
-		.nuget\packages.config = .nuget\packages.config
 		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
 		build\FLExBridge.proj = build\FLExBridge.proj
 	EndProjectSection
