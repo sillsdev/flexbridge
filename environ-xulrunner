@@ -12,7 +12,7 @@ if [ "$RUNMODE" = "INSTALLED" ]; then
 else
     # Note: May need to do a different check if ever need to distinguish
     # architectures when packaging, perhaps such as dpkg --print-architecture.
-    if [ "$(uname -m)" == "x86_64" ]]; then
+    if [ "$(uname -m)" = "x86_64" ]; then
         GECKOFX="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/lib/net40"
         XULRUNNER="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/content/Firefox"
     else
