@@ -7,9 +7,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	[DataContract]
 	public class SerializableLfComment
 	{
- 		public static readonly string Open = "open";
+		public static readonly string Open = "open";
 		public static readonly string Resolved = "resolved";
- 		public static readonly string Todo = "todo";
+		public static readonly string Todo = "todo";
+
 		[DataMember] public string Guid { get; set; }
 		[DataMember] public string AuthorNameAlternate { get; set; }
 		[DataMember] public SerializableLfCommentRegarding Regarding { get; set; }
@@ -20,8 +21,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		[DataMember] public string StatusGuid { get; set; }
 		[DataMember] public List<SerializableLfCommentReply> Replies { get; set; }
 		[DataMember] public bool IsDeleted { get; set; }
+		[DataMember] public string ContextGuid { get; set; }
 
-		public SerializableLfComment() {
+		public SerializableLfComment()
+		{
 			Replies = new List<SerializableLfCommentReply>();
 		}
 	}
