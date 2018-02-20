@@ -23,6 +23,9 @@
 	<PropertyGroup>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
 		<PackagesConfig>$(ProjectDir)packages.config</PackagesConfig>
+		<PlatformPackagesConfig Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)nuget-windows/packages.config</PlatformPackagesConfig>
+		<PlatformPackagesConfig Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)nuget-linux/packages.config</PlatformPackagesConfig>
+		<CommonPackagesConfig>$(NuGetToolsPath)nuget-common/packages.config</CommonPackagesConfig>
 
 		<!-- NuGet command -->
 		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
@@ -31,6 +34,9 @@
 
 		<NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
 		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
+		<!-- Command to download packages -->
+		<RestoreCommandCommon>$(NuGetCommand) restore "$(CommonPackagesConfig)" -NonInteractive -SolutionDirectory "$(SolutionDir)"</RestoreCommandCommon>
+		<RestoreCommandPlatformSpecific>$(NuGetCommand) restore "$(PlatformPackagesConfig)" -NonInteractive -SolutionDirectory "$(SolutionDir)"</RestoreCommandPlatformSpecific>
 	</PropertyGroup>
 
 	<Target Name="CheckPrerequisites">
@@ -55,7 +61,11 @@
 	</Target>
 
 	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
+		<!-- Download NuGet packages specified in the packages.config file of each project -->
 		<Exec Command='$(NuGetCommand) restore "$(SolutionPath)"'/>
+		<!-- Download packages in packages-common.config. Then download packages in either packages-linux.config or packages-windows.config. -->
+		<Exec Command="$(RestoreCommandCommon)"/>
+		<Exec Command="$(RestoreCommandPlatformSpecific)"/>
 	</Target>
 
 	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
