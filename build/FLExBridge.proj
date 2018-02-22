@@ -132,6 +132,8 @@
 			<Output TaskParameter="Value" PropertyName="Version"/>
 		</CreateProperty>
 		<Message Text="Version: $(Version)" Importance="high"/>
+		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
+			Condition="'$(teamcity_version)' != ''"/>
 	</Target>
 
 	<ItemGroup>
@@ -196,7 +198,7 @@
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="$(ExcludeCategory)"
-			NUnitVersion="NUnit-2.6.3" />
+			NUnitVersion="NUnit-2.6.4" />
 	</Target>
 
 	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
@@ -217,6 +219,6 @@
 	<!-- *********************** Installer stuff below.  ******************************* -->
 
 	<!-- For building an an installer on TeamCity (use TestInstallerBuild.bat to run locally) -->
-	<Target Name="Installer" DependsOnTargets="BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
-	<Target Name="Patcher" DependsOnTargets="BuildPatch; Test" Condition="'$(OS)'=='Windows_NT'"/>
+	<Target Name="Installer" DependsOnTargets="VersionNumbers; BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
+	<Target Name="Patcher" DependsOnTargets="VersionNumbers; BuildPatch; Test" Condition="'$(OS)'=='Windows_NT'"/>
 </Project>
