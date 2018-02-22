@@ -9,6 +9,8 @@
         <Output TaskParameter="Lines" PropertyName="Version" />
     </ReadLinesFromFile>
 	<Message Text="Version: $(Version)" Importance="high"/>
+	<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
+		Condition="'$(teamcity_version)' != ''"/>
   </Target>
 
   <ItemGroup>
