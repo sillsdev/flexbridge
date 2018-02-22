@@ -25,7 +25,7 @@ namespace LfMergeBridge
 		public const string mainNotesFilenameStub = "Lexicon.fwstub";
 		public const string chorusNotesExt = ".ChorusNotes";
 		public const string mainNotesFilename = mainNotesFilenameStub + chorusNotesExt;
-		public const string zeroGuidStr = "00000000-0000-0000-0000-000000000000";
+		public readonly string zeroGuidStr = Guid.Empty.ToString();
 		public const string genericAuthorName = "Language Forge";
 
 		internal string ProjectName { get; set; }

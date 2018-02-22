@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguageForgeWriteToChorusNotesActionHandlerTests.cs" />
+    <Compile Include="NotesTestHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">

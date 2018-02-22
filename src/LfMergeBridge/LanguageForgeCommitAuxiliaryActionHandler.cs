@@ -63,8 +63,8 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot do first commit. {2}.", syncBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
-			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
+//			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
+//			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
 //			if (startingRevision.Branch != desiredBranchName)
 //			{
 //				// Not being the same could create a new branch, and LF doesn't allow that.
