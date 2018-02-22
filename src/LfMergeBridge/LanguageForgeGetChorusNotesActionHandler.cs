@@ -69,10 +69,10 @@ namespace LfMergeBridge
 						lfReplies.Add(new Tuple<string, List<SerializableLfCommentReply>>(ann.Guid, repliesNotYetInLf));
 					}
 					// But also need to check for status updates
-					string newStatus = ChorusStatusToLfStatus(ann.Status);
-					if (newStatus != lfComment.Status)
+					string chorusStatus = ChorusStatusToLfStatus(ann.Status);
+					if (chorusStatus != lfComment.Status || lfComment.StatusGuid != ann.StatusGuid)
 					{
-						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid, new Tuple<string, string>(newStatus, ann.StatusGuid)));
+						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid, new Tuple<string, string>(chorusStatus, ann.StatusGuid)));
 					}
 				}
 				else
