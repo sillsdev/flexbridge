@@ -1,4 +1,9 @@
-## 3.0.0 UNRELEASED
+## 3.0.1 05-Mar-2018
+
+* Support new data model.
+* Bugfixes.
+
+## 3.0.0 09/02/2017
 
 * Support FieldWorks 9
 
