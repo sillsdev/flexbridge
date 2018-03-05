@@ -1,4 +1,11 @@
-flexbridge (3.0.0) UNRELEASED; urgency=low
+flexbridge (3.0.1) unstable; urgency=low
+
+  * Support new data model.
+  * Bugfixes.
+
+ -- Jason Naylor <jason_naylor@sil.org>  Mon, 05 Mar 2018 15:54:37 -0500
+
+flexbridge (3.0.0) unstable; urgency=low
 
   * Support FieldWorks 9
 
