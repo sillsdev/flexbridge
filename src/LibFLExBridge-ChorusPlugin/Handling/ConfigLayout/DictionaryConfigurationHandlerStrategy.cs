@@ -45,7 +45,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPathname(pathToFile));
+			return PathHelper.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPathname(pathToFile));
 		}
 
 		public string ValidateFile(string pathToFile)

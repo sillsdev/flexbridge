@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.ArchivedDraft);
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.ArchivedDraft);
 		}
 
 		public string ValidateFile(string pathToFile)

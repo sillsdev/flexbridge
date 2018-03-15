@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Lexicon
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.Lexdb)
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Lexdb)
 				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(FlexBridgeConstants.Lexicon + "_");
 		}
 

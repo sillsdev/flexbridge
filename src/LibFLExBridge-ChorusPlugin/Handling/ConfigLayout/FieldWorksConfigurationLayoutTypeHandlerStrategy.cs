@@ -22,7 +22,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, Extension);
+			return PathHelper.CheckValidPathname(pathToFile, Extension);
 		}
 
 		public string ValidateFile(string pathToFile)

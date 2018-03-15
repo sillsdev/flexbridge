@@ -210,7 +210,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 		[Test]
 		public void ShouldNotHaveTwoTextElementsAfterMerge()
 		{
-			var baseDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var baseDir = Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			var testDataDir = Path.Combine(baseDir, "TestData");
 			var common = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Common.ntbk"));
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));

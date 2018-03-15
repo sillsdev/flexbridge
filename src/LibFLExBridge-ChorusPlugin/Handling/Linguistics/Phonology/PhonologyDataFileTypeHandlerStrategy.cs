@@ -26,7 +26,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Phonology
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.Phondata) &&
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Phondata) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.PhonologicalDataFilename;
 		}
 

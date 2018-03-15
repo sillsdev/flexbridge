@@ -249,7 +249,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			using( var tempFolder = new TemporaryFolder("Temp"))
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
-				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var appsDir = Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
 				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
@@ -339,7 +339,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			using (var tempFolder = new TemporaryFolder("Temp"))
 			{
 				// Copy the Dictionary Configuration Schema to where the Dictionary Configuration Handler Strategy looks
-				var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				var appsDir = Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 				var xsdPath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
 				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);

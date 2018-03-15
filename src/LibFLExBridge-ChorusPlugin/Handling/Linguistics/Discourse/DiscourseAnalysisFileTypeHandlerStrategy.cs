@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Discourse
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.DiscourseExt) &&
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.DiscourseExt) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.DiscourseChartFilename;
 		}
 

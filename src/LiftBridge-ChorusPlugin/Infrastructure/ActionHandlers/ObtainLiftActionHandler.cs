@@ -90,7 +90,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			{
 				if (Directory.Exists(expectedPathToClonedRepository))
 					Directory.Delete(expectedPathToClonedRepository);
-				DirectoryUtilities.MoveDirectorySafely(cloneLocation, expectedPathToClonedRepository);
+				RobustIO.MoveDirectory(cloneLocation, expectedPathToClonedRepository);
 				actualCloneResult.ActualCloneFolder = expectedPathToClonedRepository;
 				actualCloneResult.FinalCloneResult = FinalCloneResult.Cloned;
 				_liftFolder = expectedPathToClonedRepository;
