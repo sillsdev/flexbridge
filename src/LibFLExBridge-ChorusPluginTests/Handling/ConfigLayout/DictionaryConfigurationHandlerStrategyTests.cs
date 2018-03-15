@@ -28,7 +28,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			var appsDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var appsDir = Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			_xsdSourcePath = Path.Combine(appsDir, "TestData", "Language Explorer", "Configuration", FlexBridgeConstants.DictConfigSchemaFilename);
 			MetadataCache.TestOnlyNewCache.UpgradeToVersion(MetadataCache.MaximumModelVersion);
 		}

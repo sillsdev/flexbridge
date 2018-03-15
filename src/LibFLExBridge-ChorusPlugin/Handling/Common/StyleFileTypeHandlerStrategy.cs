@@ -31,7 +31,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 
 		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension);
+			return PathHelper.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension);
 		}
 
 		string IFieldWorksFileHandler.ValidateFile(string pathToFile)

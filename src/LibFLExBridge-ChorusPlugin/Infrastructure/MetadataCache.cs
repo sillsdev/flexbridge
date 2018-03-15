@@ -508,13 +508,13 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		private static string GetMetaDataCacheOffsetFolder(string pathToOurs)
 		{
 			var currentPathname = pathToOurs;
-			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.General))
+			if (PathHelper.ContainsDirectory(currentPathname, FlexBridgeConstants.General))
 				return FlexBridgeConstants.General;
-			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Other))
+			if (PathHelper.ContainsDirectory(currentPathname, FlexBridgeConstants.Other))
 				return FlexBridgeConstants.Other;
-			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Linguistics))
+			if (PathHelper.ContainsDirectory(currentPathname, FlexBridgeConstants.Linguistics))
 				return FlexBridgeConstants.Linguistics;
-			if (PathUtilities.PathContainsDirectory(currentPathname, FlexBridgeConstants.Anthropology))
+			if (PathHelper.ContainsDirectory(currentPathname, FlexBridgeConstants.Anthropology))
 				return FlexBridgeConstants.Anthropology;
 			return currentPathname; // Must be a test.
 		}

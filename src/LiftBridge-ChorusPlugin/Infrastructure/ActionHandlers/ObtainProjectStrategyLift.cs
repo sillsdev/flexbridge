@@ -47,8 +47,8 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				return cloneLocation;
 
 			var cloneLocationSansSuffix = cloneLocation.Substring(0, cloneLocation.LastIndexOf("_LIFT", StringComparison.InvariantCulture));
-			var possiblyAdjustedCloneLocation = DirectoryUtilities.GetUniqueFolderPath(cloneLocationSansSuffix);
-			DirectoryUtilities.MoveDirectorySafely(cloneLocation, possiblyAdjustedCloneLocation);
+			var possiblyAdjustedCloneLocation = PathHelper.GetUniqueFolderPath(cloneLocationSansSuffix);
+			RobustIO.MoveDirectory(cloneLocation, possiblyAdjustedCloneLocation);
 			return possiblyAdjustedCloneLocation;
 		}
 

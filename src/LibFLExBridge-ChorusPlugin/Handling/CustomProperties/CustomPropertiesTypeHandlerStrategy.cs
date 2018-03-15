@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.CustomProperties
 
 		bool IFieldWorksFileHandler.CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension) &&
+			return PathHelper.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension) &&
 					Path.GetFileName(pathToFile) == FlexBridgeConstants.CustomPropertiesFilename;
 		}
 

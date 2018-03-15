@@ -26,7 +26,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.WordformInventory
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.Inventory)
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Inventory)
 				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(FlexBridgeConstants.WordformInventory + "_");
 		}
 

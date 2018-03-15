@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.langproj) &&
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.langproj) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.LanguageProjectFilename;
 		}
 

@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Anthropology
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.Ntbk) &&
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Ntbk) &&
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.DataNotebookFilename;
 		}
 

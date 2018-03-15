@@ -24,7 +24,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Reversal
 
 		public bool CanValidateFile(string pathToFile)
 		{
-			return FileUtils.CheckValidPathname(pathToFile, FlexBridgeConstants.Reversal);
+			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Reversal);
 		}
 
 		public string ValidateFile(string pathToFile)
