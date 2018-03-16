@@ -61,10 +61,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Debug\SIL.Core.Desktop.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
@@ -75,6 +71,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
     </Reference>
@@ -82,6 +82,10 @@
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
@@ -91,6 +95,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
     </Reference>
@@ -98,6 +106,10 @@
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>

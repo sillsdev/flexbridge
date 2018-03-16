@@ -72,6 +72,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\Release\SIL.Windows.Forms.dll</HintPath>
     </Reference>
@@ -91,6 +95,10 @@
     </Reference>
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\Debug\SIL.Windows.Forms.dll</HintPath>
@@ -112,6 +120,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
     </Reference>
@@ -132,6 +144,10 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
     </Reference>
@@ -139,10 +155,6 @@
   <ItemGroup>
     <Reference Include="NetSparkle.Net40" Condition="'$(OS)'=='Windows_NT'">
       <HintPath>..\..\lib\common\NetSparkle.Net40.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Vulcan.Uczniowie.HelpProvider">
       <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>

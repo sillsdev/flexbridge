@@ -139,7 +139,7 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoTrusty64masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"SIL.Core.dll*"=>"lib/ReleaseMono", "SIL.TestUtilities.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "SIL.Lift.dll"=>"lib/ReleaseMono", "L10NSharp.dll"=>"lib/ReleaseMono", "NDesk.*"=>"lib/ReleaseMono", "debug/SIL.Core.dll*"=>"lib/DebugMono", "debug/SIL.TestUtilities.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"=>"lib/DebugMono", "debug/SIL.Lift.dll*"=>"lib/DebugMono", "debug/L10NSharp.dll"=>"lib/DebugMono", "debug/NDesk.*"=>"lib/DebugMono"}
+#     paths: {"SIL.Core.dll*"=>"lib/ReleaseMono", "SIL.Core.Desktop.dll*"=>"lib/ReleaseMono", "SIL.TestUtilities.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.dll*"=>"lib/ReleaseMono", "SIL.Windows.Forms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "SIL.Lift.dll"=>"lib/ReleaseMono", "L10NSharp.dll"=>"lib/ReleaseMono", "NDesk.*"=>"lib/ReleaseMono", "debug/SIL.Core.dll*"=>"lib/DebugMono", "debug/SIL.Core.dll"=>"lib/DebugMono", "debug/SIL.Core.Desktop.dll*"=>"lib/DebugMono", "debug/SIL.TestUtilities.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.dll*"=>"lib/DebugMono", "debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"=>"lib/DebugMono", "debug/SIL.Lift.dll*"=>"lib/DebugMono", "debug/L10NSharp.dll"=>"lib/DebugMono", "debug/NDesk.*"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
 
 # make sure output directories exist
@@ -192,30 +192,22 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.las
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll ./lib/DebugMono/icu.net.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt281/latest.lastSuccessful/icu.net.dll.config ./lib/DebugMono/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll ./lib/ReleaseMono/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll.config ./lib/ReleaseMono/SIL.Core.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.dll.mdb ./lib/ReleaseMono/SIL.Core.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.dll ./lib/ReleaseMono/SIL.Core.Desktop.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.TestUtilities.dll ./lib/ReleaseMono/SIL.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.TestUtilities.dll.mdb ./lib/ReleaseMono/SIL.TestUtilities.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll ./lib/ReleaseMono/SIL.Windows.Forms.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll.config ./lib/ReleaseMono/SIL.Windows.Forms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll.mdb ./lib/ReleaseMono/SIL.Windows.Forms.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/ReleaseMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/SIL.Lift.dll ./lib/ReleaseMono/SIL.Lift.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/L10NSharp.dll ./lib/ReleaseMono/L10NSharp.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/NDesk.DBus.dll ./lib/ReleaseMono/NDesk.DBus.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/NDesk.DBus.dll.config ./lib/ReleaseMono/NDesk.DBus.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll ./lib/DebugMono/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll.config ./lib/DebugMono/SIL.Core.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll.mdb ./lib/DebugMono/SIL.Core.dll.mdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Core.Desktop.dll ./lib/DebugMono/SIL.Core.Desktop.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.TestUtilities.dll ./lib/DebugMono/SIL.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.TestUtilities.dll.mdb ./lib/DebugMono/SIL.TestUtilities.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll ./lib/DebugMono/SIL.Windows.Forms.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.config ./lib/DebugMono/SIL.Windows.Forms.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb ./lib/DebugMono/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Lift.dll ./lib/DebugMono/SIL.Lift.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/SIL.Lift.dll.mdb ./lib/DebugMono/SIL.Lift.dll.mdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/L10NSharp.dll ./lib/DebugMono/L10NSharp.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll ./lib/DebugMono/NDesk.DBus.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/PalasoTrusty64masterContinuous/latest.lastSuccessful/debug/NDesk.DBus.dll.config ./lib/DebugMono/NDesk.DBus.dll.config
