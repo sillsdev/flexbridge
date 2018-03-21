@@ -207,6 +207,10 @@
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
 		</ItemGroup>
 		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+		<!-- The FieldWorks installer wants a stable installer name -->
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion)_Offline.exe" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName)_Offline.exe"/>
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion)_Online.exe" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName)_Online.exe"/>
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion).msi" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName).msi"/>
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
