@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2017 SIL International. All rights reserved.
+// Copyright (C) 2010-2018 SIL International. All rights reserved.
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Reflection;
@@ -7,10 +7,10 @@ using System.Reflection;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("FLEx Bridge")]
-[assembly: AssemblyCopyright("Copyright (c) SIL International 2010-2017")]
+[assembly: AssemblyCopyright("Copyright (c) SIL International 2010-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.0.0")]
-[assembly: AssemblyInformationalVersion("3.0.0.0")]
+[assembly: AssemblyVersion("3.0.1.0")]
+[assembly: AssemblyFileVersion("3.0.1.0")]
+[assembly: AssemblyInformationalVersion("3.0.1.0")]
