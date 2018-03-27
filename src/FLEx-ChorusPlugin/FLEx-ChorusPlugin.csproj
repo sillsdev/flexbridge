@@ -153,14 +153,6 @@
     <None Include="..\..\lib\ReleaseMono\icu.net.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
     <Reference Include="Chorus">
@@ -189,14 +181,6 @@
     <None Include="..\..\lib\DebugMono\icu.net.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Reference Include="Geckofx-Core, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=29.0.8.0, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autofac">
