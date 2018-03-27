@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0),
  cli-common-dev (>= 0.8~),
  mono-sil, libgdiplus-sil,
  libenchant-dev, libxklavier-dev, libgtk2.0-dev,
- geckofx29, unzip, curl, ca-certificates
+ unzip, curl, ca-certificates
 Standards-Version: 3.9.6
 Homepage: http://projects.palaso.org/projects/fwbridge
 Vcs-Git: https://github.com/sillsdev/flexbridge.git
