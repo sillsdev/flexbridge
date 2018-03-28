@@ -210,7 +210,7 @@ namespace LfMergeBridgeTests
 		<message
 			author=""Language Forge""
 			status=""closed""
-			date=""2018-02-01T12:13:14Z""
+			date=""2018-02-01T12:13:14-06:00""
 			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>")).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
 
@@ -260,7 +260,7 @@ namespace LfMergeBridgeTests
 		<message
 			author=""Language Forge""
 			status=""open""
-			date=""2018-02-01T12:13:14Z""
+			date=""2018-02-01T12:13:14-06:00""
 			guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>")).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
 
@@ -294,7 +294,7 @@ namespace LfMergeBridgeTests
 @"		<message
 			author=""Language Forge""
 			status=""open""
-			date=""2018-02-01T12:13:14Z""
+			date=""2018-02-01T12:13:14-06:00""
 			guid=""1687b882-97c9-4ca0-9bc3-2a0511715401"">LF comment on F</message>",
 				"1687b882-97c9-4ca0-9bc3-2a0511715400")).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
