@@ -11,8 +11,8 @@ all: release
 
 release: vcs_version
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
-	cp -a packages/Geckofx45.64.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.21.0/lib/net40
-	cp -a packages/Geckofx45.32.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.21.0/lib/net40
+	cp -a packages/Geckofx45.64.Linux.45.0.35/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.35/lib/net40
+	cp -a packages/Geckofx45.32.Linux.45.0.35/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.35/lib/net40
 	cp -a flexbridge output/ReleaseMono
 
 debug: vcs_version
@@ -20,8 +20,8 @@ debug: vcs_version
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
 	./download_dependencies_linux.sh && . ./environ && cd build && xbuild FLExBridge.build.mono.proj /t:Build /p:RootDir=.. /p:teamcity_dotnet_nunitlauncher_msbuild_task=notthere /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
-	cp -a packages/Geckofx45.64.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.21.0/lib/net40
-	cp -a packages/Geckofx45.32.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.21.0/lib/net40
+	cp -a packages/Geckofx45.64.Linux.45.0.35/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.35/lib/net40
+	cp -a packages/Geckofx45.32.Linux.45.0.35/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.35/lib/net40
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
 	cp -a flexbridge output/DebugMono
 
