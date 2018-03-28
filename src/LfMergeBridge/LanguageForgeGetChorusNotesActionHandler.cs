@@ -153,6 +153,7 @@ namespace LfMergeBridge
 		{
 			return from repo in AnnotationRepository.CreateRepositoriesFromFolder(projectDir, progress)
 				from ann in repo.GetAllAnnotations()
+				where ann.Messages.FirstOrDefault() != null  // Some annotations have been known to have NO messages; we skip those
 				select ann;
 		}
 
