@@ -146,13 +146,13 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.35/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.35/lib/net40/Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
@@ -183,13 +183,13 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Core</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.35/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <Package>Geckofx-Winforms</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.35/lib/net40/Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

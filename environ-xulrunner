@@ -15,8 +15,8 @@ if [ "$RUNMODE" = "INSTALLED" ]; then
     GECKOFX="/usr/lib/fieldworks"
     XULRUNNER="${GECKOFX}/Firefox-Linux${BITS}"
 else
-    GECKOFX="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.35/lib/net40"
-    XULRUNNER="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.35/content/Firefox-Linux${BITS}"
+    GECKOFX="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.36/lib/net40"
+    XULRUNNER="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.36/content/Firefox-Linux${BITS}"
 fi
 MONO_PATH="$GECKOFX:$MONO_PATH"
 
