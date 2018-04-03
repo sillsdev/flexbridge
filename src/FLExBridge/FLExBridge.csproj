@@ -155,6 +155,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
     <Reference Include="Chorus">
@@ -183,6 +191,14 @@
     <Reference Include="PalasoUIWindowsForms.GeckoBrowserAdapter">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
