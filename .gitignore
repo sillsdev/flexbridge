@@ -1,15 +1,17 @@
-src/_ReSharper.LiftBridge/
+.vs/
 bin/
 BuildDir/
-obj/
-output/
-Mercurial/
-Perf test  results/
-test-results/
-_ReSharper.*
 DistFiles/Mercurial/
 DistFiles/Mercurial/MercurialExtensions/
+Mercurial/
 MercurialExtensions/
+obj/
+output/
+Perf test  results/
+src/_ReSharper.LiftBridge/
+test-results/
+
+_ReSharper.*
 
 *.user
 *.suo
