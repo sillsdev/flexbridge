@@ -4,21 +4,19 @@
 # Set GECKOFX to location of Geckofx assemblies. Prepend to MONO_PATH.
 # Set XULRUNNER to location of gecko .so files. Prepend to LD_LIBRARY_PATH.
 
+BITS=64
+if [ "$(arch)" != "x86_64" ]; then
+  BITS=32
+fi
+
 if [ "$RUNMODE" = "INSTALLED" ]; then
     # Use the geckofx shipped with fieldworks. It is not included with
     # flexbridge since flexbridge is architecture independent.
     GECKOFX="/usr/lib/fieldworks"
-    XULRUNNER="${GECKOFX}/Firefox"
+    XULRUNNER="${GECKOFX}/Firefox-Linux${BITS}"
 else
-    # Note: May need to do a different check if ever need to distinguish
-    # architectures when packaging, perhaps such as dpkg --print-architecture.
-    if [ "$(uname -m)" = "x86_64" ]; then
-        GECKOFX="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/lib/net40"
-        XULRUNNER="$(pwd)/packages/Geckofx45.64.Linux.45.0.21.0/content/Firefox"
-    else
-        GECKOFX="$(pwd)/packages/Geckofx45.32.Linux.45.0.21.0/lib/net40"
-        XULRUNNER="$(pwd)/packages/Geckofx45.32.Linux.45.0.21.0/content/Firefox"
-    fi
+    GECKOFX="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.36/lib/net40"
+    XULRUNNER="$(pwd)/packages/Geckofx45.${BITS}.Linux.45.0.36/content/Firefox-Linux${BITS}"
 fi
 MONO_PATH="$GECKOFX:$MONO_PATH"
 

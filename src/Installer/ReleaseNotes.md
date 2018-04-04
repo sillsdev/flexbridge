@@ -7,6 +7,10 @@
 
 * Support FieldWorks 9
 
+## 2.6.2 05-Mar-2018
+* Update Chorus with bugfix for timestamps.
+## 2.6.1 05/Dec/2017
+* Update Chorus with bugfix for ChorusHub timeout problem.
 ## 2.6.0 09/Nov/2017
 * Update version to 2.6.0 to enable updating from the version shipped with
   FieldWorks 8.3.9
