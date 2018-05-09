@@ -135,9 +135,12 @@
 
 	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
 		<ItemGroup>
+			<InstallerResources Include="$(RootDir)\DistFiles\App.ico"/>
+			<InstallerResources Include="$(RootDir)\DistFiles\Installer.ico"/>
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/resources"/>
 		<WriteLinesToFile File="$(AppBuildMasterDir)/version" Lines="$(BuildVersion)"/>
 	</Target>
 
