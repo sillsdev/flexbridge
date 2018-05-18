@@ -262,6 +262,39 @@ namespace TriboroughBridge_ChorusPlugin
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
+			int loops = 0;
+			while (  (this._client != null && this._client.IsConnected == true) ||
+				(this._host != null && this._host.IsConnected == true))
+			{
+				if (loops > 100)
+				{
+					Console.WriteLine($" HostOpened={HostOpened} this._host?.IsConnected={this._host?.IsConnected}  this._client?.IsConnected={this._client?.IsConnected}  loops={loops}");
+					throw new Exception("We never heard back on something we were waiting for.");
+				}
+
+				Thread.Sleep(1000);
+
+				if (disposing)
+				{
+					if (HostOpened && !this._host.IsConnected)
+					{
+						_host.Close();
+						_host = null;
+						HostOpened = false;
+					}
+
+					if (_client != null && !this._client.IsConnected)
+					{
+						_client.Close();
+						_client = null;
+					}
+
+				}
+				loops++;
+
+			}
+
+
 			if (IsDisposed)
 				return;
 
