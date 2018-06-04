@@ -33,7 +33,7 @@ fi
 	if [ ! -f "${FB_SHARE}" ]; then
 		mkdir -p "${FB_SHARE}"
 	fi
-	
+
 	# update new localizations
 	if [ "${prefix}" == "/usr" ];then
 		cp -a "/var/lib/flexbridge/localizations" "${FB_SHARE}"
