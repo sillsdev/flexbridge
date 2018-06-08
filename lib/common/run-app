@@ -35,7 +35,7 @@ case "$scriptdir" in
     *) RUNMODE= ;;
 esac
 
-. ./environ-xulrunner
+(cd $scriptdir && . ./environ-xulrunner)
 
 if [ "$RUNMODE" = "INSTALLED" ]; then
 	BASE=$fwlib
