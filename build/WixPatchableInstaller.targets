@@ -124,24 +124,23 @@
 			<BinFiles Include="$(RootBinDir)\**\*" Exclude="@(FilesForDevelopers);@(FilesInstalledByChorusMerge)"/>
 			<BinFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/> <!-- REVIEW (Hasso) 2017.12: we don't need to install "data files" -->
-			<TemplateFiles Include="$(RootDir)/output/Installer/License.htm"/>
+			<InstallerResources Include="$(RootDir)/output/Installer/License.htm"/>
+			<InstallerResources Include="$(RootDir)\DistFiles\App.ico"/>
+			<InstallerResources Include="$(RootDir)\DistFiles\Installer.ico"/>
 			<OverrideFiles Include="$(RootDir)/src/InstallerOverrides/*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
-		<Copy SourceFiles="@(TemplateFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/BaseInstallerBuild"/>
+		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/resources"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
+		<WriteLinesToFile File="$(AppBuildDir)/version" Lines="$(BuildVersion)"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster" DependsOnTargets="InstallerVersionNumbers">
 		<ItemGroup>
-			<InstallerResources Include="$(RootDir)\DistFiles\App.ico"/>
-			<InstallerResources Include="$(RootDir)\DistFiles\Installer.ico"/>
-			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
+			<ObjectFiles Include="$(AppBuildDir)/**/*"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/resources"/>
-		<WriteLinesToFile File="$(AppBuildMasterDir)/version" Lines="$(BuildVersion)"/>
+		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >

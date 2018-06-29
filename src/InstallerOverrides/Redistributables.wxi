@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<Fragment>
+		<PackageGroup Id="vcredists">
+			<PackageGroupRef Id="redist_vc10" />
+			<PackageGroupRef Id="redist_vc11" />
+			<PackageGroupRef Id="redist_vc12" />
+		</PackageGroup>
+	</Fragment>
+</Include>
