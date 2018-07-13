@@ -165,11 +165,8 @@
 		<Message Text="Version: $(Version)" Importance="high"/>
 		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
 			Condition="'$(teamcity_version)' != ''"/>
+		<Exec Command='echo "BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)" &gt; $(RootDir)/gitversion.properties' />
 	</Target>
-
-	<ItemGroup>
-		<AssemblyInfoFiles Include="$(RootDir)/src/CommonAssemblyInfo.cs"/>
-	</ItemGroup>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers; StampReleaseFiles">
 	</Target>
