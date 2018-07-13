@@ -7,7 +7,7 @@
 
 BASE="$(pwd)"
 [ -z "$BUILD" ] && BUILD=DebugMono
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
 
 # Are we running as installed from a package, or on a development machine?
 case "$(pwd)" in
