@@ -164,6 +164,7 @@
 		<Message Text="Version: $(Version)" Importance="high"/>
 		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
 			Condition="'$(teamcity_version)' != ''"/>
+		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="true" Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)" />
 	</Target>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
