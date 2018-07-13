@@ -9,15 +9,18 @@ BASE="$(pwd)"
 [ -z "$BUILD" ] && BUILD=DebugMono
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
 
-# Dependency locations
-# Search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH.
-# Also determine the location of the geckofx assemblies and shared object libraries.
-. ./environ-xulrunner
+# Are we running as installed from a package, or on a development machine?
+case "$(pwd)" in
+    /usr/*) RUNMODE=INSTALLED ;;
+    *) RUNMODE= ;;
+esac
 
+# Dependency locations
+. ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0
 
 MONO_RUNTIME=v4.0.30319
-MONO_PATH="${GDK_SHARP}:${GECKOFX}"
+MONO_PATH="${GDK_SHARP}:${MONO_PATH}"
 MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
 

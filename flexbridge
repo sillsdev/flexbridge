@@ -4,11 +4,25 @@
 
 set -e -o pipefail
 
+# On a developer machine, MONO_ENVIRON may be set, and to the location of the
+# FieldWorks environ. Running mono would then re-source the FieldWorks
+# environ, and prioritize the FW Geckofx path in LD_LIBRARY_PATH. Prevent this.
+unset MONO_ENVIRON
+
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
 cd "${scriptdir}"
-. environ
+# On a developer machine, we may be in output/DebugMono. If so, go to the
+# location of environ before sourcing it.
+if [ "$(basename "$scriptdir")" == "DebugMono" -o \
+     "$(basename "$scriptdir")" == "ReleaseMono" ]; then
+    cd ../..
+    . environ
+    cd -
+else
+    . environ
+fi
 
 (
 	XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
