@@ -2,9 +2,10 @@
 	<PropertyGroup>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">false</RestartBuild>
 	</PropertyGroup>
 
-	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
 	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
 	<UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"
@@ -20,6 +21,14 @@
 	<UsingTask TaskName="DNZip" AssemblyFile="$(RootDir)/build/MSBuild.ExtensionPack.dll" />
 
 	<Import Project="NuGet.targets"/>
+	<Import Project="$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets"
+		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets')"/>
+
+	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
+	<Target Name="GetAssemblyVersion"/>
+	<Target Name="GenerateNuspec"/>
+	<Target Name="_GenerateRestoreProjectSpec"/>
+	<Target Name="CoreCompile"/>
 
 	<!-- ***************** Main build ***************** -->
 	<PropertyGroup>
@@ -34,9 +43,20 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">UnknownMonoIssue</ExtraExcludeCategories>
 	</PropertyGroup>
 
-	<Target Name="Build" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
+	<Target Name="Build">
+		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal" Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
+	</Target>
+
+	<Target Name="RestoreBuildTasks">
+		<Message Text="RestartBuild=$(RestartBuild)"/>
+		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 4.0.0-beta0012 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+	</Target>
+
+	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
 		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
-		 but it remembers not to call targets a second time via dependencies. -->
+			but it remembers not to call targets a second time via dependencies. -->
 		<Message Text="Build Complete"/>
 	</Target>
 
@@ -137,24 +157,16 @@
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<Target Name="VersionNumbers">
-		<ReadLinesFromFile File="$(RootDir)/version">
-			<Output TaskParameter="Lines" PropertyName="Version" />
-		</ReadLinesFromFile>
+	<Target Name="VersionNumbers" DependsOnTargets="GetVersion">
+		<PropertyGroup>
+			<Version>$(GitVersion_MajorMinorPatch)</Version>
+		</PropertyGroup>
 		<Message Text="Version: $(Version)" Importance="high"/>
 		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
 			Condition="'$(teamcity_version)' != ''"/>
 	</Target>
 
-	<ItemGroup>
-		<AssemblyInfoFiles Include="$(RootDir)/src/CommonAssemblyInfo.cs"/>
-	</ItemGroup>
-
-	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers; StampReleaseFiles">
-		<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
-	</Target>
-
-	<Target Name="StampReleaseFiles" DependsOnTargets="VersionNumbers">
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
 		<!-- Copy these so we aren't modifying the original, which then is a pain on dev machines. -->
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
