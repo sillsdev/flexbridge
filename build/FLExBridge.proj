@@ -49,7 +49,7 @@
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal" Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
 	</Target>
 
-	<Target Name="RestoreBuildTasks">
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 4.0.0-beta0012 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 	</Target>
