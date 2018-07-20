@@ -4,6 +4,7 @@
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">true</RestartBuild>
 		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">false</RestartBuild>
+		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 	</PropertyGroup>
 
 	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
@@ -22,7 +23,7 @@
 
 	<Import Project="NuGet.targets"/>
 	<Import Project="$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets"
-		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets')"/>
+		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
 	<Target Name="GetAssemblyVersion"/>
