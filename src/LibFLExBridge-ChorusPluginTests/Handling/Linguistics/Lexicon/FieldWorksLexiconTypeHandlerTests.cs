@@ -13,6 +13,8 @@ using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using Palaso.IO;
+using Palaso.Providers;
+using Palaso.TestUtilities.Providers;
 
 namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 {
@@ -28,6 +30,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 		{
 			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(string.Format("{0}_01.{1}", FlexBridgeConstants.Lexicon, FlexBridgeConstants.Lexdb), out _ourFile, out _commonFile, out _theirFile);
+			_expectedUtcDateTime = DateTime.UtcNow;
+			DateTimeProvider.SetProvider(new ReproducibleDateTimeProvider(_expectedUtcDateTime));
 		}
 
 		[TearDown]
@@ -295,7 +299,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 			const string commonAncestor = baseDocument;
 			var ourContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829").Replace("False", "True");
 			var theirContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829").Replace("False", "True");
-			var dateTimeNow = DateTimeNowString;
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -305,7 +308,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				null, null,
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlAttributeBothMadeSameChangeReport) });
-			Assert.That(GetXPathNodeFrom(results, "Lexicon/header/LexDb/Introduction/StText/DateModified/@val"), Is.GreaterThan(dateTimeNow));
+			Assert.That(GetXPathNodeFrom(results, "Lexicon/header/LexDb/Introduction/StText/DateModified/@val"), Is.EqualTo(ExpectedUtcDateTimeString));
 		}
 
 		[Test]

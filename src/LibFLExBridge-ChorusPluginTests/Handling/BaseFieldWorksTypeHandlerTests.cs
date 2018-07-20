@@ -48,13 +48,31 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			return string.Empty;
 		}
 
-		public static string DateTimeNowString
+		public static DateTime _expectedUtcDateTime;
+
+		public static string ExpectedUtcDateTimeString
+		{
+			get { return ExpectedDateTime.ToString("yyyy-M-d H:m:s.fff"); }
+		}
+
+		public static DateTime ExpectedDateTime
 		{
 			get
 			{
-				var dateTimeNow = DateTime.UtcNow.ToString("yyyy-M-d H:m:s.fff");
-				return dateTimeNow;
+				if (_expectedUtcDateTime == null)
+				{
+					throw new NullReferenceException(
+						"You need to set _expectedUtcDateTime prior to calling ExpectedDateTime/ExpectedUtcDateTimeString");
+				}
+
+				// Return a DateTime object in the same resolution we get from Chorus
+				// (i.e. no timezone set, trimmed ticks)
+				return new DateTime(_expectedUtcDateTime.Year, _expectedUtcDateTime.Month,
+					_expectedUtcDateTime.Day, _expectedUtcDateTime.Hour,
+					_expectedUtcDateTime.Minute, _expectedUtcDateTime.Second,
+					_expectedUtcDateTime.Millisecond);
 			}
 		}
+
 	}
 }
