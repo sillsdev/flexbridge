@@ -63,15 +63,6 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot do first commit. {2}.", syncBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
-//			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-//			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
-//			if (startingRevision.Branch != desiredBranchName)
-//			{
-//				// Not being the same could create a new branch, and LF doesn't allow that.
-//				// It may be that LF ought to have first asked for a branch change.
-//				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot commit to current branch {2}, because LF wants branch {3}, and that could possibly create a new branch.", syncBase, LfMergeBridgeUtilities.failure, startingRevision.Branch, desiredBranchName));
-//				return;
-//			}
 
 			// Set up adjunct.
 			var syncAdjunct = new FlexBridgeSynchronizerAdjunct(Path.Combine(fullPathToProject, options[LfMergeBridgeUtilities.fwdataFilename]), fwDataExePathname, true, false);
