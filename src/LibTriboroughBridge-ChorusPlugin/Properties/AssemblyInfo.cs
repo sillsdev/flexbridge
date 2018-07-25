@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("TriboroughBridge-ChorusPlugin")]
 [assembly: InternalsVisibleTo("FLExBridge")]
 [assembly: InternalsVisibleTo("LfMergeBridge")]
+[assembly: InternalsVisibleTo("LfMergeBridgeTests")]
 [assembly: InternalsVisibleTo("RepositoryUtility")]
 [assembly: InternalsVisibleTo("FwdataTestApp")]
 [assembly: InternalsVisibleTo("TriboroughBridge-ChorusPluginTests")]

@@ -1,0 +1,18 @@
+mode: ContinuousDeployment
+increment: Patch
+assembly-versioning-scheme: MajorMinorPatchTag
+branches:
+  master:
+    tag:
+    regex: (origin/)?master
+    is-mainline: true
+  develop:
+    tag: unstable
+    regex: (origin/)?develop
+    is-mainline: true
+  lfmerge:
+    tag: lfmerge
+    regex: (origin/)?lfmerge
+    is-mainline: true
+ignore:
+  sha: []

@@ -10,7 +10,3 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright (c) SIL International 2010-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
-[assembly: AssemblyVersion("3.0.1.0")]
-[assembly: AssemblyFileVersion("3.0.1.0")]
-[assembly: AssemblyInformationalVersion("3.0.1.0")]

@@ -6,6 +6,8 @@ using LibFLExBridgeChorusPlugin.Handling;
 using NUnit.Framework;
 using Chorus.merge.xml.generic;
 using System;
+using SIL.Providers;
+using SIL.TestUtilities.Providers;
 
 namespace LibFLExBridgeChorusPluginTests.Handling
 {
@@ -21,7 +23,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>";
 
 		private readonly IPremerger _preMerger = new PreferMostRecentTimePreMerger();
-		private string _dateTimeNow;
 		private int _count;
 
 		private XmlNode CreateNode(string xml)
@@ -40,8 +41,9 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[SetUp]
 		public void SetUp()
 		{
-			_dateTimeNow = BaseFieldWorksTypeHandlerTests.DateTimeNowString;
 			_count = 3;
+			BaseFieldWorksTypeHandlerTests._expectedUtcDateTime = DateTime.UtcNow;
+			DateTimeProvider.SetProvider(new ReproducibleDateTimeProvider(BaseFieldWorksTypeHandlerTests._expectedUtcDateTime));
 		}
 
 		[Test]
@@ -55,7 +57,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, null);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -69,7 +71,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, null);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -85,7 +87,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, null);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -98,7 +100,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, ancestor);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -111,7 +113,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ours = CreateNode(CommonAncestor);
 
 			_preMerger.Premerge(null, ref ours, theirs, ancestor);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -126,7 +128,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, ancestor);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -152,7 +154,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </root>"));
 
 			_preMerger.Premerge(null, ref ours, theirs, ancestor);
-			Assert.That(GetDateTimeValue(ours), Is.GreaterThanOrEqualTo(_dateTimeNow));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo(BaseFieldWorksTypeHandlerTests.ExpectedUtcDateTimeString));
 		}
 	}
 }

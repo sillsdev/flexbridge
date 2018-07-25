@@ -11,6 +11,8 @@ using LibFLExBridgeChorusPlugin.Handling;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using SIL.IO;
+using SIL.Providers;
+using SIL.TestUtilities.Providers;
 
 namespace LibFLExBridgeChorusPluginTests.Handling
 {
@@ -26,6 +28,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		{
 			base.TestSetup();
 			FieldWorksTestServices.SetupTempFilesWithName(FlexBridgeConstants.DataNotebookFilename, MetadataCache.MaximumModelVersion, out _ourFile, out _commonFile, out _theirFile);
+			_expectedUtcDateTime = DateTime.UtcNow;
+			DateTimeProvider.SetProvider(new ReproducibleDateTimeProvider(_expectedUtcDateTime));
 		}
 
 		[TearDown]
@@ -62,7 +66,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void TimestampUpdatedIfAnotherChangedWasMadeAndTheyDeletedParent()
 		{
-			var dateTimeNowString = DateTimeNowString;
 			var ourContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123").Replace("commonName", "ourModifiedName");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
@@ -72,7 +75,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			premerger.Premerge(new ListenerForUnitTests(), ref ourModPropNode, null, ancestorModPropNode);
 
-			Assert.That(ourModPropNode.Attributes["val"].Value, Is.GreaterThanOrEqualTo(dateTimeNowString));
+			Assert.That(ourModPropNode.Attributes["val"].Value, Is.EqualTo(ExpectedUtcDateTimeString));
 		}
 
 		[Test]
@@ -94,7 +97,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void TimestampUpdatedIfAnotherChangeWasMadeAndWeDeletedParent()
 		{
-			var dateTimeNowString = DateTimeNowString;
 			var theirContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123").Replace("commonName", "theirModifiedName");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
@@ -105,7 +107,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			XmlNode ourNode = null;
 			premerger.Premerge(new ListenerForUnitTests(), ref ourNode, theirModPropNode, ancestorModPropNode);
 
-			Assert.That(theirModPropNode.Attributes["val"].Value, Is.GreaterThanOrEqualTo(dateTimeNowString));
+			Assert.That(theirModPropNode.Attributes["val"].Value, Is.EqualTo(ExpectedUtcDateTimeString));
 		}
 
 		private const string CommonPosAncestor =
@@ -139,7 +141,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ourContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2002-1-1 23:59:59.123' />").Replace("commonName", modification);
 			var theirContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2001-1-1 23:59:59.123' />").Replace("commonName", modification);
 
-			var dateTimeNow = DateTimeNowString;
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
@@ -149,7 +150,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				0, new List<Type>(),
 				expectedChangeCount, new List<Type>(expectedChangeTypes));
 			Assert.That(GetXPathNodeFrom(results, "Root/ReversalIndex/PartsOfSpeech/CmPossibilityList/Possibilities/ownseq/DateModified/@val"),
-				Is.GreaterThan(dateTimeNow));
+				Is.EqualTo(ExpectedUtcDateTimeString));
 		}
 
 		[TestCase("<DateModified val='2000-1-1 23:59:59.123' />", "commonName", 0, new Type[0], TestName = "DateModified-only change sets ancestor timestamp")]
@@ -213,7 +214,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ourContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2011-1-1 23:59:59.123").Replace(">Comment<", ">Our comment<");
 			var theirContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2012-2-2 23:59:59.123").Replace("ambuka", "their change");
 
-			var utcNow = DateTime.UtcNow;
 			FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
@@ -226,7 +226,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				0, new List<Type>(),
 				3, new List<Type> { typeof(XmlTextChangedReport), typeof(XmlChangedRecordReport), typeof(XmlAttributeBothMadeSameChangeReport)});
 
-			Assert.That(GetMergedTime(_ourFile.Path), Is.GreaterThan(utcNow));
+			Assert.That(GetMergedTime(_ourFile.Path), Is.EqualTo(ExpectedDateTime));
 		}
 
 		[Test]
@@ -235,7 +235,6 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ourContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2011-1-1 23:59:59.123").Replace(">Comment<", ">Our comment<").Replace("ambuka", "our change");
 			var theirContent = CommonLexEntryAncestor.Replace("2010-1-1 23:59:59.123", "2012-2-2 23:59:59.123").Replace(">Comment<", ">Their comment<").Replace("ambuka", "their change");
 
-			var utcNow = DateTime.UtcNow;
 			FieldWorksTestServices.DoMerge(
 				FileHandler,
 				_ourFile, ourContent,
@@ -248,7 +247,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				2, new List<Type> { typeof(XmlTextBothEditedTextConflict), typeof(BothEditedTheSameAtomicElement) },
 				1, new List<Type> { typeof(XmlAttributeBothMadeSameChangeReport)});
 
-			Assert.That(GetMergedTime(_ourFile.Path), Is.GreaterThan(utcNow));
+			Assert.That(GetMergedTime(_ourFile.Path), Is.EqualTo(ExpectedDateTime));
 		}
 	}
 }

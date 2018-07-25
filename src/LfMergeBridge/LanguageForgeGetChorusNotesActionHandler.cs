@@ -6,21 +6,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
-using Chorus;
-using Chorus.merge;
 using Chorus.notes;
 using Chorus.Utilities;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
+using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 
-namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
+namespace LfMergeBridge
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles everything needed for viewing the notes of a Flex repo.
@@ -31,7 +26,6 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		public const string mainNotesFilenameStub = "Lexicon.fwstub";
 		public const string chorusNotesExt = ".ChorusNotes";
 		public const string mainNotesFilename = mainNotesFilenameStub + chorusNotesExt;
-		public const string zeroGuidStr = "00000000-0000-0000-0000-000000000000";
 		public const string genericAuthorName = "Language Forge";
 		internal string ProjectName { get; set; }
 		internal string ProjectDir { get; set; }
@@ -47,18 +41,20 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
 
-			string inputFilename = options[LfMergeBridge.LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-			List<SerializableLfComment> commentsFromLF = LfMergeBridge.LfMergeBridgeUtilities.DecodeJsonFile<List<SerializableLfComment>>(inputFilename);
-			var knownCommentGuids = new HashSet<string>(commentsFromLF.Where(comment => comment.Guid != null).Select(comment => comment.Guid));
+			string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
+			List<SerializableLfComment> commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<SerializableLfComment>>(inputFilename);
+			Dictionary<string, SerializableLfComment> commentsFromLFByGuid = commentsFromLF.Where(comment => comment.Guid != null).ToDictionary(comment => comment.Guid);
 			var knownReplyGuids = new HashSet<string>(commentsFromLF.Where(comment => comment.Replies != null).SelectMany(comment => comment.Replies.Where(reply => reply.Guid != null).Select(reply => reply.Guid)));
 
 			var lfComments = new List<SerializableLfComment>();
 			var lfReplies = new List<Tuple<string, List<SerializableLfCommentReply>>>();
+			var lfStatusChanges = new List<KeyValuePair<string, Tuple<string, string>>>();
 			// TODO: See if we want to suppress progress messages here by using a NullProgress instance instead of the IProgress instance we were given...
 			foreach (Annotation ann in GetAllAnnotations(progress, ProjectDir))
 			{
-				if (knownCommentGuids.Contains(ann.Guid))
+				if (ann.Guid != null && commentsFromLFByGuid.ContainsKey(ann.Guid))
 				{
+					var lfComment = commentsFromLFByGuid[ann.Guid];
 					// Known comment; only serialize new replies
 					List<SerializableLfCommentReply> repliesNotYetInLf =
 						ann
@@ -72,6 +68,12 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					{
 						lfReplies.Add(new Tuple<string, List<SerializableLfCommentReply>>(ann.Guid, repliesNotYetInLf));
 					}
+					// But also need to check for status updates
+					string chorusStatus = ChorusStatusToLfStatus(ann.Status);
+					if (chorusStatus != lfComment.Status || lfComment.StatusGuid != ann.StatusGuid)
+					{
+						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid, new Tuple<string, string>(chorusStatus, ann.StatusGuid)));
+				}
 				}
 				else
 				{
@@ -86,6 +88,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 						// Content = msg?.Text ?? string.Empty,  // C# 6 syntax would be simpler if we could count on a C# 6 compiler everywhere
 						Content = (msg == null) ? string.Empty : msg.Text,
 						Status = ChorusStatusToLfStatus(ann.Status),
+						StatusGuid = ann.StatusGuid,
 						Replies = new List<SerializableLfCommentReply>(ann.Messages.Skip(1).Where(m => ! String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
 						IsDeleted = false
 					};
@@ -100,11 +103,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 			var serializedComments = new StringBuilder("New comments not yet in LF: ");
 			serializedComments.Append(JsonConvert.SerializeObject(lfComments));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
 
 			var serializedReplies = new StringBuilder("New replies on comments already in LF: ");
 			serializedReplies.Append(JsonConvert.SerializeObject(lfReplies));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
+
+			var serializedStatusChanges = new StringBuilder("New status changes on comments already in LF: ");
+			serializedStatusChanges.Append(JsonConvert.SerializeObject(lfStatusChanges));
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedStatusChanges.ToString());
 		}
 
 		private SerializableLfCommentReply ReplyFromChorusMsg(Message msg)
@@ -146,6 +153,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			return from repo in AnnotationRepository.CreateRepositoriesFromFolder(projectDir, progress)
 				from ann in repo.GetAllAnnotations()
+				where ann.Messages.FirstOrDefault() != null  // Some annotations have been known to have NO messages; we skip those
 				select ann;
 		}
 
