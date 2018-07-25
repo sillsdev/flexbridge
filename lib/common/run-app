@@ -30,12 +30,12 @@ MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-0=-gshared"
 
 # Are we running as installed from a package, or on a development machine?
-case "$(pwd)" in
+case "$scriptdir" in
     /usr/*) RUNMODE=INSTALLED ;;
     *) RUNMODE= ;;
 esac
 
-. ./environ-xulrunner
+(cd $scriptdir && . ./environ-xulrunner)
 
 if [ "$RUNMODE" = "INSTALLED" ]; then
 	BASE=$fwlib

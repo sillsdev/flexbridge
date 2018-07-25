@@ -6,20 +6,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
-using Newtonsoft.Json;
 using System.Text;
-using Chorus;
-using Chorus.merge;
 using Chorus.notes;
-using TriboroughBridge_ChorusPlugin;
-using TriboroughBridge_ChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
+using SIL.Providers;
+using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 
-namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
+namespace LfMergeBridge
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles writing new notes (which probably came from comments on the Language Forge site) into the ChorusNotes system.
@@ -30,7 +25,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		public const string mainNotesFilenameStub = "Lexicon.fwstub";
 		public const string chorusNotesExt = ".ChorusNotes";
 		public const string mainNotesFilename = mainNotesFilenameStub + chorusNotesExt;
-		public const string zeroGuidStr = "00000000-0000-0000-0000-000000000000";
+		public readonly string zeroGuidStr = Guid.Empty.ToString();
 		public const string genericAuthorName = "Language Forge";
 
 		internal string ProjectName { get; set; }
@@ -50,10 +45,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			ProjectDir = Path.GetDirectoryName(pOption);
 			Progress = progress;
 
-			string inputFilename = options[LfMergeBridge.LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-			string data = File.ReadAllText(inputFilename);
+			string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
+			//string data = File.ReadAllText(inputFilename);
 
-			List<KeyValuePair<string, SerializableLfComment>> commentsFromLF = LfMergeBridge.LfMergeBridgeUtilities.DecodeJsonFile<List<KeyValuePair<string, SerializableLfComment>>>(inputFilename);
+			List<KeyValuePair<string, SerializableLfComment>> commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<KeyValuePair<string, SerializableLfComment>>>(inputFilename);
 			AnnotationRepository[] annRepos = GetAnnotationRepositories(progress);
 			AnnotationRepository primaryRepo = annRepos[0];
 
@@ -80,17 +75,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				{
 					if (lfAnnotation == null)
 					{
-						LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping null annotation with MongoId {0}",
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping null annotation with MongoId {0}",
 							lfAnnotationObjectId ?? "(null ObjectId)"));
 					}
 					else
 					{
 						// We don't have a C# 6 compiler in our build infrastructure, so we have to do this the hard(er) way.
-						string guidForLog = lfAnnotation == null ? "(no guid)" :
-							lfAnnotation.Guid == null ? "(no guid)" :
-							lfAnnotation.Guid.ToString();
+						string guidForLog = lfAnnotation == null ? "(no guid)" : lfAnnotation.Guid ?? "(no guid)";
 						string contentForLog = lfAnnotation == null ? "(no content)" : lfAnnotation.Content ?? "(no content)";
-						LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
 							guidForLog, contentForLog));
 						// The easy way would have been able to skip creating guidForLog and contentForLog; that would have looked like:
 						// LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
@@ -117,9 +110,9 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 			}
 
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New comment ID->Guid mappings: {0}",
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New comment ID->Guid mappings: {0}",
 				String.Join(";", commentIdsThatNeedGuids.Select(kv => String.Format("{0}={1}", kv.Key, kv.Value)))));
-			LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New reply ID->Guid mappings: {0}",
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New reply ID->Guid mappings: {0}",
 				String.Join(";", replyIdsThatNeedGuids.Select(kv => String.Format("{0}={1}", kv.Key, kv.Value)))));
 
 			SaveReposIfNeeded(annRepos, progress);
@@ -145,7 +138,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo, string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
+		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo,
+			string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
 		{
 			// Any LF comments that do NOT yet have GUIDs need them set from the corresponding Chorus annotation
 			if (String.IsNullOrEmpty(annotationInfo.Guid) && !String.IsNullOrEmpty(annotationObjectId))
@@ -153,13 +147,13 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				commentIdsThatNeedGuids[annotationObjectId] = chorusAnnotation.Guid;
 			}
 
-			if (annotationInfo.Replies == null || annotationInfo.Replies.Count <= 0)
+			string statusToSet = LfStatusToChorusStatus(annotationInfo.Status);
+			if (annotationInfo.Replies.Count <= 0 && chorusAnnotation.Status == statusToSet)
 			{
 				return;  // Nothing, or nothing else, to do!
 			}
 
 			var chorusMsgGuids = new HashSet<string>(chorusAnnotation.Messages.Select(msg => msg.Guid).Where(s => ! string.IsNullOrEmpty(s) && s != zeroGuidStr));
-			string statusToSet = LfStatusToChorusStatus(annotationInfo.Status);
 			// If we're in this function, the Chorus annotation already contains the text of the LF annotation's comment,
 			// so the only thing we need to go through are the replies.
 			foreach (SerializableLfCommentReply reply in annotationInfo.Replies)
@@ -175,17 +169,31 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				}
 			}
 			// Since LF allows changing a comment's status without adding any replies, it's possible we haven't updated the Chorus status yet at this point.
-			// But first, check for a special case. Oten, the Chorus annotation's status will be blank, which corresponds to "open" in LfMerge. We don't want
+			// But first, check for a special case. Often, the Chorus annotation's status will be blank, which corresponds to "open" in LfMerge. We don't want
 			// to add a blank message just to change the Chorus status from "" (empty string) to "open", so we need to detect this situation specially.
-			if (String.IsNullOrEmpty(chorusAnnotation.Status) && statusToSet == Chorus.notes.Annotation.Open)
+			if (string.IsNullOrEmpty(chorusAnnotation.Status) && statusToSet == Annotation.Open)
 			{
 				// No need for new status here
 			}
-			else if (statusToSet != chorusAnnotation.Status)
+			else if (StatusChangeFromLF(chorusAnnotation, annotationInfo.StatusGuid, statusToSet))
 			{
 				// LF doesn't keep track of who clicked on the "Resolved" or "Todo" buttons, so we have to be vague about authorship
 				chorusAnnotation.SetStatus(genericAuthorName, statusToSet);
+				annotationInfo.StatusGuid = chorusAnnotation.StatusGuid;
 			}
+		}
+
+		private static bool StatusChangeFromLF(Annotation chorusAnnotation, string statusGuid, string statusToSet)
+		{
+			if (string.IsNullOrEmpty(statusGuid))
+				return false;
+
+			foreach (var message in chorusAnnotation.Messages)
+			{
+				if (message.Guid == statusGuid)
+					return statusToSet != message.Status;
+			}
+			return true;
 		}
 
 		private AnnotationRepository[] GetAnnotationRepositories(IProgress progress)
@@ -195,7 +203,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			if (projectRepos.Length <= 0)
 			{
 				var primaryRepo = MakePrimaryAnnotationRepository();
-				return new AnnotationRepository[] { primaryRepo };
+				return new [] { primaryRepo };
 			}
 			else
 			{
@@ -244,22 +252,15 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		private Annotation CreateAnnotation(string content, string guidStr, string author, string status, string ownerGuidStr, string ownerShortName)
 		{
 			Guid guid;
-			if (Guid.TryParse(guidStr, out guid))
+			if (!Guid.TryParse(guidStr, out guid) || guid == Guid.Empty)
 			{
-				if (guid == Guid.Empty)
-				{
-					guid = Guid.NewGuid();
-				}
-			}
-			else
-			{
-				guid = Guid.NewGuid();
+				guid = GuidProvider.Current.NewGuid();
 			}
 			if (string.IsNullOrEmpty(author))
 			{
 				author = genericAuthorName;
 			}
-			var result = new Annotation("note", MakeFlexRefURL(ownerGuidStr, ownerShortName), guid, "ignored");
+			var result = new Annotation("question", MakeFlexRefURL(ownerGuidStr, ownerShortName), guid, "ignored");
 			result.AddMessage(author, LfStatusToChorusStatus(status), content);
 			return result;
 		}

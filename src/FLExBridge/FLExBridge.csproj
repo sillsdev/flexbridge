@@ -151,18 +151,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms.GeckoBrowserAdapter">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\ReleaseMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
     <Reference Include="Chorus">
@@ -188,18 +176,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms.GeckoBrowserAdapter">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\DebugMono\PalasoUIWindowsForms.GeckoBrowserAdapter.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -207,16 +183,12 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Core</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>Geckofx-Winforms</Package>
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +218,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
@@ -258,4 +233,16 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets" Condition="Exists('..\..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
+  </Target>
+  <!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets. We get
+    these warnings because this project doesn't yet use the new .csproj format. -->
+  <Target Name="GetAssemblyVersion"/>
+  <Target Name="GenerateNuspec"/>
+  <Target Name="_GenerateRestoreProjectSpec"/>
 </Project>

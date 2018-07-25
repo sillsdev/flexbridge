@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
+using SIL.Providers;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
@@ -40,7 +41,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			else
 			{
 				// something else besides the timestamp changed. Set timestamp to current time.
-				newestDateTime = DateTime.UtcNow;
+				newestDateTime = DateTimeProvider.Current.UtcNow;
 			}
 			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.fff");
 			UpdateDateTimeVal(newestDateTimeString, ourDateTimeNode);

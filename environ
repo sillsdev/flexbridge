@@ -7,7 +7,7 @@
 
 BASE="$(pwd)"
 [ -z "$BUILD" ] && BUILD=DebugMono
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono4-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
 
 # Are we running as installed from a package, or on a development machine?
 case "$(pwd)" in
@@ -36,17 +36,17 @@ MONO_ENV_OPTIONS="-O=-gshared"
 # (so things work in both situations).
 LD_LIBRARY_PATH="${BASE}:${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
 MONO_PATH="${BASE}:${BASE}/output/${BUILD}:${MONO_PATH}"
-PATH="${BASE}/output/${BUILD}:${PATH}"
+	PATH="${BASE}/output/${BUILD}:${PATH}"
 
 ################################################################################################
 
 PATH="${MONO_PREFIX}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
 MONO_GAC_PREFIX="${MONO_PREFIX}:/usr"
-# We also add the default values for PKG_CONFIG_PATH - MonoDevelop resets the PKG_CONFIG_PATH
-# environment variable if we're running under a different Mono runtime so that some
-# packages that got installed in standard locations can't be found otherwise.
-PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig:/lib/pkgconfig:/usr/lib/pkgconfig"
+	# We also add the default values for PKG_CONFIG_PATH - MonoDevelop resets the PKG_CONFIG_PATH
+	# environment variable if we're running under a different Mono runtime so that some
+	# packages that got installed in standard locations can't be found otherwise.
+	PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig:/lib/pkgconfig:/usr/lib/pkgconfig"
 
 ################################################################################################
 

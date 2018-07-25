@@ -13,6 +13,7 @@ using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin.Handling;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin;
+using SIL.Providers;
 
 namespace LibFLExBridgeChorusPlugin.DomainServices
 {
@@ -114,7 +115,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 
 		private static string ChangeGuids(MetadataCache mdc, FdoClassInfo classInfo, XElement element)
 		{
-			var newGuid = Guid.NewGuid().ToString().ToLowerInvariant();
+			var newGuid = GuidProvider.Current.NewGuid().ToString().ToLowerInvariant();
 
 			element.Attribute(FlexBridgeConstants.GuidStr).Value = newGuid;
 

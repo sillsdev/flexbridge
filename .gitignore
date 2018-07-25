@@ -53,3 +53,5 @@ build/MarkdownDeep.NET/
 *.old
 *.swp
 icu4c.readme.txt
+gitversion.properties
+

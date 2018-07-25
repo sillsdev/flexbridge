@@ -44,8 +44,29 @@ namespace LfMergeBridge
 			return options.TryGetValue(LfMergeBridgeUtilities.onlyRepairRepo, out onlyRepairRepo) && onlyRepairRepo.ToLowerInvariant() == "true";
 		}
 
+		private static bool IsRepoEmpty(HgRepository hgRepository)
+		{
+			return string.IsNullOrWhiteSpace(hgRepository.Identifier);
+		}
+
+		private static void DeleteEmptyRepo(ref string somethingForClient, string cloneBase,
+			string actualClonePath)
+		{
+			Directory.Delete(actualClonePath, true);
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient,
+				string.Format("{0} {1}: new repository with no commits. {2}.", cloneBase,
+					LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
+		}
+
 		private static void FinishClone(IProgress progress, ref string somethingForClient, string cloneBase, string actualClonePath, string desiredBranchName, string user, bool deleteRepoIfNoSuchBranch)
 		{
+			var hgRepository = new HgRepository(actualClonePath, progress);
+			if (IsRepoEmpty(hgRepository))
+			{
+				DeleteEmptyRepo(ref somethingForClient, cloneBase, actualClonePath);
+				return;
+			}
+
 			// Just because we got a new clone, doesn't mean LF can use it.
 			if (!LibFLExBridgeUtilities.IsFlexProjectRepository(actualClonePath))
 			{
@@ -53,7 +74,6 @@ namespace LfMergeBridge
 				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: clone is not a FLEx project: {2}.", cloneBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
 				return;
 			}
-			var hgRepository = new HgRepository(actualClonePath, progress);
 			if (!string.IsNullOrEmpty(user))
 				hgRepository.SetUserNameInIni(user, progress);
 			// Have Chorus do the main work.
@@ -84,8 +104,7 @@ namespace LfMergeBridge
 					// Messages and more work to follow.
 					break;
 				case HgRepository.UpdateResults.NoCommitsInRepository:
-					Directory.Delete(actualClonePath, true);
-					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: new repository with no commits. {2}.", cloneBase, LfMergeBridgeUtilities.failure, LfMergeBridgeUtilities.cloneDeleted));
+					DeleteEmptyRepo(ref somethingForClient, cloneBase, actualClonePath);
 					return;
 			}
 			// See if repo has higher branch than LF called for.
