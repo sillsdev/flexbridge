@@ -68,7 +68,7 @@ namespace RepositoryUtility
 			{
 				var thisAssembly = Assembly.GetExecutingAssembly();
 				catalog.Catalogs.Add(new DirectoryCatalog(
-					Path.GetDirectoryName(FileUtils.StripFilePrefix(thisAssembly.CodeBase)),
+					Path.GetDirectoryName(PathHelper.StripFilePrefix(thisAssembly.CodeBase)),
 					"*-ChorusPlugin.dll"));
 				catalog.Catalogs.Add(new AssemblyCatalog(thisAssembly));
 
