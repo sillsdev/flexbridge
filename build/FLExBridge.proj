@@ -47,7 +47,9 @@
 	<Target Name="Build">
 		<CallTarget Targets="RestoreBuildTasks"/>
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal" Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
+			Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion)"
+			Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
@@ -134,7 +136,7 @@
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
-		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo)"/>
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion)"/>
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
