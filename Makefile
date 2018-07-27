@@ -36,7 +36,7 @@ debug_build:
 	cp -a flexbridge output/DebugMono
 
 version:
-	. ./environ && cd build && xbuild /t:"RestorePackages;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
+	. ./environ && cd build && xbuild /t:"RestorePackages;RestoreBuildTasks;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the
