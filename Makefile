@@ -39,7 +39,7 @@ debug_build:
 # Create AssemblyInfo files and properties file. When building the package we don't have a git
 # repo, so we have to create the files beforehand.
 version:
-	[ -d .git ] && . ./environ && cd build && xbuild /t:"RestorePackages;RestoreBuildTasks;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
+	[ -d .git ] && . ./environ && cd build && xbuild /t:"RestorePackages;RestoreBuildTasks;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj || true
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the
