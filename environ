@@ -15,12 +15,6 @@ case "$(pwd)" in
     *) RUNMODE= ;;
 esac
 
-# Are we running as installed from a package, or on a development machine?
-case "$(pwd)" in
-    /usr/*) RUNMODE=INSTALLED ;;
-    *) RUNMODE= ;;
-esac
-
 # Dependency locations
 . ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0

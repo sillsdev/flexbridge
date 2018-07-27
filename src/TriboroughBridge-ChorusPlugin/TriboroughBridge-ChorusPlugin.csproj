@@ -262,4 +262,12 @@
   <Target Name="GetAssemblyVersion"/>
   <Target Name="GenerateNuspec"/>
   <Target Name="_GenerateRestoreProjectSpec"/>
+
+  <!-- Include the generated assembly info files for the purpose of Linux package building.
+    We can't directly use the GitVersionTask there because we don't have a git repo when
+    building the binary, so the task fails. Instead we generate the AssemblyInfo file when
+    we create the source package and reference it here. -->
+  <ItemGroup Condition="!$(UpdateAssemblyInfo)">
+    <Compile Include="Properties/GitVersionTaskAssemblyInfo.g.cs" />
+  </ItemGroup>
 </Project>

@@ -132,7 +132,7 @@
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
-		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration)"/>
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo)"/>
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
@@ -224,4 +224,9 @@
 	<!-- For building an an installer on TeamCity (use TestInstallerBuild.bat to run locally) -->
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; BuildRelease; Test" Condition="'$(OS)'=='Windows_NT'"/>
 	<Target Name="Patcher" DependsOnTargets="VersionNumbers; BuildPatch; Test" Condition="'$(OS)'=='Windows_NT'"/>
+
+	<!-- update the AssemblyInfo files for linux packaging -->
+	<Target Name="UpdateAssemblyInfoForPackage">
+		<Exec Command="for f in `find $(RootDir) -name packages.config -print0 | xargs -0 grep --files-with-matches GitVersion`; do dir=`dirname $f`; xbuild /t:UpdateAssemblyInfo /p:IntermediateOutputPath=Properties $dir/`basename $dir`.csproj; done" />
+	</Target>
 </Project>

@@ -1,7 +1,7 @@
 # Linux/Mono Makefile for FlexBridge.
 
 CPUARCH=$(shell /usr/bin/arch)
-BUILD_NUMBER=$(shell dpkg-parsechangelog --show-field=version)
+BUILD_NUMBER=$(shell . gitversion.properties && echo $(BuildVersion) )
 BUILD_VCS_NUMBER=$(shell cat vcs_version)
 XDG_CONFIG_HOME ?= /tmp/.config
 UploadFolder="Alpha"
@@ -18,7 +18,7 @@ release: vcs_version download_dependencies release_build
 
 release_build:
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
-	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug
+	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug /p:UpdateAssemblyInfo=false
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a flexbridge output/ReleaseMono
@@ -29,11 +29,14 @@ debug_build:
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
-	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono
+	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono /p:UpdateAssemblyInfo=false
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
 	cp -a flexbridge output/DebugMono
+
+version:
+	. ./environ && cd build && xbuild /t:"RestorePackages;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the

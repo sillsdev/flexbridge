@@ -54,4 +54,4 @@ build/MarkdownDeep.NET/
 *.swp
 icu4c.readme.txt
 gitversion.properties
-
+GitVersionTaskAssemblyInfo.g.cs
