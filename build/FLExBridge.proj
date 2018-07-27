@@ -14,26 +14,10 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
-	</PropertyGroup>
-
-	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-	<UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"
-		Condition="'$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="GenerateReleaseArtifacts" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll"/>
-	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
-	<UsingTask TaskName="NUnitTeamCity"
-		AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
-	<UsingTask TaskName="NUnitTeamCity"
-		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
-
-	<PropertyGroup>
-		<MSBuildTasksTargets>..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
+		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
@@ -41,6 +25,18 @@
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
 	<Import Project="$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets"
 		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
+
+	<UsingTask TaskName="Split" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
+	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="GenerateReleaseArtifacts" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
+	<UsingTask TaskName="NUnit" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
 	<Target Name="GetAssemblyVersion"/>
@@ -59,6 +55,7 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 4.0.0-beta0012 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.0.2 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 	</Target>
 
 	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
@@ -161,23 +158,23 @@
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/about.htm"
+		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
+		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
 			Regex="FBCOMMITID" ReplacementText="$(BUILD_VCS_NUMBER)"/>
 
 		<Copy SourceFiles="$(RootDir)/DistFiles/License.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
-		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/License.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<FileUpdate File="$(RootDir)/output/Installer/License.htm"
+		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/License.htm"
 			DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
 			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 			<!-- The FileUpdate task checks whether ReplacementText is in the updated file contents before writing the contents back to the file, but we need to replace two dates and only one Regex, so we call FileUpdate twice with the same Regex and ReplacementText. -->
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>
-		<FileUpdate File="$(RootDir)/output/Installer/appcast.xml"
+		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/appcast.xml"
 			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 	</Target>
 
