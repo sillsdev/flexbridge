@@ -41,7 +41,7 @@ version:
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the
 # build agent
-vcs_version:
+vcs_version: version
 	[ -d .git ] && git rev-parse --short HEAD >vcs_version || true
 
 clean:
