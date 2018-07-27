@@ -36,8 +36,10 @@ debug_build:
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
 	cp -a flexbridge output/DebugMono
 
+# Create AssemblyInfo files and properties file. When building the package we don't have a git
+# repo, so we have to create the files beforehand.
 version:
-	. ./environ && cd build && xbuild /t:"RestorePackages;RestoreBuildTasks;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
+	[ -d .git ] && . ./environ && cd build && xbuild /t:"RestorePackages;RestoreBuildTasks;UpdateAssemblyInfoForPackage" /v:debug FLExBridge.proj && xbuild /t:VersionNumbers /v:debug FLExBridge.proj
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the
