@@ -141,12 +141,17 @@
 
 	<Target Name="VersionNumbers" DependsOnTargets="GetVersion">
 		<PropertyGroup>
-			<Version>$(GitVersion_MajorMinorPatch)</Version>
+			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
+			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>
 		</PropertyGroup>
 		<Message Text="Version: $(Version)" Importance="high"/>
 		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
-			Condition="'$(teamcity_version)' != ''"/>
-		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="true" Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)" />
+			Condition="'$(teamcity_version)' != '' And $(GetVersion)"/>
+		<Message Text="##teamcity[buildNumber '$(Version)']"
+			Condition="'$(teamcity_version)' != '' And !$(GetVersion)"/>
+		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="true"
+			Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)"
+			Condition="$(GetVersion)"/>
 	</Target>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
