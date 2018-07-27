@@ -20,12 +20,8 @@ using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using SIL.Xml;
-using LibFLExBridgeChorusPlugin;
-using LibFLExBridgeChorusPlugin.DomainServices;
 using LibTriboroughBridgeChorusPlugin;
 using SIL.PlatformUtilities;
-using SIL.Progress;
-using SIL.Xml;
 using TriboroughBridge_ChorusPlugin;
 
 namespace FwdataTestApp

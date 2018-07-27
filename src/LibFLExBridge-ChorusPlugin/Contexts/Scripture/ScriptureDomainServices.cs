@@ -8,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Properties;
 using SIL.Progress;
 

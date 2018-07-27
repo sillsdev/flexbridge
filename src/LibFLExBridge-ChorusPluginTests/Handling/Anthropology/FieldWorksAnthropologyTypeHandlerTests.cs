@@ -11,8 +11,6 @@ using Chorus.FileTypeHandlers.xml;
 using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
-using LibFLExBridgeChorusPlugin.Infrastructure;
-using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;

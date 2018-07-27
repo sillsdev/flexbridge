@@ -86,7 +86,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var	installedTmxBaseDirectory = Path.Combine(
-					Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
+					Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
 			var userTmxBaseDirectory = Path.Combine("SIL", FlexBridge);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.

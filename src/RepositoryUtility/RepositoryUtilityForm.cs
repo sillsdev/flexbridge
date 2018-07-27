@@ -500,7 +500,7 @@ namespace RepositoryUtility
 				default:
 					throw new ArgumentException("I didn't know how to downgrade to your new version future developer person.");
 			}
-			var fixUtfFolder = FileLocator.GetDirectoryDistributedWithApplication(false, "MercurialExtensions", "fixutf8");
+			var fixUtfFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(false, "MercurialExtensions", "fixutf8");
 			if(!string.IsNullOrEmpty(fixUtfFolder))
 				extensions.Add("fixutf8", Path.Combine(fixUtfFolder, "fixutf8.py"));
 			DowngradeHgrcForProject(currentFwdataPathname, format, extensions);
