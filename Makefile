@@ -1,7 +1,7 @@
 # Linux/Mono Makefile for FlexBridge.
 
 CPUARCH=$(shell /usr/bin/arch)
-BUILD_NUMBER=$(dpkg-parsechangelog --show-field=version)
+BUILD_NUMBER=$(shell dpkg-parsechangelog --show-field=version)
 BUILD_VCS_NUMBER=$(shell cat vcs_version)
 XDG_CONFIG_HOME ?= /tmp/.config
 UploadFolder="Alpha"
