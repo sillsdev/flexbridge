@@ -18,6 +18,8 @@
 		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
+		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
+		<UpdateAssemblyInfo Condition="'$(UpdateAssemblyInfo)' == ''">true</GetVersion>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
