@@ -1,4 +1,5 @@
 mode: ContinuousDeployment
+next-version: 3.0
 increment: Patch
 assembly-versioning-scheme: MajorMinorPatchTag
 branches:
@@ -14,5 +15,8 @@ branches:
     tag: lfmerge
     regex: (origin/)?lfmerge
     is-mainline: true
+  pull-request:
+    mode: ContinuousDeployment
+    tag: PR
 ignore:
   sha: []
