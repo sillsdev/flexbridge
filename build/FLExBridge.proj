@@ -14,8 +14,8 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -28,11 +28,12 @@
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
 	<Import Project="$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets"
 		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
+		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
 
 	<UsingTask TaskName="Split" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="GenerateReleaseArtifacts" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="SIL.BuildTasks.UnitTestTasks.NUnit"
 		AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
 		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
@@ -57,6 +58,7 @@
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 4.0.0-beta0012 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.0.2 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.0.2 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 	</Target>
 
 	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
@@ -185,15 +187,23 @@
 			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 	</Target>
 
-	<Target Name="PreparePublishingArtifacts" DependsOnTargets="VersionNumbers; CheckPreRequisites">
-		<Exec Command='$(NuGetCommand) install MarkdownDeep.NET -ExcludeVersion -OutputDirectory $(RootDir)/build'/>
-		<Copy SourceFiles="$(RootDir)/build/MarkdownDeep.NET/lib/.NetFramework 3.5/MarkdownDeep.dll"
-			DestinationFolder="$(RootDir)/build/"/>
-		<GenerateReleaseArtifacts MarkdownFile="$(RootDir)/src/Installer/ReleaseNotes.md"
-			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" StampMarkdownFile="True" VersionNumber="$(Version)"
-			ProductName="flexbridge" DebianChangeLog="$(RootDir)/debian/changelog"
-			ChangeLogAuthorInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;"
-			Release="$(Release)" />
+	<Target Name="PreparePublishingArtifacts">
+		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="PreparePublishingArtifactsInternal" Condition="!$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="PreparePublishingArtifactsInternal"
+			Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
+			Condition="$(RestartBuild)" />
+	</Target>
+
+	<Target Name="PreparePublishingArtifactsInternal" DependsOnTargets="VersionNumbers; CheckPreRequisites">
+		<StampChangelogFileWithVersion ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+			VersionNumber="$(Version)" />
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" />
+		<CreateChangelogEntry ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+			VersionNumber="$(Version)" PackageName="flexbridge"
+			DebianChangelog="$(RootDir)/debian/changelog"
+			MaintainerInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
