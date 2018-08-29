@@ -47,10 +47,10 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SIL.Core, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2">
+    <Reference Include="SIL.Core">
       <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.TestUtilities, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2">
+    <Reference Include="SIL.TestUtilities">
       <HintPath>..\..\lib\DebugMono\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
