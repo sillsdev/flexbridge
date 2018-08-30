@@ -11,6 +11,7 @@
 
 		<!-- Download nuget.exe if it does not already exist -->
 		<DownloadNuGetExe Condition=" '$(DownloadNuGetExe)' == '' ">true</DownloadNuGetExe>
+		<RestorePackages Condition=" '$(RestorePackages)' == ''">true</RestorePackages>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(PackageSources)' == '' ">
@@ -60,7 +61,7 @@
 			Condition="'$(OS)' != 'Windows_NT'" />
 	</Target>
 
-	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
+	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites" Condition="$(RestorePackages)">
 		<!-- Download NuGet packages specified in the packages.config file of each project -->
 		<Exec Command='$(NuGetCommand) restore "$(SolutionPath)"'/>
 		<!-- Download packages in packages-common.config. Then download packages in either packages-linux.config or packages-windows.config. -->

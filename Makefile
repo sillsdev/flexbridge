@@ -19,7 +19,7 @@ release: vcs_version download_dependencies release_build
 
 release_build:
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
-	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /v:debug /p:UpdateAssemblyInfo=false /p:WriteVersionInfoToBuildLog=false
+	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=ReleaseMono /p:RestorePackages=false /v:debug /p:UpdateAssemblyInfo=false /p:WriteVersionInfoToBuildLog=false
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a flexbridge output/ReleaseMono
@@ -30,7 +30,7 @@ debug_build:
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
-	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono /p:UpdateAssemblyInfo=false /p:WriteVersionInfoToBuildLog=false
+	. ./environ && cd build && xbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono /p:RestorePackages=false /p:UpdateAssemblyInfo=false /p:WriteVersionInfoToBuildLog=false
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
