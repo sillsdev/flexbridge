@@ -57,7 +57,6 @@ install:
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
-	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.md*
 	/usr/bin/install flexbridge environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	# Copy mercurial for both architectures since flexbridge is an any architecture package.
