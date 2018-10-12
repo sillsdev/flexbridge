@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
+	<!-- Always install the environment variable so all versions of FLEx can find FLEx Bridge. -->
+	<ComponentRef Id="InstallDirEnvVar"/>
 	<!-- Don't install shortcuts, but put them under a feature to keep the ICE validator happy. -->
 	<Feature Id='Shortcuts' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='0' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutDesktop'/>
