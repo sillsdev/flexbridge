@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="TARGETDIR">
+		<Component Id="InstallDirEnvVar" Guid="EEDDBBF6-7B37-4473-8D53-3081AB076399">
+			<Environment Id="InstallDirEnvVar" Name="FLEXBRIDGEDIR" Action="set" System="yes" Value="[APPFOLDER]" />
+		</Component>
+	</DirectoryRef>
+</Include>
