@@ -67,6 +67,9 @@ namespace LfMergeBridge
 			var commentIdsThatNeedGuids = new Dictionary<string,string>();
 			var replyIdsThatNeedGuids = new Dictionary<string,string>();
 
+			if (commentsFromLF == null)
+				return;
+
 			foreach (KeyValuePair<string, SerializableLfComment> kvp in commentsFromLF)
 			{
 				string lfAnnotationObjectId = kvp.Key;
@@ -233,20 +236,8 @@ namespace LfMergeBridge
 
 		private AnnotationRepository MakePrimaryAnnotationRepository()
 		{
-			string fname = Path.Combine(ProjectDir, mainNotesFilenameStub);
-			EnsureFileExists(fname, "This is a stub file to provide an attachment point for " + mainNotesFilename);
-			return AnnotationRepository.FromFile("id", fname, new NullProgress());
-		}
-
-		private void EnsureFileExists(string filename, string contentToCreateFileWith)
-		{
-			if (!File.Exists(filename))
-			{
-				using (var writer = new StreamWriter(filename, false, Encoding.UTF8))
-				{
-					writer.WriteLine(contentToCreateFileWith);
-				}
-			}
+			return AnnotationRepository.FromFile("id",
+				Path.Combine(ProjectDir, mainNotesFilenameStub), new NullProgress());
 		}
 
 		private Annotation CreateAnnotation(string content, string guidStr, string author, string status, string ownerGuidStr, string ownerShortName)

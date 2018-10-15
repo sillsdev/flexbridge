@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,9 @@ namespace LfMergeBridgeTests
 				"LanguageForgeWriteToChorusNotesActionHandlerTests"));
 			var dir = Path.Combine(_baseDir.Path, "test-project");
 			Directory.CreateDirectory(dir);
-			File.WriteAllText(Path.Combine(dir, "Lexicon.fwstub.ChorusNotes"), notes);
+
+			if (notes != null)
+				File.WriteAllText(Path.Combine(dir, "Lexicon.fwstub.ChorusNotes"), notes);
 			return dir;
 		}
 
@@ -298,6 +300,27 @@ namespace LfMergeBridgeTests
 			guid=""1687b882-97c9-4ca0-9bc3-2a0511715401"">LF comment on F</message>",
 				"1687b882-97c9-4ca0-9bc3-2a0511715400")).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
+
+		/// <summary>
+		/// Empty project from LD so we don't have a *.ChorusNotes file. Shouldn't crash (LF-199).
+		/// </summary>
+		[Test]
+		public void NoChorusNotesFile()
+		{
+			// Setup
+			var projectDir = CreateTestProject(null);
+
+			_inputFile = new TempFile();
+
+			string forClient = null;
+			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
+
+			// Execute/Verify
+			Assert.That(
+				() => sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient),
+				Throws.Nothing);
+		}
+
 	}
 }
 

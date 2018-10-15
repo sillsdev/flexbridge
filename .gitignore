@@ -50,3 +50,4 @@ vcs_version
 icu4c.readme.txt
 gitversion.properties
 .idea/
+.vs/
