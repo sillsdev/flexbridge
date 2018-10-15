@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT) (See: license.rtf file)
 
 using System;
@@ -78,7 +78,7 @@ namespace LfMergeBridge
 				{
 					if (lfAnnotation == null)
 					{
-						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping null annotation with MongoId {0}",
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("Skipping null annotation with MongoId {0}",
 							lfAnnotationObjectId ?? "(null ObjectId)"));
 					}
 					else
@@ -86,7 +86,7 @@ namespace LfMergeBridge
 						// We don't have a C# 6 compiler in our build infrastructure, so we have to do this the hard(er) way.
 						string guidForLog = lfAnnotation == null ? "(no guid)" : lfAnnotation.Guid ?? "(no guid)";
 						string contentForLog = lfAnnotation == null ? "(no content)" : lfAnnotation.Content ?? "(no content)";
-						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("Skipping deleted annotation {0} containing content \"{1}\"",
 							guidForLog, contentForLog));
 						// The easy way would have been able to skip creating guidForLog and contentForLog; that would have looked like:
 						// LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
@@ -113,10 +113,10 @@ namespace LfMergeBridge
 				}
 			}
 
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New comment ID->Guid mappings: {0}",
-				String.Join(";", commentIdsThatNeedGuids.Select(kv => String.Format("{0}={1}", kv.Key, kv.Value)))));
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("New reply ID->Guid mappings: {0}",
-				String.Join(";", replyIdsThatNeedGuids.Select(kv => String.Format("{0}={1}", kv.Key, kv.Value)))));
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("New comment ID->Guid mappings: {0}",
+				string.Join(";", commentIdsThatNeedGuids.Select(kv => string.Format("{0}={1}", kv.Key, kv.Value)))));
+			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("New reply ID->Guid mappings: {0}",
+				string.Join(";", replyIdsThatNeedGuids.Select(kv => string.Format("{0}={1}", kv.Key, kv.Value)))));
 
 			SaveReposIfNeeded(annRepos, progress);
 		}
@@ -131,21 +131,14 @@ namespace LfMergeBridge
 
 		private string LfStatusToChorusStatus(string lfStatus)
 		{
-			if (lfStatus == SerializableLfComment.Resolved)
-			{
-				return Chorus.notes.Annotation.Closed;
-			}
-			else
-			{
-				return Chorus.notes.Annotation.Open;
-			}
+			return lfStatus == SerializableLfComment.Resolved ? Annotation.Closed : Annotation.Open;
 		}
 
 		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo,
 			string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
 		{
 			// Any LF comments that do NOT yet have GUIDs need them set from the corresponding Chorus annotation
-			if (String.IsNullOrEmpty(annotationInfo.Guid) && !String.IsNullOrEmpty(annotationObjectId))
+			if (string.IsNullOrEmpty(annotationInfo.Guid) && !string.IsNullOrEmpty(annotationObjectId))
 			{
 				commentIdsThatNeedGuids[annotationObjectId] = chorusAnnotation.Guid;
 			}
