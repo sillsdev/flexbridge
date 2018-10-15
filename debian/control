@@ -11,6 +11,7 @@ Build-Depends: debhelper (>= 9.0.0),
  libxklavier-dev,
  libgtk2.0-dev,
  libcurl3,
+ wget,
  unzip,
  ca-certificates,
  git
