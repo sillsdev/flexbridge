@@ -12,7 +12,6 @@ Build-Depends: debhelper (>= 9.0.0),
  libgtk2.0-dev,
  libcurl3,
  unzip,
- curl,
  ca-certificates,
  git
 Standards-Version: 3.9.6
