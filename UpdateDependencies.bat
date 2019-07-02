@@ -25,12 +25,6 @@ REM FieldWorks build downloads this but we don't.  Another option is to generate
 REM buildupdate.sh using the generator at github.com/chrisvire/BuildUpdate
 copy /Y \fwrepo\fw\Downloads\IPCFramework.dll lib\%BUILD_CONFIG%\
 
-copy /Y %CHORUS_DIR%\Download\L10NSharp.dll lib\common\
-REM Uncomment these lines if you are working on L10NSharp
-REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.dll lib\common\
-REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
-REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
-
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\Autofac.dll lib\%BUILD_CONFIG%\
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\Autofac.dll lib\common
 
@@ -55,5 +49,3 @@ copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\SIL.*.pdb output\%BUILD_CONFIG%\
 
 copy /Y %CHORUS_DIR%\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\
 copy /Y %CHORUS_DIR%\lib\%BUILD_CONFIG%\icu*.dll lib\%BUILD_CONFIG%\
-
-copy /Y %CHORUS_DIR%\lib\common\Vulcan.Uczniowie.HelpProvider.dll lib\common

@@ -1,190 +1,190 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>8.0.30703</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FLEx_ChorusPlugin</RootNamespace>
-	<AssemblyName>FLEx-ChorusPlugin</AssemblyName>
-	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{133981BF-62BF-453A-8ED0-AEFA386FEBB8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FLEx_ChorusPlugin</RootNamespace>
+    <AssemblyName>FLEx-ChorusPlugin</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>..\..\output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>..\..\output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU'">
-	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>TRACE;MONO</DefineConstants>
-	<Optimize>true</Optimize>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
+    <DefineConstants>TRACE;MONO</DefineConstants>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU'">
-	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<DebugType>full</DebugType>
-	<UseVSHostingProcess>false</UseVSHostingProcess>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\DebugMono\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Windows.Forms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Release\SIL.Windows.Forms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="ChorusMerge">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\ChorusMerge.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Release\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Windows.Forms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\Debug\SIL.Windows.Forms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="ChorusMerge">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\ChorusMerge.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Debug\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Windows.Forms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
-	</Reference>
+    <Reference Include="Chorus">
+      <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="ChorusMerge">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\ChorusMerge.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ReleaseMono\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-	<Reference Include="Chorus">
-	  <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
-	</Reference>
-	<Reference Include="ChorusMerge">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\ChorusMerge.exe</HintPath>
-	</Reference>
-	<Reference Include="LibChorus">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Core">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
-	</Reference>
-	<Reference Include="SIL.Windows.Forms">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
-	</Reference>
-  </ItemGroup>
-  <ItemGroup>
-	<Reference Include="Autofac">
-	  <HintPath>..\..\lib\common\Autofac.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.ComponentModel.Composition" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml.Linq" />
-	<Reference Include="System.Xml" />
-	<Reference Include="Vulcan.Uczniowie.HelpProvider">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\common\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
-	</Reference>
-    <Reference Include="icu.net">
-      <HintPath>..\..\packages\icu.net.2.0.0\lib\net40\icu.net.dll</HintPath>
+    <Reference Include="Chorus">
+      <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
+    </Reference>
+    <Reference Include="ChorusMerge">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\ChorusMerge.exe</HintPath>
+    </Reference>
+    <Reference Include="LibChorus">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DebugMono\SIL.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
-	<Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	</Compile>
+    <Reference Include="Autofac">
+      <HintPath>..\..\lib\common\Autofac.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="icu.net">
+      <HintPath>..\..\packages\icu.net.2.0.0\lib\net40\icu.net.dll</HintPath>
+    </Reference>
+    <Reference Include="Vulcan.Uczniowie.HelpProvider, Version=0.1.0.0, Culture=neutral, PublicKeyToken=c5e47f534b8ee927">
+      <HintPath>..\..\packages\Vulcan.Uczniowie.HelpProvider.1.0.0\lib\net461\Vulcan.Uczniowie.HelpProvider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Content Include="chorus.ico" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\ActionHandlers\ObtainProjectStrategyFlex.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\SendReceiveActionHandler.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\UndoExportActionHandler.cs" />
+    <Compile Include="Infrastructure\ActionHandlers\ViewNotesActionHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
-	  <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
-	  <Name>TriboroughBridge-ChorusPlugin</Name>
-	</ProjectReference>
+    <Content Include="chorus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj">
+      <Project>{8F9F6C42-2BB6-49E1-831D-7414CA411845}</Project>
+      <Name>TriboroughBridge-ChorusPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
       <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
       <Name>LibFLExBridge-ChorusPlugin</Name>
@@ -216,10 +216,9 @@
   -->
   <!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets. We get
     these warnings because this project doesn't yet use the new .csproj format. -->
-  <Target Name="GetAssemblyVersion"/>
-  <Target Name="GenerateNuspec"/>
-  <Target Name="_GenerateRestoreProjectSpec"/>
-
+  <Target Name="GetAssemblyVersion" />
+  <Target Name="GenerateNuspec" />
+  <Target Name="_GenerateRestoreProjectSpec" />
   <!-- Include the generated assembly info files for the purpose of Linux package building.
     We can't directly use the GitVersionTask there because we don't have a git repo when
     building the binary, so the task fails. Instead we generate the AssemblyInfo file when

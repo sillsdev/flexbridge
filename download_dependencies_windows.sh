@@ -92,13 +92,6 @@ cd -
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus.exe"=>"lib/Debug", "LibChorus.dll"=>"lib/Debug", "ChorusMerge.exe"=>"lib/Debug", "Mercurial.zip"=>"lib/Debug", "LibChorus.TestUtilities.dll"=>"lib/Debug", "*.pdb"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
-# [3] build: Helpprovider (bt225)
-#     project: Helpprovider
-#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt225
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
-#     VCS: https://github.com/sillsdev/helpprovider.git [refs/heads/master]
 # [4] build: IPC continuous (bt278)
 #     project: IPC Library
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=bt278
@@ -118,7 +111,7 @@ cd -
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Libpalaso_PalasoWin32masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"SIL.Core.Desktop.dll"=>"lib/Release", "SIL.Core.Desktop.pdb"=>"lib/Release", "SIL.Core.dll"=>"lib/Release", "SIL.Core.pdb"=>"lib/Release", "SIL.Lift.dll"=>"lib/Release", "SIL.Lift.pdb"=>"lib/Release", "SIL.TestUtilities.dll"=>"lib/Release", "SIL.TestUtilities.pdb"=>"lib/Release", "SIL.Windows.Forms.dll"=>"lib/Release", "SIL.Windows.Forms.pdb"=>"lib/Release", "SIL.WritingSystems.dll"=>"lib/Release", "SIL.WritingSystems.pdb"=>"lib/Release", "L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release", "debug/SIL.Core.Desktop.dll"=>"lib/Debug", "debug/SIL.Core.Desktop.pdb"=>"lib/Debug", "debug/SIL.Core.dll"=>"lib/Debug", "debug/SIL.Core.pdb"=>"lib/Debug", "debug/SIL.Lift.dll"=>"lib/Debug", "debug/SIL.Lift.pdb"=>"lib/Debug", "debug/SIL.TestUtilities.dll"=>"lib/Debug", "debug/SIL.TestUtilities.pdb"=>"lib/Debug", "debug/SIL.Windows.Forms.dll"=>"lib/Debug", "debug/SIL.Windows.Forms.pdb"=>"lib/Debug", "debug/SIL.WritingSystems.dll"=>"lib/Debug", "debug/SIL.WritingSystems.pdb"=>"lib/Debug", "debug/L10NSharp.dll"=>"lib/Debug", "debug/L10NSharp.pdb"=>"lib/Debug"}
+#     paths: {"SIL.Core.Desktop.dll"=>"lib/Release", "SIL.Core.Desktop.pdb"=>"lib/Release", "SIL.Core.dll"=>"lib/Release", "SIL.Core.pdb"=>"lib/Release", "SIL.Lift.dll"=>"lib/Release", "SIL.Lift.pdb"=>"lib/Release", "SIL.TestUtilities.dll"=>"lib/Release", "SIL.TestUtilities.pdb"=>"lib/Release", "SIL.Windows.Forms.dll"=>"lib/Release", "SIL.Windows.Forms.pdb"=>"lib/Release", "SIL.WritingSystems.dll"=>"lib/Release", "SIL.WritingSystems.pdb"=>"lib/Release", "debug/SIL.Core.Desktop.dll"=>"lib/Debug", "debug/SIL.Core.Desktop.pdb"=>"lib/Debug", "debug/SIL.Core.dll"=>"lib/Debug", "debug/SIL.Core.pdb"=>"lib/Debug", "debug/SIL.Lift.dll"=>"lib/Debug", "debug/SIL.Lift.pdb"=>"lib/Debug", "debug/SIL.TestUtilities.dll"=>"lib/Debug", "debug/SIL.TestUtilities.pdb"=>"lib/Debug", "debug/SIL.Windows.Forms.dll"=>"lib/Debug", "debug/SIL.Windows.Forms.pdb"=>"lib/Debug", "debug/SIL.WritingSystems.dll"=>"lib/Debug", "debug/SIL.WritingSystems.pdb"=>"lib/Debug" }
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
 
 # make sure output directories exist
@@ -168,7 +161,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32mast
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.pdb ./lib/Debug/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Release/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Debug/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.dll ./lib/Release/SIL.Core.Desktop.dll
@@ -183,8 +175,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_Palaso
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.Windows.Forms.pdb ./lib/Release/SIL.Windows.Forms.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.WritingSystems.dll ./lib/Release/SIL.WritingSystems.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.WritingSystems.pdb ./lib/Release/SIL.WritingSystems.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/L10NSharp.dll ./lib/Release/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/L10NSharp.pdb ./lib/Release/L10NSharp.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.Core.Desktop.dll ./lib/Debug/SIL.Core.Desktop.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.Core.Desktop.pdb ./lib/Debug/SIL.Core.Desktop.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.Core.dll ./lib/Debug/SIL.Core.dll
@@ -197,6 +187,4 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_Palaso
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.Windows.Forms.pdb ./lib/Debug/SIL.Windows.Forms.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.WritingSystems.dll ./lib/Debug/SIL.WritingSystems.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/SIL.WritingSystems.pdb ./lib/Debug/SIL.WritingSystems.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/L10NSharp.dll ./lib/Debug/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/debug/L10NSharp.pdb ./lib/Debug/L10NSharp.pdb
 # End of script
