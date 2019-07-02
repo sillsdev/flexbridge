@@ -113,7 +113,6 @@
 
 	<ItemGroup>
 		<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
-		<IcuDotNetFiles Include="$(RootDir)/lib/$(Configuration)/icu.net.dll*"/>
 		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
 		<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
@@ -126,7 +125,6 @@
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
 		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
-		<Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
 		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>

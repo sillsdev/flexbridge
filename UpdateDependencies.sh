@@ -58,5 +58,3 @@ cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/Palaso*.dll* output/${BUILD_CONFIG}Mono
 
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* output/${BUILD_CONFIG}Mono/
-
-cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/icu*.dll* lib/${BUILD_CONFIG}Mono/

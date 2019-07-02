@@ -46,6 +46,3 @@ copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\Palaso*.pdb output\%BUILD_CONFIG%\
 
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\SIL.*.dll lib\%BUILD_CONFIG%\
 copy /Y %CHORUS_DIR%\output\%BUILD_CONFIG%\SIL.*.pdb output\%BUILD_CONFIG%\
-
-copy /Y %CHORUS_DIR%\lib\%BUILD_CONFIG%\icu.net.dll.config lib\%BUILD_CONFIG%\
-copy /Y %CHORUS_DIR%\lib\%BUILD_CONFIG%\icu*.dll lib\%BUILD_CONFIG%\
