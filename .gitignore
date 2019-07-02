@@ -23,7 +23,6 @@ DistFiles/.guidsForInstaller.xml
 Patches/
 *.pdb
 *.mdb
-lib/*/L10NSharp.dll
 All*Files.lst
 Download/
 lib/*/SIL*.dll
@@ -35,8 +34,6 @@ lib/*/NDesk.DBus.dll*
 lib/*/icu*.dll*
 lib/*/IPCFramework.dll
 lib/*/Autofac.dll
-lib/*/*HelpProvider.dll
-lib/*/L10NSharp.xml
 lib/Release/*.msm
 lib/*/*.config
 lib/common/Chorus_Help.chm

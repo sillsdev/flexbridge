@@ -34,11 +34,6 @@ then
 	mkdir output/${BUILD_CONFIG}Mono
 fi
 
-cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/L10NSharp.dll* lib/common/
-# Uncomment these two lines if you are working on L10NSharp
-# cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.dll lib/common/
-# cp ../l10nsharp/output/${BUILD_CONFIG}Mono/L10NSharp.* lib/${BUILD_CONFIG}Mono/
-
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/output/${BUILD_CONFIG}Mono/Autofac.dll* lib/common
 
@@ -65,5 +60,3 @@ cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* lib/${BUILD_CONFIG}Mono/
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/SIL.*.dll* output/${BUILD_CONFIG}Mono/
 
 cp ${CHORUS_DIR}/lib/${BUILD_CONFIG}Mono/icu*.dll* lib/${BUILD_CONFIG}Mono/
-
-cp ${CHORUS_DIR}/lib/common/Vulcan.Uczniowie.HelpProvider.dll* lib/common

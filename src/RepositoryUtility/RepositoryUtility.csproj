@@ -63,10 +63,6 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\lib\Release\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="L10NSharp">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Release\L10NSharp.dll</HintPath>
-    </Reference>
     <Reference Include="LibChorus">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
@@ -89,10 +85,6 @@
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\lib\Debug\Chorus.exe</HintPath>
-    </Reference>
-    <Reference Include="L10NSharp">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Debug\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <SpecificVersion>False</SpecificVersion>
@@ -117,10 +109,6 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\lib\ReleaseMono\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="L10NSharp">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\ReleaseMono\L10NSharp.dll</HintPath>
-    </Reference>
     <Reference Include="LibChorus">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
@@ -143,10 +131,6 @@
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\lib\DebugMono\Chorus.exe</HintPath>
-    </Reference>
-    <Reference Include="L10NSharp">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\DebugMono\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="LibChorus">
       <SpecificVersion>False</SpecificVersion>
@@ -180,11 +164,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28">
+      <HintPath>..\..\packages\L10NSharp.4.0.0\lib\net461\L10NSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -299,10 +288,9 @@
   -->
   <!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets. We get
     these warnings because this project doesn't yet use the new .csproj format. -->
-  <Target Name="GetAssemblyVersion"/>
-  <Target Name="GenerateNuspec"/>
-  <Target Name="_GenerateRestoreProjectSpec"/>
-
+  <Target Name="GetAssemblyVersion" />
+  <Target Name="GenerateNuspec" />
+  <Target Name="_GenerateRestoreProjectSpec" />
   <!-- Include the generated assembly info files for the purpose of Linux package building.
     We can't directly use the GitVersionTask there because we don't have a git repo when
     building the binary, so the task fails. Instead we generate the AssemblyInfo file when
