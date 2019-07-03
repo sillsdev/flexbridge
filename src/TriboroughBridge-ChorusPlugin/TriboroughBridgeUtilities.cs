@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -80,9 +80,9 @@ namespace TriboroughBridge_ChorusPlugin
 			return Directory.GetDirectories(folder).Length == 0 && Directory.GetFiles(folder).Length == 0;
 		}
 
-		internal static Dictionary<string, LocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
+		internal static Dictionary<string, ILocalizationManager> SetupLocalization(Dictionary<string, string> commandLineArgs)
 		{
-			var results = new Dictionary<string, LocalizationManager>(3);
+			var results = new Dictionary<string, ILocalizationManager>(3);
 
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
 			var	installedTmxBaseDirectory = Path.Combine(
@@ -95,7 +95,7 @@ namespace TriboroughBridge_ChorusPlugin
 			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var flexBridgeLocMan = LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
+			var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, FlexBridge, Application.ProductName,
 															  version,
 															  installedTmxBaseDirectory,
 															  userTmxBaseDirectory,
@@ -112,7 +112,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
+			var chorusLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "Chorus", "Chorus",
 														  version,
 														  installedTmxBaseDirectory,
 														  userTmxBaseDirectory,
@@ -122,7 +122,7 @@ namespace TriboroughBridge_ChorusPlugin
 
 			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var palasoLocMan = LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso",
+			var palasoLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "Palaso", "Palaso",
 														  version,
 														  installedTmxBaseDirectory,
 														  userTmxBaseDirectory,
