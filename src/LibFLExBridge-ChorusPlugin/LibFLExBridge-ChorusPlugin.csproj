@@ -116,6 +116,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handling\Common\ProjectLexiconSettingsStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainServices\FLExProjectSplitter.cs" />
     <Compile Include="DomainServices\FLExProjectUnifier.cs" />
@@ -253,10 +254,9 @@
   </Target>
   <!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets. We get
     these warnings because this project doesn't yet use the new .csproj format. -->
-  <Target Name="GetAssemblyVersion"/>
-  <Target Name="GenerateNuspec"/>
-  <Target Name="_GenerateRestoreProjectSpec"/>
-
+  <Target Name="GetAssemblyVersion" />
+  <Target Name="GenerateNuspec" />
+  <Target Name="_GenerateRestoreProjectSpec" />
   <!-- Include the generated assembly info files for the purpose of Linux package building.
     We can't directly use the GitVersionTask there because we don't have a git repo when
     building the binary, so the task fails. Instead we generate the AssemblyInfo file when

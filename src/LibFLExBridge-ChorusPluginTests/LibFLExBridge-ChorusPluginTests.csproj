@@ -148,6 +148,7 @@
     <Compile Include="DomainServices\CmObjectNestingServiceTests.cs" />
     <Compile Include="DomainServices\CmObjectValidatorTests.cs" />
     <Compile Include="Handling\BaseFieldWorksTypeHandlerTests.cs" />
+    <Compile Include="Handling\Common\ProjectLexiconSettingsTypeHandlerTests.cs" />
     <Compile Include="Handling\DateTimeMergingTests.cs" />
     <Compile Include="Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
     <Compile Include="Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />

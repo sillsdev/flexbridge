@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Xml.Linq;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
@@ -190,5 +191,9 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		internal const string ScrRefSystem = "ScrRefSystem";
 
 		/***** Relocate ones that get added below here. *****/
+		internal const string ProjectLexiconSettingsExtension = "plsx";
+		internal const string ProjectLexiconSettings = "LexiconSettings" + "." + ProjectLexiconSettingsExtension;
+		internal const string LexiconSettingsRoot = "ProjectLexiconSettings";
+
 	}
 }
