@@ -30,10 +30,10 @@ where_curl=$(type -P curl)
 where_wget=$(type -P wget)
 if [ "$where_curl" != "" ]
 then
-copy_curl $1 $2
+copy_curl "$1" "$2"
 elif [ "$where_wget" != "" ]
 then
-copy_wget $1 $2
+copy_wget "$1" "$2"
 else
 echo "Missing curl or wget"
 exit 1
@@ -45,9 +45,9 @@ copy_curl() {
 echo "curl: $2 <= $1"
 if [ -e "$2" ] && [ "$force" != "1" ]
 then
-curl -# -L -z $2 -o $2 $1
+curl -# -L -z "$2" -o "$2" "$1"
 else
-curl -# -L -o $2 $1
+curl -# -L -o "$2" "$1"
 fi
 }
 
@@ -56,7 +56,7 @@ echo "wget: $2 <= $1"
 f1=$(basename $1)
 f2=$(basename $2)
 cd $(dirname $2)
-wget -q -L -N $1
+wget -q -L -N "$1"
 # wget has no true equivalent of curl's -o option.
 # Different versions of wget handle (or not) % escaping differently.
 # A URL query is the only reason why $f1 and $f2 should differ.
@@ -68,75 +68,75 @@ cd -
 # *** Results ***
 # build: FLEx Bridge-master-Linux64-Continuous (bt435)
 # project: FLEx Bridge
-# URL: http://build.palaso.org/viewType.html?buildTypeId=bt435
-# VCS: https://github.com/sillsdev/flexbridge.git [master]
+# URL: https://build.palaso.org/viewType.html?buildTypeId=bt435
+# VCS: git@github.com:sillsdev/flexbridge.git [master]
 # dependencies:
 # [0] build: Chorus-Documentation (bt216)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt216
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt216
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus_Help.chm"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorushelp.git [master]
 # [1] build: chorus-linux64-chorus-2.5 Continuous (ChorusLinux64v25Cont)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Autofac.dll"=>"lib/common", "MercurialExtensions/**"=>"MercurialExtensions", ""=>"", "Chorus.exe"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/ReleaseMono", "Mercurial-x86_64.zip"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [2] build: chorus-linux64-chorus-2.5 Continuous (ChorusLinux64v25Cont)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=ChorusLinux64v25Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"debug/Chorus.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [chorus-2.5]
 # [3] build: Helpprovider (bt225)
 #     project: Helpprovider
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt225
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt225
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/helpprovider.git [refs/heads/master]
 # [4] build: IPC-Precise64 (bt279)
 #     project: IPC Library
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt279
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/ReleaseMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
 # [5] build: IPC-Precise64 (bt279)
 #     project: IPC Library
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt279
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt279
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/DebugMono"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
 # [6] build: icucil-linux64-Continuous (bt281)
 #     project: Libraries
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/ReleaseMono", "icu*.config"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
 # [7] build: icucil-linux64-Continuous (bt281)
 #     project: Libraries
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt281
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt281
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"icu*.dll"=>"lib/DebugMono", "icu*.config"=>"lib/DebugMono"}
 #     VCS: https://github.com/sillsdev/icu-dotnet [master]
 # [8] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"NDesk.DBus.dll"=>"lib/ReleaseMono", "NDesk.DBus.dll.config"=>"lib/ReleaseMono", "Palaso.dll"=>"lib/ReleaseMono", "Palaso.TestUtilities.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll"=>"lib/ReleaseMono", "PalasoUIWindowsForms.dll.config"=>"lib/ReleaseMono", "PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/ReleaseMono", "Palaso.Lift.dll"=>"lib/ReleaseMono", "L10NSharp.dll"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-2.6]
 # [9] build: palaso-linux64-libpalaso-2.6 Continuous (PalasoLinux64v26Cont)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=PalasoLinux64v26Cont
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"debug/NDesk.DBus.dll"=>"lib/DebugMono", "debug/NDesk.DBus.dll.config"=>"lib/DebugMono", "debug/Palaso.dll"=>"lib/DebugMono", "debug/Palaso.TestUtilities.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.dll.config"=>"lib/DebugMono", "debug/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"=>"lib/DebugMono", "debug/Palaso.Lift.dll"=>"lib/DebugMono", "debug/L10NSharp.dll"=>"lib/DebugMono"}
