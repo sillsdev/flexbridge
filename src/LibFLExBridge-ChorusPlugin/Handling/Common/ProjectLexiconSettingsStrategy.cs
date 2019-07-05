@@ -35,7 +35,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			var writingSystemsElem = document.Root.Element("WritingSystems");
 			if (writingSystemsElem == null)
 			{
-				return "Lexicon settings file has no writing systems elements.";
+				return "Lexicon settings file has no writing systems element.";
 			}
 			var wsIdSet = new HashSet<string>();
 			foreach (var writingSystemElem in writingSystemsElem.Elements("WritingSystem"))
@@ -98,12 +98,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 
 			private void SetAttrToFalseIfNotFound(string attName, XmlNode toChange)
 			{
-				if (toChange?.Attributes != null)
+				if (toChange == null)
+					return;
+
+				if (toChange.Attributes?[attName] == null)
 				{
-					if (toChange.Attributes[attName] == null)
-					{
-						((XmlElement)toChange).SetAttribute(attName, "false"); // The default value is false in SIL.Lexicon 
-					}
+					((XmlElement)toChange).SetAttribute(attName, "false"); // The default value is false in SIL.Lexicon 
 				}
 			}
 		}

@@ -263,5 +263,37 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlAttributeChangedReport) });
 		}
+
+		[Test]
+		public void PreMerger_TheySetToDefaultWeSetToTrue()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string theirsAddsEn = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='false'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string oursAddsFr = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='true'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, oursAddsFr,
+				_commonFile, commonAncestor,
+				_theirFile, theirsAddsEn,
+				new List<string>
+				{
+					"ProjectLexiconSettings/WritingSystems[@addToSldr='true']"
+				}, null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlAttributeChangedReport) });
+		}
 	}
 }
