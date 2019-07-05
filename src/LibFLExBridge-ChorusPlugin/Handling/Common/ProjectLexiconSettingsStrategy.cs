@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using Chorus.FileTypeHandlers;
 using Chorus.merge;
@@ -73,6 +74,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			var rootStrategy = ElementStrategy.CreateSingletonElement();
 			merger.MergeStrategies.SetStrategy("ProjectLexiconSettings", rootStrategy);
 			var writingSystemsStrategy = ElementStrategy.CreateSingletonElement();
+			writingSystemsStrategy.Premerger = new LexiconSettingsWritingSystemsPreMerger();
 			merger.MergeStrategies.SetStrategy("WritingSystems", writingSystemsStrategy);
 			var writingSystemStrategy = ElementStrategy.CreateForKeyedElement("id", false);
 			writingSystemStrategy.IsAtomic = true;
@@ -80,6 +82,30 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			var mergeResults = merger.MergeFiles(mergeOrder.pathToOurs, mergeOrder.pathToTheirs, mergeOrder.pathToCommonAncestor);
 			// Write merged data
 			File.WriteAllText(mergeOrder.pathToOurs, mergeResults.MergedNode.OuterXml, Encoding.UTF8);
+		}
+
+		private sealed class LexiconSettingsWritingSystemsPreMerger : IPremerger
+		{
+			public void Premerge(IMergeEventListener listener, ref XmlNode ours, XmlNode theirs, XmlNode ancestor)
+			{
+				SetAttrToFalseIfNotFound("projectSharing", ancestor);
+				SetAttrToFalseIfNotFound("projectSharing", ours);
+				SetAttrToFalseIfNotFound("projectSharing", theirs);
+				SetAttrToFalseIfNotFound("addToSldr", ancestor);
+				SetAttrToFalseIfNotFound("addToSldr", ours);
+				SetAttrToFalseIfNotFound("addToSldr", theirs);
+			}
+
+			private void SetAttrToFalseIfNotFound(string attName, XmlNode toChange)
+			{
+				if (toChange?.Attributes != null)
+				{
+					if (toChange.Attributes[attName] == null)
+					{
+						((XmlElement)toChange).SetAttribute(attName, "false"); // The default value is false in SIL.Lexicon 
+					}
+				}
+			}
 		}
 
 		public string Extension => "plsx";

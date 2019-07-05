@@ -167,5 +167,101 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				0, new List<Type>(),
 				2, new List<Type> { typeof(XmlAdditionChangeReport), typeof(XmlAdditionChangeReport) });
 		}
+
+		[Test]
+		public void PreMerger_NoConflictsWhenBothChangeToFalse()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string theirsAddsEn = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='false'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string oursAddsFr = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems projectSharing='false'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, oursAddsFr,
+				_commonFile, commonAncestor,
+				_theirFile, theirsAddsEn,
+				new List<string>
+				{
+					"ProjectLexiconSettings/WritingSystems[@addToSldr='false' and @projectSharing='false']"
+				}, null,
+				0, new List<Type>(),
+				0, new List<Type>());
+		}
+
+		[Test]
+		public void PreMerger_NoConflictsIfEachChangeDifferentSetting()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string theirsAddsEn = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='true'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string oursAddsFr = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems projectSharing='true'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, oursAddsFr,
+				_commonFile, commonAncestor,
+				_theirFile, theirsAddsEn,
+				new List<string>
+				{
+					"ProjectLexiconSettings/WritingSystems[@addToSldr='true' and @projectSharing='true']"
+				}, null,
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlAttributeChangedReport) });
+		}
+
+		[Test]
+		public void PreMerger_CanChangeToFalse()
+		{
+			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='true' projectSharing='false'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string theirsAddsEn = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='true' projectSharing='true'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+			const string oursAddsFr = @"<?xml version='1.0' encoding='utf-8'?>
+<ProjectLexiconSettings>
+<WritingSystems addToSldr='false' projectSharing='false'>
+</WritingSystems>
+</ProjectLexiconSettings>";
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, oursAddsFr,
+				_commonFile, commonAncestor,
+				_theirFile, theirsAddsEn,
+				new List<string>
+				{
+					"ProjectLexiconSettings/WritingSystems[@addToSldr='false' and @projectSharing='true']"
+				}, null,
+				0, new List<Type>(),
+				2, new List<Type> { typeof(XmlAttributeChangedReport), typeof(XmlAttributeChangedReport) });
+		}
 	}
 }
