@@ -180,12 +180,24 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 		{
 			progress.WriteMessage("Copying settings files...");
 			// copy the dictionary configuration files into the .hg included repo
+			if (writeVerbose)
+			{
+				progress.WriteMessage("Copying dictionary configuration settings.");
+			}
 			var dictionaryConfigFolder = Path.Combine(pathRoot, "ConfigurationSettings");
 			DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), true);
 			// copy the lexicon settings files into the.hg included repo
+			if (writeVerbose)
+			{
+				progress.WriteMessage("Copying shared lexicon settings.");
+			}
 			var sharedSettingsFolder = Path.Combine(pathRoot, "SharedSettings");
 			DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), true);
 			// copy the writing system files into the .hg included repo
+			if (writeVerbose)
+			{
+				progress.WriteMessage("Copying writing systems.");
+			}
 			var wsFolder = Path.Combine(pathRoot, "WritingSystems");
 			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystems"), true);
 		}
@@ -193,15 +205,42 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 		private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
 		{
 			progress.WriteMessage("Copying settings files...");
+			var cachedSettingsPath = Path.Combine(pathRoot, "CachedSettings");
+			if (!Directory.Exists(cachedSettingsPath))
+			{
+				// No settings in the repo, nothing to copy
+				return;
+			}
 			// copy the dictionary configuration files out ofthe .hg included repo
-			var dictionaryConfigFolder = Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings");
-			DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "ConfigurationSettings"), true);
+			var dictionaryConfigFolder = Path.Combine(cachedSettingsPath, "ConfigurationSettings");
+			if (Directory.Exists(dictionaryConfigFolder))
+			{
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying dictionary configuration settings.");
+				}
+				DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "ConfigurationSettings"), true);
+			}
 			// copy the lexicon settings files into the.hg included repo
-			var sharedSettingsFolder = Path.Combine(pathRoot, "CachedSettings", "SharedSettings");
-			DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "SharedSettings"), true);
+			var sharedSettingsFolder = Path.Combine(cachedSettingsPath, "SharedSettings");
+			if (Directory.Exists(sharedSettingsFolder))
+			{
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying shared lexicon settings.");
+				}
+				DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "SharedSettings"), true);
+			}
 			// copy the writing system files into the .hg included repo
-			var wsFolder = Path.Combine(pathRoot, "CachedSettings", "WritingSystems");
-			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "WritingSystems"), true);
+			var wsFolder = Path.Combine(cachedSettingsPath, "WritingSystems");
+			if (Directory.Exists(wsFolder))
+			{
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying writing systems.");
+				}
+				DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "WritingSystems"), true);
+			}
 		}
 	}
 }
