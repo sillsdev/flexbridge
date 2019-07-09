@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -17,7 +17,7 @@ namespace LibFLExBridgeChorusPluginTests
 {
 	internal static class FieldWorksTestServices
 	{
-		internal const int ExpectedExtensionCount = 27;
+		internal const int ExpectedExtensionCount = 28;
 
 		internal static void RemoveTempFiles(ref TempFile ourFile, ref TempFile commonFile, ref TempFile theirFile)
 		{
@@ -144,6 +144,8 @@ namespace LibFLExBridgeChorusPluginTests
 			Assert.That(eventListener.Conflicts.Select(x => x.GetType()), Is.EqualTo(conflictTypes));
 
 			eventListener.AssertExpectedChangesCount(expectedChangesCount);
+			Assert.That(expectedChangesCount, Is.EqualTo(changeTypes.Count),
+				"Test setup error: expected changes and the count of expected change types don't match");
 			Assert.That(eventListener.Changes.Select(x => x.GetType()), Is.EqualTo(changeTypes));
 
 			resultingConflicts = eventListener.Conflicts;

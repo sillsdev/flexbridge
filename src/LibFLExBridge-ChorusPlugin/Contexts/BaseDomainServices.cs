@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -12,6 +12,7 @@ using LibFLExBridgeChorusPlugin.Contexts.Linguistics;
 using LibFLExBridgeChorusPlugin.Contexts.Scripture;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
+using SIL.IO;
 using SIL.Progress;
 
 namespace LibFLExBridgeChorusPlugin.Contexts
@@ -28,6 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			CopySupportingSettingsFilesIntoRepo(progress, writeVerbose, pathRoot);
 		}
 
 		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
@@ -50,7 +52,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 			{
 				retval[highLevelElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()] = highLevelElement;
 			}
-
+			CopySupportingSettingsFilesIntoProjectFolder(progress, writeVerbose, pathRoot);
 			return retval;
 		}
 
@@ -172,6 +174,34 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 
 			return (propElement == null) ? new List<string>() : (from osEl in propElement.Elements(FlexBridgeConstants.Objsur)
 																 select osEl.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()).ToList();
+		}
+
+		private static void CopySupportingSettingsFilesIntoRepo(IProgress progress, bool writeVerbose, string pathRoot)
+		{
+			progress.WriteMessage("Copying settings files...");
+			// copy the dictionary configuration files into the .hg included repo
+			var dictionaryConfigFolder = Path.Combine(pathRoot, "ConfigurationSettings");
+			DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), true);
+			// copy the lexicon settings files into the.hg included repo
+			var sharedSettingsFolder = Path.Combine(pathRoot, "SharedSettings");
+			DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), true);
+			// copy the writing system files into the .hg included repo
+			var wsFolder = Path.Combine(pathRoot, "WritingSystems");
+			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystems"), true);
+		}
+
+		private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
+		{
+			progress.WriteMessage("Copying settings files...");
+			// copy the dictionary configuration files out ofthe .hg included repo
+			var dictionaryConfigFolder = Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings");
+			DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "ConfigurationSettings"), true);
+			// copy the lexicon settings files into the.hg included repo
+			var sharedSettingsFolder = Path.Combine(pathRoot, "CachedSettings", "SharedSettings");
+			DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "SharedSettings"), true);
+			// copy the writing system files into the .hg included repo
+			var wsFolder = Path.Combine(pathRoot, "CachedSettings", "WritingSystems");
+			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "WritingSystems"), true);
 		}
 	}
 }

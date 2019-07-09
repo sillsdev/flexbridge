@@ -13,7 +13,6 @@ using Chorus.sync;
 using L10NSharp;
 using LibTriboroughBridgeChorusPlugin;
 using SIL.IO;
-using SIL.PlatformUtilities;
 using SIL.Reporting;
 using TriboroughBridge_ChorusPlugin.Properties;
 

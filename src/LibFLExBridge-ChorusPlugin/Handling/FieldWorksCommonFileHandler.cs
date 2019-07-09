@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -53,7 +53,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		/// <summary>
 		/// All callers merging FieldWorks data need to pass 'true', so the MDC will know about  any custom properties for their classes.
 		///
-		/// Non-object callers (currently only the merge of the custom property definitions themselves) shoudl pass 'false'.
+		/// Non-object callers (currently only the merge of the custom property definitions themselves) should pass 'false'.
 		/// </summary>
 		internal static void Do3WayMerge(MergeOrder mergeOrder, MetadataCache mdc, bool addcustomPropertyInformation)
 		{

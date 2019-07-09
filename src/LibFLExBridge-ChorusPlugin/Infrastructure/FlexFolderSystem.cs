@@ -58,14 +58,16 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			projectFolderConfiguration.IncludePatterns.Add("**.style");
 
 			// Misc required files.
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "*.fwlayout"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "**.fwdictconfig"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("ConfigurationSettings", "**Overrides.css"));
-			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("WritingSystemStore", "*.ldml"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "AudioVisual", "**.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Others", "**.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("LinkedFiles", "Pictures", "**.*"));
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("SupportingFiles", "**.*"));
+			// Misc files moved for their protection (A file directly added to .hg can be removed if it doesn't validate)
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("CachedSettings", Path.Combine("ConfigurationSettings", "*.fwlayout")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("CachedSettings", Path.Combine("ConfigurationSettings", "**.fwdictconfig")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("CachedSettings", Path.Combine("ConfigurationSettings", "**Overrides.css")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("CachedSettings", Path.Combine("WritingSystemStore", "*.ldml")));
+			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("CachedSettings", Path.Combine("SharedSettings", "*.plsx")));
 
 			// Linguistics
 			projectFolderConfiguration.IncludePatterns.Add(Path.Combine("Linguistics", "Reversals", "**.reversal"));

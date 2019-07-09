@@ -53,7 +53,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 
 			// LP Annotations (OC). Who still uses them? If all else fails, or they are used by several BCs, then store them in one file here.
 			// [FLExAnnotations.annotation: new ext]
-			// OJO! Sig is "CmAnnotation", which is abtract class, so handle like in Discourse-land.
+			// OJO! Sig is "CmAnnotation", which is abstract class, so handle like in Discourse-land.
 			owningPropElement = langProjElement.Element(FlexBridgeConstants.Annotations);
 			if (owningPropElement != null && owningPropElement.HasElements)
 			{
