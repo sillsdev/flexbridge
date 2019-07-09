@@ -198,8 +198,8 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 			{
 				progress.WriteMessage("Copying writing systems.");
 			}
-			var wsFolder = Path.Combine(pathRoot, "WritingSystems");
-			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystems"), true);
+			var wsFolder = Path.Combine(pathRoot, "WritingSystemStore");
+			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystemStore"), true);
 		}
 
 		private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
@@ -232,14 +232,14 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 				DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "SharedSettings"), true);
 			}
 			// copy the writing system files into the .hg included repo
-			var wsFolder = Path.Combine(cachedSettingsPath, "WritingSystems");
+			var wsFolder = Path.Combine(cachedSettingsPath, "WritingSystemStore");
 			if (Directory.Exists(wsFolder))
 			{
 				if (writeVerbose)
 				{
 					progress.WriteMessage("Copying writing systems.");
 				}
-				DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "WritingSystems"), true);
+				DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "WritingSystemStore"), true);
 			}
 		}
 	}
