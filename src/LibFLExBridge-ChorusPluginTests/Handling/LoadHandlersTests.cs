@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Collections.Generic;
@@ -75,7 +75,10 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 
 				// FW layouts
 				FlexBridgeConstants.fwlayout,			// 'fwlayout'
-				FlexBridgeConstants.fwdictconfig		// 'fwdictconfig'
+				FlexBridgeConstants.fwdictconfig,		// 'fwdictconfig'
+
+				// Lexicon settings
+				FlexBridgeConstants.ProjectLexiconSettingsExtension
 			};
 
 			var knownExtensions = new HashSet<string>(_commonHandler.GetExtensionsOfKnownTextFileTypes());
