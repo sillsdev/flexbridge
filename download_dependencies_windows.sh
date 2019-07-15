@@ -68,68 +68,54 @@ cd -
 # *** Results ***
 # build: FLEx Bridge-develop-Win32-Continuous (FLExBridge_FLExBridgeDevelopWin32Continuous)
 # project: FLEx Bridge
-# URL: http://build.palaso.org/viewType.html?buildTypeId=FLExBridge_FLExBridgeDevelopWin32Continuous
-# VCS: https://github.com/sillsdev/flexbridge.git [develop]
+# URL: https://build.palaso.org/viewType.html?buildTypeId=FLExBridge_FLExBridgeDevelopWin32Continuous
+# VCS: git@github.com:sillsdev/flexbridge.git [develop]
 # dependencies:
 # [0] build: Chorus-Documentation (bt216)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt216
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt216
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus_Help.chm"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorushelp.git [master]
 # [1] build: chorus-win32-master Continuous (Chorus_Win32masterContinuous)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"MercurialExtensions"=>"MercurialExtensions", "Autofac.dll"=>"lib/common", "Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Release", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release", "ChorusMergeModule.msm"=>"lib/Release", "Microsoft_VC90_CRT_x86.msm"=>"lib/Release", "policy_9_0_Microsoft_VC90_CRT_x86.msm"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [2] build: chorus-win32-master Continuous (Chorus_Win32masterContinuous)
 #     project: Chorus
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Chorus.exe"=>"lib/Debug", "LibChorus.dll"=>"lib/Debug", "ChorusMerge.exe"=>"lib/Debug", "Mercurial.zip"=>"lib/Debug", "LibChorus.TestUtilities.dll"=>"lib/Debug", "*.pdb"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [3] build: Helpprovider (bt225)
 #     project: Helpprovider
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt225
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt225
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Vulcan.Uczniowie.HelpProvider.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/helpprovider.git [refs/heads/master]
 # [4] build: IPC continuous (bt278)
 #     project: IPC Library
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt278
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt278
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/Release"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
 # [5] build: IPC continuous (bt278)
 #     project: IPC Library
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt278
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=bt278
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"IPCFramework.*"=>"lib/Debug"}
 #     VCS: https://bitbucket.org/smcconnel/ipcframework [develop]
-# [6] build: icucil-win32-default Continuous (bt14)
-#     project: Libraries
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"icu*.dll"=>"lib/Release", "icu*.config"=>"lib/Release"}
-#     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [7] build: icucil-win32-default Continuous (bt14)
-#     project: Libraries
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt14
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"icu*.dll"=>"lib/Debug", "icu*.config"=>"lib/Debug"}
-#     VCS: https://github.com/sillsdev/icu-dotnet [master]
-# [8] build: palaso-win32-master Continuous (Libpalaso_PalasoWin32masterContinuous)
+# [6] build: palaso-win32-master Continuous (Libpalaso_PalasoWin32masterContinuous)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=Libpalaso_PalasoWin32masterContinuous
+#     URL: https://build.palaso.org/viewType.html?buildTypeId=Libpalaso_PalasoWin32masterContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"SIL.Core.Desktop.dll"=>"lib/Release", "SIL.Core.Desktop.pdb"=>"lib/Release", "SIL.Core.dll"=>"lib/Release", "SIL.Core.pdb"=>"lib/Release", "SIL.Lift.dll"=>"lib/Release", "SIL.Lift.pdb"=>"lib/Release", "SIL.TestUtilities.dll"=>"lib/Release", "SIL.TestUtilities.pdb"=>"lib/Release", "SIL.Windows.Forms.dll"=>"lib/Release", "SIL.Windows.Forms.pdb"=>"lib/Release", "SIL.WritingSystems.dll"=>"lib/Release", "SIL.WritingSystems.pdb"=>"lib/Release", "L10NSharp.dll"=>"lib/Release", "L10NSharp.pdb"=>"lib/Release", "debug/SIL.Core.Desktop.dll"=>"lib/Debug", "debug/SIL.Core.Desktop.pdb"=>"lib/Debug", "debug/SIL.Core.dll"=>"lib/Debug", "debug/SIL.Core.pdb"=>"lib/Debug", "debug/SIL.Lift.dll"=>"lib/Debug", "debug/SIL.Lift.pdb"=>"lib/Debug", "debug/SIL.TestUtilities.dll"=>"lib/Debug", "debug/SIL.TestUtilities.pdb"=>"lib/Debug", "debug/SIL.Windows.Forms.dll"=>"lib/Debug", "debug/SIL.Windows.Forms.pdb"=>"lib/Debug", "debug/SIL.WritingSystems.dll"=>"lib/Debug", "debug/SIL.WritingSystems.pdb"=>"lib/Debug", "debug/L10NSharp.dll"=>"lib/Debug", "debug/L10NSharp.pdb"=>"lib/Debug"}
@@ -185,16 +171,6 @@ copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32mast
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt225/latest.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll ./lib/common/Vulcan.Uczniowie.HelpProvider.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Release/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Debug/IPCFramework.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Release/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt54.dll ./lib/Release/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin54.dll ./lib/Release/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc54.dll ./lib/Release/icuuc54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Release/icu.net.dll.config
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll ./lib/Debug/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icudt54.dll ./lib/Debug/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuin54.dll ./lib/Debug/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icuuc54.dll ./lib/Debug/icuuc54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt14/latest.lastSuccessful/icu.net.dll.config ./lib/Debug/icu.net.dll.config
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.dll ./lib/Release/SIL.Core.Desktop.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.pdb ./lib/Release/SIL.Core.Desktop.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/latest.lastSuccessful/SIL.Core.dll ./lib/Release/SIL.Core.dll
