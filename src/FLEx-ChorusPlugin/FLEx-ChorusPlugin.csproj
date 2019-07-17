@@ -13,6 +13,7 @@
     <AssemblyName>FLEx-ChorusPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <UpdateAssemblyInfo Condition="'$(UpdateAssemblyInfo)' == ''">true</UpdateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
