@@ -12,14 +12,8 @@
 		<!-- Download nuget.exe if it does not already exist -->
 		<DownloadNuGetExe Condition=" '$(DownloadNuGetExe)' == '' ">true</DownloadNuGetExe>
 		<RestorePackages Condition=" '$(RestorePackages)' == ''">true</RestorePackages>
+		<NuGetExeUrl>https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetExeUrl>
 	</PropertyGroup>
-
-	<ItemGroup Condition=" '$(PackageSources)' == '' ">
-		<!-- Package sources used to restore packages. -->
-		<!-- The official NuGet package source (https://nuget.org/api/v2/) will be excluded if package sources are specified and it does not appear in the list -->
-		<PackageSource Include="https://nuget.org/api/v2/" />
-		<PackageSource Include="https://build.palaso.org/guestAuth/app/nuget/v1/FeedService.svc/" />
-	</ItemGroup>
 
 	<PropertyGroup>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
@@ -31,10 +25,8 @@
 		<!-- NuGet command -->
 		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/nuget.exe</NuGetExePath>
 
-		<PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
-
 		<NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
-		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
+		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono $(NuGetExePath)</NuGetCommand>
 		<!-- Command to download packages -->
 		<RestoreCommandCommon>$(NuGetCommand) restore "$(CommonPackagesConfig)" -NonInteractive -SolutionDirectory "$(SolutionDir)"</RestoreCommandCommon>
 		<RestoreCommandPlatformSpecific>$(NuGetCommand) restore "$(PlatformPackagesConfig)" -NonInteractive -SolutionDirectory "$(SolutionDir)"</RestoreCommandPlatformSpecific>
@@ -56,7 +48,7 @@
 	<Target Name="_DownloadNuGet" Condition=" '$(DownloadNuGetExe)' == 'true' AND !Exists('$(NuGetExePath)')">
 		<DownloadNuGet OutputFilename="$(NuGetExePath)"
 			Condition="'$(OS)' == 'Windows_NT'" />
-		<Exec Command="wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe || curl -O -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+		<Exec Command="wget $(NuGetExeUrl) || curl -O -L $(NuGetExeUrl)"
 			WorkingDirectory="$(NuGetToolsPath)"
 			Condition="'$(OS)' != 'Windows_NT'" />
 	</Target>
@@ -89,7 +81,7 @@
 
 					Log.LogMessage("Downloading latest version of nuget.exe...");
 					WebClient webClient = new WebClient();
-					webClient.DownloadFile("https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", OutputFilename);
+					webClient.DownloadFile("$(NuGetExeUrl)", OutputFilename);
 
 					return true;
 				}
