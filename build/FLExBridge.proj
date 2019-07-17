@@ -14,8 +14,8 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask.alt/build/GitVersionTask.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask.alt/build/GitVersionTask.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -26,17 +26,20 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(MSBuildProjectDirectory)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets"
-		Condition="Exists('$(MSBuildProjectDirectory)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
-	<Import Project="$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
-		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
+	<Import Project="$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets"
+		Condition="Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
+		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
 
-	<UsingTask TaskName="Split" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
-	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
-	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="SIL.BuildTasks.UnitTestTasks.NUnit"
-		AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
+	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="NUnit"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="DNZip"
+		AssemblyFile="$(RootDir)/packages/MSBuild.Extension.Pack.1.9.0/tools/net40/MSBuild.ExtensionPack.dll"
+		Condition="Exists('$(RootDir)/packages/MSBuild.Extension.Pack.1.9.0/tools/net40/MSBuild.ExtensionPack.dll')" />
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
 	<Target Name="GetAssemblyVersion"/>
@@ -56,9 +59,11 @@
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersionTask.alt -excludeVersion -version 4.0.2-alpha-0006 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
-		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+		<Exec Command='$(NuGetCommand) install GitVersionTask.alt -excludeVersion -version 4.0.2-alpha-0006 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.1.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install MSBuild.Extension.Pack -version 1.9.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.Runners.Net4 -version 2.6.4 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
 	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
@@ -74,9 +79,11 @@
 
 	<Target Name="Clean">
 		<Message Text="Starting Clean"/>
-		<Exec Command="find . -name obj -type d -print0 | xargs -0 rm -rf" WorkingDirectory="$(RootDir)"
-			Condition="'$(OS)'!='Windows_NT'"/>
-		<Delete Files="@(ObjFiles)" Condition="'$(OS)'=='Windows_NT'" />
+		<Delete Condition="'$(OS)'=='Windows_NT' OR $(MSBuildToolsVersion) &gt;= 15"
+			 Files="@(ObjFiles)" />
+		<Exec Condition="'$(OS)'!='Windows_NT' AND $(MSBuildToolsVersion) &lt; 15"
+			Command="find . -name obj -type d -print0 | xargs -0 rm -rf"
+			WorkingDirectory="$(RootDir)" />
 		<RemoveDir Directories="@(OutputDirectories)"/>
 		<Message Text="End Clean"/>
 	</Target>
@@ -91,7 +98,7 @@
 
 	<Target Name="UnzipMercurialWindows" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Extract a zip file-->
-		<Unzip ZipFileName="$(RootDir)\lib\$(Configuration)\Mercurial.zip" TargetDirectory="$(RootDir)"/>
+		<DNZip TaskAction="Extract" ExtractPath="$(RootDir)" ZipFileName="$(RootDir)/lib/$(Configuration)/Mercurial.zip"/>
 	</Target>
 	<Target Name="UnzipMercurialLinux" Condition="'$(OS)'!='Windows_NT'">
 		<!-- Remember, Unix/Linux commands return 0 for success ("true") -->
@@ -220,7 +227,7 @@
 		<MakeDir Directories="$(NUnitRunnerPackage)/tools/addins" Condition="'$(teamcity_version)' != ''"/>
 		<Copy SourceFiles="@(NUnitAddinFiles)" Condition="'$(teamcity_version)' != ''"
 			DestinationFolder="$(NUnitRunnerPackage)/tools/addins" />
-		<SIL.BuildTasks.UnitTestTasks.NUnit Assemblies="@(TestAssemblies)"
+		<NUnit Assemblies="@(TestAssemblies)"
 			ToolPath="$(NUnitRunnerPackage)/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(ExtraExcludeCategories)"
