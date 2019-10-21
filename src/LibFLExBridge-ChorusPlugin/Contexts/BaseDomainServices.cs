@@ -180,26 +180,35 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 		{
 			progress.WriteMessage("Copying settings files...");
 			// copy the dictionary configuration files into the .hg included repo
-			if (writeVerbose)
-			{
-				progress.WriteMessage("Copying dictionary configuration settings.");
-			}
 			var dictionaryConfigFolder = Path.Combine(pathRoot, "ConfigurationSettings");
-			DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), true);
+			if (Directory.Exists(dictionaryConfigFolder))
+			{
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying dictionary configuration settings.");
+				}
+				DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), true);
+			}
 			// copy the lexicon settings files into the.hg included repo
-			if (writeVerbose)
-			{
-				progress.WriteMessage("Copying shared lexicon settings.");
-			}
 			var sharedSettingsFolder = Path.Combine(pathRoot, "SharedSettings");
-			DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), true);
-			// copy the writing system files into the .hg included repo
-			if (writeVerbose)
+			if (Directory.Exists(sharedSettingsFolder))
 			{
-				progress.WriteMessage("Copying writing systems.");
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying shared lexicon settings.");
+				}
+				DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), true);
 			}
+			// copy the writing system files into the .hg included repo
 			var wsFolder = Path.Combine(pathRoot, "WritingSystemStore");
-			DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystemStore"), true);
+			if (Directory.Exists(wsFolder))
+			{
+				if (writeVerbose)
+				{
+					progress.WriteMessage("Copying writing systems.");
+				}
+				DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystemStore"), true);
+			}
 		}
 
 		private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
