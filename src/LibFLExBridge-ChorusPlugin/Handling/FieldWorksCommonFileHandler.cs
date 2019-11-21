@@ -23,11 +23,13 @@ namespace LibFLExBridgeChorusPlugin.Handling
 	[Export(typeof(IChorusFileTypeHandler))]
 	internal sealed class FieldWorksCommonFileHandler : IChorusFileTypeHandler
 	{
+#pragma warning disable CS0649
 		[Import(typeof(UnknownFileTypeHandlerStrategy))]
 		private IFieldWorksFileHandler _unknownFileTypeHandler;
 
 		[ImportMany]
 		private IEnumerable<IFieldWorksFileHandler> _handlers;
+#pragma warning restore CS0649
 
 		internal FieldWorksCommonFileHandler()
 		{
@@ -40,12 +42,9 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			}
 		}
 
-		private IChorusFileTypeHandler AsIChorusFileTypeHandler
-		{
-			get { return this; }
-		}
+		private IChorusFileTypeHandler AsIChorusFileTypeHandler => this;
 
-		private IFieldWorksFileHandler GetHandlerfromExtension(string extension)
+		private IFieldWorksFileHandler GetHandlerFromExtension(string extension)
 		{
 			return _handlers.FirstOrDefault(handlerCandidate => handlerCandidate.Extension == extension) ?? _unknownFileTypeHandler;
 		}
@@ -55,11 +54,11 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		///
 		/// Non-object callers (currently only the merge of the custom property definitions themselves) should pass 'false'.
 		/// </summary>
-		internal static void Do3WayMerge(MergeOrder mergeOrder, MetadataCache mdc, bool addcustomPropertyInformation)
+		internal static void Do3WayMerge(MergeOrder mergeOrder, MetadataCache mdc, bool addCustomPropertyInformation)
 		{
-			// Skip doing this for the Custom property definiton file, since it has no real need for the custom prop definitions,
+			// Skip doing this for the Custom property definition file, since it has no real need for the custom prop definitions,
 			// which are being merged (when 'false' is provided).
-			if (addcustomPropertyInformation)
+			if (addCustomPropertyInformation)
 				mdc.AddCustomPropInfo(mergeOrder); // NB: Must be done before FieldWorksCommonMergeStrategy is created. since it used the MDC.
 
 			var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, mdc);
@@ -98,14 +97,14 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			if (extension[0] != '.')
 				return false;
 
-			var handler = GetHandlerfromExtension(extension.Substring(1));
+			var handler = GetHandlerFromExtension(extension.Substring(1));
 			return handler.CanValidateFile(pathToFile);
 		}
 
 		void IChorusFileTypeHandler.Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder == null)
-				throw new ArgumentNullException("mergeOrder");
+				throw new ArgumentNullException(nameof(mergeOrder));
 
 			// Make sure MDC is updated.
 			// Since this method is called in another process by ChorusMerge,
@@ -115,10 +114,10 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			{
 				var pathToOurs = mergeOrder.pathToOurs;
 				var folder = Path.GetDirectoryName(pathToOurs);
-				while (!File.Exists(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename)))
+				while (folder != null && !File.Exists(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename)))
 				{
 					var parent = Directory.GetParent(folder);
-					folder = parent != null ? parent.ToString() : null;
+					folder = parent?.ToString();
 					if (folder == null)
 						break;
 				}
@@ -127,44 +126,44 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				if (folder != null)
 				{
 					var ourModelFileData = File.ReadAllText(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename));
-					desiredModelNumber = Int32.Parse(ModelVersionFileTypeHandlerStrategy.SplitData(ourModelFileData)[1]);
+					desiredModelNumber = int.Parse(ModelVersionFileTypeHandlerStrategy.SplitData(ourModelFileData)[1]);
 				}
 				MetadataCache.MdCache.UpgradeToVersion(desiredModelNumber);
 			}
 
 			XmlMergeService.RemoveAmbiguousChildNodes = false; // Live on the edge. Opt out of that expensive code.
 
-			GetHandlerfromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
+			GetHandlerFromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 
 		IEnumerable<IChangeReport> IChorusFileTypeHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
 		{
 			if (parent == null)
-				throw new ArgumentNullException("parent"); // Parent seems not be optional in Chorus usage.
+				throw new ArgumentNullException(nameof(parent)); // Parent seems not be optional in Chorus usage.
 			if (child == null)
-				throw new ArgumentNullException("child");
+				throw new ArgumentNullException(nameof(child));
 			if (repository == null)
-				throw new ArgumentNullException("repository");
+				throw new ArgumentNullException(nameof(repository));
 
 			var extension = FileWriterService.GetExtensionFromPathname(child.FullPath);
-			return GetHandlerfromExtension(extension).Find2WayDifferences(parent, child, repository);
+			return GetHandlerFromExtension(extension).Find2WayDifferences(parent, child, repository);
 		}
 
 		IChangePresenter IChorusFileTypeHandler.GetChangePresenter(IChangeReport report, HgRepository repository)
 		{
 			if (report == null)
-				throw new ArgumentNullException("report");
+				throw new ArgumentNullException(nameof(report));
 			if (repository == null)
-				throw new ArgumentNullException("repository");
+				throw new ArgumentNullException(nameof(repository));
 
 			var extension = FileWriterService.GetExtensionFromPathname(report.PathToFile);
-			return GetHandlerfromExtension(extension).GetChangePresenter(report, repository);
+			return GetHandlerFromExtension(extension).GetChangePresenter(report, repository);
 		}
 
 		string IChorusFileTypeHandler.ValidateFile(string pathToFile, IProgress progress)
 		{
 			if (progress == null)
-				throw new ArgumentNullException("progress");
+				throw new ArgumentNullException(nameof(progress));
 
 			if (string.IsNullOrEmpty(pathToFile))
 				return "No file to work with.";
@@ -176,7 +175,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			if (extension[0] != '.')
 				return "File has no extension.";
 
-			var handler = GetHandlerfromExtension(extension.Substring(1));
+			var handler = GetHandlerFromExtension(extension.Substring(1));
 			var results = handler.ValidateFile(pathToFile);
 			if (results != null)
 			{
@@ -204,10 +203,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return _handlers.Select(handlerStrategy => handlerStrategy.Extension);
 		}
 
-		uint IChorusFileTypeHandler.MaximumFileSize
-		{
-			get { return int.MaxValue; }
-		}
+		uint IChorusFileTypeHandler.MaximumFileSize => int.MaxValue;
 
 		#endregion
 	}
