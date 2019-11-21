@@ -53,3 +53,5 @@ icu4c.readme.txt
 gitversion.properties
 GitVersionTaskAssemblyInfo.g.cs
 .vs/
+Mercurial/
+MercurialExtensions/

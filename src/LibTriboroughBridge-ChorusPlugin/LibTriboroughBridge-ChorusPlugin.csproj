@@ -1,172 +1,46 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>LibTriboroughBridgeChorusPlugin</RootNamespace>
-    <AssemblyName>LibTriboroughBridge-ChorusPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <UpdateAssemblyInfo Condition="'$(UpdateAssemblyInfo)' == ''">true</UpdateAssemblyInfo>
+    <AssemblyTitle>LibTriboroughBridge-ChorusPlugin</AssemblyTitle>
+    <Configurations>Debug;Release</Configurations>
+    <Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
+    <Company>SIL International</Company>
+    <Authors>SIL International</Authors>
+    <Product>FLExBridge</Product>
+    <Copyright>Copyright © 2010-2020 SIL International</Copyright>
+    <PackageId>SIL.ChorusPlugin.LibTriboroughBridge</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/sillsdev/flexbridge</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <OutputPath>../../output/$(Configuration)</OutputPath>
+    <PackageOutputPath>../../output</PackageOutputPath>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AppendToReleaseNotesProperty><![CDATA[
+See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/CHANGELOG.md]]>
+    </AppendToReleaseNotesProperty>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\Release\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\DebugMono\</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-    <ConsolePause>false</ConsolePause>
-    <ErrorReport>prompt</ErrorReport>
-    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <ErrorReport>prompt</ErrorReport>
-    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="GitTools.Core, Version=1.3.1.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GitTools.Core-alt.1.3.1.2\lib\net461\GitTools.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.4.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JetBrains.Annotations.10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LibGit2Sharp.0.26.0\lib\net46\LibGit2Sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\YamlDotNet.5.2.1\lib\net45\YamlDotNet.dll</HintPath>
-    </Reference>
+    <PackageReference Include="GitVersionTask" Version="5.1.2">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SIL.Chorus.LibChorus" Version="3.1.0-alpha0020" />
+    <PackageReference Include="SIL.ReleaseTasks" Version="[2.2.0,)">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ActionType.cs" />
-    <Compile Include="Infrastructure\ActionHandlers\ActionTypeHandlerRepository.cs" />
-    <Compile Include="Infrastructure\ActionHandlers\StringToActionTypeConverter.cs" />
-    <Compile Include="Infrastructure\FinalCloneResult.cs" />
-    <Compile Include="Infrastructure\IBridgeActionTypeHandler.cs" />
-    <Compile Include="Infrastructure\IBridgeActionTypeHandlerCallEndWork.cs" />
-    <Compile Include="Infrastructure\IUpdateBranchHelperStrategy.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <DependentUpon>Settings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="LibTriboroughBridgeSharedConstants.cs" />
-    <Compile Include="Infrastructure\UpdateBranchHelper.cs" />
-    <Compile Include="Infrastructure\ActualCloneResult.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
-  <ItemGroup>
-    <None Include="..\..\lib\common\chorusmerge" Condition="'$(OS)'!='Windows_NT'">
+    <None Include="..\..\lib\common\chorusmerge">
       <Link>chorusmerge</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
-    <Error Condition="!Exists('..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets'))" />
-  </Target>
-  <!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets. We get
-    these warnings because this project doesn't yet use the new .csproj format. -->
-  <Target Name="GetAssemblyVersion" />
-  <Target Name="GenerateNuspec" />
-  <Target Name="_GenerateRestoreProjectSpec" />
-  <!-- Include the generated assembly info files for the purpose of Linux package building.
-    We can't directly use the GitVersionTask there because we don't have a git repo when
-    building the binary, so the task fails. Instead we generate the AssemblyInfo file when
-    we create the source package and reference it here. -->
-  <ItemGroup Condition="!$(UpdateAssemblyInfo)">
-    <Compile Include="Properties/GitVersionTaskAssemblyInfo.g.cs" />
-  </ItemGroup>
-  <Import Project="..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets" Condition="Exists('..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets')" />
+
 </Project>

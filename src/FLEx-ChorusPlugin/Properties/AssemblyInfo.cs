@@ -1,16 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
-//
-// Distributable under the terms of the MIT License.
-// --------------------------------------------------------------------------------------------
+﻿// Copyright (c) 2010-2020 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FLEx-ChorusPlugin")]
-[assembly: ComVisible(false)]
-
-[assembly: InternalsVisibleTo("FLEx-ChorusPluginTests")]
-[assembly: InternalsVisibleTo("RepositoryUtility")]
-[assembly: InternalsVisibleTo("FwdataTestApp")]
+[assembly: InternalsVisibleTo("FLEx-ChorusPluginTests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b511304f05af0a01cbc5408cdbdf742aa1664db0e1157235bb2619e7fb5e705bd3534a7157a088a458ec3136e46ebd2b73519fb07dffd2daa40a7b9aa340675d926ab918d2e0183b8613320529b8a490028c8e1b40b980f3724928455d447d8f93d459be3c55a4e3f2ef5119c3393fd25adba301cbff8a3ffbce2e181d143788")]
+[assembly: InternalsVisibleTo("RepositoryUtility, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b511304f05af0a01cbc5408cdbdf742aa1664db0e1157235bb2619e7fb5e705bd3534a7157a088a458ec3136e46ebd2b73519fb07dffd2daa40a7b9aa340675d926ab918d2e0183b8613320529b8a490028c8e1b40b980f3724928455d447d8f93d459be3c55a4e3f2ef5119c3393fd25adba301cbff8a3ffbce2e181d143788")]
+[assembly: InternalsVisibleTo("FwdataTestApp, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b511304f05af0a01cbc5408cdbdf742aa1664db0e1157235bb2619e7fb5e705bd3534a7157a088a458ec3136e46ebd2b73519fb07dffd2daa40a7b9aa340675d926ab918d2e0183b8613320529b8a490028c8e1b40b980f3724928455d447d8f93d459be3c55a4e3f2ef5119c3393fd25adba301cbff8a3ffbce2e181d143788")]

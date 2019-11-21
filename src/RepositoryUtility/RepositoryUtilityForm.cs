@@ -58,7 +58,7 @@ namespace RepositoryUtility
 			// as the clone will be in the only new folder in '_repoHoldingFolder', afterwards.
 			var directoriesThatExistedBeforeCloning = ExtantDirectories;
 
-			// Get the clone. This may not get a clone, if the user cancels or the clonne fails.
+			// Get the clone. This may not get a clone, if the user cancels or the clone fails.
 			GetClone(modelVersion);
 
 			// '_repoFolder' will be the new cloned folder, if the clone worked.
@@ -169,10 +169,10 @@ namespace RepositoryUtility
 			var oldTip = hgRepo.GetTip();
 			var oldTipBranchName = BranchName(oldTip);
 
-			// Step 1: Confirm we the bracnhes are the same.
+			// Step 1: Confirm we the branches are the same.
 			if (selectedBranchName != oldTipBranchName)
 			{
-				// Branches are used to mark diffent data models, and I (RandyR) wasn't in the mood to deal with that at this point in the following no-op merge. :-)
+				// Branches are used to mark different data models, and I (RandyR) wasn't in the mood to deal with that at this point in the following no-op merge. :-)
 				MessageBox.Show(this,
 					String.Format(@"Selected revision '{0}' is in branch '{1}', but tip revision '{2}' is in branch '{3}', so the merge cannot be done.",
 						_currentRevision.Number.LocalRevisionNumber, selectedBranchName,
