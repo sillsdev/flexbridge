@@ -67,37 +67,34 @@ When releasing FLExBridge be sure to do the following:
 
 1. Update the version and changelogs / release notes.
 
-	- For Windows:
-		- If you are making a major or minor version number jump, update the the first two digits in `version` (the fourth-place version number is controlled by the TeamCity build counter)
+	- Edit `GitVersion.yml` if you are making a major or minor version number jump. The third place digit will be incremented automatically by GitVersion
+
+	- Windows Instructions:
 		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
         - Run the following to update dependant Release Notes files:
-
-                @REM this sets up the path to msbuild. Check GetAndBuildThis.bat for the latest path to vsvars32.bat
-				"%VS140COMNTOOLS%vsvars32.bat"
+							
 				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
-				msbuild build/FLExBridge.proj  /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
+				build/build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
 		- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
 		- Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
 
-	- For Linux:
+	- Linux Instructions:
 
 		- `cd ~/fwrepo/flexbridge`
-		- Set new version number, such as:
-
-            `echo 2.5.1 > version`
-
 		- Create an entry atop ReleaseNotes.md:
 
 			`sed -i "1i ## $(cat version) UNRELEASED\n\n* New version\n" src/Installer/ReleaseNotes.md`
 
 		- Edit src/Installer/ReleaseNotes.md , replacing 'New version.'
 
-		- `CHANNEL=Alpha` # or Beta or Stable. On 2016-12-16 we are using Alpha for Dictionary branch.
+		- `CHANNEL=Alpha` # or Beta or Stable.
 
-		- Fill in debian/changelog and ReleaseNotes.md, make html file (for a pre-release pass `/p:Release=false` as additional property):
+		- Run the build task to fill in debian/changelog from the ReleaseNotes.md and make html file (for a pre-release pass `/p:Release=false` as additional property):
 
 			`(source environ && cd build && xbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
+			
+	- For major or minor version bumps tag the commit after the PR is merged e.g. `git tag v3.2.1` and push it to the repository.
 
 2. Build
 

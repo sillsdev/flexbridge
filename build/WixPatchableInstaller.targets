@@ -10,9 +10,9 @@
 
 	<!-- PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every -->
 	<!-- base build must get its own unique third number (minor version) in the version number sequence. -->
-	<!-- FLEx Bridge 3.0.1.X -->
+	<!-- FLEx Bridge 3.1.0.X -->
 	<PropertyGroup>
-		<ProductIdGuid>5F4A7ABE-7F5B-4E62-AF81-A0773291D7F4</ProductIdGuid>
+		<ProductIdGuid>B5C9D3AC-8CF2-47CC-B9EF-EF6E838E17A8</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- UPGRADE CODE GUID definition : This value must be the same for every version of this product. -->

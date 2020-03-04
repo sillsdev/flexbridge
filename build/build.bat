@@ -13,7 +13,7 @@ call "%InstallDir%\VC\Auxiliary\Build\vcvars32.bat"
 :Build
 pushd .
 (
-	MSBuild FLExBridge.proj /target:RestorePackages
+	MSBuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
 ) && (
 	MSBuild FLExBridge.proj /p:Platform="Any CPU" %*
 )
