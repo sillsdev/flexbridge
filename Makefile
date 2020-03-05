@@ -23,6 +23,8 @@ release_build:
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a flexbridge output/ReleaseMono
+	# Remove infrastructure assemblies from output directory
+	rm -f output/ReleaseMono/GitTools.Core* output/ReleaseMono/JetBrains.Annotations* /output/ReleaseMono/LibGit2Sharp*
 
 debug: vcs_version download_dependencies debug_build
 
