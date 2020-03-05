@@ -9,26 +9,3 @@ export XDG_CONFIG_HOME=/tmp/.config
 	dh $@ --with cli
 
 override_dh_clideps:
-	dh_clideps \
-		--exclude-moduleref=icuuc60.dll --exclude-moduleref=icuin60.dll \
-		--exclude-moduleref=icuuc59.dll --exclude-moduleref=icuin59.dll \
-		--exclude-moduleref=icuuc58.dll --exclude-moduleref=icuin58.dll \
-		--exclude-moduleref=icuuc57.dll --exclude-moduleref=icuin57.dll \
-		--exclude-moduleref=icuuc56.dll --exclude-moduleref=icuin56.dll \
-		--exclude-moduleref=icuuc55.dll --exclude-moduleref=icuin55.dll \
-		--exclude-moduleref=icuuc54.dll --exclude-moduleref=icuin54.dll \
-		--exclude-moduleref=icuuc52.dll --exclude-moduleref=icuin52.dll \
-		--exclude-moduleref=icuuc48.dll --exclude-moduleref=icuin48.dll \
-		--exclude-moduleref=libicuuc.so --exclude-moduleref=libicui18n.so \
-		--exclude-moduleref=icu.net \
-		--exclude-moduleref=libdl --exclude-moduleref=libdl.so \
-		--exclude-moduleref=xul --exclude-moduleref=libxul.so \
-		--exclude-moduleref=mozjs --exclude-moduleref=mozglue \
-		--exclude-moduleref=libgeckofix.so --exclude-moduleref=Geckofx-Core.dll \
-		--exclude-moduleref=libgobject-2.0.so --exclude-moduleref=libgio-2.0.so \
-		--exclude-moduleref=libglib-2.0.so --exclude-moduleref=libxklavier \
-		--exclude-moduleref=MAPI32.DLL \
-		--exclude-moduleref=__Internal \
-		--exclude-moduleref=Autofac --exclude-moduleref=NDesk.DBus \
-		--exclude-moduleref=LibGit2Sharp.dll --exclude-moduleref=ntdll \
-		--exclude-moduleref=Microsoft.DotNet.PlatformAbstractions.dll
