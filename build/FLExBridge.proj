@@ -57,7 +57,7 @@
 			Condition="$(RestartBuild)" />
 	</Target>
 
-	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask.alt -excludeVersion -version 4.0.2-alpha-0006 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
@@ -247,6 +247,6 @@
 
 	<!-- update the AssemblyInfo files for linux packaging -->
 	<Target Name="UpdateAssemblyInfoForPackage">
-		<Exec Command="for f in `find $(RootDir) -name packages.config -print0 | xargs -0 grep --files-with-matches GitVersion`; do dir=`dirname $f`; xbuild /t:UpdateAssemblyInfo /p:IntermediateOutputPath=Properties $dir/`basename $dir`.csproj; done" />
+		<Exec Command="for f in `find $(RootDir) -name packages.config -print0 | xargs -0 grep --files-with-matches GitVersion`; do dir=`dirname $f`; msbuild /t:UpdateAssemblyInfo /p:IntermediateOutputPath=Properties $dir/`basename $dir`.csproj; done" />
 	</Target>
 </Project>
