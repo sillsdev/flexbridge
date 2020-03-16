@@ -74,7 +74,8 @@ When releasing FLExBridge be sure to do the following:
         - Run the following to update dependant Release Notes files:
 							
 				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
-				build/build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
+				cd build
+				build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
 		- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
 		- Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag

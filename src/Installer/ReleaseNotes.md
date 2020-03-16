@@ -1,3 +1,7 @@
+## 3.1.1 2020-03-16
+
+* Chorus updated with bugfix for spaces following project names
+
 ## 3.1.0 2020-03-04
 
 * FlexBridge should now copy configuration files into a cache folder to avoid losing them on a rollback.
