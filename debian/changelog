@@ -1,3 +1,9 @@
+flexbridge (3.1.1) UNRELEASED; urgency=low
+
+  * Chorus updated with bugfix for spaces following project names
+
+ -- Jason Naylor <jason_naylor@sil.org>  Mon, 16 Mar 2020 16:11:23 -0500
+
 flexbridge (3.1.0) UNRELEASED; urgency=low
 
   * FlexBridge should now copy configuration files into a cache folder to avoid losing them on a rollback.
