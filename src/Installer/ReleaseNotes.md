@@ -1,3 +1,8 @@
+## 3.1.2 2020-03-19
+
+* Chorus updated with bugfix for losing Notes bug
+* Installer icons updated (maybe)
+
 ## 3.1.1 2020-03-16
 
 * Chorus updated with bugfix for spaces following project names
