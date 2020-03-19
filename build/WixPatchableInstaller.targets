@@ -2,7 +2,7 @@
 <Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<!-- Configuration properties - Review and edit these values as needed. -->
 	<PropertyGroup>
-		<CopyrightYear>2017</CopyrightYear>
+		<CopyrightYear>2020</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
@@ -10,9 +10,9 @@
 
 	<!-- PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every -->
 	<!-- base build must get its own unique third number (minor version) in the version number sequence. -->
-	<!-- FLEx Bridge 3.1.0.X -->
+	<!-- FLEx Bridge 3.1.2.X -->
 	<PropertyGroup>
-		<ProductIdGuid>B5C9D3AC-8CF2-47CC-B9EF-EF6E838E17A8</ProductIdGuid>
+		<ProductIdGuid>984F61B7-5A78-49C3-99DF-87A0590E3838</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- UPGRADE CODE GUID definition : This value must be the same for every version of this product. -->
