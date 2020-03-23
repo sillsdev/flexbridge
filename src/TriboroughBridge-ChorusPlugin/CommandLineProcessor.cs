@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -240,6 +240,9 @@ namespace TriboroughBridge_ChorusPlugin
 					throw new CommandLineException("-f", "missing 'FixFwData.exe'");
 			}
 
+			// I believe this is actually only used by the "obtain" and possibly "obtain_lift" actions.
+			// Send/receive, at least, does not use it, but obtains model version data from the fwdata file itself.
+			// (JohnT, March 23, 2020).
 			if (!commandLineArgs.ContainsKey(fwmodel) || String.IsNullOrEmpty(commandLineArgs[fwmodel]))
 				throw new CommandLineException("-fwmodel", "is missing");
 			var fwmodelOption = uint.Parse(commandLineArgs[fwmodel]);
