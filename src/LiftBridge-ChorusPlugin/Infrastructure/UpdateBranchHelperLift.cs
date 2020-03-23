@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -12,26 +12,26 @@ namespace SIL.LiftBridge.Infrastructure
 {
 	internal sealed class UpdateBranchHelperLift : IUpdateBranchHelperStrategy
 	{
-		internal static float GetLiftVersionNumber(string repoLocation)
+		internal static double GetLiftVersionNumber(string repoLocation)
 		{
 			var firstLiftFile = FileAndDirectoryServices.GetPathToFirstLiftFile(repoLocation);
 			if (string.IsNullOrEmpty(firstLiftFile))
-				return float.MaxValue;
+				return double.MaxValue;
 
 			using (var reader = XmlReader.Create(firstLiftFile, CanonicalXmlSettings.CreateXmlReaderSettings()))
 			{
 				reader.MoveToContent();
 				reader.MoveToAttribute("version");
-				return float.Parse(reader.Value, NumberFormatInfo.InvariantInfo);
+				return double.Parse(reader.Value, NumberFormatInfo.InvariantInfo);
 			}
 		}
 
-		public float GetModelVersionFromBranchName(string branchName)
+		public double GetModelVersionFromBranchName(string branchName)
 		{
-			return float.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
+			return double.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
 		}
 
-		public float GetModelVersionFromClone(string cloneLocation)
+		public double GetModelVersionFromClone(string cloneLocation)
 		{
 			return GetLiftVersionNumber(cloneLocation);
 		}

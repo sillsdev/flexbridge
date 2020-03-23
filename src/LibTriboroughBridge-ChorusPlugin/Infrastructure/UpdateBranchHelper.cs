@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -48,7 +48,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 				var gonerKeys = new HashSet<string>();
 				foreach (var headKvp in allHeads)
 				{
-					float currentVersion;
+					double currentVersion;
 					if (headKvp.Key == LibTriboroughBridgeSharedConstants.Default)
 					{
 						repo.Update(headKvp.Value.Number.LocalRevisionNumber);
@@ -104,7 +104,9 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 				}
 
 				// Now. get to the real work.
-				var sortedRevisions = new SortedList<float, Revision>();
+				// Don't be tempted to use 'float' here. We really need the precision of double to tell that e.g.
+				// 7500002.7000073 is greater than 7500002.7000072
+				var sortedRevisions = new SortedList<double, Revision>();
 				foreach (var kvp in allHeads)
 				{
 					sortedRevisions.Add(updateBranchHelperStrategy.GetModelVersionFromBranchName(kvp.Key), kvp.Value);

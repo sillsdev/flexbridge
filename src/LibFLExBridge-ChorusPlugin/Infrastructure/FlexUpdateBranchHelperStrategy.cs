@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-16 SIL International
+// Copyright (c) 2015-16 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
@@ -14,12 +14,16 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		#region IUpdateBranchHelperStrategy impl
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
+		// Note that, after Flex9.0.7/FlexBridge3.1, this is actually a two part number, where the whole
+		// number part is the FlexBridgeDataVersion, and the fraction is the actual FLEx
+		// model number. For example, the current code returns 7500002.7000072, where the
+		// number after the decimal is actually the FLEx model version.
+		double IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
 		{
-			return uint.Parse(branchName);
+			return double.Parse(branchName);
 		}
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
+		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
 		{
 			var modelVersion = AsIUpdateBranchHelperStrategy.GetFullModelVersion(cloneLocation);
 			return string.IsNullOrEmpty(modelVersion)
