@@ -77,7 +77,7 @@ install:
 	/usr/bin/install -d $(DESTDIR)/usr/share/applications
 	/usr/bin/install -m644 lib/common/fieldworks-chorushub.desktop $(DESTDIR)/usr/share/applications
 	# Create /usr/bin/python while still needed by included python scripts that request 'python', not 'python2'.
-	(. /etc/os-release; [[ $${UBUNTU_CODENAME} != focal ]] || ln -s python2 $(DESTDIR)/usr/bin/python )
+	(. /etc/os-release; [ $${UBUNTU_CODENAME} != focal ] || ln -s python2 $(DESTDIR)/usr/bin/python )
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
 	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
