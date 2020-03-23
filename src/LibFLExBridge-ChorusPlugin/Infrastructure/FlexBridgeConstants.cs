@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -72,8 +72,35 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		internal const string RtTag = "rt";
 
 		// Model Version
+		// An extension for a file that stores {"modelversion":<unit that is the FW model version>}
 		internal const string ModelVersion = "ModelVersion";
+		// The full name of that file
 		internal const string ModelVersionFilename = "FLExProject." + ModelVersion;
+
+		// A value that specifies a version of FlexBridge that affects the data written to the
+		// repo, but not the FieldWorks model version. This is part of the branch name, so for
+		// example a version of FlexBridge that is looking for data on branch 700072 or 700072.1 will not
+		// try to read data on branch 700072.2, even though (if it could PutHumptyTogetherAgain)
+		// its caller would be able to handle 700072 model data. This allows us to change how
+		// FlexBridge handles the data without changing the data model version (which affects other
+		// products and is becoming increasingly expensive to change).
+		// Note that send/receive never tries to handle data on other branches; it only merges with
+		// data on its own branch (though warning if there are new commits on other branches).
+		// Data migration only happens when a new version of FLEx (and FlexBridge) is installed
+		// on a computer that has the data needing migration, and upgrades and Sends it;
+		// or when making a new clone of the project using a newer version of FLEx.
+		// Because of this clone-and-upgrade possibility, FlexBridge must be able to
+		// PutHumptyTogetherAgain for both old data models and old Humpty strategies.
+		// Branch names are formed by putting a dot between the Flex Model Version and the
+		// FlexBridgeDataVersion. To avoid crashing versions of FLEx that work with data models
+		// before 700072, the result must parse as a float. The leading zeros are there so that
+		// if (by any horrible chance) we ever need a FlexBridgeDataVersion bigger than 999,
+		// an overall model version x.1000 will compare as larger than x.0999 (whereas
+		// for example x.10 is, probably not intentionally, less than x.9).
+		// (There are no projects with FlexBridgeDataVersion 0001; repos written by earlier
+		// versions use branches with no decimal part. But it seems natural to think of them
+		// as version 1, so I am starting the new system at 0002.)
+		internal const string FlexBridgeDataVersion = "0002";
 
 		// Custom Properties
 		internal const string AdditionalFieldsTag = "AdditionalFields";

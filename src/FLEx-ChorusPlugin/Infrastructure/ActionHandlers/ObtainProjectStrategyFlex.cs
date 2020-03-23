@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Collections.Generic;
@@ -31,7 +31,8 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		private static void UpdateToTheCorrectBranchHeadIfPossible(Dictionary<string, string> commandLineArgs,
 			ActualCloneResult cloneResult, string cloneLocation)
 		{
-			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), commandLineArgs["-fwmodel"], cloneResult, cloneLocation))
+			var desiredBranchName = commandLineArgs["-fwmodel"] + "." + FlexBridgeConstants.FlexBridgeDataVersion;
+			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), desiredBranchName, cloneResult, cloneLocation))
 			{
                 if (string.IsNullOrEmpty(cloneResult.Message))
                     cloneResult.Message = CommonResources.kFlexUpdateRequired;

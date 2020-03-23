@@ -143,15 +143,13 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
-		/// Get the data model version number of the current fwdata file.
+		/// Get the branch name that should be used to Send/Receive the current project, made up of the
+		/// model version number of the current fwdata file plus the FlexBridgeDataVersion.
+		/// See the comments on FlexBridgeDataVersion for various constraints on how we come up with this.
+		/// (Note that this cannot, of course, be used in the 'obtain' command, which instead relies on the -fwmodel
+		/// command line argument.)
 		/// </summary>
-		public string BranchName
-		{
-			get
-			{
-				return FieldWorksProjectServices.GetVersionNumber(_fwdataPathname);
-			}
-		}
+		public string BranchName => FieldWorksProjectServices.GetVersionNumber(_fwdataPathname) + "." + FlexBridgeConstants.FlexBridgeDataVersion;
 
 		/// <summary>
 		/// Gets a value telling if the adjunct processed anything.

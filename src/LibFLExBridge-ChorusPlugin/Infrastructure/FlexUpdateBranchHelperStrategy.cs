@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-16 SIL International
+// Copyright (c) 2015-16 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
@@ -14,9 +14,11 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		#region IUpdateBranchHelperStrategy impl
 
+		// Note that this model version, after 700072, may have a decimal part that is the FlexBridgeVersion,
+		// in addition to the integer part that is the model version.
 		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
 		{
-			return uint.Parse(branchName);
+			return float.Parse(branchName);
 		}
 
 		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
