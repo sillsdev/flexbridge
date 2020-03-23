@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 {
 	internal interface IUpdateBranchHelperStrategy
 	{
-		float GetModelVersionFromBranchName(string branchName);
-		float GetModelVersionFromClone(string cloneLocation);
+		double GetModelVersionFromBranchName(string branchName);
+		double GetModelVersionFromClone(string cloneLocation);
 		string GetFullModelVersion(string cloneLocation);
 	}
 }
