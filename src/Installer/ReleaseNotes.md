@@ -1,3 +1,7 @@
+## 3.1.3 2020-04-02
+
+* Chorus updated with bugfix for LT-20019
+
 ## 3.1.2 2020-03-19
 
 * Chorus updated with bugfix for losing Notes bug
