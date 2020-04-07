@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework> <!-- really not important -->
+    <PackageId>SIL.FlexBridge</PackageId> <!-- really not important -->
+    <Version>1.0.0</Version> <!-- really not important -->
+    <Authors>Jason Naylor</Authors>
+    <Company>SIL International</Company>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
+	<PackageReference Include="libpalaso.l10ns" Version="6.0.0-alpha-002" GeneratePathProperty="true" />
+	<PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.0,)" GeneratePathProperty="true"/>
+  </ItemGroup>
+  <Target Name="UpdateCrowdin" DependsOnTargets="GetVersion">
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ..\output\Debug\*Plugin.dll ..\output\Repositories\flexbridge\output\Debug\*.exe" />
+<!--	<Exec Command="overcrowdin updatefiles" /> -->
+  </Target>
+  <Target Name="GetLatestL10ns" DependsOnTargets="restore">
+    <ItemGroup>
+      <XliffFiles Include="$(PkgSIL_Chorus_l10ns)\content\**\*.xlf" />
+      <XliffFiles Include="$(Pkglibpalaso_l10ns)\content\**\*.xlf" />
+	</ItemGroup>
+	<Message Text="$(PkgSIL_Chorus_l10ns) &lt;-- looky looky" />
+	<Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'..\DistFiles\localizations\%(Filename)%(Extension)')" />
+<!--    <Exec Command="overcrowdin download -e -f CommonLibsL10ns.zip" /> -->
+  </Target>
+</Project>

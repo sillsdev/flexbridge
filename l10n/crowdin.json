@@ -1,0 +1,11 @@
+{
+  "project_identifier": "fieldworks",
+  "api_key_env": "CROWDIN_API_KEY",
+  "base_path": ".",
+  "files": [
+    {
+      "source": "FlexBridge.en.xlf",
+      "translation": "/%locale%/FlexBridge.%locale%.xlf",
+    }
+  ]
+}

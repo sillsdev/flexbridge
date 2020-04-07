@@ -84,9 +84,9 @@ namespace TriboroughBridge_ChorusPlugin
 			var results = new Dictionary<string, ILocalizationManager>(3);
 
 			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
-			var	installedTmxBaseDirectory = Path.Combine(
+			var	installedL10nBaseDir = Path.Combine(
 					Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userTmxBaseDirectory = Path.Combine("SIL", FlexBridge);
+			var userL10nBaseDir = Path.Combine("SIL", FlexBridge);
 
 			// Now set it up for the handful of localizable elements in FlexBridge itself.
 			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
@@ -94,10 +94,10 @@ namespace TriboroughBridge_ChorusPlugin
 			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 			// We don't need to reload strings for every "revision" (that might be every time we build).
 			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, FlexBridge, Application.ProductName,
+			var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
 															  version,
-															  installedTmxBaseDirectory,
-															  userTmxBaseDirectory,
+															  installedL10nBaseDir,
+															  userL10nBaseDir,
 															  CommonResources.chorus,
 															  FlexBridgeEmailAddress, new[]
 																  {
@@ -111,20 +111,20 @@ namespace TriboroughBridge_ChorusPlugin
 
 			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var chorusLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "Chorus", "Chorus",
+			var chorusLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Chorus", "Chorus",
 														  version,
-														  installedTmxBaseDirectory,
-														  userTmxBaseDirectory,
+														  installedL10nBaseDir,
+														  userL10nBaseDir,
 														  CommonResources.chorus,
 														  FlexBridgeEmailAddress, "Chorus");
 			results.Add("Chorus", chorusLocMan);
 
 			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var palasoLocMan = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "Palaso", "Palaso",
+			var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
 														  version,
-														  installedTmxBaseDirectory,
-														  userTmxBaseDirectory,
+														  installedL10nBaseDir,
+														  userL10nBaseDir,
 														  CommonResources.chorus,
 														  FlexBridgeEmailAddress, "Palaso");
 			results.Add("Palaso", palasoLocMan);
