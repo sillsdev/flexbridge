@@ -1,0 +1,29 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    // A quick start at build specifying, which much room for improvement.
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "make debug_build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "Initial build",
+      "type": "shell",
+      "command": "make debug",
+      "group": "build",
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+  ]
+}

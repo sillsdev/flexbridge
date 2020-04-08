@@ -1,36 +1,46 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch",
-            "type": "mono",
-            "request": "launch",
-            "program": "${workspaceRoot}/output/DebugMono/FLExBridge.exe",
-            "args": [
-                "-u", "${env:USER}",
-                "-p", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
-                "-v", "obtain",
-                "-projDir", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
-                "-fwAppsDir","${env:HOME}/fwrepo/fw/Output_x86_64/Debug",
-                "-fwmodel", "7000072",
-                "-liftmodel", "0.13_ldml3",
-                "-locale", "en",
-                "-pipeID", "SendReceive${env:HOME}/fwrepo/fw/DistFiles/Projectsobtain"
-            ],
-            "env": {
-                "MONO_ENVIRON": "${env:HOME}/fwrepo/flexbridge/environ"
-            },
-            "cwd": "${workspaceRoot}"
-        },
-        {
-            "name": "Attach",
-            "type": "mono",
-            "request": "attach",
-            "address": "localhost",
-            "port": 55555
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch",
+      "type": "mono",
+      "request": "launch",
+      "program": "${workspaceRoot}/output/DebugMono/FLExBridge.exe",
+      "args": [
+        "-u", "${env:USER}",
+        "-projDir", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
+        "-fwAppsDir", "${env:HOME}/fwrepo/fw/Output/Debug",
+        "-fwmodel", "7000072",
+        "-liftmodel", "0.13",
+        "-locale", "en",
+        // Change these arguments to launch and debug different areas.
+        // Launching FB via FW and running `ps faxww | grep FLExBridge` will
+        // reveal what setting for -p, -v, -f, and -pipeID to change
+        // these to. Then modify FW by commenting out Process.Start in
+        // FLexBridgeHelper.cs.
+        // -p could instead be .../Projects/foo/foo.fwdata
+        "-p", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
+        "-v", "obtain", // eg: obtain, send_receive
+        // "-f", "${env:HOME}/fwrepo/fw/Output/Debug/FixFwData.exe",
+        // -pipeId could instead be .../Projects/foo/foo.fwdatasend_receive
+        "-pipeID", "SendReceive${env:HOME}/fwrepo/fw/DistFiles/Projectsobtain"
+      ],
+      "env": {
+        // When launching, use this mono.
+        "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        "MONO_ENVIRON": "${env:HOME}/fwrepo/flexbridge/environ"
+      },
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "name": "Attach",
+      "type": "mono",
+      "request": "attach",
+      "address": "localhost",
+      "port": 55555
+    }
+  ]
 }
