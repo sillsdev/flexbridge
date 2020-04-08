@@ -30,7 +30,7 @@ MONO_ENV_OPTIONS="-O=-gshared"
 # (so things work in both situations).
 LD_LIBRARY_PATH="${BASE}:${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
 MONO_PATH="${BASE}:${BASE}/output/${BUILD}:${MONO_PATH}"
-	PATH="${BASE}/output/${BUILD}:${PATH}"
+PATH="${BASE}/output/${BUILD}:${PATH}"
 
 ################################################################################################
 
