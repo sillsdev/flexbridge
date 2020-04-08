@@ -5,7 +5,7 @@
   "files": [
     {
       "source": "FlexBridge.en.xlf",
-      "translation": "/%locale%/FlexBridge.%locale%.xlf",
+      "translation": "/%locale%/FlexBridge/FlexBridge.%locale%.xlf",
     }
   ]
 }
