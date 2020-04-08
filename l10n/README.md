@@ -31,5 +31,5 @@ It can also be run manually as follows:
 dotnet tool install -g overcrowdin
 set CROWDIN_FIELDWORKS_KEY=TheApiKeyForTheFieldWorksProject
 msbuild l10n.proj /t:restore
-msbuild l10n.proj /t:PackageL10ns
+msbuild l10n.proj /t:GetLatestL10ns
 ```

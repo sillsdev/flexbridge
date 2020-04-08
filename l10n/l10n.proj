@@ -8,20 +8,23 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
-	<PackageReference Include="libpalaso.l10ns" Version="6.0.0-alpha-002" GeneratePathProperty="true" />
-	<PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.0,)" GeneratePathProperty="true"/>
+    <PackageReference Include="libpalaso.l10ns" Version="6.0.0-alpha-002" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.0,)" GeneratePathProperty="true"/>
   </ItemGroup>
-  <Target Name="UpdateCrowdin" DependsOnTargets="GetVersion">
+  <Target Name="UpdateCrowdin" DependOnTargets="restore">
+    <Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
 	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ..\output\Debug\*Plugin.dll ..\output\Repositories\flexbridge\output\Debug\*.exe" />
-<!--	<Exec Command="overcrowdin updatefiles" /> -->
+    <Exec Command="overcrowdin updatefiles" />
   </Target>
   <Target Name="GetLatestL10ns" DependsOnTargets="restore">
+    <Exec Command="overcrowdin download -e -f FieldWorksL10ns.zip" />
+    <!-- Set ContinueOnError because Unzip in Msbuild v16 throws false errors for folders. (fixed in later versions) -->
+    <Unzip ContinueOnError="true" SourceFiles="FieldWorksL10ns.zip" DestinationFolder="FieldWorksL10ns" />
     <ItemGroup>
       <XliffFiles Include="$(PkgSIL_Chorus_l10ns)\content\**\*.xlf" />
       <XliffFiles Include="$(Pkglibpalaso_l10ns)\content\**\*.xlf" />
-	</ItemGroup>
-	<Message Text="$(PkgSIL_Chorus_l10ns) &lt;-- looky looky" />
-	<Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'..\DistFiles\localizations\%(Filename)%(Extension)')" />
-<!--    <Exec Command="overcrowdin download -e -f CommonLibsL10ns.zip" /> -->
+      <XliffFiles Include=".\FieldWorksL10ns\**\FlexBridge.*.xlf" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'..\DistFiles\localizations\%(Filename)%(Extension)')" />
   </Target>
 </Project>
