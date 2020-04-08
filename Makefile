@@ -27,10 +27,23 @@ release_build:
 debug: vcs_version download_dependencies debug_build
 
 debug_build:
+	# Setting /p:AutoGenerateBindingRedirects=false will prevent FLExBridge.exe.config from having bindingRedirect
+	# tags set for assemblies, such as gtk-sharp and gdk-sharp. This fixes LT-20123. These were getting set to
+	# bindingRedirect gtk-sharp and gdk-sharp to newVersion 3.0.0.0 (which later crashes FB when it can't load
+	# gtk-sharp 3.0.0.0). (gtk-sharp 3.0.0.0 is available in gtk-sharp3, but we haven't moved from gtk-sharp 2 yet.)
+	# The compiler thinks it should do this because the SIL.Windows.Forms.dll from libpalaso has assembly references to
+	# gtk-sharp 3.0.0.0, presumably because gtk-sharp3 is installed on the build agent that builds libpalaso. The
+	# FLExBridge.exe.config file could alternatively be modified post-build to use gtk-sharp and gdk-sharp newVersion
+	# 2.12.0.0.
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
-	. ./environ && cd build && msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono /p:RestorePackages=false /p:UpdateAssemblyInfo=false /p:WriteVersionInfoToBuildLog=false
+	. ./environ \
+	  && cd build \
+	  && msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
+	    /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono \
+		/p:RestorePackages=false /p:AutoGenerateBindingRedirects=false /p:UpdateAssemblyInfo=false \
+		/p:WriteVersionInfoToBuildLog=false
 	cp -a packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.$(GECKOFX45_VERSION)/lib/net40
 	cp -a packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.$(GECKOFX45_VERSION)/lib/net40
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
