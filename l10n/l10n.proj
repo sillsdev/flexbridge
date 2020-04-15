@@ -11,7 +11,7 @@
     <PackageReference Include="libpalaso.l10ns" Version="6.0.0-alpha-002" GeneratePathProperty="true" />
     <PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.0,)" GeneratePathProperty="true"/>
   </ItemGroup>
-  <Target Name="UpdateCrowdin" DependOnTargets="restore">
+  <Target Name="UpdateCrowdin" DependsOnTargets="restore">
     <Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
 	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ..\output\Debug\*Plugin.dll ..\output\Repositories\flexbridge\output\Debug\*.exe" />
     <Exec Command="overcrowdin updatefiles" />
