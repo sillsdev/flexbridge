@@ -1,10 +1,8 @@
-// Copyright (c) 2015-2016 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using SIL.Progress;
 using Chorus.VcsDrivers.Mercurial;
 
