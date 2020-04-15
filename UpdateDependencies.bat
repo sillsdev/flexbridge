@@ -4,15 +4,19 @@ REM This script assumes that the Chorus and Palaso directories are on the same l
 REM this one, and that the FieldWorks repo is also at the same level.
 REM It copies the needed libraries into the lib folder.
 
-set CHORUS_DIR="..\chorus"
-
-IF NOT EXIST %CHORUS_DIR% GOTO :EOF
-
 IF "%1"=="" (
 	set BUILD_CONFIG="Debug"
 ) ELSE (
 	set BUILD_CONFIG=%1
 )
+
+REM Uncomment these lines if you are working on L10NSharp
+REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* lib\%BUILD_CONFIG%\
+REM copy /Y ..\l10nsharp\output\%BUILD_CONFIG%\L10NSharp.* output\%BUILD_CONFIG%\
+
+set CHORUS_DIR="..\chorus"
+
+IF NOT EXIST %CHORUS_DIR% GOTO :EOF
 
 pushd %CHORUS_DIR%
 REM Presence of a second argument indicates that the caller has already run vsvars32.bat
