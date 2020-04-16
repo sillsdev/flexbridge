@@ -14,6 +14,7 @@ Build-Depends: debhelper (>= 9.0.0),
  wget,
  unzip,
  ca-certificates,
+ dotnet-sdk-3.1,
  git
 Standards-Version: 3.9.6
 Homepage: http://projects.palaso.org/projects/fwbridge
