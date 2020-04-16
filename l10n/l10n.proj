@@ -8,9 +8,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
-    <PackageReference Include="libpalaso.l10ns" Version="6.0.0-alpha-002" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.0,)" GeneratePathProperty="true"/>
+	<PackageReference Include="SIL.libpalaso.l10ns" Version="6.0.0" GeneratePathProperty="true" />
+	<PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.1,)" GeneratePathProperty="true"/>
+	<PackageReference Include="SIL.BuildTasks" Version="2.3.0-beta.14" GeneratePathProperty="true" />
   </ItemGroup>
+  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)\tools\SIL.BuildTasks.dll" />
   <Target Name="UpdateCrowdin" DependsOnTargets="restore">
     <Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
 	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ..\output\Debug\*Plugin.dll ..\output\Repositories\flexbridge\output\Debug\*.exe" />
@@ -19,7 +21,9 @@
   <Target Name="GetLatestL10ns" DependsOnTargets="restore">
     <Exec Command="overcrowdin download -e -f FieldWorksL10ns.zip" />
     <!-- Set ContinueOnError because Unzip in Msbuild v16 throws false errors for folders. (fixed in later versions) -->
+	<RemoveDir Directories="FieldWorksL10ns" />
     <Unzip ContinueOnError="true" SourceFiles="FieldWorksL10ns.zip" DestinationFolder="FieldWorksL10ns" />
+	<NormalizeLocales L10nsDirectory="FieldWorksL10ns" />
     <ItemGroup>
       <XliffFiles Include="$(PkgSIL_Chorus_l10ns)\content\**\*.xlf" />
       <XliffFiles Include="$(Pkglibpalaso_l10ns)\content\**\*.xlf" />
