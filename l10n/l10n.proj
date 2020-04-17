@@ -24,6 +24,9 @@
     <!-- Set ContinueOnError because Unzip in Msbuild v16 throws false errors for folders. (fixed in later versions) -->
     <Unzip ContinueOnError="true" SourceFiles="FieldWorksL10ns.zip" DestinationFolder="FieldWorksL10ns" />
 	<NormalizeLocales L10nsDirectory="FieldWorksL10ns" />
+	<CallTarget Targets="CopyL10nsToDistFiles"/>
+  </Target>
+  <Target Name="CopyL10nsToDistFiles" DependsOnTargets="restore">
     <ItemGroup>
       <XliffFiles Include="$(PkgSIL_Chorus_l10ns)\content\**\*.xlf" />
       <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)\content\**\*.xlf" />

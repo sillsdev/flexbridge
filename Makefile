@@ -14,6 +14,10 @@ all: release
 
 download_dependencies:
 	./download_dependencies_linux.sh
+	. ./environ \
+	  && cd l10n \
+	  && msbuild l10n.proj /t:restore \
+	  && msbuild l10n.proj /t:CopyL10nsToDistFiles
 
 release: vcs_version download_dependencies release_build
 
@@ -69,6 +73,7 @@ fetch_l10ns:
 	. ./environ \
 	  && . /etc/profile.d/dotnet-cli-tools-bin-path.sh \
 	  && cd l10n \
+	  && msbuild l10n.proj /t:restore \
 	  && msbuild l10n.proj /t:GetlatestL10ns
 
 install: fetch_l10ns

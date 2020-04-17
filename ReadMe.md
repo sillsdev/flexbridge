@@ -38,15 +38,6 @@ If you plan to work on Chorus:
 - - Build FLEx Bridge using the instructions below
 - On **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
 
-#### Mercurial
-
-To run FLEx Bridge you must unzip `chorus/lib/common/Mercurial.zip` to the root of flexbridge.  Then, edit the `mercurial.ini`
-file in the Mercurial folder. Add a line like this (with the appropriate path for your flexbridge folder):
-
-	fixutf8 = C:\Dev\flexbridge\MercurialExtensions\fixutf8\fixutf8.py
-
-Note that this is in addition to unzipping this folder per the Chorus ReadMe.
-
 #### Connecting FieldWorks to FLEx Bridge
 
 - On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
@@ -59,7 +50,7 @@ Also, if you are working on Chorus, set up the FieldWorks build to copy locally-
 
 ### Build
 
-* On **Windows**, on the very first build after cloning, run the build.bat from the build folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2015 Community Edition. (Note if you get errors related to NuGet delete nuget.exe and try the build batch file again)
+* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2015 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
 * On **Linux**, `make debug`
 
 ## Updating Release Notes for a new version
