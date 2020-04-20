@@ -3,7 +3,10 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+# Help nuget
 export XDG_CONFIG_HOME=/tmp/.config
+# Help dotnet tools get installed to and used from $HOME/bin
+export HOME=$(shell mktemp -d)
 
 %:
 	dh $@ --with cli
