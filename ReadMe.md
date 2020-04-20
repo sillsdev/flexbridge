@@ -62,6 +62,7 @@ When releasing FLEx Bridge be sure to do the following:
 1. Update the version and changelogs / release notes.
 
 	- Edit `GitVersion.yml` if you are making a major or minor version number jump. The third place digit will be incremented automatically by GitVersion
+	- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
 
 	- Windows Instructions:
 		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
@@ -71,8 +72,7 @@ When releasing FLEx Bridge be sure to do the following:
 				cd build
 				build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
 
-		- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
-		- Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
+		- (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
 
 	- Linux Instructions:
 
