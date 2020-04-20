@@ -151,7 +151,7 @@
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<Target Name="VersionNumbers" DependsOnTargets="GetVersion">
+	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
 		<PropertyGroup>
 			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
 			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>

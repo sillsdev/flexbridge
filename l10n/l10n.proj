@@ -1,34 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework> <!-- really not important -->
-    <PackageId>SIL.FlexBridge</PackageId> <!-- really not important -->
-    <Version>1.0.0</Version> <!-- really not important -->
-    <Authors>Jason Naylor</Authors>
-    <Company>SIL International</Company>
+	<TargetFramework>netframework4.6.1</TargetFramework> <!-- really not important, but should be compatible with NuGet packages -->
+	<PackageId>SIL.FlexBridge</PackageId> <!-- really not important -->
+	<Version>1.0.0</Version> <!-- really not important -->
+	<Authors>Jason Naylor</Authors>
+	<Company>SIL International</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
+	<PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
+	<PackageReference Include="MSBuild.Extension.Pack" Version="1.9.1" GeneratePathProperty="true" />
 	<PackageReference Include="SIL.libpalaso.l10ns" Version="6.0.0" GeneratePathProperty="true" />
 	<PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.1,)" GeneratePathProperty="true"/>
 	<PackageReference Include="SIL.BuildTasks" Version="2.3.0-beta.14" GeneratePathProperty="true" />
   </ItemGroup>
-  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)\tools\SIL.BuildTasks.dll" />
+  <UsingTask TaskName="DNZip" AssemblyFile="$(PkgMSBuild_Extension_Pack)/tools/net40/MSBuild.ExtensionPack.dll" />
+  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)/tools/SIL.BuildTasks.dll" />
   <Target Name="UpdateCrowdin" DependsOnTargets="restore">
-    <Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
-	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ..\output\Debug\*Plugin.dll ..\output\Repositories\flexbridge\output\Debug\*.exe" />
-    <Exec Command="overcrowdin updatefiles" />
+	<Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)/tools/ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ../output/Debug/*Plugin.dll ../output/Repositories/flexbridge/output/Debug/*.exe" />
+	<Exec Command="overcrowdin updatefiles" />
   </Target>
   <Target Name="GetLatestL10ns" DependsOnTargets="restore">
 	<RemoveDir Directories="FieldWorksL10ns" />
-    <Exec Command="overcrowdin download -e -f FieldWorksL10ns.zip" />
-    <!-- Set ContinueOnError because Unzip in Msbuild v16 throws false errors for folders. (fixed in later versions) -->
-    <Unzip ContinueOnError="true" SourceFiles="FieldWorksL10ns.zip" DestinationFolder="FieldWorksL10ns" />
+	<Exec Command="overcrowdin download -e -f FieldWorksL10ns.zip" />
+	<DNZip TaskAction="Extract" ExtractPath="FieldWorksL10ns" ZipFileName="FieldWorksL10ns.zip"/>
 	<NormalizeLocales L10nsDirectory="FieldWorksL10ns" />
-    <ItemGroup>
-      <XliffFiles Include="$(PkgSIL_Chorus_l10ns)\content\**\*.xlf" />
-      <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)\content\**\*.xlf" />
-      <XliffFiles Include=".\FieldWorksL10ns\**\FlexBridge.*.xlf" />
-    </ItemGroup>
-    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'..\DistFiles\localizations\%(Filename)%(Extension)')" />
+	<CallTarget Targets="CopyL10nsToDistFiles"/>
+  </Target>
+  <Target Name="CopyL10nsToDistFiles" DependsOnTargets="restore">
+	<ItemGroup>
+	  <XliffFiles Include="$(PkgSIL_Chorus_l10ns)/content/**/*.xlf" />
+	  <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)/content/**/*.xlf" />
+	  <XliffFiles Include="./FieldWorksL10ns/**/FlexBridge.*.xlf" />
+	</ItemGroup>
+	<Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'../DistFiles/localizations/%(Filename)%(Extension)')" />
   </Target>
 </Project>

@@ -9,12 +9,12 @@ The "big idea" for the bridge system is that clients do not have to know how tal
 
 *Language Forge* (LF) uses *LfMergeBridge* to S/R the full *FLEx* data set (LCModel, fwdata file). LF needs a *Windows.Forms*-free environment since it runs on a server.
 
-*FLEx* uses the *FLExBridge* exe to S/R its own data set and for *LIFT* (also compatible with *WeSay*). *WeSay* talks directly to *Chorus* and does not use the *FLExBridge* exe.
+*FLEx* uses *FLEx Bridge* to S/R its own data set and for *LIFT* (also compatible with *WeSay*). *WeSay* talks directly to *Chorus* and does not use *FLEx Bridge*.
 
-The *TriboroughBridge* project (named after the RFK Triborough Bridge complex connecting three boroughs in New York) contains pieces that are applicable to both *FLExBridge* (Full LCModel) and *LiftBridge* (*LIFT* model, also compatible with *WeSay*).
+The *TriboroughBridge* project (named after the RFK Triborough Bridge complex connecting three boroughs in New York) contains pieces that are applicable to both *FLEx Bridge* (Full LCModel) and *LiftBridge* (*LIFT* model, also compatible with *WeSay*).
 
 See diagram:
-![FLExBridge Projects Relationships](FLExBridgeRepo.svg)
+![FLEx Bridge Projects Relationships](FLExBridgeRepo.svg)
 
 ## Development
 
@@ -24,46 +24,40 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso.
 Versions of these assemblies are no longer in the repo.
 Therefore, to build FLEx Bridge, you must get the latest versions of these assemblies by running this in a Bash window:
 
-- In **Windows**, run `download_dependencies_windows.sh`
-- In **Linux**, run `download_dependencies_linux.sh`
+- On **Windows**, run `download_dependencies_windows.sh`
+- On **Linux**, run `download_dependencies_linux.sh`
 
 If necessary, both *download_dependencies* scripts can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
 
 If you plan to work on Chorus:
 
 - Clone the Chorus and LibPalaso repos from https://github.com/sillsdev/chorus and https://github.com/sillsdev/libpalaso into the same parent directory as flexbridge without changing their repository names.
-- In **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLExBridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLExBridge, and build FLExBridge.
-- In **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
+- On **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLEx Bridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLEx Bridge, and build FLEx Bridge. **Note:** recursive building of linked libraries is presently broken. Instead:
+- - Build Chorus per its instructions
+- - Run `UpdateDependencies.bat`
+- - Build FLEx Bridge using the instructions below
+- On **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
 
-#### Mercurial
+#### Connecting FieldWorks to FLEx Bridge
 
-To run FLExBridge you must unzip `chorus/lib/common/Mercurial.zip` to the root of flexbridge.  Then, edit the `mercurial.ini`
-file in the Mercurial folder. Add a line like this (with the appropriate path for your flexbridge folder):
-
-	fixutf8 = C:\Dev\flexbridge\MercurialExtensions\fixutf8\fixutf8.py
-
-Note that this is in addition to unzipping this folder per the Chorus ReadMe.
-
-#### Connecting FieldWorks to FLExBridge
-
-- In **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
+- On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
-- In **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
+- On **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
 
 Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
 (instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
 
 ### Build
 
-* In **Windows**, On the very first build after cloning run the build.bat from the build folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2015 Community Edition. (Note if you get errors related to NuGet delete nuget.exe and try the build batch file again)
-* In **Linux**, `make debug`
+* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2017 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
+* On **Linux**, `make debug`
 
 ## Updating Release Notes for a new version
 
-FLExBridge is following the gitflow model for branching
+FLEx Bridge is following the gitflow model for branching
 
-When releasing FLExBridge be sure to do the following:
+When releasing FLEx Bridge be sure to do the following:
 
 1. Update the version and changelogs / release notes.
 
