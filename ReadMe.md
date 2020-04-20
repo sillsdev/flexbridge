@@ -50,7 +50,7 @@ Also, if you are working on Chorus, set up the FieldWorks build to copy locally-
 
 ### Build
 
-* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2015 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
+* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2017 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
 * On **Linux**, `make debug`
 
 ## Updating Release Notes for a new version
