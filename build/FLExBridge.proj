@@ -120,7 +120,7 @@
 
 	<ItemGroup>
 		<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
-		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
+		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*.xlf"/>
 		<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
