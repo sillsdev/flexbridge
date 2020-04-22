@@ -52,8 +52,7 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			var system = new ChorusSystem(directoryName);
 			system.Init(user);
-			if (configure != null)
-				configure(system.ProjectFolderConfiguration);
+			configure?.Invoke(system.ProjectFolderConfiguration);
 			return system;
 		}
 
@@ -83,51 +82,51 @@ namespace TriboroughBridge_ChorusPlugin
 		{
 			var results = new Dictionary<string, ILocalizationManager>(3);
 
-			var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
-			var	installedL10nBaseDir = Path.Combine(
+			try
+			{
+				var desiredUiLangId = commandLineArgs[CommandLineProcessor.locale];
+				// ReSharper disable InconsistentNaming
+				var installedL10nBaseDir = Path.Combine(
+					// ReSharper disable once AssignNullToNotNullAttribute
 					Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)), localizations);
-			var userL10nBaseDir = Path.Combine("SIL", FlexBridge);
+				var userL10nBaseDir = Path.Combine("SIL", FlexBridge);
+				// ReSharper restore InconsistentNaming
 
-			// Now set it up for the handful of localizable elements in FlexBridge itself.
-			// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
-			// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
-			var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
-			// We don't need to reload strings for every "revision" (that might be every time we build).
-			var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
-															  version,
-															  installedL10nBaseDir,
-															  userL10nBaseDir,
-															  CommonResources.chorus,
-															  FlexBridgeEmailAddress, new[]
-																  {
-																	  FlexBridge, "TriboroughBridge_ChorusPlugin",
-																	  "FLEx_ChorusPlugin", "SIL.LiftBridge"
-																  });
-			results.Add("FlexBridge", flexBridgeLocMan);
+				// Now set it up for the handful of localizable elements in FlexBridge itself.
+				// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
+				// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
+				var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
+				// We don't need to reload strings for every "revision" (that might be every time we build).
+				var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+				var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus,
+					FlexBridgeEmailAddress, FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge");
+				results.Add("FlexBridge", flexBridgeLocMan);
 
-			// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
-			desiredUiLangId = LocalizationManager.UILanguageId;
+				// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
+				desiredUiLangId = LocalizationManager.UILanguageId;
 
-			versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
-			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var chorusLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Chorus", "Chorus",
-														  version,
-														  installedL10nBaseDir,
-														  userL10nBaseDir,
-														  CommonResources.chorus,
-														  FlexBridgeEmailAddress, "Chorus");
-			results.Add("Chorus", chorusLocMan);
+				versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
+				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+				var chorusLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Chorus", "Chorus",
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexBridgeEmailAddress, "Chorus");
+				results.Add("Chorus", chorusLocMan);
 
-			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
-			version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-			var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
-														  version,
-														  installedL10nBaseDir,
-														  userL10nBaseDir,
-														  CommonResources.chorus,
-														  FlexBridgeEmailAddress, "Palaso");
-			results.Add("Palaso", palasoLocMan);
+				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+				var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexBridgeEmailAddress, "Palaso");
+				results.Add("Palaso", palasoLocMan);
+			}
+			catch
+			{
+				// For some reason, even though ErrorReport has been initialized, calling it here throws an exception.
+				// ReSharper disable LocalizableElement - not localizable if l10n setup failed!
+				MessageBox.Show(
+					$"There was a problem setting up localizations, probably because they were not installed. Please report this to {TriboroughBridgeUtilities.FlexBridgeEmailAddress}.",
+					"Error Localizing FLEx Bridge", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				// ReSharper restore LocalizableElement
+			}
 
 			return results;
 		}
