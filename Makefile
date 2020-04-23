@@ -70,11 +70,13 @@ clean:
 
 fetch_l10ns:
 	dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
-	. ./environ \
-	  && . /etc/profile.d/dotnet-cli-tools-bin-path.sh \
-	  && cd l10n \
-	  && msbuild l10n.proj /t:restore \
-	  && msbuild l10n.proj /t:GetlatestL10ns
+	bash -c '\
+	  . environ \
+	    && export PATH="$$PATH:${HOME}/.dotnet/tools" \
+	    && cd l10n \
+	    && msbuild l10n.proj /t:restore \
+	    && msbuild l10n.proj /t:GetlatestL10ns \
+	'
 
 install: fetch_l10ns
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
