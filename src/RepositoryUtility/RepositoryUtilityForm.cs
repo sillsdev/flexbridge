@@ -29,8 +29,10 @@ namespace RepositoryUtility
 	[Export(typeof(RepositoryUtilityForm))]
 	public sealed partial class RepositoryUtilityForm : Form
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private ActionTypeHandlerRepository _actionTypeHandlerRepository;
+#pragma warning restore 0649
 		private readonly string _repoHoldingFolder;
 		private string _repoFolder;
 		private ChorusSystem _chorusSystem;
@@ -174,7 +176,8 @@ namespace RepositoryUtility
 			{
 				// Branches are used to mark different data models, and I (RandyR) wasn't in the mood to deal with that at this point in the following no-op merge. :-)
 				MessageBox.Show(this,
-					String.Format(@"Selected revision '{0}' is in branch '{1}', but tip revision '{2}' is in branch '{3}', so the merge cannot be done.",
+					// ReSharper disable once UseStringInterpolation
+					string.Format(@"Selected revision '{0}' is in branch '{1}', but tip revision '{2}' is in branch '{3}', so the merge cannot be done.",
 						_currentRevision.Number.LocalRevisionNumber, selectedBranchName,
 						oldTip.Number.LocalRevisionNumber, oldTipBranchName),
 					@"Mis-matched branches", MessageBoxButtons.OK,
@@ -184,6 +187,7 @@ namespace RepositoryUtility
 
 			// Step 2: Confirm we are at the correct revision.
 			if (MessageBox.Show(this,
+				// ReSharper disable once UseStringInterpolation
 				string.Format(@"This aims to roll back to revision '{0}' (currently selected revision). If this is not the desired revision, select the 'Cancel' button.", _currentRevision.Number.LocalRevisionNumber),
 				"Confirm revision to roll back to",
 				MessageBoxButtons.OKCancel,
@@ -379,18 +383,9 @@ namespace RepositoryUtility
 			return revision.Number.LocalRevisionNumber;
 		}
 
-		private string RepoDir
-		{
-			get { return Path.Combine(_repoFolder, @".hg"); }
-		}
+		private string RepoDir => Path.Combine(_repoFolder, @".hg");
 
-		private bool HasRepo
-		{
-			get
-			{
-				return !string.IsNullOrWhiteSpace(_repoFolder) && Directory.Exists(RepoDir);
-			}
-		}
+		private bool HasRepo => !string.IsNullOrWhiteSpace(_repoFolder) && Directory.Exists(RepoDir);
 
 		/// <summary>
 		/// Do a no-op merge. (See: http://mercurial.selenic.com/wiki/PruningDeadBranches#No-Op_Merges)
@@ -413,9 +408,9 @@ namespace RepositoryUtility
 			repo.Execute(repo.SecondsBeforeTimeoutOnMergeOperation, "revert", "-a", "-r", keeperRevision.Number.LocalRevisionNumber);
 
 			// Commit
-			var comment = string.Format(@"No-Op Merge: Revert repository to revision '{0}'", keeperRevision.Number.LocalRevisionNumber);
+			var comment = $@"No-Op Merge: Revert repository to revision '{keeperRevision.Number.LocalRevisionNumber}'";
 			if (!string.IsNullOrWhiteSpace(optionalComment))
-				comment = string.Format(@"{0}. {1}", comment, optionalComment);
+				comment = $@"{comment}. {optionalComment}";
 			repo.Commit(true, comment);
 		}
 
@@ -446,7 +441,9 @@ namespace RepositoryUtility
 		{
 			None,
 
+			// ReSharper disable once InconsistentNaming
 			LIFT,
+			// ReSharper disable once InconsistentNaming
 			FLEx,
 
 			NotSupported,
@@ -505,12 +502,12 @@ namespace RepositoryUtility
 				extensions.Add("fixutf8", Path.Combine(fixUtfFolder, "fixutf8.py"));
 			DowngradeHgrcForProject(currentFwdataPathname, format, extensions);
 			var otherRepoPath = Path.Combine(currentFwdataPathname, "OtherRepositories");
-			if(Directory.Exists(otherRepoPath))
+			if (!Directory.Exists(otherRepoPath))
+				return;
+
+			foreach(var repo in Directory.EnumerateDirectories(otherRepoPath))
 			{
-				foreach(var repo in Directory.EnumerateDirectories(otherRepoPath))
-				{
-					DowngradeHgrcForProject(repo, format, extensions);
-				}
+				DowngradeHgrcForProject(repo, format, extensions);
 			}
 		}
 

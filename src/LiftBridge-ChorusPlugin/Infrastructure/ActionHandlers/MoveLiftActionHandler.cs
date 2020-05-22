@@ -19,17 +19,19 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 {
 	/// <summary>
 	/// This IBridgeActionTypeHandler implementation handles everything needed move a Lift repo
-	/// from the older Lift Bridge location to the new Lift repo home within to the main Felx project folder structure.
+	/// from the older Lift Bridge location to the new Lift repo home within to the main Flex project folder structure.
 	/// </summary>
 	[Export(typeof (IBridgeActionTypeHandler))]
 	internal sealed class MoveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 		private string _baseLiftDir;
 		private const string MappingTag = "Mapping";
-		private const string ProjectguidAttrTag = "projectguid";
-		private const string RepositoryidentifierAttrTag = "repositoryidentifier";
+		private const string ProjectGuidAttrTag = "projectguid";
+		private const string RepositoryIdentifierAttrTag = "repositoryidentifier";
 		private const string MappingFilename = "LanguageProject_Repository_Map.xml";
 
 		private static void RemoveElementAndSaveDoc(XDocument mappingDoc, XElement goner, string mappingDocPathname)
@@ -72,7 +74,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				return;
 			}
 			var removedElements = mappingDoc.Root.Elements(MappingTag)
-				.Where(mapElement => mapElement.Attribute(ProjectguidAttrTag) == null || mapElement.Attribute(RepositoryidentifierAttrTag) == null).ToList();
+				.Where(mapElement => mapElement.Attribute(ProjectGuidAttrTag) == null || mapElement.Attribute(RepositoryIdentifierAttrTag) == null).ToList();
 			foreach (var goner in removedElements)
 			{
 				goner.Remove();
@@ -86,10 +88,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			string oldLiftFolder = null;
 			foreach (var mapElement in mappingDoc.Root.Elements(MappingTag).ToList())
 			{
-				if (mapElement.Attribute(ProjectguidAttrTag).Value.ToLowerInvariant() != fwLangProjGuid.ToLowerInvariant())
+				if (mapElement.Attribute(ProjectGuidAttrTag).Value.ToLowerInvariant() != fwLangProjGuid.ToLowerInvariant())
 					continue;
 
-				var repoId = mapElement.Attribute(RepositoryidentifierAttrTag).Value;
+				var repoId = mapElement.Attribute(RepositoryIdentifierAttrTag).Value;
 
 				foreach (var directory in Directory.GetDirectories(basePathForOldLiftRepos).Where(directory => Directory.Exists(Path.Combine(directory, TriboroughBridgeUtilities.hg))))
 				{
@@ -136,10 +138,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.MoveLift; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.MoveLift;
 
 		#endregion IBridgeActionTypeHandler impl
 
