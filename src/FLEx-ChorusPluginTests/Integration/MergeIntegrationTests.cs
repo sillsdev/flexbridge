@@ -158,19 +158,19 @@ namespace FLEx_ChorusPluginTests.Integration
 					sueRepo.AddAndCheckIn();
 
 					var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
-					Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+					Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 					randyRepo.WriteNewContentsToTestFile(randy);
 					randyRepo.CheckinAndPullAndMerge(sueRepo);
-					Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+					Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
-					Assert.IsNotNullOrEmpty(notesContents);
-					Assert.That(notesContents, Is.StringContaining("Removed Vs Edited Element Conflict"));
-					Assert.That(notesContents, Is.StringContaining("Randy deleted this element"));
-					Assert.That(notesContents, Is.StringContaining("Sue edited it"));
-					Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Sue."));
-					Assert.That(notesContents, Is.StringContaining("whoWon=\"Sue\""));
-					Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
-					Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
+					Assert.That(notesContents, Is.Not.Null.Or.Empty);
+					Assert.That(notesContents, Does.Contain("Removed Vs Edited Element Conflict"));
+					Assert.That(notesContents, Does.Contain("Randy deleted this element"));
+					Assert.That(notesContents, Does.Contain("Sue edited it"));
+					Assert.That(notesContents, Does.Contain("The merger kept the change made by Sue."));
+					Assert.That(notesContents, Does.Contain("whoWon=\"Sue\""));
+					Assert.That(notesContents, Does.Contain("alphaUserId=\"Randy\""));
+					Assert.That(notesContents, Does.Contain("betaUserId=\"Sue\""));
 
 					// Make sure merged file has both alts.
 					var doc = XDocument.Load(randyRepo.UserFile.Path);
@@ -179,10 +179,10 @@ namespace FLEx_ChorusPluginTests.Integration
 					Assert.AreEqual(2, aStrElements.Count);
 					var aStrZpi = aStrElements.FirstOrDefault(el => el.Attribute("ws").Value == "zpi");
 					Assert.IsNotNull(aStrZpi);
-					Assert.IsTrue(aStrZpi.Element("Run").Value == "saklo, yzaklo, rzaklo, wzaklo, nzaklo, -");
+					Assert.That(aStrZpi.Element("Run").Value, Is.EqualTo("saklo, yzaklo, rzaklo, wzaklo, nzaklo, -"));
 					var aStrEzpi = aStrElements.FirstOrDefault(el => el.Attribute("ws").Value == "qaa-x-ezpi");
 					Assert.IsNotNull(aStrEzpi);
-					Assert.IsTrue(aStrEzpi.Element("Run").Value == "saglo, yzaglo, rzaglo, wzaglo, nzaglo, -");
+					Assert.That(aStrEzpi.Element("Run").Value, Is.EqualTo("saglo, yzaglo, rzaglo, wzaglo, nzaglo, -"));
 				}
 			}
 		}
@@ -262,16 +262,16 @@ namespace FLEx_ChorusPluginTests.Integration
 					sueRepo.AddAndCheckIn();
 
 					var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
-					Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+					Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 					randyRepo.WriteNewContentsToTestFile(randy);
 					randyRepo.CheckinAndPullAndMerge(sueRepo);
-					Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+					Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
-					Assert.IsNotNullOrEmpty(notesContents);
-					Assert.That(notesContents, Is.StringContaining("Randy and Sue edited the same part of this data."));
-					Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Randy."));
-					Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
-					Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
+					Assert.That(notesContents, Is.Not.Null.Or.Empty);
+					Assert.That(notesContents, Does.Contain("Randy and Sue edited the same part of this data."));
+					Assert.That(notesContents, Does.Contain("The merger kept the change made by Randy."));
+					Assert.That(notesContents, Does.Contain("alphaUserId=\"Randy\""));
+					Assert.That(notesContents, Does.Contain("betaUserId=\"Sue\""));
 
 					// Make sure merged file has Randy's changes
 					var doc = XDocument.Load(randyRepo.UserFile.Path);
@@ -354,16 +354,16 @@ namespace FLEx_ChorusPluginTests.Integration
 
 						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", FlexBridgeConstants.fwdictconfig));
 						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
-						Assert.IsFalse(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should NOT have been in working set.");
+						Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 						randyRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), randy);
 						randyRepo.CheckinAndPullAndMerge(sueRepo);
-						Assert.IsTrue(File.Exists(mergeConflictsNotesFile), "ChorusNotes file should have been in working set.");
+						Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 						var notesContents = File.ReadAllText(mergeConflictsNotesFile);
-						Assert.IsNotNullOrEmpty(notesContents);
-						Assert.That(notesContents, Is.StringContaining("Both added the same element, but with different content"));
-						Assert.That(notesContents, Is.StringContaining("The merger kept the change made by Randy."));
-						Assert.That(notesContents, Is.StringContaining("alphaUserId=\"Randy\""));
-						Assert.That(notesContents, Is.StringContaining("betaUserId=\"Sue\""));
+						Assert.That(notesContents, Is.Not.Null.Or.Empty);
+						Assert.That(notesContents, Does.Contain("Both added the same element, but with different content"));
+						Assert.That(notesContents, Does.Contain("The merger kept the change made by Randy."));
+						Assert.That(notesContents, Does.Contain("alphaUserId=\"Randy\""));
+						Assert.That(notesContents, Does.Contain("betaUserId=\"Sue\""));
 
 						// Make sure merged file has Randy's changes
 						var doc = XDocument.Load(randyDictConfigInRepoPath);
@@ -387,7 +387,7 @@ namespace FLEx_ChorusPluginTests.Integration
 						var xsdAttr = doc.Root.Attribute("xsd");
 						Assert.Null(xsiAttr, "xsi missing namespace");
 						Assert.Null(xsdAttr, "xsd missing namespace");
-						// 
+						//
 						XNamespace xsiNs = "http://www.w3.org/2001/XMLSchema-instance";
 						XNamespace xsdNs = "http://www.w3.org/2001/XMLSchema";
 						xsiAttr = doc.Root.Attribute(xsiNs + "xsi");

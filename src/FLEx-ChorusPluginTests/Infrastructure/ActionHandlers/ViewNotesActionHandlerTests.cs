@@ -167,7 +167,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 		private DummyFolderSystem _dummyFolderSystem;
 		private Form _mockedConflictView;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
@@ -184,7 +184,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 			return Path.Combine(path, "ZPI" + Utilities.FwXmlExtension);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			_mockedConflictView.Dispose();
