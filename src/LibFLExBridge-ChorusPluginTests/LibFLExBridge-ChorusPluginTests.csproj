@@ -14,10 +14,11 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
     <IsPackable>false</IsPackable>
+    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.1.2">
+    <PackageReference Include="GitVersionTask" Version="5.3.4">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="NUnit" Version="2.6.4" />

@@ -55,8 +55,8 @@
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.1.2 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.2 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install NUnit.Runners.Net4 -version 2.6.4 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
