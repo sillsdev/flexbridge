@@ -1,6 +1,7 @@
 // Copyright (c) 2015-16 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System.Globalization;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure
@@ -20,7 +21,7 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		// number after the decimal is actually the FLEx model version.
 		double IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
 		{
-			return double.Parse(branchName);
+			return double.Parse(branchName, NumberFormatInfo.InvariantInfo);
 		}
 
 		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
