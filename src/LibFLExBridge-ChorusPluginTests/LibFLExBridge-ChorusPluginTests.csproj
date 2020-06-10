@@ -206,6 +206,7 @@
     <Compile Include="FieldWorksTestServices.cs" />
     <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
     <Compile Include="Infrastructure\FLExProjectSplitterTests.cs" />
+    <Compile Include="Infrastructure\FlexUpdateBranchHelperStrategyTests.cs" />
     <Compile Include="Infrastructure\MetadataCacheTests.cs" />
     <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
     <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
