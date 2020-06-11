@@ -1,5 +1,11 @@
+## 3.1.5 2020-06-11
+
+* Fix crash when using Scandinavian locales
+
 ## 3.1.4 2020-04-20
+
 * Use localizations from Crowdin
+
 ## 3.1.3 2020-04-02
 
 * Chorus updated with bugfix for LT-20019

@@ -1,3 +1,9 @@
+flexbridge (3.1.5) UNRELEASED; urgency=low
+
+  * Fix crash when using Scandinavian locales
+
+ -- Jason Naylor <jason_naylor@sil.org>  Thu, 11 Jun 2020 10:01:43 -0500
+
 flexbridge (3.1.4) UNRELEASED; urgency=low
 
   * Use localizations from Crowdin
