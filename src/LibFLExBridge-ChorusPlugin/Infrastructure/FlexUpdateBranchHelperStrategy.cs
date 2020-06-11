@@ -14,12 +14,12 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		#region IUpdateBranchHelperStrategy impl
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
+		double IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
 		{
-			return uint.Parse(branchName);
+			return double.Parse(branchName);
 		}
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
+		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
 		{
 			var modelVersion = AsIUpdateBranchHelperStrategy.GetFullModelVersion(cloneLocation);
 			return string.IsNullOrEmpty(modelVersion)

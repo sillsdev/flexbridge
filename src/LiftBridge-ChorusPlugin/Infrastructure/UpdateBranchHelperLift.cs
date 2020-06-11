@@ -32,12 +32,12 @@ namespace SIL.LiftBridge.Infrastructure
 
 		#region IUpdateBranchHelperStrategy impl
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
+		double IUpdateBranchHelperStrategy.GetModelVersionFromBranchName(string branchName)
 		{
-			return float.Parse(branchName.Replace("LIFT", null));
+			return double.Parse(branchName.Replace("LIFT", null));
 		}
 
-		float IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
+		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
 		{
 			return GetLiftVersionNumber(cloneLocation);
 		}

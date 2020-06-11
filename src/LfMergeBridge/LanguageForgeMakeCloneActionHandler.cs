@@ -109,7 +109,7 @@ namespace LfMergeBridge
 			}
 			// See if repo has higher branch than LF called for.
 			var highestHead = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
-			if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
+			if (double.Parse(highestHead.Branch) > double.Parse(desiredBranchName))
 			{
 				// Clone has a higher data model than LF asked for.
 				Directory.Delete(actualClonePath, true);

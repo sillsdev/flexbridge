@@ -39,7 +39,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 				var gonerKeys = new HashSet<string>();
 				foreach (var headKvp in allHeads)
 				{
-					float currentVersion;
+					double currentVersion;
 					if (headKvp.Key == LibTriboroughBridgeSharedConstants.Default)
 					{
 						repo.Update(headKvp.Value.Number.LocalRevisionNumber);
@@ -96,7 +96,7 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 				}
 
 				// Now. get to the real work.
-				var sortedRevisions = new SortedList<float, Revision>();
+				var sortedRevisions = new SortedList<double, Revision>();
 				foreach (var kvp in allHeads)
 				{
 					sortedRevisions.Add(updateBranchHelperStrategy.GetModelVersionFromBranchName(kvp.Key), kvp.Value);

@@ -74,6 +74,36 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		internal const string ModelVersion = "ModelVersion";
 		internal const string ModelVersionFilename = "FLExProject." + ModelVersion;
 
+		// A value that specifies a version of FlexBridge that affects the data written to the
+		// repo, but not the FieldWorks model version. This is part of the branch name, so for
+		// example a version of FlexBridge that is looking for data on branch 7000072 or 7500001.7000072 will not
+		// try to read data on branch 7500002.7000072, even though (if it could PutHumptyTogetherAgain)
+		// its caller would be able to handle 700072 model data. This allows us to change how
+		// FlexBridge handles the data without changing the data model version (which affects other
+		// products and is becoming increasingly expensive to change).
+		// Note that send/receive never tries to handle data on other branches; it only merges with
+		// data on its own branch (though warning if there are new commits on other branches).
+		// Data migration only happens when a new version of FLEx (and FlexBridge) is installed
+		// on a computer that has the data needing migration, and upgrades and does a send/receive;
+		// or when making a new clone of the project using a newer version of FLEx.
+		// Because of this clone-and-upgrade possibility, FlexBridge must be able to
+		// PutHumptyTogetherAgain for both old data models and old Humpty strategies.
+		// Branch names are formed by putting a dot between the FlexBridgeDataVersion and the
+		// Flex Model Version. To avoid crashing versions of FLEx that work with data models
+		// before 700072, the result must parse as a float. To prevent older versions of FlexBridge
+		// from trying to clone data that is too new for them, the float must be larger than
+		// the largest model version before we introduced this new system, 7000072.
+		// This is achieved by putting the FlexBridgeDataVersion before the model version
+		// and making it start with 750000.
+		// Note: we would have preferred to put the FlexBridgeDataVersion second, giving
+		// numbers like 7000072.02. However, we ran out of significance in Float;
+		// float.Parse("7000072.2") is equal to float.Parse("7000072") which means old
+		// versions of FlexBridge would not detect that 7000072.2 is too new for them
+		// to clone. To allow new versions of FLEx to notice that 7500002.7000073 is larger
+		// than 7500002.7000072, we changed float.Parse() to double.Parse(); but we can't
+		// change the old versions.
+		internal const string FlexBridgeDataVersion = "7500002";
+
 		// Custom Properties
 		internal const string AdditionalFieldsTag = "AdditionalFields";
 		internal const string CustomProperties = "CustomProperties";

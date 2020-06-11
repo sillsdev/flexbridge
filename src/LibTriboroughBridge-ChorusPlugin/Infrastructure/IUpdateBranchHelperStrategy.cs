@@ -5,8 +5,8 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure
 {
 	internal interface IUpdateBranchHelperStrategy
 	{
-		float GetModelVersionFromBranchName(string branchName);
-		float GetModelVersionFromClone(string cloneLocation);
+		double GetModelVersionFromBranchName(string branchName);
+		double GetModelVersionFromClone(string cloneLocation);
 		string GetFullModelVersion(string cloneLocation);
 	}
 }
