@@ -85,6 +85,8 @@ namespace LfMergeBridge
 			}
 			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
 			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
+			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredModelVersion = updateBranchHelperStrategy.GetModelVersionFromBranchName(desiredBranchName);
 
 			// Do a pull first, to see if FLEx user has upgraded.
 			var uri = options[LfMergeBridgeUtilities.languageDepotRepoUri];
@@ -94,7 +96,7 @@ namespace LfMergeBridge
 			if (pulledChangesFromOthers)
 			{
 				// Check for a higher branch that came in.
-				if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
+				if (updateBranchHelperStrategy.GetModelVersionFromBranchName(highestHead.Branch) > desiredModelVersion)
 				{
 					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: pulled a higher model '{2}' than LF asked for '{3}': {4}.", syncBase, LfMergeBridgeUtilities.failure, highestHead.Branch, desiredBranchName, "Sync stopped before local commit"));
 					return;
