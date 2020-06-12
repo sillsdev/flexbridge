@@ -180,7 +180,8 @@ namespace LfMergeBridge
 
 			var user = options.ContainsKey(LfMergeBridgeUtilities.user) ? options[LfMergeBridgeUtilities.user] : null;
 
-			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, options[LfMergeBridgeUtilities.fdoDataModelVersion], user, DeleteRepoIfNoSuchBranch(options));
+			var desiredBranchName = FlexBridgeConstants.FlexBridgeDataVersion + "." + options[LfMergeBridgeUtilities.fdoDataModelVersion];
+			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, desiredBranchName, user, DeleteRepoIfNoSuchBranch(options));
 		}
 
 		/// <summary>
