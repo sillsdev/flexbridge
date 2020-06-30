@@ -86,6 +86,14 @@ namespace LfMergeBridge
 					alreadyOnIt = true;
 					break;
 				case HgRepository.UpdateResults.NoSuchBranch:
+					// First check if this is an old-style repo
+					if (desiredBranchName.Contains("."))
+					{
+						var idx = desiredBranchName.IndexOf(".");
+						var oldStyleBranchName = desiredBranchName.Substring(idx + 1);
+						FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, oldStyleBranchName, user, deleteRepoIfNoSuchBranch);
+						return;
+					}
 					// Bail out, since LF doesn't support data migration, which would require creation of a new branch.
 					if (deleteRepoIfNoSuchBranch)
 					{
