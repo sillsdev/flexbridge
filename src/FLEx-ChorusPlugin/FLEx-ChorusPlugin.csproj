@@ -24,6 +24,7 @@
     <AppendToReleaseNotesProperty><![CDATA[
 See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/CHANGELOG.md]]>
     </AppendToReleaseNotesProperty>
+    <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
   </PropertyGroup>
 
   <ItemGroup>
