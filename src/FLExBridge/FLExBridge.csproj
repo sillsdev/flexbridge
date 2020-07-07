@@ -35,7 +35,7 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
     <PackageReference Include="GitVersionTask" Version="5.3.4">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.1.0-alpha0020" />
+    <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.1.0-beta0045" />
     <PackageReference Include="SIL.ReleaseTasks" Version="[2.3.2,)">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
