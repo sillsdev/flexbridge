@@ -1,3 +1,9 @@
+flexbridge (3.1.6) UNRELEASED; urgency=low
+
+  * Fix crash when one user edits and another deletes certain data
+
+ -- Hasso <flex_devteam@sil.org>  Wed, 08 Jul 2020 14:31:41 -0500
+
 flexbridge (3.1.5) UNRELEASED; urgency=low
 
   * Fix crash when using Scandinavian locales
