@@ -19,6 +19,7 @@ using TriboroughBridge_ChorusPlugin.Properties;
 
 using Gecko;
 using SIL.PlatformUtilities;
+using SIL.Windows.Forms.Reporting;
 
 namespace FLExBridge
 {
@@ -139,7 +140,7 @@ namespace FLExBridge
 		{
 			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
-			ExceptionHandler.Init();
+			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 	}
 }

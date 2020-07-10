@@ -16,6 +16,7 @@ using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 using Gecko;
+using SIL.Windows.Forms.Reporting;
 
 namespace RepositoryUtility
 {
@@ -88,7 +89,7 @@ namespace RepositoryUtility
 		{
 			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
-			ExceptionHandler.Init();
+			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 	}
 }
