@@ -84,7 +84,9 @@ namespace LfMergeBridge
 				return;
 			}
 			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-			var desiredBranchName = options[LfMergeBridgeUtilities.fdoDataModelVersion];
+			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredBranchName = updateBranchHelperStrategy.GetBranchNameFromModelVersion(options[LfMergeBridgeUtilities.fdoDataModelVersion]);
+			var desiredModelVersion = updateBranchHelperStrategy.GetModelVersionFromBranchName(desiredBranchName);
 
 			// Do a pull first, to see if FLEx user has upgraded.
 			var uri = options[LfMergeBridgeUtilities.languageDepotRepoUri];
@@ -94,7 +96,7 @@ namespace LfMergeBridge
 			if (pulledChangesFromOthers)
 			{
 				// Check for a higher branch that came in.
-				if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
+				if (updateBranchHelperStrategy.GetModelVersionFromBranchName(highestHead.Branch) > desiredModelVersion)
 				{
 					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: pulled a higher model '{2}' than LF asked for '{3}': {4}.", syncBase, LfMergeBridgeUtilities.failure, highestHead.Branch, desiredBranchName, "Sync stopped before local commit"));
 					return;
@@ -109,10 +111,25 @@ namespace LfMergeBridge
 			}
 			if (branch != desiredBranchName && highestHead.Branch != desiredBranchName)
 			{
-				// Not being the same could create a new branch, and LF doesn't allow that.
-				// It may be that LF ought to have first asked for a branch change.
-				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot commit to current branch '{2}', because LF wants branch '{3}', and that could possibly create a new branch.", syncBase, LfMergeBridgeUtilities.failure, branch, desiredBranchName));
-				return;
+				if (desiredBranchName.Contains("."))
+				{
+					var idx = desiredBranchName.IndexOf('.');
+					var modelNumber = desiredBranchName.Substring(idx+1);
+					if (branch != modelNumber && highestHead.Branch != modelNumber)
+					{
+						// Not being the same could create a new branch, and LF doesn't allow that.
+						// It may be that LF ought to have first asked for a branch change.
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot commit to current branch '{2}', because LF wants branch '{3}', and that could possibly create a new branch.", syncBase, LfMergeBridgeUtilities.failure, branch, desiredBranchName));
+						return;
+					}
+				}
+				else
+				{
+					// Not being the same could create a new branch, and LF doesn't allow that.
+					// It may be that LF ought to have first asked for a branch change.
+					LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("{0} {1}: Cannot commit to current branch '{2}', because LF wants branch '{3}', and that could possibly create a new branch.", syncBase, LfMergeBridgeUtilities.failure, branch, desiredBranchName));
+					return;
+				}
 			}
 
 			// Set up adjunct.

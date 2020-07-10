@@ -31,6 +31,11 @@ namespace SIL.LiftBridge.Infrastructure
 			return double.Parse(branchName.Replace("LIFT", null).Split('_')[0], NumberFormatInfo.InvariantInfo);
 		}
 
+		string IUpdateBranchHelperStrategy.GetBranchNameFromModelVersion(string modelVersion)
+		{
+			return "LIFT" + modelVersion + "_ldml3";
+		}
+
 		public double GetModelVersionFromClone(string cloneLocation)
 		{
 			return GetLiftVersionNumber(cloneLocation);
