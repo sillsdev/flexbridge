@@ -204,6 +204,13 @@
 			TeamCity="$(TeamCity)"/>
 	</Target>
 
+	<Target Name="Pack" DependsOnTargets="RestorePackages">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="pack"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
 	<!-- *********************** Installer stuff below.  ******************************* -->
 
 	<!-- For building an an installer on TeamCity (use TestInstallerBuild.bat to run locally) -->

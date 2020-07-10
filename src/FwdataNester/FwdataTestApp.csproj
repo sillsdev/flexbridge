@@ -23,6 +23,7 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
     <OutputType>WinExe</OutputType>
     <IsPackable>false</IsPackable>
     <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+    <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
   </PropertyGroup>
 
   <ItemGroup>
