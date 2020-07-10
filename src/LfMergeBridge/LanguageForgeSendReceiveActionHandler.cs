@@ -84,8 +84,8 @@ namespace LfMergeBridge
 				return;
 			}
 			var startingRevision = hgRepository.GetRevisionWorkingSetIsBasedOn();
-			var desiredBranchName = FlexBridgeConstants.FlexBridgeDataVersion + "." + options[LfMergeBridgeUtilities.fdoDataModelVersion];
 			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredBranchName = updateBranchHelperStrategy.GetBranchNameFromModelVersion(options[LfMergeBridgeUtilities.fdoDataModelVersion]);
 			var desiredModelVersion = updateBranchHelperStrategy.GetModelVersionFromBranchName(desiredBranchName);
 
 			// Do a pull first, to see if FLEx user has upgraded.

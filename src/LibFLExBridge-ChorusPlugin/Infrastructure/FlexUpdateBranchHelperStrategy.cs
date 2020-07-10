@@ -23,6 +23,11 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			return double.Parse(branchName);
 		}
 
+		string IUpdateBranchHelperStrategy.GetBranchNameFromModelVersion(string modelVersion)
+		{
+			return FlexBridgeConstants.FlexBridgeDataVersion + "." + modelVersion;
+		}
+
 		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
 		{
 			var modelVersion = AsIUpdateBranchHelperStrategy.GetFullModelVersion(cloneLocation);

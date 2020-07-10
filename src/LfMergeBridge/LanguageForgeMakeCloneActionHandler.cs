@@ -192,7 +192,8 @@ namespace LfMergeBridge
 
 			var user = options.ContainsKey(LfMergeBridgeUtilities.user) ? options[LfMergeBridgeUtilities.user] : null;
 
-			var desiredBranchName = FlexBridgeConstants.FlexBridgeDataVersion + "." + options[LfMergeBridgeUtilities.fdoDataModelVersion];
+			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredBranchName = updateBranchHelperStrategy.GetBranchNameFromModelVersion(options[LfMergeBridgeUtilities.fdoDataModelVersion]);
 			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, desiredBranchName, user, DeleteRepoIfNoSuchBranch(options));
 		}
 
