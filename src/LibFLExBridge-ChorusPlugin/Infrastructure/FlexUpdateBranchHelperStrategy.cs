@@ -26,7 +26,9 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		string IUpdateBranchHelperStrategy.GetBranchNameFromModelVersion(string modelVersion)
 		{
-			return FlexBridgeConstants.FlexBridgeDataVersion + "." + modelVersion;
+			return (System.String.CompareOrdinal(modelVersion, "7000072") < 0)
+				? modelVersion
+				: FlexBridgeConstants.FlexBridgeDataVersion + "." + modelVersion;
 		}
 
 		double IUpdateBranchHelperStrategy.GetModelVersionFromClone(string cloneLocation)
