@@ -91,12 +91,8 @@ namespace LfMergeBridge
 					{
 						var idx = desiredBranchName.IndexOf(".");
 						var oldStyleBranchName = desiredBranchName.Substring(idx + 1);
-						// FLEx versions that use model 7000072 and above know about ###.### branch names, but 7000071 and earlier don't
-						if (System.String.CompareOrdinal(oldStyleBranchName, "7000072") < 0)
-						{
-							FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, oldStyleBranchName, user, deleteRepoIfNoSuchBranch);
-							return;
-						}
+						FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, oldStyleBranchName, user, deleteRepoIfNoSuchBranch);
+						return;
 					}
 					// Bail out, since LF doesn't support data migration, which would require creation of a new branch.
 					if (deleteRepoIfNoSuchBranch)
