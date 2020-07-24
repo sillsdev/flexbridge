@@ -34,6 +34,7 @@ namespace TriboroughBridge_ChorusPlugin
 		private const string FlexBridge = "FlexBridge";
 		private const string localizations = "localizations";
 		internal const string FlexBridgeEmailAddress = "flex_errors@sil.org";
+		internal const string FlexLocalizationEmailAddress = "flex_localization@sil.org";
 // ReSharper restore InconsistentNaming
 
 		internal static XElement CreateFromBytes(byte[] xmlData)
@@ -100,7 +101,7 @@ namespace TriboroughBridge_ChorusPlugin
 				var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 				var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus,
-					FlexBridgeEmailAddress, FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge");
+					FlexLocalizationEmailAddress, FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge");
 				results.Add("FlexBridge", flexBridgeLocMan);
 
 				// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
@@ -109,13 +110,13 @@ namespace TriboroughBridge_ChorusPlugin
 				versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 				var chorusLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Chorus", "Chorus",
-					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexBridgeEmailAddress, "Chorus");
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "Chorus");
 				results.Add("Chorus", chorusLocMan);
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 				var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
-					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexBridgeEmailAddress, "Palaso");
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "Palaso");
 				results.Add("Palaso", palasoLocMan);
 			}
 			catch
@@ -123,7 +124,7 @@ namespace TriboroughBridge_ChorusPlugin
 				// For some reason, even though ErrorReport has been initialized, calling it here throws an exception.
 				// ReSharper disable LocalizableElement - not localizable if l10n setup failed!
 				MessageBox.Show(
-					$"There was a problem setting up localizations, probably because they were not installed. Please report this to {TriboroughBridgeUtilities.FlexBridgeEmailAddress}.",
+					$"There was a problem setting up localizations, probably because they were not installed. Please report this to {FlexBridgeEmailAddress}.",
 					"Error Localizing FLEx Bridge", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				// ReSharper restore LocalizableElement
 			}
