@@ -1,3 +1,8 @@
+## 3.1.7 2020-08-18
+
+* Update localization instructions
+* Fix model version parsing
+
 ## 3.1.6 2020-07-08
 
 * Fix crash when one user edits and another deletes certain data
