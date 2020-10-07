@@ -20,23 +20,7 @@ See diagram:
 
 ### Setup
 
-FLEx Bridge depends on several assemblies from Chorus and Palaso.
-Versions of these assemblies are no longer in the repo.
-Therefore, to build FLEx Bridge, you must get the latest versions of these assemblies by running this in a Bash window:
-
-- On **Windows**, run `download_dependencies_windows.sh`
-- On **Linux**, run `download_dependencies_linux.sh`
-
-If necessary, both *download_dependencies* scripts can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
-
-If you plan to work on Chorus:
-
-- Clone the Chorus and LibPalaso repos from https://github.com/sillsdev/chorus and https://github.com/sillsdev/libpalaso into the same parent directory as flexbridge without changing their repository names.
-- On **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLEx Bridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLEx Bridge, and build FLEx Bridge. **Note:** recursive building of linked libraries is presently broken. Instead:
-- - Build Chorus per its instructions
-- - Run `UpdateDependencies.bat`
-- - Build FLEx Bridge using the instructions below
-- On **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
+FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are installed from nuget.org.
 
 #### Connecting FieldWorks to FLEx Bridge
 
@@ -45,13 +29,17 @@ If you plan to work on Chorus:
 	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
 - On **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
 
-Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
-(instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
-
 ### Build
 
-* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2017 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
-* On **Linux**, `make debug`
+You should be able to build solution `FLExBridge.sln` from Visual Studio 2019 Community Edition or
+JetBrains Rider.
+
+You can also build and run tests on both Windows and Linux from the command line by running:
+
+```bash
+cd build
+msbuild /t:Test FLExBridge.proj
+```
 
 ## Updating Release Notes for a new version
 
@@ -67,7 +55,7 @@ When releasing FLEx Bridge be sure to do the following:
 	- Windows Instructions:
 		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
         - Run the following to update dependant Release Notes files:
-							
+
 				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
 				cd build
 				build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
@@ -87,8 +75,8 @@ When releasing FLEx Bridge be sure to do the following:
 
 		- Run the build task to fill in debian/changelog from the ReleaseNotes.md and make html file (for a pre-release pass `/p:Release=false` as additional property):
 
-			`(source environ && cd build && xbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
-			
+			`(source environ && cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
+
 	- For major or minor version bumps tag the commit after the PR is merged e.g. `git tag v3.2.1` and push it to the repository.
 
 2. Build

@@ -18,7 +18,6 @@
     <PackageOutputPath>../../output</PackageOutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
-    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <AppendToReleaseNotesProperty><![CDATA[
@@ -27,18 +26,15 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
     <OutputType>WinExe</OutputType>
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Geckofx45.32.Linux" Version="45.0.37" />
     <PackageReference Include="Geckofx45.64.Linux" Version="45.0.37" />
-    <PackageReference Include="GitVersionTask" Version="5.3.4">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
     <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.1.0-beta0046" />
-    <PackageReference Include="SIL.ReleaseTasks" Version="2.3.4">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.3.4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

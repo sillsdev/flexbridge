@@ -8,6 +8,7 @@
 		<ApplicationName>FLEx Bridge</ApplicationName>
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
 		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
+		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">0</BUILD_NUMBER>
 		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
 		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
@@ -57,7 +58,7 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.2 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.4 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.11.1 -solutionDirectory "$(RootDir)"' />
 	</Target>

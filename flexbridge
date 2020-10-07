@@ -15,13 +15,13 @@ prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 cd "${scriptdir}"
 # On a developer machine, we may be in output/DebugMono. If so, go to the
 # location of environ before sourcing it.
-if [ "$(basename "$scriptdir")" == "DebugMono" -o \
-     "$(basename "$scriptdir")" == "ReleaseMono" ]; then
-    cd ../..
-    . environ
-    cd -
+if [ "$(basename "$scriptdir")" == "Debug" -o \
+	 "$(basename "$scriptdir")" == "Release" ]; then
+	cd ../..
+	. environ
+	cd -
 else
-    . environ
+	. environ
 fi
 
 (
@@ -44,4 +44,4 @@ fi
 )
 
 cd - >/dev/null
-mono "${scriptdir}"/FLExBridge.exe "$@"
+mono --debug "${scriptdir}"/FLExBridge.exe "$@"
