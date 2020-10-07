@@ -11,9 +11,15 @@ for /f "usebackq delims=" %%i in (`vswhere -latest -requires Microsoft.Component
 call "%InstallDir%\VC\Auxiliary\Build\vcvars32.bat"
 
 :Build
-pushd .
+pushd ..\l10n
 (
-	MSBuild FLExBridge.proj /target:RestorePackages
+	MSBuild l10n.proj /t:restore
+) && (
+	MSBuild l10n.proj /t:CopyL10nsToDistFiles
+) && (
+	cd ..\build
+) && (
+	MSBuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
 ) && (
 	MSBuild FLExBridge.proj /p:Platform="Any CPU" %*
 )

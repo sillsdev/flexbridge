@@ -86,6 +86,14 @@ namespace LfMergeBridge
 					alreadyOnIt = true;
 					break;
 				case HgRepository.UpdateResults.NoSuchBranch:
+					// First check if this is an old-style repo
+					if (desiredBranchName.Contains("."))
+					{
+						var idx = desiredBranchName.IndexOf(".");
+						var oldStyleBranchName = desiredBranchName.Substring(idx + 1);
+						FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, oldStyleBranchName, user, deleteRepoIfNoSuchBranch);
+						return;
+					}
 					// Bail out, since LF doesn't support data migration, which would require creation of a new branch.
 					if (deleteRepoIfNoSuchBranch)
 					{
@@ -109,7 +117,9 @@ namespace LfMergeBridge
 			}
 			// See if repo has higher branch than LF called for.
 			var highestHead = LfMergeBridgeUtilities.GetHighestRevision(hgRepository);
-			if (int.Parse(highestHead.Branch) > int.Parse(desiredBranchName))
+			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredModelVersion = updateBranchHelperStrategy.GetModelVersionFromBranchName(desiredBranchName);
+			if (updateBranchHelperStrategy.GetModelVersionFromBranchName(highestHead.Branch) > desiredModelVersion)
 			{
 				// Clone has a higher data model than LF asked for.
 				Directory.Delete(actualClonePath, true);
@@ -178,7 +188,9 @@ namespace LfMergeBridge
 
 			var user = options.ContainsKey(LfMergeBridgeUtilities.user) ? options[LfMergeBridgeUtilities.user] : null;
 
-			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, options[LfMergeBridgeUtilities.fdoDataModelVersion], user, DeleteRepoIfNoSuchBranch(options));
+			IUpdateBranchHelperStrategy updateBranchHelperStrategy = new FlexUpdateBranchHelperStrategy();
+			var desiredBranchName = updateBranchHelperStrategy.GetBranchNameFromModelVersion(options[LfMergeBridgeUtilities.fdoDataModelVersion]);
+			FinishClone(progress, ref somethingForClient, cloneBase, actualClonePath, desiredBranchName, user, DeleteRepoIfNoSuchBranch(options));
 		}
 
 		/// <summary>

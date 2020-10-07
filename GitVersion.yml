@@ -3,27 +3,13 @@ increment: Patch
 assembly-versioning-scheme: MajorMinor
 branches:
   master:
-    tag: beta
-    regex: (origin/)?(master|feature/nuget)
+    tag:
+    regex: (origin/)?master
     is-mainline: true
   develop:
-    tag: unstable
-    regex: (origin/)?develop
-    is-mainline: true
-  lfmerge:
-    tag: lfmerge
-    regex: (origin/)?lfmerge
-    is-mainline: true
-    is-source-branch-for: ['master', 'develop', 'hotfix', 'feature']
-    source-branches: ['master', 'develop', 'hotfix', 'feature']
-  hotfix:
     tag: beta
-    regex: (origin/)?hotfix[/-]
-    increment: Patch
-    prevent-increment-of-merged-branch-version: false
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: false
+    regex: (origin/)?(develop|feature/nuget)
+    is-mainline: true
   pull-request:
     mode: ContinuousDeployment
     tag: PR

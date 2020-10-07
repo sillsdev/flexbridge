@@ -1,4 +1,38 @@
-## 3.0.1 2018-03-05
+## 3.1.7 2020-08-18
+
+* Update localization instructions
+* Fix model version parsing
+
+## 3.1.6 2020-07-08
+
+* Fix crash when one user edits and another deletes certain data
+
+## 3.1.5 2020-06-11
+
+* Fix crash when using Scandinavian locales
+
+## 3.1.4 2020-04-20
+
+* Use localizations from Crowdin
+
+## 3.1.3 2020-04-02
+
+* Chorus updated with bugfix for LT-20019
+
+## 3.1.2 2020-03-19
+
+* Chorus updated with bugfix for losing Notes bug
+* Installer icons updated (maybe)
+
+## 3.1.1 2020-03-16
+
+* Chorus updated with bugfix for spaces following project names
+
+## 3.1.0 2020-03-04
+
+* FlexBridge should now copy configuration files into a cache folder to avoid losing them on a rollback.
+* Update Chorus with bugfix for ldml file merge conflicts
+
 
 * Support new data model.
 * Bugfixes.

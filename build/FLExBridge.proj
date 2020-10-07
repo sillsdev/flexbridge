@@ -54,7 +54,7 @@
 			Condition="$(RestartBuild)" />
 	</Target>
 
-	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.2 -solutionDirectory "$(RootDir)"' />
@@ -92,7 +92,7 @@
 
 	<ItemGroup>
 		<EnchantFiles Include="$(RootDir)/lib/common/Enchant.Net.dll*"/>
-		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*"/>
+		<LocalizeFiles Include="$(RootDir)/DistFiles/localizations/*.xlf"/>
 		<!-- NDeskDbus is required only so that Palaso can be localized on linux -->
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
@@ -123,7 +123,7 @@
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<Target Name="VersionNumbers" DependsOnTargets="GetVersion">
+	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
 		<PropertyGroup>
 			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
 			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>
@@ -219,6 +219,6 @@
 
 	<!-- update the AssemblyInfo files for linux packaging -->
 	<Target Name="UpdateAssemblyInfoForPackage">
-		<Exec Command="for f in `find $(RootDir) -name packages.config -print0 | xargs -0 grep --files-with-matches GitVersion`; do dir=`dirname $f`; xbuild /t:UpdateAssemblyInfo /p:IntermediateOutputPath=Properties $dir/`basename $dir`.csproj; done" />
+		<Exec Command="for f in `find $(RootDir) -name packages.config -print0 | xargs -0 grep --files-with-matches GitVersion`; do dir=`dirname $f`; msbuild /t:UpdateAssemblyInfo /p:IntermediateOutputPath=Properties $dir/`basename $dir`.csproj; done" />
 	</Target>
 </Project>

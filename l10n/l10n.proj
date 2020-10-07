@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<TargetFramework>netframework4.6.1</TargetFramework> <!-- really not important, but should be compatible with NuGet packages -->
+	<PackageId>SIL.FlexBridge</PackageId> <!-- really not important -->
+	<Version>1.0.0</Version> <!-- really not important -->
+	<Authors>Jason Naylor</Authors>
+	<Company>SIL International</Company>
+  </PropertyGroup>
+  <PropertyGroup>
+	<!-- The version of MSBuild we're using on Linux doesn't generate path properties for NuGet packages. When it does, these props can be removed -->
+	<PkgMSBuild_Extension_Pack Condition="'$(PkgMSBuild_Extension_Pack)' == ''">$(NuGetPackageRoot)msbuild.extension.pack/1.9.1</PkgMSBuild_Extension_Pack>
+	<PkgSIL_BuildTasks Condition="'$(PkgSIL_BuildTasks)' == ''">$(NuGetPackageRoot)sil.buildtasks/2.3.0-beta.14</PkgSIL_BuildTasks>
+	<PkgSIL_Chorus_l10ns Condition="'$(PkgSIL_Chorus_l10ns)' == ''">$(NuGetPackageRoot)sil.chorus.l10ns/3.0.1</PkgSIL_Chorus_l10ns>
+	<PkgSIL_libpalaso_l10ns Condition="'$(PkgSIL_libpalaso_l10ns)' == ''">$(NuGetPackageRoot)sil.libpalaso.l10ns/6.0.0</PkgSIL_libpalaso_l10ns>
+  </PropertyGroup>
+  <PropertyGroup>
+	<FwL10nsDir>./FieldWorksL10ns</FwL10nsDir>
+	<FwL10nsZip>FieldWorksL10ns.zip</FwL10nsZip>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0-beta0027" GeneratePathProperty="true" />
+	<PackageReference Include="MSBuild.Extension.Pack" Version="1.9.1" GeneratePathProperty="true" />
+	<PackageReference Include="SIL.BuildTasks" Version="2.3.0-beta.14" GeneratePathProperty="true" />
+	<PackageReference Include="SIL.Chorus.l10ns" Version="[3.0.1,)" GeneratePathProperty="true"/>
+	<PackageReference Include="SIL.libpalaso.l10ns" Version="6.0.0" GeneratePathProperty="true" />
+  </ItemGroup>
+  <UsingTask TaskName="DNZip" AssemblyFile="$(PkgMSBuild_Extension_Pack)/tools/net40/MSBuild.ExtensionPack.dll" />
+  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)/tools/SIL.BuildTasks.dll" />
+
+  <Target Name="UpdateCrowdin" DependsOnTargets="restore">
+	<Error Text="Not yet functional: Requires a 32bit version of ExtractXliff or a 64bit or AnyCpu version of FlexBridge" />
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)/tools/ExtractXliff.exe&quot; -n SIL.LiftBridge -n TriboroughBridge_ChorusPlugin -n FLEx_ChorusPlugin -x FlexBridge.xlf -o FlexBridge.exe -g ../output/Debug/*Plugin.dll ../output/Repositories/flexbridge/output/Debug/*.exe" />
+	<Exec Command="overcrowdin updatefiles" />
+  </Target>
+
+  <Target Name="GetLatestL10ns" DependsOnTargets="restore">
+	<RemoveDir Directories="$(FwL10nsDir)" />
+	<Exec Command="overcrowdin download -e -f $(FwL10nsZip)" />
+	<CallTarget Targets="UnzipL10ns"/>
+	<NormalizeLocales L10nsDirectory="$(FwL10nsDir)" />
+	<CallTarget Targets="CopyL10nsToDistFiles"/>
+  </Target>
+
+  <Target Name="CopyL10nsToDistFiles" DependsOnTargets="restore">
+	<ItemGroup>
+	  <XliffFiles Include="$(PkgSIL_Chorus_l10ns)/content/**/*.xlf" />
+	  <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)/content/**/*.xlf" />
+	  <XliffFiles Include="$(FwL10nsDir)/**/FlexBridge.*.xlf" />
+	</ItemGroup>
+	<Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'../DistFiles/localizations/%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="UnzipL10ns" DependsOnTargets="UnzipL10nsWindows;UnzipL10nsLinux"/>
+  <Target Name="UnzipL10nsWindows" Condition="'$(OS)'=='Windows_NT'">
+	<DNZip TaskAction="Extract" ExtractPath="$(FwL10nsDir)" ZipFileName="$(FwL10nsZip)"/>
+  </Target>
+  <Target Name="UnzipL10nsLinux" Condition="'$(OS)'!='Windows_NT'">
+	<Exec Command="/usr/bin/unzip -uq $(FwL10nsZip) -d $(FwL10nsDir)"/>
+  </Target>
+</Project>
