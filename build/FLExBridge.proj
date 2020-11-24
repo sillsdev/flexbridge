@@ -26,8 +26,8 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets"
-		Condition="Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/build/packages/GitVersionTask/build/GitVersionTask.targets"
+		Condition="Exists('$(RootDir)/build/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
 	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
 		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
 
