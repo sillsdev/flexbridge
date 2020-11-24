@@ -1,3 +1,8 @@
+## 3.1.8 2020-11-24
+
+* Fix LT-20464 - Delete CachedSettings files if they are deleted from the project
+* Chorus updated with better ldml file merging - genDate conflicts should now be rare
+
 ## 3.1.7 2020-08-18
 
 * Update localization instructions
