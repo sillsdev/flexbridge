@@ -27,6 +27,9 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
