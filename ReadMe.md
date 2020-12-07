@@ -26,8 +26,8 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 
 - On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
-- On **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
+    "InstallationDir"="C:\Dev\flexbridge\output\Debug"
+- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/DebugMono`
 
 ### Build
 
@@ -50,46 +50,48 @@ FLEx Bridge is following the gitflow model for branching
 
 When releasing FLEx Bridge be sure to do the following:
 
-1. Update the version and changelogs / release notes.
+1. Update the version and changelogs / release notes by doing the following.
 
-	- Edit `GitVersion.yml` if you are making a major or minor version number jump. The third place digit will be incremented automatically by GitVersion
-	- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
+    - Edit `GitVersion.yml` if you are making a major or minor version number jump, by modifying the
+    `next-version:` line. The third place digit will be incremented automatically by GitVersion.
 
-	- Windows Instructions:
-		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
-        - Run the following to update dependant Release Notes files:
+    - Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
 
-				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
-				cd build
-				build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
+    - Edit `CHANGELOG.md` by editing or adding to the items in the `## [Unreleased]` section. This will be published
+	  as release notes for users.
 
-		- (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
+    - Run the following build task to fill in debian/changelog and the release notes html from CHANGELOG.md. Replace
+	  CHANNEL in the below with Alpha, Beta, or Stable. For a pre-release, pass `/p:Release=false` as an additional
+	  property. Push the results.
 
-	- Linux Instructions:
+      Windows:
 
-		- `cd ~/fwrepo/flexbridge`
-		- Create an entry atop ReleaseNotes.md:
+          cd build
+          build.bat /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
 
-			`sed -i "1i ## $(cat version) UNRELEASED\n\n* New version\n" src/Installer/ReleaseNotes.md`
+      Linux:
 
-		- Edit src/Installer/ReleaseNotes.md , replacing 'New version.'
+          cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
 
-		- `CHANNEL=Alpha` # or Beta or Stable.
+    - (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Windows: Tag and
+    Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend
+    on that tag.
 
-		- Run the build task to fill in debian/changelog from the ReleaseNotes.md and make html file (for a pre-release pass `/p:Release=false` as additional property):
-
-			`(source environ && cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
-
-	- For major or minor version bumps tag the commit after the PR is merged e.g. `git tag v3.2.1` and push it to the repository.
+    - For major or minor version bumps tag the commit after the PR is merged e.g. `git tag v3.2.1` and
+    push it to the repository.
 
 2. Build
 
-	- The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer" and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you can avoid incrementing the version number by setting the build counter back before rerunning the Patcher job.
+    - The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three
+	  version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer"
+	  and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you
+	  can avoid incrementing the version number by setting the build counter back before rerunning the Patcher
+	  job.
 
-	- Make a Linux package for release by doing the following:
-		- Go to the Jenkins job for this branch of flexbridge.
-		- Click Build with Parameters.
-		- Change Suite to "main" (or maybe "updates" for a hotfix).
-		- Unselect AppendNightlyToVersion.
-		- Optionally set Committish to an older commit, such as where the changelog entry was updated.
-		- Click Build.
+    - Make a Linux package for release by doing the following:
+        - Go to the Jenkins job for this branch of flexbridge.
+        - Click Build with Parameters.
+        - Change Suite to "main" (or maybe "updates" for a hotfix).
+        - Unselect AppendNightlyToVersion.
+        - Optionally set Committish to an older commit, such as where the changelog entry was updated.
+        - Click Build.
