@@ -14,8 +14,8 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -31,6 +31,8 @@
 		Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.props') And !$(IgnoreGitVersionTask)"/>
 	<Import Project="$(RootDir)/packages/GitVersionTask/build/GitVersionTask.targets"
 		Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props"
+		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props')" />
 
 	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
@@ -59,6 +61,7 @@
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.4 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.3.4 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.11.1 -solutionDirectory "$(RootDir)"' />
 	</Target>
@@ -173,11 +176,11 @@
 	</Target>
 
 	<Target Name="PreparePublishingArtifactsInternal" DependsOnTargets="VersionNumbers; CheckPreRequisites">
-		<StampChangelogFileWithVersion ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<StampChangelogFileWithVersion ChangelogFile="$(RootDir)/CHANGELOG.md"
 			VersionNumber="$(Version)" />
-		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/CHANGELOG.md"
 			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" />
-		<CreateChangelogEntry ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<CreateChangelogEntry ChangelogFile="$(RootDir)/CHANGELOG.md"
 			VersionNumber="$(Version)" PackageName="flexbridge"
 			DebianChangelog="$(RootDir)/debian/changelog"
 			MaintainerInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
