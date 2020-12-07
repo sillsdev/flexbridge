@@ -41,6 +41,9 @@ cd build
 msbuild /t:Test FLExBridge.proj
 ```
 
+Note: Build on Linux using Ubuntu 18.04, until https://github.com/libgit2/libgit2sharp/issues/1747
+is fixed for Ubuntu 20.04 support. At that time, update the version of nuget package GitVersionTask.
+
 ## Updating Release Notes for a new version
 
 FLEx Bridge is following the gitflow model for branching
