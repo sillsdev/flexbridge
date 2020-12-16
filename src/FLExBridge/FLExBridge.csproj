@@ -33,7 +33,7 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
     <PackageReference Include="Geckofx45.32.Linux" Version="45.0.37" />
     <PackageReference Include="Geckofx45.64.Linux" Version="45.0.37" />
     <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
-    <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.1.0-beta0046" />
+    <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.*.*-*"/>
     <PackageReference Include="SIL.ReleaseTasks" Version="2.3.4" PrivateAssets="all" />
   </ItemGroup>
 

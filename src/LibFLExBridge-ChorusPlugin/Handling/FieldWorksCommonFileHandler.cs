@@ -104,12 +104,16 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		void IChorusFileTypeHandler.Do3WayMerge(MergeOrder mergeOrder)
 		{
 			if (mergeOrder == null)
+			{
+				Console.WriteLine("ERROR: Null MergeOrder!");
 				throw new ArgumentNullException(nameof(mergeOrder));
+			}
 
 			// Make sure MDC is updated.
 			// Since this method is called in another process by ChorusMerge,
 			// the MDC that was set up for splitting the file is not available.
 			var extension = FileWriterService.GetExtensionFromPathname(mergeOrder.pathToOurs);
+			Console.WriteLine($"Merging a {extension} file:\n\tOurs: {mergeOrder.pathToOurs}\n\tTheirs: {mergeOrder.pathToTheirs}\n\tCommon: {mergeOrder.pathToCommonAncestor}");
 			if (extension != FlexBridgeConstants.ModelVersion)
 			{
 				var pathToOurs = mergeOrder.pathToOurs;
@@ -133,7 +137,9 @@ namespace LibFLExBridgeChorusPlugin.Handling
 
 			XmlMergeService.RemoveAmbiguousChildNodes = false; // Live on the edge. Opt out of that expensive code.
 
-			GetHandlerFromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
+			var handler = GetHandlerFromExtension(extension);
+			Console.WriteLine($"Using handler of type {handler.GetType().Name}");
+			handler.Do3WayMerge(MetadataCache.MdCache, mergeOrder);
 		}
 
 		IEnumerable<IChangeReport> IChorusFileTypeHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)

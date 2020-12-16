@@ -1,9 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (C) 2015-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -79,6 +80,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 
 		public void Do3WayMerge(MetadataCache mdc, MergeOrder mergeOrder)
 		{
+			Console.WriteLine($"Merging a Dictionary Configuration:\n\tOurs: {mergeOrder.pathToOurs}\n\tTheirs: {mergeOrder.pathToTheirs}\n\tCommon: {mergeOrder.pathToCommonAncestor}");
 			var merger = new XmlMerger(mergeOrder.MergeSituation) { EventListener = mergeOrder.EventListener };
 			var rootStrategy = ElementStrategy.CreateSingletonElement();
 			rootStrategy.IsAtomic = true;
