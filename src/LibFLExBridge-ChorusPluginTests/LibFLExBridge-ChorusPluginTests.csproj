@@ -20,23 +20,15 @@
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="3.1.0-beta0046" />
-    <PackageReference Include="SIL.Chorus.Mercurial" Version="3.0.1-beta5" />
+    <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="3.1.0-beta0051" />
+    <PackageReference Include="SIL.Chorus.Mercurial" Version="3.0.1-beta5" IncludeAssets="build"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="TestData\DataNotebook_Ann.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\DataNotebook_Common.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\DataNotebook_Susanna.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="TestData\DataNotebook_Ann.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\DataNotebook_Common.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\DataNotebook_Susanna.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

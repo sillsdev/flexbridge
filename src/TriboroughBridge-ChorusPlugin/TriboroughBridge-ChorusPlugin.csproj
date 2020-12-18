@@ -31,8 +31,8 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/feature/nuget/
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
     <PackageReference Include="NetSparkle.Net40" Version="1.2.0" />
-    <PackageReference Include="SIL.Chorus.App" Version="3.1.0-beta0046" />
-    <PackageReference Include="SIL.Chorus.LibChorus" Version="3.1.0-beta0046" />
+    <PackageReference Include="SIL.Chorus.App" Version="3.1.0-beta0051" />
+    <PackageReference Include="SIL.Chorus.LibChorus" Version="3.1.0-beta0051" />
     <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.0-beta0029" />
     <PackageReference Include="SIL.ReleaseTasks" Version="2.3.4" PrivateAssets="all" />
   </ItemGroup>
