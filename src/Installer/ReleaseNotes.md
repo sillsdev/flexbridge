@@ -1,3 +1,10 @@
+## 3.2.0 2021-01-20
+
+* Update the Internet Server Settings dialogs to log in to Language Forge and display available projects
+* Convert Language Depot projects to use https://languageforge.org (subdomains remain unchanged)
+* Encrypt stored passwords
+* These changes implement https://jira.sil.org/browse/LT-20407
+
 ## 3.1.8 2020-11-24
 
 * Fix LT-20464 - Delete CachedSettings files if they are deleted from the project
