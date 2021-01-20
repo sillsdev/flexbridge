@@ -14,8 +14,9 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
+		<GitVersionTaskAltPath>$(RootDir)/packages/GitVersionTask.alt/build</GitVersionTaskAltPath>
+		<RestartBuild Condition="!Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -26,8 +27,8 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets"
-		Condition="Exists('$(RootDir)/packages/GitVersionTask.alt/build/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(GitVersionTaskAltPath)/GitVersionTask.alt.targets"
+		Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
 	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
 		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
 
@@ -151,6 +152,7 @@
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
+	<!-- GetVersion is a target in $(GitVersionTaskAltPath)/GitVersionTask.alt.targets -->
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
 		<PropertyGroup>
 			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
