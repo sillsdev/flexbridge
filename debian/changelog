@@ -1,3 +1,12 @@
+flexbridge (3.2.0) UNRELEASED; urgency=low
+
+  * Update the Internet Server Settings dialogs to log in to Language Forge and display available projects
+  * Convert Language Depot projects to use https://languageforge.org (subdomains remain unchanged)
+  * Encrypt stored passwords
+  * These changes implement https://jira.sil.org/browse/LT-20407
+
+ -- Hasso <flex_devteam@sil.org>  Wed, 20 Jan 2021 16:41:15 -0600
+
 flexbridge (3.1.8) UNRELEASED; urgency=low
 
   * Fix LT-20464 - Delete CachedSettings files if they are deleted from the project
