@@ -60,7 +60,7 @@
 		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.4 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
-		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.11.1 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.12.0 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
 	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;Compile;CopyAbout">
