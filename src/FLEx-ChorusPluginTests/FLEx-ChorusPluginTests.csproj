@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit" Version="3.13.0" />
     <PackageReference Include="SIL.Chorus.ChorusMerge" Version="3.1.0-*" />
     <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="3.1.0-*" />
   </ItemGroup>
