@@ -82,14 +82,14 @@ cd -
 #     project: Chorus
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
 #     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fb-for-fw-9.0.15.tcbuildtag
 #     paths: {"MercurialExtensions"=>"MercurialExtensions", "Autofac.dll"=>"lib/common", "Chorus.exe"=>"lib/Release", "LibChorus.dll"=>"lib/Release", "ChorusMerge.exe"=>"lib/Release", "Mercurial.zip"=>"lib/Release", "LibChorus.TestUtilities.dll"=>"lib/Release", "*.pdb"=>"lib/Release", "ChorusMergeModule.msm"=>"lib/Release", "Microsoft_VC90_CRT_x86.msm"=>"lib/Release", "policy_9_0_Microsoft_VC90_CRT_x86.msm"=>"lib/Release"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [2] build: chorus-win32-master Continuous (Chorus_Win32masterContinuous)
 #     project: Chorus
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Win32masterContinuous
 #     clean: false
-#     revision: latest.lastSuccessful
+#     revision: fb-for-fw-9.0.15.tcbuildtag
 #     paths: {"Chorus.exe"=>"lib/Debug", "LibChorus.dll"=>"lib/Debug", "ChorusMerge.exe"=>"lib/Debug", "Mercurial.zip"=>"lib/Debug", "LibChorus.TestUtilities.dll"=>"lib/Debug", "*.pdb"=>"lib/Debug"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [3] build: IPC continuous (bt278)
@@ -122,45 +122,45 @@ mkdir -p ./lib/common
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/MercurialExtensions ./MercurialExtensions/MercurialExtensions
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Autofac.dll ./lib/common/Autofac.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Chorus.exe ./lib/Release/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.dll ./lib/Release/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.exe ./lib/Release/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Mercurial.zip ./lib/Release/Mercurial.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.dll ./lib/Release/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Chorus.pdb ./lib/Release/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusHubApp.pdb ./lib/Release/ChorusHubApp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.pdb ./lib/Release/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.pdb ./lib/Release/SIL.Core.Desktop.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/Chorus.pdb ./lib/Release/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.pdb ./lib/Release/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMergeModule.msm ./lib/Release/ChorusMergeModule.msm
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Microsoft_VC90_CRT_x86.msm ./lib/Release/Microsoft_VC90_CRT_x86.msm
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/policy_9_0_Microsoft_VC90_CRT_x86.msm ./lib/Release/policy_9_0_Microsoft_VC90_CRT_x86.msm
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Chorus.exe ./lib/Debug/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.dll ./lib/Debug/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.exe ./lib/Debug/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Mercurial.zip ./lib/Debug/Mercurial.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.dll ./lib/Debug/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/Chorus.pdb ./lib/Debug/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusHubApp.pdb ./lib/Debug/ChorusHubApp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/LibChorus.pdb ./lib/Debug/LibChorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/SIL.Core.Desktop.pdb ./lib/Debug/SIL.Core.Desktop.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/Chorus.pdb ./lib/Debug/Chorus.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/latest.lastSuccessful/debug/LibChorus.pdb ./lib/Debug/LibChorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions ./MercurialExtensions/MercurialExtensions
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.exe ./lib/Release/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.dll ./lib/Release/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.exe ./lib/Release/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial.zip ./lib/Release/Mercurial.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Release/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.pdb ./lib/Release/Chorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHubApp.pdb ./lib/Release/ChorusHubApp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.pdb ./lib/Release/LibChorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/SIL.Core.Desktop.pdb ./lib/Release/SIL.Core.Desktop.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/Chorus.pdb ./lib/Release/Chorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusHub.pdb ./lib/Release/ChorusHub.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusMerge.pdb ./lib/Release/ChorusMerge.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.TestUtilities.pdb ./lib/Release/LibChorus.TestUtilities.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.pdb ./lib/Release/LibChorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMergeModule.msm ./lib/Release/ChorusMergeModule.msm
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Microsoft_VC90_CRT_x86.msm ./lib/Release/Microsoft_VC90_CRT_x86.msm
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/policy_9_0_Microsoft_VC90_CRT_x86.msm ./lib/Release/policy_9_0_Microsoft_VC90_CRT_x86.msm
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.exe ./lib/Debug/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.dll ./lib/Debug/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.exe ./lib/Debug/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial.zip ./lib/Debug/Mercurial.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.dll ./lib/Debug/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.pdb ./lib/Debug/Chorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHubApp.pdb ./lib/Debug/ChorusHubApp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.pdb ./lib/Debug/LibChorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/SIL.Core.Desktop.pdb ./lib/Debug/SIL.Core.Desktop.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/Chorus.pdb ./lib/Debug/Chorus.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusHub.pdb ./lib/Debug/ChorusHub.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusMerge.pdb ./lib/Debug/ChorusMerge.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.TestUtilities.pdb ./lib/Debug/LibChorus.TestUtilities.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.pdb ./lib/Debug/LibChorus.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Release/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt278/latest.lastSuccessful/IPCFramework.dll ./lib/Debug/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/fw-9.1.1.tcbuildtag/SIL.Core.Desktop.dll ./lib/Release/SIL.Core.Desktop.dll
