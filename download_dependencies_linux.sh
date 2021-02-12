@@ -76,6 +76,7 @@ cd -
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=bt216
 #     clean: false
 #     revision: fb-for-fw-9.0.15.tcbuildtag
+#     branch: chorus-3.0
 #     paths: {"Chorus_Help.chm"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorushelp.git [master]
 # [1] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
@@ -83,6 +84,7 @@ cd -
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: fb-for-fw-9.0.15.tcbuildtag
+#     branch: chorus-3.0
 #     paths: {"debug/Chorus.exe"=>"lib/DebugMono", "debug/LibChorus.dll"=>"lib/DebugMono", "debug/ChorusHub.exe"=>"lib/DebugMono", "debug/ChorusMerge.exe"=>"lib/DebugMono", "Mercurial-i686.zip"=>"lib/DebugMono", "Mercurial-x86_64.zip"=>"lib/DebugMono", "debug/LibChorus.TestUtilities.dll"=>"lib/DebugMono", "MercurialExtensions/**"=>"MercurialExtensions"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [2] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
@@ -90,6 +92,7 @@ cd -
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: fb-for-fw-9.0.15.tcbuildtag
+#     branch: chorus-3.0
 #     paths: {"Chorus.exe"=>"lib/ReleaseMono", "LibChorus.dll"=>"lib/ReleaseMono", "ChorusHub.exe"=>"lib/ReleaseMono", "ChorusMerge.exe"=>"lib/ReleaseMono", "Mercurial-i686.zip"=>"lib/ReleaseMono", "Mercurial-x86_64.zip"=>"lib/ReleaseMono", "LibChorus.TestUtilities.dll"=>"lib/ReleaseMono"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [3] build: chorus-linux64-master Continuous (Chorus_Linux64masterContinuous)
@@ -97,6 +100,7 @@ cd -
 #     URL: https://build.palaso.org/viewType.html?buildTypeId=Chorus_Linux64masterContinuous
 #     clean: false
 #     revision: fb-for-fw-9.0.15.tcbuildtag
+#     branch: chorus-3.0
 #     paths: {"Autofac.dll"=>"lib/common"}
 #     VCS: https://github.com/sillsdev/chorus.git [master]
 # [4] build: IPC-Precise64 (bt279)
@@ -130,39 +134,39 @@ mkdir -p ./lib/common
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm ./lib/common/Chorus_Help.chm
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/Chorus.exe ./lib/DebugMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.dll ./lib/DebugMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusHub.exe ./lib/DebugMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusMerge.exe ./lib/DebugMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-i686.zip ./lib/DebugMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-x86_64.zip ./lib/DebugMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.TestUtilities.dll ./lib/DebugMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/.guidsForInstaller.xml ./MercurialExtensions/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/Dummy.txt ./MercurialExtensions/Dummy.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.gitignore ./MercurialExtensions/fixutf8/.gitignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.guidsForInstaller.xml ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.hg_archival.txt ./MercurialExtensions/fixutf8/.hg_archival.txt
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.hgignore ./MercurialExtensions/fixutf8/.hgignore
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/README. ./MercurialExtensions/fixutf8/README.
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/buildcpmap.py ./MercurialExtensions/fixutf8/buildcpmap.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/cpmap.pyc ./MercurialExtensions/fixutf8/cpmap.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.py ./MercurialExtensions/fixutf8/fixutf8.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyc ./MercurialExtensions/fixutf8/fixutf8.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyo ./MercurialExtensions/fixutf8/fixutf8.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.py ./MercurialExtensions/fixutf8/osutil.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyc ./MercurialExtensions/fixutf8/osutil.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyo ./MercurialExtensions/fixutf8/osutil.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.py ./MercurialExtensions/fixutf8/win32helper.py
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyc ./MercurialExtensions/fixutf8/win32helper.pyc
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyo ./MercurialExtensions/fixutf8/win32helper.pyo
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.exe ./lib/ReleaseMono/Chorus.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.dll ./lib/ReleaseMono/LibChorus.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHub.exe ./lib/ReleaseMono/ChorusHub.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.exe ./lib/ReleaseMono/ChorusMerge.exe
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-i686.zip ./lib/ReleaseMono/Mercurial-i686.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-x86_64.zip ./lib/ReleaseMono/Mercurial-x86_64.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.dll ./lib/ReleaseMono/LibChorus.TestUtilities.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Autofac.dll ./lib/common/Autofac.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/Chorus.exe?branch=chorus-3.0 ./lib/DebugMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.dll?branch=chorus-3.0 ./lib/DebugMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusHub.exe?branch=chorus-3.0 ./lib/DebugMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/ChorusMerge.exe?branch=chorus-3.0 ./lib/DebugMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-i686.zip?branch=chorus-3.0 ./lib/DebugMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-x86_64.zip?branch=chorus-3.0 ./lib/DebugMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/debug/LibChorus.TestUtilities.dll?branch=chorus-3.0 ./lib/DebugMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/.guidsForInstaller.xml?branch=chorus-3.0 ./MercurialExtensions/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/Dummy.txt?branch=chorus-3.0 ./MercurialExtensions/Dummy.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.gitignore?branch=chorus-3.0 ./MercurialExtensions/fixutf8/.gitignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.guidsForInstaller.xml?branch=chorus-3.0 ./MercurialExtensions/fixutf8/.guidsForInstaller.xml
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.hg_archival.txt?branch=chorus-3.0 ./MercurialExtensions/fixutf8/.hg_archival.txt
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/.hgignore?branch=chorus-3.0 ./MercurialExtensions/fixutf8/.hgignore
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/README.?branch=chorus-3.0 ./MercurialExtensions/fixutf8/README.
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/buildcpmap.py?branch=chorus-3.0 ./MercurialExtensions/fixutf8/buildcpmap.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/cpmap.pyc?branch=chorus-3.0 ./MercurialExtensions/fixutf8/cpmap.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.py?branch=chorus-3.0 ./MercurialExtensions/fixutf8/fixutf8.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyc?branch=chorus-3.0 ./MercurialExtensions/fixutf8/fixutf8.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/fixutf8.pyo?branch=chorus-3.0 ./MercurialExtensions/fixutf8/fixutf8.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.py?branch=chorus-3.0 ./MercurialExtensions/fixutf8/osutil.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyc?branch=chorus-3.0 ./MercurialExtensions/fixutf8/osutil.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/osutil.pyo?branch=chorus-3.0 ./MercurialExtensions/fixutf8/osutil.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.py?branch=chorus-3.0 ./MercurialExtensions/fixutf8/win32helper.py
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyc?branch=chorus-3.0 ./MercurialExtensions/fixutf8/win32helper.pyc
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/MercurialExtensions/fixutf8/win32helper.pyo?branch=chorus-3.0 ./MercurialExtensions/fixutf8/win32helper.pyo
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Chorus.exe?branch=chorus-3.0 ./lib/ReleaseMono/Chorus.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.dll?branch=chorus-3.0 ./lib/ReleaseMono/LibChorus.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusHub.exe?branch=chorus-3.0 ./lib/ReleaseMono/ChorusHub.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/ChorusMerge.exe?branch=chorus-3.0 ./lib/ReleaseMono/ChorusMerge.exe
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-i686.zip?branch=chorus-3.0 ./lib/ReleaseMono/Mercurial-i686.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Mercurial-x86_64.zip?branch=chorus-3.0 ./lib/ReleaseMono/Mercurial-x86_64.zip
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/LibChorus.TestUtilities.dll?branch=chorus-3.0 ./lib/ReleaseMono/LibChorus.TestUtilities.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Chorus_Linux64masterContinuous/fb-for-fw-9.0.15.tcbuildtag/Autofac.dll?branch=chorus-3.0 ./lib/common/Autofac.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/ReleaseMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt279/latest.lastSuccessful/IPCFramework.dll ./lib/DebugMono/IPCFramework.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoLinux64masterContinuous/fw-9.1.1.tcbuildtag/SIL.Core.dll ./lib/ReleaseMono/SIL.Core.dll
