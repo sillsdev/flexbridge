@@ -1,3 +1,9 @@
+flexbridge (3.1.9) UNRELEASED; urgency=low
+
+  * Fix a merge problem that silently overwrote changes in Writing System sort order
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 02 Mar 2021 10:30:25 -0600
+
 flexbridge (3.1.8) UNRELEASED; urgency=low
 
   * Fix LT-20464 - Delete CachedSettings files if they are deleted from the project

@@ -1,3 +1,7 @@
+## 3.1.9 2021-03-02
+
+* Fix a merge problem that silently overwrote changes in Writing System sort order
+
 ## 3.1.8 2020-11-24
 
 * Fix LT-20464 - Delete CachedSettings files if they are deleted from the project
