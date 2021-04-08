@@ -15,6 +15,7 @@ all: release
 download_dependencies:
 	./download_dependencies_linux.sh
 	. ./environ \
+	  && msbuild build/FLExBridge.proj /t:"RestoreBuildTasks,RestorePackages" \
 	  && cd l10n \
 	  && msbuild l10n.proj /t:restore \
 	  && msbuild l10n.proj /t:CopyL10nsToDistFiles
@@ -32,7 +33,17 @@ release_build:
 	cp -a packages/Geckofx60.64.Linux.$(GECKOFX60_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx60.64.Linux.$(GECKOFX60_VERSION)/lib/net40
 	cp -a flexbridge output/ReleaseMono
 
-debug: vcs_version download_dependencies debug_build
+hack_version:
+	touch src/FLEx-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/FLExBridge/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/LfMergeBridge/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/LibFLExBridge-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/LibTriboroughBridge-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/LiftBridge-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/RepositoryUtility/Properties/GitVersionTaskAssemblyInfo.g.cs
+	touch src/TriboroughBridge-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
+
+debug: hack_version download_dependencies debug_build
 
 debug_build:
 	# Setting /p:AutoGenerateBindingRedirects=false will prevent FLExBridge.exe.config from having bindingRedirect

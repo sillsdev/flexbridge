@@ -153,7 +153,7 @@
 	</Target>
 
 	<!-- GetVersion is a target in $(GitVersionTaskAltPath)/GitVersionTask.alt.targets -->
-	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
+	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks">
 		<PropertyGroup>
 			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
 			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>
@@ -173,24 +173,11 @@
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
-		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm"
-			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
-			Regex="FBCOMMITID" ReplacementText="$(BUILD_VCS_NUMBER)"/>
-
 		<Copy SourceFiles="$(RootDir)/DistFiles/License.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
-		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/License.htm"
-			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/License.htm"
-			DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
-			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
-			<!-- The FileUpdate task checks whether ReplacementText is in the updated file contents before writing the contents back to the file, but we need to replace two dates and only one Regex, so we call FileUpdate twice with the same Regex and ReplacementText. -->
 
 		<Copy SourceFiles="$(RootDir)/src/Installer/appcast.xml"
 			DestinationFolder="$(RootDir)/output/Installer"/>
-		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/appcast.xml"
-			Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 	</Target>
 
 	<Target Name="PreparePublishingArtifacts">
