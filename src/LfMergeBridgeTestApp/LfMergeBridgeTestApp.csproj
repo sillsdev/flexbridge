@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="all" />
+
   </ItemGroup>
 
   <ItemGroup>
