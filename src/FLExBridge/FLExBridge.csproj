@@ -203,11 +203,11 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="Geckofx-Core, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms, Culture=neutral" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.36/lib/net40/Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\YamlDotNet.5.2.1\lib\net45\YamlDotNet.dll</HintPath>
