@@ -1,3 +1,10 @@
+flexbridge (3.2.1) UNRELEASED; urgency=low
+
+  * Add an option to forget the password
+  * Move stored passwords from projects' .hg/hgrc files to an encrpyted user setting on Send/Receive
+
+ -- Hasso <flex_devteam@sil.org>  Fri, 09 Apr 2021 16:44:28 -0500
+
 flexbridge (3.2.0) UNRELEASED; urgency=low
 
   * Update the Internet Server Settings dialogs to log in to Language Forge and display available projects
