@@ -1,3 +1,8 @@
+## 3.2.1 2021-04-09
+
+* Add an option to forget the password
+* Move stored passwords from projects' .hg/hgrc files to an encrpyted user setting on Send/Receive
+
 ## 3.2.0 2021-01-20
 
 * Update the Internet Server Settings dialogs to log in to Language Forge and display available projects
