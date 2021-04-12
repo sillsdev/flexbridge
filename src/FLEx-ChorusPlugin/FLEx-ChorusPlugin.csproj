@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.props" Condition="Exists('..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.props')" />
   <Import Project="..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,6 +15,8 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <UpdateAssemblyInfo Condition="'$(UpdateAssemblyInfo)' == ''">true</UpdateAssemblyInfo>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -230,6 +233,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -240,7 +244,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets'))" />
     <Error Condition="!Exists('..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
-    <Error Condition="!Exists('..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets'))" />
+    <Error Condition="!Exists('..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.props'))" />
+    <Error Condition="!Exists('..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
@@ -261,5 +266,5 @@
   <ItemGroup Condition="!$(UpdateAssemblyInfo)">
     <Compile Include="Properties/GitVersionTaskAssemblyInfo.g.cs" />
   </ItemGroup>
-  <Import Project="..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets" Condition="Exists('..\..\packages\GitVersionTask.alt.4.0.2-alpha-0006\build\GitVersionTask.alt.targets')" />
+  <Import Project="..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.targets" Condition="Exists('..\..\packages\GitVersion.MsBuild.5.6.8\build\GitVersion.MsBuild.targets')" />
 </Project>

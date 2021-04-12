@@ -14,9 +14,9 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<GitVersionTaskAltPath>$(RootDir)/packages/GitVersionTask.alt/build</GitVersionTaskAltPath>
-		<RestartBuild Condition="!Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
+		<GitVersionTaskPath>$(RootDir)/packages/GitVersion.MsBuild.5.6.8/build</GitVersionTaskPath>
+		<RestartBuild Condition="!Exists('$(GitVersionTaskPath)/tools/net48/gitversion.exe') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(GitVersionTaskPath)/tools/net48/gitversion.exe') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -27,8 +27,10 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(GitVersionTaskAltPath)/GitVersionTask.alt.targets"
-		Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(GitVersionTaskPath)/GitVersion.MsBuild.targets"
+		Condition="Exists('$(GitVersionTaskPath)/GitVersion.MsBuild.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(GitVersionTaskPath)/GitVersion.MsBuild.props"
+		Condition="Exists('$(GitVersionTaskPath)/GitVersion.MsBuild.props') And !$(IgnoreGitVersionTask)"/>
 	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
 		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
 
@@ -60,7 +62,7 @@
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersionTask.alt -excludeVersion -version 4.0.2-alpha-0006 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -version 5.6.8 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install MSBuild.Extension.Pack -version 1.9.0 -solutionDirectory "$(RootDir)"' />
@@ -152,7 +154,7 @@
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<!-- GetVersion is a target in $(GitVersionTaskAltPath)/GitVersionTask.alt.targets -->
+	<!-- GetVersion is a target in $(GitVersionTaskPath)/GitVersion.MsBuild.targets -->
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
 		<PropertyGroup>
 			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
