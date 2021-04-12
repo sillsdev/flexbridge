@@ -1,3 +1,7 @@
+## 3.1.10 2021-04-12
+
+* Upgrade to GeckoFx 60 (required to run on Ubuntu 20.04)
+
 ## 3.1.9 2021-03-02
 
 * Fix a merge problem that silently overwrote changes in Writing System sort order

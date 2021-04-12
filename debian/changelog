@@ -1,3 +1,9 @@
+flexbridge (3.1.10) UNRELEASED; urgency=low
+
+  * Upgrade to GeckoFx 60 (required to run on Ubuntu 20.04)
+
+ -- Jason Naylor <jason_naylor@sil.org>  Mon, 12 Apr 2021 10:51:00 -0500
+
 flexbridge (3.1.9) UNRELEASED; urgency=low
 
   * Fix a merge problem that silently overwrote changes in Writing System sort order
