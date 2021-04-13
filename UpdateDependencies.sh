@@ -20,10 +20,10 @@ else
 	BUILD_CONFIG=$1
 fi
 
-pushd ${CHORUS_DIR}
-./UpdateDependencies.sh ${BUILD_CONFIG}
-build/TestBuild.sh ${BUILD_CONFIG}
-popd
+# pushd ${CHORUS_DIR}
+# ./UpdateDependencies.sh ${BUILD_CONFIG}
+# build/TestBuild.sh ${BUILD_CONFIG}
+# popd
 
 if [ ! -d output/${BUILD_CONFIG}Mono ]
 then

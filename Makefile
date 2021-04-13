@@ -20,6 +20,9 @@ download_dependencies:
 	  && msbuild l10n.proj /t:restore \
 	  && msbuild l10n.proj /t:CopyL10nsToDistFiles
 
+copy_local_dependencies:
+	./UpdateDependencies.sh
+
 release: vcs_version download_dependencies release_build
 
 release_build:
@@ -44,6 +47,8 @@ hack_version:
 	touch src/TriboroughBridge-ChorusPlugin/Properties/GitVersionTaskAssemblyInfo.g.cs
 
 debug: hack_version download_dependencies debug_build
+
+debug_chorus: copy_local_dependencies debug_build
 
 debug_build:
 	# Setting /p:AutoGenerateBindingRedirects=false will prevent FLExBridge.exe.config from having bindingRedirect
