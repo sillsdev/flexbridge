@@ -31,7 +31,45 @@
       "env": {
         // When launching, use this mono.
         "PATH": "/opt/mono5-sil/bin:${env:PATH}",
-        "MONO_ENVIRON": "${env:HOME}/fwrepo/flexbridge/environ"
+        "MONO_ENVIRON": "${env:HOME}/fwrepo/fw/environ"
+      },
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "name": "LaunchSR",
+      "type": "mono",
+      "request": "launch",
+      "program": "${workspaceRoot}/output/DebugMono/FLExBridge.exe",
+      "args": [
+        "-u", "${env:USER}",
+        "-projDir", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
+        "-fwAppsDir", "${env:HOME}/fwrepo/fw/Output/Debug",
+        "-fwmodel", "7000072",
+        "-liftmodel", "0.13",
+        "-locale", "en",
+        // Change these arguments to launch and debug different areas.
+        // Launching FB via FW and running `ps faxww | grep FLExBridge` will
+        // reveal what setting for -p, -v, -f, and -pipeID to change
+        // these to. Then modify FW by commenting out Process.Start in
+        // FLexBridgeHelper.cs.
+        // -p could instead be .../Projects/foo/foo.fwdata
+        "-p", "${env:HOME}/fwrepo/fw/DistFiles/Projects/4/4.fwdata",
+        "-v", "send_receive",
+        "-f", "${env:HOME}/fwrepo/fw/Output/Debug/FixFwData.exe",
+        // -pipeId could instead be .../Projects/foo/foo.fwdatasend_receive
+        "-pipeID", "SendReceive${env:HOME}/fwrepo/fw/DistFiles/Projects/4/4.fwdatasend_receive"
+      ],
+      "env": {
+        // When launching, use this mono.
+				// Use Flexbridge from code, rather than a package, if desired.
+				"FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+				// Send and receive to the QA LanguageForge server instead of production, if desired.
+				"LANGUAGEFORGESERVER": "-qa.languageforge.org",
+				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+				// When launching FieldWorks, use this mono.
+        "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        "MONO_ENVIRON": "${env:HOME}/fwrepo/fw/environ"
       },
       "cwd": "${workspaceRoot}"
     },

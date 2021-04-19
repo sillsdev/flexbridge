@@ -1,28 +1,10 @@
-# Environment settings for running FieldWorks
-#
-# Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
+# Environment settings for Flexbridge, such as to run with the SIL version of mono and find the right geckofx.
 
-# Possible values for RUNMODE:
-# - INSTALLED: when running an installed package
-# - PACKAGING: while building the package
+# These setting assume that the packaged SIL Mono is installed in /opt/mono-sil.
+# Note that this file is intended to be "sourced", not "executed". For example: cd HERE && . environ
+# You must first cd to the directory containing this script.
+# Alternatively, use ./run-in-environ rather than manually sourcing environ.
 
-# Unset things from incoming environment to avoid unexpected behaviour, such
-# as when FW is run from PT. Restore path to something basic, along with the
-# dotnet tools path, if present.
-unset LD_LIBRARY_PATH \
-  LD_PRELOAD \
-  PATH \
-  MONO_ENABLE_SHM \
-  MONO_IOMAP \
-  MONO_WINFORMS_XIM_STYLE \
-  MOZ_ASSUME_USER_NS \
-  MOZ_LIBDIR TEXINPUTS \
-  USE_GTK_DIALOGS \
-  WINFORMS_FONT_OVERRIDE_EXPLICITLY_SET \
-  WINFORMS_STYLE_TITLEBAR_COLOR_1 \
-  WINFORMS_STYLE_TITLEBAR_COLOR_2 \
-  WINFORMS_STYLE_TITLEBAR_VERTICAL_GRADIENT
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
 DOTNET_TOOLS_PATHER="/etc/profile.d/dotnet-cli-tools-bin-path.sh"
 if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
   . "${DOTNET_TOOLS_PATHER}"
@@ -31,7 +13,7 @@ fi
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
-[ -z "$BUILD" ] && BUILD=Debug
+[ -z "$BUILD" ] && BUILD=DebugMono
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
 [ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono5-sil
 
@@ -47,11 +29,11 @@ MONO_ENV_OPTIONS="-O=-gshared"
 # Directory settings
 if [ "$RUNMODE" != "INSTALLED" ]
 then
-	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+	PATH="${BASE}/output/${BUILD}:\
 /usr/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
-	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+	LD_LIBRARY_PATH="${BASE}/output/${BUILD}:\
 /usr/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
@@ -86,21 +68,21 @@ then
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
 	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
-	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
+	COMPONENTS_MAP_PATH="${BASE}/output/${BUILD}"
 	FW_ROOT="${BASE}/DistFiles"
 	FW_ROOTDATA="${BASE}/DistFiles"
 	FW_ROOTCODE="${BASE}/DistFiles"
 	ICU_DATA="${BASE}/DistFiles/Icu54"
-	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+	MONO_REGISTRY_PATH="${BASE}/output/registry"
 	MONO_HELP_VIEWER=${BASE}/Lib/linux/launch-xchm
 fi
 
 if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
 then
-	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
+	FW_CommonAppData=${BASE}/output/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
 	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
-	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
+	MONO_PATH="${BASE}/DistFiles:${BASE}/output/${BUILD}"
 fi
 
 MONO_PATH="${MONO_PATH}:${ENC_CONVERTERS}:${GECKOFX}"
