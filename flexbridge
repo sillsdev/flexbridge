@@ -1,28 +1,16 @@
 #!/bin/bash
 
-# Launch FlexBridge
+# Launch FLExBridge
+# Since FLEx Bridge should always be launched from FieldWorks,
+# there is no need to source a new environ file;
+# the environment variables should already be set correctly.
 
 set -e -o pipefail
-
-# On a developer machine, MONO_ENVIRON may be set, and to the location of the
-# FieldWorks environ. Running mono would then re-source the FieldWorks
-# environ, and prioritize the FW Geckofx path in LD_LIBRARY_PATH. Prevent this.
-unset MONO_ENVIRON
 
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
 cd "${scriptdir}"
-# On a developer machine, we may be in output/DebugMono. If so, go to the
-# location of environ before sourcing it.
-if [ "$(basename "$scriptdir")" == "DebugMono" -o \
-     "$(basename "$scriptdir")" == "ReleaseMono" ]; then
-    cd ../..
-    . environ
-    cd -
-else
-    . environ
-fi
 
 (
 	XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}

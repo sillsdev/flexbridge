@@ -1,4 +1,5 @@
 # Environment settings for Flexbridge, such as to run with the SIL version of mono and find the right geckofx.
+# Note: this environ is not sourced in installed environments, because the environment is inherited from FLEx.
 
 # These setting assume that the packaged SIL Mono is installed in /opt/mono-sil.
 # Note that this file is intended to be "sourced", not "executed". For example: cd HERE && . environ
