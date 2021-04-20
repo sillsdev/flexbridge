@@ -7,6 +7,10 @@
 
 set -e -o pipefail
 
+# set HGRCPATH so that we ignore ~/.hgrc files which might have content that is
+# incompatible with our version of Mercurial
+export HGRCPATH=
+
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
