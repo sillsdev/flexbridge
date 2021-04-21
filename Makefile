@@ -43,6 +43,7 @@ debug_build:
 	# gtk-sharp 3.0.0.0, presumably because gtk-sharp3 is installed on the build agent that builds libpalaso. The
 	# FLExBridge.exe.config file could alternatively be modified post-build to use gtk-sharp and gdk-sharp newVersion
 	# 2.12.0.0.
+	# LT-20521: Actually, we do need FLExBridge.exe.config (TODO)
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
@@ -50,7 +51,7 @@ debug_build:
 	  && cd build \
 	  && msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
 	    /p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) /p:Configuration=DebugMono \
-		/p:RestorePackages=false /p:AutoGenerateBindingRedirects=false /p:UpdateAssemblyInfo=false \
+		/p:RestorePackages=false /p:UpdateAssemblyInfo=false \
 		/p:WriteVersionInfoToBuildLog=false
 	cp -a packages/Geckofx60.64.Linux.$(GECKOFX60_VERSION)/build/Geckofx-Core.dll.config packages/Geckofx60.64.Linux.$(GECKOFX60_VERSION)/lib/net40
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
