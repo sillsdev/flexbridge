@@ -148,8 +148,8 @@
 		</PropertyGroup>
 		<DownloadFileOnce Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"/> <!-- .net 4.5.1 -->
-		<DownloadFileOnce Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"/>			<!-- VisualC++ 10 runtime -->
+		<DownloadFileOnce Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
+			LocalFilename="$(WixLibsDir)/vcredist_2010_x86.exe"/>		<!-- VisualC++ 10 runtime -->
 		<DownloadFileOnce Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
 			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"/>		<!-- VisualC++ 11 runtime -->
 		<DownloadFileOnce Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
