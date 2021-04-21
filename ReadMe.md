@@ -48,6 +48,8 @@ If you plan to work on Chorus:
 Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
 (instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
 
+TODO: If you plan to Send and Receive to the Internet with High bandwidth, you will need to edit flexbridge\Mercurial\default.d\cacerts.rc to contain the correct path to flexbridge\Mercurial\cacert.pem. Since this must be an absolute path, and this file seems to be overwritten on each build, we should create a build step to take care of this. See https://jira.sil.org/browse/LT-20563
+
 ### Build
 
 * On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2017 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
