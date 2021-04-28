@@ -11,14 +11,14 @@ XDG_CONFIG_HOME ?= /tmp/.config
 UploadFolder="Alpha"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
-GECKOFX45_VERSION := 45.0.36
+GECKOFX60_VERSION := 60.0.51
 
 all: release
 
 download_dependencies:
 	cd l10n \
-		&& msbuild l10n.proj /t:restore \
-		&& msbuild l10n.proj /t:CopyL10nsToDistFiles
+	  && msbuild l10n.proj /t:restore \
+	  && msbuild l10n.proj /t:CopyL10nsToDistFiles
 
 release: vcs_version download_dependencies release_build
 
@@ -26,10 +26,10 @@ release_build:
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
 	# Don't update the assembly info - there's no git repo during package build
 	cd build \
-		&& msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
+	  && msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
 			/p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) \
 			/p:Configuration=Release /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
-			/p:WriteVersionInfoToBuildLog=false
+	  /p:WriteVersionInfoToBuildLog=false
 	cp -a flexbridge output/Release
 
 debug: vcs_version download_dependencies debug_build
@@ -40,10 +40,10 @@ debug_build:
 	export FBCommonAppData
 	# Don't update the assembly info - there's no git repo during package build
 	cd build \
-		&& msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
+	  && msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
 			/p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) \
 			/p:Configuration=Debug /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
-			/p:WriteVersionInfoToBuildLog=false
+		/p:WriteVersionInfoToBuildLog=false
 	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
 	cp -a flexbridge output/Debug
 
@@ -68,9 +68,9 @@ fetch_l10ns:
 	dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
 	bash -c '\
 		export PATH="$$PATH:${HOME}/.dotnet/tools" \
-			&& cd l10n \
-			&& msbuild l10n.proj /t:restore \
-			&& msbuild l10n.proj /t:GetlatestL10ns \
+	    && cd l10n \
+	    && msbuild l10n.proj /t:restore \
+	    && msbuild l10n.proj /t:GetlatestL10ns \
 	'
 
 install: fetch_l10ns
