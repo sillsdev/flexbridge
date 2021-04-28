@@ -38,6 +38,7 @@ lib/Release/*.msm
 lib/*/*.config
 lib/common/Chorus_Help.chm
 build/.nuget/
+build/gitversion.json
 build/NuGet.exe
 build/nuget.exe
 packages/
