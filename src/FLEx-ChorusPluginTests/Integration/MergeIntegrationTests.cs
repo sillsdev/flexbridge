@@ -138,7 +138,7 @@ namespace FLEx_ChorusPluginTests.Integration
 			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
 			mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
 			mdc.ResetCaches();
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("{0}_01.{1}", FlexBridgeConstants.Lexicon, FlexBridgeConstants.Lexdb), commonAncestor))
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", $"{FlexBridgeConstants.Lexicon}_01.{FlexBridgeConstants.Lexdb}", commonAncestor))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.
@@ -188,7 +188,6 @@ namespace FLEx_ChorusPluginTests.Integration
 		}
 
 		[Test]
-		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
 		public void EnsureDictionaryConfigsUseDictionaryStrategy()
 		{
 			const string commonAncestor = @"<?xml version='1.0' encoding='utf-8'?>
@@ -254,7 +253,7 @@ namespace FLEx_ChorusPluginTests.Integration
 				var xsdPathInProj = Path.Combine(tempFolder.Path, FlexBridgeConstants.DictConfigSchemaFilename);
 				File.Copy(xsdPath, xsdPathInProj, true);
 
-				using (var sueRepo = new RepositoryWithFilesSetup("Sue", string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), commonAncestor))
+				using (var sueRepo = new RepositoryWithFilesSetup("Sue", $"root.{FlexBridgeConstants.fwdictconfig}", commonAncestor))
 				using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))
 				{
 					// By doing the clone before making Sue's changes, we get the common starting state in both repos.
@@ -294,8 +293,7 @@ namespace FLEx_ChorusPluginTests.Integration
 		}
 
 		[Test]
-		[Category("UnknownMonoIssue")] // Do3WayMerge is never called on Mono, for some reason.
-		public void DictConfigMerge_DifferentUpradePathKeepsFileFormat()
+		public void DictConfigMerge_DifferentUpgradePathKeepsFileFormat()
 		{
 			//const string commonAncestor = null;
 
@@ -350,12 +348,12 @@ namespace FLEx_ChorusPluginTests.Integration
 					using (var randyRepo = new RepositorySetup("Randy", sueRepo))
 					{
 						// By doing the clone before making Sue's changes, we get the common starting state in both repos.
-						sueRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), sue);
+						sueRepo.AddAndCheckinFile($"root.{FlexBridgeConstants.fwdictconfig}", sue);
 
-						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, string.Format("root.{0}", FlexBridgeConstants.fwdictconfig));
+						var randyDictConfigInRepoPath = Path.Combine(randyRepo.ProjectFolder.Path, $"root.{FlexBridgeConstants.fwdictconfig}");
 						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
 						Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
-						randyRepo.AddAndCheckinFile(string.Format("root.{0}", FlexBridgeConstants.fwdictconfig), randy);
+						randyRepo.AddAndCheckinFile($"root.{FlexBridgeConstants.fwdictconfig}", randy);
 						randyRepo.CheckinAndPullAndMerge(sueRepo);
 						Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 						var notesContents = File.ReadAllText(mergeConflictsNotesFile);
