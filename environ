@@ -7,8 +7,10 @@
 # Alternatively, use ./run-in-environ rather than manually sourcing environ.
 
 BASE="$(pwd)"
-[ -z "$BUILD" ] && BUILD=DebugMono
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
+[ -z "$BUILD" ] && BUILD=Debug
+# Building requires Mono 6 because of an issue with GitVersion.MsBuild.
+# Running will also work with mono5-sil.
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr
 
 # Are we running as installed from a package, or on a development machine?
 case "$(pwd)" in
