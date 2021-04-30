@@ -176,42 +176,45 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 																 select osEl.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()).ToList();
 		}
 
-		private static void CopySupportingSettingsFilesIntoRepo(IProgress progress, bool writeVerbose, string pathRoot)
+		internal static void CopySupportingSettingsFilesIntoRepo(IProgress progress, bool writeVerbose, string pathRoot)
 		{
 			progress.WriteMessage("Copying settings files...");
 			// copy the dictionary configuration files into the .hg included repo
 			var dictionaryConfigFolder = Path.Combine(pathRoot, "ConfigurationSettings");
-			if (Directory.Exists(dictionaryConfigFolder))
-			{
-				if (writeVerbose)
-				{
-					progress.WriteMessage("Copying dictionary configuration settings.");
-				}
-				DirectoryHelper.Copy(dictionaryConfigFolder, Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), true);
-			}
+			CopyFilesIntoCachedFolderWithFileRemoval(progress, writeVerbose, dictionaryConfigFolder,
+				Path.Combine(pathRoot, "CachedSettings", "ConfigurationSettings"), "Copying dictionary configuration settings.");
 			// copy the lexicon settings files into the.hg included repo
 			var sharedSettingsFolder = Path.Combine(pathRoot, "SharedSettings");
-			if (Directory.Exists(sharedSettingsFolder))
-			{
-				if (writeVerbose)
-				{
-					progress.WriteMessage("Copying shared lexicon settings.");
-				}
-				DirectoryHelper.Copy(sharedSettingsFolder, Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), true);
-			}
+			CopyFilesIntoCachedFolderWithFileRemoval(progress, writeVerbose, sharedSettingsFolder,
+				Path.Combine(pathRoot, "CachedSettings", "SharedSettings"), "Copying shared lexicon settings.");
 			// copy the writing system files into the .hg included repo
 			var wsFolder = Path.Combine(pathRoot, "WritingSystemStore");
-			if (Directory.Exists(wsFolder))
+			CopyFilesIntoCachedFolderWithFileRemoval(progress, writeVerbose, wsFolder,
+				Path.Combine(pathRoot, "CachedSettings", "WritingSystemStore"), "Copying writing systems.");
+		}
+
+		/// <summary>
+		/// Copy the files into the repo location, remove files from the repo that were removed from the local folder.
+		/// </summary>
+		private static void CopyFilesIntoCachedFolderWithFileRemoval(IProgress progress,
+			bool writeVerbose, string sourcePath, string destinationPath, string progressMessage)
+		{
+			if (Directory.Exists(sourcePath))
 			{
 				if (writeVerbose)
 				{
-					progress.WriteMessage("Copying writing systems.");
+					progress.WriteMessage(progressMessage);
 				}
-				DirectoryHelper.Copy(wsFolder, Path.Combine(pathRoot, "CachedSettings", "WritingSystemStore"), true);
+
+				if (Directory.Exists(destinationPath))
+				{
+					RobustIO.DeleteDirectoryAndContents(destinationPath);
+				}
+				DirectoryHelper.Copy(sourcePath, destinationPath, true);
 			}
 		}
 
-		private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
+	  private static void CopySupportingSettingsFilesIntoProjectFolder(IProgress progress, bool writeVerbose, string pathRoot)
 		{
 			progress.WriteMessage("Copying settings files...");
 			var cachedSettingsPath = Path.Combine(pathRoot, "CachedSettings");

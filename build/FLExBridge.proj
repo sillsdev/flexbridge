@@ -14,8 +14,8 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -27,10 +27,10 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(RootDir)/packages/GitVersionTask/build/GitVersionTask.props"
-		Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.props') And !$(IgnoreGitVersionTask)"/>
-	<Import Project="$(RootDir)/packages/GitVersionTask/build/GitVersionTask.targets"
-		Condition="Exists('$(RootDir)/packages/GitVersionTask/build/GitVersionTask.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props"
+		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets"
+		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets') And !$(IgnoreGitVersionTask)"/>
 	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props"
 		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props')" />
 
@@ -41,7 +41,7 @@
 		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
 		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 
-	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
+	<!-- a few do-nothing targets to get rid of some warnings from GitVersion.MsBuild.targets -->
 	<Target Name="GetAssemblyVersion"/>
 	<Target Name="GenerateNuspec"/>
 	<Target Name="_GenerateRestoreProjectSpec"/>
@@ -59,7 +59,7 @@
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersionTask -excludeVersion -version 5.3.4 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -excludeVersion -version 5.6.8 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
@@ -128,15 +128,6 @@
 	</Target>
 
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
-		<PropertyGroup>
-			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
-			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>
-		</PropertyGroup>
-		<Message Text="Version: $(Version)" Importance="high"/>
-		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
-			Condition="'$(teamcity_version)' != '' And $(GetVersion)"/>
-		<Message Text="##teamcity[buildNumber '$(Version)']"
-			Condition="'$(teamcity_version)' != '' And !$(GetVersion)"/>
 		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="true"
 			Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)"
 			Condition="$(GetVersion)"/>
