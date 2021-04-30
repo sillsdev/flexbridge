@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
+using System.Web;
 using SIL.Network;
 using SIL.Providers;
 
@@ -288,7 +289,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
-			uriBuilder.Query = HttpUtilityFromMono.UrlEncode(query.ToString());
+			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
 
 			return uriBuilder.Uri.AbsoluteUri;
 		}
@@ -338,7 +339,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				value = value.Substring(5);
 				return bool.Parse(value);
 			}
-			return HttpUtilityFromMono.UrlDecode(value);
+			return HttpUtility.UrlDecode(value);
 		}
 		#endregion
 	}

@@ -17,7 +17,7 @@ using SIL.Progress;
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 {
 	/// <summary>
-	/// This IBridgeActionTypeHandler implementation handles everything needed to obtain anyh type of supported bridge system.
+	/// This IBridgeActionTypeHandler implementation handles everything needed to obtain any type of supported bridge system.
 	///
 	/// Each bridge system needs to implement the IObtainProjectStrategy interface and export it for use by MEF.
 	/// Those implementations then are responsible for processing the newly cloned repo, and tell FLEx how to create
@@ -28,17 +28,16 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 	{
 		[ImportMany]
 		private IEnumerable<IObtainProjectStrategy> Strategies { get; set; }
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 		private IObtainProjectStrategy _currentStrategy;
 		private string _pathToRepository;
 		private const char SepChar = '|';
 		private const string HubQueryKey = "filePattern=";
 
-		internal string ChorusHubQuery
-		{
-			get { return HubQueryKey + PasteTogetherQueryParts(); }
-		}
+		private string ChorusHubQuery => HubQueryKey + PasteTogetherQueryParts();
 
 		private IObtainProjectStrategy GetCurrentStrategy(string cloneLocation)
 		{
@@ -106,10 +105,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.Obtain; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.Obtain;
 
 		#endregion IBridgeActionTypeHandler impl
 

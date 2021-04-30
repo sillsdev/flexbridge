@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -17,10 +17,9 @@ using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-
-#if MONO
 using Gecko;
-#endif
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms.Reporting;
 
 namespace FLExBridge
 {
@@ -32,7 +31,7 @@ namespace FLExBridge
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// Enable the next line if you neext to attach the FB process to your debugger.
+			// Enable the next line if you next to attach the FB process to your debugger.
 			//MessageBox.Show(@"Get ready to debug FB exe.");
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -45,10 +44,10 @@ namespace FLExBridge
 
 			using (new HotSpotProvider())
 			{
-				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.
-				// Without this call, although PalasoUIWindowsForms is listed in the References of this project,
+				// This is a kludge to make sure we have a real reference to SIL.Windows.Forms.
+				// Without this call, although SIL.Windows.Forms is listed in the References of this project,
 				// since we don't actually use it directly, it does not show up when calling GetReferencedAssemblies on this assembly.
-				// But we need it to show up in that list so that ExceptionHandler.Init can install the intended PalasoUIWindowsForms
+				// But we need it to show up in that list so that ExceptionHandler.Init can install the intended SIL.Windows.Forms
 				// exception handler.
 			}
 
@@ -62,12 +61,8 @@ namespace FLExBridge
 
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
 
-#if MONO
-			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
-			Xpcom.Initialize(Environment.GetEnvironmentVariable("XULRUNNER"));
-			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
-#endif
+			if (Platform.IsLinux)
+				InitializeGeckofx();
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -133,11 +128,19 @@ namespace FLExBridge
 			Settings.Default.Save();
 		}
 
+		private static void InitializeGeckofx()
+		{
+			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
+			Xpcom.Initialize(Environment.GetEnvironmentVariable("XULRUNNER"));
+			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
+		}
+
 		private static void SetUpErrorHandling()
 		{
 			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
-			ExceptionHandler.Init();
+			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 	}
 }

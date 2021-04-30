@@ -14,13 +14,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		protected IChorusFileTypeHandler FileHandler;
 		internal MetadataCache Mdc;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
 			FileHandler = FieldWorksTestServices.CreateChorusFileHandlers();
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTearDown()
 		{
 			FileHandler = null;

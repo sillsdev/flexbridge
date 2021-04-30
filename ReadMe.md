@@ -20,38 +20,26 @@ See diagram:
 
 ### Setup
 
-FLEx Bridge depends on several assemblies from Chorus and Palaso.
-Versions of these assemblies are no longer in the repo.
-Therefore, to build FLEx Bridge, you must get the latest versions of these assemblies by running this in a Bash window:
-
-- On **Windows**, run `download_dependencies_windows.sh`
-- On **Linux**, run `download_dependencies_linux.sh`
-
-If necessary, both *download_dependencies* scripts can be updated using the tool at https://github.com/chrisvire/BuildUpdate (requires Ruby).
-
-If you plan to work on Chorus:
-
-- Clone the Chorus and LibPalaso repos from https://github.com/sillsdev/chorus and https://github.com/sillsdev/libpalaso into the same parent directory as flexbridge without changing their repository names.
-- On **Windows**, run `GetAndBuildThis.bat` to: Download the latest commit on your branch of FLEx Bridge (if you have no uncommitted changes), GetAndBuild LibPalaso and Chorus recursively, copy dependencies from LibPalaso to Chorus to FLEx Bridge, and build FLEx Bridge. **Note:** recursive building of linked libraries is presently broken. Instead:
-- - Build Chorus per its instructions
-- - Run `UpdateDependencies.bat`
-- - Build FLEx Bridge using the instructions below
-- On **Linux**, run `UpdateDependencies.sh`, then build in *MonoDevelop* using `FLExBridge VS2010.sln`. You may also need to create the *localizations* folder here `/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono/localizations`.
+FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are installed from nuget.org.
 
 #### Connecting FieldWorks to FLEx Bridge
 
 - On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-	"InstallationDir"="C:\Dev\flexbridge\output\Debug"
-- On **Linux**, `export FLEXBRIDGEDIR=/home/YOURUSERNAME/fwrepo/flexbridge/output/DebugMono`
-
-Also, if you are working on Chorus, set up the FieldWorks build to copy locally-built Chorus and Palaso artifacts
-(instructions are located in the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki)).
+    "InstallationDir"="C:\Dev\flexbridge\output\Debug"
+- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/DebugMono`
 
 ### Build
 
-* On **Windows**, on the very first build after cloning, run `build.bat` from the `build` folder. After that you should be able to build solution FLExBridge.sln from Visual Studio 2017 Community Edition. (Note: if you get errors related to NuGet, delete `build/nuget.exe` and try the build batch file again)
-* On **Linux**, `make debug`
+You should be able to build solution `FLExBridge.sln` from Visual Studio 2019 Community Edition or
+JetBrains Rider.
+
+You can also build and run tests on both Windows and Linux from the command line by running:
+
+```bash
+cd build
+msbuild /t:Test FLExBridge.proj
+```
 
 ## Updating Release Notes for a new version
 
@@ -59,46 +47,44 @@ FLEx Bridge is following the gitflow model for branching
 
 When releasing FLEx Bridge be sure to do the following:
 
-1. Update the version and changelogs / release notes.
+1. Update the version and changelogs / release notes by doing the following.
 
-	- Edit `GitVersion.yml` if you are making a major or minor version number jump. The third place digit will be incremented automatically by GitVersion
-	- Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
+    - Generate a new Product ID GUID in `build/WixPatchableInstaller.targets`
 
-	- Windows Instructions:
-		- Update the src/Installer/ReleaseNotes.md with the user-facing change information, adding another heading for the previous version
-        - Run the following to update dependant Release Notes files:
-							
-				@REM Replace Alpha here with Beta or Stable as appropriate. Pass Release=false for a pre-release
-				cd build
-				build.bat /t:PreparePublishingArtifacts /p:UploadFolder=Alpha /p:Release=true
+    - Edit `CHANGELOG.md` by editing or adding to the items in the `## [Unreleased]` section. This will be published
+      as release notes for users.
 
-		- (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Tag and Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend on that tag
+    - Run the following build task to fill in debian/changelog and the release notes html from CHANGELOG.md. Replace
+      CHANNEL in the below with Alpha, Beta, or Stable. For a pre-release, pass `/p:Release=false` as an additional
+      property. Push the results.
 
-	- Linux Instructions:
+      Windows:
 
-		- `cd ~/fwrepo/flexbridge`
-		- Create an entry atop ReleaseNotes.md:
+          cd build
+          build.bat /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
 
-			`sed -i "1i ## $(cat version) UNRELEASED\n\n* New version\n" src/Installer/ReleaseNotes.md`
+      Linux:
 
-		- Edit src/Installer/ReleaseNotes.md , replacing 'New version.'
+          cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
 
-		- `CHANNEL=Alpha` # or Beta or Stable.
+    - (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Windows: Tag and
+    Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend
+    on that tag.
 
-		- Run the build task to fill in debian/changelog from the ReleaseNotes.md and make html file (for a pre-release pass `/p:Release=false` as additional property):
-
-			`(source environ && cd build && xbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=$CHANNEL)`
-			
-	- For major or minor version bumps tag the commit after the PR is merged e.g. `git tag v3.2.1` and push it to the repository.
+    - Tag the commit after the PR is merged e.g. `git tag v3.2.1` and push the tag to the repository.
 
 2. Build
 
-	- The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer" and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you can avoid incrementing the version number by setting the build counter back before rerunning the Patcher job.
+    - The Windows version is released through two jobs on TeamCity: "Installer" and "Patcher". The first three
+      version numbers come from the `version` file; the fourth-place version number is always 1 for "Installer"
+      and comes from the build counter for "Patcher". If you need to make a fix before publishing a patch, you
+      can avoid incrementing the version number by setting the build counter back before rerunning the Patcher
+      job.
 
-	- Make a Linux package for release by doing the following:
-		- Go to the Jenkins job for this branch of flexbridge.
-		- Click Build with Parameters.
-		- Change Suite to "main" (or maybe "updates" for a hotfix).
-		- Unselect AppendNightlyToVersion.
-		- Optionally set Committish to an older commit, such as where the changelog entry was updated.
-		- Click Build.
+    - Make a Linux package for release by doing the following:
+        - Go to the Jenkins job for this branch of flexbridge.
+        - Click Build with Parameters.
+        - Change Suite to "main" (or maybe "updates" for a hotfix).
+        - Unselect AppendNightlyToVersion.
+        - Optionally set Committish to an older commit, such as where the changelog entry was updated.
+        - Click Build.
