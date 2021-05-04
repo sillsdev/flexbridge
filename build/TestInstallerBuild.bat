@@ -1,4 +1,3 @@
-REM This script assumes you have already downloaded TeamCity dependencies
 setlocal
 if not "%VS150COMNTOOLS%"=="" (
 	call "%VS150COMNTOOLS%vsvars32.bat"

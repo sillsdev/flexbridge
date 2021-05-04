@@ -118,8 +118,6 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				{
 					var parent = Directory.GetParent(folder);
 					folder = parent?.ToString();
-					if (folder == null)
-						break;
 				}
 				// 'folder' should now have the required model version file in it, or null for some tests.
 				var desiredModelNumber = MetadataCache.MaximumModelVersion;
