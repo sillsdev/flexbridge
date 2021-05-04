@@ -27,7 +27,7 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 - On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
 [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
     "InstallationDir"="C:\Dev\flexbridge\output\Debug"
-- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/DebugMono`
+- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug`
 
 ### Build
 
@@ -40,6 +40,14 @@ You can also build and run tests on both Windows and Linux from the command line
 cd build
 msbuild /t:Test FLExBridge.proj
 ```
+
+### Building client projects against locally-built artifacts
+
+- Set an enviroment variable `LOCAL_NUGET_REPO` with the path to a folder on your computer (or local network) to publish locally-built packages
+- See [these instructions](https://docs.microsoft.com/en-us/nuget/hosting-packages/local-feeds) to enable local package sources
+- `build /t:pack` will pack nuget packages and publish them to `LOCAL_NUGET_REPO`
+
+Further instructions at <https://github.com/sillsdev/libpalaso/wiki/Developing-with-locally-modified-nuget-packages>
 
 ## Updating Release Notes for a new version
 
@@ -60,12 +68,16 @@ When releasing FLEx Bridge be sure to do the following:
 
       Windows:
 
-          cd build
-          build.bat /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
+      ```cmd
+      cd build
+      build.bat /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
+      ```
 
       Linux:
 
-          cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
+      ```bash
+      cd build && msbuild FLExBridge.proj /t:PreparePublishingArtifacts /p:UploadFolder=CHANNEL
+      ```
 
     - (Ignore this step for now; FLEx Bridge patches cannot be bundled in FLEx patches) Windows: Tag and
     Pin the FLEx Bridge Installer build on TeamCity, then update the FLEx Bridge Patcher build to depend
