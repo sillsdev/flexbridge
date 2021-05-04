@@ -2,8 +2,9 @@
 
 -include gitversion.properties
 CPUARCH=$(shell /usr/bin/arch)
+ifdef BuildVersion
 BUILD_NUMBER=$(BuildVersion)
-ifneq ($(origin BUILD_NUMBER), '')
+else
 BUILD_NUMBER=0
 endif
 BUILD_VCS_NUMBER=$(shell cat vcs_version)
