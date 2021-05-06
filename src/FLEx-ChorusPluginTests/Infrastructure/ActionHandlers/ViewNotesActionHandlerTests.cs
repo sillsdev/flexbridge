@@ -5,6 +5,7 @@ using System.IO;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using NUnit.Framework;
+using SIL.PlatformUtilities;
 
 namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 {
@@ -148,13 +149,17 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 				<div class='property'>yetAnother:
 				</div>
 			</body>").Replace("'", "\"");
-#if MONO
-			result = result.Replace("\r\n", "\n");
-			desired = desired.Replace("\r\n", "\n");
-#else
-			result = result.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
-			desired = desired.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
-#endif
+			if (Platform.IsLinux)
+			{
+				result = result.Replace("\r\n", "\n");
+				desired = desired.Replace("\r\n", "\n");
+			}
+			else
+			{
+				result = result.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+				desired = desired.Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+			}
+
 			Assert.That(result, Is.EqualTo(desired));
 		}
 #if notyet
@@ -162,7 +167,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 		private DummyFolderSystem _dummyFolderSystem;
 		private Form _mockedConflictView;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_dummyFolderSystem = new DummyFolderSystem();
@@ -179,7 +184,7 @@ namespace FLEx_ChorusPluginTests.Infrastructure.ActionHandlers
 			return Path.Combine(path, "ZPI" + Utilities.FwXmlExtension);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			_mockedConflictView.Dispose();

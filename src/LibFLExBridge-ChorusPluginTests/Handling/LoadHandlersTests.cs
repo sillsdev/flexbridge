@@ -14,14 +14,14 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	{
 		private IChorusFileTypeHandler _commonHandler;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_commonHandler = ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
 				.FirstOrDefault(h => h.GetType().Name == "FieldWorksCommonFileHandler");
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			_commonHandler = null;

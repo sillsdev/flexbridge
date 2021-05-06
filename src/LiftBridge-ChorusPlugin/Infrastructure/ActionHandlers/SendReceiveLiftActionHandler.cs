@@ -22,8 +22,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class SendReceiveLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 		private bool _gotChanges;
 
 		#region IBridgeActionTypeHandler impl
@@ -99,10 +101,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			}
 		}
 
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.SendReceiveLift; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.SendReceiveLift;
 
 		#endregion IBridgeActionTypeHandler impl
 

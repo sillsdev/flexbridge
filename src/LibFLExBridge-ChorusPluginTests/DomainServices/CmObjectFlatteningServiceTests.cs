@@ -282,8 +282,8 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 					Assert.That(conflictElement.Attribute("contextPath").Value, Is.EqualTo(refAttr));
 					Assert.AreEqual("FLExBridge", msgElement.Attribute("author").Value);
 					var html = conflictElement.Attribute("htmlDetails").Value;
-					Assert.That(html, Is.StringContaining(guidNewRie), "The HTML should contain a link to the changed-guid object");
-					Assert.That(html, Is.StringContaining("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"), "The HTML should contain a link to conflicting object");
+					Assert.That(html, Does.Contain(guidNewRie), "The HTML should contain a link to the changed-guid object");
+					Assert.That(html, Does.Contain("14a6b4bc-1bb3-4c67-b70c-5a195e411e27"), "The HTML should contain a link to conflicting object");
 
 					// Make sure the duplicate guids were changed in both levels.
 					var ries = from rie in sortedDict.Values

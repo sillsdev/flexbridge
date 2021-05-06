@@ -22,8 +22,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class SendReceiveActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 
 		private bool _gotChanges;
 
@@ -75,10 +77,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
 					{
-						// The FlexBridgeSychronizerAdjunct class (implements ISychronizerAdjunct) handles the fwdata file splitting and restoring
-						// now.  'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSychronizerAdjunct, and the Synchronizer
-						// class then calls one of the methods of the ISychronizerAdjunct interface right before the first Commit (local commit)
-						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISychronizerAdjunct
+						// The FlexBridgeSynchronizerAdjunct class (implements ISynchronizerAdjunct) handles the fwdata file splitting and restoring
+						// now.  'syncDlg' sees to it that the Synchronizer class ends up with FlexBridgeSynchronizerAdjunct, and the Synchronizer
+						// class then calls one of the methods of the ISynchronizerAdjunct interface right before the first Commit (local commit)
+						// call.  If two heads are merged, then the Synchronizer class calls the second method of the ISynchronizerAdjunct
 						// interface, (once for each pair of merged heads) so Flex Bridge can restore the fwdata file, AND, most importantly,
 						// produce any needed incompatible move conflict reports of the merge, which are then included in the post-merge commit.
 						var syncAdjunct = new FlexBridgeSynchronizerAdjunct(origPathname, options["-f"], false, true);
@@ -135,10 +137,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.SendReceive; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.SendReceive;
 
 		#endregion IBridgeActionTypeHandler impl
 

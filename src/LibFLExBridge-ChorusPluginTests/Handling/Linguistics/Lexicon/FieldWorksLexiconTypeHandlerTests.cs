@@ -1035,13 +1035,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 				0, new List<Type>(),
 				out resultingConflicts);
 			var conflict = resultingConflicts[0];
-			Assert.That(conflict.HtmlDetails, Is.Not.StringContaining("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
-			Assert.That(conflict.HtmlDetails, Is.StringContaining("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");
+			Assert.That(conflict.HtmlDetails, Does.Not.Contain("&lt;LexEntry"), "should use the proper html generator and not get raw xml");
+			Assert.That(conflict.HtmlDetails, Does.Contain("<div class='description'>Entry \"institute\":"), "should contain something like what the entry context generator produces.");
 			var context = conflict.Context;
-			Assert.That(context.DataLabel, Is.StringContaining("Entry"));
-			Assert.That(context.PathToUserUnderstandableElement, Is.StringStarting("silfw"));
-			Assert.That(context.PathToUserUnderstandableElement, Is.StringContaining("Entry"));
-			Assert.That(context.PathToUserUnderstandableElement, Is.StringContaining("institute"));
+			Assert.That(context.DataLabel, Does.Contain("Entry"));
+			Assert.That(context.PathToUserUnderstandableElement, Does.StartWith("silfw"));
+			Assert.That(context.PathToUserUnderstandableElement, Does.Contain("Entry"));
+			Assert.That(context.PathToUserUnderstandableElement, Does.Contain("institute"));
 		}
 
 		[Test]

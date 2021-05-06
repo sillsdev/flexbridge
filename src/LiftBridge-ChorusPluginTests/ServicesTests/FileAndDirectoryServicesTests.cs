@@ -21,7 +21,7 @@ namespace LiftBridgeTests.ServicesTests
 		private string _newWsDirName;
 		private string _newLdmlPathname;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			// Create some permanent data for the fixture.
@@ -44,7 +44,7 @@ namespace LiftBridgeTests.ServicesTests
 			File.Create(_newLdmlPathname).Close();
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			// Wipe out fixture data, and everthing in it.

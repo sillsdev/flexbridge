@@ -24,7 +24,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 		private MetadataCache _mdc;
 		private XmlMerger _merger;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_mdc = MetadataCache.TestOnlyNewCache;

@@ -1,48 +1,47 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build;Pack">
 	<PropertyGroup>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
-		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'=='Windows_NT'">Debug</Configuration>
-		<Configuration Condition="'$(Configuration)'=='' And '$(OS)'!='Windows_NT'">DebugMono</Configuration>
+		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
 		<Platform Condition="'$(Platform)'==''">Any CPU</Platform>
 		<Solution>FLExBridge.sln</Solution>
 		<ApplicationName>FLEx Bridge</ApplicationName>
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
 		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
+		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">0</BUILD_NUMBER>
 		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
 		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<GitVersionTaskAltPath>$(RootDir)/packages/GitVersionTask.alt/build</GitVersionTaskAltPath>
-		<RestartBuild Condition="!Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.dll') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
-		<UpdateAssemblyInfo Condition="'$(UpdateAssemblyInfo)' == ''">true</UpdateAssemblyInfo>
 		<WriteVersionInfoToBuildLog Condition="'$(WriteVersionInfoToBuildLog)' == ''">true</WriteVersionInfoToBuildLog>
+		<TeamCity Condition="'$(teamcity_version)' != ''">true</TeamCity>
+		<TeamCity Condition="'$(teamcity_version)' == ''">false</TeamCity>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(GitVersionTaskAltPath)/GitVersionTask.alt.targets"
-		Condition="Exists('$(GitVersionTaskAltPath)/GitVersionTask.alt.targets') And !$(IgnoreGitVersionTask)"/>
-	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props"
-		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/net461/SIL.ReleaseTasks.props')" />
+	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props"
+		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets"
+		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props"
+		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props')" />
 
 	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="NUnit"
+	<UsingTask TaskName="NUnit3"
 		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
 		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-	<UsingTask TaskName="DNZip"
-		AssemblyFile="$(RootDir)/packages/MSBuild.Extension.Pack.1.9.0/tools/net40/MSBuild.ExtensionPack.dll"
-		Condition="Exists('$(RootDir)/packages/MSBuild.Extension.Pack.1.9.0/tools/net40/MSBuild.ExtensionPack.dll')" />
 
-	<!-- a few do-nothing targets to get rid of some warnings from GitVersionTask.targets -->
+	<!-- a few do-nothing targets to get rid of some warnings from GitVersion.MsBuild.targets -->
 	<Target Name="GetAssemblyVersion"/>
 	<Target Name="GenerateNuspec"/>
 	<Target Name="_GenerateRestoreProjectSpec"/>
@@ -54,20 +53,20 @@
 		<CallTarget Targets="RestoreBuildTasks"/>
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
-			Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
 			Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersionTask.alt -excludeVersion -version 4.0.2-alpha-0006 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.2.0 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install MSBuild.Extension.Pack -version 1.9.0 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install NUnit.Runners.Net4 -version 2.6.4 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -excludeVersion -version 5.6.9 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
+		<!-- Install NUnit.Console which has the required extensions as dependencies -->
+		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.12.0 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
-	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;UnzipMercurial;Compile;CopyAbout">
+	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;Compile;CopyAbout">
 		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
 		 but it remembers not to call targets a second time via dependencies. -->
 		<Message Text="Build Complete"/>
@@ -93,30 +92,6 @@
 		<MakeDir Directories="$(RootDir)/output/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
-	</Target>
-
-	<Target Name="UnzipMercurial" DependsOnTargets="UnzipMercurialWindows;UnzipMercurialLinux"/>
-
-	<Target Name="UnzipMercurialWindows" Condition="'$(OS)'=='Windows_NT'">
-		<!-- Extract a zip file-->
-		<DNZip TaskAction="Extract" ExtractPath="$(RootDir)" ZipFileName="$(RootDir)/lib/$(Configuration)/Mercurial.zip"/>
-	</Target>
-	<Target Name="UnzipMercurialLinux" Condition="'$(OS)'!='Windows_NT'">
-		<!-- Remember, Unix/Linux commands return 0 for success ("true") -->
-		<Exec Command="/usr/bin/test `arch` = x86_64" ContinueOnError="true" IgnoreExitCode="true">
-			<Output TaskParameter="ExitCode" PropertyName="ZeroIf64BitCpu"/>
-		</Exec>
-		<Exec Command="/usr/bin/test `arch` = i686" ContinueOnError="true" IgnoreExitCode="true">
-			<Output TaskParameter="ExitCode" PropertyName="ZeroIf32BitCpu"/>
-		</Exec>
-		<!-- Extract the appropriate zip file. -->
-		<Exec Command="/bin/rm -rf ../Mercurial" />
-		<Exec Condition="'$(ZeroIf64BitCpu)'=='0'"
-			Command="/usr/bin/unzip -uq $(RootDir)/lib/$(Configuration)/Mercurial-x86_64.zip -d $(RootDir)" />
-		<Exec Condition="'$(ZeroIf32BitCpu)'=='0'"
-			Command="/usr/bin/unzip -uq $(RootDir)/lib/$(Configuration)/Mercurial-i686.zip -d $(RootDir)" />
-		<!-- Zip doesn't seem to retain the permission bits we need. -->
-		<Exec Command="/bin/chmod +x $(RootDir)/Mercurial/hg*" ContinueOnError="true"/>
 	</Target>
 
 	<ItemGroup>
@@ -145,24 +120,14 @@
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
-		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"/>
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"/>
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
 		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
 	</Target>
 
-	<!-- GetVersion is a target in $(GitVersionTaskAltPath)/GitVersionTask.alt.targets -->
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion">
-		<PropertyGroup>
-			<Version Condition="$(GetVersion)">$(GitVersion_MajorMinorPatch)</Version>
-			<Version Condition="!$(GetVersion)">$(BUILD_NUMBER)</Version>
-		</PropertyGroup>
-		<Message Text="Version: $(Version)" Importance="high"/>
-		<Message Text="##teamcity[buildNumber '$(Version).$(BUILD_NUMBER).$(BUILD_VCS_NUMBER)']"
-			Condition="'$(teamcity_version)' != '' And $(GetVersion)"/>
-		<Message Text="##teamcity[buildNumber '$(Version)']"
-			Condition="'$(teamcity_version)' != '' And !$(GetVersion)"/>
 		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="true"
 			Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)"
 			Condition="$(GetVersion)"/>
@@ -197,48 +162,48 @@
 		<CallTarget Targets="RestoreBuildTasks"/>
 		<CallTarget Targets="PreparePublishingArtifactsInternal" Condition="!$(RestartBuild)" />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="PreparePublishingArtifactsInternal"
-			Properties="Configuration=$(Configuration);UpdateAssemblyInfo=$(UpdateAssemblyInfo);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
 			Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="PreparePublishingArtifactsInternal" DependsOnTargets="VersionNumbers; CheckPreRequisites">
-		<StampChangelogFileWithVersion ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<StampChangelogFileWithVersion ChangelogFile="$(RootDir)/CHANGELOG.md"
 			VersionNumber="$(Version)" />
-		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/CHANGELOG.md"
 			HtmlFile="$(RootDir)/src/Installer/$(UploadFolder).htm" />
-		<CreateChangelogEntry ChangelogFile="$(RootDir)/src/Installer/ReleaseNotes.md"
+		<CreateChangelogEntry ChangelogFile="$(RootDir)/CHANGELOG.md"
 			VersionNumber="$(Version)" PackageName="flexbridge"
 			DebianChangelog="$(RootDir)/debian/changelog"
 			MaintainerInfo="Jason Naylor &lt;jason_naylor@sil.org&gt;" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
-		<CallTarget Targets="TestOnly"/>
+		<CallTarget Targets="TestOnly" Condition="!$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="TestOnly" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)" Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="TestOnly" >
-		<PropertyGroup>
-			<NUnitVersion>2.6.4</NUnitVersion>
-			<NUnitRunnerPackage>$(RootDir)/packages/NUnit.Runners.Net4.$(NUnitVersion)</NUnitRunnerPackage>
-		</PropertyGroup>
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*Tests.dll" />
-			<NUnitAddinFiles Include="$(teamcity_dotnet_nunitaddin)-$(NUnitVersion).*" />
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/net461/*Tests.dll" />
 		</ItemGroup>
 
-		<MakeDir Directories="$(NUnitRunnerPackage)/tools/addins" Condition="'$(teamcity_version)' != ''"/>
-		<Copy SourceFiles="@(NUnitAddinFiles)" Condition="'$(teamcity_version)' != ''"
-			DestinationFolder="$(NUnitRunnerPackage)/tools/addins" />
-		<NUnit Assemblies="@(TestAssemblies)"
-			ToolPath="$(NUnitRunnerPackage)/tools"
+		<NUnit3 Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(ExtraExcludeCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)/net461"
 			Force32Bit="$(useNUnit-x86)"
 			Verbose="true"
-			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"/>
-		<Message Text="##teamcity[importData type='nunit' path='$(RootDir)/output/$(Configuration)/TestResults.xml']"
-			Condition="'$(teamcity_version)' != '' and '$(OS)'!='Windows_NT'"/>
+			UseNUnit3Xml="false"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/net461/TestResults.xml"
+			TeamCity="$(TeamCity)"/>
+	</Target>
+
+	<Target Name="Pack" DependsOnTargets="RestorePackages">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="pack"
+			Properties="Configuration=$(Configuration)" />
 	</Target>
 
 	<!-- *********************** Installer stuff below.  ******************************* -->

@@ -21,3 +21,4 @@
 *.yml -whitespace
 changelog -whitespace
 *.json -whitespace
+*.md -whitespace

@@ -204,11 +204,11 @@ namespace LibFLExBridgeChorusPluginTests.Handling.General
 			var conflict = (XmlTextBothEditedTextConflict)resultingConflicts[0];
 			Assert.That(conflict.Context, Is.Not.Null);
 			var context = conflict.Context;
-			Assert.That(context.DataLabel, Is.StringContaining("AnalysisWss"));
+			Assert.That(context.DataLabel, Does.Contain("AnalysisWss"));
 			var html = conflict.HtmlDetails;
-			Assert.That(html, Is.StringContaining("<span class=\"ws\">en-fonipa</span>"));
-			Assert.That(html, Is.StringContaining("<span class=\"ws\">" + conflictMarker + "en-Zxxx-x-audio</span></span>"));
-			Assert.That(html, Is.StringContaining("<span class=\"ws\">" + conflictMarker + "en</span></span>"));
+			Assert.That(html, Does.Contain("<span class=\"ws\">en-fonipa</span>"));
+			Assert.That(html, Does.Contain($"<span class=\"ws\">{conflictMarker}en-Zxxx-x-audio</span></span>"));
+			Assert.That(html, Does.Contain($"<span class=\"ws\">{conflictMarker}en</span></span>"));
 		}
 	}
 }

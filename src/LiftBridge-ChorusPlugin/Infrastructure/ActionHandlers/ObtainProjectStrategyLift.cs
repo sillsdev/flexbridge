@@ -25,8 +25,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	[Export(typeof(IObtainProjectStrategy))]
 	internal sealed class ObtainProjectStrategyLift : IObtainProjectStrategy
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
-		private ICreateProjectFromLift _liftprojectCreator;
+		private ICreateProjectFromLift _liftProjectCreator;
+#pragma warning restore 0649
 		private string _liftFolder;
 
 		#region Other methods
@@ -82,7 +84,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			return Directory.Exists(hgDataFolder) && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
 		}
 
-		string IObtainProjectStrategy.HubQuery { get { return "*.lift"; } }
+		string IObtainProjectStrategy.HubQuery => "*.lift";
 
 		bool IObtainProjectStrategy.IsRepositoryEmpty(string repositoryLocation)
 		{
@@ -145,14 +147,11 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 
 		void IObtainProjectStrategy.TellFlexAboutIt()
 		{
-			_liftprojectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
+			_liftProjectCreator.CreateProjectFromLift(FileAndDirectoryServices.GetPathToFirstLiftFile(_liftFolder)); // PathToFirstLiftFile may be null, which is fine.
 																													 //Caller does it. _connectionHelper.SignalBridgeWorkComplete(false);
 		}
 
-		ActionType IObtainProjectStrategy.SupportedActionType
-		{
-			get { return ActionType.ObtainLift; }
-		}
+		ActionType IObtainProjectStrategy.SupportedActionType => ActionType.ObtainLift;
 
 		#endregion
 	}

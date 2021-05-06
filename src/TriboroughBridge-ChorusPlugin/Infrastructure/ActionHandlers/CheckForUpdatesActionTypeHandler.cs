@@ -6,9 +6,8 @@ using System.ComponentModel.Composition;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
-#if !MONO
 using NetSparkle;
-#endif
+using SIL.PlatformUtilities;
 using TriboroughBridge_ChorusPlugin.Properties;
 
 namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
@@ -30,22 +29,20 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		/// </remarks>
 		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-#if !MONO
+			if (Platform.IsLinux)
+				return;
+
 			using (var sparkle = new Sparkle(@"http://downloads.palaso.org/FlexBridge/Alpha/appcast.xml", CommonResources.chorus32x32))
 			{
 				sparkle.DoLaunchAfterUpdate = false;
 				sparkle.CheckForUpdatesAtUserRequest();
 			}
-#endif
 		}
 
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.CheckForUpdates; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.CheckForUpdates;
 
 		#endregion IBridgeActionTypeHandler impl
 	}

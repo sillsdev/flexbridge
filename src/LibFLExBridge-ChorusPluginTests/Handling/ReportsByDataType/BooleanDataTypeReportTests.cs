@@ -42,7 +42,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 			FieldWorksTestServices.RemoveTempFilesAndParentDir(ref _ourFile, ref _commonFile, ref _theirFile);
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

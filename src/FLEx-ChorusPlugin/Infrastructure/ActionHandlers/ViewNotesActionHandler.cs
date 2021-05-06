@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -56,12 +57,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			// A lift URL will be something like:
 			//		lift://foo.lift?type=entry&id=someguid&label=formforentry
 			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + ProjectName);
-			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
+			var query = HttpUtility.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
 			// the FLExConnectionHelper that we have a URL to jump to.
-			if (JumpUrlChanged != null)
-				JumpUrlChanged(this, new JumpEventArgs(host + "?" + query));
+			JumpUrlChanged?.Invoke(this, new JumpEventArgs(host + "?" + query));
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		/// </summary>
 		internal string AdjustConflictHtml(string input)
 		{
-			var projectNameForUrl = HttpUtilityFromMono.UrlEncode(ProjectName);
+			var projectNameForUrl = HttpUtility.UrlEncode(ProjectName);
 			return FixChecksums(FixWsRuns(input)).Replace(@"&amp;database=current&amp;", @"&amp;database=" + projectNameForUrl + @"&amp;");
 		}
 
