@@ -53,13 +53,13 @@
 		<CallTarget Targets="RestoreBuildTasks"/>
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
-			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog);DisableGitVersionTask=$(DisableGitVersionTask)"
 			Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -excludeVersion -version 5.6.8 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -excludeVersion -version 5.6.9 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
@@ -120,7 +120,8 @@
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
-		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"/>
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog);DisableGitVersionTask=$(DisableGitVersionTask)"/>
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
@@ -162,7 +163,7 @@
 		<CallTarget Targets="RestoreBuildTasks"/>
 		<CallTarget Targets="PreparePublishingArtifactsInternal" Condition="!$(RestartBuild)" />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="PreparePublishingArtifactsInternal"
-			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog);DisableGitVersionTask=$(DisableGitVersionTask)"
 			Condition="$(RestartBuild)" />
 	</Target>
 
@@ -179,7 +180,9 @@
 
 	<Target Name="Test" DependsOnTargets="Build">
 		<CallTarget Targets="TestOnly" Condition="!$(RestartBuild)" />
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="TestOnly" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)" Condition="$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="TestOnly"
+			Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog);DisableGitVersionTask=$(DisableGitVersionTask)"
+			Condition="$(RestartBuild)" />
 	</Target>
 
 	<Target Name="TestOnly" >
@@ -203,7 +206,7 @@
 		<MSBuild
 			Projects="$(SolutionPath)"
 			Targets="pack"
-			Properties="Configuration=$(Configuration)" />
+			Properties="Configuration=$(Configuration);DisableGitVersionTask=$(DisableGitVersionTask)" />
 	</Target>
 
 	<!-- *********************** Installer stuff below.  ******************************* -->
