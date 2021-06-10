@@ -75,7 +75,9 @@ fetch_l10ns:
 	    && msbuild l10n.proj /t:GetlatestL10ns \
 	'
 
-install: fetch_l10ns
+install: fetch_l10ns install-core
+
+install-core:
 	/usr/bin/install -d $(DESTDIR)$(PREFIX)/lib/flexbridge
 	/usr/bin/install output/$(CONFIGURATION)/net461/*.* $(DESTDIR)$(PREFIX)/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)$(PREFIX)/lib/flexbridge/*.htm
