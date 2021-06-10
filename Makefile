@@ -12,6 +12,7 @@ UploadFolder="Alpha"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
 GECKOFX60_VERSION := 60.0.51
+CONFIGURATION ?= Release
 
 all: release
 
@@ -75,22 +76,22 @@ fetch_l10ns:
 
 install: fetch_l10ns
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install output/Release/net461/*.* $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install output/$(CONFIGURATION)/net461/*.* $(DESTDIR)/usr/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
 	/usr/bin/install flexbridge environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	# Copy mercurial for both architectures since flexbridge is an any architecture package.
-	/usr/bin/install -m644 lib/Release/net461/Mercurial-x86_64.zip $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install -m644 lib/Release/net461/Mercurial-i686.zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -m644 lib/$(CONFIGURATION)/net461/Mercurial-x86_64.zip $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install -m644 lib/$(CONFIGURATION)/net461/Mercurial-i686.zip $(DESTDIR)/usr/lib/flexbridge
 	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/chorusmerge $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
-	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/$(CONFIGURATION)/net461/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)/var/lib/flexbridge/localizations
-	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)/var/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/$(CONFIGURATION)/net461/localizations/*.* $(DESTDIR)/var/lib/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
 	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin
