@@ -1,3 +1,9 @@
+flexbridge (3.3.0) UNRELEASED; urgency=low
+
+  * Refactoring to use nuget packages
+
+ -- Eberhard <flex_devteam@sil.org>  Tue, 15 Jun 2021 18:55:13 +0200
+
 flexbridge (3.2.1) UNRELEASED; urgency=low
 
   * Add an option to forget the password
