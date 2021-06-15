@@ -9,8 +9,6 @@
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
 		<BUILD_VCS_NUMBER Condition="'$(BUILD_VCS_NUMBER)' == ''">0</BUILD_VCS_NUMBER>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">0</BUILD_NUMBER>
-		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
-		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
@@ -192,7 +190,7 @@
 			TestInNewThread="false"
 			ExcludeCategory="$(ExtraExcludeCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)/net461"
-			Force32Bit="$(useNUnit-x86)"
+			Process="single"
 			Verbose="true"
 			UseNUnit3Xml="false"
 			OutputXmlFile="$(RootDir)/output/$(Configuration)/net461/TestResults.xml"
