@@ -2,11 +2,11 @@ Source: flexbridge
 Section: misc
 Priority: extra
 Maintainer: FLEx Dev Team <FLEx_DevTeam@sil.org>
-Build-Depends: debhelper (>= 9.0.0),
- cli-common-dev (>= 0.8~),
- mono5-sil,
- mono5-sil-msbuild,
- libgdiplus5-sil,
+Build-Depends: debhelper (>= 11.0.0),
+ cli-common-dev (>= 0.9~),
+ mono-devel (>= 6.8) | mono5-sil,
+ msbuild | mono5-sil-msbuild,
+ libgdiplus (>= 6.0) | libgdiplus5-sil,
  libenchant-dev,
  libxklavier-dev,
  libgtk2.0-dev,
@@ -23,8 +23,8 @@ Vcs-Browser: https://github.com/sillsdev/flexbridge
 Package: flexbridge
 Architecture: all
 Depends: ${misc:Depends}, ${cli:Depends},
- mono4-sil | mono5-sil,
- libgdiplus4-sil | libgdiplus5-sil,
+ mono5-sil | mono-runtime (>= 6.8),
+ libgdiplus5-sil | libgdiplus (>= 6.0),
  fieldworks-applications (>= 9.0),
  python-is-python2 | python (>= 2.7),
  unzip,
