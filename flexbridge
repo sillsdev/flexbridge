@@ -36,4 +36,4 @@ cd "${scriptdir}"
 )
 
 cd - >/dev/null
-mono "${scriptdir}"/FLExBridge.exe "$@"
+mono --debug "${scriptdir}"/FLExBridge.exe "$@"

@@ -26,8 +26,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	[Export(typeof (IBridgeActionTypeHandler))]
 	internal sealed class ObtainLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 		private bool _gotClone;
 		private string _liftFolder;
 
@@ -39,7 +41,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 				   && Directory.GetFiles(hgDataFolder, "*.lift.i").Any();
 		}
 
-		private static string HubQuery { get { return "*.lift"; } }
+		private static string HubQuery => "*.lift";
 
 		private static bool IsRepositoryEmpty(string repositoryLocation)
 		{
@@ -154,10 +156,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 		/// <summary>
 		/// Get the type of action supported by the handler.
 		/// </summary>
-		ActionType IBridgeActionTypeHandler.SupportedActionType
-		{
-			get { return ActionType.ObtainLift; }
-		}
+		ActionType IBridgeActionTypeHandler.SupportedActionType => ActionType.ObtainLift;
 
 		#endregion IBridgeActionTypeHandler impl
 

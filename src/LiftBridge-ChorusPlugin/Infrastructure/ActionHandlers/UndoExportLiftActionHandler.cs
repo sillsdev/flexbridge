@@ -20,8 +20,10 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class UndoExportLiftActionHandler : IBridgeActionTypeHandler, IBridgeActionTypeHandlerCallEndWork
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 
 		#region IBridgeActionTypeHandler impl
 

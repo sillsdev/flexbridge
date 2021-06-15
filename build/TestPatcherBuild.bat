@@ -1,10 +1,8 @@
-REM This script assumes you have already downloaded TeamCity dependencies
-
 if "%FLExBridgeTestPatchVersion%"=="" set FLExBridgeTestPatchVersion=1
 set /a FLExBridgeTestPatchVersion=%FLExBridgeTestPatchVersion%+1
 
 setlocal
-call "%VS140COMNTOOLS%vsvars32.bat"
+call "%VS150COMNTOOLS%vsvars32.bat"
 
 pushd .
 (

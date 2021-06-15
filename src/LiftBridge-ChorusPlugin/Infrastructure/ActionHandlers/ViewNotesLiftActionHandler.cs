@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHandlers.lift;
@@ -59,7 +60,7 @@ namespace SIL.LiftBridge.Infrastructure.ActionHandlers
 			// A lift URL will be something like:
 			//		lift://foo.lift?type=entry&id=someguid&label=formforentry
 			var originalQuery = url.Substring(hostLength + 1).Replace("database=current", "database=" + LiftUtilties.GetLiftProjectName(_fwProjectFolder));
-			var query = HttpUtilityFromMono.UrlEncode(originalQuery);
+			var query = HttpUtility.UrlEncode(originalQuery);
 
 			// Instead of closing the conflict viewer we now need to fire this event to notify
 			// the FLExConnectionHelper that we have a URL to jump to.

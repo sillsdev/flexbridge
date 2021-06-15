@@ -1,228 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D8929836-9B5D-4103-82AE-92ADC802592A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>LibFLExBridgeChorusPluginTests</RootNamespace>
     <AssemblyName>LibFLExBridge-ChorusPluginTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <Configurations>Debug;Release</Configurations>
+    <Description>Unit tests for LibFLExBridge-ChorusPlugin</Description>
+    <Company>SIL International</Company>
+    <Authors>SIL International</Authors>
+    <Product>FLExBridge</Product>
+    <Copyright>Copyright © 2010-2020 SIL International</Copyright>
+    <OutputPath>../../output/$(Configuration)</OutputPath>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
+    <IsPackable>false</IsPackable>
+    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\Release\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\DebugMono\</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-    <ConsolePause>false</ConsolePause>
-    <ErrorReport>prompt</ErrorReport>
-    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <ErrorReport>prompt</ErrorReport>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;MONO</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.6.9" PrivateAssets="all" />
+    <PackageReference Include="NUnit" Version="3.13.0" />
+    <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="3.1.0-*" />
+    <PackageReference Include="SIL.Chorus.Mercurial" Version="3.0.1-*" IncludeAssets="build" />
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities">
-      <HintPath>..\..\lib\Debug\SIL.TestUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\Debug\LibChorus.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus.TestUtilities">
-      <HintPath>..\..\lib\Debug\LibChorus.TestUtilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\Release\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities">
-      <HintPath>..\..\lib\Release\SIL.TestUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\Release\LibChorus.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus.TestUtilities">
-      <HintPath>..\..\lib\Release\LibChorus.TestUtilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'DebugMono'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\DebugMono\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities">
-      <HintPath>..\..\lib\DebugMono\SIL.TestUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\DebugMono\LibChorus.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus.TestUtilities">
-      <HintPath>..\..\lib\DebugMono\LibChorus.TestUtilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'ReleaseMono'">
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\lib\ReleaseMono\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities">
-      <HintPath>..\..\lib\ReleaseMono\SIL.TestUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus">
-      <HintPath>..\..\lib\ReleaseMono\LibChorus.dll</HintPath>
-    </Reference>
-    <Reference Include="LibChorus.TestUtilities">
-      <HintPath>..\..\lib\ReleaseMono\LibChorus.TestUtilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="TestData\DataNotebook_Ann.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\DataNotebook_Common.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\DataNotebook_Susanna.ntbk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="TestData\DataNotebook_Ann.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\DataNotebook_Common.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\DataNotebook_Susanna.ntbk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\Language Explorer\Configuration\DictionaryConfiguration.xsd" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DomainServices\CmObjectFlatteningServiceTests.cs" />
-    <Compile Include="DomainServices\CmObjectNestingServiceTests.cs" />
-    <Compile Include="DomainServices\CmObjectValidatorTests.cs" />
-    <Compile Include="Handling\BaseFieldWorksTypeHandlerTests.cs" />
-    <Compile Include="Handling\Common\ProjectLexiconSettingsTypeHandlerTests.cs" />
-    <Compile Include="Handling\DateTimeMergingTests.cs" />
-    <Compile Include="Handling\FieldWorksGenericHtmlGeneratorTests.cs" />
-    <Compile Include="Handling\FieldWorksObjectContextGeneratorHtmlTests.cs" />
-    <Compile Include="Handling\FieldWorksObjectContextGeneratorTests.cs" />
-    <Compile Include="Handling\LoadHandlersTests.cs" />
-    <Compile Include="Handling\UnknownFileTypeHandlerTests.cs" />
-    <Compile Include="Handling\Anthropology\FieldWorksAnthropologyTypeHandlerTests.cs" />
-    <Compile Include="Handling\Common\FieldWorksListsTypeHandlerTests.cs" />
-    <Compile Include="Handling\Common\FieldWorksStylesTypeHandlerTests.cs" />
-    <Compile Include="Handling\Common\StyleContextGeneratorTests.cs" />
-    <Compile Include="Handling\ConfigLayout\DictionaryConfigurationHandlerStrategyTests.cs" />
-    <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutContextGeneratorHtmlTests.cs" />
-    <Compile Include="Handling\ConfigLayout\FieldWorksCustomLayoutTypeHandlerTests.cs" />
-    <Compile Include="Handling\CustomProperties\FieldWorksCustomPropertyFileHandlerTests.cs" />
-    <Compile Include="Handling\General\FieldWorksAnnotationTypeHandlerTests.cs" />
-    <Compile Include="Handling\General\FieldWorksFilterTypeHandlerTests.cs" />
-    <Compile Include="Handling\General\FieldWorksLanguageProjectTypeHandlerTests.cs" />
-    <Compile Include="Handling\General\PictureTypeHandlerTests.cs" />
-    <Compile Include="Handling\General\VirtualOrderingTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\FieldWorksFeatureSystemTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\Discourse\FieldWorksDiscourseAnalysisTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\Lexicon\FieldWorksLexiconTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\MorphologyAndSyntax\FieldWorksAnalyzingAgentTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\MorphologyAndSyntax\FieldWorksMorphAndSynTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\MorphologyAndSyntax\PosContextGeneratorTests.cs" />
-    <Compile Include="Handling\Linguistics\Phonology\FieldWorksPhonologyDataTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\Reversal\FieldWorksReversalTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\TextCorpus\FieldWorksTextCorpusTypeHandlerTests.cs" />
-    <Compile Include="Handling\Linguistics\WordformInventory\FieldWorksWordformInventoryTypeHandlerTests.cs" />
-    <Compile Include="Handling\ModelVersion\FieldWorksModelVersionFileHandlerTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\BinaryDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\BooleanDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\GenDateDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\GuidDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\IntegerDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\MultiStringDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\MultiUnicodeDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\OtherElementStrategyTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\OwningAtomicDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\OwningCollectionDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\OwningSequenceDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\ReferenceAtomicDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\ReferenceCollectionDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\ReferenceSequenceDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\StringDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\TextPropBinaryDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\TimeDataTypeReportTests.cs" />
-    <Compile Include="Handling\ReportsByDataType\UnicodeDataTypeReportTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksArchivedDraftsTypeHandlerTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksImportSettingsTypeHandlerTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksScrBookAnnotationsTypeHandlerTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksScrBooksTypeHandlerTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksScriptureReferenceSystemTypeHandlerTests.cs" />
-    <Compile Include="Handling\Scripture\FieldWorksScriptureTranslationTypeHandlerTests.cs" />
-    <Compile Include="FieldWorksTestServices.cs" />
-    <Compile Include="Infrastructure\DataSortingServiceTests.cs" />
-    <Compile Include="Infrastructure\FLExProjectSplitterTests.cs" />
-    <Compile Include="Infrastructure\FlexUpdateBranchHelperStrategyTests.cs" />
-    <Compile Include="Infrastructure\MetadataCacheTests.cs" />
-    <Compile Include="Infrastructure\FLExProjectUnifierTests.cs" />
-    <Compile Include="Infrastructure\LibFLExBridgeUtilitiesTests.cs" />
-    <Compile Include="Integration\UpdateMetaDataCacheTests.cs" />
-    <Compile Include="Handling\PreferMostRecentTimePreMergerTests.cs" />
-    <Compile Include="WinFormsTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj">
-      <Project>{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}</Project>
-      <Name>LibFLExBridge-ChorusPlugin</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj">
-      <Project>{8E6DD218-7BA1-4119-82D2-535C05A0923C}</Project>
-      <Name>LibTriboroughBridge-ChorusPlugin</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
+
 </Project>

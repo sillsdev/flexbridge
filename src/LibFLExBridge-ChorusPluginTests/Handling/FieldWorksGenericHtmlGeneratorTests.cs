@@ -213,7 +213,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var checksum = resultNode.SelectSingleNode("//div[@class='checksum' and text()[contains(., '" + propName + "')]]");
 			Assert.That(checksum, Is.Not.Null);
 			var checksumText = checksum.InnerText;
-			Assert.That(checksumText, Is.StringStarting(propName + ": "));
+			Assert.That(checksumText, Does.StartWith(propName + ": "));
 			var checksumData = checksumText.Substring((propName + ": ").Length);
 			return checksumData;
 		}

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Web;
 using System.Xml;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
@@ -474,7 +475,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			var fwUrl = fwAppArgs.ToString();
 			var hostLength = fwUrl.IndexOf("?", StringComparison.Ordinal);
 			var host = fwUrl.Substring(0, hostLength);
-			var query = HttpUtilityFromMono.UrlDecode(fwUrl.Substring(hostLength + 1));
+			var query = HttpUtility.UrlDecode(fwUrl.Substring(hostLength + 1));
 			var url = host + "?" + query;
 			return new ContextDescriptor(label, url);
 		}

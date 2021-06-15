@@ -22,8 +22,10 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 	[Export(typeof(IObtainProjectStrategy))]
 	internal sealed class ObtainProjectStrategyFlex : IObtainProjectStrategy
 	{
+#pragma warning disable 0649 // CS0649 : Field is never assigned to, and will always have its default value null
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
+#pragma warning restore 0649
 		private bool _gotClone;
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
@@ -32,11 +34,11 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			ActualCloneResult cloneResult, string cloneLocation)
 		{
 			var desiredBranchName = FlexBridgeConstants.FlexBridgeDataVersion + "." + commandLineArgs["-fwmodel"];
-			if (!UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), desiredBranchName, cloneResult, cloneLocation))
-			{
-                if (string.IsNullOrEmpty(cloneResult.Message))
-                    cloneResult.Message = CommonResources.kFlexUpdateRequired;
-			}
+			if (UpdateBranchHelper.UpdateToTheCorrectBranchHeadIfPossible(new FlexUpdateBranchHelperStrategy(), desiredBranchName, cloneResult, cloneLocation))
+				return;
+
+			if (string.IsNullOrEmpty(cloneResult.Message))
+				cloneResult.Message = CommonResources.kFlexUpdateRequired;
 		}
 
 		#region IObtainProjectStrategy impl
@@ -46,7 +48,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			return LibFLExBridgeUtilities.IsFlexProjectRepository(repositoryLocation);
 		}
 
-		string IObtainProjectStrategy.HubQuery { get { return "*.CustomProperties"; } }
+		string IObtainProjectStrategy.HubQuery => "*.CustomProperties";
 
 		bool IObtainProjectStrategy.IsRepositoryEmpty(string repositoryLocation)
 		{
@@ -60,7 +62,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			_newProjectFilename = Path.GetFileName(cloneLocation) + LibTriboroughBridgeSharedConstants.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
 
-			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' parm.
+			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' param.
 			// Update to the head of the desired branch, if possible.
 			UpdateToTheCorrectBranchHeadIfPossible(commandLineArgs, actualCloneResult, cloneLocation);
 
@@ -98,10 +100,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 		}
 
-		ActionType IObtainProjectStrategy.SupportedActionType
-		{
-			get { return ActionType.Obtain; }
-		}
+		ActionType IObtainProjectStrategy.SupportedActionType => ActionType.Obtain;
 
 		#endregion
 	}

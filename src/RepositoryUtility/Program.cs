@@ -9,14 +9,14 @@ using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using LibTriboroughBridge_ChorusPlugin.Properties;
 using SIL.IO;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
-#if MONO
 using Gecko;
-#endif
+using SIL.Windows.Forms.Reporting;
 
 namespace RepositoryUtility
 {
@@ -56,12 +56,8 @@ namespace RepositoryUtility
 
 			SetUpErrorHandling();
 
-#if MONO
-			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
-			Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
-			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
-#endif
+			if (Platform.IsLinux)
+				InitializeGeckofx();
 
 			// An aggregate catalog that combines multiple catalogs
 			using (var catalog = new AggregateCatalog())
@@ -81,11 +77,19 @@ namespace RepositoryUtility
 			Settings.Default.Save();
 		}
 
+		private static void InitializeGeckofx()
+		{
+			// Set up Xpcom for geckofx (used by some Chorus dialogs that we may invoke).
+			Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
+			GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+			Application.ApplicationExit += (sender, e) => { Xpcom.Shutdown(); };
+		}
+
 		private static void SetUpErrorHandling()
 		{
 			ErrorReport.EmailAddress = TriboroughBridgeUtilities.FlexBridgeEmailAddress;
 			ErrorReport.AddStandardProperties();
-			ExceptionHandler.Init();
+			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		private TemporaryFolder _tempFolder;
 		private string _xsdSourcePath;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			var appsDir = Path.GetDirectoryName(PathHelper.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
@@ -135,7 +135,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 			CopySchema();
 
 			File.WriteAllText(_configFile.Path, ValidConfigXml);
-			Assert.IsNullOrEmpty(_fileHandler.ValidateFile(_configFile.Path, new NullProgress()), "Should validate against the schema");
+			Assert.That(_fileHandler.ValidateFile(_configFile.Path, new NullProgress()), Is.Null.Or.Empty,
+				"Should validate against the schema");
 		}
 
 		[Test]
