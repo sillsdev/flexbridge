@@ -56,3 +56,4 @@ GitVersionTaskAssemblyInfo.g.cs
 .vs/
 Mercurial/
 MercurialExtensions/
+build/FLExBridge.files

@@ -12,8 +12,8 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe') Or !Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')And Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -38,6 +38,7 @@
 	<UsingTask TaskName="NUnit3"
 		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
 		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="Dependencies" AssemblyFile="$(SolutionDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll" Condition="Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')"/>
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersion.MsBuild.targets -->
 	<Target Name="GetAssemblyVersion"/>
@@ -55,6 +56,12 @@
 			Condition="$(RestartBuild)" />
 	</Target>
 
+	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;Compile;CopyAbout">
+		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
+		 but it remembers not to call targets a second time via dependencies. -->
+		<Message Text="Build Complete"/>
+	</Target>
+
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites" BeforeTargets="RestorePackages">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -excludeVersion -version 5.6.9 -solutionDirectory "$(RootDir)"' />
@@ -62,12 +69,12 @@
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -version 2.5.0 -solutionDirectory "$(RootDir)"' />
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.12.0 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install BuildDependencyTasks -excludeVersion -version 0.4.3 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
-	<Target Name="BuildInternal" DependsOnTargets="Clean;CreateDirectories;SetAssemblyVersion;Compile;CopyAbout">
-		<!-- CallTarget doesn't work well in xbuild.  Variable assignments don't pass out,
-		 but it remembers not to call targets a second time via dependencies. -->
-		<Message Text="Build Complete"/>
+	<Target Name="DownloadDependencies" DependsOnTargets="RestoreBuildTasks">
+		<Dependencies DependencyFile="FLExBridge.dep" UseDependencyFile="true"
+			KeepJobsFile="true" WorkingDir="$(RootDir)" />
 	</Target>
 
 	<ItemGroup>
@@ -117,7 +124,7 @@
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
+	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages; DownloadDependencies">
 		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"/>
 	</Target>
 
