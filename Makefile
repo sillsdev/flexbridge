@@ -52,6 +52,7 @@ debug_build:
 # repo, so we have to create the files beforehand.
 version:
 	[ -e .git ] && cd build \
+		&& export IGNORE_NORMALISATION_GIT_HEAD_MOVE=1 \
 		&& msbuild /t:"RestoreBuildTasks;RestorePackages;UpdateAssemblyInfoForPackage" FLExBridge.proj \
 		&& msbuild /t:VersionNumbers FLExBridge.proj || true
 
