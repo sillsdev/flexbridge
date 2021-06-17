@@ -8,6 +8,8 @@ init:
       set GITVERSION_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
 
       if defined APPVEYOR_PULL_REQUEST_NUMBER set GitVersion_NoNormalizeEnabled=true
+
+      if defined APPVEYOR_PULL_REQUEST_NUMBER set IGNORE_NORMALISATION_GIT_HEAD_MOVE=1
 install:
   - choco install gitversion.portable -pre -y
 nuget:
@@ -16,7 +18,7 @@ nuget:
 before_build:
   - cmd: >-
       if defined APPVEYOR_PULL_REQUEST_NUMBER git checkout -b PR-%APPVEYOR_PULL_REQUEST_NUMBER%
-  - ps: gitversion /l console /output buildserver
+  - ps: gitversion /l console /output buildserver /nonormalize
 build:
   project: build/FLExBridge.proj
   publish_nuget: true
