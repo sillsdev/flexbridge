@@ -27,7 +27,8 @@ release_build:
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
 	# Don't update the assembly info - there's no git repo during package build
 	cd build \
-		&& msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
+		&& msbuild FLExBridge.proj /t:"SetVersionProperties;Build" /p:GetVersion=false \
+			/p:BUILD_NUMBER=$(BUILD_NUMBER) \
 			/p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) \
 			/p:Configuration=Release /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
 			/p:WriteVersionInfoToBuildLog=false /p:DisableGitVersionTask=true \
@@ -42,7 +43,8 @@ debug_build:
 	export FBCommonAppData
 	# Don't update the assembly info - there's no git repo during package build
 	cd build \
-		&& msbuild FLExBridge.proj /t:Build /p:GetVersion=false /p:BUILD_NUMBER=$(BUILD_NUMBER) \
+		&& msbuild FLExBridge.proj /t:"SetVersionProperties;Build" /p:GetVersion=false \
+			/p:BUILD_NUMBER=$(BUILD_NUMBER) \
 			/p:BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER) /p:UploadFolder=$(UploadFolder) \
 			/p:Configuration=Debug /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
 			/p:WriteVersionInfoToBuildLog=false /p:DisableGitVersionTask=true \
@@ -55,7 +57,7 @@ debug_build:
 version:
 	[ -e .git ] && cd build \
 		&& export IGNORE_NORMALISATION_GIT_HEAD_MOVE=1 \
-		&& msbuild /t:"RestoreBuildTasks;RestorePackages;UpdateAssemblyInfoForPackage" FLExBridge.proj \
+		&& msbuild /t:"RestoreBuildTasks;RestorePackages" FLExBridge.proj \
 		&& msbuild /t:VersionNumbers FLExBridge.proj || true
 
 # generate the vcs_version file, this hash is used to update the about.htm information
