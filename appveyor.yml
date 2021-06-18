@@ -18,6 +18,8 @@ nuget:
 before_build:
   - cmd: >-
       if defined APPVEYOR_PULL_REQUEST_NUMBER git checkout -b PR-%APPVEYOR_PULL_REQUEST_NUMBER%
+
+      if not defined APPVEYOR_PULL_REQUEST_NUMBER git checkout -b %APPVEYOR_REPO_BRANCH%
   - ps: gitversion /l console /output buildserver /nonormalize
 build:
   project: build/FLExBridge.proj
