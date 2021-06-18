@@ -21,7 +21,7 @@ Vcs-Git: https://github.com/sillsdev/flexbridge.git
 Vcs-Browser: https://github.com/sillsdev/flexbridge
 
 Package: flexbridge
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends}, ${cli:Depends},
  mono5-sil | mono-runtime (>= 6.8),
  libgdiplus5-sil | libgdiplus (>= 6.0),

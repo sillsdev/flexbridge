@@ -19,8 +19,8 @@ set -e
 
 case "$1" in
 	remove|upgrade|deconfigure)
-		if [ -d /usr/lib/flexbridge/Mercurial ]; then
-			rm -rf /usr/lib/flexbridge/Mercurial
+		if [ -f /usr/lib/flexbridge/hg.fixed ]; then
+			rm -f /usr/lib/flexbridge/hg.fixed
 		fi
 	;;
 

@@ -20,14 +20,12 @@ set -e
 
 case "$1" in
 	configure)
-		if [ -f /usr/lib/flexbridge/Chorus.exe -a ! -f /usr/lib/flexbridge/Mercurial/hg ]; then
+		if [ -f /usr/lib/flexbridge/Chorus.exe -a ! -f /usr/lib/flexbridge/hg.fixed ]; then
 			cd /usr/lib/flexbridge
-			ARCH="$(/usr/bin/arch)"
-			unzip Mercurial-${ARCH}.zip
-			chmod +x Mercurial/hg
 			# Remove any existing fixutf8 extensions with potentially problematic paths
 			perl -ni -e 'print unless /^fixutf8/' Mercurial/mercurial.ini
 			echo "fixutf8=/usr/lib/flexbridge/MercurialExtensions/fixutf8/fixutf8.py" >> Mercurial/mercurial.ini
+			touch /usr/lib/flexbridge/hg.fixed
 		fi
 
 		UID_MIN=$(sed -n '/^UID_MIN[ \t][ \t]*/s///p' /etc/login.defs)
