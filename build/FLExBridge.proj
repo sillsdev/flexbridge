@@ -96,7 +96,8 @@
 	<Target Name="CreateDirectories">
 		<MakeDir Directories="$(RootDir)/output/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
-		<MakeDir Directories="$(RootDir)/output/$(Configuration)/localizations/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/localizations/"/>
 	</Target>
 
 	<ItemGroup>
@@ -112,16 +113,16 @@
 	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputWindows;CopyExtraFilesToOutputLinux"/>
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
-		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
-		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
-		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
-		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
-		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
+		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 	</Target>
 
 	<Target Name="CopyExtraFilesToOutputWindows" Condition="'$(OS)'=='Windows_NT'">
-		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/localizations"/>
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages; DownloadDependencies">
@@ -129,7 +130,7 @@
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
-		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)"/>
+		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 	</Target>
 
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion" Condition="$(GetVersion)">
