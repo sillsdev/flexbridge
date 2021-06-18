@@ -58,7 +58,7 @@ version:
 	[ -e .git ] && cd build \
 		&& export IGNORE_NORMALISATION_GIT_HEAD_MOVE=1 \
 		&& msbuild /t:"RestoreBuildTasks;RestorePackages" FLExBridge.proj \
-		&& msbuild /t:VersionNumbers FLExBridge.proj || true
+		&& msbuild /t:VersionNumbers /p:BuildingPackage=1 FLExBridge.proj || true
 
 # generate the vcs_version file, this hash is used to update the about.htm information
 # when building the package we don't have a git repo, so we rely to get the information from the

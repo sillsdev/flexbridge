@@ -139,7 +139,7 @@
 		<Delete Files="@(GitVersionPropsFile)" />
 
 		<!-- on Jenkins this will create gitversion.properties -->
-		<Exec Command="$(GitVersionFileExe) $(RootDir) -output buildserver -updateprojectfiles" WorkingDirectory="$(RootDir)" />
+		<Exec Command="$(GitVersionFileExe) $(RootDir) -output buildserver -updateprojectfiles" WorkingDirectory="$(RootDir)" Condition="'$(BuildingPackage)'!=''" />
 		<!-- append build number -->
 		<WriteLinesToFile File="$(RootDir)/gitversion.properties" Overwrite="false"
 			Lines="BuildVersion=$(GitVersion_SemVer).$(BUILD_NUMBER)" />
