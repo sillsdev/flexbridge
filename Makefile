@@ -21,9 +21,7 @@ download_dependencies:
 		&& msbuild l10n.proj /t:restore \
 		&& msbuild l10n.proj /t:CopyL10nsToDistFiles
 
-release: vcs_version download_dependencies release_build
-
-release_build:
+release: vcs_version download_dependencies
 	echo "in Makefile: BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"
 	# Don't update the assembly info - there's no git repo during package build
 	cd build \
@@ -35,9 +33,7 @@ release_build:
 			/p:GenerateGitVersionInformation=false
 	cp -a flexbridge output/Release
 
-debug: vcs_version download_dependencies debug_build
-
-debug_build:
+debug: vcs_version download_dependencies
 	FBCommonAppData="/tmp/flexbridge"
 	if test ! -d "/tmp/flexbridge"; then mkdir -p "/tmp/flexbridge"; fi;
 	export FBCommonAppData
