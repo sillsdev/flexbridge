@@ -2,7 +2,7 @@ if "%FLExBridgeTestPatchVersion%"=="" set FLExBridgeTestPatchVersion=1
 set /a FLExBridgeTestPatchVersion=%FLExBridgeTestPatchVersion%+1
 
 setlocal
-call "%VS150COMNTOOLS%vsvars32.bat"
+call "%VS160COMNTOOLS%vsvars32.bat"
 
 pushd .
 (

@@ -1,10 +1,10 @@
 setlocal
-if not "%VS150COMNTOOLS%"=="" (
-	call "%VS150COMNTOOLS%vsvars32.bat"
+if not "%VS160COMNTOOLS%"=="" (
+	call "%VS160COMNTOOLS%vsvars32.bat"
 	GOTO Build
 )
 
-for /f "delims=" %%i in ('vswhere -nologo -version "[15.0,16.0)" -requires Microsoft.Component.MSBuild -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do (
+for /f "delims=" %%i in ('vswhere -nologo -version "[16.0,)" -requires Microsoft.Component.MSBuild -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do (
 	set InstallDir=%%i
 )
 call "%InstallDir%\VC\Auxiliary\Build\vcvars32.bat"

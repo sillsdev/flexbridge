@@ -1,7 +1,7 @@
 # FLEx Bridge
 
-**FLEx Bridge** is an add-on to FieldWorks (https://software.sil.org/fieldworks/; https://github.com/sillsdev/FwDocumentation/wiki)
-that supports using Chorus (https://github.com/sillsdev/chorus) to allow multiple users to share data.
+**FLEx Bridge** is an add-on to FieldWorks (<https://software.sil.org/fieldworks/>; <https://github.com/sillsdev/FwDocumentation/wiki>)
+that supports using Chorus (<https://github.com/sillsdev/chorus>) to allow multiple users to share data.
 
 ## Architecture
 
@@ -25,8 +25,12 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 #### Connecting FieldWorks to FLEx Bridge
 
 - On **Windows**, add the following keys to your registry (32-bit OS: omit 'Wow6432Node\'):
-[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-    "InstallationDir"="C:\Dev\flexbridge\output\Debug"
+
+  ```
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
+      "InstallationDir"="C:\Dev\flexbridge\output\Debug"
+  ```
+
 - On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug`
 
 ### Build
