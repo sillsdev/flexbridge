@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Configuration properties - Review and edit these values as needed. -->
 	<PropertyGroup>
 		<CopyrightYear>2021</CopyrightYear>
@@ -57,6 +57,8 @@
 			<!-- Build Directories -->
 			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
 		</PropertyGroup>
+
+		<Message Text="InstallerVersionNumbers: Version=$(Version), Major=$(MajorVersion), Minor=$(MinorVersion), Patch=$(PatchVersion), Build=$(BuildVersion), VersionSeg4=$(VersionSeg4)" />
 	</Target>
 
 	<!-- Build Directories -->
