@@ -39,8 +39,6 @@
 			<!-- Build Directories -->
 			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
 		</PropertyGroup>
-
-		<Message Text="InstallerVersionNumbers: Version=$(Version), Major=$(MajorVersion), Minor=$(MinorVersion), Patch=$(PatchVersion), Build=$(BuildVersion)" />
 	</Target>
 
 	<!-- Build Directories -->
