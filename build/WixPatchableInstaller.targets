@@ -30,35 +30,17 @@
 
 	<!-- Property definitions -->
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
-		<!-- parse the version number into segments -->
-		<Split Input="$(Version)" Delimiter="." OutputSubString="0">
-			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg1"/>
-		</Split>
-		<Split Input="$(Version)" Delimiter="." OutputSubString="1" ContinueOnError="true">
-			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg2"/>
-		</Split>
-		<Split Input="$(Version)" Delimiter="." OutputSubString="2" ContinueOnError="true">
-			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg3"/>
-		</Split>
-		<Split Input="$(Version)" Delimiter="." OutputSubString="3" ContinueOnError="true">
-			<Output TaskParameter="ReturnValue" PropertyName="VersionSeg4"/>
-		</Split>
 		<PropertyGroup>
-			<!-- set default values for trailing version numbers -->
-			<VersionSeg2 Condition="'$(VersionSeg2)'==''">0</VersionSeg2>
-			<VersionSeg3 Condition="'$(VersionSeg3)'==''">0</VersionSeg3>
-			<VersionSeg4 Condition="'$(VersionSeg4)'==''">1</VersionSeg4> <!-- 1 is the base build number. It may be a NAnt thing... -->
-
-			<MajorVersion>$(VersionSeg1)</MajorVersion>
-			<MinorVersion>$(MajorVersion).$(VersionSeg2)</MinorVersion>
-			<PatchVersion>$(MinorVersion).$(VersionSeg3)</PatchVersion>
-			<BuildVersion>$(PatchVersion).$(VersionSeg4)</BuildVersion>
+			<MajorVersion>$(GitVersion_Major)</MajorVersion>
+			<MinorVersion>$(MajorVersion).$(GitVersion_Minor)</MinorVersion>
+			<PatchVersion>$(MinorVersion).$(GitVersion_Patch)</PatchVersion>
+			<BuildVersion>$(PatchVersion).$(GitVersion_PreReleaseNumber)</BuildVersion>
 
 			<!-- Build Directories -->
 			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
 		</PropertyGroup>
 
-		<Message Text="InstallerVersionNumbers: Version=$(Version), Major=$(MajorVersion), Minor=$(MinorVersion), Patch=$(PatchVersion), Build=$(BuildVersion), VersionSeg4=$(VersionSeg4)" />
+		<Message Text="InstallerVersionNumbers: Version=$(Version), Major=$(MajorVersion), Minor=$(MinorVersion), Patch=$(PatchVersion), Build=$(BuildVersion)" />
 	</Target>
 
 	<!-- Build Directories -->
