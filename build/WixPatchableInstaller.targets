@@ -31,10 +31,12 @@
 	<!-- Property definitions -->
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
 		<PropertyGroup>
+			<PreReleaseNumber>$(GitVersion_PreReleaseNumber)</PreReleaseNumber>
+			<PreReleaseNumber Condition="'$(PreReleaseNumber)'==''">$([MSBuild]::Multiply($(BUILD_NUMBER), 10))</PreReleaseNumber>
 			<MajorVersion>$(GitVersion_Major)</MajorVersion>
 			<MinorVersion>$(MajorVersion).$(GitVersion_Minor)</MinorVersion>
 			<PatchVersion>$(MinorVersion).$(GitVersion_Patch)</PatchVersion>
-			<BuildVersion>$(PatchVersion).$(GitVersion_PreReleaseNumber)</BuildVersion>
+			<BuildVersion>$(PatchVersion).$(PreReleaseNumber)</BuildVersion>
 
 			<!-- Build Directories -->
 			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
