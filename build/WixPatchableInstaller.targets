@@ -84,7 +84,7 @@
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<PropertyGroup>
-			<RootBinDir>$(RootDir)/output/$(Configuration)</RootBinDir>
+			<RootBinDir>$(RootDir)/output/$(Configuration)/net461</RootBinDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<FilesForDevelopers Include="$(RootBinDir)\TestData\**\*"/>
@@ -208,6 +208,9 @@
 			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)"</PatchArgs>
 		</PropertyGroup>
 
+		<!-- NOTE: The current setup expects to find existing installers from previous builds in
+			`BuildDir/FLExBridge_Build_Master`. On TC this is given by all builds with the same vcs root
+			sharing the same workspace. -->
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
 
 		<ItemGroup>
