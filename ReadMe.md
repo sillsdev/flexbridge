@@ -47,6 +47,12 @@ cd build
 msbuild /t:Test FLExBridge.proj
 ```
 
+Additional setup for Linux:
+```bash
+cp -a flexbridge output/Debug/net461/
+cp -a DistFiles output/
+```
+
 ### Building client projects against locally-built artifacts
 
 - Set an enviroment variable `LOCAL_NUGET_REPO` with the path to a folder on your computer (or local network) to publish locally-built packages
