@@ -5,16 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
+      "name": "Launch FLExBridge",
       "type": "mono",
       "request": "launch",
-      "program": "${workspaceRoot}/output/DebugMono/FLExBridge.exe",
+      "program": "${workspaceRoot}/output/Debug/net461/FLExBridge.exe",
       "args": [
         "-u", "${env:USER}",
         "-projDir", "${env:HOME}/fwrepo/fw/DistFiles/Projects",
         "-fwAppsDir", "${env:HOME}/fwrepo/fw/Output/Debug",
         "-fwmodel", "7000072",
-        "-liftmodel", "0.13",
+        "-liftmodel", "0.13_ldml3",
         "-locale", "en",
         // Change these arguments to launch and debug different areas.
         // Launching FB via FW and running `ps faxww | grep FLExBridge` will
@@ -29,9 +29,13 @@
         "-pipeID", "SendReceive${env:HOME}/fwrepo/fw/DistFiles/Projectsobtain"
       ],
       "env": {
+        // Send and receive to the QA LanguageForge server instead of production, if desired.
+        "LANGUAGEFORGESERVER": "-qa.languageforge.org",
         // When launching, use this mono.
         "PATH": "/opt/mono5-sil/bin:${env:PATH}",
-        "MONO_ENVIRON": "${env:HOME}/fwrepo/flexbridge/environ"
+        // Note that FLExBridge is run in the environment inherited from FieldWorks, such as set by FW environ.
+        // Path to enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+        "MONO_ENVIRON": "${workspaceRoot}/../fw/environ",
       },
       "cwd": "${workspaceRoot}"
     },
