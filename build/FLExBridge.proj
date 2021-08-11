@@ -108,11 +108,13 @@
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
 		<GeckoBrowserFiles Include="$(RootDir)/lib/$(Configuration)/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
+		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
 	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputWindows;CopyExtraFilesToOutputLinux"/>
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
+		<Copy SourceFiles="@(LinuxLauncherFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
 		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
