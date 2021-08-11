@@ -31,7 +31,6 @@ release: vcs_version download_dependencies
 			/p:Configuration=Release /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
 			/p:WriteVersionInfoToBuildLog=false /p:DisableGitVersionTask=true \
 			/p:GenerateGitVersionInformation=false
-	cp -a flexbridge output/Release
 
 debug: vcs_version download_dependencies
 	FBCommonAppData="/tmp/flexbridge"
@@ -45,8 +44,6 @@ debug: vcs_version download_dependencies
 			/p:Configuration=Debug /p:RestorePackages=false /p:UpdateAssemblyInfo=false \
 			/p:WriteVersionInfoToBuildLog=false /p:DisableGitVersionTask=true \
 			/p:GenerateGitVersionInformation=false
-	# Put flexbridge next to FLExBridge.exe, as it will be in a user's machine, so FW can easily find it on a developer's machine.
-	cp -a flexbridge output/Debug
 
 # Create AssemblyInfo files and properties file. When building the package we don't have a git
 # repo, so we have to create the files beforehand.
@@ -81,7 +78,7 @@ install: fetch_l10ns
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
-	/usr/bin/install flexbridge environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install environ environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	cp -r Mercurial  $(DESTDIR)/usr/lib/flexbridge
 	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
