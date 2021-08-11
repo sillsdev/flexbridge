@@ -98,6 +98,8 @@
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/localizations/"/>
+		<MakeDir Directories="$(RootDir)/output/DistFiles"/>
+		<MakeDir Directories="$(RootDir)/output/DistFiles/localizations"/>
 	</Target>
 
 	<ItemGroup>
@@ -108,13 +110,17 @@
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
 		<GeckoBrowserFiles Include="$(RootDir)/lib/$(Configuration)/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
+		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
 	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputWindows;CopyExtraFilesToOutputLinux"/>
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
+		<Copy SourceFiles="@(LinuxLauncherFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
+		<!-- Seemingly redundantly copying localizations to output/DistFiles/localizations (or at least making that directory) is needed on Linux to avoid an error on a dev machine. -->
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/DistFiles/localizations"/>
 		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
