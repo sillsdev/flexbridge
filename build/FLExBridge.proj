@@ -70,6 +70,7 @@
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.12.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install BuildDependencyTasks -excludeVersion -version 0.4.3 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install SIL.Windows.Forms.GeckoBrowserAdapter -version 8.0.0 -solutionDirectory "$(RootDir)"' Condition="'$(OS)'!='Windows_NT'"/>
 	</Target>
 
 	<Target Name="DownloadDependencies" DependsOnTargets="RestoreBuildTasks">
@@ -107,7 +108,7 @@
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
-		<GeckoBrowserFiles Include="$(RootDir)/lib/$(Configuration)/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
+		<GeckoBrowserFiles Include="$(RootDir)/packages/SIL.Windows.Forms.GeckoBrowserAdapter.8.0.0/lib/net461/SIL.Windows.Forms.GeckoBrowserAdapter.dll.*"/>
 		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
