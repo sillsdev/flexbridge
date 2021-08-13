@@ -24,6 +24,9 @@ before_build:
         {
             gitversion /l console /output buildserver
         }
+  - cmd: |
+        msbuild l10n\l10n.proj /t:restore
+        msbuild l10n\l10n.proj /t:CopyL10nsToDistFiles
 build:
   project: build/FLExBridge.proj
   publish_nuget: true
