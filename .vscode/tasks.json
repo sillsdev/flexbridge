@@ -3,11 +3,10 @@
   // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
-    // A quick start at build specifying, which much room for improvement.
     {
       "label": "Build",
       "type": "shell",
-      "command": "make debug_build",
+      "command": "msbuild ${workspaceRoot}/build/FLExBridge.proj",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -17,7 +16,7 @@
       ]
     },
     {
-      "label": "Initial build",
+      "label": "make debug",
       "type": "shell",
       "command": "make debug",
       "group": "build",
