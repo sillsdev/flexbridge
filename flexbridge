@@ -31,7 +31,7 @@ cd "${scriptdir}"
 		cp -a "/var/lib/flexbridge/localizations" "${FB_SHARE}"
 	else
 		# For developer build. This is still not working correctly.
-		cp -a "${prefix}/DistFiles/localizations" "${FB_SHARE}"
+		cp -a "${prefix}/../DistFiles/localizations" "${FB_SHARE}"
 	fi
 )
 
