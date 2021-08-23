@@ -112,23 +112,19 @@
 		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
-	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputWindows;CopyExtraFilesToOutputLinux"/>
+	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputLinux">
+		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == ''" />
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
+	</Target>
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
-		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == ''" />
 		<Error Text="GeckoBrowserAdapter Missing" Condition="'@(GeckoBrowserFiles)' == ''" />
 		<Copy SourceFiles="@(LinuxLauncherFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
 		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-	</Target>
-
-	<Target Name="CopyExtraFilesToOutputWindows" Condition="'$(OS)'=='Windows_NT'">
-		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == ''" />
-		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages; DownloadDependencies">
