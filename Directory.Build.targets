@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Target Name="RemoveExtraFiles" Condition="'$(OS)'=='Windows_NT'" AfterTargets="Build">
+		<!-- On Linux, FLEx Bridge needs Geckofx. On Windows, the Geckofx DLL's need to be present for the build to succeed, but
+			their presence prevents L10nSharp from extracting strings for localization, since the Linux Geckofx DLL's can't be loaded.
+			Deleting them here fixes both developer builds in Visual Studio and installer builds on the server. -->
+		<ItemGroup>
+			<GeckofxDlls Include="$(MSBuildThisFiledirectory)/output/$(Configuration)/net461/Geckofx-*"/>
+		</ItemGroup>
+		<Delete Files="@(GeckofxDlls)"/>
+	</Target>
+</Project>

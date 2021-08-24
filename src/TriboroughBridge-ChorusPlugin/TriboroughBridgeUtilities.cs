@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -97,8 +97,8 @@ namespace TriboroughBridge_ChorusPlugin
 				// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
 				// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
 				var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
-				// We don't need to reload strings for every "revision" (that might be every time we build).
-				var version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
+				// We don't need to reload strings for every "revision" (that might be every time we build). REVIEW (Hasso) 2021.08: then why do we have `build`?
+				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus,
 					FlexLocalizationEmailAddress, FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge");
@@ -116,7 +116,7 @@ namespace TriboroughBridge_ChorusPlugin
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
 				var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
-					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "Palaso");
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "SIL");
 				results.Add("Palaso", palasoLocMan);
 			}
 			catch
