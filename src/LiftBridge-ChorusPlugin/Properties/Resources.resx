@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -272,13 +272,6 @@
   </data>
   <data name="kFlexNotListening" xml:space="preserve">
 	<value>FLEx isn't listening.</value>
-  </data>
-  <data name="kAlreadyRunning" xml:space="preserve">
-	<value>There is already a copy of FLExBridge running.
-You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
--- Send/Receive Project
--- Receive Project from a colleague
--- View Conflict Report (can't have two open)</value>
   </data>
   <data name="kLiftBridge" xml:space="preserve">
 	<value>Lift Bridge</value>

@@ -28,10 +28,10 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 
   ```
   [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-      "InstallationDir"="C:\Dev\flexbridge\output\Debug"
+      "InstallationDir"="C:\Dev\flexbridge\output\Debug\net461"
   ```
 
-- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug`
+- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug/net461`
 
 TODO: If you plan to Send and Receive to the Internet with High bandwidth, you will need to edit flexbridge\Mercurial\default.d\cacerts.rc to contain the correct path to flexbridge\Mercurial\cacert.pem. Since this must be an absolute path, and this file seems to be overwritten on each build, we should create a build step to take care of this. See https://jira.sil.org/browse/LT-20563
 
