@@ -78,7 +78,7 @@ install: fetch_l10ns
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
 	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
-	/usr/bin/install environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
+	/usr/bin/install flexbridge environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
 	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
 	cp -r Mercurial  $(DESTDIR)/usr/lib/flexbridge
 	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
