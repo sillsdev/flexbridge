@@ -11,6 +11,11 @@ set -e -o pipefail
 # incompatible with our version of Mercurial
 export HGRCPATH=
 
+FB_ARGS="${FB_ARGS:-""}"
+if [[ $FB_DEBUG_LISTEN == "true" ]]; then
+  # Use suspend=y to pause until a debugger attaches.
+  FB_ARGS="${FB_ARGS} --debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55502,suspend=n"
+fi
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
@@ -36,4 +41,4 @@ cd "${scriptdir}"
 )
 
 cd - >/dev/null
-mono --debug "${scriptdir}"/FLExBridge.exe "$@"
+mono --debug ${FB_ARGS} "${scriptdir}"/FLExBridge.exe "$@"
