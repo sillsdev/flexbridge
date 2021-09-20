@@ -20,4 +20,4 @@ branches:
 ignore:
   sha: []
 # Tell gitversion to use a version number >= next-version
-next-version: 3.3.0
+next-version: 3.4.1
