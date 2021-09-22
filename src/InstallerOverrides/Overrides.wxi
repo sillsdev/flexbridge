@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-	<Property Id="REGISTRYKEY" Value="SIL\$(var.ApplicationName)\9"/> <!-- yes, this is the FLEx version -->
+	<Property Id="REGISTRYKEY" Value="$(SafeManufacturer)\$(var.ApplicationName)\9"/> <!-- yes, this is the FLEx version -->
 	<Property Id="APPFOLDERREGSZNAME" Value="InstallationDir"/>
-	<SetProperty Id="APPFOLDER" Value="[ProgramFilesFolder]\SIL\$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch"/>
-	<SetProperty Id="OVRAPPFOLDER" Value="[ProgramFilesFolder]\SIL\$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch"/>
+	<SetProperty Id="APPFOLDER" Value="[ProgramFilesFolder]\$(SafeManufacturer)\$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch"/>
+	<SetProperty Id="OVRAPPFOLDER" Value="[ProgramFilesFolder]\$(SafeManufacturer)\$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch"/>
 	<!-- REVIW (Hasso) 2017.12: this is where configuration data is kept, but the registry key is irrelevant. -->
-	<SetProperty Id="OVRDATAFOLDER" Value="[%LOCALAPPDATA]\SIL_International\FLExBridge.exe_Url_zdatz30412fterv2p2mfad34bt0qo02r\$(var.VersionNumber)" Before="AppSearch"/>
+	<SetProperty Id="OVRDATAFOLDER" Value="[%LOCALAPPDATA]\$(SafeManufacturer)\$(var.SafeApplicationName)\$(var.VersionNumber)" Before="AppSearch"/>
 
 	<!-- Install Chorus and Mercurial -->
 	<DirectoryRef  Id='APPFOLDER'>

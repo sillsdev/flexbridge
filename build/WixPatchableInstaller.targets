@@ -4,6 +4,7 @@
 	<PropertyGroup>
 		<CopyrightYear>2021</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
+		<SafeManufacturer>SIL</SafeManufacturer>
 		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
 	</PropertyGroup>
@@ -75,6 +76,8 @@
 
 	<!-- Build Folders and Copy Targets -->
 	<Target Name="CleanMasterOutputDir">
+		<Message Text="MSBPD: $(MSBuildProjectDirectory); TCBCD: $(teamcity_build_checkoutDir); RD: $(RootDir)"/>
+		<Message Text="Will restart? $(RestartBuild)"/>
 		<RemoveDir Directories="$(AppBuildMasterDir)" />
 	</Target>
 
@@ -183,7 +186,7 @@
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)"</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" "$(SafeManufacturer)"</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -205,7 +208,7 @@
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)"</PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" "$(SafeManufacturer)"</PatchArgs>
 		</PropertyGroup>
 
 		<!-- NOTE: The current setup expects to find existing installers from previous builds in

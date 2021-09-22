@@ -136,6 +136,8 @@
 	</Target>
 
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion" Condition="$(GetVersion)">
+		<Message Text="MSBPD: $(MSBuildProjectDirectory); TCBCD: $(teamcity_build_checkoutDir); RD: $(RootDir)"/>
+
 		<ItemGroup>
 			<GitVersionPropsFile Include="$(RootDir)/gitversion.properties"/>
 		</ItemGroup>
@@ -153,6 +155,7 @@
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
+		<Message Text="Should load from '$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll'"/>
 		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
