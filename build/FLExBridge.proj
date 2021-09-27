@@ -3,7 +3,7 @@
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' == '' And '$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
 		<RootDir Condition="'$(teamcity_build_checkoutDir)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
-		<Platform Condition="'$(Platform)'==''">Any CPU</Platform>
+		<Platform>Any CPU</Platform>
 		<Solution>FLExBridge.sln</Solution>
 		<ApplicationName>FLEx Bridge</ApplicationName>
 		<SolutionPath>$(RootDir)/$(Solution)</SolutionPath>
@@ -12,8 +12,15 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') Or !Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe') Or !Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/SIL.ReleaseTasks/tools/net461/SIL.ReleaseTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')And Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')">false</RestartBuild>
+		<GitVersionMsBuildProps>$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props</GitVersionMsBuildProps>
+		<GitVersionMsBuildTargets>$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets</GitVersionMsBuildTargets>
+		<SILBuildTasksDLL>$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll</SILBuildTasksDLL>
+		<SILReleaseTasksProps>$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props</SILReleaseTasksProps>
+		<NUnitToolsDir>$(RootDir)/packages/NUnit.ConsoleRunner/tools</NUnitToolsDir>
+		<NUnitConsoleRunner>$(NUnitToolsDir)/nunit3-console.exe</NUnitConsoleRunner>
+		<BuildDependencyTasksDLL>$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll</BuildDependencyTasksDLL>
+		<RestartBuild Condition="!Exists('$(GitVersionMsBuildProps)') Or !Exists('$(GitVersionMsBuildTargets)') Or !Exists('$(SILBuildTasksDLL)') Or !Exists('$(SILReleaseTasksProps)') Or !Exists('$(NUnitConsoleRunner)') Or !Exists('$(BuildDependencyTasksDLL)')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(GitVersionMsBuildProps)') And Exists('$(GitVersionMsBuildTargets)') And Exists('$(SILBuildTasksDLL)') And Exists('$(SILReleaseTasksProps)') And Exists('$(NUnitConsoleRunner)') And Exists('$(BuildDependencyTasksDLL)')">false</RestartBuild>
 		<IgnoreGitVersionTask Condition="'$(IgnoreGitVersionTask)' == ''">false</IgnoreGitVersionTask>
 		<MSBuildTasksTargets>$(RootDir)/packages/MSBuildTasks.1.5.0.235/tools/MSBuild.Community.Tasks.Targets</MSBuildTasksTargets>
 		<GetVersion Condition="'$(GetVersion)' == ''">true</GetVersion>
@@ -25,20 +32,19 @@
 	<Import Project="$(MSBuildTasksTargets)" Condition="Exists('$(MSBuildTasksTargets)')"/>
 	<Import Project="NuGet.targets"/>
 	<Import Project="WixPatchableInstaller.targets" Condition="'$(OS)'=='Windows_NT'"/>
-	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props"
-		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props') And !$(IgnoreGitVersionTask)"/>
-	<Import Project="$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets"
-		Condition="Exists('$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets') And !$(IgnoreGitVersionTask)"/>
-	<Import Project="$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props"
-		Condition="Exists('$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props')" />
+	<Import Project="$(GitVersionMsBuildProps)"
+		Condition="Exists('$(GitVersionMsBuildProps)') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(GitVersionMsBuildTargets)"
+		Condition="Exists('$(GitVersionMsBuildTargets)') And !$(IgnoreGitVersionTask)"/>
+	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
 
-	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
-	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')"/>
-	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll" Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And '$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="Split" AssemblyFile="$(SILBuildTasksDLL)" Condition="Exists('$(SILBuildTasksDLL)')"/>
+	<UsingTask TaskName="SIL.BuildTasks.FileUpdate" AssemblyFile="$(SILBuildTasksDLL)" Condition="Exists('$(SILBuildTasksDLL)')"/>
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(SILBuildTasksDLL)" Condition="Exists('$(SILBuildTasksDLL)') And '$(OS)'=='Windows_NT'"/>
 	<UsingTask TaskName="NUnit3"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-	<UsingTask TaskName="Dependencies" AssemblyFile="$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll" Condition="Exists('$(RootDir)/packages/BuildDependencyTasks/BuildDependencyTasks.dll')"/>
+		AssemblyFile="$(SILBuildTasksDLL)"
+		Condition="Exists('$(SILBuildTasksDLL)')" />
+	<UsingTask TaskName="Dependencies" AssemblyFile="$(BuildDependencyTasksDLL)" Condition="Exists('$(BuildDependencyTasksDLL)')"/>
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersion.MsBuild.targets -->
 	<Target Name="GetAssemblyVersion"/>
@@ -113,7 +119,7 @@
 	</ItemGroup>
 
 	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputLinux">
-		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == ''" />
+		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == '' AND '$(Configuration)' != 'Debug'" />
 		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
 	</Target>
 
@@ -153,6 +159,7 @@
 		<Copy SourceFiles="$(RootDir)/DistFiles/about.htm"
 			DestinationFolder="$(RootDir)/output/Installer"/>
 		<Message Text="Version=$(Version),BUILD_VCS_NUMBER=$(BUILD_VCS_NUMBER)"/>
+		<Message Text="Should load from '$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll' ($(SILBuildTasksDLL))"/>
 		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm"
 			DatePlaceholder="DEV_RELEASE_DATE" Regex="DEV_VERSION_NUMBER" ReplacementText="$(Version)"/>
 		<SIL.BuildTasks.FileUpdate File="$(RootDir)/output/Installer/about.htm" DateFormat="yyyy" DatePlaceholder="DEV_RELEASE_YEAR"
@@ -203,7 +210,7 @@
 		</ItemGroup>
 
 		<NUnit3 Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
+			ToolPath="$(NUnitToolsDir)"
 			TestInNewThread="false"
 			ExcludeCategory="$(ExtraExcludeCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)/net461"
