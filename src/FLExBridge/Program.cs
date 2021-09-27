@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
-using LibTriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin.Properties;
 using SIL.IO;
 using SIL.Progress;
 using SIL.Reporting;
@@ -51,11 +51,7 @@ namespace FLExBridge
 				// exception handler.
 			}
 
-			if (Settings.Default.CallUpgrade)
-			{
-				Settings.Default.Upgrade();
-				Settings.Default.CallUpgrade = false;
-			}
+			Settings.UpgradeSettingsIfNecessary(Settings.Default, Application.ProductName);
 
 			SetUpErrorHandling();
 

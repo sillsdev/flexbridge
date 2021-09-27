@@ -1,11 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-    <RootNamespace>FLEx_ChorusPluginTests</RootNamespace>
-    <AssemblyName>FLEx-ChorusPluginTests</AssemblyName>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>LibTriboroughBridge_ChorusPluginTests</RootNamespace>
+
+    <AssemblyName>TriboroughBridge-ChorusPluginTests</AssemblyName>
     <Configurations>Debug;Release</Configurations>
-    <Description>Unit tests for FLEx-ChorusPlugin</Description>
+    <Description>Unit tests for LibTriboroughBridge-ChorusPlugin</Description>
     <Company>SIL</Company>
     <Authors>SIL International</Authors>
     <Product>FLExBridge</Product>
@@ -20,13 +21,12 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.6.10" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="SIL.Chorus.ChorusMerge" Version="5.0.0-*" />
-    <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="5.0.0-*" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.47" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.47" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj" />
-    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj" />
+    <ProjectReference Include="..\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj" />
   </ItemGroup>
 
 </Project>

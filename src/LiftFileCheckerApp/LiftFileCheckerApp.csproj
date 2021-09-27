@@ -7,7 +7,7 @@
     <AssemblyName>LiftFileCheckerApp</AssemblyName>
     <Configurations>Debug;Release</Configurations>
     <Description>LIFT file checker app</Description>
-    <Company>SIL International</Company>
+    <Company>SIL</Company>
     <Authors>SIL International</Authors>
     <Product>FLExBridge</Product>
     <Copyright>Copyright © 2010-2021 SIL International</Copyright>
@@ -33,15 +33,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

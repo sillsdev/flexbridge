@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-    <RootNamespace>TriboroughBridge_ChorusPluginTests</RootNamespace>
-    <AssemblyName>TriboroughBridge-ChorusPluginTests</AssemblyName>
+    <TargetFramework>net48</TargetFramework>
     <Configurations>Debug;Release</Configurations>
-    <Description>Unit tests for TriboroughBridge-ChorusPlugin</Description>
+    <Description>Unit tests for the FLEx Bridge Repository Utility</Description>
     <Company>SIL</Company>
     <Authors>SIL International</Authors>
     <Product>FLExBridge</Product>
@@ -18,13 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.6.10" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="5.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj" />
+    <ProjectReference Include="..\RepositoryUtility\RepositoryUtility.csproj" />
   </ItemGroup>
 
 </Project>

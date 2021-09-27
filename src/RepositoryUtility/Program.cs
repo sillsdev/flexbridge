@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -7,20 +7,20 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
-using LibTriboroughBridge_ChorusPlugin.Properties;
+using Gecko;
+using RepositoryUtility.Properties;
 using SIL.IO;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
+using SIL.Windows.Forms.Reporting;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
-
-using Gecko;
-using SIL.Windows.Forms.Reporting;
+using Settings = RepositoryUtility.Properties.Settings;
 
 namespace RepositoryUtility
 {
-	static class Program
+	public static class Program
 	{
 		/// <summary>
 		/// The main entry point for the application.
@@ -48,11 +48,7 @@ namespace RepositoryUtility
 				// exception handler.
 			}
 
-			if (Settings.Default.CallUpgrade)
-			{
-				Settings.Default.Upgrade();
-				Settings.Default.CallUpgrade = false;
-			}
+			LibTriboroughBridgeChorusPlugin.Properties.Settings.UpgradeSettingsIfNecessary(Settings.Default, SettingsProvider.ProductNameForSettings);
 
 			SetUpErrorHandling();
 
