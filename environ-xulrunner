@@ -10,13 +10,15 @@ if [ "$RUNMODE" = "INSTALLED" ]; then
     GECKOFX="/usr/lib/fieldworks"
     XULRUNNER="${GECKOFX}/Firefox-Linux64"
 else
-    GECKOFX="$(pwd)/packages/Geckofx60.64.Linux.60.0.51/lib/net40"
-    XULRUNNER="$(pwd)/packages/Geckofx60.64.Linux.60.0.51/content/Firefox-Linux64"
+    GECKOFX="$HOME/.nuget/packages/geckofx60.64.linux/60.0.51/lib/net40"
+    XULRUNNER="$HOME/.nuget/packages/geckofx60.64.linux/60.0.51/content/Firefox-Linux64"
 fi
 MONO_PATH="$GECKOFX:$MONO_PATH"
 
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
 
-LD_PRELOAD=libgeckofix.so
+if [[ $(/sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) 2>/dev/null | grep libgeckofix.so | wc -l) > 0 ]]; then
+    LD_PRELOAD=libgeckofix.so
+fi
 
 export GECKOFX XULRUNNER MONO_PATH LD_LIBRARY_PATH LD_PRELOAD
