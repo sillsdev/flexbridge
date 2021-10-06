@@ -6,7 +6,7 @@
     <AssemblyTitle>RepositoryUtility</AssemblyTitle>
     <Configurations>Debug;Release</Configurations>
     <Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
-    <Company>SIL International</Company>
+    <Company>SIL</Company>
     <Authors>SIL International</Authors>
     <Product>FLExBridge</Product>
     <Copyright>Copyright © 2010-2021 SIL International</Copyright>
@@ -38,4 +38,24 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGE
     <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>$(AssemblyName)Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b511304f05af0a01cbc5408cdbdf742aa1664db0e1157235bb2619e7fb5e705bd3534a7157a088a458ec3136e46ebd2b73519fb07dffd2daa40a7b9aa340675d926ab918d2e0183b8613320529b8a490028c8e1b40b980f3724928455d447d8f93d459be3c55a4e3f2ef5119c3393fd25adba301cbff8a3ffbce2e181d143788</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
 </Project>
