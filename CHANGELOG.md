@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.4.2] - 2021-10-06
+
+### Fixed
+
+- Move settings to a stable location; migrate old settings
+- Fix Localization of the shared Palaso library
+
+### Changed
+
+- Update the embedded browser (Geckofx)
+
 ## [3.3.0] - 2021-07-13
 
 ### Changed
