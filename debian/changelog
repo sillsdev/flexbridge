@@ -1,3 +1,17 @@
+flexbridge (3.4.2) UNRELEASED; urgency=low
+
+  * Fixed
+
+    * Move settings to a stable location; migrate old settings
+    * Fix Localization of the shared Palaso library
+    * Fix a crash in the settings dialog on Linux
+
+  * Changed
+
+    * Update the embedded browser (Geckofx)
+
+ -- Hasso <flex_devteam@sil.org>  Wed, 06 Oct 2021 11:56:04 -0500
+
 flexbridge (3.3.0) UNRELEASED; urgency=low
 
   * Refactoring to use nuget packages
