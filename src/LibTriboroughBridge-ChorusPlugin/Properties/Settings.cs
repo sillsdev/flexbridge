@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace LibTriboroughBridgeChorusPlugin.Properties
@@ -26,43 +26,42 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 				return;
 			}
 
-			MigrateNonCrossPlatformSettings(new FileSystem(), appName);
+			MigrateNonCrossPlatformSettings(appName);
 
 			settings.Upgrade();
 			settings.CallUpgrade = false;
 		}
 
-		internal static void MigrateNonCrossPlatformSettings(IFileSystem fs, string appName)
+		internal static void MigrateNonCrossPlatformSettings(string appName)
 		{
 			// Find settings from earlier versions that didn't use CrossPlatformSettingsProvider
 			// Copy the latest version's settings from each matching folder (don't overwrite)
 			var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			var oldCompanyDirInfo = fs.DirectoryInfo.FromDirectoryName(Path.Combine(localAppData,
-				Platform.IsWindows ? "SIL_International" : "SIL International"));
-			var oldAppDirs = PotentialOldAppSettingsDirs(oldCompanyDirInfo, appName).SelectMany(di => di.EnumerateDirectories()).ToList();
+			var oldCompanyDir = Path.Combine(localAppData, Platform.IsWindows ? "SIL_International" : "SIL International");
+			var oldAppDirs = PotentialOldAppSettingsDirs(oldCompanyDir, appName).SelectMany(FileUtils.GetDirectoriesInDirectory).ToList();
 			if (!oldAppDirs.Any())
 			{
 				return;
 			}
 
 			var latestOldSettingsDir = LatestVersionSettingsDir(oldAppDirs);
-			var newAppDirInfo = fs.DirectoryInfo.FromDirectoryName(Path.Combine(localAppData, Application.CompanyName, appName));
-			var newSettingsDir = newAppDirInfo.CreateSubdirectory(latestOldSettingsDir.Name);
+			var newAppDir = Path.Combine(localAppData, Application.CompanyName, appName);
+			var newSettingsDir = Path.Combine(newAppDir, Path.GetFileName(latestOldSettingsDir));
 			const string settingsFileName = "user.config";
-			var latestOldSettingsFile = fs.FileInfo.FromFileName(Path.Combine(latestOldSettingsDir.FullName, settingsFileName));
-			var newSettingsFilePath = Path.Combine(newSettingsDir.FullName, settingsFileName);
-			if (latestOldSettingsFile.Exists && !fs.File.Exists(newSettingsFilePath))
+			var latestOldSettingsFile = Path.Combine(latestOldSettingsDir, settingsFileName);
+			var newSettingsFilePath = Path.Combine(newSettingsDir, settingsFileName);
+			if (FileUtils.FileExists(latestOldSettingsFile) && !FileUtils.FileExists(newSettingsFilePath))
 			{
-				latestOldSettingsFile.CopyTo(newSettingsFilePath);
+				FileUtils.Copy(latestOldSettingsFile, newSettingsFilePath);
 			}
 		}
 
-		internal static IEnumerable<IDirectoryInfo> PotentialOldAppSettingsDirs(IDirectoryInfo oldCompanyDir, string appName)
+		internal static string[] PotentialOldAppSettingsDirs(string oldCompanyDir, string appName)
 		{
-			return oldCompanyDir.Exists ? oldCompanyDir.EnumerateDirectories($"{appName}.exe_*") : new IDirectoryInfo[0];
+			return FileUtils.DirectoryExists(oldCompanyDir) ? FileUtils.GetDirectoriesInDirectory(oldCompanyDir, $"{appName}.exe_*") : new string[0];
 		}
 
-		internal static IDirectoryInfo LatestVersionSettingsDir(List<IDirectoryInfo> versionSettingsDirs)
+		internal static string LatestVersionSettingsDir(List<string> versionSettingsDirs)
 		{
 			versionSettingsDirs.Sort(CompareVersion);
 			return versionSettingsDirs.LastOrDefault();
@@ -72,11 +71,12 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 		/// 1 if lhs represents a directory whose name is a version higher than that of rhs, or rhs has a name that is not a version;
 		/// -1 if lhs represents a directory whose name is a version less than that of rhs, or only rhs has a name that is a version;
 		/// 0 if both have a name that is the same version or both have a name that is not a version.</returns>
-		internal static int CompareVersion(IDirectoryInfo lhs, IDirectoryInfo rhs)
+		internal static int CompareVersion(string lhs, string rhs)
 		{
-			return Version.TryParse(lhs.Name, out var lhsVer)
-				? Version.TryParse(rhs.Name, out var rhsVer) ? lhsVer.CompareTo(rhsVer) : 1
-				: Version.TryParse(rhs.Name, out _) ? -1 : 0;
+			var rhsName = Path.GetFileName(rhs);
+			return Version.TryParse(Path.GetFileName(lhs), out var lhsVer)
+				? Version.TryParse(rhsName, out var rhsVer) ? lhsVer.CompareTo(rhsVer) : 1
+				: Version.TryParse(rhsName, out _) ? -1 : 0;
 		}
 	}
 

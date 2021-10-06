@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <Configurations>Debug;Release</Configurations>
     <Description>Unit tests for the FLEx Bridge Repository Utility</Description>
     <Company>SIL</Company>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <RootNamespace>LibTriboroughBridge_ChorusPluginTests</RootNamespace>
 
     <AssemblyName>TriboroughBridge-ChorusPluginTests</AssemblyName>
@@ -21,8 +21,8 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.6.10" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.47" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.47" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="10.2.0-*" />
   </ItemGroup>
 
   <ItemGroup>
