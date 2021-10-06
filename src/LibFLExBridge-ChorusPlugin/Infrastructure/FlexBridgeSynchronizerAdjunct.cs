@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -11,7 +11,7 @@ using Chorus.sync;
 using Chorus.VcsDrivers.Mercurial;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Properties;
-using LibTriboroughBridge_ChorusPlugin.Properties;
+using LibTriboroughBridgeChorusPlugin.Properties;
 using SIL.Progress;
 
 namespace LibFLExBridgeChorusPlugin.Infrastructure

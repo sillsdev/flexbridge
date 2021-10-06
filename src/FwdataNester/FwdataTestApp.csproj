@@ -6,7 +6,7 @@
     <AssemblyTitle>FwdataTestApp</AssemblyTitle>
     <Configurations>Debug;Release</Configurations>
     <Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
-    <Company>SIL International</Company>
+    <Company>SIL</Company>
     <Authors>SIL International</Authors>
     <Product>FLExBridge</Product>
     <Copyright>Copyright © 2010-2021 SIL International</Copyright>

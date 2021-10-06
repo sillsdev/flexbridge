@@ -1,17 +1,17 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RepositoryUtility.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="RecentlyUsedFileName" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="RecentlyUsedFileName" Provider="RepositoryUtility.Properties.SettingsProvider" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RecentlyUsedExportFolder" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="RecentlyUsedExportFolder" Provider="RepositoryUtility.Properties.SettingsProvider" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="HgrcStartFolder" Type="System.String" Scope="User">
+    <Setting Name="HgrcStartFolder" Provider="RepositoryUtility.Properties.SettingsProvider" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="CallUpgrade" Type="System.Boolean" Scope="User">
+    <Setting Name="CallUpgrade" Provider="RepositoryUtility.Properties.SettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
