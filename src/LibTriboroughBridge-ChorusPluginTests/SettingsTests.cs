@@ -5,7 +5,6 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using LibTriboroughBridgeChorusPlugin.Properties;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
@@ -17,6 +16,7 @@ namespace LibTriboroughBridge_ChorusPluginTests
 	public class SettingsTests
 	{
 		private const string AppName = "FLExBridge";
+		private const string CompanyName = "SIL";
 		private const string OldDirName = AppName + ".exe_Url_SomebodyThoughtGeneratingALongStringWouldBeAGoodIdea";
 		private const string SettingsFileName = "user.config";
 
@@ -33,7 +33,7 @@ namespace LibTriboroughBridge_ChorusPluginTests
 			LocalAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			OldCompanyDirPath = Path.Combine(LocalAppData, Platform.IsWindows ? "SIL_International" : "SIL International");
 			OldAppDirPath = Path.Combine(OldCompanyDirPath, OldDirName);
-			NewCompanyDirPath = Path.Combine(LocalAppData, Application.CompanyName);
+			NewCompanyDirPath = Path.Combine(LocalAppData, CompanyName);
 			NewAppDirPath = Path.Combine(NewCompanyDirPath, AppName);
 		}
 
@@ -62,7 +62,7 @@ namespace LibTriboroughBridge_ChorusPluginTests
 			_fileOs.AddFile(Path.Combine(OldAppDirPath, "1.0", SettingsFileName), mockData);
 
 			// SUT
-			Settings.MigrateNonCrossPlatformSettings(AppName);
+			Settings.MigrateNonCrossPlatformSettings(CompanyName, AppName);
 
 			var newSettingsFilePath = Path.Combine(NewAppDirPath, prevVer, SettingsFileName);
 			Assert.That(FileUtils.FileExists(newSettingsFilePath));
@@ -81,7 +81,7 @@ namespace LibTriboroughBridge_ChorusPluginTests
 			_fileOs.AddFile(newSettingsFilePath, existingConfigXml);
 
 			// SUT
-			Settings.MigrateNonCrossPlatformSettings(AppName);
+			Settings.MigrateNonCrossPlatformSettings(CompanyName, AppName);
 
 			Assert.That(FileUtils.FileExists(newSettingsFilePath), Is.True, $"Settings should have been copied to {newSettingsFilePath}");
 			Assert.That(_fileOs.ReadAllText(newSettingsFilePath), Is.EqualTo(existingConfigXml));

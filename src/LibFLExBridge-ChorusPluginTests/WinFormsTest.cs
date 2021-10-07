@@ -1,7 +1,8 @@
-﻿// Copyright (C) 2017 SIL International. All rights reserved.
+// Copyright (C) 2017-2021 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License.
 
+using System;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace LibFLExBridgeChorusPluginTests
 		[Test]
 		public void TestForAbsenceOfWindowsForms([Values("LibFLExBridge-ChorusPlugin", "LibTriboroughBridge-ChorusPlugin")] string assembly)
 		{
+			Console.WriteLine(string.Join(Environment.NewLine, Assembly.Load(assembly).GetReferencedAssemblies().Select(a => a.FullName)));
 			Assert.False(Assembly.Load(assembly).GetReferencedAssemblies()
 							.Any(assemblyName => assemblyName.FullName.Contains("Windows.Forms")),
 				"{0} should not reference Windows.Forms. See Readme.md", assembly);

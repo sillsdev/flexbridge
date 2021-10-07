@@ -52,7 +52,7 @@ namespace FLExBridge
 				// exception handler.
 			}
 
-			Settings.UpgradeSettingsIfNecessary(Settings.Default, Application.ProductName);
+			Settings.UpgradeSettingsIfNecessary(Settings.Default, Application.CompanyName, Application.ProductName);
 
 			SetUpErrorHandling();
 

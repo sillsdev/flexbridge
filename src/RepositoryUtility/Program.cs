@@ -49,7 +49,8 @@ namespace RepositoryUtility
 				// exception handler.
 			}
 
-			LibTriboroughBridgeChorusPlugin.Properties.Settings.UpgradeSettingsIfNecessary(Settings.Default, SettingsProvider.ProductNameForSettings);
+			LibTriboroughBridgeChorusPlugin.Properties.Settings.UpgradeSettingsIfNecessary(Settings.Default,
+				Application.CompanyName, SettingsProvider.ProductNameForSettings);
 
 			SetUpErrorHandling();
 

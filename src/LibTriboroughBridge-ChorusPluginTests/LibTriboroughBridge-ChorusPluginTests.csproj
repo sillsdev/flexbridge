@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.6.10" PrivateAssets="all" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit" Version="3.13.0" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="10.2.0-*" />
   </ItemGroup>

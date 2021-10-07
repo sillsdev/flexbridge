@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
@@ -19,20 +18,20 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 		/// If settings need to be upgraded, finds old settings under %LocalAppData%/SIL_International/AppName_URL_CrazyLongGeneratedString or similar
 		/// and copies them to %LocalAppData%/SIL/AppName, then upgrades settings.
 		/// </summary>
-		public static void UpgradeSettingsIfNecessary<T>(T settings, string appName) where T : ApplicationSettingsBase, IUpgradableSettings
+		public static void UpgradeSettingsIfNecessary<T>(T settings, string companyName, string appName) where T : ApplicationSettingsBase, IUpgradableSettings
 		{
 			if (!settings.CallUpgrade)
 			{
 				return;
 			}
 
-			MigrateNonCrossPlatformSettings(appName);
+			MigrateNonCrossPlatformSettings(companyName, appName);
 
 			settings.Upgrade();
 			settings.CallUpgrade = false;
 		}
 
-		internal static void MigrateNonCrossPlatformSettings(string appName)
+		internal static void MigrateNonCrossPlatformSettings(string companyName, string appName)
 		{
 			// Find settings from earlier versions that didn't use CrossPlatformSettingsProvider
 			// Copy the latest version's settings from each matching folder (don't overwrite)
@@ -45,7 +44,7 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 			}
 
 			var latestOldSettingsDir = LatestVersionSettingsDir(oldAppDirs);
-			var newAppDir = Path.Combine(localAppData, Application.CompanyName, appName);
+			var newAppDir = Path.Combine(localAppData, companyName, appName);
 			var newSettingsDir = Path.Combine(newAppDir, Path.GetFileName(latestOldSettingsDir));
 			const string settingsFileName = "user.config";
 			var latestOldSettingsFile = Path.Combine(latestOldSettingsDir, settingsFileName);
