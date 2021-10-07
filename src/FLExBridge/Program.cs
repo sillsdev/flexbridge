@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -13,6 +13,7 @@ using SIL.IO;
 using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
+using SIL.Windows.Forms.Miscellaneous;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
 using TriboroughBridge_ChorusPlugin.Properties;
@@ -58,6 +59,9 @@ namespace FLExBridge
 			}
 
 			SetUpErrorHandling();
+
+			// Use Gtk3
+			GraphicsManager.GtkVersionInUse = GraphicsManager.GTK3;
 
 			var options = CommandLineProcessor.ParseCommandLineArgs(args);
 
