@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -12,6 +12,7 @@ using SIL.IO;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
+using SIL.Windows.Forms.Miscellaneous;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Properties;
 
@@ -55,6 +56,9 @@ namespace RepositoryUtility
 			}
 
 			SetUpErrorHandling();
+
+			// Use Gtk3
+			GraphicsManager.GtkVersionInUse = GraphicsManager.GTK3;
 
 			if (Platform.IsLinux)
 				InitializeGeckofx();
