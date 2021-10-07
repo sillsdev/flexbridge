@@ -1,55 +1,59 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.705
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OtherDocs", "OtherDocs", "{0D38A3A9-1AE9-4984-A412-D395D2666ECC}"
 	ProjectSection(SolutionItems) = preProject
-		DistFiles\about.htm = DistFiles\about.htm
-		build\FLExBridge.proj = build\FLExBridge.proj
-		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
-		src\Installer\Installer.wxs = src\Installer\Installer.wxs
-		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
-		CHANGELOG.md = CHANGELOG.md
-		GitVersion.yml = GitVersion.yml
-		ReadMe.md = ReadMe.md
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		DistFiles\about.htm = DistFiles\about.htm
 		appveyor.yml = appveyor.yml
+		CHANGELOG.md = CHANGELOG.md
+		build\FLExBridge.proj = build\FLExBridge.proj
+		GitVersion.yml = GitVersion.yml
+		src\Installer\Installer.wixproj = src\Installer\Installer.wixproj
+		src\Installer\Installer.wxs = src\Installer\Installer.wxs
+		ReadMe.md = ReadMe.md
+		build\TestInstallerBuild.bat = build\TestInstallerBuild.bat
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLExBridge", "src\FLExBridge\FLExBridge.csproj", "{A40E1224-6159-4FE6-B78E-4094BD05DAF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FLExBridge", "src\FLExBridge\FLExBridge.csproj", "{A40E1224-6159-4FE6-B78E-4094BD05DAF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLEx-ChorusPlugin", "src\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj", "{133981BF-62BF-453A-8ED0-AEFA386FEBB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FLEx-ChorusPlugin", "src\FLEx-ChorusPlugin\FLEx-ChorusPlugin.csproj", "{133981BF-62BF-453A-8ED0-AEFA386FEBB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLEx-ChorusPluginTests", "src\FLEx-ChorusPluginTests\FLEx-ChorusPluginTests.csproj", "{5512542B-6423-4221-90AC-CF12CC73E96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FLEx-ChorusPluginTests", "src\FLEx-ChorusPluginTests\FLEx-ChorusPluginTests.csproj", "{5512542B-6423-4221-90AC-CF12CC73E96F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FwdataTestApp", "src\FwdataNester\FwdataTestApp.csproj", "{C036E79E-49D8-4AB3-BB9A-792C514A817F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwdataTestApp", "src\FwdataNester\FwdataTestApp.csproj", "{C036E79E-49D8-4AB3-BB9A-792C514A817F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridge-ChorusPlugin", "src\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj", "{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiftBridge-ChorusPlugin", "src\LiftBridge-ChorusPlugin\LiftBridge-ChorusPlugin.csproj", "{B814F8CE-56A1-4245-8CBA-683DD2FFF2DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftBridge-ChorusPluginTests", "src\LiftBridge-ChorusPluginTests\LiftBridge-ChorusPluginTests.csproj", "{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiftBridge-ChorusPluginTests", "src\LiftBridge-ChorusPluginTests\LiftBridge-ChorusPluginTests.csproj", "{6B8A79C7-B761-41DD-B9E3-FD5631ABE299}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriboroughBridge-ChorusPlugin", "src\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj", "{8F9F6C42-2BB6-49E1-831D-7414CA411845}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriboroughBridge-ChorusPlugin", "src\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj", "{8F9F6C42-2BB6-49E1-831D-7414CA411845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriboroughBridge-ChorusPluginTests", "src\TriboroughBridge-ChorusPluginTests\TriboroughBridge-ChorusPluginTests.csproj", "{88C35B4A-6925-45D7-97A4-E4DC4A59731F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriboroughBridge-ChorusPluginTests", "src\TriboroughBridge-ChorusPluginTests\TriboroughBridge-ChorusPluginTests.csproj", "{88C35B4A-6925-45D7-97A4-E4DC4A59731F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryUtility", "src\RepositoryUtility\RepositoryUtility.csproj", "{FC668C72-7472-4774-8501-8E021ECF3BEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryUtility", "src\RepositoryUtility\RepositoryUtility.csproj", "{FC668C72-7472-4774-8501-8E021ECF3BEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibFLExBridge-ChorusPlugin", "src\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj", "{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibFLExBridge-ChorusPlugin", "src\LibFLExBridge-ChorusPlugin\LibFLExBridge-ChorusPlugin.csproj", "{67DCA42D-0666-4BDB-BF7B-F3FAB2A6EFED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibFLExBridge-ChorusPluginTests", "src\LibFLExBridge-ChorusPluginTests\LibFLExBridge-ChorusPluginTests.csproj", "{D8929836-9B5D-4103-82AE-92ADC802592A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibFLExBridge-ChorusPluginTests", "src\LibFLExBridge-ChorusPluginTests\LibFLExBridge-ChorusPluginTests.csproj", "{D8929836-9B5D-4103-82AE-92ADC802592A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTriboroughBridge-ChorusPlugin", "src\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj", "{8E6DD218-7BA1-4119-82D2-535C05A0923C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibTriboroughBridge-ChorusPlugin", "src\LibTriboroughBridge-ChorusPlugin\LibTriboroughBridge-ChorusPlugin.csproj", "{8E6DD218-7BA1-4119-82D2-535C05A0923C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfMergeBridge", "src\LfMergeBridge\LfMergeBridge.csproj", "{4F0ECF1E-3C41-4564-A629-02C3455C71D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LfMergeBridge", "src\LfMergeBridge\LfMergeBridge.csproj", "{4F0ECF1E-3C41-4564-A629-02C3455C71D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfMergeBridgeTestApp", "src\LfMergeBridgeTestApp\LfMergeBridgeTestApp.csproj", "{DECC78B9-4FB5-4181-B7B7-E5121578000A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LfMergeBridgeTestApp", "src\LfMergeBridgeTestApp\LfMergeBridgeTestApp.csproj", "{DECC78B9-4FB5-4181-B7B7-E5121578000A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfMergeBridgeTests", "src\LfMergeBridgeTests\LfMergeBridgeTests.csproj", "{6CB1246D-956A-4759-AA13-D434CBB383FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LfMergeBridgeTests", "src\LfMergeBridgeTests\LfMergeBridgeTests.csproj", "{6CB1246D-956A-4759-AA13-D434CBB383FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiftFileCheckerApp", "src\LiftFileCheckerApp\LiftFileCheckerApp.csproj", "{30AA046B-5E14-408C-89EF-8601BB27FB32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiftFileCheckerApp", "src\LiftFileCheckerApp\LiftFileCheckerApp.csproj", "{30AA046B-5E14-408C-89EF-8601BB27FB32}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibTriboroughBridge-ChorusPluginTests", "src\LibTriboroughBridge-ChorusPluginTests\LibTriboroughBridge-ChorusPluginTests.csproj", "{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryUtilityTests", "src\RepositoryUtilityTests\RepositoryUtilityTests.csproj", "{720CCCB7-B966-4C3F-9F60-8B422DB46996}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +125,14 @@ Global
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720CCCB7-B966-4C3F-9F60-8B422DB46996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720CCCB7-B966-4C3F-9F60-8B422DB46996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720CCCB7-B966-4C3F-9F60-8B422DB46996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720CCCB7-B966-4C3F-9F60-8B422DB46996}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
