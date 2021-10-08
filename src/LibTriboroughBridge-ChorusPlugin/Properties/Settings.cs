@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace LibTriboroughBridgeChorusPlugin.Properties
 {
@@ -25,10 +26,24 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 				return;
 			}
 
-			MigrateNonCrossPlatformSettings(companyName, appName);
+			TryTo(() => MigrateNonCrossPlatformSettings(companyName, appName));
 
-			settings.Upgrade();
+			TryTo(settings.Upgrade);
+
+			// Whether or not we succeeded, don't try again.
 			settings.CallUpgrade = false;
+		}
+
+		private static void TryTo(Action doThis)
+		{
+			try
+			{
+				doThis();
+			}
+			catch (Exception e)
+			{
+				ErrorReport.ReportNonFatalExceptionWithMessage(e, "Failed to upgrade settings");
+			}
 		}
 
 		internal static void MigrateNonCrossPlatformSettings(string companyName, string appName)
