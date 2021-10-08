@@ -49,10 +49,10 @@ namespace RepositoryUtility
 				// exception handler.
 			}
 
+			SetUpErrorHandling();
+
 			LibTriboroughBridgeChorusPlugin.Properties.Settings.UpgradeSettingsIfNecessary(Settings.Default,
 				Application.CompanyName, SettingsProvider.ProductNameForSettings);
-
-			SetUpErrorHandling();
 
 			// Use Gtk3
 			GraphicsManager.GtkVersionInUse = GraphicsManager.GTK3;

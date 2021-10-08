@@ -52,9 +52,9 @@ namespace FLExBridge
 				// exception handler.
 			}
 
-			Settings.UpgradeSettingsIfNecessary(Settings.Default, Application.CompanyName, Application.ProductName);
-
 			SetUpErrorHandling();
+
+			Settings.UpgradeSettingsIfNecessary(Settings.Default, Application.CompanyName, Application.ProductName);
 
 			// Use Gtk3
 			GraphicsManager.GtkVersionInUse = GraphicsManager.GTK3;
