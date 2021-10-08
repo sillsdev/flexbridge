@@ -67,6 +67,8 @@ namespace LibTriboroughBridge_ChorusPluginTests
 			var newSettingsFilePath = Path.Combine(NewAppDirPath, prevVer, SettingsFileName);
 			Assert.That(FileUtils.FileExists(newSettingsFilePath));
 			Assert.That(_fileOs.ReadAllText(newSettingsFilePath), Is.EqualTo(prevConfigXml));
+			Assert.That(FileUtils.DirectoryExists(Path.GetDirectoryName(newSettingsFilePath)),
+				"MockFileOS doesn't always care about directories existing. Real filesystems do.");
 		}
 
 		[Test]

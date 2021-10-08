@@ -51,6 +51,7 @@ namespace LibTriboroughBridgeChorusPlugin.Properties
 			var newSettingsFilePath = Path.Combine(newSettingsDir, settingsFileName);
 			if (FileUtils.FileExists(latestOldSettingsFile) && !FileUtils.FileExists(newSettingsFilePath))
 			{
+				FileUtils.EnsureDirectoryExists(newSettingsDir);
 				FileUtils.Copy(latestOldSettingsFile, newSettingsFilePath);
 			}
 		}
