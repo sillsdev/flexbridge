@@ -2,20 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>LfMergeBridgeTestApp</RootNamespace>
     <AssemblyName>LfMergeBridgeTestApp</AssemblyName>
-    <Configurations>Debug;Release</Configurations>
     <Description>LfMergeBridge test app</Description>
-    <Company>SIL</Company>
-    <Authors>SIL International</Authors>
-    <Product>FLExBridge</Product>
-    <Copyright>Copyright © 2010-2021 SIL International</Copyright>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
     <IsPackable>false</IsPackable>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
   </PropertyGroup>
 
   <ItemGroup>
