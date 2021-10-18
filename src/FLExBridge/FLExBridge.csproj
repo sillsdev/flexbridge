@@ -1,32 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>FLExBridge</RootNamespace>
     <AssemblyTitle>FLExBridge</AssemblyTitle>
-    <Configurations>Debug;Release</Configurations>
-    <Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
-    <Company>SIL</Company>
-    <Authors>SIL International</Authors>
-    <Product>FLExBridge</Product>
-    <Copyright>Copyright © 2010-2021 SIL International</Copyright>
     <PackageId>SIL.Chorus.FLExBridge</PackageId>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/sillsdev/flexbridge</PackageProjectUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
-    <PackageOutputPath>../../output</PackageOutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <AppendToReleaseNotesProperty><![CDATA[
-See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGELOG.md]]>
-    </AppendToReleaseNotesProperty>
     <OutputType>WinExe</OutputType>
-    <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>

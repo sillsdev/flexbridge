@@ -1,21 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>LiftFileCheckerApp</RootNamespace>
     <AssemblyName>LiftFileCheckerApp</AssemblyName>
-    <Configurations>Debug;Release</Configurations>
     <Description>LIFT file checker app</Description>
-    <Company>SIL</Company>
-    <Authors>SIL International</Authors>
-    <Product>FLExBridge</Product>
-    <Copyright>Copyright © 2010-2021 SIL International</Copyright>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
     <IsPackable>false</IsPackable>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
   </PropertyGroup>
 
   <ItemGroup>

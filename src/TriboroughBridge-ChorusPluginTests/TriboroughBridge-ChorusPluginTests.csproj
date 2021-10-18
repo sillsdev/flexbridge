@@ -1,20 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>TriboroughBridge_ChorusPluginTests</RootNamespace>
     <AssemblyName>TriboroughBridge-ChorusPluginTests</AssemblyName>
-    <Configurations>Debug;Release</Configurations>
     <Description>Unit tests for TriboroughBridge-ChorusPlugin</Description>
-    <Company>SIL</Company>
-    <Authors>SIL International</Authors>
-    <Product>FLExBridge</Product>
-    <Copyright>Copyright © 2010-2021 SIL International</Copyright>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
     <IsPackable>false</IsPackable>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
   </PropertyGroup>
 
   <ItemGroup>
