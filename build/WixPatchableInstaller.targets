@@ -65,7 +65,7 @@
 
 	<!-- Compile Product and Installer Custom Actions -->
 	<Target Name="ProductCompile" DependsOnTargets="Build">
-		<MSBuild Projects="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions.sln" Properties="Configuration=release;Platform=x86" />
+		<MSBuild Projects="$(RootDir)/src/WiXInstaller/CustomActions/CustomActions.sln" Properties="Configuration=Release;Platform=x86" />
 	</Target>
 
 	<!-- used by target Clean in FLExBridge.proj -->

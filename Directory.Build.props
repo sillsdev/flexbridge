@@ -13,7 +13,7 @@
 	<OutputPath>../../output/$(Configuration)</OutputPath>
 	<PackageOutputPath>../../output</PackageOutputPath>
 	<SignAssembly>true</SignAssembly>
-	<AssemblyOriginatorKeyFile>../../Flexbridge.snk</AssemblyOriginatorKeyFile>
+	<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/Flexbridge.snk</AssemblyOriginatorKeyFile>
 	<ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
 	<IncludeSymbols>true</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
