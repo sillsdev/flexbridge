@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Enlarge the settings dialog to fit wide comboboxes
+- If only one project is available to send and receive, select it automatically
+
 ## [3.4.2] - 2021-10-06
 
 ### Fixed
