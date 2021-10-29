@@ -1,3 +1,12 @@
+flexbridge (3.4.3.4) UNRELEASED; urgency=low
+
+  * Fixed
+
+    * Enlarge the settings dialog to fit wide comboboxes
+    * If only one project is available to send and receive, select it automatically
+
+ -- Hasso <flex_devteam@sil.org>  Thu, 28 Oct 2021 14:03:51 -0500
+
 flexbridge (3.4.2) UNRELEASED; urgency=low
 
   * Fixed
