@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="MsmDir" Value="$(var.MASTERBUILDDIR)\..\FLExBridge_MSM"/>
+	<?else?>
+	<?ifdef UPDATEBUILDDIR?>
+	<WixVariable Id="MsmDir" Value="$(var.UPDATEBUILDDIR)\..\FLExBridge_MSM"/>
+	<?else?>
+	<WixVariable Id="MsmDir" Value="$(var.APPBUILDDIR)\..\FLExBridge_MSM"/>
+	<?endif?>
+	<?endif?>
+
+	<!-- Install Chorus and Mercurial -->
+	<DirectoryRef  Id='APPFOLDER'>
+		<Merge Id="ChorusMergeModule" Language="1033" SourceFile="!(wix.MsmDir)\ChorusMergeModule.msm" DiskId="1"/>
+	</DirectoryRef>
+
 	<DirectoryRef Id="TARGETDIR">
 		<Component Id="InstallDirEnvVar" Guid="EEDDBBF6-7B37-4473-8D53-3081AB076399">
 			<Environment Id="InstallDirEnvVar" Name="FLEXBRIDGEDIR" Action="set" System="yes" Value="[APPFOLDER]" />

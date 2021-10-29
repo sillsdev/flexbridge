@@ -49,6 +49,7 @@
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+		<MsmDirSuffix>$(BinDirSuffix)_MSM</MsmDirSuffix>
 	</PropertyGroup>
 
 	<!-- Top Level Targets -->
@@ -107,6 +108,7 @@
 			<BinFiles Include="$(RootBinDir)\**\*" Exclude="@(FilesForDevelopers);@(FilesInstalledByChorusMerge)"/>
 			<BinFiles Include="$(RootDir)/output/Installer/License.htm"/>
 			<DataFiles Include="$(RootDir)/output/Installer/License.htm"/> <!-- REVIEW (Hasso) 2017.12: we don't need to install "data files" -->
+			<MergeModules Include="$(RootDir)\lib\Release\ChorusMergeModule.msm"/>
 			<InstallerResources Include="$(RootDir)/output/Installer/License.htm"/>
 			<InstallerResources Include="$(RootDir)\DistFiles\App.ico"/>
 			<InstallerResources Include="$(RootDir)\DistFiles\Installer.ico"/>
@@ -114,6 +116,7 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)%(RecursiveDir)"/>
+		<Copy SourceFiles="@(MergeModules)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(MsmDirSuffix)"/>
 		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/resources"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(RootDir)/src/WiXInstaller/Common"/>
 		<WriteLinesToFile File="$(AppBuildDir)/version" Lines="$(BuildVersion)"/>
