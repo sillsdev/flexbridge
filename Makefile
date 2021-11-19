@@ -13,6 +13,7 @@ UploadFolder="Alpha"
 # Work around proxy bug in older mono to allow dependency downloads
 no_proxy := $(no_proxy),*.local
 GECKOFX60_VERSION := 60.0.51
+PREFIX ?= /usr
 
 all: release
 
@@ -73,32 +74,32 @@ fetch_l10ns:
 	'
 
 install: fetch_l10ns
-	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install output/Release/net461/*.* $(DESTDIR)/usr/lib/flexbridge
-	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.htm
-	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.png
-	/bin/chmod -x $(DESTDIR)/usr/lib/flexbridge/*.config
-	/usr/bin/install flexbridge environ-xulrunner $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install lib/common/run-app $(DESTDIR)/usr/lib/flexbridge
-	cp -r Mercurial  $(DESTDIR)/usr/lib/flexbridge
-	cp -r MercurialExtensions $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install lib/common/chorusmerge $(DESTDIR)/usr/lib/flexbridge
-	/usr/bin/install -d $(DESTDIR)/usr/lib/flexbridge/localizations
-	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)/usr/lib/flexbridge/localizations
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/usr/bin/install output/Release/net461/*.* $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/bin/chmod -x $(DESTDIR)$(PREFIX)/lib/flexbridge/*.htm
+	/bin/chmod -x $(DESTDIR)$(PREFIX)/lib/flexbridge/*.png
+	/bin/chmod -x $(DESTDIR)$(PREFIX)/lib/flexbridge/*.config
+	/usr/bin/install flexbridge environ-xulrunner $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/usr/bin/install lib/common/run-app $(DESTDIR)$(PREFIX)/lib/flexbridge
+	cp -r Mercurial  $(DESTDIR)$(PREFIX)/lib/flexbridge
+	cp -r MercurialExtensions $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/usr/bin/install lib/common/Chorus_Help.chm $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/usr/bin/install lib/common/chorusmerge $(DESTDIR)$(PREFIX)/lib/flexbridge
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/lib/flexbridge/localizations
+	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)$(PREFIX)/lib/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)/var/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)/var/lib/flexbridge/localizations
-	/usr/bin/install -d $(DESTDIR)/usr/bin
-	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)/usr/bin
-	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)/usr/bin
-	/usr/bin/install -d $(DESTDIR)/usr/share/pixmaps
-	/usr/bin/install -m644 lib/common/chorusHubIcon.png $(DESTDIR)/usr/share/pixmaps
-	/usr/bin/install -d $(DESTDIR)/usr/share/applications
-	/usr/bin/install -m644 lib/common/fieldworks-chorushub.desktop $(DESTDIR)/usr/share/applications
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/bin
+	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)$(PREFIX)/bin
+	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)$(PREFIX)/bin
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/share/pixmaps
+	/usr/bin/install -m644 lib/common/chorusHubIcon.png $(DESTDIR)$(PREFIX)/share/pixmaps
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/share/applications
+	/usr/bin/install -m644 lib/common/fieldworks-chorushub.desktop $(DESTDIR)$(PREFIX)/share/applications
 	# remove unwanted stuff
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/FwdataTestApp.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*.TestUtilities.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/*Bridge-ChorusPluginTests.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/nunit.framework.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/TheTurtle.*
-	/bin/rm -f $(DESTDIR)/usr/lib/flexbridge/NetSparkle.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/FwdataTestApp.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*.TestUtilities.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*Bridge-ChorusPluginTests.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/nunit.framework.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/TheTurtle.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/NetSparkle.*
