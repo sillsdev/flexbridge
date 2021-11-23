@@ -89,7 +89,6 @@ jobs:
       - name: Set flexbridge commit to build from
         run: |
           set -xueo pipefail
-          ps
           # Find the source stanza for 'flexbridge.git' and change its 'commit:' field to the commit id this build is checking.
           echo gs: ${GITHUB_SHA}
           perl -0777 -pi -e \
