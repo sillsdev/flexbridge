@@ -23,7 +23,7 @@
 # This job builds and packages FieldWorks using a specific FLExBridge commit, 
 # demonstrating if Flatpak Fieldworks building and functionality continue.
 
-name: Build in Flatpak FieldWorks
+name: Build Flexbridge in Flatpak FieldWorks
 
 on:
   push:
@@ -103,15 +103,13 @@ jobs:
           source ./.flatpak-builder/build/fieldworks-1/fw/Src/MasterVersionInfo.txt
           # VERSION_SUFFIX will be empty, or set to FWBETAVERSION but with a dash before it.
           VERSION_SUFFIX="${FWBETAVERSION:+"-${FWBETAVERSION}"}"
-          PACKAGE_VERSION="${FWMAJOR}.${FWMINOR}.${FWREVISION}.${GITHUB_RUN_NUMBER}${VERSION_SUFFIX}-experimental-$(date +'%Y%m%d')-${GITHUB_SHA::7}"
-          TAG_NAME="v${FWMAJOR}.${FWMINOR}.${FWREVISION}.${GITHUB_RUN_NUMBER}${VERSION_SUFFIX}-experimental"
+          PACKAGE_VERSION="${FWMAJOR}.${FWMINOR}.${FWREVISION}${VERSION_SUFFIX}-experimental-flexbridge.${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d')-${GITHUB_SHA::7}"
           echo >> "${GITHUB_ENV}" "FWMAJOR=${FWMAJOR}"
           echo >> "${GITHUB_ENV}" "FWMINOR=${FWMINOR}"
           echo >> "${GITHUB_ENV}" "FWREVISION=${FWREVISION}"
           echo >> "${GITHUB_ENV}" "FWBETAVERSION=${FWBETAVERSION}"
           echo >> "${GITHUB_ENV}" "VERSION_SUFFIX=${VERSION_SUFFIX}"
           echo >> "${GITHUB_ENV}" "PACKAGE_VERSION=${PACKAGE_VERSION}"
-          echo >> "${GITHUB_ENV}" "TAG_NAME=${TAG_NAME}"
       - name: Create flatpak bundle
         run: |
           set -xueo pipefail
@@ -130,17 +128,3 @@ jobs:
           name: fw-flatpak-bundle
           path: |
             artifacts/
-      - name: Publish artifacts as Github release
-        uses: ncipollo/release-action@v1.8.6
-        with:
-          artifacts: "artifacts/*"
-          prerelease: true
-          # Branch to build from
-          commit: develop
-          # New tag name to use
-          tag: "${{ env.TAG_NAME }}"
-          allowUpdates: true
-          artifactErrorsFailBuild: true
-          name: "v${{ env.PACKAGE_VERSION }}"
-          body: "Automatically generated FieldWorks flatpak package for internal testing. Not for use on production machines or with real data."
-          token: ${{ secrets.GITHUB_TOKEN }}
