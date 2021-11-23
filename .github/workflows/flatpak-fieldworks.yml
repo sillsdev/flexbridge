@@ -89,7 +89,7 @@ jobs:
           set -xueo pipefail
           # Find the source stanza for 'flexbridge.git' and change its 'commit:' field to the commit id this build is checking.
           perl -0777 -pi -e \
-            '(type: git[\s\S]*?flexbridge\.git[\s\S]*?commit: )(.*)(\n[\s\S]*?- type:)/$1'${GITHUB_SHA}'$3/gm' \
+            's/(type: git[\s\S]*?flexbridge\.git[\s\S]*?commit: )(.*)(\n[\s\S]*?- type:)/$1'${GITHUB_SHA}'$3/gm' \
             org.sil.FieldWorks.yml
           cat org.sil.FieldWorks.yml | grep ${GITHUB_SHA}
           cat org.sil.FieldWorks.yml
