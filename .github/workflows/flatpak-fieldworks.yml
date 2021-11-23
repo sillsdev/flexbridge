@@ -40,6 +40,7 @@ jobs:
       - name: Adjust disk space
         run: |
           set -xueo pipefail
+          wget 'https://api.nuget.org/v3-flatcontainer/Geckofx45.64.Linux/45.0.21/Geckofx45.64.Linux.45.0.21.nupkg'
           df -h /
           
           sudo apt-get purge --assume-yes \
