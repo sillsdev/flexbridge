@@ -87,7 +87,9 @@ jobs:
       - name: Set flexbridge commit to build from
         run: |
           set -xueo pipefail
-          
+          perl -0777 -pi -e 's/(flexbridge\.git\s+branch: .*\s+commit: )(.*)(\n)/$1'${GITHUB_SHA}'$3/gm' org.sil.FieldWorks.yml
+          cat org.sil.FieldWorks.yml | grep ${GITHUB_SHA}
+          cat org.sil.FieldWorks.yml
       - name: Build flatpak package
         run: |
           set -xueo pipefail
