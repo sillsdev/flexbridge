@@ -1,4 +1,4 @@
-# Build FieldWorks flatpak with flexbridge
+# Build FieldWorks flatpak with specific Flexbridge commit
 #
 # Copyright (c) 2021 SIL International. MIT License.
 #
@@ -39,6 +39,7 @@ jobs:
     steps:
       - name: Adjust disk space
         run: |
+          exit 0
           set -xueo pipefail
           df -h /
           
@@ -78,6 +79,7 @@ jobs:
           ref: 'org.sil.FieldWorks'
       - name: Install flatpak dependencies
         run: |
+          exit 0
           set -xueo pipefail
           sudo apt-get update
           sudo apt-get install flatpak-builder
@@ -87,14 +89,15 @@ jobs:
       - name: Set flexbridge commit to build from
         run: |
           set -xueo pipefail
+          ps
           # Find the source stanza for 'flexbridge.git' and change its 'commit:' field to the commit id this build is checking.
           echo gs: ${GITHUB_SHA}
           echo egs: ${env.GITHUB_SHA}
           perl -0777 -pi -e \
             's/(type: git[\s\S]*?flexbridge\.git[\s\S]*?commit: )(.*)(\n[\s\S]*?- type:)/$1112233$3/gm' \
             org.sil.FieldWorks.yml
-          cat org.sil.FieldWorks.yml | grep ${GITHUB_SHA}
           cat org.sil.FieldWorks.yml
+          cat org.sil.FieldWorks.yml | grep ${GITHUB_SHA}
       - name: Build flatpak package
         run: |
           set -xueo pipefail
