@@ -50,7 +50,6 @@ jobs:
             adoptopenjdk-8-hotspot \
             dotnet-sdk-3.1 \
             powershell \
-            snapd \
             mono-devel \
             monodoc-http \
             mongodb-org-server \
@@ -88,12 +87,19 @@ jobs:
       - name: Set Flexbridge commit to build from
         run: |
           set -xueo pipefail
-          
-          # Find the source stanza for 'flexbridge.git' and change its 'commit:'
-          # field to the commit id this build is checking.
-          perl -0777 -pi -e \
-            's/(type: git[\s\S]*?flexbridge\.git[\s\S]*?commit: )(.*)(\n[\s\S]*?- type:)/${1}'${GITHUB_SHA}'${3}/gm' \
+          sudo snap install yq
+          # Find the source stanza for 'flexbridge.git'. Remove 'branch:' and 
+          # change its 'commit:' field to the commit id this build is checking.
+          yq eval --inplace \
+            '.modules[0].modules[] | 
+              select(.name == "flexbridge").sources[] | 
+              select(.url == "https://github.com/sillsdev/flexbridge.git") | 
+              del(.branch) | 
+              .commit = "'${GITHUB_SHA}'"' \
             org.sil.FieldWorks.yml
+          # perl -0777 -pi -e \
+          #   's/(type: git[\s\S]*?flexbridge\.git[\s\S]*?commit: )(.*)(\n[\s\S]*?- type:)/${1}'${GITHUB_SHA}'${3}/gm' \
+          #   org.sil.FieldWorks.yml
       - name: Build flatpak package
         run: |
           set -xueo pipefail
