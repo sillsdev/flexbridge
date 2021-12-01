@@ -1,5 +1,7 @@
 #!/bin/bash
-
+#
+# Copyright (c) 2016-2021 SIL International. MIT License.
+#
 # Launch FLExBridge
 # Since FLEx Bridge should always be launched from FieldWorks,
 # there is no need to source a new environ file;
@@ -16,24 +18,16 @@ prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
 cd "${scriptdir}"
 
-(
-	XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
-	FB_SHARE="${XDG_DATA_HOME}/SIL/FlexBridge"
+# Keep localizations files updated.
+FB_SHARE="${XDG_DATA_HOME}/SIL/FlexBridge"
+mkdir -p "${FB_SHARE}"
 
-	# Keep localizations files updated.
-	# Initialize on fresh install
-	if [ ! -f "${FB_SHARE}" ]; then
-		mkdir -p "${FB_SHARE}"
-	fi
-
-	# update new localizations
-	if [ "${prefix}" == "/usr" ];then
-		cp -a "/var/lib/flexbridge/localizations" "${FB_SHARE}"
-	else
-		# For developer build. This is still not working correctly.
-		cp -a "${prefix}/../DistFiles/localizations" "${FB_SHARE}"
-	fi
-)
+if [[ "${prefix}" == "/usr" || -n "${FLATPAK_ID-}" ]]; then
+  cp -a "/var/lib/flexbridge/localizations" "${FB_SHARE}"
+else
+  # For developer build. This is still not working correctly.
+  cp -a "${prefix}/../DistFiles/localizations" "${FB_SHARE}"
+fi
 
 cd - >/dev/null
 mono --debug "${scriptdir}"/FLExBridge.exe "$@"
