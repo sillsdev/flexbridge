@@ -7,7 +7,7 @@
 # there is no need to source a new environ file;
 # the environment variables should already be set correctly.
 
-set -e -o pipefail
+set -ueo pipefail
 
 # set HGRCPATH so that we ignore ~/.hgrc files which might have content that is
 # incompatible with our version of Mercurial
