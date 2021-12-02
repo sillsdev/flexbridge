@@ -1,3 +1,5 @@
+# Copyright (c) 2013-2021 SIL International. MIT License.
+#
 # Linux/Mono Makefile for FlexBridge, mainly intended for use during Linux package build
 
 -include gitversion.properties
@@ -87,8 +89,8 @@ install: fetch_l10ns
 	/usr/bin/install lib/common/chorusmerge $(DESTDIR)$(PREFIX)/lib/flexbridge
 	/usr/bin/install -d $(DESTDIR)$(PREFIX)/lib/flexbridge/localizations
 	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)$(PREFIX)/lib/flexbridge/localizations
-	/usr/bin/install -d $(DESTDIR)/var/lib/flexbridge/localizations
-	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)/var/lib/flexbridge/localizations
+	/usr/bin/install -d $(DESTDIR)$(PREFIX)/share/flexbridge/localizations
+	/usr/bin/install -m644 output/Release/net461/localizations/*.* $(DESTDIR)$(PREFIX)/share/flexbridge/localizations
 	/usr/bin/install -d $(DESTDIR)$(PREFIX)/bin
 	/usr/bin/install lib/common/fieldworks-chorus $(DESTDIR)$(PREFIX)/bin
 	/usr/bin/install lib/common/fieldworks-chorushub $(DESTDIR)$(PREFIX)/bin
