@@ -33,12 +33,21 @@
 	<Exec Command="overcrowdin updatefiles" />
   </Target>
 
-  <Target Name="GetLatestL10ns" DependsOnTargets="restore">
-	<RemoveDir Directories="$(FwL10nsDir)" />
-	<Exec Command="overcrowdin download -e -f $(FwL10nsZip)" />
-	<CallTarget Targets="UnzipL10ns"/>
-	<NormalizeLocales L10nsDirectory="$(FwL10nsDir)" />
-	<CallTarget Targets="CopyL10nsToDistFiles"/>
+  <Target Name="GetLatestL10ns" DependsOnTargets="restore;FetchLatestL10ns;ProcessL10ns">
+  </Target>
+
+  <Target Name="FetchLatestL10ns" DependsOnTargets="restore">
+    <Exec Command="overcrowdin download -e -f $(FwL10nsZip)" />
+  </Target>
+
+  <Target Name="ProcessL10ns"  DependsOnTargets="restore">
+    <!-- Target ProcessL10ns assumes that l10ns have been fetched,
+    without explicitly depending on a fetching target so it can be done
+    by other means. -->
+    <RemoveDir Directories="$(FwL10nsDir)" />
+    <CallTarget Targets="UnzipL10ns"/>
+    <NormalizeLocales L10nsDirectory="$(FwL10nsDir)" />
+    <CallTarget Targets="CopyL10nsToDistFiles"/>
   </Target>
 
   <Target Name="CopyL10nsToDistFiles" DependsOnTargets="restore">
