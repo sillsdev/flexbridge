@@ -70,12 +70,14 @@ fetch_l10ns:
 	dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
 	bash -c '\
 		export PATH="$$PATH:${HOME}/.dotnet/tools" \
-		&& cd l10n \
-		&& msbuild l10n.proj /t:restore \
-		&& msbuild l10n.proj /t:GetlatestL10ns \
+		&& msbuild l10n/l10n.proj -t:restore \
+		&& msbuild l10n/l10n.proj -t:FetchLatestL10ns \
 	'
+process_l10ns:
+	msbuild l10n/l10n.proj -t:restore
+	msbuild l10n/l10n.proj -t:ProcessL10ns
 
-install: fetch_l10ns
+install: fetch_l10ns process_l10ns
 	/usr/bin/install -d $(DESTDIR)$(PREFIX)/lib/flexbridge
 	/usr/bin/install output/Release/net461/*.* $(DESTDIR)$(PREFIX)/lib/flexbridge
 	/bin/chmod -x $(DESTDIR)$(PREFIX)/lib/flexbridge/*.htm
