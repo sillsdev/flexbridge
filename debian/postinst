@@ -40,9 +40,11 @@ case "$1" in
 		done
 
 		VLF=/var/lib/flexbridge
-		chgrp -R fieldworks $VLF
-		chmod -R g+w $VLF
-		find $VLF -type d -print0 | xargs -0 chmod 2775
+		# Switching off making the system FB localization area user-writable,
+		# while changing for flatpak.
+		#chgrp -R fieldworks $VLF
+		#chmod -R g+w $VLF
+		#find $VLF -type d -print0 | xargs -0 chmod 2775
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)

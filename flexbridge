@@ -23,7 +23,7 @@ FB_SHARE="${XDG_DATA_HOME}/SIL/FlexBridge"
 mkdir -p "${FB_SHARE}"
 
 if [[ "${prefix}" == "/usr" || -n "${FLATPAK_ID-}" ]]; then
-  cp -a "/var/lib/flexbridge/localizations" "${FB_SHARE}"
+  cp -a "${prefix}/share/flexbridge/localizations" "${FB_SHARE}"
 else
   # For developer build. This is still not working correctly.
   cp -a "${prefix}/../DistFiles/localizations" "${FB_SHARE}"
