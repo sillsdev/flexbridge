@@ -104,8 +104,11 @@ install-core:
 	/usr/bin/install -m644 lib/common/fieldworks-chorushub.desktop $(DESTDIR)$(PREFIX)/share/applications
 	# remove unwanted stuff
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/FwdataTestApp.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/LfMergeBridgeTestApp.*
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*.TestUtilities.*
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*Bridge-ChorusPluginTests.*
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*Tests.dll
+	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/*Tests.pdb
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/nunit.framework.*
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/TheTurtle.*
 	/bin/rm -f $(DESTDIR)$(PREFIX)/lib/flexbridge/NetSparkle.*
