@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
@@ -43,7 +44,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				// something else besides the timestamp changed. Set timestamp to current time.
 				newestDateTime = DateTimeProvider.Current.UtcNow;
 			}
-			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.fff");
+			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.fff", CultureInfo.InvariantCulture);
 			UpdateDateTimeVal(newestDateTimeString, ourDateTimeNode);
 			UpdateDateTimeVal(newestDateTimeString, theirDateTimeNode);
 		}
