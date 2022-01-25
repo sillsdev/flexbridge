@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Globalization;
 using System.Xml;
 using Chorus.FileTypeHandlers;
 using LibFLExBridgeChorusPlugin.Infrastructure;
@@ -50,10 +51,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 
 		public static DateTime _expectedUtcDateTime;
 
-		public static string ExpectedUtcDateTimeString
-		{
-			get { return ExpectedDateTime.ToString("yyyy-M-d H:m:s.fff"); }
-		}
+		public static string ExpectedUtcDateTimeString => ExpectedDateTime.ToString("yyyy-M-d H:m:s.fff", CultureInfo.InvariantCulture);
 
 		public static DateTime ExpectedDateTime
 		{
@@ -73,6 +71,5 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 					_expectedUtcDateTime.Millisecond);
 			}
 		}
-
 	}
 }
