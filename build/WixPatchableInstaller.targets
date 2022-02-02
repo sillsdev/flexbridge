@@ -138,6 +138,10 @@
 			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"/>		<!-- VisualC++ 11 runtime -->
 		<DownloadFileOnce Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
 			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"/>		<!-- VisualC++ 12 runtime -->
+		<!-- Chorus merge module. Needed to make local installer builds work. This will not download anything on TeamCity, because this file will
+			already have been imported from TC build dependencies. If developers ever need a new version, they can delete their old one. -->
+		<DownloadFileOnce LocalFilename="$(RootDir)\lib\Release\ChorusMergeModule.msm"
+			Address="https://build.palaso.org/guestAuth/repository/download/Chorus_Win32masterContinuous/.lastSuccessful/ChorusMergeModule.msm"/>
 	</Target>
 
 	<UsingTask TaskName="DownloadFileOnce" TaskFactory="CodeTaskFactory"
