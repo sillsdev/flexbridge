@@ -1,6 +1,7 @@
 mode: ContinuousDeployment
 increment: Patch
 assembly-versioning-scheme: MajorMinor
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{WeightedPreReleaseNumber}'
 branches:
   master:
     tag:
