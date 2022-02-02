@@ -16,10 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.6.0] - 2022-02-02
+
 ### Fixed
 
 - Enlarge the settings dialog to fit wide comboboxes
 - If only one project is available to send and receive, select it automatically
+- Use invariant culture in Date.ToString in the premerger
 
 ## [3.4.2] - 2021-10-06
 

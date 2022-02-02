@@ -1,3 +1,13 @@
+flexbridge (3.6.0) UNRELEASED; urgency=low
+
+  * Fixed
+
+    * Enlarge the settings dialog to fit wide comboboxes
+    * If only one project is available to send and receive, select it automatically
+    * Use invariant culture in Date.ToString in the premerger
+
+ -- Jason Naylor <jason_naylor@sil.org>  Wed, 02 Feb 2022 14:09:24 -0600
+
 flexbridge (3.4.3.4) UNRELEASED; urgency=low
 
   * Fixed
