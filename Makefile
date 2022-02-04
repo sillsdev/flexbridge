@@ -68,11 +68,9 @@ clean:
 
 fetch_l10ns:
 	dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
-	bash -c '\
-		export PATH="$$PATH:${HOME}/.dotnet/tools" \
-		&& msbuild l10n/l10n.proj -t:restore \
-		&& msbuild l10n/l10n.proj -t:FetchLatestL10ns \
-	'
+	PATH="$$PATH:${HOME}/.dotnet/tools" msbuild l10n/l10n.proj -t:restore
+	PATH="$$PATH:${HOME}/.dotnet/tools" msbuild l10n/l10n.proj -t:FetchLatestL10ns
+
 process_l10ns:
 	msbuild l10n/l10n.proj -t:restore
 	msbuild l10n/l10n.proj -t:ProcessL10ns
