@@ -119,12 +119,13 @@ namespace TriboroughBridge_ChorusPlugin
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "SIL");
 				results.Add("Palaso", palasoLocMan);
 			}
-			catch
+			catch (Exception e)
 			{
 				// For some reason, even though ErrorReport has been initialized, calling it here throws an exception.
 				// ReSharper disable LocalizableElement - not localizable if l10n setup failed!
 				MessageBox.Show(
-					$"There was a problem setting up localizations, probably because they were not installed. Please report this to {FlexBridgeEmailAddress}.",
+					$"There was a problem setting up localizations, probably because they were not installed. Please report this to {FlexBridgeEmailAddress}." +
+					$"{Environment.NewLine}{Environment.NewLine}Details:{Environment.NewLine}{e}",
 					"Error Localizing FLEx Bridge", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				// ReSharper restore LocalizableElement
 			}

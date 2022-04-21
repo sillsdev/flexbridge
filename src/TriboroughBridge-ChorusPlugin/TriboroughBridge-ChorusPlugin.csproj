@@ -30,4 +30,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="CreateL10nsDir" AfterTargets="Build">
+    <MakeDir Directories="$(OutputPath)/localizations"/>
+  </Target>
+
 </Project>
