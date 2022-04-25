@@ -32,7 +32,7 @@
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
 		<PropertyGroup>
 			<PreReleaseNumber>$(GitVersion_PreReleaseNumber)</PreReleaseNumber>
-			<PreReleaseNumber Condition="'$(PreReleaseNumber)'==''">$([MSBuild]::Multiply($(BUILD_NUMBER), 10))</PreReleaseNumber>
+			<PreReleaseNumber Condition="'$(PreReleaseNumber)'==''">$(GitVersion_WeightedPreReleaseNumber)</PreReleaseNumber>
 			<MajorVersion>$(GitVersion_Major)</MajorVersion>
 			<MinorVersion>$(MajorVersion).$(GitVersion_Minor)</MinorVersion>
 			<PatchVersion>$(MinorVersion).$(GitVersion_Patch)</PatchVersion>
