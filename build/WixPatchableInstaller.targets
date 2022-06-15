@@ -11,7 +11,7 @@
 	<!-- PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every -->
 	<!-- base build must get its own unique third number (minor version) in the version number sequence. -->
 	<PropertyGroup>
-		<ProductIdGuid>354F5054-6A0B-4372-B7BC-CA515090A1DA</ProductIdGuid>
+		<ProductIdGuid>62F352E2-CBDF-421C-A181-DC02D375B38E</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- UPGRADE CODE GUID definition : This value must be the same for every version of this product. -->

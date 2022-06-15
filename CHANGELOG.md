@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.6.1] - 2022-06-15
+
+### Fixed
+
+- Cleanup Flexbridge login dialog
+- Move the location of the local Chorus cache
+
 ## [3.6.0] - 2022-02-02
 
 ### Fixed
