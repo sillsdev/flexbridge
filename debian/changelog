@@ -1,3 +1,12 @@
+flexbridge (3.6.1) UNRELEASED; urgency=low
+
+  * Fixed
+
+    * Cleanup Flexbridge login dialog
+    * Move the location of the local Chorus cache
+
+ -- Mark Kidder <mark_kidder@sil.org>  Wed, 15 Jun 2022 14:09:24 -0600
+
 flexbridge (3.6.0) UNRELEASED; urgency=low
 
   * Fixed
