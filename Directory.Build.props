@@ -25,5 +25,7 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGE
 	<ChangelogFile>../../CHANGELOG.md</ChangelogFile>
 	<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	<ChorusVersion>5.0.0-beta*</ChorusVersion>
+	<LCModelVersion>10.2.0-beta*</LCModelVersion>
   </PropertyGroup>
 </Project>
