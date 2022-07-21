@@ -93,6 +93,8 @@ namespace TriboroughBridge_ChorusPlugin
 				var userL10nBaseDir = Path.Combine("SIL", FlexBridge);
 				// ReSharper restore InconsistentNaming
 
+				LocalizationManager.ReturnOnlyApprovedStrings = true;
+
 				// Now set it up for the handful of localizable elements in FlexBridge itself.
 				// This is safer than Application.ProductVersion, which might contain words like 'alpha' or 'beta',
 				// which (on the SECOND run of the program) fail when L10NSharp tries to make a Version object out of them.
