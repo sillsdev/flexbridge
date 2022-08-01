@@ -11,7 +11,7 @@
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="SIL.Chorus.LibChorus.TestUtilities" Version="$(ChorusVersion)" />
-    <PackageReference Include="SIL.Chorus.Mercurial" Version="3.0.2" IncludeAssets="build" />
+    <PackageReference Include="SIL.Chorus.Mercurial" Version="3.0.3.4" IncludeAssets="build" />
   </ItemGroup>
 
   <ItemGroup>
