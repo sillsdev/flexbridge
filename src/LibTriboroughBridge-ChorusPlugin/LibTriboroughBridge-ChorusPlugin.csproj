@@ -4,6 +4,7 @@
     <RootNamespace>LibTriboroughBridgeChorusPlugin</RootNamespace>
     <AssemblyTitle>LibTriboroughBridge-ChorusPlugin</AssemblyTitle>
     <PackageId>SIL.ChorusPlugin.LibTriboroughBridge</PackageId>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,7 @@
     <PackageReference Include="SIL.Chorus.LibChorus" Version="$(ChorusVersion)" />
     <PackageReference Include="SIL.LCModel.Utils" Version="$(LCModelVersion)" />
     <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>
