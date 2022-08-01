@@ -12,7 +12,7 @@
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">KnownMonoIssue,UnknownMonoIssue</ExtraExcludeCategories>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,$(ExtraExcludeCategories)</ExtraExcludeCategories>
 		<Release Condition="'$(Release)' == ''">true</Release>
-		<PalasoVer4LinuxGecko Condition="'$(OS)'!='Windows_NT'">9.0.0-beta0076</PalasoVer4LinuxGecko>
+		<PalasoVer4LinuxGecko Condition="'$(OS)'!='Windows_NT'">10.0.0-beta0081</PalasoVer4LinuxGecko>
 		<GitVersionMsBuildProps>$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.props</GitVersionMsBuildProps>
 		<GitVersionMsBuildTargets>$(RootDir)/packages/GitVersion.MsBuild/build/GitVersion.MsBuild.targets</GitVersionMsBuildTargets>
 		<SILBuildTasksDLL>$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll</SILBuildTasksDLL>
@@ -115,7 +115,7 @@
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
-		<GeckoBrowserFiles Include="$(RootDir)/packages/SIL.Windows.Forms.GeckoBrowserAdapter.$(PalasoVer4LinuxGecko)/lib/net461/SIL.Windows.Forms.GeckoBrowserAdapter.dll.*"/>
+		<GeckoBrowserFiles Include="$(RootDir)/packages/SIL.Windows.Forms.GeckoBrowserAdapter.$(PalasoVer4LinuxGecko)/lib/net461/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
 		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
