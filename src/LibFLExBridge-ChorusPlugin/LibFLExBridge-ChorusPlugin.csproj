@@ -4,7 +4,6 @@
     <RootNamespace>LibFLExBridgeChorusPlugin</RootNamespace>
     <AssemblyTitle>LibFLExBridge-ChorusPlugin</AssemblyTitle>
     <PackageId>SIL.ChorusPlugin.LibFLExBridge</PackageId>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
