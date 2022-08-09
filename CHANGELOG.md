@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.7.1] - 2022-08-09
+
+### Fixed
+
+- Use a cross-process mutex (on Windows) to avoid crashes trying to update the Notes file
+- Updated to the latest Mercurial package so users no longer rely on python-is-python2
+
 ## [3.6.3] - 2022-07-29
 
 ### Fixed
