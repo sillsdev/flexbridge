@@ -1,3 +1,12 @@
+flexbridge (3.7.1) UNRELEASED; urgency=low
+
+  * Fixed
+
+    * Use a cross-process mutex (on Windows) to avoid crashes trying to update the Notes file
+    * Updated to the latest Mercurial package so users no longer rely on python-is-python2
+
+ -- Jason Naylor <jason_naylor@sil.org>  Tue, 09 Aug 2022 16:52:16 -0500
+
 flexbridge (3.6.3) UNRELEASED; urgency=low
 
   * Fixed

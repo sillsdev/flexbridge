@@ -16,11 +16,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [3.6.4] - 2022-08-26
+## [3.8.1] - 2022-08-26
 
 ### Added
 
 - Add .NET Standard to LfMergeBridge, LibFLExBridge-ChorusPlugin, and LibTriboroughBridge-ChorusPlugin
+
+## [3.7.1] - 2022-08-09
+
+### Fixed
+
+- Use a cross-process mutex (on Windows) to avoid crashes trying to update the Notes file
+- Updated to the latest Mercurial package so users no longer rely on python-is-python2
 
 ## [3.6.3] - 2022-07-29
 
