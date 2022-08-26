@@ -16,8 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [3.8.1] - 2022-08-26
-
 ### Added
 
 - Add .NET Standard to LfMergeBridge, LibFLExBridge-ChorusPlugin, and LibTriboroughBridge-ChorusPlugin
