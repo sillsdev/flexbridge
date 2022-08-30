@@ -3,6 +3,8 @@
 **FLEx Bridge** is an add-on to FieldWorks (<https://software.sil.org/fieldworks/>; <https://github.com/sillsdev/FwDocumentation/wiki>)
 that supports using Chorus (<https://github.com/sillsdev/chorus>) to allow multiple users to share data.
 
+Here's a change
+
 ## Architecture
 
 The "big idea" for the bridge system is that clients do not have to know how talk to *Chorus* directly to do Send/Receive(S/R), or even know that *Chorus* is involved. The architecture allows for any number of "bridges" between clients and *Chorus*, with a new bridge being needed for each major kind of xml data (e.g., *LIFT* or *FLEx*'s fwdata). Each bridge needs to define *Handlers* for the xml file extensions it will have in its data. *Chorus* uses those handlers in its work. Each bridge also needs to define *Actions*, which are the kinds of things it wants to do for S/R.
