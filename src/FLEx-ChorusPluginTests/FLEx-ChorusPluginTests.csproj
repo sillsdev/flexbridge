@@ -5,6 +5,7 @@
     <AssemblyName>FLEx-ChorusPluginTests</AssemblyName>
     <Description>Unit tests for FLEx-ChorusPlugin</Description>
     <IsPackable>false</IsPackable>
+    <AppConfig>..\AppForTests.config</AppConfig>
   </PropertyGroup>
 
   <ItemGroup>
