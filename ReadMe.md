@@ -35,8 +35,7 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 
 ### Build
 
-You should be able to build solution `FLExBridge.sln` from Visual Studio 2019 Community Edition or
-JetBrains Rider.
+You should be able to build solution `FLExBridge.sln` from Visual Studio 2022 Community Edition or JetBrains Rider.
 
 You can also build and run tests on both Windows and Linux from the command line by running:
 

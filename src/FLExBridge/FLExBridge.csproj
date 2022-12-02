@@ -18,4 +18,11 @@
     <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj" />
   </ItemGroup>
 
+  <Target Name="MakeChorusMergeExeConfig" AfterTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <FLExBridgeExeConfig>$(OutputPath)/$(AssemblyTitle).exe.config</FLExBridgeExeConfig>
+      <ChorusMergeExeConfig>$(OutputPath)/ChorusMerge.exe.config</ChorusMergeExeConfig>
+    </PropertyGroup>
+    <Copy SourceFiles="$(FLExBridgeExeConfig)" DestinationFiles="$(ChorusMergeExeConfig)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

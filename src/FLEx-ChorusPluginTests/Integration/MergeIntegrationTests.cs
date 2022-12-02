@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.IO;
@@ -160,7 +160,8 @@ namespace FLEx_ChorusPluginTests.Integration
 					var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
 					Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 					randyRepo.WriteNewContentsToTestFile(randy);
-					randyRepo.CheckinAndPullAndMerge(sueRepo);
+					var result = randyRepo.CheckinAndPullAndMerge(sueRepo);
+					Assert.That(result.Succeeded, result.ErrorEncountered?.ToString());
 					Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
 					Assert.That(notesContents, Is.Not.Null.Or.Empty);
@@ -263,7 +264,8 @@ namespace FLEx_ChorusPluginTests.Integration
 					var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyRepo.UserFile.Path);
 					Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 					randyRepo.WriteNewContentsToTestFile(randy);
-					randyRepo.CheckinAndPullAndMerge(sueRepo);
+					var result = randyRepo.CheckinAndPullAndMerge(sueRepo);
+					Assert.That(result.Succeeded, result.ErrorEncountered?.ToString());
 					Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 					var notesContents = File.ReadAllText(mergeConflictsNotesFile);
 					Assert.That(notesContents, Is.Not.Null.Or.Empty);
@@ -354,7 +356,8 @@ namespace FLEx_ChorusPluginTests.Integration
 						var mergeConflictsNotesFile = ChorusNotesMergeEventListener.GetChorusNotesFilePath(randyDictConfigInRepoPath);
 						Assert.That(File.Exists(mergeConflictsNotesFile), Is.False, "ChorusNotes file should NOT have been in working set.");
 						randyRepo.AddAndCheckinFile($"root.{FlexBridgeConstants.fwdictconfig}", randy);
-						randyRepo.CheckinAndPullAndMerge(sueRepo);
+						var result = randyRepo.CheckinAndPullAndMerge(sueRepo);
+						Assert.That(result.Succeeded, result.ErrorEncountered?.ToString());
 						Assert.That(File.Exists(mergeConflictsNotesFile), Is.True, "ChorusNotes file should have been in working set.");
 						var notesContents = File.ReadAllText(mergeConflictsNotesFile);
 						Assert.That(notesContents, Is.Not.Null.Or.Empty);
