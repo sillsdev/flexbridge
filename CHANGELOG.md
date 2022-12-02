@@ -16,9 +16,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Increase the audio and picture file size limit from 1 MB to 10 MB
+
+## [3.8.0] - 2022-12-02
+
 ### Added
 
 - Add .NET Standard to LfMergeBridge, LibFLExBridge-ChorusPlugin, and LibTriboroughBridge-ChorusPlugin
+
+### Changed
+
+- Reorganise Chorus Internet Server Settings control, add a help button to the Get from Internet dialog (LT-21209)
 
 ## [3.7.1] - 2022-08-09
 
