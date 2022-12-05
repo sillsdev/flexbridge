@@ -16,10 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Changed
-
-- Increase the audio and picture file size limit from 1 MB to 10 MB
-
 ## [3.8.0] - 2022-12-02
 
 ### Added
@@ -29,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Reorganise Chorus Internet Server Settings control, add a help button to the Get from Internet dialog (LT-21209)
+- Increase the audio and picture file size limit from 1 MB to 10 MB
 
 ## [3.7.1] - 2022-08-09
 
