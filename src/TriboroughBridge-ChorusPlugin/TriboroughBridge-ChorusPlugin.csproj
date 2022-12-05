@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
+    <!-- The only reason we depend directly on L10NSharp is because our dependencies can't agree which one they want -->
+    <PackageReference Include="L10NSharp" Version="6.0.0" />
     <PackageReference Include="NetSparkle.Net40" Version="1.2.0" />
     <PackageReference Include="SIL.Chorus.App" Version="$(ChorusVersion)" />
     <PackageReference Include="SIL.Chorus.LibChorus" Version="$(ChorusVersion)" />
