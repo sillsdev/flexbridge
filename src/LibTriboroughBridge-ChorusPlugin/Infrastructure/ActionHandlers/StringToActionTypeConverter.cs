@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -18,10 +18,8 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers
 		private const string Language_Forge_Get_Chorus_Notes = "Language_Forge_Get_Chorus_Notes";
 		private const string Language_Forge_Write_To_Chorus_Notes = "Language_Forge_Write_To_Chorus_Notes";
 
-		// Support for FLEx
-		// Support for both FLEx full project & LIFT
-		private const string check_for_updates = "check_for_updates";	// -p <$fwroot>\foo where 'foo' is the project folder name
-		private const string about_flex_bridge = "about_flex_bridge";	// -p <$fwroot>\foo where 'foo' is the project folder name
+		// Support for FLEx Bridge itself
+		private const string about_flex_bridge = "about_flex_bridge";
 		// Support for full FLEx project
 		private const string obtain = "obtain";							// -p <$fwroot>
 		private const string send_receive = "send_receive";				// -p <$fwroot>\foo\foo.fwdata
@@ -73,8 +71,6 @@ namespace LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers
 					return ActionType.UndoExport;
 				case undo_export_lift:
 					return ActionType.UndoExportLift;
-				case check_for_updates:
-					return ActionType.CheckForUpdates;
 				case move_lift:
 					return ActionType.MoveLift;
 				case about_flex_bridge:

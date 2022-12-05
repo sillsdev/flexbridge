@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
-    <PackageReference Include="NetSparkle.Net40" Version="1.2.0" />
     <PackageReference Include="SIL.Chorus.App" Version="$(ChorusVersion)" />
     <PackageReference Include="SIL.Chorus.LibChorus" Version="$(ChorusVersion)" />
     <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.0" />
