@@ -28,4 +28,8 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGE
 	<ChorusVersion>5.1.0-beta*</ChorusVersion>
 	<LCModelVersion>10.2.0-beta*</LCModelVersion>
   </PropertyGroup>
+  <ItemGroup>
+	<!-- The only reason we depend directly on L10NSharp is because our dependencies can't agree which one they want -->
+	<PackageReference Include="L10NSharp" Version="6.0.0" />
+  </ItemGroup>
 </Project>
