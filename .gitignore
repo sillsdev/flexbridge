@@ -49,6 +49,7 @@ vcs_version
 .idea/
 build/MarkdownDeep.NET/
 *.old
+*.orig
 *.swp
 icu4c.readme.txt
 gitversion.properties
