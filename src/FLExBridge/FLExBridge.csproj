@@ -11,12 +11,17 @@
     <PackageReference Include="Geckofx60.64.Linux" Version="60.0.51.0" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
     <PackageReference Include="SIL.Chorus.ChorusMerge" Version="$(ChorusVersion)" />
+    <PackageReference Include="SIL.Chorus.ChorusMergeModule" Version="$(ChorusVersion)" GeneratePathProperty="true" PrivateAssets="all" />
     <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TriboroughBridge-ChorusPlugin\TriboroughBridge-ChorusPlugin.csproj" />
   </ItemGroup>
+
+  <Target Name="CopyChorusMergeModuleToLib" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(Configuration)'=='Release'">
+    <Copy SourceFiles="$(PkgSIL_Chorus_ChorusMergeModule)/content/ChorusMergeModule.msm" DestinationFolder="../../lib/Release" SkipUnchangedFiles="true" />
+  </Target>
 
   <Target Name="MakeChorusMergeExeConfig" AfterTargets="CopyFilesToOutputDirectory">
     <PropertyGroup>
