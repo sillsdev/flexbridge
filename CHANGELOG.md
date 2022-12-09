@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+
+- Command to check for Updates
+
 ## [3.8.0] - 2022-12-02
 
 ### Added
