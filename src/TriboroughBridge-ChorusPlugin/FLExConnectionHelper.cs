@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 //#define RunStandAlone
 
@@ -76,7 +76,7 @@ namespace TriboroughBridge_ChorusPlugin
 		private bool HostOpened { get; set; }
 
 		/// <summary>
-		/// The Obtain was cancelled or failed, so tell Felx to forget about it.
+		/// The Obtain was cancelled or failed, so tell FLEx to forget about it.
 		/// </summary>
 		internal void TellFlexNoNewProjectObtained()
 		{
@@ -179,19 +179,9 @@ namespace TriboroughBridge_ChorusPlugin
 				return;
 			}
 #endif
-			if (_client == null)
-				return;
-			try
+			if (_client != null && !_client.RemoteCall("BridgeSentJumpUrl", new object[] {e.JumpUrl ?? ""}))
 			{
-				if (!_client.RemoteCall("BridgeSentJumpUrl", new object[] {e.JumpUrl ?? ""}))
-				{
-					Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
-				}
-			}
-			catch (Exception)
-			{
-				// Sometimes the connection is in the process of being closed, we don't care much about that either.
-				Console.WriteLine(CommonResources.kFlexNotListening);
+				Console.WriteLine(CommonResources.kFlexNotListening); //It isn't fatal if FLEx isn't listening to us.
 			}
 		}
 
