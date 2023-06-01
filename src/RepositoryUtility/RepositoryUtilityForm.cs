@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Chorus;
 using Chorus.FileTypeHandlers.lift;
+using Chorus.merge;
 using Chorus.UI.Review;
 using Chorus.UI.Sync;
 using Chorus.VcsDrivers.Mercurial;
@@ -44,6 +45,7 @@ namespace RepositoryUtility
 		{
 			InitializeComponent();
 			pullFileFromRevisionRangeToolStripMenuItem.Enabled = false;
+			prepareToDebugMerge.Enabled = false;
 			_repoHoldingFolder = Path.Combine(
 				Platform.IsWindows ? @"C:\" : Environment.GetEnvironmentVariable(@"HOME"),
 				@"RepositoryUtilityProjects");
@@ -370,6 +372,7 @@ namespace RepositoryUtility
 		private void HistoryPageRevisionSelectionChanged(object sender, RevisionEventArgs e)
 		{
 			_currentRevision = e.Revision;
+			prepareToDebugMerge.Enabled = _currentRevision != null;
 		}
 
 		private static string BranchName(Revision revision)
@@ -456,6 +459,27 @@ namespace RepositoryUtility
 			using(var getFileFromRevRangeDlg = new GetFileFromRevisionRange(_repoFolder, _chorusSystem))
 			{
 				getFileFromRevRangeDlg.ShowDialog(this);
+			}
+		}
+
+		private void HandlePrepareToDebugMerge(object sender, EventArgs e)
+		{
+			Environment.SetEnvironmentVariable("CHORUSDEBUGGING", "on");
+			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ChorusPathToRepository")))
+			{
+				Environment.SetEnvironmentVariable("ChorusPathToRepository", _repoFolder);
+			}
+			using (var dlg = new PrepareToDebugMergeForm())
+			{
+				var model = new PrepareToDebugModel();
+				model.MergeCommitToDebug = _currentRevision?.Number.LocalRevisionNumber;
+				model.MergeParents = _currentRevision?.Parents.Select(p => p.Hash).ToList();
+				var prepareToDebugController = new PrepareToDebugController(dlg, model, _chorusSystem);
+				var result = dlg.ShowDialog(this);
+				if (result == DialogResult.OK)
+				{
+					prepareToDebugController.StripAndRunMerge();
+				}
 			}
 		}
 

@@ -1,5 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (C) 2010-2013 SIL International. All rights reserved.
+// --------------------------------------------------------------------------------------------
+// Copyright (C) 2010-2023 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License.
 // --------------------------------------------------------------------------------------------
@@ -53,6 +53,7 @@ namespace RepositoryUtility
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.projectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.revertHgrcFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.prepareToDebugMerge = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripMenuItemBlank1 = new System.Windows.Forms.ToolStripSeparator();
 			this._menuStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -76,14 +77,15 @@ namespace RepositoryUtility
 			// repositoryToolStripMenuItem
 			// 
 			this.repositoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cloneToolStripMenuItem,
-            this.openLocalRepositoryToolStripMenuItem,
-            this.updateToRevisionToolStripMenuItem,
-            this.restoreToRevisionToolStripMenuItem,
-            this.sendBackToSourceToolStripMenuItem,
-            this.pullFileFromRevisionRangeToolStripMenuItem,
-            toolStripMenuItemBlank1,
-            this.exitToolStripMenuItem});
+			this.cloneToolStripMenuItem,
+			this.openLocalRepositoryToolStripMenuItem,
+			this.updateToRevisionToolStripMenuItem,
+			this.restoreToRevisionToolStripMenuItem,
+			this.sendBackToSourceToolStripMenuItem,
+			this.pullFileFromRevisionRangeToolStripMenuItem,
+			this.prepareToDebugMerge,
+			toolStripMenuItemBlank1,
+			this.exitToolStripMenuItem});
 			this.repositoryToolStripMenuItem.Name = "repositoryToolStripMenuItem";
 			this.repositoryToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
 			this.repositoryToolStripMenuItem.Text = "&Repository";
@@ -153,6 +155,13 @@ namespace RepositoryUtility
 			this.revertHgrcFilesToolStripMenuItem.Text = "&Revert hgrc files";
 			this.revertHgrcFilesToolStripMenuItem.Click += new System.EventHandler(this.HandleRevertHgrcFiles);
 			// 
+			// revertHgrcFilesToolStripMenuItem
+			// 
+			this.prepareToDebugMerge.Name = "prepareToDebugMergeMenuItem";
+			this.prepareToDebugMerge.Size = new System.Drawing.Size(158, 22);
+			this.prepareToDebugMerge.Text = "Prepare to &debug a merge";
+			this.prepareToDebugMerge.Click += new System.EventHandler(this.HandlePrepareToDebugMerge);
+			// 
 			// RepositoryUtilityForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,5 +194,6 @@ namespace RepositoryUtility
 		private System.Windows.Forms.ToolStripMenuItem pullFileFromRevisionRangeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem projectsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem revertHgrcFilesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem prepareToDebugMerge;
 	}
 }
