@@ -5,6 +5,7 @@
     <AssemblyTitle>FLExBridge</AssemblyTitle>
     <PackageId>SIL.Chorus.FLExBridge</PackageId>
     <OutputType>WinExe</OutputType>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>
