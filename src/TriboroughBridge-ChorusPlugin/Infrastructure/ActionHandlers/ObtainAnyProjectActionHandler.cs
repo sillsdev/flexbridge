@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -75,12 +76,20 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = options[CommandLineProcessor.projDir];
 			CloneResult result;
-			using (var form = new Form())
+			var uriArg = options[CommandLineProcessor.uri];
+			if (!string.IsNullOrEmpty(uriArg))
 			{
-				var getSharedProjectModel = new GetSharedProjectModel();
-				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
-					CommonResources.kHowToSendReceiveExtantRepository);
+				result = StartClone(uriArg);
+			}
+			else
+			{
+				using (var form = new Form())
+				{
+					var getSharedProjectModel = new GetSharedProjectModel();
+					result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
+						ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
+						CommonResources.kHowToSendReceiveExtantRepository);
+				}
 			}
 
 			if (result == null // Not sure it can be null, but I (RBR) have a null ref crash report (LT-15094)
@@ -100,6 +109,26 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
+		}
+
+		private CloneResult StartClone(string uriArg)
+		{
+			var uri = new Uri(uriArg);
+			var jwt = Environment.GetEnvironmentVariable("JWT");
+			var host = new Uri(uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
+			var projectName = uri.Segments[1];
+
+			if (MessageBox.Show($"Download {projectName} from {host}?", "Confirm Download", MessageBoxButtons.YesNo) != DialogResult.Yes) return null;
+
+			var dialog = new GetCloneFromInternetDialog(_pathToRepository);
+			DialogResult? res = null;
+			dialog.FormClosing += (sender, args) => res = dialog.DialogResult;
+			dialog.Show();
+			dialog.StartClone("bearer", jwt, host, projectName);
+			Application.Run(dialog);
+
+			var cloneStatus = res == DialogResult.OK ? CloneStatus.Created : CloneStatus.NotCreated;
+			return new CloneResult(dialog.PathToNewlyClonedFolder, cloneStatus);
 		}
 
 		/// <summary>
