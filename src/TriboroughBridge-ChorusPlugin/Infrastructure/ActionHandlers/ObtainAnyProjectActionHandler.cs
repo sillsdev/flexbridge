@@ -78,9 +78,10 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			CloneResult result;
 			var uriArg = options[CommandLineProcessor.uri];
 			var projectArg = options[CommandLineProcessor.project];
-			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg))
+			var userArg = options[CommandLineProcessor.user];
+			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg) && !string.IsNullOrEmpty(userArg))
 			{
-				result = StartClone(projectArg, uriArg);
+				result = StartClone(projectArg, uriArg, userArg);
 			}
 			else
 			{
@@ -112,7 +113,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
 		}
 
-		private CloneResult StartClone(string projectArg, string uriArg)
+		private CloneResult StartClone(string projectArg, string uriArg, string userArg)
 		{
 			var uri = new Uri(uriArg);
 			var jwt = Environment.GetEnvironmentVariable("JWT");
@@ -120,7 +121,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 
 			if (MessageBox.Show($"Download {projectArg} from {host}?", "Confirm Download", MessageBoxButtons.YesNo) != DialogResult.Yes) return null;
 
-			var dialog = GetCloneFromInternetDialog.StartClone("bearer", jwt, _pathToRepository, projectArg, uri);
+			var dialog = GetCloneFromInternetDialog.StartClone(userArg, jwt, _pathToRepository, projectArg, uri);
 			DialogResult? res = null;
 			dialog.FormClosing += (sender, args) => res = dialog.DialogResult;
 			Application.Run(dialog);
