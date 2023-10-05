@@ -120,11 +120,9 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 
 			if (MessageBox.Show($"Download {projectArg} from {host}?", "Confirm Download", MessageBoxButtons.YesNo) != DialogResult.Yes) return null;
 
-			var dialog = new GetCloneFromInternetDialog(_pathToRepository);
+			var dialog = GetCloneFromInternetDialog.StartClone("bearer", jwt, _pathToRepository, projectArg, uri);
 			DialogResult? res = null;
 			dialog.FormClosing += (sender, args) => res = dialog.DialogResult;
-			dialog.Show();
-			dialog.StartClone("bearer", jwt, projectArg, uri);
 			Application.Run(dialog);
 
 			var cloneStatus = res == DialogResult.OK ? CloneStatus.Created : CloneStatus.NotCreated;
