@@ -30,6 +30,7 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string locale = "-locale";
 		internal const string uri = "-uri";
 		internal const string project = "-project";
+		internal const string user = "-user";
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
