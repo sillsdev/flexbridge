@@ -81,7 +81,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			var userArg = options[CommandLineProcessor.user];
 			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg) && !string.IsNullOrEmpty(userArg))
 			{
-				result = StartClone(projectArg, uriArg, userArg);
+				result = Clone(projectArg, uriArg, userArg);
 			}
 			else
 			{
@@ -113,7 +113,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
 		}
 
-		private CloneResult StartClone(string projectArg, string uriArg, string userArg)
+		private CloneResult Clone(string projectArg, string uriArg, string userArg)
 		{
 			var uri = new Uri(uriArg);
 			var jwt = Environment.GetEnvironmentVariable("JWT");
@@ -121,13 +121,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 
 			if (MessageBox.Show($"Download {projectArg} from {host}?", "Confirm Download", MessageBoxButtons.YesNo) != DialogResult.Yes) return null;
 
-			var dialog = GetCloneFromInternetDialog.StartClone(userArg, jwt, _pathToRepository, projectArg, uri);
-			DialogResult? res = null;
-			dialog.FormClosing += (sender, args) => res = dialog.DialogResult;
-			Application.Run(dialog);
-
-			var cloneStatus = res == DialogResult.OK ? CloneStatus.Created : CloneStatus.NotCreated;
-			return new CloneResult(dialog.PathToNewlyClonedFolder, cloneStatus);
+			return GetCloneFromInternetDialog.DoClone(userArg, jwt, _pathToRepository, projectArg, uri);
 		}
 
 		/// <summary>
