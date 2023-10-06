@@ -78,10 +78,9 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			CloneResult result;
 			var uriArg = options[CommandLineProcessor.uri];
 			var projectArg = options[CommandLineProcessor.project];
-			var userArg = options[CommandLineProcessor.user];
-			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg) && !string.IsNullOrEmpty(userArg))
+			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg))
 			{
-				result = Clone(projectArg, uriArg, userArg);
+				result = Clone(projectArg, uriArg);
 			}
 			else
 			{
@@ -113,15 +112,17 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
 		}
 
-		private CloneResult Clone(string projectArg, string uriArg, string userArg)
+		private CloneResult Clone(string projectArg, string uriArg)
 		{
 			var uri = new Uri(uriArg);
-			var jwt = Environment.GetEnvironmentVariable("JWT");
+			var userpass = Environment.GetEnvironmentVariable("CHORUS_CREDENTIALS");
+			var user = userpass.Split(':')[0];
+			var pass = userpass.Split(':')[1];
 			var host = new Uri(uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
 
 			if (MessageBox.Show($"Download {projectArg} from {host}?", "Confirm Download", MessageBoxButtons.YesNo) != DialogResult.Yes) return null;
 
-			return GetCloneFromInternetDialog.DoClone(userArg, jwt, _pathToRepository, projectArg, uri);
+			return GetCloneFromInternetDialog.DoClone(user, pass, _pathToRepository, projectArg, uri);
 		}
 
 		/// <summary>

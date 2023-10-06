@@ -17,7 +17,7 @@ namespace TriboroughBridge_ChorusPlugin
 	internal static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming
-		internal const string u = "-u"; // userNameActual
+		internal const string u = "-u"; // the name to use in the commit log
 		internal const string p = "-p"; // project directory
 		internal const string v = "-v"; // command
 		internal const string f = "-f"; // FixItAppPathname
@@ -28,9 +28,8 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string liftmodel = "-liftmodel"; // LIFT model version number
 		internal const string pipeID = "-pipeID";
 		internal const string locale = "-locale";
-		internal const string uri = "-uri";
-		internal const string project = "-project";
-		internal const string user = "-user";
+		internal const string uri = "-uri"; // Full project URI
+		internal const string project = "-project"; // Project name
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
