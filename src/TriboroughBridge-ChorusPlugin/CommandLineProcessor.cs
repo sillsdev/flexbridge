@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -29,7 +29,7 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string pipeID = "-pipeID";
 		internal const string locale = "-locale";
 		internal const string uri = "-uri"; // Full project URI
-		internal const string project = "-project"; // Project name
+		internal const string project = "-project"; // Local project name for cloning
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name
