@@ -33,7 +33,7 @@ namespace FLExBridge
 		static void Main(string[] args)
 		{
 			// Enable the next line if you next to attach the FB process to your debugger.
-			//MessageBox.Show(@"Get ready to debug FB exe.");
+			MessageBox.Show(@"Get ready to debug FB exe.");
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
