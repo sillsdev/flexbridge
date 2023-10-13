@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2023 SIL International
+﻿// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -114,11 +114,13 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 
 		private CloneResult Clone(string projectArg, string uriArg)
 		{
-			var uri = new Uri(uriArg);
-			var credentials = Environment.GetEnvironmentVariable("CHORUS_CREDENTIALS").Split(new[] {':'}, 2);
-			var user = credentials[0];
-			var pass = credentials[1];
-			return GetCloneFromInternetDialog.ConfirmAndDoClone(user, pass, _pathToRepository, projectArg, uri);
+			var credentials = Environment.GetEnvironmentVariable("CHORUS_CREDENTIALS");
+			if (credentials == null || !credentials.Contains(":")) return new CloneResult(null, CloneStatus.NotCreated);
+			var split = credentials.Split(new[] {':'}, 2);
+			var user = split[0];
+			var pass = split[1];
+			var isJwt = user == "bearer";
+			return GetCloneFromInternetDialog.ConfirmAndDoClone(user, pass, _pathToRepository, projectArg, uriArg, !isJwt);
 		}
 
 		/// <summary>
