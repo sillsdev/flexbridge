@@ -119,6 +119,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			var split = credentials.Split(new[] {':'}, 2);
 			var user = split[0];
 			var pass = split[1];
+			//Accepted practice for authenticating with JWT (https://github.com/sillsdev/languageforge-lexbox/issues/242)
 			var isJwt = user == "bearer";
 			return GetCloneFromInternetDialog.ConfirmAndDoClone(user, pass, _pathToRepository, projectArg, uriArg, !isJwt);
 		}
