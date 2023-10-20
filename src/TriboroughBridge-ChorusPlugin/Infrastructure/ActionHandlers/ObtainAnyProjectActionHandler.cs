@@ -120,7 +120,7 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			var user = split[0];
 			var pass = split[1];
 			//Accepted practice for authenticating with JWT (https://github.com/sillsdev/languageforge-lexbox/issues/242)
-			//Per param name saveUserSettings, we don't want to overwrite user/pass setting if with bearer/JWT
+			//Per param name saveUserSettings, we don't want to overwrite user/pass setting if bearer/JWT
 			var isJwt = user == "bearer";
 			return GetCloneFromInternetDialog.ConfirmAndDoClone(user, pass, _pathToRepository, projectArg, uriArg, !isJwt);
 		}
