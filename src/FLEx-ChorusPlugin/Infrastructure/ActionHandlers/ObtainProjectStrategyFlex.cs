@@ -26,7 +26,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		[Import]
 		private FLExConnectionHelper _connectionHelper;
 #pragma warning restore 0649
-		private bool _gotClone;
+		private bool GotClone { get { return _newFwProjectPathname != null;}}
 		private string _newProjectFilename;
 		private string _newFwProjectPathname;
 
@@ -61,12 +61,17 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 			_newProjectFilename = Path.GetFileName(cloneLocation) + LibTriboroughBridgeSharedConstants.FwXmlExtension;
 			_newFwProjectPathname = Path.Combine(cloneLocation, _newProjectFilename);
+			
+			if (File.Exists(_newFwProjectPathname))
+			{
+				// .fwdata already exists
+				return;
+			}
 
 			// Check the actual FW model number in the '-fwmodel' of 'commandLineArgs' param.
 			// Update to the head of the desired branch, if possible.
 			UpdateToTheCorrectBranchHeadIfPossible(commandLineArgs, actualCloneResult, cloneLocation);
 
-			_gotClone = false;
 			switch (actualCloneResult.FinalCloneResult)
 			{
 				case FinalCloneResult.ExistingCloneTargetFolder:
@@ -80,8 +85,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 					Directory.Delete(cloneLocation, true);
 					_newFwProjectPathname = null;
 					return;
-                case FinalCloneResult.Cloned:
-					_gotClone = true;
+        case FinalCloneResult.Cloned:
 					break;
 			}
 
@@ -90,7 +94,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 
 		void IObtainProjectStrategy.TellFlexAboutIt()
 		{
-			if (_gotClone)
+			if (GotClone)
 			{
 				_connectionHelper.CreateProjectFromFlex(_newFwProjectPathname);
 			}

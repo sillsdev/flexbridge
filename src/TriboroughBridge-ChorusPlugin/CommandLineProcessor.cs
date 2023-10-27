@@ -30,6 +30,7 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string locale = "-locale";
 		internal const string uri = "-uri"; // Full project URI
 		internal const string project = "-project"; // Project name to clone into
+		internal const string repositoryIdentifier = "-repositoryIdentifier"; // Identifier to match projects across repo's
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name

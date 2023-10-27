@@ -78,9 +78,18 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			CloneResult result;
 			var uriArg = options[CommandLineProcessor.uri];
 			var projectArg = options[CommandLineProcessor.project];
+			var identifier = options[CommandLineProcessor.repositoryIdentifier];
 			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg))
 			{
-				result = Clone(projectArg, uriArg);
+				var projectFoldersByIdentifier = GetSharedProjectModel.ExtantRepoIdentifiers(_pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories);
+				if (!string.IsNullOrEmpty(identifier) && projectFoldersByIdentifier.TryGetValue(identifier, out var projectFolder))
+				{
+					result = FindPreexistingProject(projectFolder);
+				}
+				else
+				{
+					result = Clone(projectArg, uriArg);
+				}
 			}
 			else
 			{
@@ -110,6 +119,27 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
+		}
+
+		private CloneResult FindPreexistingProject(string projectFolder)
+		{
+			var containingFolders = Directory.GetDirectories(Path.GetFullPath(_pathToRepository), projectFolder, SearchOption.AllDirectories);
+			if (containingFolders.Count() == 0 && Directory.Exists(LibTriboroughBridgeSharedConstants.OtherRepositories))
+			{
+				containingFolders = Directory.GetDirectories(Path.GetFullPath(LibTriboroughBridgeSharedConstants.OtherRepositories), projectFolder, SearchOption.TopDirectoryOnly);
+			}
+
+			if (containingFolders.Count() == 0)
+			{
+				throw new ApplicationException("Detected that the project exists but could not find it locally.");
+			}
+			else if (containingFolders.Count() > 1)
+			{
+				MessageBox.Show($"Found multiple copies of the project. Opening the first:\n{containingFolders[0]}");
+			}
+
+			string containingFolder = containingFolders[0];
+			return new CloneResult(containingFolder, CloneStatus.Created);
 		}
 
 		private CloneResult Clone(string projectArg, string uriArg)
