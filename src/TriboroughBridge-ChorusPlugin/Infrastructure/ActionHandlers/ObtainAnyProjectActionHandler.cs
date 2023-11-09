@@ -145,7 +145,10 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 		private CloneResult Clone(string projectArg, string uriArg)
 		{
 			var credentials = Environment.GetEnvironmentVariable("CHORUS_CREDENTIALS");
-			if (credentials == null || !credentials.Contains(":")) return new CloneResult(null, CloneStatus.NotCreated);
+			if (credentials == null || !credentials.Contains(":"))
+			{
+				return new CloneResult(null, CloneStatus.NotCreated);
+			}
 			var split = credentials.Split(new[] {':'}, 2);
 			var user = split[0];
 			var pass = split[1];
