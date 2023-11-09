@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -17,7 +17,7 @@ namespace TriboroughBridge_ChorusPlugin
 	internal static class CommandLineProcessor
 	{
 // ReSharper disable InconsistentNaming
-		internal const string u = "-u"; // userNameActual
+		internal const string u = "-u"; // the name to use in the commit log
 		internal const string p = "-p"; // project directory
 		internal const string v = "-v"; // command
 		internal const string f = "-f"; // FixItAppPathname
@@ -28,6 +28,9 @@ namespace TriboroughBridge_ChorusPlugin
 		internal const string liftmodel = "-liftmodel"; // LIFT model version number
 		internal const string pipeID = "-pipeID";
 		internal const string locale = "-locale";
+		internal const string uri = "-uri"; // Full project URI
+		internal const string project = "-project"; // Project name to clone into
+		internal const string repositoryIdentifier = "-repositoryIdentifier"; // Identifier to match projects across repo's
 
 		internal const string obtain = "obtain";						// -p <$fwroot>
 		internal const string obtain_lift = "obtain_lift";				// -p <$fwroot>\foo where 'foo' is the project folder name

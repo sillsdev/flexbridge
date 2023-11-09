@@ -1,6 +1,7 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -75,12 +76,30 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = options[CommandLineProcessor.projDir];
 			CloneResult result;
-			using (var form = new Form())
+			var uriArg = options[CommandLineProcessor.uri];
+			var projectArg = options[CommandLineProcessor.project];
+			var identifier = options[CommandLineProcessor.repositoryIdentifier];
+			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg))
 			{
-				var getSharedProjectModel = new GetSharedProjectModel();
-				result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
-					ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
-					CommonResources.kHowToSendReceiveExtantRepository);
+				var projectFoldersByIdentifier = GetSharedProjectModel.ExtantRepoIdentifiers(_pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories);
+				if (!string.IsNullOrEmpty(identifier) && projectFoldersByIdentifier.TryGetValue(identifier, out var projectFolder))
+				{
+					result = FindPreexistingProject(projectFolder);
+				}
+				else
+				{
+					result = Clone(projectArg, uriArg);
+				}
+			}
+			else
+			{
+				using (var form = new Form())
+				{
+					var getSharedProjectModel = new GetSharedProjectModel();
+					result = getSharedProjectModel.GetSharedProjectUsing(form, _pathToRepository, null, ProjectFilter,
+						ChorusHubQuery, _pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories,
+						CommonResources.kHowToSendReceiveExtantRepository);
+				}
 			}
 
 			if (result == null // Not sure it can be null, but I (RBR) have a null ref crash report (LT-15094)
@@ -100,6 +119,43 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			}
 
 			_currentStrategy.FinishCloning(options, result.ActualLocation, null);
+		}
+
+		private CloneResult FindPreexistingProject(string projectFolder)
+		{
+			var containingFolders = Directory.GetDirectories(Path.GetFullPath(_pathToRepository), projectFolder, SearchOption.AllDirectories);
+			if (containingFolders.Count() == 0 && Directory.Exists(LibTriboroughBridgeSharedConstants.OtherRepositories))
+			{
+				containingFolders = Directory.GetDirectories(Path.GetFullPath(LibTriboroughBridgeSharedConstants.OtherRepositories), projectFolder, SearchOption.TopDirectoryOnly);
+			}
+
+			if (containingFolders.Count() == 0)
+			{
+				throw new ApplicationException("Detected that the project exists but could not find it locally.");
+			}
+			else if (containingFolders.Count() > 1)
+			{
+				MessageBox.Show($"Found multiple copies of the project. Opening the first:\n{containingFolders[0]}");
+			}
+
+			string containingFolder = containingFolders[0];
+			return new CloneResult(containingFolder, CloneStatus.Created);
+		}
+
+		private CloneResult Clone(string projectArg, string uriArg)
+		{
+			var credentials = Environment.GetEnvironmentVariable("CHORUS_CREDENTIALS");
+			if (credentials == null || !credentials.Contains(":"))
+			{
+				return new CloneResult(null, CloneStatus.NotCreated);
+			}
+			var split = credentials.Split(new[] {':'}, 2);
+			var user = split[0];
+			var pass = split[1];
+			//Accepted practice for authenticating with JWT (https://github.com/sillsdev/languageforge-lexbox/issues/242)
+			//Per param name saveUserSettings, we don't want to overwrite user/pass setting if bearer/JWT
+			var isJwt = user == "bearer";
+			return GetCloneFromInternetDialog.ConfirmAndDoClone(user, pass, _pathToRepository, projectArg, uriArg, !isJwt);
 		}
 
 		/// <summary>
