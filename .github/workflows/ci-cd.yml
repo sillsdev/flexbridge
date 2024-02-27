@@ -1,0 +1,62 @@
+name: FlexBridge CI/CD
+on:
+  push:
+    branches: ["develop", "master"]
+  pull_request:
+    branches: ["develop", "master"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows_debug_build_and_test:
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+    name: Build Debug and run Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+        with:
+          fetch-depth: 0
+
+      - name: Download 461 targeting pack
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+        id: downloadfile  # Remember to give an ID if you need the output filename
+        with:
+            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+            target: public/
+                
+      - name: Install targeting pack
+        shell: cmd
+        working-directory: public
+        run: NDP461-DevPack-KB3105179-ENU.exe /q
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: | 
+            2.1.x
+            3.1.x
+            5.0.x
+        if: github.event_name != 'pull_request'
+
+      - name: Add Fake Localizations for CI
+        shell: bash
+        run: echo > DistFiles/localizations/empty.xlf
+        if: github.event_name == 'pull_request'
+        
+      - name: Restore Build Tasks & Packages
+        id: package_restore
+        shell: cmd
+        run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
+          
+      - name: Build & Test
+        id: build_and_test
+        shell: cmd
+        run: msbuild build\FLExBridge.proj /t:Test
