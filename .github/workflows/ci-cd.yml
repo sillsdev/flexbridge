@@ -13,7 +13,7 @@ concurrency:
 jobs:
   windows_debug_build_and_test:
     env:
-      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
