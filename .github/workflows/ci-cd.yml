@@ -45,7 +45,7 @@ jobs:
             3.1.x
             5.0.x
         if: github.event_name != 'pull_request'
-
+        
       - name: Add Fake Localizations for CI
         shell: bash
         run: echo > DistFiles/localizations/empty.xlf
@@ -60,3 +60,27 @@ jobs:
         id: build_and_test
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Test
+        
+      - name: Install Latest Overcrowdin
+        shell: cmd
+        run: dotnet tool install -g overcrowdin
+        if: github.event_name != 'pull_request'
+        
+      - name: Restore L10n Packages
+        shell: cmd
+        run: |
+          cd l10n
+          msbuild l10n.proj /t:restore
+        if: github.event_name != 'pull_request'
+          
+      - name: Get Latest L10ns
+        shell: cmd
+        run: |
+          cd l10n
+          msbuild l10n.proj /t:GetLatestL10ns;CopyL10nsToDistFiles
+        if: github.event_name != 'pull_request'
+      
+      - name: Build Installer
+        shell: cmd
+        run: msbuild build/FLExBridge.proj /t:Installer /p:UploadFolder=Alpha
+        if: github.event_name != 'pull_request'
