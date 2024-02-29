@@ -4,6 +4,7 @@
 	<PropertyGroup>
 		<CopyrightYear>2021</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
+		<SafeManufacturer>SIL</SafeManufacturer>
 		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
 	</PropertyGroup>
@@ -187,7 +188,7 @@
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
 			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)"</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
