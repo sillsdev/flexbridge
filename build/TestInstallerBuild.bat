@@ -19,6 +19,8 @@ pushd .
 ) && (
 	pushd ..\l10n
 ) && (
+	MSBuild l10n.proj /t:restore
+) && (
 	MSBuild l10n.proj /t:GetLatestL10ns
 ) && (
 	popd
