@@ -13,10 +13,14 @@ set -ueo pipefail
 # incompatible with our version of Mercurial
 export HGRCPATH=
 
-scriptdir="$(dirname "$0")"
-prefix=$(cd "$scriptdir/../.."; /bin/pwd)
+if [[ ${CHORUSDEBUGGING-} == "true" ]]; then
+  # Note: Change to suspend=y to pause until a debugger attaches.
+  FB_MONO_ARGS="${FB_MONO_ARGS-} --debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55502,suspend=n"
+fi
+script_dir="$(dirname "$0")"
+prefix=$(cd "${script_dir}/../.."; /bin/pwd)
 
-cd "${scriptdir}"
+cd "${script_dir}"
 
 # Keep localizations files updated.
 FB_SHARE="${XDG_DATA_HOME}/SIL/FlexBridge"
@@ -30,4 +34,4 @@ else
 fi
 
 cd - >/dev/null
-mono --debug "${scriptdir}"/FLExBridge.exe "$@"
+mono --debug ${FB_MONO_ARGS-} "${script_dir}"/FLExBridge.exe "$@"

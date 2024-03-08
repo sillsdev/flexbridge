@@ -36,6 +36,8 @@
         // Note that FLExBridge is run in the environment inherited from FieldWorks, such as set by FW environ.
         // Path to enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
         "MONO_ENVIRON": "${workspaceRoot}/../fw/environ",
+        // Make Chorus print hg debugging info.
+        "CHORUSDEBUGGING": "true",
       },
       "cwd": "${workspaceRoot}"
     },
@@ -44,7 +46,7 @@
       "type": "mono",
       "request": "attach",
       "address": "localhost",
-      "port": 55555
+      "port": 55502
     }
   ]
 }

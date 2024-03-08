@@ -1,2 +1,10 @@
-#!/bin/sh
-exec mono `dirname $0`/ChorusMerge.exe "$@"
+#!/bin/bash
+set -ueo pipefail
+script_dir="$(dirname "$0")"
+
+if [[ ${CHORUSDEBUGGING-} == "true" ]]; then
+  # Note: Change to suspend=y to pause until a debugger attaches.
+  CHORUS_MONO_ARGS="${CHORUS_MONO_ARGS-} --debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55503,suspend=n"
+fi
+
+exec mono --debug ${CHORUS_MONO_ARGS-} "${script_dir}"/ChorusMerge.exe "$@"
