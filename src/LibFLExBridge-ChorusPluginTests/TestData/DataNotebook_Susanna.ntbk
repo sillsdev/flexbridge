@@ -4,9 +4,9 @@
 		<RnResearchNbk
 			guid="d739cbea-ea5e-11de-85be-0013722f8dec">
 			<DateCreated
-				val="2012-5-11 20:30:59.450" />
+				val="2012-05-11 20:30:59.450" />
 			<DateModified
-				val="2012-5-11 21:25:40.965" />
+				val="2012-05-11 21:25:40.965" />
 			<Name>
 				<AUni
 					ws="en">Data Notebook</AUni>
@@ -23,9 +23,9 @@
 				t="r" />
 		</AnthroCodes>
 		<DateCreated
-			val="2012-5-11 21:25:40.964" />
+			val="2012-05-11 21:25:40.964" />
 		<DateModified
-			val="2012-5-11 21:25:55.978" />
+			val="2012-05-11 21:25:55.978" />
 		<DateOfEvent
 			val="0" />
 		<Locations>
@@ -50,16 +50,16 @@
 					<StText
 						guid="f0392d21-e8eb-4c05-8bc7-783ce641223b">
 						<DateModified
-							val="2012-5-11 21:20:21.980" />
+							val="2012-05-11 21:20:21.980" />
 						<Paragraphs />
 						<RightToLeft
 							val="False" />
 					</StText>
 				</Contents>
 				<DateCreated
-					val="2012-5-11 21:20:21.80" />
+					val="2012-05-11 21:20:21.80" />
 				<DateModified
-					val="2012-5-11 21:25:40.965" />
+					val="2012-05-11 21:25:40.965" />
 				<Description>
 					<AStr
 						ws="fr">

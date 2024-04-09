@@ -51,7 +51,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 
 		public static DateTime _expectedUtcDateTime;
 
-		public static string ExpectedUtcDateTimeString => ExpectedDateTime.ToString("yyyy-M-d H:m:s.fff", CultureInfo.InvariantCulture);
+		public static string ExpectedUtcDateTimeString => ExpectedDateTime.ToString(SIL.LCModel.Utils.SilUtilsExtensions.LCMTimeFormatWithMillis, CultureInfo.InvariantCulture);
 
 		public static DateTime ExpectedDateTime
 		{
