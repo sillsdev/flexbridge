@@ -44,7 +44,10 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				// something else besides the timestamp changed. Set timestamp to current time.
 				newestDateTime = DateTimeProvider.Current.UtcNow;
 			}
-			var newestDateTimeString = newestDateTime.ToString("yyyy-M-d H:m:s.fff", CultureInfo.InvariantCulture);
+
+			string formatStr = SIL.LCModel.Utils.SilUtilsExtensions.LCMTimeFormatWithMillis;
+			var newestDateTimeString = newestDateTime.ToString(formatStr, CultureInfo.InvariantCulture);
+
 			UpdateDateTimeVal(newestDateTimeString, ourDateTimeNode);
 			UpdateDateTimeVal(newestDateTimeString, theirDateTimeNode);
 		}

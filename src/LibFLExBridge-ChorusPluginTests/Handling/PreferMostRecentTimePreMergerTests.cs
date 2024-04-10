@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
@@ -139,7 +139,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			var ours = CreateNode(CommonAncestor);
 
 			_preMerger.Premerge(null, ref ours, theirs, ancestor);
-			Assert.That(GetDateTimeValue(ours), Is.EqualTo("2010-1-3 3:4:5.678"));
+			Assert.That(GetDateTimeValue(ours), Is.EqualTo("2010-01-03 03:04:05.678"));
 		}
 
 				[Test]

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -41,7 +41,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 
 		private const string CommonOwnSeqAncestor =
 			@"<ownseq class='PartOfSpeech' guid ='c1ed6db0-e382-11de-8a39-0800200c9a66'>
-	<DateModified val='2000-1-1 23:59:59.123' />
+	<DateModified val='2000-01-01 23:59:59.123' />
 	<Name>
 			<AUni
 				ws='en'>commonName</AUni>
@@ -51,7 +51,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void OurOriginalTimestampRestoredToAncestorValueIfOnlyChangeWasTimestampAndTheyDeletedParent()
 		{
-			var ourContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123");
+			var ourContent = CommonOwnSeqAncestor.Replace("2000-01-01 23:59:59.123", "2002-01-01 23:59:59.123");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
@@ -60,13 +60,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			IPremerger premerger = new PreferMostRecentTimePreMerger();
 			premerger.Premerge(new ListenerForUnitTests(), ref ourModPropNode, null, ancestorModPropNode);
 
-			Assert.AreEqual("2000-1-1 23:59:59.123", ourModPropNode.Attributes["val"].Value);
+			Assert.AreEqual("2000-01-01 23:59:59.123", ourModPropNode.Attributes["val"].Value);
 		}
 
 		[Test]
 		public void TimestampUpdatedIfAnotherChangedWasMadeAndTheyDeletedParent()
 		{
-			var ourContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123").Replace("commonName", "ourModifiedName");
+			var ourContent = CommonOwnSeqAncestor.Replace("2000-01-01 23:59:59.123", "2002-01-01 23:59:59.123").Replace("commonName", "ourModifiedName");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
@@ -81,7 +81,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void TheirOriginalTimestampRestoredToAncestorValueIfOnlyChangeWasTimestampAndWeDeletedParent()
 		{
-			var theirContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123");
+			var theirContent = CommonOwnSeqAncestor.Replace("2000-01-01 23:59:59.123", "2002-01-01 23:59:59.123");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
@@ -91,13 +91,13 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 			XmlNode ourNode = null;
 			premerger.Premerge(new ListenerForUnitTests(), ref ourNode, theirModPropNode, ancestorModPropNode);
 
-			Assert.AreEqual("2000-1-1 23:59:59.123", theirModPropNode.Attributes["val"].Value);
+			Assert.AreEqual("2000-01-01 23:59:59.123", theirModPropNode.Attributes["val"].Value);
 		}
 
 		[Test]
 		public void TimestampUpdatedIfAnotherChangeWasMadeAndWeDeletedParent()
 		{
-			var theirContent = CommonOwnSeqAncestor.Replace("2000-1-1 23:59:59.123", "2002-1-1 23:59:59.123").Replace("commonName", "theirModifiedName");
+			var theirContent = CommonOwnSeqAncestor.Replace("2000-01-01 23:59:59.123", "2002-01-01 23:59:59.123").Replace("commonName", "theirModifiedName");
 
 			var ancestorNode = XmlUtilities.GetDocumentNodeFromRawXml(CommonOwnSeqAncestor, new XmlDocument());
 			var ancestorModPropNode = ancestorNode.SelectSingleNode("DateModified");
@@ -130,16 +130,16 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 </ReversalIndex>
 </Root>";
 
-		[TestCase("<DateModified val='2000-1-1 23:59:59.123' />", "2002-1-1 23:59:59.123", "2001-1-1 23:59:59.123", "newModifiedName", 2, new[]{ typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) }, TestName = "Timestamp updated")]
-		[TestCase("", "2002-1-1 23:59:59.123", "2001-1-1 23:59:59.123", "newModifiedName", 2, new[] { typeof(XmlAttributeBothAddedReport), typeof(XmlTextBothMadeSameChangeReport) }, TestName = "Timestamp updated - no ancestor timestamp")]
-		[TestCase("", "2002-1-1 23:59:59.123", "2001-1-1 23:59:59.123", "commonName", 1, new[] { typeof(XmlAttributeBothAddedReport) }, TestName = "DateModified-only change - Timestamp updated")]
-		[TestCase("<DateModified val='2000-1-1 23:59:59.123' />", "2001-1-1 23:59:59.123", "2002-1-1 23:59:59.123", "newModifiedName", 2, new[]{ typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) })]
-		[TestCase("", "2001-1-1 23:59:59.123", "2002-1-1 23:59:59.123", "commonName", 1, new[] { typeof(XmlAttributeBothAddedReport) })]
+		[TestCase("<DateModified val='2000-01-01 23:59:59.123' />", "2002-01-01 23:59:59.123", "2001-01-01 23:59:59.123", "newModifiedName", 2, new[]{ typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) }, TestName = "Timestamp updated")]
+		[TestCase("", "2002-01-01 23:59:59.123", "2001-01-01 23:59:59.123", "newModifiedName", 2, new[] { typeof(XmlAttributeBothAddedReport), typeof(XmlTextBothMadeSameChangeReport) }, TestName = "Timestamp updated - no ancestor timestamp")]
+		[TestCase("", "2002-01-01 23:59:59.123", "2001-01-01 23:59:59.123", "commonName", 1, new[] { typeof(XmlAttributeBothAddedReport) }, TestName = "DateModified-only change - Timestamp updated")]
+		[TestCase("<DateModified val='2000-01-01 23:59:59.123' />", "2001-01-01 23:59:59.123", "2002-01-01 23:59:59.123", "newModifiedName", 2, new[]{ typeof(XmlAttributeBothMadeSameChangeReport), typeof(XmlTextBothMadeSameChangeReport) })]
+		[TestCase("", "2001-01-01 23:59:59.123", "2002-01-01 23:59:59.123", "commonName", 1, new[] { typeof(XmlAttributeBothAddedReport) })]
 		public void MergeConflict_TimestampUpdated(string ancestorDate, string ourDate, string theirDate, string modification, int expectedChangeCount, Type[] expectedChangeTypes)
 		{
 			var ancestorContent = CommonPosAncestor.Replace("DateGoesHere", ancestorDate);
-			var ourContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2002-1-1 23:59:59.123' />").Replace("commonName", modification);
-			var theirContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2001-1-1 23:59:59.123' />").Replace("commonName", modification);
+			var ourContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2002-01-01 23:59:59.123' />").Replace("commonName", modification);
+			var theirContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2001-01-01 23:59:59.123' />").Replace("commonName", modification);
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -153,12 +153,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				Is.EqualTo(ExpectedUtcDateTimeString));
 		}
 
-		[TestCase("<DateModified val='2000-1-1 23:59:59.123' />", "commonName", 0, new Type[0], TestName = "DateModified-only change sets ancestor timestamp")]
+		[TestCase("<DateModified val='2000-01-01 23:59:59.123' />", "commonName", 0, new Type[0], TestName = "DateModified-only change sets ancestor timestamp")]
 		public void TimestampOnlyChange_TimestampKept(string ancestorDate, string modification, int expectedChangeCount, Type[] expectedChangeTypes)
 		{
 			var ancestorContent = CommonPosAncestor.Replace("DateGoesHere", ancestorDate);
-			var ourContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2002-1-1 23:59:59.123' />").Replace("commonName", modification);
-			var theirContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2001-1-1 23:59:59.123' />").Replace("commonName", modification);
+			var ourContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2002-01-01 23:59:59.123' />").Replace("commonName", modification);
+			var theirContent = CommonPosAncestor.Replace("DateGoesHere", "<DateModified val='2001-01-01 23:59:59.123' />").Replace("commonName", modification);
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -169,7 +169,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				0, new List<Type>(),
 				expectedChangeCount, new List<Type>(expectedChangeTypes));
 			Assert.That(GetXPathNodeFrom(results, "Root/ReversalIndex/PartsOfSpeech/CmPossibilityList/Possibilities/ownseq/DateModified/@val"),
-				Is.EqualTo("2000-1-1 23:59:59.123"));
+				Is.EqualTo("2000-01-01 23:59:59.123"));
 		}
 
 		private static DateTime GetMergedTime(string filePath)

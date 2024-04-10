@@ -281,7 +281,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 		<LexDb guid='06425922-3258-4094-a9ec-3c2fe5b52b39' >
 			<Introduction>
 				<StText guid='45b78bcf-2400-48d5-a9c1-973447d36d4e'>
-					<DateModified val='2011-2-2 19:39:28.829' />
+					<DateModified val='2011-02-02 19:39:28.829' />
 					<Paragraphs>
 						<ownseq class='StTxtPara' guid='9edbb6e1-2bdd-481c-b84d-26c69f22856c'>
 							<ParseIsCurrent val='False' />
@@ -298,8 +298,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 		public void MergeHasNoReportsForDeepDateModifiedChangesAndKeepsMostRecent()
 		{
 			const string commonAncestor = baseDocument;
-			var ourContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829").Replace("False", "True");
-			var theirContent = commonAncestor.Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829").Replace("False", "True");
+			var ourContent = commonAncestor.Replace("2011-02-02 19:39:28.829", "2012-02-02 19:39:28.829").Replace("False", "True");
+			var theirContent = commonAncestor.Replace("2011-02-02 19:39:28.829", "2013-02-02 19:39:28.829").Replace("False", "True");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
@@ -320,8 +320,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.Lexicon
 					<AUni ws='en'>Original Dictionary</AUni>
 				</Name>");
 
-			var ourContent = commonAncestor.Replace("Original Dictionary", "My Dictionary").Replace("2011-2-2 19:39:28.829", "2012-2-2 19:39:28.829");
-			var theirContent = commonAncestor.Replace("Original Dictionary", "Their Dictionary").Replace("2011-2-2 19:39:28.829", "2013-2-2 19:39:28.829");
+			var ourContent = commonAncestor.Replace("Original Dictionary", "My Dictionary").Replace("2011-02-02 19:39:28.829", "2012-02-02 19:39:28.829");
+			var theirContent = commonAncestor.Replace("Original Dictionary", "Their Dictionary").Replace("2011-02-02 19:39:28.829", "2013-02-02 19:39:28.829");
 
 			var results = FieldWorksTestServices.DoMerge(
 				FileHandler,
