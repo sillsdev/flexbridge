@@ -45,7 +45,6 @@
 	<UsingTask TaskName="NUnit3"
 		AssemblyFile="$(SILBuildTasksDLL)"
 		Condition="Exists('$(SILBuildTasksDLL)')" />
-	<UsingTask TaskName="Dependencies" AssemblyFile="$(BuildDependencyTasksDLL)" Condition="Exists('$(BuildDependencyTasksDLL)')"/>
 
 	<!-- a few do-nothing targets to get rid of some warnings from GitVersion.MsBuild.targets -->
 	<Target Name="GetAssemblyVersion"/>
@@ -78,11 +77,6 @@
 		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.12.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install BuildDependencyTasks -excludeVersion -version 0.4.3 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install SIL.Windows.Forms.GeckoBrowserAdapter -version $(PalasoVer4LinuxGecko) -solutionDirectory "$(RootDir)"' Condition="'$(OS)'!='Windows_NT'"/>
-	</Target>
-
-	<Target Name="DownloadDependencies" DependsOnTargets="RestoreBuildTasks">
-		<Dependencies DependencyFile="FLExBridge.dep" UseDependencyFile="true"
-			KeepJobsFile="true" WorkingDir="$(RootDir)" />
 	</Target>
 
 	<ItemGroup>
@@ -134,7 +128,7 @@
 		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages; DownloadDependencies">
+	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
 		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Build" Properties="Configuration=$(Configuration);GetVersion=$(GetVersion);WriteVersionInfoToBuildLog=$(WriteVersionInfoToBuildLog)"/>
 	</Target>
 

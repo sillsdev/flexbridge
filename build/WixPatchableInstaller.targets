@@ -50,11 +50,14 @@
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+		<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
+		<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
+		<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BaseBuildArgs>
 	</PropertyGroup>
 
 	<!-- Top Level Targets -->
 	<!-- called only once, at the first release of a major version -->
-	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
+	<Target Name="BuildRelease" DependsOnTargets="CleanMasterOutputDir;BuildProductMain;BuildProductBase;CopyBuildToMaster"/>
 
 	<!-- called at each minor release to build a patch installer -->
 	<Target Name="BuildPatch" DependsOnTargets="BuildProductMain;BuildProductPatchMsp" />
@@ -131,6 +134,7 @@
 		<PropertyGroup>
 			<WixLibsDir>$(RootDir)/src/WiXInstaller/libs</WixLibsDir>
 		</PropertyGroup>
+		<Message Text="Executing buildMsi.bat from $(BaseBuildDir)"/>
 		<DownloadFileOnce Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"/> <!-- .net 4.5.1 -->
 		<DownloadFileOnce Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
@@ -184,14 +188,39 @@
 	</UsingTask>
 
 	<!-- Build Wix Product Targets -->
-	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
-		<PropertyGroup>
-			<MsiFile>$(SafeApplicationName)_$(BuildVersion).msi</MsiFile>
-			<BaseBuildDir>$(RootDir)/src/WiXInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BaseBuildArgs>
-		</PropertyGroup>
-		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
+	<!-- Attempt to build and sign the full installation package. Both the msi, and the Online and Offline bundles -->
+	<Target Name="BuildProductBase" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
+		<PropertyGroup>
+			<BuildArgsJIT>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BuildArgsJIT>
+		</PropertyGroup>
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BuildArgsJIT)" />
+
+		<ItemGroup>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
+			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
+		</ItemGroup>
+		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+		<!-- The FieldWorks installer wants a stable installer name -->
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion)_Offline.exe" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName)_Offline.exe"/>
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion)_Online.exe" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName)_Online.exe"/>
+		<Move SourceFiles="$(InstallersBaseDir)/$(SafeApplicationName)_$(BuildVersion).msi" DestinationFiles="$(InstallersBaseDir)/$(SafeApplicationName).msi"/>
+	</Target>
+
+	<!-- Build the msi, useful for separating the signing step -->
+	<Target Name="BuildProductBaseMsi" DependsOnTargets="GetDotNetFiles;InstallerVersionNumbers;BuildProductMain">
+		<PropertyGroup>
+			<BuildArgsJIT>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BuildArgsJIT>
+		</PropertyGroup>
+		<Message Text="Executing buildMsi.bat from $(BaseBuildDir)"/>
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildMsi.bat $(BuildArgsJIT)" />
+	</Target>
+
+	<Target Name="BuildProductBaseBundles" DependsOnTargets="GetDotNetFiles; InstallerVersionNumbers">
+		<PropertyGroup>
+			<BuildArgsJIT>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer)</BuildArgsJIT>
+		</PropertyGroup>
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildexe.bat $(BuildArgsJIT) x86 1" />
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
