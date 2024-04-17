@@ -15,16 +15,17 @@ set Path=%WIX%\bin;%PATH%
 echo Starting Build
 pushd .
 (
-	MSBuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
+REM	MSBuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
 ) && (
-	pushd ..\l10n
+REM	pushd ..\l10n
 ) && (
-	MSBuild l10n.proj /t:restore
+REM	MSBuild l10n.proj /t:restore
 ) && (
-	MSBuild l10n.proj /t:GetLatestL10ns
+REM	MSBuild l10n.proj /t:GetLatestL10ns
 ) && (
-	popd
+REM	popd
 ) && (
-	MSBuild FLExBridge.proj /target:Installer /p:Configuration=Debug /p:Platform="Any CPU" %*
+  MSBuild FLExBridge.proj /target:CleanMasterOutputDir;BuildProductBaseMsi /p:Configuration=Debug /p:Platform="Any CPU" %*
 )
 popd
+REM -2147024893/0x80070003

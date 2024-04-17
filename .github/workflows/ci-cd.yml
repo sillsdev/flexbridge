@@ -5,6 +5,11 @@ on:
   pull_request:
     branches: ["develop", "master"]
   workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Alpha, Beta, Stable used to stamp release artifacts'
+        required: true
+        default: 'Alpha'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -38,15 +43,15 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
         
+      # We need the dotnet runtime to execute overcrowdin
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: | 
-            2.1.x
-            3.1.x
-            5.0.x
+          dotnet-version:
+            8.0.x
         if: github.event_name != 'pull_request'
         
+      # If we are just doing a CI build we don't need real localizations, but the location must exist
       - name: Add Fake Localizations for CI
         shell: bash
         run: echo > DistFiles/localizations/empty.xlf
@@ -62,26 +67,34 @@ jobs:
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Test
         
+      # All the following are used only when building an installer after a merge
       - name: Install Latest Overcrowdin
         shell: cmd
         run: dotnet tool install -g overcrowdin
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         
+
       - name: Restore L10n Packages
         shell: cmd
         run: |
           cd l10n
           msbuild l10n.proj /t:restore
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
           
       - name: Get Latest L10ns
         shell: cmd
         run: |
           cd l10n
           msbuild l10n.proj /t:GetLatestL10ns;CopyL10nsToDistFiles
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
       
       - name: Build Installer
         shell: cmd
-        run: msbuild build/FLExBridge.proj /t:Installer /p:UploadFolder=Alpha
-        if: github.event_name != 'pull_request'
+        run: msbuild build/FLExBridge.proj /t:CleanMasterOutputDir;PreparePublishingArtifactsInternal;BuildProductBaseMsi /p:UploadFolder=${{ inputs.environment || 'Alpha' }}
+        #if: github.event_name != 'pull_request'
+
+      - name: Create Msi Digest
+        uses: sillsdev/codesign/generate-digest@main
+        with:
+          path: src/WiXInstaller/BaseInstallerBuild/*.msi
+          public-cert: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
