@@ -5,15 +5,22 @@ on:
   pull_request:
     branches: ["develop", "master"]
   workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Alpha, Beta, Stable used to stamp release artifacts'
+        required: true
+        default: 'Alpha'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  windows_debug_build_and_test:
+  build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
+      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
+      teamcity_build_checkoutDir: ${{ github.workspace }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -38,35 +45,26 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
         
+      # We need the dotnet runtime to execute overcrowdin
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: | 
-            2.1.x
-            3.1.x
-            5.0.x
+          dotnet-version:
+            8.0.x
         if: github.event_name != 'pull_request'
         
+      # If we are just doing a CI build we don't need real localizations, but the location must exist
       - name: Add Fake Localizations for CI
         shell: bash
         run: echo > DistFiles/localizations/empty.xlf
         if: github.event_name == 'pull_request'
-        
-      - name: Restore Build Tasks & Packages
-        id: package_restore
-        shell: cmd
-        run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
-          
-      - name: Build & Test
-        id: build_and_test
-        shell: cmd
-        run: msbuild build\FLExBridge.proj /t:Test
-        
+
       - name: Install Latest Overcrowdin
         shell: cmd
         run: dotnet tool install -g overcrowdin
         if: github.event_name != 'pull_request'
         
+
       - name: Restore L10n Packages
         shell: cmd
         run: |
@@ -79,9 +77,50 @@ jobs:
         run: |
           cd l10n
           msbuild l10n.proj /t:GetLatestL10ns;CopyL10nsToDistFiles
-        if: github.event_name != 'pull_request'
-      
-      - name: Build Installer
+        if: github.event_name != 'pull_request'      
+        
+      - name: Restore Build Tasks & Packages
+        id: package_restore
         shell: cmd
-        run: msbuild build/FLExBridge.proj /t:Installer /p:UploadFolder=Alpha
+        run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
+          
+      - name: Build & Test
+        id: build_and_test_step
+        shell: cmd
+        run: msbuild build\FLExBridge.proj /t:Test /p:Configuration=Release
+        
+      # All the following are used only when building an installer after a merge
+      - name: Build Msi
+        id: build_msi
+        shell: cmd
+        run: |
+          msbuild build/FLExBridge.proj /t:CleanMasterOutputDir;PreparePublishingArtifactsInternal;BuildProductBaseMsi /p:UploadFolder=${{ inputs.environment || 'Alpha' }}
         if: github.event_name != 'pull_request'
+
+      - name: Prepare for msi signing
+        shell: bash
+        run: |
+          echo "FILES_TO_SIGN=$(cat $FILESTOSIGNLATER)" >> $GITHUB_OUTPUT
+        id: gathered_files
+        if: github.event_name != 'pull_request'
+
+      - name: upload-msi
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge.msi
+          path: ${{ steps.gathered_files.outputs.FILES_TO_SIGN }}
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+          
+  sign-installer:
+    name: Sign FlexBridge Installer
+    needs: build_and_test
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2
+    with:
+      artifact: FlexBridge.msi
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+    
