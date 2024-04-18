@@ -71,5 +71,10 @@ namespace LfMergeBridge
 
 			return true;
 		}
+
+		public static void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
+			LibFLExBridgeChorusPlugin.DomainServices.FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
+		}
 	}
 }
