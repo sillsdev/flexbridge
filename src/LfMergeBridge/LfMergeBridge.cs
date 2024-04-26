@@ -71,5 +71,15 @@ namespace LfMergeBridge
 
 			return true;
 		}
+
+		public static void DisassembleFwdataFile(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
+			LibFLExBridgeChorusPlugin.DomainServices.FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
+		}
+
+		public static void ReassembleFwdataFile(IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
+			LibFLExBridgeChorusPlugin.DomainServices.FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
+		}
 	}
 }
