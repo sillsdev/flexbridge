@@ -53,6 +53,13 @@ jobs:
             8.0.x
         if: github.event_name != 'pull_request'
         
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2 
+        shell: cmd
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          
       # If we are just doing a CI build we don't need real localizations, but the location must exist
       - name: Add Fake Localizations for CI
         shell: bash
@@ -123,4 +130,4 @@ jobs:
       artifact: FlexBridge.msi
     secrets:
       certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
-    
+  
