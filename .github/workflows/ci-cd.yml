@@ -37,14 +37,14 @@ jobs:
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
-                
+
       - name: Install targeting pack
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
-        
+
       # We need the dotnet runtime to execute overcrowdin
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
@@ -52,14 +52,13 @@ jobs:
           dotnet-version:
             8.0.x
         if: github.event_name != 'pull_request'
-        
-      - name: Downgrade Wix Toolset - remove when runner has 3.14.2 
-        shell: cmd
+
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
         run: |
           choco uninstall wixtoolset
           choco install wixtoolset --version 3.11.2 --allow-downgrade --force
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          
+
       # If we are just doing a CI build we don't need real localizations, but the location must exist
       - name: Add Fake Localizations for CI
         shell: bash
@@ -70,7 +69,7 @@ jobs:
         shell: cmd
         run: dotnet tool install -g overcrowdin
         if: github.event_name != 'pull_request'
-        
+
 
       - name: Restore L10n Packages
         shell: cmd
@@ -78,24 +77,24 @@ jobs:
           cd l10n
           msbuild l10n.proj /t:restore
         if: github.event_name != 'pull_request'
-          
+
       - name: Get Latest L10ns
         shell: cmd
         run: |
           cd l10n
           msbuild l10n.proj /t:GetLatestL10ns;CopyL10nsToDistFiles
-        if: github.event_name != 'pull_request'      
-        
+        if: github.event_name != 'pull_request'
+
       - name: Restore Build Tasks & Packages
         id: package_restore
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
-          
+
       - name: Build & Test
         id: build_and_test_step
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Test /p:Configuration=Release
-        
+
       # All the following are used only when building an installer after a merge
       - name: Build Msi
         id: build_msi
@@ -120,14 +119,55 @@ jobs:
           if-no-files-found: error
           overwrite: true
         if: github.event_name != 'pull_request'
-          
-  sign-installer:
+
+  sign-msi:
     name: Sign FlexBridge Installer
     needs: build_and_test
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@v2
+    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
     with:
       artifact: FlexBridge.msi
+      description: 'FLex Bridge Installer'
     secrets:
       certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
-  
+
+  build-offline-bundle:
+    name: Build offline bundle
+    needs: sign-msi
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Download FlexBridge artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge.msi
+          path: src/WiXInstaller/BaseInstallerBuild  # Target directory for the downloaded artifact
+          run: ls -R src/WiXInstaller/BaseInstallerBuild
+
+#      - name: Unzip FlexBridge artifact
+#        run: unzip src/WiXInstaller/BaseInstallerBuild/FlexBridge.msi.zip -d src/WiXInstaller/BaseInstallerBuild
+        
+      # All the following are used only when building an installer after a merge
+      - name: Build Bundles
+        id: build_bundles
+        working-directory: build
+        shell: cmd
+        run: |
+          msbuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
+          msbuild FLExBridge.proj /t:BuildProductBaseBundles /p:Configuration=Release /p:Platform="Any CPU" 
