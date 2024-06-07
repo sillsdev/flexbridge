@@ -21,7 +21,7 @@ jobs:
       CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
       FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
       teamcity_build_checkoutDir: ${{ github.workspace }}
-    name: Build Debug and run Tests
+    name: Build Debug / Test / Build Msi
     runs-on: windows-latest
     steps:
       - name: Checkout Files
@@ -103,6 +103,8 @@ jobs:
           msbuild build/FLExBridge.proj /t:CleanMasterOutputDir;PreparePublishingArtifactsInternal;BuildProductBaseMsi /p:UploadFolder=${{ inputs.environment || 'Alpha' }}
         if: github.event_name != 'pull_request'
 
+      # REVIEW: The .msi file is named with the version, there is probably a cleaner way to generate the correct filename
+      # and after completing the work to do signing of the bundles it became clear that capturing the files in the signtool wasn't necessary
       - name: Prepare for msi signing
         shell: bash
         run: |
@@ -127,12 +129,12 @@ jobs:
     uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
     with:
       artifact: FlexBridge.msi
-      description: 'FLex Bridge Installer'
+      description: 'FLEx Bridge Installer'
     secrets:
       certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
 
-  build-offline-bundle:
-    name: Build offline bundle
+  build-bundles:
+    name: Build Installer Bundles
     needs: sign-msi
     if: github.event_name != 'pull_request'
     runs-on: windows-latest
@@ -161,7 +163,6 @@ jobs:
           name: FlexBridge.msi
           path: src/WiXInstaller/BaseInstallerBuild  # Target directory for the downloaded artifact
         
-      # All the following are used only when building an installer after a merge
       - name: Build Bundles
         id: build_bundles
         working-directory: build
@@ -189,10 +190,10 @@ jobs:
         if: github.event_name != 'pull_request'   
         
       - name: Upload Offline Bundle(detatched)
-        id: upload-offline-detached
+        id: upload-offline-bundle
         uses: actions/upload-artifact@v4
         with:
-          name: offline-detached
+          name: FlexBridge_Offline.exe
           path: BuildDir/FlexBridge_Offline.exe
           if-no-files-found: error
           overwrite: true
@@ -209,11 +210,119 @@ jobs:
         if: github.event_name != 'pull_request'   
         
       - name: Upload Online Bundle(detached)
-        id: upload-online-detached
+        id: upload-online-bundle
         uses: actions/upload-artifact@v4
         with:
-          name: online-detached
+          name: FlexBridge_Online.exe
           path: BuildDir/FlexBridge_Online.exe
           if-no-files-found: error
           overwrite: true
         if: github.event_name != 'pull_request'
+        
+  sign-offline-engine:
+    name: Sign Offline Engine
+    needs: build-bundles
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    with:
+      artifact: offline-engine
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  sign-online-engine:
+    name: Sign Online Engine
+    needs: build-bundles
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    with:
+      artifact: online-engine
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  reattach-engines:
+    runs-on: windows-latest
+    needs: [sign-offline-engine, sign-online-engine]
+    steps:      
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          
+      - name: Download signed online engine
+        uses: actions/download-artifact@v4
+        with:
+          name: online-engine
+      - name: Download signed offline engine
+        uses: actions/download-artifact@v4
+        with:
+          name: offline-engine
+      - name: Download Online Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge_Online.exe
+      - name: Download Offline Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge_Offline.exe
+          
+      - name: Reattach Engines
+        shell: cmd
+        run: |
+          insignia -ab online-engine.exe FlexBridge_Online.exe -o FlexBridge_Online.exe
+          insignia -ab offline-engine.exe FlexBridge_Offline.exe -o FlexBridge_Offline.exe
+
+      - name: Upload Online Bundle(attached)
+        id: upload-online-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Online.exe
+          path: FlexBridge_Online.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+
+      - name: Upload Offline Bundle(attached)
+        id: upload-offline-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Offline.exe
+          path: FlexBridge_Offline.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+      
+      - name: Cleanup Offline Engine      
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: offline-engine
+      
+      - name: Cleanup Online Engine      
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: online-engine
+        
+  sign-offline-bundle:
+    name: Sign Offline Bundle
+    needs: reattach-engines
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    with:
+      artifact: FlexBridge_Offline.exe
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  sign-online-bundle:
+    name: Sign Online Bundle
+    needs: reattach-engines
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    with:
+      artifact: FlexBridge_Online.exe
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
