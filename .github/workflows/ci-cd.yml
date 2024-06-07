@@ -136,6 +136,8 @@ jobs:
     needs: sign-msi
     if: github.event_name != 'pull_request'
     runs-on: windows-latest
+    env:
+      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -158,10 +160,6 @@ jobs:
         with:
           name: FlexBridge.msi
           path: src/WiXInstaller/BaseInstallerBuild  # Target directory for the downloaded artifact
-          run: ls -R src/WiXInstaller/BaseInstallerBuild
-
-#      - name: Unzip FlexBridge artifact
-#        run: unzip src/WiXInstaller/BaseInstallerBuild/FlexBridge.msi.zip -d src/WiXInstaller/BaseInstallerBuild
         
       # All the following are used only when building an installer after a merge
       - name: Build Bundles
@@ -169,5 +167,53 @@ jobs:
         working-directory: build
         shell: cmd
         run: |
-          msbuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
-          msbuild FLExBridge.proj /t:BuildProductBaseBundles /p:Configuration=Release /p:Platform="Any CPU" 
+          msbuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages;GetDotNetFiles;CopyWixOverrides
+          msbuild FLExBridge.proj /t:BuildProductBaseBundles /p:Configuration=Release /p:Platform="Any CPU"
+      
+      - name: Extract burn engines
+        id: extract_engines
+        working-directory: BuildDir
+        shell: cmd
+        run: |
+          insignia -ib FlexBridge_Offline.exe -o offline-engine.exe
+          insignia -ib FlexBridge_Online.exe -o online-engine.exe
+      
+      - name: Upload Offline Engine
+        id: upload-offline-engine
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-engine
+          path: BuildDir/offline-engine.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'   
+        
+      - name: Upload Offline Bundle(detatched)
+        id: upload-offline-detached
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-detached
+          path: BuildDir/FlexBridge_Offline.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request' 
+        
+      - name: Upload Online Engine
+        id: upload-online-engine
+        uses: actions/upload-artifact@v4
+        with:
+          name: online-engine
+          path: BuildDir/online-engine.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'   
+        
+      - name: Upload Online Bundle(detached)
+        id: upload-online-detached
+        uses: actions/upload-artifact@v4
+        with:
+          name: online-detached
+          path: BuildDir/FlexBridge_Online.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
