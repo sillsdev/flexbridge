@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2023 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -76,9 +76,9 @@ namespace TriboroughBridge_ChorusPlugin.Infrastructure.ActionHandlers
 			// "obtain"; // -p <$fwroot>
 			_pathToRepository = options[CommandLineProcessor.projDir];
 			CloneResult result;
-			var uriArg = options[CommandLineProcessor.uri];
-			var projectArg = options[CommandLineProcessor.project];
-			var identifier = options[CommandLineProcessor.repositoryIdentifier];
+			options.TryGetValue(CommandLineProcessor.uri, out var uriArg);
+			options.TryGetValue(CommandLineProcessor.project, out var projectArg);
+			options.TryGetValue(CommandLineProcessor.repositoryIdentifier, out var identifier);
 			if (!string.IsNullOrEmpty(uriArg) && !string.IsNullOrEmpty(projectArg))
 			{
 				var projectFoldersByIdentifier = GetSharedProjectModel.ExtantRepoIdentifiers(_pathToRepository, LibTriboroughBridgeSharedConstants.OtherRepositories);
