@@ -126,7 +126,7 @@ jobs:
     name: Sign FlexBridge Installer
     needs: build_and_test
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
     with:
       artifact: FlexBridge.msi
       description: 'FLEx Bridge Installer'
@@ -223,7 +223,7 @@ jobs:
     name: Sign Offline Engine
     needs: build-bundles
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
     with:
       artifact: offline-engine
       description: 'FLEx Bridge Installer'
@@ -234,7 +234,7 @@ jobs:
     name: Sign Online Engine
     needs: build-bundles
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
     with:
       artifact: online-engine
       description: 'FLEx Bridge Installer'
@@ -308,7 +308,7 @@ jobs:
     name: Sign Offline Bundle
     needs: reattach-engines
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
     with:
       artifact: FlexBridge_Offline.exe
       description: 'FLEx Bridge Installer'
@@ -319,7 +319,7 @@ jobs:
     name: Sign Online Bundle
     needs: reattach-engines
     if: github.event_name != 'pull_request'
-    uses: sillsdev/codesign/.github/workflows/sign.yml@feature/enableDispatchCalls
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
     with:
       artifact: FlexBridge_Online.exe
       description: 'FLEx Bridge Installer'
