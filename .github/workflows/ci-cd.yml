@@ -5,16 +5,23 @@ on:
   pull_request:
     branches: ["develop", "master"]
   workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Alpha, Beta, Stable used to stamp release artifacts'
+        required: true
+        default: 'Alpha'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  windows_debug_build_and_test:
+  build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
-    name: Build Debug and run Tests
+      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
+      teamcity_build_checkoutDir: ${{ github.workspace }}
+    name: Build Debug / Test / Build Msi
     runs-on: windows-latest
     steps:
       - name: Checkout Files
@@ -26,62 +33,298 @@ jobs:
 
       - name: Download 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        id: downloadfile  # Remember to give an ID if you need the output filename
+        id: downloadfile
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
-                
+
       - name: Install targeting pack
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
-        
+
+      # We need the dotnet runtime to execute overcrowdin
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: | 
-            2.1.x
-            3.1.x
-            5.0.x
+          dotnet-version:
+            8.0.x
         if: github.event_name != 'pull_request'
-        
+
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        if: github.event_name != 'pull_request' 
+
+      # If we are just doing a CI build we don't need real localizations, but the location must exist
       - name: Add Fake Localizations for CI
         shell: bash
         run: echo > DistFiles/localizations/empty.xlf
         if: github.event_name == 'pull_request'
-        
-      - name: Restore Build Tasks & Packages
-        id: package_restore
-        shell: cmd
-        run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
-          
-      - name: Build & Test
-        id: build_and_test
-        shell: cmd
-        run: msbuild build\FLExBridge.proj /t:Test
-        
+
       - name: Install Latest Overcrowdin
         shell: cmd
         run: dotnet tool install -g overcrowdin
         if: github.event_name != 'pull_request'
-        
+
+
       - name: Restore L10n Packages
         shell: cmd
         run: |
           cd l10n
           msbuild l10n.proj /t:restore
         if: github.event_name != 'pull_request'
-          
+
       - name: Get Latest L10ns
         shell: cmd
         run: |
           cd l10n
           msbuild l10n.proj /t:GetLatestL10ns;CopyL10nsToDistFiles
         if: github.event_name != 'pull_request'
-      
-      - name: Build Installer
+
+      - name: Restore Build Tasks & Packages
+        id: package_restore
         shell: cmd
-        run: msbuild build/FLExBridge.proj /t:Installer /p:UploadFolder=Alpha
+        run: msbuild build\FLExBridge.proj /t:RestoreBuildTasks;RestorePackages
+
+      - name: Build & Test
+        id: build_and_test_step
+        shell: cmd
+        run: msbuild build\FLExBridge.proj /t:Test /p:Configuration=Release
+
+      # All the following are used only when building an installer after a merge
+      - name: Build Msi
+        id: build_msi
+        shell: cmd
+        run: |
+          msbuild build/FLExBridge.proj /t:CleanMasterOutputDir;PreparePublishingArtifactsInternal;BuildProductBaseMsi /p:UploadFolder=${{ inputs.environment || 'Alpha' }}
         if: github.event_name != 'pull_request'
+
+      # REVIEW: The .msi file is named with the version, there is probably a cleaner way to generate the correct filename
+      # and after completing the work to do signing of the bundles it became clear that capturing the files in the signtool wasn't necessary
+      - name: Prepare for msi signing
+        shell: bash
+        run: |
+          echo "FILES_TO_SIGN=$(cat $FILESTOSIGNLATER)" >> $GITHUB_OUTPUT
+        id: gathered_files
+        if: github.event_name != 'pull_request'
+
+      - name: upload-msi
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge.msi
+          path: ${{ steps.gathered_files.outputs.FILES_TO_SIGN }}
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+
+  sign-msi:
+    name: Sign FlexBridge Installer
+    needs: build_and_test
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
+    with:
+      artifact: FlexBridge.msi
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  build-bundles:
+    name: Build Installer Bundles
+    needs: sign-msi
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    env:
+      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+      # See: https://github.com/actions/runner-images/issues/9667
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Download FlexBridge artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge.msi
+          path: src/WiXInstaller/BaseInstallerBuild  # Target directory for the downloaded artifact
+        
+      - name: Build Bundles
+        id: build_bundles
+        working-directory: build
+        shell: cmd
+        run: |
+          msbuild FLExBridge.proj /t:RestoreBuildTasks;RestorePackages;GetDotNetFiles;CopyWixOverrides
+          msbuild FLExBridge.proj /t:BuildProductBaseBundles /p:Configuration=Release /p:Platform="Any CPU"
+      
+      - name: Extract burn engines
+        id: extract_engines
+        working-directory: BuildDir
+        shell: cmd
+        run: |
+          insignia -ib FlexBridge_Offline.exe -o offline-engine.exe
+          insignia -ib FlexBridge_Online.exe -o online-engine.exe
+      
+      - name: Upload Offline Engine
+        id: upload-offline-engine
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-engine
+          path: BuildDir/offline-engine.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'   
+        
+      - name: Upload Offline Bundle(detatched)
+        id: upload-offline-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Offline.exe
+          path: BuildDir/FlexBridge_Offline.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request' 
+        
+      - name: Upload Online Engine
+        id: upload-online-engine
+        uses: actions/upload-artifact@v4
+        with:
+          name: online-engine
+          path: BuildDir/online-engine.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'   
+        
+      - name: Upload Online Bundle(detached)
+        id: upload-online-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Online.exe
+          path: BuildDir/FlexBridge_Online.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+        
+  sign-offline-engine:
+    name: Sign Offline Engine
+    needs: build-bundles
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
+    with:
+      artifact: offline-engine
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  sign-online-engine:
+    name: Sign Online Engine
+    needs: build-bundles
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
+    with:
+      artifact: online-engine
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  reattach-engines:
+    runs-on: windows-latest
+    needs: [sign-offline-engine, sign-online-engine]
+    steps:      
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          
+      - name: Download signed online engine
+        uses: actions/download-artifact@v4
+        with:
+          name: online-engine
+      - name: Download signed offline engine
+        uses: actions/download-artifact@v4
+        with:
+          name: offline-engine
+      - name: Download Online Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge_Online.exe
+      - name: Download Offline Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: FlexBridge_Offline.exe
+          
+      - name: Reattach Engines
+        shell: cmd
+        run: |
+          insignia -ab online-engine.exe FlexBridge_Online.exe -o FlexBridge_Online.exe
+          insignia -ab offline-engine.exe FlexBridge_Offline.exe -o FlexBridge_Offline.exe
+
+      - name: Upload Online Bundle(attached)
+        id: upload-online-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Online.exe
+          path: FlexBridge_Online.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+
+      - name: Upload Offline Bundle(attached)
+        id: upload-offline-bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlexBridge_Offline.exe
+          path: FlexBridge_Offline.exe
+          if-no-files-found: error
+          overwrite: true
+        if: github.event_name != 'pull_request'
+      
+      - name: Cleanup Offline Engine      
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: offline-engine
+      
+      - name: Cleanup Online Engine      
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: online-engine
+        
+  sign-offline-bundle:
+    name: Sign Offline Bundle
+    needs: reattach-engines
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
+    with:
+      artifact: FlexBridge_Offline.exe
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+
+  sign-online-bundle:
+    name: Sign Online Bundle
+    needs: reattach-engines
+    if: github.event_name != 'pull_request'
+    uses: sillsdev/codesign/.github/workflows/sign.yml@v2.1
+    with:
+      artifact: FlexBridge_Online.exe
+      description: 'FLEx Bridge Installer'
+    secrets:
+      certificate: ${{ secrets.CODESIGN_LSDEVSECTIGOEV }}
+

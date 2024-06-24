@@ -37,7 +37,7 @@
   </Target>
 
   <Target Name="FetchLatestL10ns" DependsOnTargets="restore">
-    <Exec Command="overcrowdin download -e -f $(FwL10nsZip)" />
+    <Exec Command="overcrowdin download -f $(FwL10nsZip)" />
   </Target>
 
   <Target Name="ProcessL10ns"  DependsOnTargets="restore">
