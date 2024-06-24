@@ -33,7 +33,7 @@ jobs:
 
       - name: Download 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        id: downloadfile  # Remember to give an ID if you need the output filename
+        id: downloadfile
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
@@ -149,6 +149,7 @@ jobs:
           submodules: true
 
       - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+      # See: https://github.com/actions/runner-images/issues/9667
         run: |
           choco uninstall wixtoolset
           choco install wixtoolset --version 3.11.2 --allow-downgrade --force
