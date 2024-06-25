@@ -38,8 +38,6 @@ namespace LfMergeBridge
 		/// </summary>
 		void IBridgeActionTypeHandler.StartWorking(IProgress progress, Dictionary<string, string> options, ref string somethingForClient)
 		{
-			var hadExtraData = false;
-
 			var pOption = options["-p"];
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
@@ -47,15 +45,12 @@ namespace LfMergeBridge
 			List<LfComment> commentsFromLF;
 			if (LfMergeBridge.ExtraInputData.TryGetValue(options, out var extraData) && extraData is GetChorusNotesInput inputData)
 			{
-				Console.WriteLine("Extra data passed in, of the right type");
 				commentsFromLF = inputData.LfComments;
-				hadExtraData = true;
 			}
 			else
 			{
-				Console.WriteLine("No extra data passed in, or it was the wrong type");
-				string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-				commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<LfComment>>(inputFilename);
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, "No ExtraInputData passed, or it was the wrong type (should be GetChorusNotesInput). Aborting operation.");
+				return;
 			}
 
 			Dictionary<Guid, LfComment> commentsFromLFByGuid = commentsFromLF.Where(comment => comment.Guid != null).ToDictionary(comment => comment.Guid.Value);
@@ -121,33 +116,14 @@ namespace LfMergeBridge
 				}
 			}
 
-			if (hadExtraData)
-			{
-				// This version of LfMerge follows the ExtraData protocol, so pass the objects back directly
-				var response = new GetChorusNotesResponse {
-					LfComments = lfComments,
-					LfReplies = lfReplies,
-					LfStatusChanges = lfStatusChanges,
-				};
-				// LfMergeBridge.ExtraOutputData.AddOrUpdate(options, response); // Not available in netstandard2.0
-				LfMergeBridge.ExtraOutputData.Remove(options); // Available in netstandard2.0, does not throw if value does not exist
-				LfMergeBridge.ExtraOutputData.Add(options, response); // Now this is guaranteed safe (would have thrown if previous value had not been removed)
-			}
-			else
-			{
-				// Older version of LfMerge, serialize (likely slow)
-				var serializedComments = new StringBuilder("New comments not yet in LF: ");
-				serializedComments.Append(JsonConvert.SerializeObject(lfComments));
-				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
-
-				var serializedReplies = new StringBuilder("New replies on comments already in LF: ");
-				serializedReplies.Append(JsonConvert.SerializeObject(lfReplies));
-				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
-
-				var serializedStatusChanges = new StringBuilder("New status changes on comments already in LF: ");
-				serializedStatusChanges.Append(JsonConvert.SerializeObject(lfStatusChanges));
-				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedStatusChanges.ToString());
-			}
+			var response = new GetChorusNotesResponse {
+				LfComments = lfComments,
+				LfReplies = lfReplies,
+				LfStatusChanges = lfStatusChanges,
+			};
+			// LfMergeBridge.ExtraOutputData.AddOrUpdate(options, response); // Not available in netstandard2.0
+			LfMergeBridge.ExtraOutputData.Remove(options); // Available in netstandard2.0, does not throw if value does not exist
+			LfMergeBridge.ExtraOutputData.Add(options, response); // Now this is guaranteed safe (would have thrown if previous value had not been removed)
 		}
 
 		private LfCommentReply ReplyFromChorusMsg(Message msg)
