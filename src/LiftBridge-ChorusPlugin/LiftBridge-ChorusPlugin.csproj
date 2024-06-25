@@ -4,6 +4,7 @@
     <RootNamespace>SIL.LiftBridge</RootNamespace>
     <AssemblyTitle>LiftBridge-ChorusPlugin</AssemblyTitle>
     <PackageId>SIL.ChorusPlugin.LiftBridge</PackageId>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>

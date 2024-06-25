@@ -4,6 +4,7 @@
     <RootNamespace>FLEx_ChorusPlugin</RootNamespace>
     <AssemblyTitle>FLEx-ChorusPlugin</AssemblyTitle>
     <PackageId>SIL.ChorusPlugin.FLEx</PackageId>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>
