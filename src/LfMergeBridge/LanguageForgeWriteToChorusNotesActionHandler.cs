@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Chorus.notes;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using SIL.Providers;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
+using LfMergeBridge.LfMergeModel;
 
 namespace LfMergeBridge
 {
@@ -45,10 +45,18 @@ namespace LfMergeBridge
 			ProjectDir = Path.GetDirectoryName(pOption);
 			Progress = progress;
 
-			string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-			//string data = File.ReadAllText(inputFilename);
+			List<KeyValuePair<string, LfComment>> commentsFromLF;
+			if (LfMergeBridge.ExtraInputData.TryGetValue(options, out var extraData) && extraData is WriteToChorusNotesInput inputData)
+			{
+				commentsFromLF = inputData.LfComments;
+			}
+			else
+			{
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient,
+					"No ExtraInputData passed, or it was the wrong type (should be WriteToChorusNotesInput). Aborting operation.");
+				return;
+			}
 
-			List<KeyValuePair<string, SerializableLfComment>> commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<KeyValuePair<string, SerializableLfComment>>>(inputFilename);
 			AnnotationRepository[] annRepos = GetAnnotationRepositories(progress);
 			AnnotationRepository primaryRepo = annRepos[0];
 
@@ -64,16 +72,16 @@ namespace LfMergeBridge
 			// We'll keep track of any comment IDs and reply IDs from LF that didn't have GUIDs when they were handed to us, and make sure
 			// that LfMerge can assign the right GUIDs to the right comment and/or reply IDs.
 			// Two dictionaries are needed, because comment IDs are Mongo ObjectId instances, whereas reply IDs are strings coming from PHP's so-called "uniqid" function.
-			var commentIdsThatNeedGuids = new Dictionary<string,string>();
-			var replyIdsThatNeedGuids = new Dictionary<string,string>();
+			var commentIdsThatNeedGuids = new Dictionary<string,Guid>();
+			var replyIdsThatNeedGuids = new Dictionary<string,Guid>();
 
 			if (commentsFromLF == null)
 				return;
 
-			foreach (KeyValuePair<string, SerializableLfComment> kvp in commentsFromLF)
+			foreach (KeyValuePair<string, LfComment> kvp in commentsFromLF)
 			{
 				string lfAnnotationObjectId = kvp.Key;
-				SerializableLfComment lfAnnotation = kvp.Value;
+				LfComment lfAnnotation = kvp.Value;
 				if (lfAnnotation == null || lfAnnotation.IsDeleted)
 				{
 					if (lfAnnotation == null)
@@ -83,40 +91,34 @@ namespace LfMergeBridge
 					}
 					else
 					{
-						// We don't have a C# 6 compiler in our build infrastructure, so we have to do this the hard(er) way.
-						string guidForLog = lfAnnotation == null ? "(no guid)" : lfAnnotation.Guid ?? "(no guid)";
-						string contentForLog = lfAnnotation == null ? "(no content)" : lfAnnotation.Content ?? "(no content)";
-						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("Skipping deleted annotation {0} containing content \"{1}\"",
-							guidForLog, contentForLog));
-						// The easy way would have been able to skip creating guidForLog and contentForLog; that would have looked like:
-						// LfMergeBridge.LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
-						// 	lfAnnotation?.Guid ?? "(no guid)", lfAnnotation?.Content ?? "(no content)"));
+						LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, String.Format("Skipping deleted annotation {0} containing content \"{1}\"",
+							lfAnnotation?.Guid?.ToString() ?? "(no guid)", lfAnnotation?.Content ?? "(no content)"));
 					}
 					continue;
 				}
-				// TODO: Once we're compiling with C# 6, use the ?. syntax below instead of the more lengthy (== null) syntax that we're currently using.
-				// string ownerGuid = lfAnnotation.Regarding?.TargetGuid ?? string.Empty;
-				// string ownerShortName = lfAnnotation.Regarding?.Word ?? "???";  // Match FLEx's behavior when short name can't be determined
-				string ownerGuid = (lfAnnotation.Regarding == null) ? string.Empty : lfAnnotation.Regarding.TargetGuid;
-				string ownerShortName = (lfAnnotation.Regarding == null) ? "???" : lfAnnotation.Regarding.Word;  // Match FLEx's behavior when short name can't be determined
+				string ownerGuid = lfAnnotation.Regarding?.TargetGuid ?? string.Empty;
+				string ownerShortName = lfAnnotation.Regarding?.Word ?? "???";  // Match FLEx's behavior when short name can't be determined
 
 				Annotation chorusAnnotation;
-				if (lfAnnotation.Guid != null && chorusAnnotationsByGuid.TryGetValue(lfAnnotation.Guid, out chorusAnnotation) && chorusAnnotation != null)
+				if (lfAnnotation.Guid != null && chorusAnnotationsByGuid.TryGetValue(lfAnnotation.Guid.ToString(), out chorusAnnotation) && chorusAnnotation != null)
 				{
 					SetChorusAnnotationMessagesFromLfReplies(chorusAnnotation, lfAnnotation, lfAnnotationObjectId, replyIdsThatNeedGuids, commentIdsThatNeedGuids);
 				}
 				else
 				{
-					Annotation newAnnotation = CreateAnnotation(lfAnnotation.Content, lfAnnotation.Guid, lfAnnotation.AuthorNameAlternate, lfAnnotation.Status, ownerGuid, ownerShortName);
+					Annotation newAnnotation = CreateAnnotation(lfAnnotation.Content, lfAnnotation.Guid?.ToString(), lfAnnotation.AuthorNameAlternate, lfAnnotation.Status, ownerGuid, ownerShortName);
 					SetChorusAnnotationMessagesFromLfReplies(newAnnotation, lfAnnotation, lfAnnotationObjectId, replyIdsThatNeedGuids, commentIdsThatNeedGuids);
 					primaryRepo.AddAnnotation(newAnnotation);
 				}
 			}
 
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("New comment ID->Guid mappings: {0}",
-				string.Join(";", commentIdsThatNeedGuids.Select(kv => string.Format("{0}={1}", kv.Key, kv.Value)))));
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, string.Format("New reply ID->Guid mappings: {0}",
-				string.Join(";", replyIdsThatNeedGuids.Select(kv => string.Format("{0}={1}", kv.Key, kv.Value)))));
+			var response = new WriteToChorusNotesResponse {
+				CommentIdsThatNeedGuids = commentIdsThatNeedGuids,
+				ReplyIdsThatNeedGuids = replyIdsThatNeedGuids,
+			};
+
+			LfMergeBridge.ExtraOutputData.Remove(options); // Ensure Add() doesn't throw if there was already leftover data there
+			LfMergeBridge.ExtraOutputData.Add(options, response);
 
 			SaveReposIfNeeded(annRepos, progress);
 		}
@@ -134,13 +136,13 @@ namespace LfMergeBridge
 			return lfStatus == SerializableLfComment.Resolved ? Annotation.Closed : Annotation.Open;
 		}
 
-		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, SerializableLfComment annotationInfo,
-			string annotationObjectId, Dictionary<string,string> uniqIdsThatNeedGuids, Dictionary<string,string> commentIdsThatNeedGuids)
+		private void SetChorusAnnotationMessagesFromLfReplies(Annotation chorusAnnotation, LfComment annotationInfo,
+			string annotationObjectId, Dictionary<string,Guid> uniqIdsThatNeedGuids, Dictionary<string,Guid> commentIdsThatNeedGuids)
 		{
 			// Any LF comments that do NOT yet have GUIDs need them set from the corresponding Chorus annotation
-			if (string.IsNullOrEmpty(annotationInfo.Guid) && !string.IsNullOrEmpty(annotationObjectId))
+			if (annotationInfo.Guid == null && !string.IsNullOrEmpty(annotationObjectId))
 			{
-				commentIdsThatNeedGuids[annotationObjectId] = chorusAnnotation.Guid;
+				commentIdsThatNeedGuids[annotationObjectId] = Guid.Parse(chorusAnnotation.Guid);
 			}
 
 			string statusToSet = LfStatusToChorusStatus(annotationInfo.Status);
@@ -152,16 +154,16 @@ namespace LfMergeBridge
 			var chorusMsgGuids = new HashSet<string>(chorusAnnotation.Messages.Select(msg => msg.Guid).Where(s => ! string.IsNullOrEmpty(s) && s != zeroGuidStr));
 			// If we're in this function, the Chorus annotation already contains the text of the LF annotation's comment,
 			// so the only thing we need to go through are the replies.
-			foreach (SerializableLfCommentReply reply in annotationInfo.Replies)
+			foreach (LfCommentReply reply in annotationInfo.Replies)
 			{
-				if (reply.IsDeleted || chorusMsgGuids.Contains(reply.Guid))
+				if (reply.IsDeleted || chorusMsgGuids.Contains(reply.Guid?.ToString()))
 				{
 					continue;
 				}
 				Message newChorusMsg = chorusAnnotation.AddMessage(reply.AuthorNameAlternate, statusToSet, reply.Content);
-				if ((string.IsNullOrEmpty(reply.Guid) || reply.Guid == zeroGuidStr) && ! string.IsNullOrEmpty(reply.UniqId))
+				if ((reply.Guid == null || reply.Guid == Guid.Empty) && ! string.IsNullOrEmpty(reply.UniqId))
 				{
-					uniqIdsThatNeedGuids[reply.UniqId] = newChorusMsg.Guid;
+					uniqIdsThatNeedGuids[reply.UniqId] = Guid.Parse(newChorusMsg.Guid);
 				}
 			}
 			// Since LF allows changing a comment's status without adding any replies, it's possible we haven't updated the Chorus status yet at this point.
@@ -175,18 +177,19 @@ namespace LfMergeBridge
 			{
 				// LF doesn't keep track of who clicked on the "Resolved" or "Todo" buttons, so we have to be vague about authorship
 				chorusAnnotation.SetStatus(genericAuthorName, statusToSet);
-				annotationInfo.StatusGuid = chorusAnnotation.StatusGuid;
+				annotationInfo.StatusGuid = string.IsNullOrEmpty(chorusAnnotation.StatusGuid) ? Guid.Empty : Guid.Parse(chorusAnnotation.StatusGuid);
 			}
 		}
 
-		private static bool StatusChangeFromLF(Annotation chorusAnnotation, string statusGuid, string statusToSet)
+		private static bool StatusChangeFromLF(Annotation chorusAnnotation, Guid? statusGuid, string statusToSet)
 		{
-			if (string.IsNullOrEmpty(statusGuid))
+			if (statusGuid == null || statusGuid == Guid.Empty)
 				return false;
 
+			var guidStr = statusGuid.ToString();
 			foreach (var message in chorusAnnotation.Messages)
 			{
-				if (message.Guid == statusGuid)
+				if (message.Guid == guidStr)
 					return statusToSet != message.Status;
 			}
 			return true;
@@ -236,7 +239,7 @@ namespace LfMergeBridge
 		private Annotation CreateAnnotation(string content, string guidStr, string author, string status, string ownerGuidStr, string ownerShortName)
 		{
 			Guid guid;
-			if (!Guid.TryParse(guidStr, out guid) || guid == Guid.Empty)
+			if (guidStr == null || !Guid.TryParse(guidStr, out guid) || guid == Guid.Empty)
 			{
 				guid = GuidProvider.Current.NewGuid();
 			}
