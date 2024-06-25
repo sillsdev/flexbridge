@@ -108,14 +108,14 @@ namespace LfMergeBridge
 						Content = (msg == null) ? string.Empty : msg.Text,
 						Status = ChorusStatusToLfStatus(ann.Status),
 						StatusGuid = Guid.TryParse(ann.StatusGuid, out var annStatusGuid) ? annStatusGuid : Guid.Empty,
-						Replies = new List<LfCommentReply>(ann.Messages.Skip(1).Where(m => ! String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
-						IsDeleted = false
-					};
-					lfComment.Regarding = new LfCommentRegarding {
-						TargetGuid = ExtractGuidFromChorusRef(ann.RefStillEscaped),
-						// Word and Meaning will be set in LfMerge, but set them to something vaguely sensible here as a fallback
-						Word = ann.LabelOfThingAnnotated,
-						Meaning = string.Empty
+						Replies = new List<LfCommentReply>(ann.Messages.Skip(1).Where(m => !String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
+						IsDeleted = false,
+						Regarding = new LfCommentRegarding {
+							TargetGuid = ExtractGuidFromChorusRef(ann.RefStillEscaped),
+							// Word and Meaning will be set in LfMerge, but set them to something vaguely sensible here as a fallback
+							Word = ann.LabelOfThingAnnotated,
+							Meaning = string.Empty
+						}
 					};
 					lfComments.Add(lfComment);
 				}
