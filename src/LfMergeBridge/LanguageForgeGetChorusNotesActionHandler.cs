@@ -14,6 +14,7 @@ using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using SIL.Progress;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
+using LfMergeBridge.LfMergeModel;
 
 namespace LfMergeBridge
 {
@@ -41,46 +42,59 @@ namespace LfMergeBridge
 			ProjectName = Path.GetFileNameWithoutExtension(pOption);
 			ProjectDir = Path.GetDirectoryName(pOption);
 
-			string inputFilename = options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge];
-			List<SerializableLfComment> commentsFromLF = LfMergeBridgeUtilities.DecodeJsonFile<List<SerializableLfComment>>(inputFilename);
-			Dictionary<string, SerializableLfComment> commentsFromLFByGuid = commentsFromLF.Where(comment => comment.Guid != null).ToDictionary(comment => comment.Guid);
-			var knownReplyGuids = new HashSet<string>(commentsFromLF.Where(comment => comment.Replies != null).SelectMany(comment => comment.Replies.Where(reply => reply.Guid != null).Select(reply => reply.Guid)));
+			List<LfComment> commentsFromLF;
+			if (LfMergeBridge.ExtraInputData.TryGetValue(options, out var extraData) && extraData is GetChorusNotesInput inputData)
+			{
+				commentsFromLF = inputData.LfComments;
+			}
+			else
+			{
+				LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, "No ExtraInputData passed, or it was the wrong type (should be GetChorusNotesInput). Aborting operation.");
+				return;
+			}
 
-			var lfComments = new List<SerializableLfComment>();
-			var lfReplies = new List<Tuple<string, List<SerializableLfCommentReply>>>();
+			Dictionary<Guid, LfComment> commentsFromLFByGuid = commentsFromLF.Where(comment => comment.Guid != null).ToDictionary(comment => comment.Guid.Value);
+			var knownReplyGuids = new HashSet<Guid>(commentsFromLF.Where(comment => comment.Replies != null).SelectMany(comment => comment.Replies.Where(reply => reply.Guid != null).Select(reply => reply.Guid.Value)));
+
+			var lfComments = new List<LfComment>();
+			var lfReplies = new List<Tuple<string, List<LfCommentReply>>>();
 			var lfStatusChanges = new List<KeyValuePair<string, Tuple<string, string>>>();
 			// TODO: See if we want to suppress progress messages here by using a NullProgress instance instead of the IProgress instance we were given...
 			foreach (Annotation ann in GetAllAnnotations(progress, ProjectDir))
 			{
-				if (ann.Guid != null && commentsFromLFByGuid.ContainsKey(ann.Guid))
+				Guid? annGuid = null;
+				if (ann.Guid != null && Guid.TryParse(ann.Guid, out var parsedGuid)) { annGuid = parsedGuid; }
+				if (annGuid != null && commentsFromLFByGuid.ContainsKey(annGuid.Value))
 				{
-					var lfComment = commentsFromLFByGuid[ann.Guid];
-					// Known comment; only serialize new replies
-					List<SerializableLfCommentReply> repliesNotYetInLf =
+					var lfComment = commentsFromLFByGuid[annGuid.Value];
+					// Known comment; only return new replies
+					List<LfCommentReply> repliesNotYetInLf =
 						ann
 							.Messages
 							.Skip(1)  // First message translates to the LF *comment*, while subsequent messages are *replies* in LF
 							.Where(m => ! String.IsNullOrWhiteSpace(m.Text))
-							.Where(m => ! knownReplyGuids.Contains(m.Guid))
+							.Where(m => m.Guid != null && Guid.TryParse(m.Guid, out var mGuid) && ! knownReplyGuids.Contains(mGuid))
 							.Select(ReplyFromChorusMsg)
 							.ToList();
 					if (repliesNotYetInLf.Count > 0)
 					{
-						lfReplies.Add(new Tuple<string, List<SerializableLfCommentReply>>(ann.Guid, repliesNotYetInLf));
+						lfReplies.Add(new Tuple<string, List<LfCommentReply>>(ann.Guid, repliesNotYetInLf));
 					}
 					// But also need to check for status updates
 					string chorusStatus = ChorusStatusToLfStatus(ann.Status);
-					if (chorusStatus != lfComment.Status || lfComment.StatusGuid != ann.StatusGuid)
+					Guid annStatusGuid = Guid.Empty;
+					if (ann.StatusGuid != null) { Guid.TryParse(ann.StatusGuid, out annStatusGuid); }
+					if (chorusStatus != lfComment.Status || (lfComment.StatusGuid ?? Guid.Empty) != annStatusGuid)
 					{
-						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid, new Tuple<string, string>(chorusStatus, ann.StatusGuid)));
-				}
+						lfStatusChanges.Add(new KeyValuePair<string, Tuple<string, string>>(lfComment.Guid?.ToString(), new Tuple<string, string>(chorusStatus, ann.StatusGuid)));
+					}
 				}
 				else
 				{
-					// New comment: serialize everything
+					// New comment: return all replies
 					var msg = ann.Messages.FirstOrDefault();
-					var lfComment = new SerializableLfComment {
-						Guid = ann.Guid,
+					var lfComment = new LfComment {
+						Guid = annGuid,
 						// AuthorNameAlternate = msg?.Author ?? string.Empty,  // C# 6 syntax would be simpler if we could count on a C# 6 compiler everywhere
 						AuthorNameAlternate = (msg == null) ? string.Empty : msg.Author,
 						DateCreated = ann.Date,
@@ -88,39 +102,37 @@ namespace LfMergeBridge
 						// Content = msg?.Text ?? string.Empty,  // C# 6 syntax would be simpler if we could count on a C# 6 compiler everywhere
 						Content = (msg == null) ? string.Empty : msg.Text,
 						Status = ChorusStatusToLfStatus(ann.Status),
-						StatusGuid = ann.StatusGuid,
-						Replies = new List<SerializableLfCommentReply>(ann.Messages.Skip(1).Where(m => ! String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
-						IsDeleted = false
-					};
-					lfComment.Regarding = new SerializableLfCommentRegarding {
-						TargetGuid = ExtractGuidFromChorusRef(ann.RefStillEscaped),
-						// Word and Meaning will be set in LfMerge, but set them to something vaguely sensible here as a fallback
-						Word = ann.LabelOfThingAnnotated,
-						Meaning = string.Empty
+						StatusGuid = Guid.TryParse(ann.StatusGuid, out var annStatusGuid) ? annStatusGuid : Guid.Empty,
+						Replies = new List<LfCommentReply>(ann.Messages.Skip(1).Where(m => !String.IsNullOrWhiteSpace(m.Text)).Select(ReplyFromChorusMsg)),
+						IsDeleted = false,
+						Regarding = new LfCommentRegarding {
+							TargetGuid = ExtractGuidFromChorusRef(ann.RefStillEscaped),
+							// Word and Meaning will be set in LfMerge, but set them to something vaguely sensible here as a fallback
+							Word = ann.LabelOfThingAnnotated,
+							Meaning = string.Empty
+						}
 					};
 					lfComments.Add(lfComment);
 				}
 			}
-			var serializedComments = new StringBuilder("New comments not yet in LF: ");
-			serializedComments.Append(JsonConvert.SerializeObject(lfComments));
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedComments.ToString());
 
-			var serializedReplies = new StringBuilder("New replies on comments already in LF: ");
-			serializedReplies.Append(JsonConvert.SerializeObject(lfReplies));
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedReplies.ToString());
-
-			var serializedStatusChanges = new StringBuilder("New status changes on comments already in LF: ");
-			serializedStatusChanges.Append(JsonConvert.SerializeObject(lfStatusChanges));
-			LfMergeBridgeUtilities.AppendLineToSomethingForClient(ref somethingForClient, serializedStatusChanges.ToString());
+			var response = new GetChorusNotesResponse {
+				LfComments = lfComments,
+				LfReplies = lfReplies,
+				LfStatusChanges = lfStatusChanges,
+			};
+			// LfMergeBridge.ExtraOutputData.AddOrUpdate(options, response); // Not available in netstandard2.0
+			LfMergeBridge.ExtraOutputData.Remove(options); // Available in netstandard2.0, does not throw if value does not exist
+			LfMergeBridge.ExtraOutputData.Add(options, response); // Now this is guaranteed safe (would have thrown if previous value had not been removed)
 		}
 
-		private SerializableLfCommentReply ReplyFromChorusMsg(Message msg)
+		private LfCommentReply ReplyFromChorusMsg(Message msg)
 		{
-			var reply = new SerializableLfCommentReply();
-			reply.Guid = msg.Guid;
+			var reply = new LfCommentReply();
+			reply.Guid = Guid.Parse(msg.Guid); // We already know it's parseable by now
 			reply.AuthorNameAlternate = msg.Author;
 			if (reply.AuthorInfo == null)
-				reply.AuthorInfo = new SerializableLfAuthorInfo();
+				reply.AuthorInfo = new LfAuthorInfo();
 			reply.AuthorInfo.CreatedDate = msg.Date;
 			reply.AuthorInfo.ModifiedDate = msg.Date;
 			reply.Content = msg.Text;

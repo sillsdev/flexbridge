@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Chorus.VcsDrivers.Mercurial;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
@@ -18,6 +19,9 @@ namespace LfMergeBridge
 	/// </summary>
 	public static class LfMergeBridge
 	{
+		public static ConditionalWeakTable<object, object> ExtraInputData { get; } = new ConditionalWeakTable<object, object>();
+		public static ConditionalWeakTable<object, object> ExtraOutputData { get; } = new ConditionalWeakTable<object, object>();
+
 		/// <summary>
 		/// This is the only 'uniform interface' public API neded to support current and future needs of LfMerge.
 		/// </summary>

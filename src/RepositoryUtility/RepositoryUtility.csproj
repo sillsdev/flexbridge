@@ -5,6 +5,7 @@
     <AssemblyTitle>RepositoryUtility</AssemblyTitle>
     <OutputType>WinExe</OutputType>
     <IsPackable>false</IsPackable>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>

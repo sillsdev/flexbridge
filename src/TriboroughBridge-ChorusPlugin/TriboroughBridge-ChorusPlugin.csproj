@@ -4,6 +4,7 @@
     <RootNamespace>TriboroughBridge_ChorusPlugin</RootNamespace>
     <AssemblyTitle>TriboroughBridge-ChorusPlugin</AssemblyTitle>
     <PackageId>SIL.ChorusPlugin.TriboroughBridge</PackageId>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>
