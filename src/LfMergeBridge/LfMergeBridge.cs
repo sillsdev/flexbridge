@@ -19,7 +19,8 @@ namespace LfMergeBridge
 	/// </summary>
 	public static class LfMergeBridge
 	{
-		public static ConditionalWeakTable<object, object> ExtraData { get; } = new ConditionalWeakTable<object, object>();
+		public static ConditionalWeakTable<object, object> ExtraInputData { get; } = new ConditionalWeakTable<object, object>();
+		public static ConditionalWeakTable<object, object> ExtraOutputData { get; } = new ConditionalWeakTable<object, object>();
 
 		/// <summary>
 		/// This is the only 'uniform interface' public API neded to support current and future needs of LfMerge.

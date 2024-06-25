@@ -45,11 +45,10 @@ namespace LfMergeBridge
 			ProjectDir = Path.GetDirectoryName(pOption);
 
 			List<LfComment> commentsFromLF;
-			if (LfMergeBridge.ExtraData.TryGetValue(options, out var extraData) && extraData is GetChorusNotesInput inputData)
+			if (LfMergeBridge.ExtraInputData.TryGetValue(options, out var extraData) && extraData is GetChorusNotesInput inputData)
 			{
 				Console.WriteLine("Extra data passed in, of the right type");
 				commentsFromLF = inputData.LfComments;
-				LfMergeBridge.ExtraData.Remove(options);
 				hadExtraData = true;
 			}
 			else
@@ -130,7 +129,9 @@ namespace LfMergeBridge
 					LfReplies = lfReplies,
 					LfStatusChanges = lfStatusChanges,
 				};
-				LfMergeBridge.ExtraData.Add(options, response);
+				// LfMergeBridge.ExtraOutputData.AddOrUpdate(options, response); // Not available in netstandard2.0
+				LfMergeBridge.ExtraOutputData.Remove(options); // Available in netstandard2.0, does not throw if value does not exist
+				LfMergeBridge.ExtraOutputData.Add(options, response); // Now this is guaranteed safe (would have thrown if previous value had not been removed)
 			}
 			else
 			{
