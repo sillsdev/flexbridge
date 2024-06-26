@@ -20,11 +20,11 @@ class Program
         );
         rootCommand.AddGlobalOption(quietOption);
 
-        var file = new Argument<FileSystemInfo>(
+        var filename = new Argument<string>(
             "file",
-            "Name of .fwdata file to create"
+            "Name of .fwdata file to create, or directory to create it in"
         );
-        rootCommand.Add(file);
+        rootCommand.Add(filename);
 
         var hgRevOption = new Option<string>(
             ["--rev", "-r"],
@@ -39,23 +39,46 @@ class Program
         );
         rootCommand.Add(cleanupOption);
 
-        rootCommand.SetHandler(Run, file, verboseOption, quietOption, hgRevOption, cleanupOption);
+        rootCommand.SetHandler(Run, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
 
         return await rootCommand.InvokeAsync(args);
     }
 
-    static Task<int> Run(FileSystemInfo file, bool verbose, bool quiet, string rev, bool cleanup)
+    static FileInfo LocateFwDataFile(string input)
+    {
+        if (Directory.Exists(input)) {
+            var dirInfo = new DirectoryInfo(input);
+            var fname = dirInfo.Name + ".fwdata";
+            return new FileInfo(Path.Join(input, fname));
+        } else if (File.Exists(input)) {
+            return new FileInfo(input);
+        } else if (File.Exists(input + ".fwdata")) {
+            return new FileInfo(input + ".fwdata");
+        } else {
+            if (input.EndsWith(".fwdata")) return new FileInfo(input);
+            return new FileInfo(input + ".fwdata");
+        }
+    }
+
+    static Task<int> Run(string filename, bool verbose, bool quiet, string rev, bool cleanup)
     {
         IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
         progress.ShowVerbose = verbose;
-        bool isDir = file.Exists && (file.Attributes & FileAttributes.Directory) != 0;
-        string name = isDir ? Path.Join(file.FullName, file.Name + ".fwdata") : file.FullName;
-        string dir = isDir ? file.FullName : new FileInfo(file.FullName).Directory!.FullName;
+        var file = LocateFwDataFile(filename);
+        if (file.Exists) {
+            progress.WriteWarning("File {0} already exists and will be overwritten", file.FullName);
+        }
+        var dir = file.Directory;
+        if (dir == null || !dir.Exists) {
+            progress.WriteError("Could not find directory {0}. MkFwData needs a Mercurial repo to work with.", dir?.FullName ?? "(null)");
+            return Task.FromResult(1);
+        }
+        string name = file.FullName;
         progress.WriteMessage("Checking out {0}", rev);
-        var result = HgRunner.Run($"hg checkout {rev}", dir, 30, progress);
+        var result = HgRunner.Run($"hg checkout {rev}", dir.FullName, 30, progress);
         if (result.ExitCode != 0)
         {
-            progress.WriteMessage("Could not find Mercurial repo; please check filename");
+            progress.WriteMessage("Could not find Mercurial repo in directory {0}. MkFwData needs a Mercurial repo to work with.", dir.FullName ?? "(null)");
             return Task.FromResult(result.ExitCode);
         }
         progress.WriteVerbose("Creating {0} ...", name);
@@ -64,8 +87,8 @@ class Program
         if (cleanup)
         {
             progress.WriteVerbose("Cleaning up...");
-            HgRunner.Run($"hg checkout null", dir, 30, progress);
-            HgRunner.Run($"hg purge --no-confirm --exclude *.fwdata --exclude hgRunner.log", dir, 30, progress);
+            HgRunner.Run($"hg checkout null", dir.FullName, 30, progress);
+            HgRunner.Run($"hg purge --no-confirm --exclude *.fwdata --exclude hgRunner.log", dir.FullName, 30, progress);
         }
         return Task.FromResult(0);
     }

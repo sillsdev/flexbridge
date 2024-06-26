@@ -20,11 +20,11 @@ class Program
         );
         rootCommand.AddGlobalOption(quietOption);
 
-        var file = new Argument<FileSystemInfo>(
+        var filename = new Argument<string>(
             "file",
             "Name of .fwdata file to split"
         );
-        rootCommand.Add(file);
+        rootCommand.Add(filename);
 
         var cleanupOption = new Option<bool>(
             ["--cleanup", "-c"],
@@ -32,18 +32,36 @@ class Program
         );
         rootCommand.Add(cleanupOption);
 
-        rootCommand.SetHandler(Run, file, verboseOption, quietOption, cleanupOption);
+        rootCommand.SetHandler(Run, filename, verboseOption, quietOption, cleanupOption);
 
         return await rootCommand.InvokeAsync(args);
     }
 
-    static Task<int> Run(FileSystemInfo file, bool verbose, bool quiet, bool cleanup)
+    static FileInfo? LocateFwDataFile(string input)
+    {
+        if (Directory.Exists(input)) {
+            var dirInfo = new DirectoryInfo(input);
+            var fname = dirInfo.Name + ".fwdata";
+            return new FileInfo(Path.Join(input, fname));
+        } else if (File.Exists(input)) {
+            return new FileInfo(input);
+        } else if (File.Exists(input + ".fwdata")) {
+            return new FileInfo(input + ".fwdata");
+        } else {
+            return null;
+        }
+    }
+
+    static Task<int> Run(string filename, bool verbose, bool quiet, bool cleanup)
     {
         IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
         progress.ShowVerbose = verbose;
-        bool isDir = file.Exists && (file.Attributes & FileAttributes.Directory) != 0;
-        string name = isDir ? Path.Join(file.FullName, file.Name + ".fwdata") : file.FullName;
-        string dir = isDir ? file.FullName : new FileInfo(file.FullName).Directory!.FullName;
+        var file = LocateFwDataFile(filename);
+        if (file == null || !file.Exists) {
+            progress.WriteError("Could not find {0}", filename);
+            return Task.FromResult(1);
+        }
+        string name = file.FullName;
         progress.WriteVerbose("Splitting {0} ...", name);
         LfMergeBridge.LfMergeBridge.DisassembleFwdataFile(progress, writeVerbose: true, name);
         progress.WriteMessage("Finished splitting {0}", name);
