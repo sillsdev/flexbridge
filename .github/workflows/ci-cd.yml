@@ -107,6 +107,14 @@ jobs:
           path: output/*nupkg
           if-no-files-found: warn
 
+      # --skip-duplicate allows retrying a workflow that failed with a partial push, skipping already published packages and publishing the rest.
+      # - name: Publish NuGet packages to nuget.org
+      #   run: |
+      #     foreach ($pkg in (Get-ChildItem output -Include *.nupkg)) {
+      #         dotnet nuget push $pkg --skip-duplicate --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
+      #     }
+      #   if: github.event_name != 'pull_request'
+
       # All the following are used only when building an installer after a merge
       - name: Build Msi
         id: build_msi
