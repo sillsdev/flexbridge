@@ -96,6 +96,17 @@ jobs:
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Test /p:Configuration=Release
 
+      - name: Create NuGet packages
+        shell: cmd
+        run: msbuild build\FLExBridge.proj /t:Pack /p:Configuration=Release
+
+      - name: Upload NuGet packages to build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: output/*nupkg
+          if-no-files-found: warn
+
       # All the following are used only when building an installer after a merge
       - name: Build Msi
         id: build_msi
