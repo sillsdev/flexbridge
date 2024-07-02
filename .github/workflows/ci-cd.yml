@@ -118,13 +118,6 @@ jobs:
       #     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       #   if: github.event_name != 'pull_request'
 
-      - name: Simulate publishing NuGet packages
-        run: |
-          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *.nupkg)) {
-              echo "would push $pkg"
-          }
-        if: github.event_name == 'pull_request'
-
       # All the following are used only when building an installer after a merge
       - name: Build Msi
         id: build_msi
