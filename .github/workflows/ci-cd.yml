@@ -118,16 +118,6 @@ jobs:
         if: github.event_name != 'pull_request'
         continue-on-error: true
 
-      - name: "PR: Publish NuGet packages to int.nugettest.org"
-        run: |
-          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *nupkg)) {
-              dotnet nuget push output/$pkg --skip-duplicate --api-key $env:NUGET_API_KEY --source https://apiint.nugettest.org/v3/index.json
-          }
-        env:
-          NUGET_API_KEY: ${{ secrets.SILLSDEV_PUBLISH_NUGET_ORG }}
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-
       # All the following are used only when building an installer after a merge
       - name: Build Msi
         id: build_msi
