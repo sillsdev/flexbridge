@@ -110,7 +110,7 @@ jobs:
       # --skip-duplicate allows retrying a workflow that failed with a partial push, skipping already published packages and publishing the rest.
       - name: Publish NuGet packages to nuget.org
         run: |
-          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *.nupkg)) {
+          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *nupkg)) {
               dotnet nuget push output/$pkg --skip-duplicate --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
           }
         env:
@@ -119,7 +119,7 @@ jobs:
 
       - name: "PR: Publish NuGet packages to int.nugettest.org"
         run: |
-          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *.nupkg)) {
+          foreach ($pkg in (Get-ChildItem -Path output -Name -Filter *nupkg)) {
               dotnet nuget push output/$pkg --skip-duplicate --api-key $env:NUGET_API_KEY --source https://apiint.nugettest.org/v3/index.json
           }
         env:
