@@ -116,6 +116,7 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.SILLSDEV_PUBLISH_NUGET_ORG }}
         if: github.event_name != 'pull_request'
+        continue-on-error: true
 
       - name: "PR: Publish NuGet packages to int.nugettest.org"
         run: |
@@ -125,6 +126,7 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.SILLSDEV_PUBLISH_NUGET_ORG }}
         if: github.event_name == 'pull_request'
+        continue-on-error: true
 
       # All the following are used only when building an installer after a merge
       - name: Build Msi
