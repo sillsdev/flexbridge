@@ -6,7 +6,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var rootCommand = new RootCommand("Make .fwdata file");
+        var rootCommand = new RootCommand("Make or split .fwdata file");
 
         var verboseOption = new Option<bool>(
             ["--verbose", "-v"],
@@ -20,31 +20,46 @@ class Program
         );
         rootCommand.AddGlobalOption(quietOption);
 
+        var splitCommand = new Command("split", "Split .fwdata file (push Humpty off the wall)");
+        var combineCommand = new Command("combine", "Recombine .fwdata file (put Humpty together again)");
+
+        rootCommand.Add(splitCommand);
+        rootCommand.Add(combineCommand);
+
         var filename = new Argument<string>(
             "file",
-            "Name of .fwdata file to create, or directory to create it in"
+            "Name of .fwdata file to create or split, or directory to create/split it in"
         );
-        rootCommand.Add(filename);
+        splitCommand.Add(filename);
+        combineCommand.Add(filename);
 
         var hgRevOption = new Option<string>(
             ["--rev", "-r"],
             "Revision to check out (default \"tip\")"
         );
         hgRevOption.SetDefaultValue("tip");
-        rootCommand.Add(hgRevOption);
+        combineCommand.AddGlobalOption(hgRevOption);
 
         var cleanupOption = new Option<bool>(
             ["--cleanup", "-c"],
-            "Clean repository after creating .fwdata file (deletes every other file except .fwdata)"
+            "Clean repository after creating .fwdata file (CAUTION: deletes every other file except .fwdata)"
         );
-        rootCommand.Add(cleanupOption);
+        combineCommand.Add(cleanupOption);
 
-        rootCommand.SetHandler(Run, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
+        combineCommand.SetHandler(CombineFwData, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
+
+        var cleanupOptionForSplit = new Option<bool>(
+            ["--cleanup", "-c"],
+            "Delete .fwdata file after splitting"
+        );
+        splitCommand.Add(cleanupOptionForSplit);
+
+        splitCommand.SetHandler(SplitFwData, filename, verboseOption, quietOption, cleanupOptionForSplit);
 
         return await rootCommand.InvokeAsync(args);
     }
 
-    static FileInfo LocateFwDataFile(string input)
+    static FileInfo? MaybeLocateFwDataFile(string input)
     {
         if (Directory.Exists(input)) {
             var dirInfo = new DirectoryInfo(input);
@@ -55,12 +70,46 @@ class Program
         } else if (File.Exists(input + ".fwdata")) {
             return new FileInfo(input + ".fwdata");
         } else {
-            if (input.EndsWith(".fwdata")) return new FileInfo(input);
-            return new FileInfo(input + ".fwdata");
+            return null;
         }
     }
 
-    static Task<int> Run(string filename, bool verbose, bool quiet, string rev, bool cleanup)
+    static FileInfo LocateFwDataFile(string input)
+    {
+        var result = MaybeLocateFwDataFile(input);
+        if (result != null) return result;
+        if (input.EndsWith(".fwdata")) return new FileInfo(input);
+        return new FileInfo(input + ".fwdata");
+    }
+
+    static Task<int> SplitFwData(string filename, bool verbose, bool quiet, bool cleanup)
+    {
+        IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
+        progress.ShowVerbose = verbose;
+        var file = MaybeLocateFwDataFile(filename);
+        if (file == null || !file.Exists) {
+            progress.WriteError("Could not find {0}", filename);
+            return Task.FromResult(1);
+        }
+        string name = file.FullName;
+        progress.WriteVerbose("Splitting {0} ...", name);
+        LfMergeBridge.LfMergeBridge.DisassembleFwdataFile(progress, writeVerbose: true, name);
+        progress.WriteMessage("Finished splitting {0}", name);
+        if (cleanup)
+        {
+            progress.WriteVerbose("Cleaning up...");
+            var fwdataFile = new FileInfo(name);
+            if (fwdataFile.Exists) {
+                fwdataFile.Delete();
+                progress.WriteVerbose("Deleted {0}", fwdataFile.FullName);
+            } else {
+                progress.WriteVerbose("File not found, so not deleting: {0}", fwdataFile.FullName);
+            }
+        }
+        return Task.FromResult(0);
+    }
+
+    static Task<int> CombineFwData(string filename, bool verbose, bool quiet, string rev, bool cleanup)
     {
         IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
         progress.ShowVerbose = verbose;
