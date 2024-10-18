@@ -21,32 +21,32 @@ class Program
         rootCommand.AddGlobalOption(quietOption);
 
         var splitCommand = new Command("split", "Split .fwdata file (push Humpty off the wall)");
-        var combineCommand = new Command("combine", "Recombine .fwdata file (put Humpty together again)");
+        var buildCommand = new Command("build", "Rebuild .fwdata file (put Humpty together again)");
 
         rootCommand.Add(splitCommand);
-        rootCommand.Add(combineCommand);
+        rootCommand.Add(buildCommand);
 
         var filename = new Argument<string>(
             "file",
             "Name of .fwdata file to create or split, or directory to create/split it in"
         );
         splitCommand.Add(filename);
-        combineCommand.Add(filename);
+        buildCommand.Add(filename);
 
         var hgRevOption = new Option<string>(
             ["--rev", "-r"],
             "Revision to check out (default \"tip\")"
         );
         hgRevOption.SetDefaultValue("tip");
-        combineCommand.AddGlobalOption(hgRevOption);
+        buildCommand.AddGlobalOption(hgRevOption);
 
         var cleanupOption = new Option<bool>(
             ["--cleanup", "-c"],
             "Clean repository after creating .fwdata file (CAUTION: deletes every other file except .fwdata)"
         );
-        combineCommand.Add(cleanupOption);
+        buildCommand.Add(cleanupOption);
 
-        combineCommand.SetHandler(CombineFwData, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
+        buildCommand.SetHandler(BuildFwData, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
 
         var cleanupOptionForSplit = new Option<bool>(
             ["--cleanup", "-c"],
@@ -109,7 +109,7 @@ class Program
         return Task.FromResult(0);
     }
 
-    static Task<int> CombineFwData(string filename, bool verbose, bool quiet, string rev, bool cleanup)
+    static Task<int> BuildFwData(string filename, bool verbose, bool quiet, string rev, bool cleanup)
     {
         IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
         progress.ShowVerbose = verbose;
