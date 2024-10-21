@@ -40,13 +40,20 @@ class Program
         hgRevOption.SetDefaultValue("tip");
         buildCommand.AddGlobalOption(hgRevOption);
 
+        var timeoutOption = new Option<int>(
+            ["--timeout", "-t"],
+            "Timeout in seconds for Hg commands (default 600)"
+        );
+        timeoutOption.SetDefaultValue(600);
+        buildCommand.AddGlobalOption(timeoutOption);
+
         var cleanupOption = new Option<bool>(
             ["--cleanup", "-c"],
             "Clean repository after creating .fwdata file (CAUTION: deletes every other file except .fwdata)"
         );
         buildCommand.Add(cleanupOption);
 
-        buildCommand.SetHandler(BuildFwData, filename, verboseOption, quietOption, hgRevOption, cleanupOption);
+        buildCommand.SetHandler(BuildFwData, filename, verboseOption, quietOption, hgRevOption, timeoutOption, cleanupOption);
 
         var cleanupOptionForSplit = new Option<bool>(
             ["--cleanup", "-c"],
@@ -109,7 +116,7 @@ class Program
         return Task.FromResult(0);
     }
 
-    static Task<int> BuildFwData(string filename, bool verbose, bool quiet, string rev, bool cleanup)
+    static Task<int> BuildFwData(string filename, bool verbose, bool quiet, string rev, int timeout, bool cleanup)
     {
         IProgress progress = quiet ? new NullProgress() : new ConsoleProgress();
         progress.ShowVerbose = verbose;
@@ -124,7 +131,7 @@ class Program
         }
         string name = file.FullName;
         progress.WriteMessage("Checking out {0}", rev);
-        var result = HgRunner.Run($"hg checkout {rev}", dir.FullName, 30, progress);
+        var result = HgRunner.Run($"hg checkout {rev}", dir.FullName, timeout, progress);
         if (result.ExitCode != 0)
         {
             progress.WriteMessage("Could not find Mercurial repo in directory {0}. MkFwData needs a Mercurial repo to work with.", dir.FullName ?? "(null)");
@@ -136,8 +143,8 @@ class Program
         if (cleanup)
         {
             progress.WriteVerbose("Cleaning up...");
-            HgRunner.Run($"hg checkout null", dir.FullName, 30, progress);
-            HgRunner.Run($"hg purge --no-confirm --exclude *.fwdata --exclude hgRunner.log", dir.FullName, 30, progress);
+            HgRunner.Run($"hg checkout null", dir.FullName, timeout, progress);
+            HgRunner.Run($"hg purge --no-confirm --exclude *.fwdata --exclude hgRunner.log", dir.FullName, timeout, progress);
         }
         return Task.FromResult(0);
     }
