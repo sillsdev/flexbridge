@@ -30,15 +30,35 @@ namespace LfMergeBridge
 	[Export(typeof(IBridgeActionTypeHandler))]
 	internal sealed class LanguageForgeSendReceiveActionHandler : IBridgeActionTypeHandler
 	{
-		private const string FwDataExe = "FixFwData.exe";
+		private const string FwData = "FixFwData";
 		private const string syncBase = "Sync";
+
+		private static string FindFwData()
+		{
+			// Try current working directory first
+			var cwd = Directory.GetCurrentDirectory();
+			var withExe = Path.Combine(cwd, FwData + ".exe");
+			if (File.Exists(withExe)) return withExe;
+			var withoutExe = Path.Combine(cwd, FwData);
+			if (File.Exists(withoutExe)) return withoutExe;
+
+			// Then try loction of LfMergeBridge.dll, as FixFwData is probably installed alongside as a sister file
+			var assembly = Assembly.GetExecutingAssembly();
+			var dir = Directory.GetParent(assembly.Location).FullName;
+			withExe = Path.Combine(dir, FwData + ".exe");
+			if (File.Exists(withExe)) return withExe;
+			withoutExe = Path.Combine(dir, FwData);
+			if (File.Exists(withoutExe)) return withoutExe;
+
+			return null;
+		}
 
 		/// <summary>
 		/// Do a Send/Receive with the matching Language Depot project for the given Language Forge project's repository.
 		/// </summary>
 		/// <remarks>This handler will *not* reset the workspace to another branch or long hash,
 		/// since doing so would prevent any new changes in the fwdata file from being processed.
-		/// 
+		///
 		/// If LF needs to sync with another commit (via its long hash),
 		/// LF *must* first use the action handler "LanguageForgeUpdateToLongHashActionHandler",
 		/// which will reset the workspace, and then LF can write new changes to the fwdata file,
@@ -56,10 +76,10 @@ namespace LfMergeBridge
 
 			var commitMessage = options.ContainsKey(LfMergeBridgeUtilities.commitMessage) ? options[LfMergeBridgeUtilities.commitMessage] : "sync";
 
-			var fwDataExePathname = Path.Combine(Directory.GetCurrentDirectory(), FwDataExe);
-			if (!File.Exists(fwDataExePathname))
+			var fwDataExePathname = FindFwData();
+			if (fwDataExePathname == null)
 			{
-				throw new InvalidOperationException(string.Format(@"Can't find {0} in the current directory ({1})", FwDataExe, Directory.GetCurrentDirectory()));
+				throw new InvalidOperationException(string.Format(@"Can't find {0} or {0}.exe in the current directory ({1})", FwData, Directory.GetCurrentDirectory()));
 			}
 
 			// Syncing of a new repo (actually created here) is not supported.
