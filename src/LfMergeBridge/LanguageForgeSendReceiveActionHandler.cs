@@ -79,7 +79,7 @@ namespace LfMergeBridge
 			var fwDataExePathname = FindFwData();
 			if (fwDataExePathname == null)
 			{
-				throw new InvalidOperationException(string.Format(@"Can't find {0} or {0}.exe in the current directory ({1})", FwData, Directory.GetCurrentDirectory()));
+				throw new InvalidOperationException(string.Format(@"Can't find {0} or {0}.exe", FwData));
 			}
 
 			// Syncing of a new repo (actually created here) is not supported.
