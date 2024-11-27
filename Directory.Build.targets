@@ -4,7 +4,7 @@
 			their presence prevents L10nSharp from extracting strings for localization, since the Linux Geckofx DLL's can't be loaded.
 			Deleting them here fixes both developer builds in Visual Studio and installer builds on the server. -->
 		<ItemGroup>
-			<GeckofxDlls Include="$(MSBuildThisFiledirectory)/output/$(Configuration)/net461/Geckofx-*"/>
+			<GeckofxDlls Include="$(MSBuildThisFiledirectory)/output/$(Configuration)/$(TargetFramework)/Geckofx-*"/>
 		</ItemGroup>
 		<Delete Files="@(GeckofxDlls)"/>
 	</Target>

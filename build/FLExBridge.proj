@@ -98,8 +98,8 @@
 	<Target Name="CreateDirectories">
 		<MakeDir Directories="$(RootDir)/output/"/>
 		<MakeDir Directories="$(RootDir)/output/$(Configuration)/"/>
-		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/"/>
-		<MakeDir Directories="$(RootDir)/output/$(Configuration)/net461/localizations/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/$(TargetFramework)/"/>
+		<MakeDir Directories="$(RootDir)/output/$(Configuration)/$(TargetFramework)/localizations/"/>
 	</Target>
 
 	<ItemGroup>
@@ -109,23 +109,23 @@
 		<NDeskDBusFiles Include="$(RootDir)/lib/$(Configuration)/NDesk.DBus.dll*"/>
 		<ChorusHubFiles Include="$(RootDir)/lib/$(Configuration)/ChorusHub.*"/>
 		<ConfigFiles Include="$(RootDir)/lib/$(Configuration)/*.dll.config"/>
-		<GeckoBrowserFiles Include="$(RootDir)/packages/SIL.Windows.Forms.GeckoBrowserAdapter.$(PalasoVer4LinuxGecko)/lib/net461/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
+		<GeckoBrowserFiles Include="$(RootDir)/packages/SIL.Windows.Forms.GeckoBrowserAdapter.$(PalasoVer4LinuxGecko)/lib/$(TargetFramework)/SIL.Windows.Forms.GeckoBrowserAdapter.dll*"/>
 		<LinuxLauncherFiles Include="$(RootDir)/flexbridge"/>
 	</ItemGroup>
 
 	<Target Name="CopyExtraFilesToOutput" DependsOnTargets="CopyExtraFilesToOutputLinux">
 		<Error Text="Localization Files Missing" Condition="'@(LocalizeFiles)' == '' AND '$(Configuration)' != 'Debug'" />
-		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461/localizations"/>
+		<Copy SourceFiles="@(LocalizeFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)/localizations"/>
 	</Target>
 
 	<Target Name="CopyExtraFilesToOutputLinux" Condition="'$(OS)'!='Windows_NT'">
 		<Error Text="GeckoBrowserAdapter Missing" Condition="'@(GeckoBrowserFiles)' == ''" />
-		<Copy SourceFiles="@(LinuxLauncherFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
-		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="@(LinuxLauncherFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
+		<Copy SourceFiles="@(EnchantFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
+		<Copy SourceFiles="@(NDeskDBusFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
+		<Copy SourceFiles="@(ChorusHubFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
+		<Copy SourceFiles="@(GeckoBrowserFiles)" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="CopyExtraFilesToOutput; RestorePackages">
@@ -133,7 +133,7 @@
 	</Target>
 
 	<Target Name="CopyAbout" DependsOnTargets="SetAssemblyVersion">
-		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)/net461"/>
+		<Copy SourceFiles="$(RootDir)/output/Installer/about.htm" DestinationFolder="$(RootDir)/output/$(Configuration)/$(TargetFramework)"/>
 	</Target>
 
 	<Target Name="VersionNumbers" DependsOnTargets="RestoreBuildTasks;GetVersion" Condition="$(GetVersion)">
@@ -201,18 +201,18 @@
 
 	<Target Name="TestOnly" >
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/net461/*Tests.dll" />
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/$(TargetFramework)/*Tests.dll" />
 		</ItemGroup>
 
 		<NUnit3 Assemblies="@(TestAssemblies)"
 			ToolPath="$(NUnitToolsDir)"
 			TestInNewThread="false"
 			ExcludeCategory="$(ExtraExcludeCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)/net461"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)/$(TargetFramework)"
 			Process="single"
 			Verbose="true"
 			UseNUnit3Xml="false"
-			OutputXmlFile="$(RootDir)/output/$(Configuration)/net461/TestResults.xml"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/$(TargetFramework)/TestResults.xml"
 			TeamCity="$(TeamCity)"/>
 	</Target>
 

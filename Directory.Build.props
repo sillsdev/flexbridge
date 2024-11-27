@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-	<TargetFrameworks>net461</TargetFrameworks>
+	<TargetFrameworks>net462</TargetFrameworks>
 	<Configurations>Debug;Release</Configurations>
 	<Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
 	<Company>SIL</Company>
