@@ -52,6 +52,9 @@ msbuild /t:Test FLExBridge.proj
 
 Further instructions at <https://github.com/sillsdev/libpalaso/wiki/Developing-with-locally-modified-nuget-packages>
 
+### Debugging or adding FileHandlers for merging
+See [FileTypeHandlers](./FileTypeHandlers.md) documentation.
+
 ## Updating Release Notes for a new version
 
 FLEx Bridge is following the gitflow model for branching
