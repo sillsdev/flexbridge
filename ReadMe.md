@@ -28,10 +28,10 @@ FLEx Bridge depends on several assemblies from Chorus and Palaso. Those are inst
 
   ```
   [HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SIL\Flex Bridge\9]
-      "InstallationDir"="C:\Dev\flexbridge\output\Debug\net461"
+      "InstallationDir"="C:\Dev\flexbridge\output\Debug\net462"
   ```
 
-- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug/net461`
+- On **Linux**, `export FLEXBRIDGEDIR=${HOME}/fwrepo/flexbridge/output/Debug/net462`
 
 ### Build
 
