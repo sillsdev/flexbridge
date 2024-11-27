@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -21,7 +21,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		{
 			using (var writer = XmlWriter.Create(newPathname, CanonicalXmlSettings.CreateXmlWriterSettings()))
 			{
-				XmlUtils.WriteNode(writer, root.OuterXml, new HashSet<string>());
+				XmlUtils.WriteNode(writer, root.OuterXml, new HashSet<string>(), new HashSet<string> { "xml" });
 			}
 		}
 
