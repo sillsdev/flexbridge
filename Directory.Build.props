@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-	<TargetFrameworks>net461</TargetFrameworks>
+	<TargetFrameworks>net462</TargetFrameworks>
 	<Configurations>Debug;Release</Configurations>
 	<Description>Library that allows multiple FieldWorks users to collaborate remotely (i.e., not necessarily connected by a local network).</Description>
 	<Company>SIL</Company>
@@ -25,11 +25,11 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGE
 	<ChangelogFile>../../CHANGELOG.md</ChangelogFile>
 	<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-	<ChorusVersion>6.0.0-beta*</ChorusVersion>
-	<LCModelVersion>10.2.0-beta*</LCModelVersion>
+	<ChorusVersion>6.0.0-beta0059</ChorusVersion>
+	<LCModelVersion>11.0.0-beta*</LCModelVersion>
   </PropertyGroup>
   <ItemGroup>
 	<!-- The only reason we depend directly on L10NSharp is because our dependencies can't agree which one they want -->
-	<PackageReference Include="L10NSharp" Version="6.0.0" />
+	<PackageReference Include="L10NSharp" Version="8.0.0-beta0005" />
   </ItemGroup>
 </Project>

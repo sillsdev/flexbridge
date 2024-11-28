@@ -52,6 +52,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LfMergeBridgeTestApp", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LfMergeBridgeTests", "src\LfMergeBridgeTests\LfMergeBridgeTests.csproj", "{6CB1246D-956A-4759-AA13-D434CBB383FE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MkFwData", "src\MkFwData\MkFwData.csproj", "{5CDB086A-79DE-4EF4-BB48-4AEAEEB0827B}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiftFileCheckerApp", "src\LiftFileCheckerApp\LiftFileCheckerApp.csproj", "{30AA046B-5E14-408C-89EF-8601BB27FB32}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibTriboroughBridge-ChorusPluginTests", "src\LibTriboroughBridge-ChorusPluginTests\LibTriboroughBridge-ChorusPluginTests.csproj", "{AA6CC4E2-6FD8-4B30-99EC-A446E9CAA176}"
@@ -124,6 +126,10 @@ Global
 		{6CB1246D-956A-4759-AA13-D434CBB383FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB1246D-956A-4759-AA13-D434CBB383FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CB1246D-956A-4759-AA13-D434CBB383FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CDB086A-79DE-4EF4-BB48-4AEAEEB0827B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CDB086A-79DE-4EF4-BB48-4AEAEEB0827B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CDB086A-79DE-4EF4-BB48-4AEAEEB0827B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CDB086A-79DE-4EF4-BB48-4AEAEEB0827B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30AA046B-5E14-408C-89EF-8601BB27FB32}.Release|Any CPU.ActiveCfg = Release|Any CPU
