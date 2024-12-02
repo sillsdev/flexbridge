@@ -84,6 +84,11 @@ jobs:
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Test /p:Configuration=Release
 
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        with:
+          files: '**/TestResults.xml'
+
       - name: Create NuGet packages
         shell: cmd
         run: msbuild build\FLExBridge.proj /t:Pack /p:Configuration=Release
