@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LfMergeBridge;
+using LfMergeBridge.LfMergeModel;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using SIL.IO;
@@ -39,11 +41,12 @@ namespace LfMergeBridgeTests
 			return sutActionHandler;
 		}
 
-		private Dictionary<string, string> GetOptions(string projectDir)
+		private Dictionary<string, string> GetOptions(string projectDir, List<LfComment> commentsFromLfMerge, string key = "5a71f21c6efc676a612eb76f")
 		{
 			var options = new Dictionary<string, string>();
-			options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge] = _inputFile.Path;
 			options["-p"] = projectDir;
+			var extraInputData = new WriteToChorusNotesInput { LfComments = commentsFromLfMerge.Select(cmt => new KeyValuePair<string, LfComment>(key, cmt)).ToList() };
+			LfMergeBridge.LfMergeBridge.ExtraInputData.Add(options, extraInputData);
 			return options;
 		}
 
@@ -84,18 +87,23 @@ namespace LfMergeBridgeTests
 					date=""2018-01-31T17:43:30Z""
 					guid=""c4f4df11-8dda-418e-8124-66406d67a2d1"">LF comment on F</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileById(string.Format(
-				"\"Status\":\"open\",\"StatusGuid\":\"{0}\",", statusGuid));
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", statusGuid);
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(0));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
 
@@ -121,17 +129,23 @@ namespace LfMergeBridgeTests
 					guid=""c9bd2519-b92a-4e65-a879-00e0c8a57e1d"">
 				</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileById(string.Format("\"Status\":\"open\",\"StatusGuid\":\"{0}\",", statusGuid));
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", statusGuid);
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(0));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
 
@@ -163,17 +177,23 @@ namespace LfMergeBridgeTests
 					guid=""51b1ba75-b28a-4dac-9bb4-7f1e2f14563a"">
 				</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileById("\"Status\":\"closed\",\"StatusGuid\":\"c9bd2519-b92a-4e65-a879-00e0c8a57e1d\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("closed", "c9bd2519-b92a-4e65-a879-00e0c8a57e1d");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(0));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			AssertThatXmlIn.String(notesContent).EqualsIgnoreWhitespace(NotesTestHelper.ReadChorusNotesFile(projectDir));
 		}
 
@@ -192,17 +212,23 @@ namespace LfMergeBridgeTests
 				status=""open""
 				date=""2018-01-31T17:43:30Z""
 				guid=""c4f4df11-8dda-418e-8124-66406d67a2d1"">LF comment on F</message>"));
-			_inputFile = NotesTestHelper.CreateMongoDataFileById("\"Status\":\"resolved\",\"StatusGuid\":\"c4f4df11-8dda-418e-8124-66406d67a2d1\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("resolved", "c4f4df11-8dda-418e-8124-66406d67a2d1");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(0));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			AssertThatXmlIn.String(NotesTestHelper.GetAnnotationXml(
 @"		<message
 			author=""Language Forge""
@@ -237,17 +263,23 @@ namespace LfMergeBridgeTests
 					date=""2018-01-31T01:02:03Z""
 					guid=""449489a4-8e0e-4b98-a75d-b6263f4a4e6a"">
 				</message>"));
-			_inputFile = NotesTestHelper.CreateMongoDataFileById("\"Status\":\"open\",\"StatusGuid\":\"449489a4-8e0e-4b98-a75d-b6263f4a4e6a\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", "449489a4-8e0e-4b98-a75d-b6263f4a4e6a");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: {0}New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(0));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			AssertThatXmlIn.String(NotesTestHelper.GetAnnotationXml(
 @"		<message
 			author=""Language Forge""
@@ -279,18 +311,25 @@ namespace LfMergeBridgeTests
 <notes
 	version=""0"">
 </notes>");
-			_inputFile = NotesTestHelper.CreateMongoDataFileById("\"Status\":\"open\",", false);
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", "", false);
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeWriteToChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(string.Format(
-				"New comment ID->Guid mappings: 5a71f21c6efc676a612eb76f=1687b882-97c9-4ca0-9bc3-2a0511715400{0}" +
-				"New reply ID->Guid mappings: ", Environment.NewLine)));
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as WriteToChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			Assert.That(response.CommentIdsThatNeedGuids.Count, Is.EqualTo(1));
+			Assert.That(response.CommentIdsThatNeedGuids.Keys.ToList(), Is.EquivalentTo(new List<string> { "5a71f21c6efc676a612eb76f" } ));
+			Assert.That(response.CommentIdsThatNeedGuids["5a71f21c6efc676a612eb76f"], Is.EqualTo(new Guid("1687b882-97c9-4ca0-9bc3-2a0511715400")));
+			Assert.That(response.ReplyIdsThatNeedGuids.Count, Is.EqualTo(0));
 			// REVIEW: It's surprising that we ignore the DateCreated/Modified from LF
 			AssertThatXmlIn.String(NotesTestHelper.GetAnnotationXml(
 @"		<message
@@ -317,7 +356,7 @@ namespace LfMergeBridgeTests
 
 			// Execute/Verify
 			Assert.That(
-				() => sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient),
+				() => sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir, new List<LfComment>()), ref forClient),
 				Throws.Nothing);
 		}
 

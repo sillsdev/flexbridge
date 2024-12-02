@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.IO;
 using LfMergeBridge;
+using LfMergeBridge.LfMergeModel;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 using SIL.IO;
@@ -37,11 +38,12 @@ namespace LfMergeBridgeTests
 			return sutActionHandler;
 		}
 
-		private Dictionary<string, string> GetOptions(string projectDir)
+		private Dictionary<string, string> GetOptions(string projectDir, List<LfComment> commentsFromLfMerge)
 		{
 			var options = new Dictionary<string, string>();
-			options[LfMergeBridgeUtilities.serializedCommentsFromLfMerge] = _inputFile.Path;
 			options["-p"] = projectDir;
+			var extraInputData = new GetChorusNotesInput { LfComments = commentsFromLfMerge };
+			LfMergeBridge.LfMergeBridge.ExtraInputData.Add(options, extraInputData);
 			return options;
 		}
 
@@ -69,6 +71,36 @@ namespace LfMergeBridgeTests
 				"\"Replies\":[],\"IsDeleted\":false,\"ContextGuid\":null}}]\n" +
 				"New replies on comments already in LF: []\n" +
 				"New status changes on comments already in LF: []", status, statusGuid, DateTimeProvider.Current.Now.ToString("yyyy-MM-ddTHH:mm:sszzz")));
+		}
+
+		private static GetChorusNotesResponse ExpectValidResponse(Dictionary<string, string> options)
+		{
+			var found = LfMergeBridge.LfMergeBridge.ExtraOutputData.TryGetValue(options, out var outputObject);
+			Assert.IsTrue(found, "No output comments from LfMergeBridge");
+			Assert.NotNull(outputObject);
+			var response = outputObject as GetChorusNotesResponse;
+			Assert.That(response, Is.Not.Null);
+			return response;
+		}
+
+		private static void ExpectStatusChanges(Dictionary<string, string> options, string status, string statusGuid)
+		{
+			var response = ExpectValidResponse(options);
+			Assert.That(response.LfComments.Count, Is.EqualTo(0));
+			Assert.That(response.LfReplies.Count, Is.EqualTo(0));
+			Assert.That(response.LfStatusChanges.Count, Is.GreaterThan(0));
+			var change = response.LfStatusChanges[0];
+			Assert.That(change.Key, Is.EqualTo("e8a03b36-2c36-4647-b879-24dbcd5a9ac4"));
+			Assert.That(change.Value.Item1, Is.EqualTo(status));
+			Assert.That(change.Value.Item2, Is.EqualTo(statusGuid));
+		}
+
+		private static void ExpectNoStatusChanges(Dictionary<string, string> options)
+		{
+			var response = ExpectValidResponse(options);
+			Assert.That(response.LfComments.Count, Is.EqualTo(0));
+			Assert.That(response.LfReplies.Count, Is.EqualTo(0));
+			Assert.That(response.LfStatusChanges.Count, Is.EqualTo(0));
 		}
 
 		[SetUp]
@@ -105,19 +137,17 @@ namespace LfMergeBridgeTests
 					date=""2018-01-31T17:43:30Z""
 					guid=""c4f4df11-8dda-418e-8124-66406d67a2d1"">LF comment on F</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList(
-				"\"Status\":\"open\",\"StatusGuid\":\"c4f4df11-8dda-418e-8124-66406d67a2d1\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", "c4f4df11-8dda-418e-8124-66406d67a2d1");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedClientString(
-				"New comments not yet in LF: []\nNew replies on comments already in LF: []\n" +
-				"New status changes on comments already in LF: []")));
+			ExpectNoStatusChanges(options);
 		}
 
 		/// <summary>
@@ -141,18 +171,17 @@ namespace LfMergeBridgeTests
 					guid=""c9bd2519-b92a-4e65-a879-00e0c8a57e1d"">
 				</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList(string.Format(
-				"\"Status\":\"open\",\"StatusGuid\":\"{0}\",", statusGuid));
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", statusGuid);
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedStatusChangesMessage(
-				"resolved", "c9bd2519-b92a-4e65-a879-00e0c8a57e1d")));
+			ExpectStatusChanges(options, "resolved", "c9bd2519-b92a-4e65-a879-00e0c8a57e1d");
 		}
 
 		/// <summary>
@@ -182,17 +211,17 @@ namespace LfMergeBridgeTests
 					guid=""51b1ba75-b28a-4dac-9bb4-7f1e2f14563a"">
 				</message>");
 			var projectDir = CreateTestProject(notesContent);
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList("\"Status\":\"closed\",\"StatusGuid\":\"c9bd2519-b92a-4e65-a879-00e0c8a57e1d\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("closed", "c9bd2519-b92a-4e65-a879-00e0c8a57e1d");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedStatusChangesMessage(
-				"open", "51b1ba75-b28a-4dac-9bb4-7f1e2f14563a")));
+			ExpectStatusChanges(options, "open", "51b1ba75-b28a-4dac-9bb4-7f1e2f14563a");
 		}
 
 		/// <summary>
@@ -214,17 +243,17 @@ namespace LfMergeBridgeTests
 				status=""closed""
 				date=""2018-02-01T12:13:14Z""
 				guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>"));
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList("\"Status\":\"resolved\",\"StatusGuid\":\"c4f4df11-8dda-418e-8124-66406d67a2d1\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("resolved", "c4f4df11-8dda-418e-8124-66406d67a2d1");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedStatusChangesMessage(
-				"resolved", "1687b882-97c9-4ca0-9bc3-2a0511715400")));
+			ExpectStatusChanges(options, "resolved", "1687b882-97c9-4ca0-9bc3-2a0511715400");
 		}
 
 		/// <summary>
@@ -252,17 +281,17 @@ namespace LfMergeBridgeTests
 					status=""open""
 					date=""2018-02-01T12:13:14Z""
 					guid=""1687b882-97c9-4ca0-9bc3-2a0511715400""></message>"));
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList("\"Status\":\"open\",\"StatusGuid\":\"449489a4-8e0e-4b98-a75d-b6263f4a4e6a\",");
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", "449489a4-8e0e-4b98-a75d-b6263f4a4e6a");
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedStatusChangesMessage(
-				"open", "1687b882-97c9-4ca0-9bc3-2a0511715400")));
+			ExpectStatusChanges(options, "open", "1687b882-97c9-4ca0-9bc3-2a0511715400");
 		}
 
 		/// <summary>
@@ -281,17 +310,42 @@ namespace LfMergeBridgeTests
 					date=""{0}""
 					guid=""c4f4df11-8dda-418e-8124-66406d67a2d1"">LF comment on F</message>",
 				DateTimeProvider.Current.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))));
-			_inputFile = NotesTestHelper.CreateMongoDataFileAsList("\"Status\":\"open\",", false);
+			var lfComments = NotesTestHelper.CreateLfCommentsListById("open", "", false);
 
 			string forClient = null;
 			var sutActionHandler = GetLanguageForgeGetChorusNotesActionHandler();
 
 			// Execute
-			sutActionHandler.StartWorking(new NullProgress(), GetOptions(projectDir), ref forClient);
+			var options = GetOptions(projectDir, lfComments);
+			sutActionHandler.StartWorking(new NullProgress(), options, ref forClient);
 
 			// Verify
-			Assert.That(forClient, Is.EqualTo(ExpectedNewCommentsMessage(
-				"open", "c4f4df11-8dda-418e-8124-66406d67a2d1")));
+			var response = ExpectValidResponse(options);
+			Assert.That(response.LfComments.Count, Is.EqualTo(1));
+			Assert.That(response.LfReplies.Count, Is.EqualTo(0));
+			Assert.That(response.LfStatusChanges.Count, Is.EqualTo(0));
+
+			var comment = response.LfComments[0];
+			Assert.That(comment.Guid, Is.EqualTo(new Guid("e8a03b36-2c36-4647-b879-24dbcd5a9ac4")));
+
+			Assert.That(comment.AuthorNameAlternate, Is.EqualTo("Language Forge"));
+			Assert.That(comment.Content, Is.EqualTo("LF comment on F"));
+			Assert.That(comment.ContextGuid, Is.Null);
+			Assert.That(comment.DateCreated, Is.EqualTo(DateTimeProvider.Current.Now));
+			Assert.That(comment.DateModified, Is.EqualTo(DateTimeProvider.Current.Now));
+			Assert.That(comment.IsDeleted, Is.False);
+			Assert.That(comment.Replies, Is.Empty);
+			Assert.That(comment.Status, Is.EqualTo("open"));
+			Assert.That(comment.StatusGuid, Is.EqualTo(new Guid("c4f4df11-8dda-418e-8124-66406d67a2d1")));
+
+			Assert.That(comment.Regarding.Field, Is.Null);
+			Assert.That(comment.Regarding.FieldNameForDisplay, Is.Null);
+			Assert.That(comment.Regarding.FieldValue, Is.Null);
+			Assert.That(comment.Regarding.InputSystem, Is.Null);
+			Assert.That(comment.Regarding.InputSystemAbbreviation, Is.Null);
+			Assert.That(comment.Regarding.Meaning, Is.EqualTo(""));
+			Assert.That(comment.Regarding.Word, Is.EqualTo("F"));
+			Assert.That(comment.Regarding.TargetGuid, Is.EqualTo("1e7a8774-da73-49de-83bf-a613c12bb281"));
 		}
 	}
 }

@@ -1,6 +1,9 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+using System;
+using System.Collections.Generic;
 using System.IO;
+using LfMergeBridge.LfMergeModel;
 using SIL.IO;
 
 namespace LfMergeBridgeTests
@@ -28,33 +31,36 @@ namespace LfMergeBridgeTests
 				messagesXml, annotationGuid);
 		}
 
-		public static TempFile CreateMongoDataFileById(string statusFields, bool addAnnotationGuid = true)
+		public static List<LfComment> CreateLfCommentsListById(string status, string statusGuid, bool addAnnotationGuid = true)
 		{
-			return new TempFile(string.Format(@"[{{""Key"":""5a71f21c6efc676a612eb76f"",
-""Value"":{{""Id"":""5a71f21c6efc676a612eb76f"",{0}
-""AuthorInfo"":{{""CreatedByUserRef"":""5a2671036efc6737ab1f1f82"",""CreatedDate"":""2018-01-31T16:43:08.474Z"",""ModifiedByUserRef"":""5a2671036efc6737ab1f1f82"",""ModifiedDate"":""2018-01-31T16:43:08.474Z""}},
-""Regarding"":{{""TargetGuid"":""1e7a8774-da73-49de-83bf-a613c12bb281"",""Word"":""F"",""Meaning"":""F""}},
-""DateCreated"":""2018-01-31T16:43:08.474Z"",""DateModified"":""2018-01-31T16:43:08.474Z"",
-""Content"":""LF comment on F"",
-{1}
-""IsDeleted"":false,""EntryRef"":""5a3801ee511fd55d813e1f76"",""Score"":0}}}}]",
-				addAnnotationGuid ? "\"Guid\":\"e8a03b36-2c36-4647-b879-24dbcd5a9ac4\"," : "",
-				statusFields));
+			var date = new DateTime(2018, 1, 31, 16, 43, 8, 474, DateTimeKind.Utc);
+			var comment = new LfComment
+			{
+				DateCreated = date,
+				DateModified = date,
+				AuthorInfo = new LfAuthorInfo
+				{
+					CreatedByUserRef = new MongoDB.Bson.ObjectId("5a2671036efc6737ab1f1f82"),
+					CreatedDate = date,
+					ModifiedByUserRef = new MongoDB.Bson.ObjectId("5a2671036efc6737ab1f1f82"),
+					ModifiedDate = date,
+				},
+				Regarding = new LfCommentRegarding
+				{
+					TargetGuid = "1e7a8774-da73-49de-83bf-a613c12bb281",
+					Word = "F",
+					Meaning = "F",
+				},
+				Content = "LF comment on F",
+				Status = status,
+				IsDeleted = false,
+				EntryRef = new MongoDB.Bson.ObjectId("5a3801ee511fd55d813e1f76"),
+				Score = 0,
+			};
+			if (addAnnotationGuid) comment.Guid = new Guid("e8a03b36-2c36-4647-b879-24dbcd5a9ac4");
+			if (!string.IsNullOrEmpty(statusGuid)) comment.StatusGuid = new Guid(statusGuid);
+			return new List<LfComment> { comment };
 		}
-
-		public static TempFile CreateMongoDataFileAsList(string statusFields, bool addAnnotationGuid = true)
-		{
-			return new TempFile(string.Format(@"[{{""Id"":""5a71f21c6efc676a612eb76f"",{0}
-""AuthorInfo"":{{""CreatedByUserRef"":""5a2671036efc6737ab1f1f82"",""CreatedDate"":""2018-02-01T12:13:14Z"",""ModifiedByUserRef"":""5a2671036efc6737ab1f1f82"",""ModifiedDate"":""2018-02-01T12:13:14Z""}},
-""Regarding"":{{""TargetGuid"":""1e7a8774-da73-49de-83bf-a613c12bb281"",""Word"":""F"",""Meaning"":""F""}},
-""DateCreated"":""2018-02-01T12:13:14Z"",""DateModified"":""2018-02-01T12:13:14Z"",
-""Content"":""LF comment on F"",
-{1}
-""IsDeleted"":false,""EntryRef"":""5a3801ee511fd55d813e1f76"",""Score"":0}}]",
-				addAnnotationGuid ? "\"Guid\":\"e8a03b36-2c36-4647-b879-24dbcd5a9ac4\"," : "",
-				statusFields));
-		}
-
 	}
 }
 
