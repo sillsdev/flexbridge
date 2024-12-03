@@ -101,9 +101,9 @@ namespace TriboroughBridge_ChorusPlugin
 				var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 				// We don't need to reload strings for every "revision" (that might be every time we build). REVIEW (Hasso) 2021.08: then why do we have `build`?
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				var flexBridgeLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, FlexBridge, Application.ProductName,
+				var flexBridgeLocMan = LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus,
-					FlexLocalizationEmailAddress, FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge");
+					FlexLocalizationEmailAddress, new [] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
 				results.Add("FlexBridge", flexBridgeLocMan);
 
 				// In case the UI language was unavailable, change it, so we don't frustrate the user with three dialogs.
@@ -111,14 +111,14 @@ namespace TriboroughBridge_ChorusPlugin
 
 				versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-				var chorusLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Chorus", "Chorus",
-					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "Chorus");
+				var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, new []{ "Chorus" });
 				results.Add("Chorus", chorusLocMan);
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-				var palasoLocMan = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "Palaso", "Palaso",
-					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, "SIL");
+				var palasoLocMan = LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso",
+					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, new []{ "SIL" });
 				results.Add("Palaso", palasoLocMan);
 			}
 			catch (Exception e)
