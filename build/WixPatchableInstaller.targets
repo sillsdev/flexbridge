@@ -88,7 +88,7 @@
 		<RemoveDir Directories="$(AppBuildDir)" />	<!-- ./BuildDir/$(SafeApplicationName) 1.0 Build -->
 		<!-- copy in new stuff -->
 		<PropertyGroup>
-			<RootBinDir>$(RootDir)/output/$(Configuration)/net461</RootBinDir>
+			<RootBinDir>$(RootDir)/output/$(Configuration)/net462</RootBinDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<FilesForDevelopers Include="$(RootBinDir)\TestData\**\*"/>
