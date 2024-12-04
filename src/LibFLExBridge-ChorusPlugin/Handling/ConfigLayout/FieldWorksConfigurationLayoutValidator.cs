@@ -29,8 +29,10 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 							return ValidateLayoutTypeElement(childElement);
 						case "layout":
 							return ValidateLayoutElement(childElement);
+						case "part":
+							return ValidatePartElement(childElement);
 						default:
-							return "Layout file contains unrecognized child element.";
+							return "Layout file contains unrecognized child element: " + childElement.Name.LocalName + ".";
 					}
 				}
 			}
@@ -108,7 +110,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 					case "generate":
 						return ValidateGenerateElement(childElement);
 					default:
-						return "Layout element contains unrecognized child element.";
+						return "Layout element contains unrecognized child element" + childElement.Name.LocalName + ".";
 				}
 			}
 			return null;
@@ -118,6 +120,14 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 		{
 			if (part.Attribute("ref") == null)
 				return "Required 'ref' attribute is missing.";
+			foreach (var childElement in part.Elements())
+			{
+				if (childElement.Name.LocalName == "indent")
+					foreach (var grandChildElement in childElement.Elements())
+					{
+						ValidatePartElement(grandChildElement);
+					}
+			}
 
 			return null;
 		}
