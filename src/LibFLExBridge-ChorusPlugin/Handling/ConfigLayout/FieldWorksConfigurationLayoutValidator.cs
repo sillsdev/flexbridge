@@ -123,10 +123,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			foreach (var childElement in part.Elements())
 			{
 				if (childElement.Name.LocalName == "indent")
+				{
 					foreach (var grandChildElement in childElement.Elements())
 					{
 						ValidatePartElement(grandChildElement);
 					}
+				}
 			}
 
 			return null;
