@@ -13,6 +13,7 @@ using LibChorus.TestUtilities;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
+using System.Text.RegularExpressions;
 
 namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 {
@@ -107,6 +108,24 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 
 			File.WriteAllText(_ourFile.Path, data);
 			Assert.IsNotNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
+		}
+
+		[Test]
+		public void ShouldBeAbleToValidateFileWithPartAndIndent()
+		{
+			const string data =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+  <LayoutInventory>
+  <part ref=""HeavySummary"" param=""Summary"" collapsedLayout=""SummaryCollapsed"" expansion=""expanded"" menu=""mnuDataTree-Sense"" hotlinks=""mnuDataTree-Sense-Hotlinks"" notifyVirtual=""LexSenseOutline"">
+	<indent>
+		<part ref=""Exemplar"" visibility=""ifdata"" />
+		<part ref=""ReversalEntries"" visibility=""ifdata"" />
+	</indent>
+  </part>
+</LayoutInventory>";
+
+			File.WriteAllText(_ourFile.Path, data);
+			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
 		[Test]
@@ -357,5 +376,45 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 			Assert.IsFalse(results.Contains("combinedkey"));
 
 		}
+
+		[Test]
+		public void SampleMergeWithPartAndIndent()
+		{
+			const string commonAncestor =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+  <LayoutInventory>
+  <part ref=""HeavySummary"" param=""Summary"" collapsedLayout=""SummaryCollapsed"" expansion=""expanded"" menu=""mnuDataTree-Sense"" hotlinks=""mnuDataTree-Sense-Hotlinks"" notifyVirtual=""LexSenseOutline"">
+	<indent>
+		<part ref=""Exemplar"" visibility=""ifdata"" />
+		<part ref=""ReversalEntries"" visibility=""ifdata"" />
+	</indent>
+  </part>
+</LayoutInventory>";
+			const string ourContent =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+  <LayoutInventory>
+  <part ref=""HeavySummary"" param=""Summary"" collapsedLayout=""SummaryCollapsed"" expansion=""expanded"" menu=""mnuDataTree-Sense"" hotlinks=""mnuDataTree-Sense-Hotlinks"" notifyVirtual=""LexSenseOutline"">
+	<indent>
+		<part ref=""ReversalEntries"" visibility=""ifdata"" />
+		<part ref=""Exemplar"" visibility=""ifdata"" />
+	</indent>
+  </part>
+</LayoutInventory>";
+
+			const string theirContent = commonAncestor;
+
+			var results = FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				null, null,
+				0, new List<Type>(),
+				1, new List<Type> { typeof(XmlChangedRecordReport) });
+			string normalizedResults = Regex.Replace(results, @"\s", "");
+			string normalizedOurContent = Regex.Replace(ourContent, @"\s", "");
+			Assert.AreEqual(normalizedResults, normalizedOurContent);
+		}
+
 	}
 }
