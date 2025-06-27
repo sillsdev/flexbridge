@@ -167,6 +167,8 @@ namespace LfMergeBridge
 			syncOptions.RepositorySourcesToTry.Clear(); // Get rid of any default ones, since LF only sends off to the internet (Language Depot).
 			// We use the generic creation code here to make testing easier. In the real world we will only create "HttpRepositoryPath".
 			syncOptions.RepositorySourcesToTry.Add(repositoryAddress);
+			var user = options.ContainsKey(LfMergeBridgeUtilities.user) ? options[LfMergeBridgeUtilities.user] : null;
+			if (user != null) hgRepository.SetUserNameInIni(user, progress);
 
 			progress.WriteVerbose("Syncing");
 			var syncResults = synchronizer.SyncNow(syncOptions);
