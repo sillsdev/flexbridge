@@ -166,6 +166,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 				<File Id="about.htm" Name="about.htm" KeyPath="yes" Source="..\..\output\Installer\about.htm" />
 			</Component>
 
+			<!-- RepositoryUtility debugging tool -->
+			<Component Id="RepositoryUtility.exe" Guid="15FC8E47-B443-447E-967B-586076BA2B13">
+			  <File Id="RepositoryUtility.exe" Name="RepositoryUtility.exe" Source="..\..\output\Release\net462\RepositoryUtility.exe"/>
+			</Component>
+
 			<Merge Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\Release\ChorusMergeModule.msm" DiskId="1"/>
 		  </Directory>
 		</Directory>
@@ -218,6 +223,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="IPCFramework.dll"/>
 
 	  <ComponentRef Id="about.htm" />
+
+	  <ComponentRef Id="RepositoryUtility.exe" />
 
 	  <MergeRef Id="ChorusMergeModule"/>
 	  <MergeRef Id="CRT90"/>
