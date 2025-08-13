@@ -170,7 +170,7 @@ jobs:
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
           credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-          files-folder: src/WiXInstaller/BaseInstallerBuild
+          files-folder: BuildDir
           files-folder-filter: FlexBridge_*.exe
           description:  'FLExBridge installer - SIL Global'
           description-url: 'https://software.sil.org/fieldworks/help/using-sendreceive/flex-bridge/'
@@ -179,6 +179,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          name: nuget-packages
-          path: output/*nupkg
+          name: FlexBridgeInstallers
+          path: BuildDir/FlexBridge_*.exe
           if-no-files-found: warn
