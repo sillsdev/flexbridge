@@ -2,8 +2,8 @@
 <Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Configuration properties - Review and edit these values as needed. -->
 	<PropertyGroup>
-		<CopyrightYear>2021</CopyrightYear>
-		<Manufacturer>SIL International</Manufacturer>
+		<CopyrightYear>2025</CopyrightYear>
+		<Manufacturer>SIL Global</Manufacturer>
 		<SafeManufacturer>SIL</SafeManufacturer>
 		<SafeApplicationName>$(ApplicationName.Replace(" ", ""))</SafeApplicationName>
 		<!-- Setting the variables CertPath and CertPass is the responsibility of the client -->
@@ -95,7 +95,6 @@
 			<FilesForDevelopers Include="$(RootBinDir)\**\*Tests.*"/>
 			<FilesForDevelopers Include="$(RootBinDir)\**\*TestApp.*"/>
 			<FilesForDevelopers Include="$(RootBinDir)\**\*TestUtilities.*"/>
-			<FilesForDevelopers Include="$(RootBinDir)\RepositoryUtility.*"/>
 			<FilesInstalledByChorusMerge Include="$(RootBinDir)\Autofac.dll;
 				$(RootBinDir)\LibChorus.dll;
 				$(RootBinDir)\Chorus.exe;

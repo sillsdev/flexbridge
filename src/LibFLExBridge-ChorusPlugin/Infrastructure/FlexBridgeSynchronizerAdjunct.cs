@@ -101,27 +101,27 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		{
 			using (var process = new Process())
 			{
-			var startInfo = process.StartInfo;
-			startInfo.FileName = _fixitPathname.Replace("\"", null);
-			startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
-			startInfo.CreateNoWindow = false;
-			startInfo.UseShellExecute = false;
-			startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
-			startInfo.RedirectStandardOutput = true;
-			process.Start();
-			var mergeOutput = process.StandardOutput.ReadToEnd();
-			process.WaitForExit();
-			// If the user requests verbose output they can see all the fixup reports.
-			// Unfortunately this includes sequences of dots intended to show progress on the console.
-			// They always occur at the start of a line. The Replace gets rid of them.
-			progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
-			// 0 means fixup ran but fixed nothing, 1 means it ran and fixed something, anything else is a problem
-			if(process.ExitCode != 0 && process.ExitCode != 1)
-			{
-				throw new Exception("Merge fixing program has crashed.");
+				var startInfo = process.StartInfo;
+				startInfo.FileName = _fixitPathname.Replace("\"", null);
+				startInfo.Arguments = "\"" + _fwdataPathname.Replace("\"", null) + "\"";
+				startInfo.CreateNoWindow = false;
+				startInfo.UseShellExecute = false;
+				startInfo.WorkingDirectory = Path.GetDirectoryName(_fixitPathname) ?? string.Empty;
+				startInfo.RedirectStandardOutput = true;
+				process.Start();
+				var mergeOutput = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
+				// If the user requests verbose output they can see all the fixup reports.
+				// Unfortunately this includes sequences of dots intended to show progress on the console.
+				// They always occur at the start of a line. The Replace gets rid of them.
+				progress.WriteVerbose(new Regex(@"(?<=(^|\n|\r))\.+").Replace(mergeOutput, ""));
+				// 0 means fixup ran but fixed nothing, 1 means it ran and fixed something, anything else is a problem
+				if(process.ExitCode != 0 && process.ExitCode != 1)
+				{
+					throw new Exception("Merge fixing program has crashed.");
+				}
+				return process.ExitCode == 1;
 			}
-			return process.ExitCode == 1;
-		}
 		}
 
 		/// <summary>
