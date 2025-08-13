@@ -168,7 +168,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 			<!-- RepositoryUtility debugging tool -->
 			<Component Id="RepositoryUtility.exe" Guid="15FC8E47-B443-447E-967B-586076BA2B13">
-			  <File Id="RepositoryUtility.exe" Name="RepositoryUtility.exe" Source="..\..\output\Release\net462\RepositoryUtility.exe"/>
+			  <File Id="RepositoryUtility.exe" Name="RepositoryUtility.exe" KeyPath="yes" Source="..\..\output\Release\net462\RepositoryUtility.exe"/>
 			</Component>
 
 			<Merge Id="ChorusMergeModule" Language="1033" SourceFile="..\..\lib\Release\ChorusMergeModule.msm" DiskId="1"/>

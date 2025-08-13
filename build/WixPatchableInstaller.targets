@@ -95,7 +95,6 @@
 			<FilesForDevelopers Include="$(RootBinDir)\**\*Tests.*"/>
 			<FilesForDevelopers Include="$(RootBinDir)\**\*TestApp.*"/>
 			<FilesForDevelopers Include="$(RootBinDir)\**\*TestUtilities.*"/>
-			<FilesForDevelopers Include="$(RootBinDir)\RepositoryUtility.*"/>
 			<FilesInstalledByChorusMerge Include="$(RootBinDir)\Autofac.dll;
 				$(RootBinDir)\LibChorus.dll;
 				$(RootBinDir)\Chorus.exe;

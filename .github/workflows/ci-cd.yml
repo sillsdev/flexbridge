@@ -126,7 +126,7 @@ jobs:
           credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
           files-folder: src/WiXInstaller/BaseInstallerBuild
           files-folder-filter: FlexBridge*.msi
-          description:  'FLExBridge installer - SIL Global'
+          description:  'FLExBridge Installer'
           description-url: 'https://software.sil.org/fieldworks/help/using-sendreceive/flex-bridge/'
 
       - name: Build Bundles
