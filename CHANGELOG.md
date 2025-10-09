@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Command to clone a specific project
+- Add L10NSharp.Windows.Forms dependency for version 9.0.0-beta0001
 
 ### Removed
 
@@ -34,6 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Reorganise Chorus Internet Server Settings control, add a help button to the Get from Internet dialog (LT-21209)
 - Increase the audio and picture file size limit from 1 MB to 10 MB
+- Update Chorus dependency from 6.0.0-beta0061 to 6.0.0-beta0063
+- Update L10NSharp dependency from 8.0.0-beta0005 to 9.0.0-beta0001
 
 ## [3.7.1] - 2022-08-09
 
