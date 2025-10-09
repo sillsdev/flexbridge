@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Chorus;
 using Chorus.sync;
 using L10NSharp;
+using L10NSharp.Windows.Forms;
 using LibTriboroughBridgeChorusPlugin;
 using SIL.IO;
 using SIL.Reporting;
@@ -101,7 +102,7 @@ namespace TriboroughBridge_ChorusPlugin
 				var versionObj = Assembly.GetExecutingAssembly().GetName().Version;
 				// We don't need to reload strings for every "revision" (that might be every time we build). REVIEW (Hasso) 2021.08: then why do we have `build`?
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				var flexBridgeLocMan = LocalizationManager.Create(desiredUiLangId, FlexBridge, Application.ProductName,
+				var flexBridgeLocMan = LocalizationManagerWinforms.Create(desiredUiLangId, FlexBridge, Application.ProductName,
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus,
 					FlexLocalizationEmailAddress, new [] { FlexBridge, "TriboroughBridge_ChorusPlugin", "FLEx_ChorusPlugin", "SIL.LiftBridge" });
 				results.Add("FlexBridge", flexBridgeLocMan);
@@ -111,13 +112,13 @@ namespace TriboroughBridge_ChorusPlugin
 
 				versionObj = Assembly.GetAssembly(typeof(ChorusSystem)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-				var chorusLocMan = LocalizationManager.Create(desiredUiLangId, "Chorus", "Chorus",
+				var chorusLocMan = LocalizationManagerWinforms.Create(desiredUiLangId, "Chorus", "Chorus",
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, new []{ "Chorus" });
 				results.Add("Chorus", chorusLocMan);
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = "" + versionObj.Major + "." + versionObj.Minor + "." + versionObj.Build;
-				var palasoLocMan = LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso",
+				var palasoLocMan = LocalizationManagerWinforms.Create(desiredUiLangId, "Palaso", "Palaso",
 					version, installedL10nBaseDir, userL10nBaseDir, CommonResources.chorus, FlexLocalizationEmailAddress, new []{ "SIL" });
 				results.Add("Palaso", palasoLocMan);
 			}

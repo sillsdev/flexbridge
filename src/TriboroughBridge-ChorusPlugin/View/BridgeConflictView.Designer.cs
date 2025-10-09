@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (C) 2010-2013 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License.
@@ -39,7 +39,7 @@ namespace TriboroughBridge_ChorusPlugin.View
 			this.label1 = new System.Windows.Forms.Label();
 			this._warninglabel1 = new System.Windows.Forms.Label();
 			this._label1 = new System.Windows.Forms.Label();
-			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.l10NSharpExtender1 = new L10NSharp.Windows.Forms.L10NSharpExtender(this.components);
 			((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
 			this._splitContainer.Panel1.SuspendLayout();
 			this._splitContainer.SuspendLayout();
@@ -134,7 +134,7 @@ namespace TriboroughBridge_ChorusPlugin.View
 		private System.Windows.Forms.Label _label1;
 		private System.Windows.Forms.Label _warninglabel1;
 		private System.Windows.Forms.Label label1;
-		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private L10NSharp.Windows.Forms.L10NSharpExtender l10NSharpExtender1;
 
 	}
 }

@@ -23,11 +23,12 @@ See full changelog at https://github.com/sillsdev/flexbridge/blob/develop/CHANGE
 	<ChangelogFile>../../CHANGELOG.md</ChangelogFile>
 	<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-	<ChorusVersion>6.0.0-beta0061</ChorusVersion>
+	<ChorusVersion>6.0.0-beta0063</ChorusVersion>
 	<LCModelVersion>11.0.0-beta*</LCModelVersion>
   </PropertyGroup>
   <ItemGroup>
 	<!-- The only reason we depend directly on L10NSharp is because our dependencies can't agree which one they want -->
-	<PackageReference Include="L10NSharp" Version="8.0.0-beta0005" />
+	<PackageReference Include="L10NSharp" Version="9.0.0-beta0001" />
+	<PackageReference Include="L10NSharp.Windows.Forms" Version="9.0.0-beta0001" />
   </ItemGroup>
 </Project>
