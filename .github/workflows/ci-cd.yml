@@ -100,6 +100,10 @@ jobs:
           path: output/*nupkg
           if-no-files-found: warn
 
+      #
+      # All the following are used only when building an installer after a merge
+      #
+
       # --skip-duplicate allows retrying a workflow that failed with a partial push, skipping already published packages and publishing the rest.
       - name: Publish NuGet packages to nuget.org
         run: |
@@ -111,7 +115,6 @@ jobs:
         if: github.event_name != 'pull_request'
         continue-on-error: true
 
-      # All the following are used only when building an installer after a merge
       - name: Build Msi
         if: github.event_name != 'pull_request'
         id: build_msi
