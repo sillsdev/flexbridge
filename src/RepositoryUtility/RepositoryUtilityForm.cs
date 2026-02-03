@@ -22,6 +22,7 @@ using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibTriboroughBridgeChorusPlugin;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
+using RepositoryUtility.Properties;
 using SIL.PlatformUtilities;
 using SIL.Progress;
 
@@ -123,14 +124,17 @@ namespace RepositoryUtility
 			// Get some selected folder that hopefully has a repo in it.
 			using (var folderDlg = new FolderBrowserDialog())
 			{
+				var openLocalStartLoc = Settings.Default.OpenLocalStartFolder;
 				folderDlg.ShowNewFolderButton = false;
-				folderDlg.SelectedPath = _repoHoldingFolder;
+				folderDlg.SelectedPath = string.IsNullOrEmpty(openLocalStartLoc) ? _repoHoldingFolder : openLocalStartLoc;
 				if (folderDlg.ShowDialog(this) != DialogResult.OK)
 				{
 					_repoFolder = null;
 					return;
 				}
 				_repoFolder = folderDlg.SelectedPath;
+				Settings.Default.OpenLocalStartFolder = _repoFolder;
+				Settings.Default.Save();
 			}
 
 			if (!HasRepo)
@@ -256,6 +260,17 @@ namespace RepositoryUtility
 							: Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + LibTriboroughBridgeSharedConstants.FwXmlExtension),
 						repoType);
 				syncDlg.SetSynchronizerAdjunct(syncAdjunt);
+				var versionString = LibFLExBridgeUtilities.GetFlexModelVersion(_repoFolder);
+				var versionNumbers = versionString.Split(new[] { "{", ":", "}" },
+					StringSplitOptions.RemoveEmptyEntries);
+				if (versionNumbers.Length == 0)
+					throw new Exception("Invalid version number in branch name");
+				var version = Int32.Parse(versionNumbers.Length > 1 ? versionNumbers[1] : versionNumbers[0]);
+
+				MetadataCache.MdCache.UpgradeToVersion(version);
+				// Use Lexicon location to build up custom properties in support of validating a commit outside of a merge context
+				var mergeOrderFolder = Path.Combine(_repoFolder, FlexBridgeConstants.Lexicon);
+				MetadataCache.MdCache.AddCustomPropInfo(new MergeOrder(mergeOrderFolder, mergeOrderFolder, mergeOrderFolder, new NullMergeSituation()));
 
 				// Chorus does it in this order:
 				// Local Commit

@@ -2,12 +2,14 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Chorus.VcsDrivers.Mercurial;
 using Gecko;
+using L10NSharp;
 using RepositoryUtility.Properties;
 using SIL.IO;
 using SIL.PlatformUtilities;
@@ -39,7 +41,10 @@ namespace RepositoryUtility
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-
+			TriboroughBridgeUtilities.SetupLocalization(new Dictionary<string, string>
+			{
+				{ CommandLineProcessor.locale, "en" }
+			});
 			using (var hotspot = new HotSpotProvider())
 			{
 				// This is a kludge to make sure we have a real reference to PalasoUIWindowsForms.

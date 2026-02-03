@@ -58,3 +58,4 @@ GitVersionTaskAssemblyInfo.g.cs
 Mercurial/
 MercurialExtensions/
 build/FLExBridge.files
+/l10n/FlexBridge.en.xlf

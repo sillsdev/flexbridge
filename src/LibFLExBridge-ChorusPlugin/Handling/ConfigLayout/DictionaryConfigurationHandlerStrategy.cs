@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (C) 2015-2017 SIL International. All rights reserved.
 //
 // Distributable under the terms of the MIT License.
@@ -15,9 +15,7 @@ using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.VcsDrivers.Mercurial;
-using LibFLExBridgeChorusPlugin.Handling;
 using LibFLExBridgeChorusPlugin.Infrastructure;
-using LibTriboroughBridgeChorusPlugin;
 using SIL.IO;
 
 namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
