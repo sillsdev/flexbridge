@@ -324,6 +324,117 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		}
 
 		[Test]
+		public void Merge_RecordTypeLayoutsAreMatchedByChoiceGuid_LT19237()
+		{
+			// LT-19237: The Data Notebook writes one <layout> per record type, and every one of
+			// them shares class="RnGenericRec" type="detail" name="Normal"; they are distinguished
+			// ONLY by the choiceGuid attribute. Before this fix the layout merge key was
+			// {class, type, name}, so two record-type layouts were indistinguishable to the merger.
+			// When two users had the layouts in a different order and each edited a DIFFERENT
+			// record type's layout, the merger cross-matched them, fabricating spurious conflicts,
+			// losing most fields from one layout and duplicating the other.
+			// The GUIDs, the reversed ordering, and the edited parts below are taken from the real
+			// Nukak reproduction attached to the ticket (SUEL vs FamiliaTrujillo).
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+    <part ref='SeeAlso' visibility='always' />
+    <part ref='ExternalMaterials' visibility='always' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+    <part ref='SeeAlso' visibility='always' />
+    <part ref='ExternalMaterials' visibility='always' />
+    <part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+</LayoutInventory>";
+
+			// OURS (SUEL): the two record-type layouts are in REVERSED order, and only the
+			// 08e4d456 layout is edited (Hypothesis visibility ifdata->always, custom field added).
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+    <part ref='SeeAlso' visibility='always' />
+    <part ref='ExternalMaterials' visibility='always' />
+    <part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='always' />
+    <part ref='SeeAlso' visibility='always' />
+    <part ref='ExternalMaterials' visibility='always' />
+    <part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+</LayoutInventory>";
+
+			// THEIRS (FamiliaTrujillo): ancestor order; only the B7EA5156 layout is edited
+			// (SeeAlso & ExternalMaterials always->ifdata, custom field gains a visibility).
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+    <part ref='SeeAlso' visibility='always' />
+    <part ref='ExternalMaterials' visibility='always' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+    <part ref='SeeAlso' visibility='ifdata' />
+    <part ref='ExternalMaterials' visibility='ifdata' />
+    <part ref='Custom' param='Esquema de Materiales Culturales' visibility='ifdata' />
+  </layout>
+</LayoutInventory>";
+
+			var matchesExactlyOne = new List<string>
+			{
+				// Exactly one layout survives per record type (the bug duplicated one and mangled the other).
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']",
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']",
+				// Our edit landed in the 08e4d456 layout...
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']/part[@ref='Hypothesis' and @visibility='always']",
+				// ...and did NOT bleed into the B7EA5156 layout.
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']/part[@ref='Hypothesis' and @visibility='ifdata']",
+				// Their edits landed in the B7EA5156 layout...
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']/part[@ref='SeeAlso' and @visibility='ifdata']",
+				// ...and did NOT bleed into the 08e4d456 layout.
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']/part[@ref='SeeAlso' and @visibility='always']"
+			};
+
+			// A correct merge of edits to DIFFERENT record-type layouts has NO conflicts.
+			// (The change-report expectations are pinned from the observed correct merge output.)
+			// Each side's edits are applied (none lost): our 08e4d456 layout has one attribute
+			// change (Hypothesis) plus one added part (Custom); their B7EA5156 layout has three
+			// changes (SeeAlso, ExternalMaterials, Custom visibility). Atomic <part> edits surface
+			// as XmlChangedRecordReport; the added <part> as XmlAdditionChangeReport.
+			var expectedChanges = new List<Type>
+			{
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlAdditionChangeReport)
+			};
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				matchesExactlyOne, null,
+				0, new List<Type>(),
+				expectedChanges.Count, expectedChanges);
+		}
+
+		[Test]
 		public void SampleMergeWithMissingAncestor()
 		{
 			const string commonAncestor =

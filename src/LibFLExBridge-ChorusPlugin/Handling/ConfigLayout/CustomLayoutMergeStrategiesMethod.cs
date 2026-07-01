@@ -29,7 +29,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			#region 'layout' and children.
 			elStrat = new ElementStrategy(false)
 				{
-					MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> { "class", "type", "name" }),
+					// LT-19237: The Data Notebook emits one <layout> per record type, all sharing the
+					// same class/type/name and differing only by choiceGuid. Without choiceGuid in the
+					// key the merger cannot tell record-type layouts apart and cross-matches them,
+					// losing fields and duplicating layouts. Layouts without a choiceGuid all key on a
+					// null value, so they continue to match each other exactly as before.
+					MergePartnerFinder = new FindByMultipleKeyAttributes(new List<string> { "class", "type", "name", "choiceGuid" }),
 					ContextDescriptorGenerator = new FieldWorkCustomLayoutContextGenerator()
 				};
 			mergeStrategies.SetStrategy("layout", elStrat);
