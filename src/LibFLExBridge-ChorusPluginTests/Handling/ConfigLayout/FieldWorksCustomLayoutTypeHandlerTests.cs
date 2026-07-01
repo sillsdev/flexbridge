@@ -285,12 +285,12 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 @"<?xml version='1.0' encoding='utf-8'?>
 <LayoutInventory>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
   </layout>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='SeeAlso' visibility='always' />
+	<part ref='Title' visibility='always' />
+	<part ref='SeeAlso' visibility='always' />
   </layout>
 </LayoutInventory>";
 
@@ -389,17 +389,17 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 @"<?xml version='1.0' encoding='utf-8'?>
 <LayoutInventory>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
-    <part ref='SeeAlso' visibility='always' />
-    <part ref='ExternalMaterials' visibility='always' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
   </layout>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
-    <part ref='SeeAlso' visibility='always' />
-    <part ref='ExternalMaterials' visibility='always' />
-    <part ref='Custom' param='Esquema de Materiales Culturales' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
   </layout>
 </LayoutInventory>";
 
@@ -409,18 +409,18 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 @"<?xml version='1.0' encoding='utf-8'?>
 <LayoutInventory>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
-    <part ref='SeeAlso' visibility='always' />
-    <part ref='ExternalMaterials' visibility='always' />
-    <part ref='Custom' param='Esquema de Materiales Culturales' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
   </layout>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='always' />
-    <part ref='SeeAlso' visibility='always' />
-    <part ref='ExternalMaterials' visibility='always' />
-    <part ref='Custom' param='Esquema de Materiales Culturales' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='always' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
   </layout>
 </LayoutInventory>";
 
@@ -430,17 +430,17 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 @"<?xml version='1.0' encoding='utf-8'?>
 <LayoutInventory>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
-    <part ref='SeeAlso' visibility='always' />
-    <part ref='ExternalMaterials' visibility='always' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
   </layout>
   <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
-    <part ref='Title' visibility='always' />
-    <part ref='Hypothesis' visibility='ifdata' />
-    <part ref='SeeAlso' visibility='ifdata' />
-    <part ref='ExternalMaterials' visibility='ifdata' />
-    <part ref='Custom' param='Esquema de Materiales Culturales' visibility='ifdata' />
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='ifdata' />
+	<part ref='ExternalMaterials' visibility='ifdata' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' visibility='ifdata' />
   </layout>
 </LayoutInventory>";
 
