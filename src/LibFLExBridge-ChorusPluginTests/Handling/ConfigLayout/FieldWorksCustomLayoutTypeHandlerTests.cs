@@ -333,8 +333,8 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 			// When two users had the layouts in a different order and each edited a DIFFERENT
 			// record type's layout, the merger cross-matched them, fabricating spurious conflicts,
 			// losing most fields from one layout and duplicating the other.
-			// The GUIDs, the reversed ordering, and the edited parts below are taken from the real
-			// Nukak reproduction attached to the ticket (SUEL vs FamiliaTrujillo).
+			// The GUIDs, the reversed ordering, and the edited fields below are a trimmed subset of
+			// the real Nukak reproduction attached to the ticket.
 			const string commonAncestor =
 @"<?xml version='1.0' encoding='utf-8'?>
 <LayoutInventory>
@@ -353,7 +353,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
   </layout>
 </LayoutInventory>";
 
-			// OURS (SUEL): the two record-type layouts are in REVERSED order, and only the
+			// OURS: the two record-type layouts are in REVERSED order, and only the
 			// 08e4d456 layout is edited (Hypothesis visibility ifdata->always, custom field added).
 			const string ourContent =
 @"<?xml version='1.0' encoding='utf-8'?>
@@ -374,7 +374,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
   </layout>
 </LayoutInventory>";
 
-			// THEIRS (FamiliaTrujillo): ancestor order; only the B7EA5156 layout is edited
+			// THEIRS: ancestor order; only the B7EA5156 layout is edited
 			// (SeeAlso & ExternalMaterials always->ifdata, custom field gains a visibility).
 			const string theirContent =
 @"<?xml version='1.0' encoding='utf-8'?>
