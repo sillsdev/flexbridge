@@ -273,6 +273,56 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		}
 
 		[Test]
+		public void Diff_RecordTypeLayoutsAreMatchedByChoiceGuid_LT19237()
+		{
+			// LT-19237 (two-way diff path): the Data Notebook emits one <layout> per record type,
+			// all sharing class="RnGenericRec" type="detail" name="Normal" and differing only by
+			// choiceGuid. The diff data collector keyed layouts on class+type+name alone, so two
+			// record-type layouts collided and ToDictionary threw a duplicate-key ArgumentException
+			// when a user viewed history/change reports. The key now includes choiceGuid (matching
+			// the merge fix), so each record-type layout is diffed against its own counterpart.
+			const string parent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='Hypothesis' visibility='ifdata' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+    <part ref='Title' visibility='always' />
+    <part ref='SeeAlso' visibility='always' />
+  </layout>
+</LayoutInventory>";
+
+			// Edit ONLY the 08e4d456 layout: Hypothesis visibility ifdata->always. ('ifdata' occurs
+			// only in that layout, so the B7EA5156 layout is left untouched.)
+			var child = parent.Replace("ifdata", "always");
+
+			using (var repositorySetup = new RepositorySetup("randy"))
+			{
+				repositorySetup.AddAndCheckinFile("RnGenericRec." + FlexBridgeConstants.fwlayout, parent);
+				repositorySetup.ChangeFileAndCommit("RnGenericRec." + FlexBridgeConstants.fwlayout, child, "change it");
+				var hgRepository = repositorySetup.Repository;
+				var allRevisions = (from rev in hgRepository.GetAllRevisions()
+									orderby rev.Number.LocalRevisionNumber
+									select rev).ToList();
+				var firstFiR = hgRepository.GetFilesInRevision(allRevisions[0]).First();
+				var secondFiR = hgRepository.GetFilesInRevision(allRevisions[1]).First();
+
+				// Before the fix this call threw ArgumentException (duplicate key) instead of returning.
+				var result = FileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
+
+				Assert.AreEqual(1, result.Count);
+				var onlyReport = result[0];
+				Assert.IsInstanceOf<XmlChangedRecordReport>(onlyReport);
+				Assert.AreEqual(firstFiR.FullPath, onlyReport.PathToFile);
+				// The change is attributed to the edited record type (08e4d456), not the other layout.
+				var changedLayout = ((XmlChangedRecordReport)onlyReport).ChildNode;
+				Assert.AreEqual("08e4d456-ce03-4bc1-9231-38caca76b80f", changedLayout.Attributes["choiceGuid"].Value);
+			}
+		}
+
+		[Test]
 		public void SampleMergeWithNoConflicts()
 		{
 			const string commonAncestor =
