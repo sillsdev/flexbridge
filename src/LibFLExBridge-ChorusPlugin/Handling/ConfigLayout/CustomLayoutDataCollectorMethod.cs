@@ -15,9 +15,15 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 		internal static Dictionary<string, byte[]> GetDataFromRevision(FileInRevision revision, HgRepository repository)
 		{
 			var doc = XDocument.Parse(revision.GetFileContents(repository));
+			// LT-19237: include choiceGuid in the key. The Data Notebook emits one <layout> per
+			// record type, all sharing class/type/name and differing only by choiceGuid; without it
+			// the keys collide and ToDictionary throws a duplicate-key ArgumentException. choiceGuid
+			// is optional, so layouts without it key on class+type+name+"" (byte-identical to the old
+			// key). Matches the merge partner key in CustomLayoutMergeStrategiesMethod.
 			var data = doc.Root.Elements("layout")
 				.ToDictionary(layoutElement =>
-							  layoutElement.Attribute("class").Value + layoutElement.Attribute("type").Value + layoutElement.Attribute("name").Value,
+							  layoutElement.Attribute("class").Value + layoutElement.Attribute("type").Value + layoutElement.Attribute("name").Value
+							  + (layoutElement.Attribute("choiceGuid")?.Value ?? ""),
 					layoutElement => LibTriboroughBridgeSharedConstants.Utf8.GetBytes(layoutElement.ToString()));
 
 			var layoutTypeElement = doc.Root.Element("layoutType");

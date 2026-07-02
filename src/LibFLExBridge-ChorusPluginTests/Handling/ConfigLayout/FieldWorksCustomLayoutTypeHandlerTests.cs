@@ -273,6 +273,56 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 		}
 
 		[Test]
+		public void Diff_RecordTypeLayoutsAreMatchedByChoiceGuid_LT19237()
+		{
+			// LT-19237 (two-way diff path): the Data Notebook emits one <layout> per record type,
+			// all sharing class="RnGenericRec" type="detail" name="Normal" and differing only by
+			// choiceGuid. The diff data collector keyed layouts on class+type+name alone, so two
+			// record-type layouts collided and ToDictionary threw a duplicate-key ArgumentException
+			// when a user viewed history/change reports. The key now includes choiceGuid (matching
+			// the merge fix), so each record-type layout is diffed against its own counterpart.
+			const string parent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='SeeAlso' visibility='always' />
+  </layout>
+</LayoutInventory>";
+
+			// Edit ONLY the 08e4d456 layout: Hypothesis visibility ifdata->always. ('ifdata' occurs
+			// only in that layout, so the B7EA5156 layout is left untouched.)
+			var child = parent.Replace("ifdata", "always");
+
+			using (var repositorySetup = new RepositorySetup("randy"))
+			{
+				repositorySetup.AddAndCheckinFile("RnGenericRec." + FlexBridgeConstants.fwlayout, parent);
+				repositorySetup.ChangeFileAndCommit("RnGenericRec." + FlexBridgeConstants.fwlayout, child, "change it");
+				var hgRepository = repositorySetup.Repository;
+				var allRevisions = (from rev in hgRepository.GetAllRevisions()
+									orderby rev.Number.LocalRevisionNumber
+									select rev).ToList();
+				var firstFiR = hgRepository.GetFilesInRevision(allRevisions[0]).First();
+				var secondFiR = hgRepository.GetFilesInRevision(allRevisions[1]).First();
+
+				// Before the fix this call threw ArgumentException (duplicate key) instead of returning.
+				var result = FileHandler.Find2WayDifferences(firstFiR, secondFiR, hgRepository).ToList();
+
+				Assert.AreEqual(1, result.Count);
+				var onlyReport = result[0];
+				Assert.IsInstanceOf<XmlChangedRecordReport>(onlyReport);
+				Assert.AreEqual(firstFiR.FullPath, onlyReport.PathToFile);
+				// The change is attributed to the edited record type (08e4d456), not the other layout.
+				var changedLayout = ((XmlChangedRecordReport)onlyReport).ChildNode;
+				Assert.AreEqual("08e4d456-ce03-4bc1-9231-38caca76b80f", changedLayout.Attributes["choiceGuid"].Value);
+			}
+		}
+
+		[Test]
 		public void SampleMergeWithNoConflicts()
 		{
 			const string commonAncestor =
@@ -321,6 +371,117 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ConfigLayout
 				0, new List<Type>());
 			Assert.IsTrue(results.Contains("20"));
 			Assert.IsFalse(results.Contains("combinedkey"));
+		}
+
+		[Test]
+		public void Merge_RecordTypeLayoutsAreMatchedByChoiceGuid_LT19237()
+		{
+			// LT-19237: The Data Notebook writes one <layout> per record type, and every one of
+			// them shares class="RnGenericRec" type="detail" name="Normal"; they are distinguished
+			// ONLY by the choiceGuid attribute. Before this fix the layout merge key was
+			// {class, type, name}, so two record-type layouts were indistinguishable to the merger.
+			// When two users had the layouts in a different order and each edited a DIFFERENT
+			// record type's layout, the merger cross-matched them, fabricating spurious conflicts,
+			// losing most fields from one layout and duplicating the other.
+			// The GUIDs, the reversed ordering, and the edited fields below are a trimmed subset of
+			// the real Nukak reproduction attached to the ticket.
+			const string commonAncestor =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+</LayoutInventory>";
+
+			// OURS: the two record-type layouts are in REVERSED order, and only the
+			// 08e4d456 layout is edited (Hypothesis visibility ifdata->always, custom field added).
+			const string ourContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='always' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' />
+  </layout>
+</LayoutInventory>";
+
+			// THEIRS: ancestor order; only the B7EA5156 layout is edited
+			// (SeeAlso & ExternalMaterials always->ifdata, custom field gains a visibility).
+			const string theirContent =
+@"<?xml version='1.0' encoding='utf-8'?>
+<LayoutInventory>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='always' />
+	<part ref='ExternalMaterials' visibility='always' />
+  </layout>
+  <layout class='RnGenericRec' type='detail' name='Normal' choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC' version='25'>
+	<part ref='Title' visibility='always' />
+	<part ref='Hypothesis' visibility='ifdata' />
+	<part ref='SeeAlso' visibility='ifdata' />
+	<part ref='ExternalMaterials' visibility='ifdata' />
+	<part ref='Custom' param='Esquema de Materiales Culturales' visibility='ifdata' />
+  </layout>
+</LayoutInventory>";
+
+			var matchesExactlyOne = new List<string>
+			{
+				// Exactly one layout survives per record type (the bug duplicated one and mangled the other).
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']",
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']",
+				// Our edit landed in the 08e4d456 layout...
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']/part[@ref='Hypothesis' and @visibility='always']",
+				// ...and did NOT bleed into the B7EA5156 layout.
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']/part[@ref='Hypothesis' and @visibility='ifdata']",
+				// Their edits landed in the B7EA5156 layout...
+				"LayoutInventory/layout[@choiceGuid='B7EA5156-EA5E-11DE-9F9C-0013722F8DEC']/part[@ref='SeeAlso' and @visibility='ifdata']",
+				// ...and did NOT bleed into the 08e4d456 layout.
+				"LayoutInventory/layout[@choiceGuid='08e4d456-ce03-4bc1-9231-38caca76b80f']/part[@ref='SeeAlso' and @visibility='always']"
+			};
+
+			// A correct merge of edits to DIFFERENT record-type layouts has NO conflicts.
+			// (The change-report expectations are pinned from the observed correct merge output.)
+			// Each side's edits are applied (none lost): our 08e4d456 layout has one attribute
+			// change (Hypothesis) plus one added part (Custom); their B7EA5156 layout has three
+			// changes (SeeAlso, ExternalMaterials, Custom visibility). Atomic <part> edits surface
+			// as XmlChangedRecordReport; the added <part> as XmlAdditionChangeReport.
+			var expectedChanges = new List<Type>
+			{
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlChangedRecordReport),
+				typeof(XmlAdditionChangeReport)
+			};
+
+			FieldWorksTestServices.DoMerge(
+				FileHandler,
+				_ourFile, ourContent,
+				_commonFile, commonAncestor,
+				_theirFile, theirContent,
+				matchesExactlyOne, null,
+				0, new List<Type>(),
+				expectedChanges.Count, expectedChanges);
 		}
 
 		[Test]
