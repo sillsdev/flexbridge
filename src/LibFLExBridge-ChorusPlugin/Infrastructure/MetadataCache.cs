@@ -99,9 +99,21 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		{
 			get
 			{
-				_mdc = null;
+				Reset();
 				return MdCache;
 			}
+		}
+
+		/// <summary>
+		/// Drop the cache, so the next use starts from the base model.
+		/// </summary>
+		/// <remarks>
+		/// The cache holds one project's model version and custom fields. A process that handles several projects
+		/// must reset it between them, or one project's custom field types get used to validate and merge another's.
+		/// </remarks>
+		internal static void Reset()
+		{
+			_mdc = null;
 		}
 
 		internal int ModelVersion { get; private set; }
