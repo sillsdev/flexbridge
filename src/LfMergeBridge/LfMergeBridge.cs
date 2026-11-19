@@ -38,10 +38,10 @@ namespace LfMergeBridge
 		/// </remarks>
 		public static bool Execute(string actionType, IProgress progress, Dictionary<string, string> options, out string somethingForClient)
 		{
+			MetadataCache.Reset();
 			Guard.AgainstNullOrEmptyString(actionType, "actionType");
 			Guard.AgainstNull(progress, "progress");
 			Guard.AgainstNull(options, "options"); // Individual handlers will worry about validity of the options.
-			MetadataCache.Reset();
 
 			// Is mercurial set up?
 			var readinessMessage = HgRepository.GetEnvironmentReadinessMessage("en");
