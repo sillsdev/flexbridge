@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Chorus.VcsDrivers.Mercurial;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure;
 using LibTriboroughBridgeChorusPlugin.Infrastructure.ActionHandlers;
 using SIL.Code;
@@ -37,6 +38,7 @@ namespace LfMergeBridge
 		/// </remarks>
 		public static bool Execute(string actionType, IProgress progress, Dictionary<string, string> options, out string somethingForClient)
 		{
+			MetadataCache.Reset();
 			Guard.AgainstNullOrEmptyString(actionType, "actionType");
 			Guard.AgainstNull(progress, "progress");
 			Guard.AgainstNull(options, "options"); // Individual handlers will worry about validity of the options.
@@ -78,11 +80,13 @@ namespace LfMergeBridge
 
 		public static void DisassembleFwdataFile(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
+			MetadataCache.Reset();
 			LibFLExBridgeChorusPlugin.DomainServices.FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
 		}
 
 		public static void ReassembleFwdataFile(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
+			MetadataCache.Reset();
 			LibFLExBridgeChorusPlugin.DomainServices.FLExProjectUnifier.PutHumptyTogetherAgain(progress, writeVerbose, mainFilePathname);
 		}
 	}
