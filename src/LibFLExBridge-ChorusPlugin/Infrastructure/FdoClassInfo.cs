@@ -50,7 +50,25 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		internal void AddProperty(FdoPropertyInfo propertyinfo)
 		{
-			_directProperties.Add(propertyinfo);
+			if (propertyinfo.IsCustomProperty)
+				AddOrReplaceCustomProperty(propertyinfo);
+			else
+				_directProperties.Add(propertyinfo);
+		}
+
+		/// <summary>
+		/// Add a custom property, replacing any earlier custom property of the same name,
+		/// since a later definition may have changed its type.
+		/// A model property of the same name is kept and the custom one is ignored.
+		/// Callers must reset the caches for the change to show in AllProperties.
+		/// </summary>
+		internal void AddOrReplaceCustomProperty(FdoPropertyInfo customProperty)
+		{
+			var existingIndex = _directProperties.FindIndex(pi => pi.PropertyName == customProperty.PropertyName);
+			if (existingIndex < 0)
+				_directProperties.Add(customProperty);
+			else if (_directProperties[existingIndex].IsCustomProperty)
+				_directProperties[existingIndex] = customProperty;
 		}
 
 		internal void RemoveProperty(string propertyName)

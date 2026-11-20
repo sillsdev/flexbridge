@@ -147,7 +147,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 				var propType = cf.Attribute("type").Value;
 				cf.Attribute("type").Value = MetadataCache.RestoreAdjustedTypeValue(propType);
 
-				mdc.GetClassInfo(cf.Attribute(FlexBridgeConstants.Class).Value).AddProperty(
+				mdc.AddCustomPropInfo(cf.Attribute(FlexBridgeConstants.Class).Value,
 					new FdoPropertyInfo(cf.Attribute(FlexBridgeConstants.Name).Value, propType, true));
 			}
 			mdc.ResetCaches();
