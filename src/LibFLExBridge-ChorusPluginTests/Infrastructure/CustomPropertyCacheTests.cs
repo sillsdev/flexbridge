@@ -201,6 +201,18 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 		}
 
 		[Test]
+		public void AddProperty_CustomPropertyTwice_ReplacesEarlierDefinition()
+		{
+			var lexEntry = _mdc.GetClassInfo("LexEntry");
+			lexEntry.AddProperty(new FdoPropertyInfo("Rank", DataType.Integer, true));
+			lexEntry.AddProperty(new FdoPropertyInfo("Rank", DataType.String, true));
+			_mdc.ResetCaches();
+
+			Assert.That(CountOfLexEntryProperties("Rank"), Is.EqualTo(1));
+			Assert.That(lexEntry.GetProperty("Rank").DataType, Is.EqualTo(DataType.String));
+		}
+
+		[Test]
 		public void AddCustomPropInfo_ModelPropertyName_DoesNotReplaceModelProperty()
 		{
 			var modelProperty = _mdc.GetClassInfo("LexEntry").GetProperty("HomographNumber");

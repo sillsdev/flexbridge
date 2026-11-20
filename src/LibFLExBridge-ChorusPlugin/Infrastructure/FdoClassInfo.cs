@@ -50,7 +50,10 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 
 		internal void AddProperty(FdoPropertyInfo propertyinfo)
 		{
-			_directProperties.Add(propertyinfo);
+			if (propertyinfo.IsCustomProperty)
+				AddOrReplaceCustomProperty(propertyinfo);
+			else
+				_directProperties.Add(propertyinfo);
 		}
 
 		/// <summary>
