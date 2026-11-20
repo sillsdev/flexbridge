@@ -261,11 +261,11 @@ namespace FwdataTestApp
 
 		private MetadataCache GetFreshMdc()
 		{
-			var mdc = MetadataCache.TestOnlyNewCache;
+			var mdc = new MetadataCache();
 			var modelVersionPathname = Path.Combine(_workingDir, FlexBridgeConstants.ModelVersionFilename);
 			if (!File.Exists(modelVersionPathname))
 			{
-				FLExProjectSplitter.WriteVersionFile(_srcFwdataPathname);
+				FLExProjectSplitter.WriteVersionFile(mdc, _srcFwdataPathname);
 				using (var fastSplitter = new FastXmlElementSplitter(_srcFwdataPathname))
 				{
 					bool foundOptionalFirstElement;
@@ -345,7 +345,6 @@ namespace FwdataTestApp
 
 		private void RestoreMainFileFromPieces(Stopwatch restoreTimer)
 		{
-			GetFreshMdc(); // Want it fresh.
 			restoreTimer.Start();
 			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), true, _srcFwdataPathname);
 			restoreTimer.Stop();
@@ -370,7 +369,6 @@ namespace FwdataTestApp
 		private void RoundTripData(Stopwatch breakupTimer, Stopwatch restoreTimer, Stopwatch ambiguousTimer, StringBuilder sbValidation)
 		{
 			File.Copy(_srcFwdataPathname, _srcFwdataPathname + ".orig", true); // Keep it safe.
-			GetFreshMdc(); // Want it fresh.
 			breakupTimer.Start();
 			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), false, _srcFwdataPathname);
 			breakupTimer.Stop();
@@ -412,7 +410,7 @@ namespace FwdataTestApp
 				{
 					EventListener = new ChangeAndConflictAccumulator()
 				};
-				var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, MetadataCache.MdCache);
+				var merger = FieldWorksMergeServices.CreateXmlMergerForFieldWorksData(mergeOrder, GetFreshMdc());
 				ambiguousTimer.Start();
 				foreach (var dataFile in allDataFiles)
 				{
@@ -534,7 +532,6 @@ namespace FwdataTestApp
 
 		private void ValidateSplitData(Stopwatch validateTimer, StringBuilder sb, StringBuilder sbValidation)
 		{
-			GetFreshMdc(); // Want it fresh.
 			// Validate all files.
 			validateTimer.Start();
 			var fbHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
@@ -623,7 +620,6 @@ namespace FwdataTestApp
 		{
 			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 			verifyTimer.Start();
-			GetFreshMdc(); // Want it fresh.
 			var origData = new Dictionary<string, byte[]>(StringComparer.InvariantCultureIgnoreCase);
 			using (var fastSplitterOrig = new FastXmlElementSplitter(_srcFwdataPathname + ".orig"))
 			{
@@ -784,7 +780,7 @@ namespace FwdataTestApp
 				{
 					var element = TriboroughBridgeUtilities.CreateFromBytes(unownedElement);
 					classElement.Add(element);
-					CmObjectNestingService.NestObject(false, element,
+					CmObjectNestingService.NestObject(mdc, false, element,
 												  classData,
 												  guidToClassMapping);
 				}

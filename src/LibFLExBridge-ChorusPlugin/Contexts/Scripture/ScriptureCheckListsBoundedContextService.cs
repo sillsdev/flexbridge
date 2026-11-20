@@ -14,7 +14,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 	{
 		private const string CheckLists = "CheckLists";
 
-		internal static void NestContext(XElement langProj,
+		internal static void NestContext(MetadataCache mdc, XElement langProj,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -32,7 +32,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[checkListGuid];
 				var checkList = LibFLExBridgeUtilities.CreateFromBytes(classData[className][checkListGuid]);
 
-				CmObjectNestingService.NestObject(false, checkList,
+				CmObjectNestingService.NestObject(mdc, false, checkList,
 					classData,
 					guidToClassMapping);
 
@@ -43,6 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -61,6 +62,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				var listDoc = XDocument.Load(listPathname);
 				var listElement = listDoc.Element("CheckList").Element(FlexBridgeConstants.CmPossibilityList);
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					listPathname,
 					sortedData,
 					listElement,

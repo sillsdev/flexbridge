@@ -16,6 +16,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 	[TestFixture]
 	public class CmObjectNestingServiceTests
 	{
+		private readonly MetadataCache _mdc = new MetadataCache();
 		private XElement _rt;
 		private Dictionary<string, SortedDictionary<string, byte[]>> _classData;
 		private Dictionary<string, string> _guidToClassMapping;
@@ -56,7 +57,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void NullObjectThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, null,
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(_mdc, false, null,
 				new Dictionary<string, SortedDictionary<string, byte[]>>(),
 				new Dictionary<string, string>()));
 		}
@@ -64,7 +65,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void NullClassDataThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(_mdc, false, new XElement("junk"),
 				null,
 				new Dictionary<string, string>()));
 		}
@@ -72,7 +73,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void NullGuidToClassMappingThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(false, new XElement("junk"),
+			Assert.Throws<ArgumentNullException>(() => CmObjectNestingService.NestObject(_mdc, false, new XElement("junk"),
 				new Dictionary<string, SortedDictionary<string, byte[]>>(),
 				null));
 		}
@@ -80,7 +81,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void ElementRenamed()
 		{
-			CmObjectNestingService.NestObject(false,
+			CmObjectNestingService.NestObject(_mdc, false,
 				_rt,
 				_classData,
 				_guidToClassMapping);
@@ -92,7 +93,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		public void OwnedObjectsAreNested()
 		{
 			AddOwnedObjects();
-			CmObjectNestingService.NestObject(false, _rt,
+			CmObjectNestingService.NestObject(_mdc, false, _rt,
 				_classData,
 				_guidToClassMapping);
 			var entriesElement = _rt.Element("Entries");
@@ -126,7 +127,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 						};
 			classData.Add("Segment", data);
 			var guidToClassMapping = new Dictionary<string, string> {{"c1ed6dc8-e382-11de-8a39-0800200c9a66", "Segment"}};
-			CmObjectNestingService.NestObject(false, rt,
+			CmObjectNestingService.NestObject(_mdc, false, rt,
 				classData,
 				guidToClassMapping);
 			var result = rt.ToString();
@@ -149,7 +150,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 						};
 			classData.Add("CmPossibility", data);
 			var guidToClassMapping = new Dictionary<string, string> { { "c1ed6dc8-e382-11de-8a39-0800200c9a66", "CmPossibility" } };
-			CmObjectNestingService.NestObject(false, rt,
+			CmObjectNestingService.NestObject(_mdc, false, rt,
 				classData,
 				guidToClassMapping);
 			var result = rt.ToString();
@@ -163,7 +164,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			foreach (var originalElement in _classData.Values.SelectMany(top => top.Values))
 				Assert.IsTrue(LibTriboroughBridgeSharedConstants.Utf8.GetString(originalElement).Contains(FlexBridgeConstants.OwnerGuid));
 
-			CmObjectNestingService.NestObject(false, _rt,
+			CmObjectNestingService.NestObject(_mdc, false, _rt,
 				_classData,
 				_guidToClassMapping);
 			Assert.IsFalse(_rt.ToString().Contains(FlexBridgeConstants.OwnerGuid));

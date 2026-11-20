@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 {
 	internal static class MorphologyAndSyntaxBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -26,7 +26,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			if (lexDb != null)
 			{
 				// Write out LexDb's "MorphTypes" list, as per AndyB (7 Feb 2012).
-				FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+				FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 											  lexDb, FlexBridgeConstants.MorphTypes,
 											  Path.Combine(morphAndSynDir, FlexBridgeConstants.MorphTypesListFilename));
 			}
@@ -37,6 +37,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			morphologicalDataPropElement.RemoveNodes();
 			var morphDataElement = LibFLExBridgeUtilities.CreateFromBytes(classData["MoMorphData"].Values.First());
 			CmObjectNestingService.NestObject(
+				mdc,
 				false,
 				morphDataElement,
 				classData,
@@ -49,6 +50,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			var morphFeatureSystemElement = LibFLExBridgeUtilities.CreateFromBytes(classData["FsFeatureSystem"][morphFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
 			morphFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
+				mdc,
 				false,
 				morphFeatureSystemElement,
 				classData,
@@ -57,7 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 
 			// 3. Nest: LP's PartsOfSpeech(CmPossibilityList OA)
 			//		Remove objsur node from LP.
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProjElement, FlexBridgeConstants.PartsOfSpeech,
 										  Path.Combine(morphAndSynDir, FlexBridgeConstants.PartsOfSpeechFilename));
 
@@ -70,6 +72,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				var agentElement = LibFLExBridgeUtilities.CreateFromBytes(agents[agentGuid]);
 				rootElement.Add(agentElement);
 				CmObjectNestingService.NestObject(
+					mdc,
 					false,
 					agentElement,
 					classData,
@@ -93,6 +96,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -109,6 +113,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				// Restore MorphTypes list to LexDb.
 				var morphTypesDoc = XDocument.Load(currentPathname);
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					lexDb, FlexBridgeConstants.MorphTypes,
@@ -121,6 +126,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			{
 				var mAndSFeatSysDoc = XDocument.Load(currentPathname);
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					langProjElement, "MsFeatureSystem",
@@ -132,6 +138,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			{
 				var posDoc = XDocument.Load(currentPathname);
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					langProjElement, FlexBridgeConstants.PartsOfSpeech,
@@ -145,6 +152,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 			foreach (var agentElement in agentDoc.Root.Elements())
 			{
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					currentPathname,
 					sortedData,
 					agentElement,
@@ -164,6 +172,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 				var mAndSDataDoc = XDocument.Load(currentPathname);
 				var morphDataElement = mAndSDataDoc.Root.Element("MoMorphData");
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					langProjElement,
@@ -176,6 +185,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.MorphologyAndSyntax
 					var prodRestrictDoc = XDocument.Load(currentPathname);
 					var prodRestrictListElement = prodRestrictDoc.Root.Element(FlexBridgeConstants.CmPossibilityList);
 					BaseDomainServices.RestoreElement(
+						mdc,
 						currentPathname,
 						sortedData,
 						morphDataElement, "ProdRestrict", prodRestrictListElement);

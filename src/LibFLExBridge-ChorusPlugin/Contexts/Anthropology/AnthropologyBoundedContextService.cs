@@ -27,7 +27,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyBoundedContextService
 	{
-		internal static void NestContext(string anthropologyDir,
+		internal static void NestContext(MetadataCache mdc, string anthropologyDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -42,7 +42,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 				var notebookElement = LibFLExBridgeUtilities.CreateFromBytes(sortedInstanceData.Values.First());
 				headerElement.Add(notebookElement);
 
-				CmObjectNestingService.NestObject(false, notebookElement,
+				CmObjectNestingService.NestObject(mdc, false, notebookElement,
 					classData,
 					guidToClassMapping);
 
@@ -84,39 +84,40 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 					case "Status":
 					case "TimeOfDay":
 			*/
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "AnthroList",
 										  Path.Combine(anthropologyDir, "AnthroList." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "ConfidenceLevels",
 										  Path.Combine(anthropologyDir, "ConfidenceLevels." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Education",
 										  Path.Combine(anthropologyDir, "Education." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Locations",
 										  Path.Combine(anthropologyDir, "Locations." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "People",
 										  Path.Combine(anthropologyDir, "People." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Positions",
 										  Path.Combine(anthropologyDir, "Positions." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Restrictions",
 										  Path.Combine(anthropologyDir, "Restrictions." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Roles",
 										  Path.Combine(anthropologyDir, "Roles." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "Status",
 										  Path.Combine(anthropologyDir, "Status." + FlexBridgeConstants.List));
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProj, "TimeOfDay",
 										  Path.Combine(anthropologyDir, "TimeOfDay." + FlexBridgeConstants.List));
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string anthropologyBaseDir)
@@ -150,12 +151,12 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 			if (File.Exists(recTypesPathname))
 			{
 				var listDoc = XDocument.Load(recTypesPathname);
-				BaseDomainServices.RestoreElement(recTypesPathname, sortedData,
+				BaseDomainServices.RestoreElement(mdc,recTypesPathname, sortedData,
 					dnMainElement, "RecTypes",
 					listDoc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 			}
 
-			BaseDomainServices.RestoreElement(currentPathname, sortedData,
+			BaseDomainServices.RestoreElement(mdc,currentPathname, sortedData,
 				langProjElement, "ResearchNotebook",
 				dnMainElement);
 
@@ -167,7 +168,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 				var listRootName = listRoot.Name.LocalName;
 				if (listRootName == "RecTypes")
 					continue;
-				BaseDomainServices.RestoreElement(listPathname,
+				BaseDomainServices.RestoreElement(mdc,listPathname,
 					sortedData,
 					langProjElement,
 					listRootName,

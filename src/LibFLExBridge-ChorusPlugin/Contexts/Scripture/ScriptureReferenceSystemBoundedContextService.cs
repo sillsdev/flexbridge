@@ -18,7 +18,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureReferenceSystemBoundedContextService
 	{
-		internal static void NestContext(string baseDirectory,
+		internal static void NestContext(MetadataCache mdc, string baseDirectory,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 
 			var refSystem = LibFLExBridgeUtilities.CreateFromBytes(sortedInstanceData.First().Value);
 
-			CmObjectNestingService.NestObject(false, refSystem,
+			CmObjectNestingService.NestObject(mdc, false, refSystem,
 				classData,
 				guidToClassMapping);
 
@@ -38,6 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -50,6 +51,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				return; // Nobody home.
 			var doc = XDocument.Load(pathname);
 			CmObjectFlatteningService.FlattenOwnerlessObject(
+				mdc,
 				pathname,
 				sortedData,
 				doc.Element(FlexBridgeConstants.ScriptureReferenceSystem).Element("ScrRefSystem"));

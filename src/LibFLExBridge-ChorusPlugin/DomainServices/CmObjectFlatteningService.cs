@@ -18,6 +18,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 	internal static class CmObjectFlatteningService
 	{
 		internal static void FlattenOwnerlessObject(
+			MetadataCache mdc,
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element)
@@ -25,17 +26,17 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			if (element == null) throw new ArgumentNullException("element");
 			if (element.Attribute("ownerguid") != null)
 				throw new ArgumentException("FlattenOwnerlessObject cannot be safely used to flatten owned objects");
-			FlattenObjectCore(pathname, sortedData, element, null);
+			FlattenObjectCore(mdc, pathname, sortedData, element, null);
 		}
 
 		/// <summary>
 		/// Flatten an owned object and put an appropriate objsur in the list. //AND RETURN THE OBJSUR which should replace it.
 		/// </summary>
-		internal static void FlattenOwnedObject(string pathname,
+		internal static void FlattenOwnedObject(MetadataCache mdc, string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid, SortedDictionary<string, XElement> sortedSurrogates)
 		{
-			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			FlattenObjectCore(mdc, pathname, sortedData, element, ownerguid);
 			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
 			var guid = element.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 			sortedSurrogates.Add(guid, BaseDomainServices.CreateObjSurElement(guid));
@@ -44,17 +45,18 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		/// <summary>
 		/// Flatten an owned object and add an appropriate objsur to the specified property of the owning object.
 		/// </summary>
-		internal static void FlattenOwnedObject(string pathname,
+		internal static void FlattenOwnedObject(MetadataCache mdc, string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid, XContainer owningElement, string propertyName)
 		{
-			FlattenObjectCore(pathname, sortedData, element, ownerguid);
+			FlattenObjectCore(mdc, pathname, sortedData, element, ownerguid);
 			// We MUST create the objsur AFTER flattening the object, which may pathologically change its guid.
 			var guid = element.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 			BaseDomainServices.RestoreObjsurElement(owningElement, propertyName, BaseDomainServices.CreateObjSurElement(guid));
 		}
 
 		private static void FlattenObjectCore(
+			MetadataCache mdc,
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement element, string ownerguid)
@@ -70,7 +72,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 
 			string className;
 			bool isOwnSeqNode;
-			var elementGuid = CheckForDuplicateElementMethod.CheckForDuplicateGuid(pathname, sortedData, element, out isOwnSeqNode, out className);
+			var elementGuid = CheckForDuplicateElementMethod.CheckForDuplicateGuid(mdc, pathname, sortedData, element, out isOwnSeqNode, out className);
 			sortedData.Add(elementGuid, element);
 
 			// The name of 'element' is the class of CmObject, or 'ownseq', or....
@@ -89,7 +91,6 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			element.Add(sortedAttrs.Values);
 
 			// Restore any ref seq props to have 'objsur' elements.
-			var mdc = MetadataCache.MdCache;
 			var propCache = mdc.PropertyCache[className];
 			var refSeqPropNames = propCache["AllReferenceSequence"];
 			// Restore any ref col props to have 'objsur' elements.
@@ -132,7 +133,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 					{
 						var owningPropertyElement = (element.Elements().Where(customNode => customNode.Name.LocalName == FlexBridgeConstants.Custom && customNode.Attribute(FlexBridgeConstants.Name) != null && customNode.Attribute(FlexBridgeConstants.Name).Value == propertyElement.Attribute(FlexBridgeConstants.Name).Value)).First();
 						ownedElement.Remove();
-						FlattenObjectCore(pathname, sortedData, ownedElement, elementGuid); // BEFORE we make the objsur!
+						FlattenObjectCore(mdc, pathname, sortedData, ownedElement, elementGuid); // BEFORE we make the objsur!
 						BaseDomainServices.RestoreObjsurElement(owningPropertyElement, ownedElement);
 					}
 					else
@@ -140,7 +141,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 						var propertyName = ownedElement.Parent.Name.LocalName;
 						ownedElement.Remove();
 						// Move down the nested set of owned objects, and do the same.
-						FlattenOwnedObject(pathname, sortedData, ownedElement, elementGuid, element, propertyName);
+						FlattenOwnedObject(mdc, pathname, sortedData, ownedElement, elementGuid, element, propertyName);
 					}
 				}
 			}

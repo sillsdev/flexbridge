@@ -35,6 +35,16 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 	{
 		internal static void PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
+			PutHumptyTogetherAgain(new MetadataCache(), progress, writeVerbose, mainFilePathname);
+		}
+
+		/// <summary>
+		/// Unify the project using the given metadata cache.
+		/// The cache must be fresh for this project: it is upgraded to the project's model version
+		/// and gets the project's custom fields.
+		/// </summary>
+		internal static void PutHumptyTogetherAgain(MetadataCache mdc, IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckPathname(mainFilePathname);
 
@@ -59,14 +69,14 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 						progress.WriteVerbose("Processing data model version number....");
 					else
 						progress.WriteMessage("Processing data model version number....");
-					UpgradeToVersion(writer, pathRoot);
+					UpgradeToVersion(mdc, writer, pathRoot);
 					if (writeVerbose)
 						progress.WriteVerbose("Processing custom properties....");
 					else
 						progress.WriteMessage("Processing custom properties....");
-					WriteOptionalCustomProperties(writer, pathRoot);
+					WriteOptionalCustomProperties(mdc, writer, pathRoot);
 
-					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(progress, writeVerbose, pathRoot);
+					var sortedData = BaseDomainServices.PutHumptyTogetherAgain(mdc, progress, writeVerbose, pathRoot);
 
 					if (writeVerbose)
 						progress.WriteVerbose("Writing temporary fwdata file....");
@@ -112,11 +122,12 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 				File.Delete(dupidPathname);
 			var projName = Path.GetFileName(mainFilePathname);
 			progress.WriteMessage("Split up project file: {0} (again)", projName);
+			// The re-split reads the files the unify just wrote, so it starts from a fresh cache like any split.
 			FLExProjectSplitter.PushHumptyOffTheWall(progress, writeVerbose, mainFilePathname);
 			progress.WriteMessage("Finished splitting up project file: {0} (again)", projName);
 		}
 
-		private static void UpgradeToVersion(XmlWriter writer, string pathRoot)
+		private static void UpgradeToVersion(MetadataCache mdc, XmlWriter writer, string pathRoot)
 		{
 			writer.WriteStartElement("languageproject");
 
@@ -124,11 +135,10 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			var version = LibFLExBridgeUtilities.GetFlexModelVersion(pathRoot);
 			writer.WriteAttributeString("version", version);
 
-			var mdc = MetadataCache.MdCache; // This may really need to be a reset
 			mdc.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		private static void WriteOptionalCustomProperties(XmlWriter writer, string pathRoot)
+		private static void WriteOptionalCustomProperties(MetadataCache mdc, XmlWriter writer, string pathRoot)
 		{
 			// Write out optional custom property data to the fwdata file.
 			// The foo.CustomProperties file will exist, even if it has nothing in it, but the "AdditionalFields" root element.
@@ -138,7 +148,6 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			if (!customFieldElements.Any())
 				return;
 
-			var mdc = MetadataCache.MdCache;
 			foreach (var cf in customFieldElements)
 			{
 				// Remove 'key' attribute from CustomField elements, before writing to main file.

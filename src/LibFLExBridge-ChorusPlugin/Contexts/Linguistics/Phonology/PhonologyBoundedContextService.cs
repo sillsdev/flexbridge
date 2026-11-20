@@ -12,7 +12,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 {
 	internal static class PhonologyBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -29,11 +29,12 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 			var phonDataElement = LibFLExBridgeUtilities.CreateFromBytes(classData["PhPhonData"].Values.First());
 			// 1.A. Write: Break out PhPhonData's PhonRuleFeats(CmPossibilityList OA) and write in its own .list file. (If it exists, but *before* nesting "PhPhonData".)
 			FileWriterService.WriteNestedListFileIfItExists(
-				classData, guidToClassMapping,
+				mdc, classData, guidToClassMapping,
 				phonDataElement, "PhonRuleFeats",
 				Path.Combine(phonologyDir, FlexBridgeConstants.PhonRuleFeaturesFilename));
 			phonDataPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
+				mdc,
 				false,
 				phonDataElement,
 				classData,
@@ -43,6 +44,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 			var phonFeatureSystemElement = LibFLExBridgeUtilities.CreateFromBytes(classData["FsFeatureSystem"][phonFeatureSystemPropElement.Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value]);
 			phonFeatureSystemPropElement.RemoveNodes();
 			CmObjectNestingService.NestObject(
+				mdc,
 				false,
 				phonFeatureSystemElement,
 				classData,
@@ -54,6 +56,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -68,6 +71,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 			{
 				var phoneFeatSysDoc = XDocument.Load(currentPathname);
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					langProjElement, "PhFeatureSystem",
@@ -81,6 +85,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 			var phonDataDoc = XDocument.Load(currentPathname);
 			var phonDataElement = phonDataDoc.Root.Element("PhPhonData");
 			BaseDomainServices.RestoreElement(
+				mdc,
 				currentPathname,
 				sortedData,
 				langProjElement, "PhonologicalData",
@@ -93,6 +98,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Phonology
 
 			var phonRuleFeatsListDoc = XDocument.Load(currentPathname);
 			BaseDomainServices.RestoreElement(
+				mdc,
 				currentPathname,
 				sortedData,
 				phonDataElement, "PhonRuleFeats",

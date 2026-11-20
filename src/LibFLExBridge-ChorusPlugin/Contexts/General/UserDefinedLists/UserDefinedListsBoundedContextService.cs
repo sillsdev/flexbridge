@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 {
 	internal static class UserDefinedListsBoundedContextService
 	{
-		internal static void NestContext(string generalBaseDir,
+		internal static void NestContext(MetadataCache mdc, string generalBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -31,6 +31,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 			{
 				var element = LibFLExBridgeUtilities.CreateFromBytes(userDefinedListBytes);
 				CmObjectNestingService.NestObject(
+					mdc,
 					false,
 					element,
 					classData,
@@ -42,6 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string generalBaseDir)
@@ -54,7 +56,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General.UserDefinedLists
 			{
 				// These are un-owned lists.
 				var userDefinedListDoc = XDocument.Load(userDefinedListPathname);
-				CmObjectFlatteningService.FlattenOwnerlessObject(userDefinedListPathname,
+				CmObjectFlatteningService.FlattenOwnerlessObject(mdc, userDefinedListPathname,
 					sortedData,
 					userDefinedListDoc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 			}

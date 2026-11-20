@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
 	internal static class ArchivedDraftsBoundedContextService
 	{
-		internal static void NestContext(XElement archivedDraftsProperty,
+		internal static void NestContext(MetadataCache mdc, XElement archivedDraftsProperty,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -31,7 +31,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[draftGuid];
 				var draft = LibFLExBridgeUtilities.CreateFromBytes(classData[className][draftGuid]);
 
-				CmObjectNestingService.NestObject(false, draft,
+				CmObjectNestingService.NestObject(mdc, false, draft,
 					classData,
 					guidToClassMapping);
 
@@ -43,6 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -58,7 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			{
 				var doc = XDocument.Load(draftPathname);
 				var draftElement = doc.Root.Element(FlexBridgeConstants.ScrDraft);
-				CmObjectFlatteningService.FlattenOwnedObject(draftPathname,
+				CmObjectFlatteningService.FlattenOwnedObject(mdc, draftPathname,
 					sortedData,
 					draftElement,
 					scrOwningGuid, sortedDrafts); // Restore 'ownerguid' to draftElement.

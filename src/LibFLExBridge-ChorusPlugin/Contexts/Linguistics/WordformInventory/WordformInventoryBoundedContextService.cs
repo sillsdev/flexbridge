@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 {
 	internal static class WordformInventoryBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -39,7 +39,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 				{
 					var pfElement = LibFLExBridgeUtilities.CreateFromBytes(punctFormStringData);
 					header.Add(pfElement);
-					CmObjectNestingService.NestObject(false,
+					CmObjectNestingService.NestObject(mdc, false,
 						pfElement,
 						classData,
 						guidToClassMapping);
@@ -60,7 +60,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 						// Can be null, for DMs less than 64.
 						checksumProperty.Attribute(FlexBridgeConstants.Val).Value = "0";
 					}
-					CmObjectNestingService.NestObject(false,
+					CmObjectNestingService.NestObject(mdc, false,
 													  wfElement,
 													  classData,
 													  guidToClassMapping);
@@ -91,6 +91,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -120,6 +121,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.WordformInventory
 					.Where(element => element.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant() != FlexBridgeConstants.EmptyGuid))
 				{
 					CmObjectFlatteningService.FlattenOwnerlessObject(
+						mdc,
 						inventoryPathname,
 						sortedData,
 						unownedElement);

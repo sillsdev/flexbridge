@@ -37,7 +37,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 	{
 		private const string ReversalRootFolder = "Reversals";
 
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -69,11 +69,11 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 
 				// Break out ReversalIndex's PartsOfSpeech(CmPossibilityList OA) and write in its own .list file.
 				FileWriterService.WriteNestedListFileIfItExists(
-					classData, guidToClassMapping,
+					mdc, classData, guidToClassMapping,
 					revIndexElement, FlexBridgeConstants.PartsOfSpeech,
 					Path.Combine(revIndexDir, ws + "-" + FlexBridgeConstants.PartsOfSpeechFilename));
 
-				CmObjectNestingService.NestObject(false, revIndexElement,
+				CmObjectNestingService.NestObject(mdc, false, revIndexElement,
 					classData,
 					guidToClassMapping);
 
@@ -92,6 +92,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -129,6 +130,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 				{
 					var catListDoc = XDocument.Load(catPathname);
 					BaseDomainServices.RestoreElement(
+						mdc,
 						catPathname,
 						sortedData,
 						revIdxElement, FlexBridgeConstants.PartsOfSpeech,
@@ -153,7 +155,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Reversals
 					foreach (var sortedChartElement in sortedRecords.Values)
 						recordsElementOwningProp.Add(sortedChartElement);
 				}
-				CmObjectFlatteningService.FlattenOwnedObject(reversalPathname, sortedData, revIdxElement,
+				CmObjectFlatteningService.FlattenOwnedObject(mdc, reversalPathname, sortedData, revIdxElement,
 					lexDb.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant(), sortedRevs); // Restore 'ownerguid' to indices.
 			}
 

@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 	/// </summary>
 	internal static class TextCorpusBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -41,17 +41,17 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 			var langProjElement = wellUsedElements[FlexBridgeConstants.LangProject];
 
 			// Write Genre list (owning atomic CmPossibilityList)
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProjElement, FlexBridgeConstants.GenreList,
 										  Path.Combine(textCorpusBaseDir, FlexBridgeConstants.GenreListFilename));
 
 			// Write text markup tags list (owning atomic CmPossibilityList)
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProjElement, FlexBridgeConstants.TextMarkupTags,
 										  Path.Combine(textCorpusBaseDir, FlexBridgeConstants.TextMarkupTagsListFilename));
 
 			// Handle the LP TranslationTags prop (OA-CmPossibilityList), if it exists.
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  langProjElement, FlexBridgeConstants.TranslationTags,
 										  Path.Combine(textCorpusBaseDir, FlexBridgeConstants.TranslationTagsListFilename));
 
@@ -59,7 +59,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 			if (texts.Count == 0)
 				return; // No texts to process.
 
-			if (MetadataCache.MdCache.ModelVersion < 7000059)
+			if (mdc.ModelVersion < 7000059)
 			{
 				// Backwards compatible code.
 				var textGuidsInLangProj = BaseDomainServices.GetGuids(langProjElement, "Texts");
@@ -72,6 +72,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 					var textElement = LibFLExBridgeUtilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
+						mdc,
 						false,
 						textElement,
 						classData,
@@ -91,6 +92,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 					var textElement = LibFLExBridgeUtilities.CreateFromBytes(texts[textGuid]);
 					rootElement.Add(textElement);
 					CmObjectNestingService.NestObject(
+						mdc,
 						false,
 						textElement,
 						classData,
@@ -103,6 +105,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -117,17 +120,17 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 			// Put the Genre list back in the right place.
 			var pathname = Path.Combine(textCorpusBaseDir, FlexBridgeConstants.GenreListFilename);
 			var doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, FlexBridgeConstants.GenreList, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
+			BaseDomainServices.RestoreElement(mdc, pathname, sortedData, langProjElement, FlexBridgeConstants.GenreList, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 			// Put the markup tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, FlexBridgeConstants.TextMarkupTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, FlexBridgeConstants.TextMarkupTags, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
+			BaseDomainServices.RestoreElement(mdc, pathname, sortedData, langProjElement, FlexBridgeConstants.TextMarkupTags, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 			// Put the translation tags list back in the right place.
 			pathname = Path.Combine(textCorpusBaseDir, FlexBridgeConstants.TranslationTagsListFilename);
 			doc = XDocument.Load(pathname);
-			BaseDomainServices.RestoreElement(pathname, sortedData, langProjElement, FlexBridgeConstants.TranslationTags, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
+			BaseDomainServices.RestoreElement(mdc, pathname, sortedData, langProjElement, FlexBridgeConstants.TranslationTags, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 
-			if (MetadataCache.MdCache.ModelVersion < 7000059)
+			if (mdc.ModelVersion < 7000059)
 			{
 				// Backwards compatible code.
 				// Put Texts back into LP.
@@ -139,6 +142,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
 					CmObjectFlatteningService.FlattenOwnedObject(
+						mdc,
 						textPathname,
 						sortedData,
 						textElement,
@@ -160,6 +164,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.TextCorpus
 					var root = textDoc.Root;
 					var textElement = root.Elements().First();
 					CmObjectFlatteningService.FlattenOwnerlessObject(
+						mdc,
 						textPathname,
 						sortedData,
 						textElement);

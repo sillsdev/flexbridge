@@ -22,8 +22,8 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 	/// To add a test for a new split/unify edge case:
 	/// <list type="number">
 	/// <item>Describe the smallest project that shows the case with a <see cref="FwdataBuilder"/>.</item>
-	/// <item>Create a harness from it in a using block. The harness starts and ends with a fresh MetadataCache,
-	/// because the cache is process-wide and split and unify both add the project's custom fields to it.</item>
+	/// <item>Create a harness from it in a using block. Each split and unify gets its own fresh MetadataCache,
+	/// as it does in Send/Receive.</item>
 	/// <item>Call <see cref="Split"/>, then change the split files if the case needs it (as a merge would):
 	/// <see cref="EditSplitObject"/> for one object found by guid, or <see cref="EditSplitFile"/> for a whole file,
 	/// such as <see cref="FlexBridgeConstants.CustomPropertiesFilename"/>.</item>
@@ -51,15 +51,11 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 
 		internal SplitUnifyHarness(string fwdataContents)
 		{
-			MetadataCache = MetadataCache.TestOnlyNewCache;
 			_projectFolder = new TemporaryFolder("SplitUnifyHarness_" + Guid.NewGuid().ToString("N"));
 			FwdataPathname = Path.Combine(_projectFolder.Path, "Proj" + LibTriboroughBridgeSharedConstants.FwXmlExtension);
 			File.WriteAllText(FwdataPathname, fwdataContents);
 			Original = XDocument.Parse(fwdataContents);
 		}
-
-		/// <summary>The cache split and unify use. It is reset when the harness is created and disposed.</summary>
-		internal MetadataCache MetadataCache { get; private set; }
 
 		internal string ProjectFolder
 		{
@@ -152,7 +148,6 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		public void Dispose()
 		{
 			_projectFolder.Dispose();
-			MetadataCache = MetadataCache.TestOnlyNewCache;
 		}
 
 		/// <summary>The guid of an element with a guid attribute, such as an &lt;rt&gt; or &lt;objsur&gt;.</summary>

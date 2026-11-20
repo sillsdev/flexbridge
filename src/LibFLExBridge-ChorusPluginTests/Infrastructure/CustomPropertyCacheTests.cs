@@ -17,8 +17,8 @@ using SIL.TestUtilities;
 namespace LibFLExBridgeChorusPluginTests.Infrastructure
 {
 	/// <summary>
-	/// One Send/Receive splits and unifies the project in the same process, and every pass adds the
-	/// project's custom fields to the shared MetadataCache. These tests check that a custom field ends up
+	/// Split and unify both add the project's custom fields to the MetadataCache they are given.
+	/// These tests pass one cache through several passes and check that a custom field ends up
 	/// defined once, with the type from the most recent definition.
 	/// </summary>
 	[TestFixture]
@@ -33,7 +33,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 		[SetUp]
 		public void Setup()
 		{
-			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc = new MetadataCache();
 			_projectFolder = new TemporaryFolder("CustomPropertyCacheTests");
 			_fwdataPathname = Path.Combine(_projectFolder.Path, "Proj" + LibTriboroughBridgeSharedConstants.FwXmlExtension);
 		}
@@ -42,7 +42,6 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 		public void TearDown()
 		{
 			_projectFolder.Dispose();
-			_mdc = MetadataCache.TestOnlyNewCache;
 		}
 
 		private static string FwdataWithIntegerCustomField()
@@ -55,12 +54,12 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 
 		private void Split()
 		{
-			FLExProjectSplitter.PushHumptyOffTheWall(new NullProgress(), false, _fwdataPathname);
+			FLExProjectSplitter.PushHumptyOffTheWall(_mdc, new NullProgress(), false, _fwdataPathname);
 		}
 
 		private void Unify()
 		{
-			FLExProjectUnifier.PutHumptyTogetherAgain(new NullProgress(), false, _fwdataPathname);
+			FLExProjectUnifier.PutHumptyTogetherAgain(_mdc, new NullProgress(), false, _fwdataPathname);
 		}
 
 		/// <summary>

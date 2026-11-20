@@ -16,6 +16,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 	internal static class CmObjectNestingService
 	{
 		internal static void NestObject(
+			MetadataCache mdc,
 			bool isOwningSeqProp,
 			XElement obj,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
@@ -33,20 +34,20 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			if (ownerGuidAttribute != null)
 				ownerGuidAttribute.Remove();
 
-			var propCacheForClass = MetadataCache.MdCache.PropertyCache[className];
+			var propCacheForClass = mdc.PropertyCache[className];
 			// 2. Nest owned objects in 'obj', but only if it has any owning props.
 			if (propCacheForClass["AllOwning"].Count > 0)
-				NestOwnedObjects(classData, guidToClassMapping, obj);
+				NestOwnedObjects(mdc, classData, guidToClassMapping, obj);
 
 			// 3. Reset ref seq prop nodes from "objsur" to SharedConstants.Refseq,
 			// so they can use a special ElementStrategy for SharedConstants.Refseq that has isOrderRelevant to be true.
 			if (propCacheForClass["AllReferenceSequence"].Count > 0)
-				RenameReferenceSequenceObjsurNodes(className, obj);
+				RenameReferenceSequenceObjsurNodes(mdc, className, obj);
 
 			// 4. Rename ref col prop nodes from "objsur" to SharedConstants.Refcol,
 			// so they can use a special ElementStrategy for SharedConstants.Refcol that has isOrderRelevant to be false.
 			if (propCacheForClass["AllReferenceCollection"].Count > 0)
-				RenameReferenceCollectionObjsurNodes(className, obj);
+				RenameReferenceCollectionObjsurNodes(mdc, className, obj);
 
 			// 5. Remove 'obj' from lists.
 			var guid = obj.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
@@ -54,9 +55,9 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			guidToClassMapping.Remove(guid);
 		}
 
-		private static void RenameReferenceCollectionObjsurNodes(string className, XElement obj)
+		private static void RenameReferenceCollectionObjsurNodes(MetadataCache mdc, string className, XElement obj)
 		{
-			var refColProps = MetadataCache.MdCache.GetClassInfo(className).AllReferenceCollectionProperties.ToList();
+			var refColProps = mdc.GetClassInfo(className).AllReferenceCollectionProperties.ToList();
 			if (refColProps.Count == 0)
 				return;
 			foreach (var refColProp in refColProps)
@@ -76,9 +77,9 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			}
 		}
 
-		private static void RenameReferenceSequenceObjsurNodes(string className, XElement obj)
+		private static void RenameReferenceSequenceObjsurNodes(MetadataCache mdc, string className, XElement obj)
 		{
-			var refSeqProps = MetadataCache.MdCache.GetClassInfo(className).AllReferenceSequenceProperties.ToList();
+			var refSeqProps = mdc.GetClassInfo(className).AllReferenceSequenceProperties.ToList();
 			if (refSeqProps.Count == 0)
 				return;
 			foreach (var refSeqProp in refSeqProps)
@@ -99,6 +100,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		}
 
 		private static void NestOwnedObjects(
+			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement owningObjElement)
@@ -107,8 +109,8 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 				|| owningObjElement.Name.LocalName == FlexBridgeConstants.Refseq)
 					? owningObjElement.Attribute(FlexBridgeConstants.Class).Value
 					: owningObjElement.Name.LocalName;
-			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
-			var owningProps = MetadataCache.MdCache.PropertyCache[className]["AllOwning"];
+			var classInfo = mdc.GetClassInfo(className);
+			var owningProps = mdc.PropertyCache[className]["AllOwning"];
 			foreach (var propertyElement in owningObjElement.Elements())
 			{
 				var isCustomProperty = propertyElement.Name.LocalName == FlexBridgeConstants.Custom;
@@ -139,7 +141,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 					var ownedElement = LibFLExBridgeUtilities.CreateFromBytes(classData[classOfOwnedObject][guid]);
 					objsurElement.ReplaceWith(ownedElement);
 					// Recurse on down to the bottom.
-					NestObject(isOwningSeqProp, ownedElement, classData, guidToClassMapping);
+					NestObject(mdc, isOwningSeqProp, ownedElement, classData, guidToClassMapping);
 				}
 			}
 		}

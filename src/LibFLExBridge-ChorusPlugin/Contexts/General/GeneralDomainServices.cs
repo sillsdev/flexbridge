@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 {
 	internal static class GeneralDomainServices
 	{
-		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+		internal static void WriteNestedDomainData(MetadataCache mdc, IProgress progress, bool writeVerbose, string rootDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -33,17 +33,17 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				progress.WriteMessage("Writing the general data....");
 				progress.WriteMessage("Writing user-defined list data....");
 			}
-			UserDefinedListsBoundedContextService.NestContext(generalBaseDir, wellUsedElements, classData, guidToClassMapping);
+			UserDefinedListsBoundedContextService.NestContext(mdc, generalBaseDir, wellUsedElements, classData, guidToClassMapping);
 
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
 			if (writeVerbose)
 				progress.WriteVerbose("Writing language project data....");
 			else
 				progress.WriteMessage("Writing language project data....");
-			GeneralDomainBoundedContext.NestContext(generalBaseDir, wellUsedElements, classData, guidToClassMapping);
+			GeneralDomainBoundedContext.NestContext(mdc, generalBaseDir, wellUsedElements, classData, guidToClassMapping);
 		}
 
-		internal static void FlattenDomain(IProgress progress, bool writeVerbose, SortedDictionary<string, XElement> highLevelData, SortedDictionary<string, XElement> sortedData, string rootDir)
+		internal static void FlattenDomain(MetadataCache mdc, IProgress progress, bool writeVerbose, SortedDictionary<string, XElement> highLevelData, SortedDictionary<string, XElement> sortedData, string rootDir)
 		{
 			var generalBaseDir = Path.Combine(rootDir, FlexBridgeConstants.General);
 			if (!Directory.Exists(generalBaseDir))
@@ -60,13 +60,13 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				progress.WriteMessage("Collecting the general data....");
 				progress.WriteMessage("Collecting the language project data....");
 			}
-			GeneralDomainBoundedContext.FlattenContext(highLevelData, sortedData, generalBaseDir);
+			GeneralDomainBoundedContext.FlattenContext(mdc, highLevelData, sortedData, generalBaseDir);
 
 			if (writeVerbose)
 				progress.WriteVerbose("Collecting the user-defined list data....");
 			else
 				progress.WriteMessage("Collecting the user-defined list data....");
-			UserDefinedListsBoundedContextService.FlattenContext(highLevelData, sortedData, generalBaseDir);
+			UserDefinedListsBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, generalBaseDir);
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)

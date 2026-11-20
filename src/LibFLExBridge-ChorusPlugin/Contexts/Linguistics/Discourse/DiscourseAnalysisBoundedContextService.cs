@@ -18,7 +18,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Discourse
 	/// </summary>
 	internal static class DiscourseAnalysisBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -36,6 +36,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Discourse
 
 			// Nest the entire object, and then pull out the owned stuff, and relocate them, as needed.
 			CmObjectNestingService.NestObject(
+				mdc,
 				false,
 				discourseElement,
 				classData,
@@ -88,6 +89,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Discourse
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -141,6 +143,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Discourse
 			}
 			var langProjElement = highLevelData[FlexBridgeConstants.LangProject];
 			BaseDomainServices.RestoreElement(
+				mdc,
 				chartPathname,
 				sortedData,
 				langProjElement,

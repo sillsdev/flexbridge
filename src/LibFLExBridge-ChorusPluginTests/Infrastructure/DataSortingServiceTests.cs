@@ -182,7 +182,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 			hs = new HashSet<string> { "Abbreviation" };
 			pl.Add("MultiAlt", hs);
 
-			var rtElement = DataSortingService.TestingSortMainElement(rt);
+			var rtElement = DataSortingService.TestingSortMainElement(new MetadataCache(), rt);
 			Assert.AreEqual(FlexBridgeConstants.Class, rtElement.Attributes().ElementAt(0).Name.LocalName);
 			Assert.AreEqual(FlexBridgeConstants.GuidStr, rtElement.Attributes().ElementAt(1).Name.LocalName);
 			Assert.AreEqual(FlexBridgeConstants.OwnerGuid, rtElement.Attributes().ElementAt(2).Name.LocalName);

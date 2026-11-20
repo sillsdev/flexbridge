@@ -17,6 +17,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 	[TestFixture]
 	public class CmObjectFlatteningServiceTests
 	{
+		private readonly MetadataCache _mdc = new MetadataCache();
 		private XElement _reversalIndexElement;
 		private const string ReversalOwnerGuid = "c1ed6db5-e382-11de-8a39-0800200c9a66";
 
@@ -55,7 +56,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void NullPathnameThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
+			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 				null,
 				new SortedDictionary<string, XElement>(),
 				new XElement("junk")));
@@ -64,7 +65,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 		[Test]
 		public void EmptyPathnameThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
+			Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 				"",
 				new SortedDictionary<string, XElement>(),
 				new XElement("junk")));
@@ -76,7 +77,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
+				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempPath,
 					null,
 					new XElement("junk")));
@@ -89,7 +90,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(
+				Assert.Throws<ArgumentNullException>(() => CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempPath,
 					new SortedDictionary<string, XElement>(),
 					null));
@@ -102,7 +103,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var tempPath = tempFile.Path;
-				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenOwnedObject(
+				Assert.Throws<ArgumentException>(() => CmObjectFlatteningService.FlattenOwnedObject(_mdc,
 					tempPath,
 					new SortedDictionary<string, XElement>(),
 					new XElement("junk"),
@@ -117,7 +118,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			{
 				var tempPath = tempFile.Path;
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempPath,
 					sortedData,
 					_reversalIndexElement);
@@ -133,7 +134,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenOwnedObject(
+				CmObjectFlatteningService.FlattenOwnedObject(_mdc,
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement,
@@ -148,7 +149,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement);
@@ -166,7 +167,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 			using (var tempFile = new TempFile())
 			{
 				var sortedData = new SortedDictionary<string, XElement>();
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempFile.Path,
 					sortedData,
 					_reversalIndexElement);
@@ -196,7 +197,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
 											new XElement(FlexBridgeConstants.Refseq,
 													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempFile.Path,
 					sortedData,
 					segment);
@@ -218,7 +219,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 													BaseDomainServices.CreateAttributes("0039739a-7fcf-4838-8b75-566b8815a29f", "r"),
 											new XElement(FlexBridgeConstants.Refcol,
 													BaseDomainServices.CreateAttributes("00b560a2-9af0-4185-bbeb-c0eb3c5e3769", "r")))));
-				CmObjectFlatteningService.FlattenOwnerlessObject(
+				CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 					tempFile.Path,
 					sortedData,
 					possibilityElement);
@@ -258,7 +259,7 @@ namespace LibFLExBridgeChorusPluginTests.DomainServices
 					var reversalIndexElement = XElement.Parse(nestedReversal);
 					var sortedDict = new SortedDictionary<string, XElement>();
 					Assert.IsFalse(File.Exists(notesPathname));
-					CmObjectFlatteningService.FlattenOwnerlessObject(
+					CmObjectFlatteningService.FlattenOwnerlessObject(_mdc,
 						tempFile.Path,
 						sortedDict,
 						reversalIndexElement);

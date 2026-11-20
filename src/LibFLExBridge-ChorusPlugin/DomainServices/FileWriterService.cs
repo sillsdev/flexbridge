@@ -204,8 +204,8 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 						: extension.Substring(1));
 		}
 
-		internal static void WriteNestedListFileIfItExists(IDictionary<string,
-			SortedDictionary<string, byte[]>> classData,
+		internal static void WriteNestedListFileIfItExists(MetadataCache mdc,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement listOwningElement, string listOwningPropertyName,
 			string listPathname)
@@ -215,7 +215,8 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 				return;
 
 			var listElement = LibFLExBridgeUtilities.CreateFromBytes(classData[FlexBridgeConstants.CmPossibilityList][listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
-			CmObjectNestingService.NestObject(false,
+			CmObjectNestingService.NestObject(mdc,
+											  false,
 											  listElement,
 											  classData,
 											  guidToClassMapping);

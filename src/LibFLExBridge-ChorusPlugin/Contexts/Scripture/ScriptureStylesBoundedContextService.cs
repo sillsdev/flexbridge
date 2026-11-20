@@ -14,7 +14,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 	{
 		private const string StyleFilename = "ScriptureStyleSheet." + FlexBridgeConstants.Style;
 
-		internal static void NestContext(XElement stylesProperty,
+		internal static void NestContext(MetadataCache mdc, XElement stylesProperty,
 			string baseDirectory,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -24,10 +24,11 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			if (!Directory.Exists(stylesDir))
 				Directory.CreateDirectory(stylesDir);
 
-			BaseDomainServices.NestStylesPropertyElement(classData, guidToClassMapping, stylesProperty, Path.Combine(stylesDir, StyleFilename));
+			BaseDomainServices.NestStylesPropertyElement(mdc, classData, guidToClassMapping, stylesProperty, Path.Combine(stylesDir, StyleFilename));
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -48,6 +49,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			foreach (var styleElement in doc.Root.Elements("StStyle"))
 			{
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					stylePathname,
 					sortedData,
 					styleElement,

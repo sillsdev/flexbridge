@@ -15,7 +15,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 	/// </summary>
 	internal static class AnthropologyDomainServices
 	{
-		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+		internal static void WriteNestedDomainData(MetadataCache mdc, IProgress progress, bool writeVerbose, string rootDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -29,10 +29,11 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 				progress.WriteVerbose("Writing the anthropology data....");
 			else
 				progress.WriteMessage("Writing the anthropology data....");
-			AnthropologyBoundedContextService.NestContext(anthropologyBaseDir, wellUsedElements, classData, guidToClassMapping);
+			AnthropologyBoundedContextService.NestContext(mdc, anthropologyBaseDir, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		internal static void FlattenDomain(
+			MetadataCache mdc,
 			IProgress progress, bool writeVerbose,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
@@ -46,7 +47,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Anthropology
 				progress.WriteVerbose("Collecting the anthropology data....");
 			else
 				progress.WriteMessage("Collecting the anthropology data....");
-			AnthropologyBoundedContextService.FlattenContext(highLevelData, sortedData, anthropologyBaseDir);
+			AnthropologyBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, anthropologyBaseDir);
 		}
 
 		internal static void RemoveBoundedContextData(string pathRoot)

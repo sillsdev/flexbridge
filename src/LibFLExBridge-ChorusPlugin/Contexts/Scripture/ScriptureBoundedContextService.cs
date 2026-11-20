@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
 	internal static class ScriptureBoundedContextService
 	{
-		internal static void NestContext(XElement languageProjectElement,
+		internal static void NestContext(MetadataCache mdc, XElement languageProjectElement,
 			XElement scriptureElement,
 			string baseDirectory,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
@@ -23,7 +23,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			var scriptureBaseDir = baseDirectory;
 
 			// Split out the optional NoteCategories list.
-			FileWriterService.WriteNestedListFileIfItExists(classData, guidToClassMapping,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData, guidToClassMapping,
 										  scriptureElement, FlexBridgeConstants.NoteCategories,
 										  Path.Combine(scriptureBaseDir, FlexBridgeConstants.NoteCategoriesListFilename));
 
@@ -39,7 +39,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			{
 				var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(canonicalBookNumber);
 				var currentAnnotationElement = LibFLExBridgeUtilities.CreateFromBytes(allAnnotations[annotationObjSurElements[canonicalBookNumber - 1].Attribute(FlexBridgeConstants.GuidStr).Value]);
-				CmObjectNestingService.NestObject(false, currentAnnotationElement,
+				CmObjectNestingService.NestObject(mdc, false, currentAnnotationElement,
 					classData,
 					guidToClassMapping);
 				FileWriterService.WriteNestedFile(
@@ -58,7 +58,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				{
 					var currentBookElement = LibFLExBridgeUtilities.CreateFromBytes(allBooks[objsurEl.Attribute(FlexBridgeConstants.GuidStr).Value]);
 					var paddedNumber = ScriptureDomainServices.PaddedCanonicalBookNumer(Int32.Parse(currentBookElement.Element("CanonicalNum").Attribute("val").Value));
-					CmObjectNestingService.NestObject(false, currentBookElement,
+					CmObjectNestingService.NestObject(mdc, false, currentBookElement,
 						classData,
 						guidToClassMapping);
 					FileWriterService.WriteNestedFile(
@@ -67,7 +67,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				}
 			}
 
-			CmObjectNestingService.NestObject(false, scriptureElement,
+			CmObjectNestingService.NestObject(mdc, false, scriptureElement,
 				classData,
 				guidToClassMapping);
 
@@ -79,6 +79,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -98,13 +99,14 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			if (File.Exists(pathname))
 			{
 				doc = XDocument.Load(pathname);
-				BaseDomainServices.RestoreElement(pathname, sortedData, scrElement, FlexBridgeConstants.NoteCategories, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
+				BaseDomainServices.RestoreElement(mdc, pathname, sortedData, scrElement, FlexBridgeConstants.NoteCategories, doc.Root.Element(FlexBridgeConstants.CmPossibilityList));
 			}
 
 			// Owned by LangProj in TranslatedScripture prop.
 			var langProjElement = highLevelData[FlexBridgeConstants.LangProject];
 
 			CmObjectFlatteningService.FlattenOwnedObject(
+				mdc,
 				pathname,
 				sortedData,
 				scrElement,
@@ -125,6 +127,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				var sortedDoc = XDocument.Load(sortedPathnameKvp.Value);
 				var element = sortedDoc.Root.Element(FlexBridgeConstants.ScrBookAnnotations);
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					sortedPathnameKvp.Value,
 					sortedData,
 					element,
@@ -140,12 +143,13 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 					scriptureBooksProperty = new XElement(FlexBridgeConstants.ScriptureBooks);
 					scrElement.Add(scriptureBooksProperty);
 					// Make sure new property is sorted in correct place.
-					DataSortingService.SortMainRtElement(scrElement);
+					DataSortingService.SortMainRtElement(mdc, scrElement);
 				}
 				// Add book <objsur> element to scrElement's ScriptureBooks element.
 				sortedDoc = XDocument.Load(bookPathname);
 				element = sortedDoc.Root.Element(FlexBridgeConstants.ScrBook);
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					bookPathname,
 					sortedData,
 					element,

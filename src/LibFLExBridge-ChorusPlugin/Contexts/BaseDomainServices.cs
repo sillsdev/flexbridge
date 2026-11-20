@@ -19,33 +19,33 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 {
 	internal static class BaseDomainServices
 	{
-		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string pathRoot,
+		internal static void PushHumptyOffTheWall(MetadataCache mdc, IProgress progress, bool writeVerbose, string pathRoot,
 			IDictionary<string, XElement> wellUsedElements,
 			Dictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
 		{
 			// NB: Don't even think of changing the order these methods are called in.
-			LinguisticsDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
-			AnthropologyDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
-			ScriptureDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
-			GeneralDomainServices.WriteNestedDomainData(progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			LinguisticsDomainServices.WriteNestedDomainData(mdc, progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			AnthropologyDomainServices.WriteNestedDomainData(mdc, progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			ScriptureDomainServices.WriteNestedDomainData(mdc, progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
+			GeneralDomainServices.WriteNestedDomainData(mdc, progress, writeVerbose, pathRoot, wellUsedElements, classData, guidToClassMapping);
 			CopySupportingSettingsFilesIntoRepo(progress, writeVerbose, pathRoot);
 		}
 
-		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(IProgress progress, bool writeVerbose, string pathRoot)
+		internal static SortedDictionary<string, XElement> PutHumptyTogetherAgain(MetadataCache mdc, IProgress progress, bool writeVerbose, string pathRoot)
 		{
 			var retval = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 
 			var sortedData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			var highLevelData = new SortedDictionary<string, XElement>(StringComparer.OrdinalIgnoreCase);
 			// NB: Don't even think of changing the order these methods are called in.
-			GeneralDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			GeneralDomainServices.FlattenDomain(mdc, progress, writeVerbose, highLevelData, sortedData, pathRoot);
 			CmObjectFlatteningService.CombineData(retval, sortedData);
-			ScriptureDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			ScriptureDomainServices.FlattenDomain(mdc, progress, writeVerbose, highLevelData, sortedData, pathRoot);
 			CmObjectFlatteningService.CombineData(retval, sortedData);
-			AnthropologyDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			AnthropologyDomainServices.FlattenDomain(mdc, progress, writeVerbose, highLevelData, sortedData, pathRoot);
 			CmObjectFlatteningService.CombineData(retval, sortedData);
-			LinguisticsDomainServices.FlattenDomain(progress, writeVerbose, highLevelData, sortedData, pathRoot);
+			LinguisticsDomainServices.FlattenDomain(mdc, progress, writeVerbose, highLevelData, sortedData, pathRoot);
 			CmObjectFlatteningService.CombineData(retval, sortedData);
 
 			foreach (var highLevelElement in highLevelData.Values)
@@ -81,12 +81,14 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 		/************************ Basic operations above here. ****************/
 
 		internal static void RestoreElement(
+			MetadataCache mdc,
 			string pathname,
 			SortedDictionary<string, XElement> sortedData,
 			XElement owningElement, string owningPropertyName,
 			XElement ownedElement)
 		{
 			CmObjectFlatteningService.FlattenOwnedObject(
+				mdc,
 				pathname,
 				sortedData,
 				ownedElement,
@@ -128,6 +130,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 		}
 
 		internal static void NestStylesPropertyElement(
+			MetadataCache mdc,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			XElement stylesProperty,
@@ -146,7 +149,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts
 				var styleGuid = styleObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 				var className = guidToClassMapping[styleGuid];
 				var style = LibFLExBridgeUtilities.CreateFromBytes(classData[className][styleGuid]);
-				CmObjectNestingService.NestObject(false, style, classData, guidToClassMapping);
+				CmObjectNestingService.NestObject(mdc, false, style, classData, guidToClassMapping);
 				root.Add(style);
 			}
 

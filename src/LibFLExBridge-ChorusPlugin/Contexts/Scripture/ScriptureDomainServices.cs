@@ -18,7 +18,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 	/// </summary>
 	internal static class ScriptureDomainServices
 	{
-		internal static void WriteNestedDomainData(IProgress progress, bool writeVerbose, string rootDir,
+		internal static void WriteNestedDomainData(MetadataCache mdc, IProgress progress, bool writeVerbose, string rootDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -55,10 +55,10 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				progress.WriteVerbose("Writing the other data....");
 			else
 				progress.WriteMessage("Writing the other data....");
-			ScriptureReferenceSystemBoundedContextService.NestContext(scriptureBaseDir, classData, guidToClassMapping);
+			ScriptureReferenceSystemBoundedContextService.NestContext(mdc,scriptureBaseDir, classData, guidToClassMapping);
 			var langProj = wellUsedElements[FlexBridgeConstants.LangProject];
 			FLExProjectSplitter.CheckForUserCancelRequested(progress);
-			ScriptureCheckListsBoundedContextService.NestContext(langProj, scriptureBaseDir, classData, guidToClassMapping);
+			ScriptureCheckListsBoundedContextService.NestContext(mdc,langProj, scriptureBaseDir, classData, guidToClassMapping);
 
 			// These are intentionally out of order from the above numbering scheme.
 			var scrAsBytes = classData[FlexBridgeConstants.Scripture].Values.FirstOrDefault();
@@ -67,13 +67,13 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			{
 				var scripture = LibFLExBridgeUtilities.CreateFromBytes(scrAsBytes);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
-				ArchivedDraftsBoundedContextService.NestContext(scripture.Element(FlexBridgeConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
+				ArchivedDraftsBoundedContextService.NestContext(mdc,scripture.Element(FlexBridgeConstants.ArchivedDrafts), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
-				ScriptureStylesBoundedContextService.NestContext(scripture.Element(FlexBridgeConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
+				ScriptureStylesBoundedContextService.NestContext(mdc,scripture.Element(FlexBridgeConstants.Styles), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
-				ImportSettingsBoundedContextService.NestContext(scripture.Element(FlexBridgeConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
+				ImportSettingsBoundedContextService.NestContext(mdc,scripture.Element(FlexBridgeConstants.ImportSettings), scriptureBaseDir, classData, guidToClassMapping);
 				FLExProjectSplitter.CheckForUserCancelRequested(progress);
-				ScriptureBoundedContextService.NestContext(langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
+				ScriptureBoundedContextService.NestContext(mdc,langProj, scripture, scriptureBaseDir, classData, guidToClassMapping);
 			}
 
 			RemoveFolderIfEmpty(scriptureBaseDir);
@@ -87,6 +87,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenDomain(
+			MetadataCache mdc,
 			IProgress progress, bool writeVerbose,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
@@ -100,17 +101,17 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				progress.WriteVerbose("Collecting the other data....");
 			else
 				progress.WriteMessage("Collecting the other data....");
-			ScriptureReferenceSystemBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-			ScriptureCheckListsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ScriptureReferenceSystemBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
+			ScriptureCheckListsBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
 
 			// Have to flatten the main Scripture context before the rest, since the main context owns the other four.
 			// The main obj gets stuffed into highLevelData, so the owned stuff can have owner guid restored.
-			ScriptureBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+			ScriptureBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
 			if (highLevelData.ContainsKey(FlexBridgeConstants.Scripture))
 			{
-				ArchivedDraftsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-				ScriptureStylesBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
-				ImportSettingsBoundedContextService.FlattenContext(highLevelData, sortedData, scriptureBaseDir);
+				ArchivedDraftsBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
+				ScriptureStylesBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
+				ImportSettingsBoundedContextService.FlattenContext(mdc, highLevelData, sortedData, scriptureBaseDir);
 			}
 		}
 

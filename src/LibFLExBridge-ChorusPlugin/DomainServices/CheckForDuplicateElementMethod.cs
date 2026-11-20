@@ -34,9 +34,8 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		/// <param name="isOwnSeqNode">Out paramenter that is used by caller.</param>
 		/// <param name="className">The class of <paramref name="element"/>.</param>
 		/// <returns></returns>
-		internal static string CheckForDuplicateGuid(string pathname, SortedDictionary<string, XElement> sortedData, XElement element, out bool isOwnSeqNode, out string className)
+		internal static string CheckForDuplicateGuid(MetadataCache mdc, string pathname, SortedDictionary<string, XElement> sortedData, XElement element, out bool isOwnSeqNode, out string className)
 		{
-			var mdc = MetadataCache.MdCache;
 			FdoClassInfo classInfo;
 			isOwnSeqNode = GetClassInfoFromElement(mdc, element, out classInfo, out className);
 			var elementGuid = element.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();

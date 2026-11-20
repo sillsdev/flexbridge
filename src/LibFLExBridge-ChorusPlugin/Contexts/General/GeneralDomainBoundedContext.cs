@@ -14,7 +14,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 {
 	internal sealed class GeneralDomainBoundedContext
 	{
-		internal static void NestContext(string generalBaseDir,
+		internal static void NestContext(MetadataCache mdc, string generalBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -22,13 +22,14 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			var langProjElement = wellUsedElements[FlexBridgeConstants.LangProject];
 
 			// LP AnnotationDefs (OA-CmPossibilityList). AnnotationDefs.list]
-			FileWriterService.WriteNestedListFileIfItExists(classData,
+			FileWriterService.WriteNestedListFileIfItExists(mdc, classData,
 				guidToClassMapping,
 				langProjElement, FlexBridgeConstants.AnnotationDefs,
 				Path.Combine(generalBaseDir, FlexBridgeConstants.AnnotationDefsListFilename));
 
 			// LP Styles (OC-StStyle) is used by everyone, but Scripture, so they go here.
 			BaseDomainServices.NestStylesPropertyElement(
+				mdc,
 				classData,
 				guidToClassMapping,
 				langProjElement.Element(FlexBridgeConstants.Styles),
@@ -44,7 +45,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 					var filterGuid = filterObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[filterGuid];
 					var filterElement = LibFLExBridgeUtilities.CreateFromBytes(classData[className][filterGuid]);
-					CmObjectNestingService.NestObject(false, filterElement, classData, guidToClassMapping);
+					CmObjectNestingService.NestObject(mdc, false, filterElement, classData, guidToClassMapping);
 					root.Add(filterElement);
 				}
 				FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, FlexBridgeConstants.FLExFiltersFilename), root);
@@ -63,7 +64,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 					var annotationGuid = annotationObjSurElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant();
 					var className = guidToClassMapping[annotationGuid];
 					var annotationElement = LibFLExBridgeUtilities.CreateFromBytes(classData[className][annotationGuid]);
-					CmObjectNestingService.NestObject(false, annotationElement, classData, guidToClassMapping);
+					CmObjectNestingService.NestObject(mdc, false, annotationElement, classData, guidToClassMapping);
 					BaseDomainServices.ReplaceElementNameWithAndAddClassAttribute(FlexBridgeConstants.CmAnnotation, annotationElement);
 					root.Add(annotationElement);
 				}
@@ -78,6 +79,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			{
 				var element = LibFLExBridgeUtilities.CreateFromBytes(unownedPictureBytes);
 				CmObjectNestingService.NestObject(
+					mdc,
 					false,
 					element,
 					classData,
@@ -87,12 +89,13 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			FileWriterService.WriteNestedFile(Path.Combine(generalBaseDir, FlexBridgeConstants.FLExUnownedPicturesFilename), rootElement);
 
 			// No VirtualOrdering instances are owned.
-			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
+			if (mdc.ModelVersion > MetadataCache.StartingModelVersion)
 			{
 				rootElement = new XElement(FlexBridgeConstants.VirtualOrderings);
 				foreach (var element in classData[FlexBridgeConstants.VirtualOrdering].Values.ToArray().Select(virtualOrderingBytes => LibFLExBridgeUtilities.CreateFromBytes(virtualOrderingBytes)))
 				{
 					CmObjectNestingService.NestObject(
+						mdc,
 						false,
 						element,
 						classData,
@@ -103,7 +106,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			}
 
 			// Yippee!! Write LP here. :-) [LanguageProject.langproj; new ext]
-			CmObjectNestingService.NestObject(false,
+			CmObjectNestingService.NestObject(mdc, false,
 				langProjElement,
 				classData,
 				guidToClassMapping);
@@ -111,6 +114,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string generalBaseDir)
@@ -122,6 +126,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			highLevelData.Add(FlexBridgeConstants.LangProject, langProjElement);
 			// Flatten it.
 			CmObjectFlatteningService.FlattenOwnerlessObject(
+				mdc,
 				langProjPathname,
 				sortedData,
 				langProjElement);
@@ -133,6 +138,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			{
 				// Flatten it here to get the right pathname into the method.
 				BaseDomainServices.RestoreElement(
+					mdc,
 					currentPathname,
 					sortedData,
 					langProjElement,
@@ -152,6 +158,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				{
 					// Put style back into LP's Styles element.
 					CmObjectFlatteningService.FlattenOwnedObject(
+						mdc,
 						currentPathname,
 						sortedData,
 						styleElement,
@@ -173,6 +180,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 				{
 					// Put CmFilter back into LP's Filters element.
 					CmObjectFlatteningService.FlattenOwnedObject(
+						mdc,
 						currentPathname,
 						sortedData,
 						filterElement,
@@ -197,6 +205,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 					annotationElement.Name = classAttr.Value;
 					classAttr.Remove();
 					CmObjectFlatteningService.FlattenOwnedObject(
+						mdc,
 						currentPathname,
 						sortedData,
 						annotationElement,
@@ -209,13 +218,14 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			}
 
 			// No VirtualOrdering instances are owned.
-			if (MetadataCache.MdCache.ModelVersion > MetadataCache.StartingModelVersion)
+			if (mdc.ModelVersion > MetadataCache.StartingModelVersion)
 			{
 				currentPathname = Path.Combine(generalBaseDir, FlexBridgeConstants.FLExVirtualOrderingFilename);
 				doc = XDocument.Load(currentPathname);
 				foreach (var orderingElement in doc.Root.Elements(FlexBridgeConstants.VirtualOrdering))
 				{
 					CmObjectFlatteningService.FlattenOwnerlessObject(
+						mdc,
 						currentPathname,
 						sortedData,
 						orderingElement);
@@ -228,6 +238,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.General
 			foreach (var pictureElement in doc.Root.Elements(FlexBridgeConstants.CmPicture))
 			{
 				CmObjectFlatteningService.FlattenOwnerlessObject(
+					mdc,
 					currentPathname,
 					sortedData,
 					pictureElement);

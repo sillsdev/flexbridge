@@ -39,19 +39,19 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			return customPropertiesElement;
 		}
 
-		internal static XElement TestingSortMainElement(string rootData)
+		internal static XElement TestingSortMainElement(MetadataCache mdc, string rootData)
 		{
 			var sortedResult = XElement.Parse(rootData);
 
-			SortMainRtElement(sortedResult);
+			SortMainRtElement(mdc, sortedResult);
 
 			return sortedResult;
 		}
 
-		internal static void SortMainRtElement(XElement rootData)
+		internal static void SortMainRtElement(MetadataCache mdc, XElement rootData)
 		{
 			var className = rootData.Attribute(FlexBridgeConstants.Class).Value;
-			var classInfo = MetadataCache.MdCache.GetClassInfo(className);
+			var classInfo = mdc.GetClassInfo(className);
 
 			// Get collection properties for the class.
 			var collData = (from collProp in classInfo.AllCollectionProperties select collProp.PropertyName).ToList();

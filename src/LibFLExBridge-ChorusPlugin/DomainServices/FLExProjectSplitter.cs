@@ -44,6 +44,16 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 
 		internal static void PushHumptyOffTheWall(IProgress progress, bool writeVerbose, string mainFilePathname)
 		{
+			PushHumptyOffTheWall(new MetadataCache(), progress, writeVerbose, mainFilePathname);
+		}
+
+		/// <summary>
+		/// Split the project using the given metadata cache.
+		/// The cache must be fresh for this project: it is upgraded to the project's model version
+		/// and gets the project's custom fields.
+		/// </summary>
+		internal static void PushHumptyOffTheWall(MetadataCache mdc, IProgress progress, bool writeVerbose, string mainFilePathname)
+		{
 			Guard.AgainstNull(progress, "progress");
 			FileWriterService.CheckFilename(mainFilePathname);
 
@@ -53,19 +63,19 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			CheckForUserCancelRequested(progress);
 			DeleteOldFiles(rootDirectoryName);
 			CheckForUserCancelRequested(progress);
-			WriteVersionFile(mainFilePathname);
+			WriteVersionFile(mdc, mainFilePathname);
 			// Outer Dict has the class name for its key and a sorted (by guid) dictionary as its value.
 			// The inner dictionary has a caseless guid as the key and the byte array as the value.
 			// (Only has current concrete classes.)
-			var classData = GenerateBasicClassData();
+			var classData = GenerateBasicClassData(mdc);
 			var wellUsedElements = new Dictionary<string, XElement>
 				{
 					{FlexBridgeConstants.LangProject, null},
 					{FlexBridgeConstants.LexDb, null}
 				};
-			var guidToClassMapping = WriteOrCacheProperties(mainFilePathname, classData, wellUsedElements);
+			var guidToClassMapping = WriteOrCacheProperties(mdc, mainFilePathname, classData, wellUsedElements);
 			CheckForUserCancelRequested(progress);
-			BaseDomainServices.PushHumptyOffTheWall(progress, writeVerbose, rootDirectoryName, wellUsedElements, classData, guidToClassMapping);
+			BaseDomainServices.PushHumptyOffTheWall(mdc, progress, writeVerbose, rootDirectoryName, wellUsedElements, classData, guidToClassMapping);
 		}
 
 		private static void DeleteOldFiles(string pathRoot)
@@ -83,20 +93,19 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			BaseDomainServices.RemoveDomainData(pathRoot);
 		}
 
-		internal static void WriteVersionFile(string mainFilePathname)
+		internal static void WriteVersionFile(MetadataCache mdc, string mainFilePathname)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
 			var version = FieldWorksProjectServices.GetVersionNumber(mainFilePathname);
 			FileWriterService.WriteVersionNumberFile(pathRoot, version);
-			MetadataCache.MdCache.UpgradeToVersion(Int32.Parse(version));
+			mdc.UpgradeToVersion(Int32.Parse(version));
 		}
 
-		private static Dictionary<string, string> WriteOrCacheProperties(string mainFilePathname,
+		private static Dictionary<string, string> WriteOrCacheProperties(MetadataCache mdc, string mainFilePathname,
 			Dictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, XElement> wellUsedElements)
 		{
 			var pathRoot = Path.GetDirectoryName(mainFilePathname);
-			var mdc = MetadataCache.MdCache;
 			// Key is the guid of the object, and value is the class name.
 			var guidToClassMapping = new Dictionary<string, string>();
 			using (var fastSplitter = new FastXmlElementSplitter(mainFilePathname))
@@ -127,9 +136,9 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			return guidToClassMapping;
 		}
 
-		private static Dictionary<string, SortedDictionary<string, byte[]>> GenerateBasicClassData()
+		private static Dictionary<string, SortedDictionary<string, byte[]>> GenerateBasicClassData(MetadataCache mdc)
 		{
-			return MetadataCache.MdCache.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
+			return mdc.AllConcreteClasses.ToDictionary(fdoClassInfo => fdoClassInfo.ClassName, fdoClassInfo => new SortedDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 		}
 
 		private static void CacheDataRecord(byte[] record,

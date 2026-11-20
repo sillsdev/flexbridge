@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 {
 	internal static class ImportSettingsBoundedContextService
 	{
-		internal static void NestContext(XElement importSettingsProperty,
+		internal static void NestContext(MetadataCache mdc, XElement importSettingsProperty,
 			string scriptureBaseDir,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -32,7 +32,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 				var className = guidToClassMapping[styleGuid];
 				var importSetting = LibFLExBridgeUtilities.CreateFromBytes(classData[className][styleGuid]);
 
-				CmObjectNestingService.NestObject(false, importSetting,
+				CmObjectNestingService.NestObject(mdc, false, importSetting,
 												  classData,
 												  guidToClassMapping);
 
@@ -45,6 +45,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string scriptureBaseDir)
@@ -63,6 +64,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Scripture
 			foreach (var importSettingsElement in doc.Root.Elements("ScrImportSet"))
 			{
 				CmObjectFlatteningService.FlattenOwnedObject(
+					mdc,
 					pathname,
 					sortedData,
 					importSettingsElement,

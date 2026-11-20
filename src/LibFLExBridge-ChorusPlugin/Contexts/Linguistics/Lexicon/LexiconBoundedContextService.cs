@@ -13,7 +13,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 {
 	internal static class LexiconBoundedContextService
 	{
-		internal static void NestContext(string linguisticsBaseDir,
+		internal static void NestContext(MetadataCache mdc, string linguisticsBaseDir,
 			IDictionary<string, XElement> wellUsedElements,
 			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping)
@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 
 			// Nest each CmPossibilityList owned by LexDb.
 			var lists = classData[FlexBridgeConstants.CmPossibilityList];
-			NestLists(classData, guidToClassMapping, lists, lexiconDir, lexDb,
+			NestLists(mdc, classData, guidToClassMapping, lists, lexiconDir, lexDb,
 					  new List<string>
 						{
 							"SenseTypes",
@@ -46,7 +46,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 						});
 
 			// Nest SemanticDomainList and AffixCategories props of LangProject.
-			NestLists(classData, guidToClassMapping, lists, lexiconDir, langProjElement,
+			NestLists(mdc, classData, guidToClassMapping, lists, lexiconDir, langProjElement,
 					  new List<string>
 						{
 							"SemanticDomainList",
@@ -56,7 +56,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 			// The LexDb object will go into the <header>, and will still nest these owning props: Appendixes, Introduction, and Resources (plus its basic props).
 			// All of the lexical entries will then go in as siblings of, but after, the <header> element.
 			// At this point LexDb is ready to go into the <header>.
-			CmObjectNestingService.NestObject(false, lexDb,
+			CmObjectNestingService.NestObject(mdc, false, lexDb,
 				classData,
 				guidToClassMapping);
 			var header = new XElement(FlexBridgeConstants.Header);
@@ -70,7 +70,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 				foreach (var entry in srcDataCopy.Values)
 				{
 					var entryElement = LibFLExBridgeUtilities.CreateFromBytes(entry);
-					CmObjectNestingService.NestObject(false, entryElement,
+					CmObjectNestingService.NestObject(mdc, false, entryElement,
 													  classData,
 													  guidToClassMapping);
 					nestedData.Add(entryElement.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant(), entryElement);
@@ -98,6 +98,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 		}
 
 		internal static void FlattenContext(
+			MetadataCache mdc,
 			SortedDictionary<string, XElement> highLevelData,
 			SortedDictionary<string, XElement> sortedData,
 			string linguisticsBaseDir)
@@ -134,6 +135,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 							case "AffixCategories":
 								// Flatten the LP list by itself, and add an appropriate surrogate.
 								CmObjectFlatteningService.FlattenOwnedObject(
+									mdc,
 									listPathname,
 									sortedData,
 									listElement,
@@ -143,6 +145,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 					}
 					// Flatten lexDb.
 					CmObjectFlatteningService.FlattenOwnedObject(
+						mdc,
 						lexDbPathname,
 						sortedData,
 						lexDb,
@@ -154,6 +157,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 					.Where(element => element.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant() != FlexBridgeConstants.EmptyGuid))
 				{
 					CmObjectFlatteningService.FlattenOwnerlessObject(
+						mdc,
 						lexDbPathname,
 						sortedData,
 						entryElement);
@@ -161,7 +165,8 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 			}
 		}
 
-		private static void NestLists(IDictionary<string, SortedDictionary<string, byte[]>> classData,
+		private static void NestLists(MetadataCache mdc,
+			IDictionary<string, SortedDictionary<string, byte[]>> classData,
 			Dictionary<string, string> guidToClassMapping,
 			IDictionary<string, byte[]> posLists,
 			string lexiconRootDir,
@@ -176,7 +181,7 @@ namespace LibFLExBridgeChorusPlugin.Contexts.Linguistics.Lexicon
 
 				var root = new XElement(propName);
 				var listElement = LibFLExBridgeUtilities.CreateFromBytes(posLists[listPropElement.Elements().First().Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant()]);
-				CmObjectNestingService.NestObject(false,
+				CmObjectNestingService.NestObject(mdc, false,
 					listElement,
 					classData,
 					guidToClassMapping);
