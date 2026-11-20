@@ -442,13 +442,14 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
-		/// Add a custom property to a class.
+		/// Add a custom property to a class, replacing any earlier definition of that custom property.
+		/// Call ResetCaches afterwards.
 		/// </summary>
 		internal void AddCustomPropInfo(string className, FdoPropertyInfo propInfo)
 		{
 			if (!propInfo.IsCustomProperty)
 				throw new ArgumentException("Property is not custom.");
-			_classes[className].AddProperty(propInfo);
+			_classes[className].AddOrReplaceCustomProperty(propInfo);
 		}
 
 		private void SetSuperclasses()
@@ -493,14 +494,10 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			foreach (var customFieldElement in doc.Element(FlexBridgeConstants.AdditionalFieldsTag).Elements(FlexBridgeConstants.CustomField))
 			{
 				var className = customFieldElement.Attribute(FlexBridgeConstants.Class).Value;
-				FdoClassInfo classInfo;
-				if (!_classes.TryGetValue(className, out classInfo))
+				if (!_classes.ContainsKey(className))
 					continue;
 
-				var propertyName = customFieldElement.Attribute(FlexBridgeConstants.Name).Value;
-				var propInfo = classInfo.GetProperty(propertyName);
-				if (propInfo == null)
-					AddCustomPropInfo(className, new FdoPropertyInfo(customFieldElement));
+				AddCustomPropInfo(className, new FdoPropertyInfo(customFieldElement));
 			}
 			ResetCaches();
 		}
