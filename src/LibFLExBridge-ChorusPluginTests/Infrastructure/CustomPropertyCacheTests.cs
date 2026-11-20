@@ -1,14 +1,13 @@
 // Copyright (c) 2026 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Chorus.merge;
 using LibFLExBridgeChorusPlugin.DomainServices;
 using LibFLExBridgeChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip;
 using LibTriboroughBridgeChorusPlugin;
 using NUnit.Framework;
 using SIL.Progress;
@@ -24,7 +23,6 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 	[TestFixture]
 	public class CustomPropertyCacheTests
 	{
-		private const string LangProjGuid = "c1ed46ba-e382-11de-8a39-0800200c9a66";
 		private const string EntryGuid = "c1ed46bc-e382-11de-8a39-0800200c9a66";
 
 		private TemporaryFolder _projectFolder;
@@ -46,51 +44,12 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 			_mdc = MetadataCache.TestOnlyNewCache;
 		}
 
-		/// <summary>
-		/// The objects LangProject must own for the splitter and unifier to round trip a project:
-		/// (LangProject property, class of the owned object).
-		/// </summary>
-		private static readonly string[,] RequiredLangProjectOwnedObjects =
-		{
-			{ "GenreList", "CmPossibilityList" },
-			{ "LexDb", "LexDb" },
-			{ "MorphologicalData", "MoMorphData" },
-			{ "MsFeatureSystem", "FsFeatureSystem" },
-			{ "PhFeatureSystem", "FsFeatureSystem" },
-			{ "PhonologicalData", "PhPhonData" },
-			{ "ResearchNotebook", "RnResearchNbk" },
-			{ "TextMarkupTags", "CmPossibilityList" },
-			{ "TranslationTags", "CmPossibilityList" }
-		};
-
 		private static string FwdataWithIntegerCustomField()
 		{
-			var langProject = new XElement("rt",
-				new XAttribute("class", "LangProject"),
-				new XAttribute("guid", LangProjGuid),
-				new XElement("AnalyzingAgents"),
-				new XElement("Styles"));
-			var ownedObjects = new List<XElement>();
-			for (var i = 0; i < RequiredLangProjectOwnedObjects.GetLength(0); ++i)
-			{
-				var guid = Guid.NewGuid().ToString();
-				langProject.Add(new XElement(RequiredLangProjectOwnedObjects[i, 0],
-					new XElement("objsur", new XAttribute("guid", guid), new XAttribute("t", "o"))));
-				ownedObjects.Add(new XElement("rt",
-					new XAttribute("class", RequiredLangProjectOwnedObjects[i, 1]),
-					new XAttribute("guid", guid),
-					new XAttribute("ownerguid", LangProjGuid)));
-			}
-			var entry = XElement.Parse(string.Format(
-				"<rt class='LexEntry' guid='{0}'><Custom name='Rank' val='3' /></rt>", EntryGuid));
-
-			var root = new XElement("languageproject",
-				new XAttribute("version", MetadataCache.MaximumModelVersion),
-				XElement.Parse("<AdditionalFields><CustomField name='Rank' class='LexEntry' type='Integer' /></AdditionalFields>"),
-				langProject,
-				ownedObjects,
-				entry);
-			return new XDocument(new XDeclaration("1.0", "utf-8", null), root).ToString();
+			return new FwdataBuilder()
+				.AddCustomField("LexEntry", "Rank", "Integer")
+				.AddUnownedObject("LexEntry", EntryGuid, new XElement("Custom", new XAttribute("name", "Rank"), new XAttribute("val", "3")))
+				.ToString();
 		}
 
 		private void Split()
