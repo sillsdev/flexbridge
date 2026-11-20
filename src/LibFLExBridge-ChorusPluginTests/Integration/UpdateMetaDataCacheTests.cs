@@ -4,11 +4,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using Chorus.FileTypeHandlers;
 using Chorus.merge;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 using SIL.IO;
+using LibFLExBridgeChorusPlugin.Handling;
+using LibFLExBridgeChorusPlugin.Handling.ModelVersion;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPluginTests.Integration
@@ -28,10 +29,9 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 		[Test]
 		public void MetaDataCacheIsUpdated()
 		{
-			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000037.
-			var fileHandler = (from handler in ChorusFileTypeHandlerCollection.CreateWithInstalledHandlers().Handlers
-							   where handler.GetType().Name == "FieldWorksCommonFileHandler"
-							   select handler).First();
+			var mdc = new MetadataCache(); // Starts with 7000037.
+			// Merging the model version file upgrades the cache it is given.
+			IFieldWorksFileHandler fileHandler = new ModelVersionFileTypeHandlerStrategy();
 
 			Assert.AreEqual(7000037, mdc.ModelVersion);
 
@@ -41,7 +41,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexExampleSentence", "DoNotPublishIn");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, FlexBridgeConstants.LexDb, "PublicationTypes");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexSense", "DoNotPublishIn");
-			DoMerge(fileHandler, 7000038);
+			DoMerge(mdc, fileHandler,7000038);
 			//		1. Add CmObject::VirtualOrdering (concrete)
 			var classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "VirtualOrdering");
 			Assert.IsFalse(classInfo.IsAbstract);
@@ -127,7 +127,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Segment", "BeginTimeOffset");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Segment", "EndTimeOffset");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "Text", "MediaFiles");
-			DoMerge(fileHandler, 7000049);
+			DoMerge(mdc, fileHandler,7000049);
 			// 1.
 			classInfo = CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "CmMediaContainer");
 			CheckNewPropertyAfterUpgrade(classInfo, "OffsetType", DataType.Unicode);
@@ -171,7 +171,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoCompoundRule", "Disabled");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoAdhocProhib", "Disabled");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "Disabled");
-			DoMerge(fileHandler, 7000053);
+			DoMerge(mdc, fileHandler,7000053);
 			classInfo = mdc.GetClassInfo("PhSegmentRule");
 			CheckNewPropertyAfterUpgrade(classInfo, "Disabled", DataType.Boolean);
 			classInfo = mdc.GetClassInfo("MoCompoundRule");
@@ -190,7 +190,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoStemMsa", "Slots");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "ProcliticSlots");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "MoInflAffixTemplate", "EncliticSlots");
-			DoMerge(fileHandler, 7000054);
+			DoMerge(mdc, fileHandler,7000054);
 			classInfo = mdc.GetClassInfo("MoStemMsa");
 			CheckNewPropertyAfterUpgrade(classInfo, "Slots", DataType.ReferenceCollection);
 			classInfo = mdc.GetClassInfo("MoInflAffixTemplate");
@@ -207,7 +207,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			//		Add: Slots rel col
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "WfiMorphBundle", "InflType");
 			CheckClassDoesNotExistBeforeUpGrade(mdc, "LexEntryInflType");
-			DoMerge(fileHandler, 7000055);
+			DoMerge(mdc, fileHandler,7000055);
 			classInfo = mdc.GetClassInfo("WfiMorphBundle");
 			CheckNewPropertyAfterUpgrade(classInfo, "InflType", DataType.ReferenceAtomic);
 			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("LexEntryType"), "LexEntryInflType");
@@ -234,7 +234,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			//	Modifed: LangProject
 			//		Remove: OC "Texts" property
 			CheckPropertyExistsBeforeUpGrade(mdc, "LangProject", "Texts");
-			DoMerge(fileHandler, 7000059);
+			DoMerge(mdc, fileHandler,7000059);
 			Assert.AreEqual(DataType.ReferenceAtomic, mdc.GetClassInfo("RnGenericRec").GetProperty("Text").DataType);
 			CheckPropertyRemovedAfterUpGrade(mdc, "LangProject", "Texts");
 
@@ -249,7 +249,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 
 			// 7000063: Add the LangProject HomographWs property.
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LangProject", "HomographWs");
-			DoMerge(fileHandler, 7000063);
+			DoMerge(mdc, fileHandler,7000063);
 			classInfo = mdc.GetClassInfo("LangProject");
 			CheckNewPropertyAfterUpgrade(classInfo, "HomographWs", DataType.Unicode);
 
@@ -267,7 +267,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 
 			// 7000068: Change ReversalIndexEntry's Subentries property from owning collection to owning sequence.
 			Assert.AreEqual(DataType.OwningCollection, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
-			DoMerge(fileHandler, 7000068);
+			DoMerge(mdc, fileHandler,7000068);
 			Assert.AreEqual(DataType.OwningSequence, mdc.GetClassInfo("ReversalIndexEntry").GetProperty("Subentries").DataType);
 			// 7000069: All the 7000069 changes
 			// Make sure prior model is expected.
@@ -301,7 +301,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "CmPicture", "DoNotPublishIn");
 
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "LexPronunciation", "DoNotPublishIn");
-			DoMerge(fileHandler, 7000069);
+			DoMerge(mdc, fileHandler,7000069);
 			CheckClassDoesExistAfterUpGrade(mdc, mdc.GetClassInfo("CmObject"), "LexExtendedNote");
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "ExtendedNoteType", DataType.ReferenceAtomic);
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("LexExtendedNote"), "Examples", DataType.OwningSequence);
@@ -340,7 +340,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			// Add Senses property to ReversalIndexEntry as reference sequence.
 			CheckPropertyExistsBeforeUpGrade(mdc, "LexSense", "ReversalEntries");
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, "ReversalIndexEntry", "Senses");
-			DoMerge(fileHandler, 7000072);
+			DoMerge(mdc, fileHandler,7000072);
 			CheckPropertyRemovedAfterUpGrade(mdc, "LexSense", "ReversalEntries");
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo("ReversalIndexEntry"), "Senses", DataType.ReferenceSequence);
 		}
@@ -348,7 +348,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 		[Test]
 		public void UnsupportedUpdateThrows()
 		{
-			var mdc = MetadataCache.TestOnlyNewCache; // Ensures it is reset to start with 7000044.
+			var mdc = new MetadataCache();
 			Assert.Throws<ArgumentOutOfRangeException>(() => mdc.UpgradeToVersion(Int32.MaxValue));
 		}
 
@@ -372,20 +372,20 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			return result;
 		}
 
-		private static void CheckNoModelChangesUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours)
+		private static void CheckNoModelChangesUpgrade(MetadataCache mdc, IFieldWorksFileHandler fileHandler, int ours)
 		{
 			var startingClassCount = mdc.AllClasses.Count();
 			var startingPropertyCount = mdc.AllClasses.Sum(classInfo => classInfo.AllProperties.Count());
-			DoMerge(fileHandler, ours);
+			DoMerge(mdc, fileHandler,ours);
 			Assert.AreEqual(startingClassCount, mdc.AllClasses.Count(), "Different number of classes.");
 			Assert.AreEqual(startingPropertyCount, mdc.AllClasses.Sum(classInfo => classInfo.AllProperties.Count()), "Different number of properties.");
 		}
 
-		private static void CheckSinglePropertyAddedUpgrade(MetadataCache mdc, IChorusFileTypeHandler fileHandler, int ours, string className, string newPropName, DataType dataType)
+		private static void CheckSinglePropertyAddedUpgrade(MetadataCache mdc, IFieldWorksFileHandler fileHandler, int ours, string className, string newPropName, DataType dataType)
 		{
 			CheckPropertyDoesNotExistBeforeUpGrade(mdc, className, newPropName);
 
-			DoMerge(fileHandler, ours);
+			DoMerge(mdc, fileHandler,ours);
 
 			CheckNewPropertyAfterUpgrade(mdc.GetClassInfo(className), newPropName, dataType);
 		}
@@ -428,7 +428,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 			Assert.AreEqual(dataType, newProperty.DataType, string.Format("{0} {1} data type should be {2}.", classInfo.ClassName, newPropName, dataType));
 		}
 
-		private static void DoMerge(IChorusFileTypeHandler fileHandler, int ours)
+		private static void DoMerge(MetadataCache mdc, IFieldWorksFileHandler fileHandler, int ours)
 		{
 			TempFile ourFile;
 			TempFile commonFile;
@@ -447,7 +447,7 @@ namespace LibFLExBridgeChorusPluginTests.Integration
 				{
 					EventListener = listener
 				};
-				fileHandler.Do3WayMerge(mergeOrder);
+				fileHandler.Do3WayMerge(mdc, mergeOrder);
 			}
 			finally
 			{

@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.ScriptureTransFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -38,7 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				if (root.Name.LocalName != FlexBridgeConstants.TranslatedScripture || root.Element(FlexBridgeConstants.Scripture) == null)
 					return "Not valid Scripture translation file.";
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.Scripture));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.Scripture));
 			}
 			catch (Exception e)
 			{

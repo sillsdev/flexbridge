@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Phonology
@@ -11,6 +12,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Phonology
 	/// </summary>
 	internal sealed class EnvironmentContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal EnvironmentContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForEnvironment(start);

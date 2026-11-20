@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPlugin.Handling
 {
@@ -13,7 +14,8 @@ namespace LibFLExBridgeChorusPlugin.Handling
 
 		private readonly string m_objectNameForLabel = "";
 
-		internal MultiLingualStringsContextGenerator(string startOfContextLabel, params string[] valuesToGet)
+		internal MultiLingualStringsContextGenerator(MetadataCache mdc, string startOfContextLabel, params string[] valuesToGet)
+			: base(mdc)
 		{
 			m_objectNameForLabel = startOfContextLabel;
 			m_valuesToCheckFor = valuesToGet;

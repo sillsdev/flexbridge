@@ -33,7 +33,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.CustomProperties
 					Path.GetFileName(pathToFile) == FlexBridgeConstants.CustomPropertiesFilename;
 		}
 
-		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -79,10 +79,6 @@ namespace LibFLExBridgeChorusPlugin.Handling.CustomProperties
 					if (customFieldElement.HasElements)
 						return "Contains illegal child element";
 				}
-
-				MetadataCache.MdCache.AddCustomPropInfo(new MergeOrder(
-					pathToFile, pathToFile, pathToFile,
-					new MergeSituation(pathToFile, "", "", "", "", MergeOrder.ConflictHandlingModeChoices.WeWin)));
 
 				return null;
 			}

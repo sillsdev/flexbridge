@@ -37,7 +37,6 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		private static readonly FindByKeyAttribute WsKeyFinder = new FindByKeyAttribute(FlexBridgeConstants.Ws);
 		private static readonly FindByKeyAttribute GuidKeyFinder = new FindByKeyAttribute(FlexBridgeConstants.GuidStr);
 		private static readonly FindFirstElementWithSameName SameNameFinder = new FindFirstElementWithSameName();
-		private static readonly FieldWorkObjectContextGenerator ContextGen = new FieldWorkObjectContextGenerator();
 		private const string MutableSingleton = "MutableSingleton";
 		private const string ImmutableSingleton = "ImmutableSingleton";
 
@@ -63,11 +62,13 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		{
 			merger.MergeStrategies.ElementToMergeStrategyKeyMapper = new FieldWorksElementToMergeStrategyKeyMapper();
 
+			// Each merger gets its own default context generator, since it holds this merger's strategies and metadata.
+			var contextGen = new FieldWorkObjectContextGenerator(metadataCache);
 			var sharedElementStrategies = new Dictionary<string, ElementStrategy>();
-			CreateSharedElementStrategies(sharedElementStrategies);
+			CreateSharedElementStrategies(sharedElementStrategies, contextGen);
 
 			var strategiesForMerger = merger.MergeStrategies;
-			ContextGen.MergeStrategies = strategiesForMerger;
+			contextGen.MergeStrategies = strategiesForMerger;
 
 			foreach (var sharedKvp in sharedElementStrategies)
 				strategiesForMerger.SetStrategy(sharedKvp.Key, sharedKvp.Value);
@@ -81,8 +82,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 							};
 			strategiesForMerger.SetStrategy(FlexBridgeConstants.CustomField, customPropDefnStrat);
 
-			var headerStrategy = CreateSingletonElementType(false);
-			headerStrategy.ContextDescriptorGenerator = ContextGen;
+			var headerStrategy = CreateSingletonElementType(false, contextGen);
 			strategiesForMerger.SetStrategy(FlexBridgeConstants.Header, headerStrategy);
 
 			// There are two abstract class names used: CmAnnotation and DsChart.
@@ -100,12 +100,12 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 
 			foreach (var classInfo in metadataCache.AllConcreteClasses)
 			{
-				MakeClassStrategy(strategiesForMerger, classInfo, ContextGen);
-				AddPropertyStrategiesForClass(strategiesForMerger, classInfo);
+				MakeClassStrategy(metadataCache, strategiesForMerger, classInfo, contextGen);
+				AddPropertyStrategiesForClass(metadataCache, strategiesForMerger, classInfo, contextGen);
 			}
 		}
 
-		private static void MakeClassStrategy(MergeStrategies strategiesForMerger, FdoClassInfo classInfo, FieldWorkObjectContextGenerator defaultDescriptor)
+		private static void MakeClassStrategy(MetadataCache mdc, MergeStrategies strategiesForMerger, FdoClassInfo classInfo, FieldWorkObjectContextGenerator defaultDescriptor)
 		{
 			Guard.AgainstNull(defaultDescriptor, "defaultDescriptor");
 
@@ -124,41 +124,41 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			switch (classInfo.ClassName)
 			{
 				case "CmPossibilityList":
-					classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator();
+					classStrat.ContextDescriptorGenerator = new PossibilityListContextGenerator(mdc);
 					break;
 				case "FsClosedFeature":
-					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation");
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator(mdc, "Phonological Features", "Name", "Abbreviation");
 					break;
 				case "FsFeatStruc":
 					classStrat.IsAtomic = true;
 					break;
 				case "LangProject":
-					classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator();
+					classStrat.ContextDescriptorGenerator = new LanguageProjectContextGenerator(mdc);
 					break;
 				case "LexEntry":
-					classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator();
+					classStrat.ContextDescriptorGenerator = new LexEntryContextGenerator(mdc);
 					break;
 				case "PhEnvironment":
-					classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator();
+					classStrat.ContextDescriptorGenerator = new EnvironmentContextGenerator(mdc);
 					break;
 				case "PhNCSegments":
-					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation");
+					classStrat.ContextDescriptorGenerator = new MultiLingualStringsContextGenerator(mdc, "Natural Class", "Name", "Abbreviation");
 					break;
 				case "ReversalIndexEntry":
-					classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator();
+					classStrat.ContextDescriptorGenerator = new ReversalEntryContextGenerator(mdc);
 					break;
 				case "RnGenericRec":
-					classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator();
+					classStrat.ContextDescriptorGenerator = new RnGenericRecContextGenerator(mdc);
 					break;
 				case "ScrBook":
-					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator();
+					classStrat.ContextDescriptorGenerator = new ScrBookContextGenerator(mdc);
 					break;
 				case "ScrDraft":
 					// ScrDraft instances can only be added or removed, but not changed, according to John Wickberg (18 Jan 2012).
 					classStrat.IsImmutable = true;
 					break;
 				case "ScrSection":
-					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator();
+					classStrat.ContextDescriptorGenerator = new ScrSectionContextGenerator(mdc);
 					break;
 				case "ScrTxtPara": // Fall through.
 				case "StTxtPara":
@@ -168,10 +168,10 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 					// classStrat.IsAtomic = true;
 					break;
 				case "Text":
-					classStrat.ContextDescriptorGenerator = new TextContextGenerator();
+					classStrat.ContextDescriptorGenerator = new TextContextGenerator(mdc);
 					break;
 				case "WfiWordform":
-					classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator();
+					classStrat.ContextDescriptorGenerator = new WfiWordformContextGenerator(mdc);
 					break;
 
 				// These should be all the subclasses of CmPossiblity. It's unfortuate to have to list them here;
@@ -192,27 +192,27 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 				case "MoMorphType":
 				case "PartOfSpeech":
 				case "PhPhonRuleFeat":
-					classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator();
+					classStrat.ContextDescriptorGenerator = new PossibilityContextGenerator(mdc);
 					break;
 
 				case "ConstChartRow":
 				case "ConstChartWordGroup":
 				case "DsConstChart":
-					classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator();
+					classStrat.ContextDescriptorGenerator = new DiscourseChartContextGenerator(mdc);
 					break;
 			}
 
 			((FieldWorkObjectContextGenerator)classStrat.ContextDescriptorGenerator).MergeStrategies = strategiesForMerger;
 		}
 
-		private static void AddPropertyStrategiesForClass(MergeStrategies strategiesForMerger, FdoClassInfo classInfo)
+		private static void AddPropertyStrategiesForClass(MetadataCache mdc, MergeStrategies strategiesForMerger, FdoClassInfo classInfo, FieldWorkObjectContextGenerator contextGen)
 		{
 			foreach (var propertyInfo in classInfo.AllProperties)
 			{
 				var isCustom = propertyInfo.IsCustomProperty;
 				var propStrategy = isCustom
-									   ? CreateStrategyForKeyedElement(FlexBridgeConstants.Name, false)
-									   : CreateSingletonElementStrategy();
+									   ? CreateStrategyForKeyedElement(FlexBridgeConstants.Name, false, contextGen)
+									   : CreateSingletonElementStrategy(contextGen);
 				switch (propertyInfo.DataType)
 				{
 					// Block of object properties
@@ -238,7 +238,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 					case DataType.ReferenceAtomic:
 						if (classInfo.ClassName == "LexSense" && propertyInfo.PropertyName == "MorphoSyntaxAnalysis")
 						{
-							propStrategy.ContextDescriptorGenerator = new PosContextGenerator();
+							propStrategy.ContextDescriptorGenerator = new PosContextGenerator(mdc);
 						}
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
@@ -297,7 +297,7 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
 					case DataType.TextPropBinary:
-						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator();
+						propStrategy.ContextDescriptorGenerator = new StyleContextGenerator(mdc);
 						propStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 						break;
 					case DataType.Time:
@@ -323,110 +323,109 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 			}
 		}
 
-		private static ElementStrategy CreateSingletonElementStrategy()
+		private static ElementStrategy CreateSingletonElementStrategy(FieldWorkObjectContextGenerator contextGen)
 		{
 			var result = ElementStrategy.CreateSingletonElement();
-			result.ContextDescriptorGenerator = ContextGen;
+			result.ContextDescriptorGenerator = contextGen;
 			return result;
 		}
 
-		private static void AddSharedImmutableSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant)
+		private static void AddSharedImmutableSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant, FieldWorkObjectContextGenerator contextGen)
 		{
-			var strategy = AddSharedSingletonElementType(sharedElementStrategies, name, orderOfTheseIsRelevant);
+			var strategy = AddSharedSingletonElementType(sharedElementStrategies, name, orderOfTheseIsRelevant, contextGen);
 			strategy.IsImmutable = true;
 		}
 
-		private static ElementStrategy AddSharedSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant)
+		private static ElementStrategy AddSharedSingletonElementType(Dictionary<string, ElementStrategy> sharedElementStrategies, string name, bool orderOfTheseIsRelevant, FieldWorkObjectContextGenerator contextGen)
 		{
-			var strategy = CreateSingletonElementType(orderOfTheseIsRelevant);
+			var strategy = CreateSingletonElementType(orderOfTheseIsRelevant, contextGen);
 			sharedElementStrategies.Add(name, strategy);
 			return strategy;
 		}
 
-		private static ElementStrategy CreateSingletonElementType(bool orderOfTheseIsRelevant)
+		private static ElementStrategy CreateSingletonElementType(bool orderOfTheseIsRelevant, FieldWorkObjectContextGenerator contextGen)
 		{
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
 								MergePartnerFinder = SameNameFinder,
-								ContextDescriptorGenerator = ContextGen
+								ContextDescriptorGenerator = contextGen
 							};
 			return strategy;
 		}
 
-		private static void CreateSharedElementStrategies(Dictionary<string, ElementStrategy> sharedElementStrategies)
+		private static void CreateSharedElementStrategies(Dictionary<string, ElementStrategy> sharedElementStrategies, FieldWorkObjectContextGenerator contextGen)
 		{
 			// Set up immutable strategies.
 			// Skip this one, since all DateTime props are, either legally (created), or are pre-processed for merging.
-			//AddSharedImmutableSingletonElementType(sharedElementStrategies, DateCreated, false);
-			AddSharedImmutableSingletonElementType(sharedElementStrategies, ImmutableSingleton, false);
+			//AddSharedImmutableSingletonElementType(sharedElementStrategies, DateCreated, false, contextGen);
+			AddSharedImmutableSingletonElementType(sharedElementStrategies, ImmutableSingleton, false, contextGen);
 
-			AddSharedSingletonElementType(sharedElementStrategies, MutableSingleton, false);
+			AddSharedSingletonElementType(sharedElementStrategies, MutableSingleton, false, contextGen);
 
-			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Str, false);
+			var elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Str, false, contextGen);
 			elementStrategy.IsAtomic = true; // TsStrings are atomic
 			elementStrategy.NumberOfChildren = NumberOfChildrenAllowed.ZeroOrOne;
 
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Binary, false);
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Binary, false, contextGen);
 			elementStrategy.IsAtomic = true; // Binary properties are atomic
 
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Prop, false);
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Prop, false, contextGen);
 			elementStrategy.IsAtomic = true; // Prop is atomic
 
-			AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Uni, false);
-			AddSharedKeyedByWsElementType(sharedElementStrategies, FlexBridgeConstants.AStr, false, true); // final parm is for IsAtomic, which in this case is atomic.
-			AddSharedKeyedByWsElementType(sharedElementStrategies, FlexBridgeConstants.AUni, false, false); // final parm is for IsAtomic, which in this case is not atomic.
+			AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Uni, false, contextGen);
+			AddSharedKeyedByWsElementType(sharedElementStrategies, FlexBridgeConstants.AStr, false, true, contextGen); // 4th parm is for IsAtomic, which in this case is atomic.
+			AddSharedKeyedByWsElementType(sharedElementStrategies, FlexBridgeConstants.AUni, false, false, contextGen); // 4th parm is for IsAtomic, which in this case is not atomic.
 
 			// Add element for "ownseq"
-			elementStrategy = CreateStrategyForKeyedElement(FlexBridgeConstants.GuidStr, true);
+			elementStrategy = CreateStrategyForKeyedElement(FlexBridgeConstants.GuidStr, true, contextGen);
 			elementStrategy.Premerger = new OwnSeqPremerger();
-			elementStrategy.ContextDescriptorGenerator = ContextGen;
 			elementStrategy.AttributesToIgnoreForMerging.AddRange(new[] { FlexBridgeConstants.GuidStr, FlexBridgeConstants.Class });
 			sharedElementStrategies.Add(FlexBridgeConstants.Ownseq, elementStrategy);
 
 			// Add element for SharedConstants.Objsur.
 			// This is only good now for ref atomic.
 			// No. atomic ref prop can't have multiples, so there is no need for a keyed lookup. CreateStrategyForKeyedElement(SharedConstants.GuidStr, false);
-			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Objsur, false);
+			elementStrategy = AddSharedSingletonElementType(sharedElementStrategies, FlexBridgeConstants.Objsur, false, contextGen);
 			elementStrategy.IsAtomic = true; // Testing to see if atomic here, or at the prop level is better, as per https://www.pivotaltracker.com/story/show/25402673
 			elementStrategy.NumberOfChildren = NumberOfChildrenAllowed.Zero;
 
 			// Add element for SharedConstants.Refseq
-			elementStrategy = CreateStrategyForElementKeyedByGuidInList(); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.
+			elementStrategy = CreateStrategyForElementKeyedByGuidInList(contextGen); // JohnT's new Chorus widget that handles potentially repeating element guids for ref seq props.
 			elementStrategy.AttributesToIgnoreForMerging.Add("t");
 			sharedElementStrategies.Add(FlexBridgeConstants.Refseq, elementStrategy);
 
 			// Add element for SharedConstants.Refcol
 			// Order is not important in any kind of collection property, since they are mathematical sets with no ordering and no repeats.
-			elementStrategy = CreateStrategyForKeyedElement(FlexBridgeConstants.GuidStr, false);
+			elementStrategy = CreateStrategyForKeyedElement(FlexBridgeConstants.GuidStr, false, contextGen);
 			elementStrategy.AttributesToIgnoreForMerging.Add("t");
 			sharedElementStrategies.Add(FlexBridgeConstants.Refcol, elementStrategy);
 		}
 
-		private static ElementStrategy CreateStrategyForElementKeyedByGuidInList()
+		private static ElementStrategy CreateStrategyForElementKeyedByGuidInList(FieldWorkObjectContextGenerator contextGen)
 		{
 			var result = ElementStrategy.CreateForKeyedElementInList(FlexBridgeConstants.GuidStr);
-			result.ContextDescriptorGenerator = ContextGen;
+			result.ContextDescriptorGenerator = contextGen;
 			return result;
 		}
 
-		private static ElementStrategy CreateStrategyForKeyedElement(string guid, bool orderIsRelevant)
+		private static ElementStrategy CreateStrategyForKeyedElement(string guid, bool orderIsRelevant, FieldWorkObjectContextGenerator contextGen)
 		{
 			var result = ElementStrategy.CreateForKeyedElement(guid, orderIsRelevant);
-			result.ContextDescriptorGenerator = ContextGen;
+			result.ContextDescriptorGenerator = contextGen;
 			return result;
 		}
 
-		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic)
+		private static void AddSharedKeyedByWsElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, bool orderOfTheseIsRelevant, bool isAtomic, FieldWorkObjectContextGenerator contextGen)
 		{
-			AddKeyedElementType(sharedElementStrategies, elementName, WsKeyFinder, orderOfTheseIsRelevant, isAtomic);
+			AddKeyedElementType(sharedElementStrategies, elementName, WsKeyFinder, orderOfTheseIsRelevant, isAtomic, contextGen);
 		}
 
-		private static void AddKeyedElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, IFindNodeToMerge findBykeyAttribute, bool orderOfTheseIsRelevant, bool isAtomic)
+		private static void AddKeyedElementType(IDictionary<string, ElementStrategy> sharedElementStrategies, string elementName, IFindNodeToMerge findBykeyAttribute, bool orderOfTheseIsRelevant, bool isAtomic, FieldWorkObjectContextGenerator contextGen)
 		{
 			var strategy = new ElementStrategy(orderOfTheseIsRelevant)
 							{
 								MergePartnerFinder = findBykeyAttribute,
-								ContextDescriptorGenerator = ContextGen,
+								ContextDescriptorGenerator = contextGen,
 								IsAtomic = isAtomic
 							};
 			sharedElementStrategies.Add(elementName, strategy);
@@ -435,14 +434,16 @@ namespace LibFLExBridgeChorusPlugin.DomainServices
 		/// <summary>
 		/// This method will return the guid associated with the given element moving up the heirarchy if necessary.
 		/// </summary>
-		internal static string GetGuid(XmlNode element)
+		/// <param name="mdc">The metadata of the element's project, used to tell class elements from property elements.</param>
+		/// <param name="element">The element to start from.</param>
+		internal static string GetGuid(MetadataCache mdc, XmlNode element)
 		{
 			var elt = element;
-			while (elt != null && MetadataCache.MdCache.GetClassInfo(GetClassName(elt)) == null
+			while (elt != null && mdc.GetClassInfo(GetClassName(elt)) == null
 				   && elt.Name != FlexBridgeConstants.Ownseq)
 				elt = elt.ParentNode;
 			return elt.Attributes[FlexBridgeConstants.GuidStr] == null
-				? GetGuid(element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
+				? GetGuid(mdc, element.ParentNode) // Oops. Its a property node that has the same name as a class (e.g., PartOfSppech, or Lexdb), so go higher.
 				: elt.Attributes[FlexBridgeConstants.GuidStr].Value;
 		}
 

@@ -4,6 +4,7 @@
 using System.Xml;
 using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin.Handling;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
 namespace LibFLExBridgeChorusPluginTests.Handling
@@ -43,7 +44,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator(new MetadataCache());
 			var html = generator.HtmlContext(input);
 			Assert.That(html.StartsWith("<div>"));
 			Assert.That(html, Contains.Substring("<div><span class=\"ws\">en</span>: abcdefghijk</div>"));
@@ -83,7 +84,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator(new MetadataCache());
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo("<span class=\"ws\">en</span>: abcdefghijk"));
 
@@ -113,7 +114,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0]; // the Target element.
-			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator(new MetadataCache());
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo("abcdefghijk"));
 
@@ -137,7 +138,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 				</RootClass>";
 			var root = GetNode(source);
 			var input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0]; // the Target element.
-			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator();
+			IGenerateHtmlContext generator = new FieldWorkObjectContextGenerator(new MetadataCache());
 			var html = generator.HtmlContext(input);
 			Assert.That(html, Is.EqualTo(new FwGenericHtmlGenerator().MakeHtml(input)));
 		}

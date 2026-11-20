@@ -34,7 +34,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.LanguageProjectFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -48,7 +48,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 					return "Not a valid Language Project file.";
 				}
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.LangProject));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.LangProject));
 			}
 			catch (Exception e)
 			{

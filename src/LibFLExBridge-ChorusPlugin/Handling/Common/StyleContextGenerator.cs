@@ -1,6 +1,7 @@
 // Copyright (c) 2010-2016 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Linq;
 using System.Xml;
 using Chorus.merge.xml.generic;
@@ -30,6 +31,13 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 		internal IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
 		{
 			get { return this; }
+		}
+
+		private readonly MetadataCache _mdc;
+
+		internal StyleContextGenerator(MetadataCache mdc)
+		{
+			_mdc = mdc ?? throw new ArgumentNullException(nameof(mdc));
 		}
 
 		private const string Space = " ";
@@ -155,7 +163,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 		ContextDescriptor IGenerateContextDescriptorFromNode.GenerateContextDescriptor(XmlNode mergeElement, string filePath)
 		{
 			return FieldWorksMergeServices.GenerateContextDescriptor(filePath,
-																			 FieldWorksMergeServices.GetGuid(mergeElement),
+																			 FieldWorksMergeServices.GetGuid(_mdc, mergeElement),
 																			 GetLabel(mergeElement));
 		}
 
@@ -270,7 +278,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 		/// <returns>The label of the custom field if it has one. Otherwise, the custom property name.</returns>
 		internal string GetDisplayName(string classname, string customPropertyName)
 		{
-			var mdc = MetadataCache.MdCache;
+			var mdc = _mdc;
 			FdoClassInfo classInfo = null;
 			if (string.IsNullOrEmpty(classname))
 			{

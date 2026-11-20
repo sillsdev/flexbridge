@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Discourse
@@ -13,6 +14,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Discourse
 	/// </summary>
 	internal sealed class DiscourseChartContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal DiscourseChartContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForChart(start);

@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.TextCorpus
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.TextInCorpus);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -40,7 +40,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.TextCorpus
 				{
 					return "Not valid text corpus file";
 				}
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.Text));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.Text));
 			}
 			catch (Exception e)
 			{

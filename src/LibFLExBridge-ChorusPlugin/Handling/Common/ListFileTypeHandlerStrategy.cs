@@ -28,14 +28,14 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.List);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
 				var doc = XDocument.Load(pathToFile);
 				var root = doc.Root;
 				return root.Elements(FlexBridgeConstants.CmPossibilityList).Any()
-					? CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.CmPossibilityList))
+					? CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.CmPossibilityList))
 					: "Not valid list file.";
 			}
 			catch (Exception e)

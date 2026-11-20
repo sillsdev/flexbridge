@@ -131,6 +131,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.General
 </CmAnnotation>
 </Annotations>";
 			File.WriteAllText(_ourFile.Path, data);
+			FieldWorksTestServices.WriteModelVersionFile(_ourFile.Path, FieldWorksTestServices.LastModelVersionWithoutRequiredBasicProperties);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 	}

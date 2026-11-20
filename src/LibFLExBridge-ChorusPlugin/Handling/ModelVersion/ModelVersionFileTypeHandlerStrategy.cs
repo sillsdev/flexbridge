@@ -36,7 +36,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ModelVersion
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.ModelVersionFilename;
 		}
 
-		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{

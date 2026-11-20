@@ -27,7 +27,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.book);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -36,7 +36,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				if (root.Name.LocalName != FlexBridgeConstants.Book || root.Element(FlexBridgeConstants.ScrBook) == null)
 					return "Not valid Scripture book file.";
 
-				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.ScrBook));
+				var result = CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.ScrBook));
 				if (result != null)
 					return result;
 			}

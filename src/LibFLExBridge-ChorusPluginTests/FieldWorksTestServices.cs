@@ -83,6 +83,22 @@ namespace LibFLExBridgeChorusPluginTests
 			return replacement;
 		}
 
+		/// <summary>
+		/// The newest model version that does not require an element for every basic property (DM 7000066 added that rule).
+		/// For validation tests whose data leaves those elements out.
+		/// </summary>
+		internal const int LastModelVersionWithoutRequiredBasicProperties = 7000065;
+
+		/// <summary>
+		/// Write the .ModelVersion file in the folder holding <paramref name="pathname"/>, replacing any already there.
+		/// Validation reads the project's model version from that file.
+		/// </summary>
+		internal static void WriteModelVersionFile(string pathname, int modelVersion)
+		{
+			File.WriteAllText(Path.Combine(Path.GetDirectoryName(pathname), FlexBridgeConstants.ModelVersionFilename),
+				"{\"modelversion\": " + modelVersion + "}");
+		}
+
 		internal static void SetupTempFilesWithExtension(string extension, out TempFile ourFile, out TempFile commonFile, out TempFile theirFile)
 		{
 			ourFile = TempFile.WithExtension(extension);

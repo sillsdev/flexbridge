@@ -2,12 +2,18 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Common
 {
 	internal sealed class PossibilityContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal PossibilityContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForPossibilityItem(start);

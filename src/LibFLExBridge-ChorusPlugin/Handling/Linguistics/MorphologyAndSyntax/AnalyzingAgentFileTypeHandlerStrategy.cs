@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.AnalyzingAgentsFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -44,7 +44,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 				}
 
 				return root.Elements(FlexBridgeConstants.CmAgent)
-					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(res => res != null);
+					.Select(filterElement => CmObjectValidator.ValidateObject(mdc, filterElement)).FirstOrDefault(res => res != null);
 			}
 			catch (Exception e)
 			{

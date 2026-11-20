@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Phonology
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.PhonologicalDataFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -43,7 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Phonology
 					return "Not valid phonology data file";
 				}
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.PhPhonData));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.PhPhonData));
 			}
 			catch (Exception e)
 			{

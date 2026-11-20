@@ -109,29 +109,24 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			// Make sure MDC is updated.
 			// Since this method is called in another process by ChorusMerge,
 			// the MDC that was set up for splitting the file is not available.
+			var mdc = new MetadataCache();
 			var extension = FileWriterService.GetExtensionFromPathname(mergeOrder.pathToOurs);
 			if (extension != FlexBridgeConstants.ModelVersion)
 			{
-				var pathToOurs = mergeOrder.pathToOurs;
-				var folder = Path.GetDirectoryName(pathToOurs);
-				while (folder != null && !File.Exists(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename)))
-				{
-					var parent = Directory.GetParent(folder);
-					folder = parent?.ToString();
-				}
-				// 'folder' should now have the required model version file in it, or null for some tests.
+				// The project folder should have the required model version file in it, or be null for some tests.
+				var folder = MetadataCache.FindProjectFolder(Path.GetDirectoryName(mergeOrder.pathToOurs));
 				var desiredModelNumber = MetadataCache.MaximumModelVersion;
 				if (folder != null)
 				{
 					var ourModelFileData = File.ReadAllText(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename));
 					desiredModelNumber = int.Parse(ModelVersionFileTypeHandlerStrategy.SplitData(ourModelFileData)[1]);
 				}
-				MetadataCache.MdCache.UpgradeToVersion(desiredModelNumber);
+				mdc.UpgradeToVersion(desiredModelNumber);
 			}
 
 			XmlMergeService.RemoveAmbiguousChildNodes = false; // Live on the edge. Opt out of that expensive code.
 
-			GetHandlerFromExtension(extension).Do3WayMerge(MetadataCache.MdCache, mergeOrder);
+			GetHandlerFromExtension(extension).Do3WayMerge(mdc, mergeOrder);
 		}
 
 		IEnumerable<IChangeReport> IChorusFileTypeHandler.Find2WayDifferences(FileInRevision parent, FileInRevision child, HgRepository repository)
@@ -174,13 +169,37 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				return "File has no extension.";
 
 			var handler = GetHandlerFromExtension(extension.Substring(1));
-			var results = handler.ValidateFile(pathToFile);
+			var results = ValidateFile(handler, pathToFile);
 			if (results != null)
 			{
 				progress.WriteError("File '{0}' is not valid with message:{1}\t{2}", pathToFile, Environment.NewLine, results);
 				progress.WriteWarning("It may also have other problems in addition to the one that was reported.");
 			}
 			return results;
+		}
+
+		private static string ValidateFile(IFieldWorksFileHandler handler, string pathToFile)
+		{
+			var extension = handler.Extension;
+			if (extension == FlexBridgeConstants.ModelVersion || extension == FlexBridgeConstants.CustomProperties)
+			{
+				// These files define the project's metadata, so they are checked on their own terms,
+				// and loading the metadata from them would fail if they are broken.
+				return handler.ValidateFile(new MetadataCache(), pathToFile);
+			}
+
+			// Chorus gives us only the path, so find the cache for the project the file is in.
+			// One process (such as LfMergeBridge in a server) may validate files of several projects.
+			MetadataCache mdc;
+			try
+			{
+				mdc = ProjectMetadataCaches.ForFile(pathToFile);
+			}
+			catch (Exception e)
+			{
+				return string.Format("Could not load the project's model version and custom properties: {0}", e.Message);
+			}
+			return handler.ValidateFile(mdc, pathToFile);
 		}
 
 		IEnumerable<IChangeReport> IChorusFileTypeHandler.DescribeInitialContents(FileInRevision fileInRevision, TempFile file)

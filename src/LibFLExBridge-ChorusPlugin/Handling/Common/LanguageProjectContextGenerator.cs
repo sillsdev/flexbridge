@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Common
 {
@@ -14,6 +15,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 	/// </summary>
 	class LanguageProjectContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal LanguageProjectContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return "Project";

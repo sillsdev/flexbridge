@@ -3,6 +3,7 @@
 
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Handling.Common;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
 namespace LibFLExBridgeChorusPluginTests.Handling.Common
@@ -24,7 +25,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				</StStyle>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // Rules
-			var generator = new StyleContextGenerator();
+			var generator = new StyleContextGenerator(new MetadataCache());
 			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Style \"Normal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
@@ -57,7 +58,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				</StStyle>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // Rules
-			var generator = new StyleContextGenerator();
+			var generator = new StyleContextGenerator(new MetadataCache());
 			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Style \"Abnormal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
@@ -107,7 +108,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // Custom//StyleRules
-			var generator = new StyleContextGenerator();
+			var generator = new StyleContextGenerator(new MetadataCache());
 			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Data Notebook Record \"Type\" Custom Field \"Like\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
@@ -118,7 +119,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				Is.EqualTo(@"<div class='StStyle'> namedStyle (Block Quote)</div>"));
 
 			input = root.ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0]; // Description//StyleRules
-			generator = new StyleContextGenerator();
+			generator = new StyleContextGenerator(new MetadataCache());
 			descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("Data Notebook Record \"Type\" Description"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
@@ -133,7 +134,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 		public void ContextForGeneralStyleChange()
 		{
 			const string source = @"
-				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->
+				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MetadataCache.GetClassInfo() knows has a guid -->
 					<SomeWsRules>
 						<Prop backcolor='green' fontsize='24000' forecolor='yellow' spaceAfter='9000' undercolor='blue' underline='red'>
 							<MoreRules>
@@ -147,7 +148,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				</WfiWordform>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[1]; // SomeWsRules  - the comment is [0]
-			var generator = new StyleContextGenerator();
+			var generator = new StyleContextGenerator(new MetadataCache());
 			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform [untitled]"));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));
@@ -164,7 +165,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 		public void ContextForNamedFieldStyleChange()
 		{
 			const string source = @"
-				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MdCache.GetClassInfo() knows has a guid -->
+				<WfiWordform guid='d9aa70f0-ea5e-11de-8efb-0013722f8dec'> <!-- some element that MetadataCache.GetClassInfo() knows has a guid -->
 					<Name>
 						<Uni>Abnormal</Uni>
 					</Name>
@@ -181,7 +182,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Common
 				</WfiWordform>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[2]; // SomeWsRules  - the comment is [0]
-			var generator = new StyleContextGenerator();
+			var generator = new StyleContextGenerator(new MetadataCache());
 			var descriptor = generator.AsIGenerateContextDescriptorFromNode.GenerateContextDescriptor(input, "myfile");
 			Assert.That(descriptor.DataLabel, Is.EqualTo("WfiWordform \"Abnormal\""));
 			Assert.That(descriptor.PathToUserUnderstandableElement, Contains.Substring("label=" + descriptor.DataLabel));

@@ -23,26 +23,27 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 	{
 		private static IGenerateContextDescriptorFromNode MakeGenerator()
 		{
-			var result = new FieldWorkObjectContextGenerator();
+			var mdc = new MetadataCache();
+			var result = new FieldWorkObjectContextGenerator(mdc);
 			var strategies = new MergeStrategies();
 			result.MergeStrategies = strategies;
-			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(), strategies));
-			strategies.SetStrategy("ReversalIndexEntry", MakeClassStrategy(new ReversalEntryContextGenerator(), strategies));
-			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(), strategies));
-			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(), strategies));
-			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(), strategies));
-			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(), strategies));
-			strategies.SetStrategy("PhNCSegments", MakeClassStrategy(new MultiLingualStringsContextGenerator("Natural Class", "Name", "Abbreviation"), strategies));
-			strategies.SetStrategy("FsClosedFeature", MakeClassStrategy(new MultiLingualStringsContextGenerator("Phonological Features", "Name", "Abbreviation"), strategies));
-			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(), strategies));
-			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(), strategies));
-			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(), strategies));
-			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(), strategies));
+			strategies.SetStrategy("LexEntry", MakeClassStrategy(new LexEntryContextGenerator(mdc), strategies));
+			strategies.SetStrategy("ReversalIndexEntry", MakeClassStrategy(new ReversalEntryContextGenerator(mdc), strategies));
+			strategies.SetStrategy("WfiWordform", MakeClassStrategy(new WfiWordformContextGenerator(mdc), strategies));
+			strategies.SetStrategy("CmPossibilityList", MakeClassStrategy(new PossibilityListContextGenerator(mdc), strategies));
+			strategies.SetStrategy("CmPossibility", MakeClassStrategy(new PossibilityContextGenerator(mdc), strategies));
+			strategies.SetStrategy("LexEntryType", MakeClassStrategy(new PossibilityContextGenerator(mdc), strategies));
+			strategies.SetStrategy("PhEnvironment", MakeClassStrategy(new EnvironmentContextGenerator(mdc), strategies));
+			strategies.SetStrategy("DsChart", MakeClassStrategy(new DiscourseChartContextGenerator(mdc), strategies));
+			strategies.SetStrategy("DsConstChart", MakeClassStrategy(new DiscourseChartContextGenerator(mdc), strategies));
+			strategies.SetStrategy("ConstChartRow", MakeClassStrategy(new DiscourseChartContextGenerator(mdc), strategies));
+			strategies.SetStrategy("ConstChartWordGroup", MakeClassStrategy(new DiscourseChartContextGenerator(mdc), strategies));
+			strategies.SetStrategy("PhNCSegments", MakeClassStrategy(new MultiLingualStringsContextGenerator(mdc, "Natural Class", "Name", "Abbreviation"), strategies));
+			strategies.SetStrategy("FsClosedFeature", MakeClassStrategy(new MultiLingualStringsContextGenerator(mdc, "Phonological Features", "Name", "Abbreviation"), strategies));
+			strategies.SetStrategy("Text", MakeClassStrategy(new TextContextGenerator(mdc), strategies));
+			strategies.SetStrategy("RnGenericRec", MakeClassStrategy(new RnGenericRecContextGenerator(mdc), strategies));
+			strategies.SetStrategy("ScrBook", MakeClassStrategy(new ScrBookContextGenerator(mdc), strategies));
+			strategies.SetStrategy("ScrSection", MakeClassStrategy(new ScrSectionContextGenerator(mdc), strategies));
 			return result;
 		}
 
@@ -858,7 +859,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 					</ArbitraryLabel>";
 			var root = FieldWorksTestServices.GetNode(source);
 			var input = root.ChildNodes[0];
-			var generator = new FieldWorkObjectContextGenerator();
+			var generator = new FieldWorkObjectContextGenerator(new MetadataCache());
 
 			Assert.That(generator.FirstNonBlankChildsData(input), Is.EqualTo("The Name"));
 		}

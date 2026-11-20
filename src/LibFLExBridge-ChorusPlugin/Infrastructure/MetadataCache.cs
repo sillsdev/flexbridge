@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.merge;
 using Chorus.Properties;
+using LibFLExBridgeChorusPlugin.Handling.ModelVersion;
 using SIL.Code;
 using SIL.IO;
 
@@ -25,9 +26,9 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		private static MetadataCache _mdc;
 
 		/// <summary>
-		/// Constructor.
+		/// Create a cache for the base model (<see cref="StartingModelVersion"/>) with no custom properties.
 		/// </summary>
-		private MetadataCache()
+		internal MetadataCache()
 		{
 			AddMainClassInfo();
 			SetSuperclasses();
@@ -502,16 +503,91 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 			if (!File.Exists(customPropPathname))
 				return;
 
-			var doc = XDocument.Load(customPropPathname);
-			foreach (var customFieldElement in doc.Element(FlexBridgeConstants.AdditionalFieldsTag).Elements(FlexBridgeConstants.CustomField))
+			AddCustomPropInfo(XDocument.Load(customPropPathname));
+			ResetCaches();
+		}
+
+		/// <summary>
+		/// Add the custom fields declared in a split .CustomProperties document. Call ResetCaches afterwards.
+		/// </summary>
+		/// <remarks>
+		/// The splitter stores the long form of object property types (OwningAtomic for OA, and so on),
+		/// which is what <see cref="DataType"/> parses. Older files may still hold the short form, so adjust it here.
+		/// All attributes but 'key' are kept, since merge reports use the 'label' attribute.
+		/// </remarks>
+		private void AddCustomPropInfo(XDocument customPropertiesDocument)
+		{
+			foreach (var customFieldElement in customPropertiesDocument.Element(FlexBridgeConstants.AdditionalFieldsTag).Elements(FlexBridgeConstants.CustomField))
 			{
 				var className = customFieldElement.Attribute(FlexBridgeConstants.Class).Value;
 				if (!_classes.ContainsKey(className))
 					continue;
 
-				AddCustomPropInfo(className, new FdoPropertyInfo(customFieldElement));
+				var definition = new XElement(customFieldElement);
+				var typeAttr = definition.Attribute("type");
+				if (typeAttr != null)
+					typeAttr.Value = AdjustedPropertyType(typeAttr.Value);
+				AddCustomPropInfo(className, new FdoPropertyInfo(definition));
 			}
-			ResetCaches();
+		}
+
+		/// <summary>
+		/// Find the root folder of a split project: the folder holding the .ModelVersion file,
+		/// starting at <paramref name="anyPath"/> (a file or folder in the project) and walking up.
+		/// </summary>
+		/// <returns>
+		/// The full path of the project folder, with no trailing separator (unless it is a root folder),
+		/// or null if no folder above <paramref name="anyPath"/> has a .ModelVersion file.
+		/// </returns>
+		internal static string FindProjectFolder(string anyPath)
+		{
+			if (string.IsNullOrEmpty(anyPath))
+				return null;
+			var folder = Path.GetFullPath(anyPath);
+			if (Directory.Exists(folder))
+			{
+				var trimmed = folder.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				if (trimmed.Length >= Path.GetPathRoot(folder).Length)
+					folder = trimmed;
+			}
+			else
+			{
+				folder = Path.GetDirectoryName(folder);
+			}
+			while (folder != null && !File.Exists(Path.Combine(folder, FlexBridgeConstants.ModelVersionFilename)))
+				folder = Path.GetDirectoryName(folder);
+			return folder;
+		}
+
+		/// <summary>
+		/// Create the cache for the split project in <paramref name="projectFolder"/>,
+		/// from its .ModelVersion and .CustomProperties files.
+		/// </summary>
+		internal static MetadataCache LoadFromProjectFolder(string projectFolder)
+		{
+			return LoadFromProjectFiles(
+				ReadAllTextIfExists(Path.Combine(projectFolder, FlexBridgeConstants.ModelVersionFilename)),
+				ReadAllTextIfExists(Path.Combine(projectFolder, FlexBridgeConstants.CustomPropertiesFilename)));
+		}
+
+		/// <summary>
+		/// Create a cache from the contents of a project's .ModelVersion and .CustomProperties files.
+		/// Either may be null, if the file does not exist.
+		/// </summary>
+		internal static MetadataCache LoadFromProjectFiles(string modelVersionText, string customPropertiesText)
+		{
+			var mdc = new MetadataCache();
+			if (modelVersionText != null)
+				mdc.UpgradeToVersion(Int32.Parse(ModelVersionFileTypeHandlerStrategy.SplitData(modelVersionText)[1].Trim()));
+			if (!string.IsNullOrWhiteSpace(customPropertiesText))
+				mdc.AddCustomPropInfo(XDocument.Parse(customPropertiesText));
+			mdc.ResetCaches();
+			return mdc;
+		}
+
+		internal static string ReadAllTextIfExists(string pathname)
+		{
+			return File.Exists(pathname) ? File.ReadAllText(pathname) : null;
 		}
 
 		private static string GetMetaDataCacheOffsetFolder(string pathToOurs)

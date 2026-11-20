@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Lexicon
 				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(FlexBridgeConstants.Lexicon + "_");
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -40,7 +40,6 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Lexicon
 					return "Not valid lexicon file";
 				}
 
-				var mdc = MetadataCache.MdCache;
 				var header = root.Element(FlexBridgeConstants.Header);
 				if (header != null)
 				{

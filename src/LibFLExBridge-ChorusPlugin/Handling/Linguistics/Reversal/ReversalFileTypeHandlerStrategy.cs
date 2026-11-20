@@ -27,7 +27,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Reversal
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Reversal);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -36,14 +36,14 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Reversal
 				if (root.Name.LocalName != "Reversal")
 					return "Not a FieldWorks reversal file.";
 				var header = root.Element(FlexBridgeConstants.Header);
-				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("ReversalIndex"));
+				var result = CmObjectValidator.ValidateObject(mdc, header.Element("ReversalIndex"));
 				if (result != null)
 					return result;
 				foreach (var record in root.Elements(FlexBridgeConstants.ReversalIndexEntry))
 				{
 					if (record.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant() == FlexBridgeConstants.EmptyGuid)
 						return null;
-					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					result = CmObjectValidator.ValidateObject(mdc, record);
 					if (result != null)
 						return result;
 				}

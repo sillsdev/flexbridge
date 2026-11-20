@@ -25,7 +25,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			return PathHelper.CheckValidPathname(pathToFile, Extension);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			return FieldWorksConfigurationLayoutValidator.Validate(pathToFile);
 		}

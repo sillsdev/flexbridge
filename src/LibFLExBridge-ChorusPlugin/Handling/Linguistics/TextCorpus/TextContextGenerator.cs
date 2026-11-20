@@ -3,6 +3,7 @@
 
 using System.Xml;
 using System.Text;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.TextCorpus
@@ -14,6 +15,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.TextCorpus
 	internal sealed class TextContextGenerator : FieldWorkObjectContextGenerator
 	{
 		private const string Comma = ",";
+
+		internal TextContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
 
 		protected override string GetLabel(XmlNode start)
 		{

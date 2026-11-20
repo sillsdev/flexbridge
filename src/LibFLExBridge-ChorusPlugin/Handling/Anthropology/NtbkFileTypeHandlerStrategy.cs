@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Anthropology
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.DataNotebookFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -38,14 +38,14 @@ namespace LibFLExBridgeChorusPlugin.Handling.Anthropology
 				if (root.Name.LocalName != FlexBridgeConstants.Anthropology)
 					return "Not a FieldWorks data notebook file.";
 				var header = root.Element(FlexBridgeConstants.Header);
-				var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, header.Element("RnResearchNbk"));
+				var result = CmObjectValidator.ValidateObject(mdc, header.Element("RnResearchNbk"));
 				if (result != null)
 					return result;
 				foreach (var record in root.Elements(FlexBridgeConstants.RnGenericRec))
 				{
 					if (record.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant() == FlexBridgeConstants.EmptyGuid)
 						return null;
-					result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					result = CmObjectValidator.ValidateObject(mdc, record);
 					if (result != null)
 						return result;
 				}

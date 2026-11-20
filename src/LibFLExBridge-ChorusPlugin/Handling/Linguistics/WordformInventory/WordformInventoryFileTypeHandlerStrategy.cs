@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.WordformInventory
 				&& Path.GetFileNameWithoutExtension(pathToFile).StartsWith(FlexBridgeConstants.WordformInventory + "_");
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -46,7 +46,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.WordformInventory
 				var header = root.Element(FlexBridgeConstants.Header);
 				if (header != null)
 				{
-					foreach (var punctResult in header.Elements("PunctuationForm").Select(punctForm => CmObjectValidator.ValidateObject(MetadataCache.MdCache, punctForm)).Where(punctResult => punctResult != null))
+					foreach (var punctResult in header.Elements("PunctuationForm").Select(punctForm => CmObjectValidator.ValidateObject(mdc, punctForm)).Where(punctResult => punctResult != null))
 					{
 						return punctResult;
 					}
@@ -55,7 +55,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.WordformInventory
 				{
 					if (record.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant() == FlexBridgeConstants.EmptyGuid)
 						return null;
-					var result = CmObjectValidator.ValidateObject(MetadataCache.MdCache, record);
+					var result = CmObjectValidator.ValidateObject(mdc, record);
 					if (result != null)
 						return result;
 				}

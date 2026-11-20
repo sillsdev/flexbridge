@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.ImportSettingsFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -39,7 +39,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				if (root.Name.LocalName != FlexBridgeConstants.ImportSettings || !root.Elements(FlexBridgeConstants.ScrImportSet).Any())
 					return "Not valid Scripture import settings file.";
 
-				foreach (var result in root.Elements(FlexBridgeConstants.ScrImportSet).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.ScrImportSet))).Where(result => result != null))
+				foreach (var result in root.Elements(FlexBridgeConstants.ScrImportSet).Select(draft => CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.ScrImportSet))).Where(result => result != null))
 				{
 					return result;
 				}

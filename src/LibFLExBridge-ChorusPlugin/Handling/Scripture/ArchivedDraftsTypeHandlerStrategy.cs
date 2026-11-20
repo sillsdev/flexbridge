@@ -28,7 +28,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.ArchivedDraft);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -37,7 +37,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				if (root.Name.LocalName != FlexBridgeConstants.ArchivedDrafts || !root.Elements(FlexBridgeConstants.ScrDraft).Any())
 					return "Not valid archived draft file.";
 
-				foreach (var result in root.Elements(FlexBridgeConstants.ScrDraft).Select(draft => CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.ScrDraft))).Where(result => result != null))
+				foreach (var result in root.Elements(FlexBridgeConstants.ScrDraft).Select(draft => CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.ScrDraft))).Where(result => result != null))
 				{
 					return result;
 				}

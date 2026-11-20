@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Discourse
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.DiscourseChartFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -42,7 +42,6 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.Discourse
 					return "Not valid discourse file.";
 				}
 
-				var mdc = MetadataCache.MdCache;
 				var result = CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.Header).Element("DsDiscourseData"));
 				if (result != null)
 					return result;

@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Scripture
@@ -15,6 +16,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 	/// </summary>
 	internal sealed class ScrBookContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal ScrBookContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForScrBook(start);

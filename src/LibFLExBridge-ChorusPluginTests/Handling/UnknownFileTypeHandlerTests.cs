@@ -21,7 +21,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling
 		[Test]
 		public void ValidateFileThrows()
 		{
-			Assert.Throws<NotSupportedException>(() => _handler.ValidateFile(null));
+			Assert.Throws<NotSupportedException>(() => _handler.ValidateFile(null, null));
 		}
 
 		[Test]

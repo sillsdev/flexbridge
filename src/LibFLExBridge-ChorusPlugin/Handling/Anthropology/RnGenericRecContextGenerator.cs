@@ -2,6 +2,7 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibFLExBridgeChorusPlugin.Properties;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Anthropology
@@ -12,6 +13,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Anthropology
 	/// </summary>
 	internal sealed class RnGenericRecContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal RnGenericRecContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForRnGenericRec(start);

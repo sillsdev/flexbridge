@@ -117,6 +117,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSynta
 </CmAgent>
 </AnalyzingAgents>";
 			File.WriteAllText(_ourFile.Path, data);
+			FieldWorksTestServices.WriteModelVersionFile(_ourFile.Path, FieldWorksTestServices.LastModelVersionWithoutRequiredBasicProperties);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 
@@ -132,6 +133,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSynta
 </AnalyzingAgents>";
 
 			File.WriteAllText(_ourFile.Path, data);
+			FieldWorksTestServices.WriteModelVersionFile(_ourFile.Path, FieldWorksTestServices.LastModelVersionWithoutRequiredBasicProperties);
 			Assert.IsNull(FileHandler.ValidateFile(_ourFile.Path, new NullProgress()));
 		}
 	}

@@ -34,7 +34,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.FLExVirtualOrderingFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -46,7 +46,6 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 					return "Not a valid virtual ordering file.";
 				}
 
-				var mdc = MetadataCache.MdCache;
 				return root.Elements(FlexBridgeConstants.VirtualOrdering)
 					.Select(orderingElement => CmObjectValidator.ValidateObject(mdc, orderingElement)).FirstOrDefault(result => result != null);
 			}

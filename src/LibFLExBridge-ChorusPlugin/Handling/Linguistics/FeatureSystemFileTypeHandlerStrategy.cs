@@ -28,7 +28,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics
 			return PathHelper.CheckValidPathname(pathToFile, FlexBridgeConstants.Featsys);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -41,7 +41,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics
 					return "Not valid feature system file";
 				}
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.FsFeatureSystem));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.FsFeatureSystem));
 			}
 			catch (Exception e)
 			{

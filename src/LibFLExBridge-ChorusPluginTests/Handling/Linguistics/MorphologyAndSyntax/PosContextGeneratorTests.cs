@@ -5,6 +5,7 @@ using System.Xml;
 using Chorus.merge.xml.generic;
 using LibFLExBridgeChorusPlugin;
 using LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
 
 namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSyntax
@@ -305,7 +306,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics.MorphologyAndSynta
 
 		internal MockPosContextGenerator(XmlNode morphSynData)
 		{
-			m_generator = new PosContextGenerator();
+			m_generator = new PosContextGenerator(new MetadataCache());
 			LoadPosList(morphSynData);
 		}
 

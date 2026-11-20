@@ -34,7 +34,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.FLExFiltersFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -48,7 +48,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 				}
 
 				return root.Elements(FlexBridgeConstants.CmFilter)
-					.Select(filterElement => CmObjectValidator.ValidateObject(MetadataCache.MdCache, filterElement)).FirstOrDefault(result => result != null);
+					.Select(filterElement => CmObjectValidator.ValidateObject(mdc, filterElement)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
 			{

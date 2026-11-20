@@ -33,6 +33,16 @@ namespace LibFLExBridgeChorusPlugin.Handling
 		protected const string Space = " ";
 		protected const string Quote = "\"";
 
+		internal FieldWorkObjectContextGenerator(MetadataCache mdc)
+		{
+			Mdc = mdc ?? throw new ArgumentNullException(nameof(mdc));
+		}
+
+		/// <summary>
+		/// The metadata of the project being merged, used to tell class elements from property elements.
+		/// </summary>
+		protected MetadataCache Mdc { get; }
+
 		/// <summary>
 		/// Strategies may provide alternate context descriptors for parent elements.
 		/// </summary>
@@ -54,7 +64,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 				//    guid = element.Attributes[SharedConstants.GuidStr].Value;
 				//    break;
 				default:
-					guid = FieldWorksMergeServices.GetGuid(element);
+					guid = FieldWorksMergeServices.GetGuid(Mdc, element);
 					label = GetLabel(element);
 					break;
 			}

@@ -34,7 +34,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.FLExUnownedPicturesFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -46,7 +46,6 @@ namespace LibFLExBridgeChorusPlugin.Handling.General
 					return "Not a valid unowned picture file.";
 				}
 
-				var mdc = MetadataCache.MdCache;
 				return root.Elements(FlexBridgeConstants.CmPicture)
 					.Select(pictureElement => CmObjectValidator.ValidateObject(mdc, pictureElement)).FirstOrDefault(result => result != null);
 			}

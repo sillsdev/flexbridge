@@ -26,6 +26,12 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 	{
 		private string[] _posGuidStrs;
 		private Dictionary<string, string> _guidPosNameDict;
+		private readonly MetadataCache _mdc;
+
+		internal PosContextGenerator(MetadataCache mdc)
+		{
+			_mdc = mdc ?? throw new System.ArgumentNullException(nameof(mdc));
+		}
 
 		private IGenerateContextDescriptorFromNode AsIGenerateContextDescriptorFromNode
 		{
@@ -194,7 +200,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 		{
 			LoadPosList();
 			return FieldWorksMergeServices.GenerateContextDescriptor(filePath,
-																			 FieldWorksMergeServices.GetGuid(mergeElement),
+																			 FieldWorksMergeServices.GetGuid(_mdc, mergeElement),
 																			 GetLabel(mergeElement));
 		}
 

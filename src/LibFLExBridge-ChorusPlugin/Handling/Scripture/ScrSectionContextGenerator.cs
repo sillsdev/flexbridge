@@ -18,6 +18,11 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 		private int _endRef;
 		private string _bookName;
 
+		internal ScrSectionContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForScrSection(start);

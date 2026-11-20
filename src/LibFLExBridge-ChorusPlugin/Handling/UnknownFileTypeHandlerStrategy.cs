@@ -27,7 +27,7 @@ namespace LibFLExBridgeChorusPlugin.Handling
 			return false;
 		}
 
-		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			throw new NotSupportedException("'ValidateFile' method is not supported for unknown file types.");
 		}

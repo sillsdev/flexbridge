@@ -29,7 +29,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.ScriptureReferenceSystemFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -38,7 +38,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Scripture
 				if (root.Name.LocalName != FlexBridgeConstants.ScriptureReferenceSystem || root.Element(FlexBridgeConstants.ScrRefSystem) == null)
 					return "Not valid Scripture reference system file.";
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.ScrRefSystem));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.ScrRefSystem));
 			}
 			catch (Exception e)
 			{

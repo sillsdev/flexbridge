@@ -34,7 +34,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			return PathHelper.CheckValidPathname(pathToFile, AsIFieldWorksFileHandler.Extension);
 		}
 
-		string IFieldWorksFileHandler.ValidateFile(string pathToFile)
+		string IFieldWorksFileHandler.ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -78,7 +78,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 					return message + ".";
 				}
 				return root.Elements(FlexBridgeConstants.StStyle)
-					.Select(style => CmObjectValidator.ValidateObject(MetadataCache.MdCache, style)).FirstOrDefault(result => result != null);
+					.Select(style => CmObjectValidator.ValidateObject(mdc, style)).FirstOrDefault(result => result != null);
 			}
 			catch (Exception e)
 			{

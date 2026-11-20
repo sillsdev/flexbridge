@@ -30,7 +30,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 				   Path.GetFileName(pathToFile) == FlexBridgeConstants.MorphAndSynDataFilename;
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			try
 			{
@@ -43,7 +43,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Linguistics.MorphologyAndSyntax
 					return "Not valid morphology data file";
 				}
 
-				return CmObjectValidator.ValidateObject(MetadataCache.MdCache, root.Element(FlexBridgeConstants.MoMorphData));
+				return CmObjectValidator.ValidateObject(mdc, root.Element(FlexBridgeConstants.MoMorphData));
 			}
 			catch (Exception e)
 			{

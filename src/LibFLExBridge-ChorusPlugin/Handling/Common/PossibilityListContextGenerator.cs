@@ -5,11 +5,17 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Xml;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 
 namespace LibFLExBridgeChorusPlugin.Handling.Common
 {
 	internal sealed class PossibilityListContextGenerator : FieldWorkObjectContextGenerator
 	{
+		internal PossibilityListContextGenerator(MetadataCache mdc)
+			: base(mdc)
+		{
+		}
+
 		protected override string GetLabel(XmlNode start)
 		{
 			return GetLabelForPossibilityList(start);

@@ -24,7 +24,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.Common
 			return PathHelper.CheckValidPathname(pathToFile, Extension);
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			var document = XDocument.Load(pathToFile);
 			if (document.Root?.Name != "ProjectLexiconSettings")

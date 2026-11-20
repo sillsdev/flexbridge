@@ -46,7 +46,7 @@ namespace LibFLExBridgeChorusPlugin.Handling.ConfigLayout
 			return PathHelper.CheckValidPathname(pathToFile, Extension) && File.Exists(GetXsdPathname(pathToFile));
 		}
 
-		public string ValidateFile(string pathToFile)
+		public string ValidateFile(MetadataCache mdc, string pathToFile)
 		{
 			var schemas = new XmlSchemaSet();
 			using(var reader = XmlReader.Create(GetXsdPathname(pathToFile)))
