@@ -537,17 +537,6 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		}
 
 		/// <summary>
-		/// Create the cache for the split project in <paramref name="projectFolder"/>,
-		/// from its .ModelVersion and .CustomProperties files.
-		/// </summary>
-		internal static MetadataCache LoadFromProjectFolder(string projectFolder)
-		{
-			return LoadFromProjectFiles(
-				ReadAllTextIfExists(Path.Combine(projectFolder, FlexBridgeConstants.ModelVersionFilename)),
-				ReadAllTextIfExists(Path.Combine(projectFolder, FlexBridgeConstants.CustomPropertiesFilename)));
-		}
-
-		/// <summary>
 		/// Create a cache from the contents of a project's .ModelVersion and .CustomProperties files.
 		/// Either may be null, if the file does not exist.
 		/// </summary>
