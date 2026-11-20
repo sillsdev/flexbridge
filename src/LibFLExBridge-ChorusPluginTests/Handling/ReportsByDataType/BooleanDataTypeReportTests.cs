@@ -47,7 +47,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 		{
 			base.FixtureSetup();
 
-			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc = new MetadataCache();
 			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 			{
 				EventListener = new NullMergeEventListener()

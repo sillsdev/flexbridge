@@ -19,7 +19,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 		[SetUp]
 		public void TestSetup()
 		{
-			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc = new MetadataCache();
 		}
 
 		[TearDown]

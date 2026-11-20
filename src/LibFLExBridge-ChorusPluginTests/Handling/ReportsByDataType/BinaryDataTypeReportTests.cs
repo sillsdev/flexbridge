@@ -24,7 +24,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 		[Test]
 		public void EnsureAllBinaryPropertiesAreSetUpCorrectly()
 		{
-			var mdc = MetadataCache.MdCache;
+			var mdc = new MetadataCache();
 			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 				{
 					EventListener = new ListenerForUnitTests()

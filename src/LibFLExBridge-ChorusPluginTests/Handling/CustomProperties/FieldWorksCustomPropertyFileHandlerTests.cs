@@ -579,7 +579,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.CustomProperties
 </AdditionalFields>";
 
 			var tempPathname = Path.Combine(Path.GetTempPath(), FlexBridgeConstants.CustomPropertiesFilename);
-			FileWriterService.WriteCustomPropertyFile(MetadataCache.TestOnlyNewCache, Path.GetTempPath(),
+			FileWriterService.WriteCustomPropertyFile(new MetadataCache(), Path.GetTempPath(),
 				LibTriboroughBridgeSharedConstants.Utf8.GetBytes(originalCustomData));
 			using (var tempFile = TempFile.TrackExisting(tempPathname))
 			{
@@ -654,7 +654,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.CustomProperties
 			File.WriteAllText(_ourFile.Path, randy);
 			File.WriteAllText(_theirFile.Path, sue);
 			File.WriteAllText(_commonFile.Path, commonAncestor);
-			var mdc = MetadataCache.TestOnlyNewCache;
+			var mdc = new MetadataCache();
 			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
 			mdc.ResetCaches();
 			var eventListener = new ListenerForUnitTests();

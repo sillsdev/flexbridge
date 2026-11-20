@@ -24,7 +24,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.ReportsByDataType
 		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
-			_mdc = MetadataCache.TestOnlyNewCache;
+			_mdc = new MetadataCache();
 			var mergeOrder = new MergeOrder(null, null, null, new NullMergeSituation())
 			{
 				EventListener = new ListenerForUnitTests()

@@ -64,7 +64,6 @@ namespace FLEx_ChorusPluginTests.Integration
 		<DateModified val='2012-12-10 6:29:17.117' />
 		<HomographNumber val='1' />
 		<DoNotUseForParsing val='True' />
-		<ExcludeAsHeadword val='True' />
 		<Senses>
 			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
 				<Custom
@@ -95,7 +94,6 @@ namespace FLEx_ChorusPluginTests.Integration
 		<DateModified val='2012-12-10 6:29:17.117' />
 		<HomographNumber val='1' />
 		<DoNotUseForParsing val='True' />
-		<ExcludeAsHeadword val='True' />
 		<Senses>
 			<ownseq class='LexSense' guid='97129e67-e0a5-47c4-a875-05c2b2e1b7df'>
 				<Custom
@@ -133,12 +131,22 @@ namespace FLEx_ChorusPluginTests.Integration
 	</LexEntry>
 </Lexicon>";
 
-			var mdc = MetadataCache.TestOnlyNewCache;
-			mdc.AddCustomPropInfo("LexEntry", new FdoPropertyInfo("Tone", DataType.ReferenceCollection, true));
-			mdc.AddCustomPropInfo("LexSense", new FdoPropertyInfo("Paradigm", DataType.MultiString, true));
-			mdc.AddCustomPropInfo("WfiWordform", new FdoPropertyInfo("Certified", DataType.Boolean, true));
-			mdc.ResetCaches();
-			using (var sueRepo = new RepositoryWithFilesSetup("Sue", $"{FlexBridgeConstants.Lexicon}_01.{FlexBridgeConstants.Lexdb}", commonAncestor))
+			// Validation and merge read the custom fields from the project's .CustomProperties file.
+			// The repository setup commits its file right away, before that file can exist,
+			// so start with a lexicon that uses no custom fields and commit the common ancestor with the metadata files.
+			const string lexiconWithoutCustomFields =
+@"<?xml version='1.0' encoding='utf-8'?>
+<Lexicon>
+	<header>
+		<LexDb guid='2d23f428-83a9-44ba-90f1-9e3264b5b982' >
+			<DateCreated val='2012-12-10 6:29:17.117' />
+			<DateModified val='2012-12-10 6:29:17.117' />
+			<IsHeadwordCitationForm val='True' />
+			<IsBodyInSeparateSubentry val='True' />
+		</LexDb>
+	</header>
+</Lexicon>";
+			using (var sueRepo = new RepositoryWithFilesSetup("Sue", $"{FlexBridgeConstants.Lexicon}_01.{FlexBridgeConstants.Lexdb}", lexiconWithoutCustomFields))
 			{
 				var sueProjPath = sueRepo.ProjectFolder.Path;
 				// Add model version number file.
@@ -149,6 +157,7 @@ namespace FLEx_ChorusPluginTests.Integration
 				var customPropsPathname = Path.Combine(sueProjPath, FlexBridgeConstants.CustomPropertiesFilename);
 				File.WriteAllText(customPropsPathname, CustomPropData);
 				sueRepo.Repository.TestOnlyAddSansCommit(customPropsPathname);
+				sueRepo.WriteNewContentsToTestFile(commonAncestor);
 				sueRepo.AddAndCheckIn();
 
 				using (var randyRepo = RepositoryWithFilesSetup.CreateByCloning("Randy", sueRepo))

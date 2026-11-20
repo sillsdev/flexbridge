@@ -260,17 +260,7 @@ namespace RepositoryUtility
 							: Path.Combine(_repoFolder, Path.GetFileName(_repoFolder) + LibTriboroughBridgeSharedConstants.FwXmlExtension),
 						repoType);
 				syncDlg.SetSynchronizerAdjunct(syncAdjunt);
-				var versionString = LibFLExBridgeUtilities.GetFlexModelVersion(_repoFolder);
-				var versionNumbers = versionString.Split(new[] { "{", ":", "}" },
-					StringSplitOptions.RemoveEmptyEntries);
-				if (versionNumbers.Length == 0)
-					throw new Exception("Invalid version number in branch name");
-				var version = Int32.Parse(versionNumbers.Length > 1 ? versionNumbers[1] : versionNumbers[0]);
-
-				MetadataCache.MdCache.UpgradeToVersion(version);
-				// Use Lexicon location to build up custom properties in support of validating a commit outside of a merge context
-				var mergeOrderFolder = Path.Combine(_repoFolder, FlexBridgeConstants.Lexicon);
-				MetadataCache.MdCache.AddCustomPropInfo(new MergeOrder(mergeOrderFolder, mergeOrderFolder, mergeOrderFolder, new NullMergeSituation()));
+				// Validating the commit loads the model version and custom properties from the repo's own files.
 
 				// Chorus does it in this order:
 				// Local Commit

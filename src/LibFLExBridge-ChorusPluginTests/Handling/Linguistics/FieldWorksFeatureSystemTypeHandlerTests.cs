@@ -191,7 +191,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Linguistics
 			File.WriteAllText(_ourFile.Path, user1);
 			File.WriteAllText(_theirFile.Path, user2);
 			File.WriteAllText(_commonFile.Path, ancestor);
-			var mdc = MetadataCache.TestOnlyNewCache;
+			var mdc = new MetadataCache();
 			var eventListener = new ListenerForUnitTests();
 			var mergeOrder = new MergeOrder(_ourFile.Path, _commonFile.Path, _theirFile.Path, new NullMergeSituation())
 			{

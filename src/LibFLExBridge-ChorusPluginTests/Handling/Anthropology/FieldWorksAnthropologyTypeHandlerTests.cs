@@ -214,9 +214,7 @@ namespace LibFLExBridgeChorusPluginTests.Handling.Anthropology
 			var annOurs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Ann.ntbk"));
 			var susannaTheirs = File.ReadAllText(Path.Combine(testDataDir, "DataNotebook_Susanna.ntbk"));
 
-			// No. FieldWorksCommonFileHandler-Do3WayMerge method needs to do this.
-			// var mdc = MetadataCache.TestOnlyNewCache;
-			// mdc.UpgradeToVersion(7000058);
+			// FieldWorksCommonFileHandler.Do3WayMerge builds the cache from the model version file.
 
 			FieldWorksTestServices.DoMerge(
 				FileHandler,

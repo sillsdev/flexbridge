@@ -15,15 +15,18 @@ using SIL.IO;
 namespace LibFLExBridgeChorusPlugin.Infrastructure
 {
 	/// <summary>
-	/// Cache to hold metadata about the CmObject classes.
+	/// Cache to hold metadata about the CmObject classes of one project: its model version and its custom properties.
 	/// </summary>
+	/// <remarks>
+	/// There is no shared instance. Split and unify create one per run, a merge creates one per file,
+	/// and validation gets one for the file's project from <see cref="ProjectMetadataCaches"/>.
+	/// </remarks>
 	internal sealed class MetadataCache
 	{
 		internal const int StartingModelVersion = 7000037;
 		private readonly Dictionary<string, FdoClassInfo> _classes = new Dictionary<string, FdoClassInfo>();
 		private IEnumerable<FdoClassInfo> _concreteClasses;
 		private readonly Dictionary<string, Dictionary<string, HashSet<string>>> _propertyCache = new Dictionary<string, Dictionary<string, HashSet<string>>>();
-		private static MetadataCache _mdc;
 
 		/// <summary>
 		/// Create a cache for the base model (<see cref="StartingModelVersion"/>) with no custom properties.
@@ -89,32 +92,6 @@ namespace LibFLExBridgeChorusPlugin.Infrastructure
 		internal Dictionary<string, Dictionary<string, HashSet<string>>> PropertyCache
 		{
 			get { return _propertyCache; }
-		}
-
-		internal static MetadataCache MdCache
-		{
-			get { return _mdc ?? (_mdc = new MetadataCache()); }
-		}
-
-		internal static MetadataCache TestOnlyNewCache
-		{
-			get
-			{
-				Reset();
-				return MdCache;
-			}
-		}
-
-		/// <summary>
-		/// Drop the cache, so the next use starts from the base model.
-		/// </summary>
-		/// <remarks>
-		/// The cache holds one project's model version and custom fields. A process that handles several projects
-		/// must reset it between them, or one project's custom field types get used to validate and merge another's.
-		/// </remarks>
-		internal static void Reset()
-		{
-			_mdc = null;
 		}
 
 		internal int ModelVersion { get; private set; }
