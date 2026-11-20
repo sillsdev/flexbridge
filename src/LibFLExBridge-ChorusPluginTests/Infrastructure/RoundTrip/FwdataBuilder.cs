@@ -27,7 +27,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 	/// </remarks>
 	internal sealed class FwdataBuilder
 	{
-		internal const string LangProjectGuid = "c1ed46ba-e382-11de-8a39-0800200c9a66";
+		internal static readonly Guid LangProjectGuid = new Guid("c1ed46ba-e382-11de-8a39-0800200c9a66");
 
 		/// <summary>
 		/// The objects LangProject must own for the splitter and unifier to round trip a project:
@@ -72,11 +72,11 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 			// Fixed guids keep the split files (for example, which Lexicon_NN.lexdb bucket a guid lands in) stable from run to run.
 			var i = 0;
 			foreach (var owned in RequiredLangProjectOwnedObjects)
-				AddOwnedObject(LangProjectGuid, owned.Key, owned.Value, string.Format("00000000-0000-0000-0000-{0:x12}", ++i));
+				AddOwnedObject(LangProjectGuid, owned.Key, owned.Value, new Guid(string.Format("00000000-0000-0000-0000-{0:x12}", ++i)));
 		}
 
 		/// <summary>The guid of the stub LexDb that LangProject owns.</summary>
-		internal string LexDbGuid
+		internal Guid LexDbGuid
 		{
 			get { return OwnedGuid(LangProjectGuid, FlexBridgeConstants.LexDb); }
 		}
@@ -96,7 +96,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		}
 
 		/// <summary>Add an object with no owner, such as a LexEntry.</summary>
-		internal FwdataBuilder AddUnownedObject(string className, string guid, params object[] content)
+		internal FwdataBuilder AddUnownedObject(string className, Guid guid, params object[] content)
 		{
 			return AddRt(NewRt(className, guid, content));
 		}
@@ -105,7 +105,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		/// Add an object owned by <paramref name="ownerGuid"/> (already added) in its <paramref name="owningProperty"/>.
 		/// The owner gets an &lt;objsur t='o'/&gt; in that property, after any it already has.
 		/// </summary>
-		internal FwdataBuilder AddOwnedObject(string ownerGuid, string owningProperty, string className, string guid, params object[] content)
+		internal FwdataBuilder AddOwnedObject(Guid ownerGuid, string owningProperty, string className, Guid guid, params object[] content)
 		{
 			var owner = GetRt(ownerGuid);
 			var property = owner.Element(owningProperty);
@@ -126,17 +126,17 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		/// <summary>Add an &lt;rt&gt; element as is. The caller handles ownerguid and the owner's objsur.</summary>
 		internal FwdataBuilder AddRt(XElement rt)
 		{
-			var guid = rt.Attribute(FlexBridgeConstants.GuidStr).Value;
-			if (_objects.Any(obj => SameGuid(obj, guid)))
+			var guid = SplitUnifyHarness.GuidOf(rt);
+			if (_objects.Any(obj => SplitUnifyHarness.GuidOf(obj) == guid))
 				throw new ArgumentException("An object with guid " + guid + " was already added.", "rt");
 			_objects.Add(rt);
 			return this;
 		}
 
 		/// <summary>The &lt;rt&gt; element with the given guid, for a test that wants to change a stub object.</summary>
-		internal XElement GetRt(string guid)
+		internal XElement GetRt(Guid guid)
 		{
-			var rt = _objects.FirstOrDefault(obj => SameGuid(obj, guid));
+			var rt = _objects.FirstOrDefault(obj => SplitUnifyHarness.GuidOf(obj) == guid);
 			if (rt == null)
 				throw new ArgumentException("No object with guid " + guid + " has been added.", "guid");
 			return rt;
@@ -157,22 +157,17 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 			return doc.Declaration + Environment.NewLine + doc;
 		}
 
-		private string OwnedGuid(string ownerGuid, string owningProperty)
+		private Guid OwnedGuid(Guid ownerGuid, string owningProperty)
 		{
-			return GetRt(ownerGuid).Element(owningProperty).Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value;
+			return SplitUnifyHarness.GuidOf(GetRt(ownerGuid).Element(owningProperty).Element(FlexBridgeConstants.Objsur));
 		}
 
-		private static XElement NewRt(string className, string guid, object[] content)
+		private static XElement NewRt(string className, Guid guid, object[] content)
 		{
 			return new XElement(FlexBridgeConstants.RtTag,
 				new XAttribute(FlexBridgeConstants.Class, className),
 				new XAttribute(FlexBridgeConstants.GuidStr, guid),
 				content);
-		}
-
-		private static bool SameGuid(XElement rt, string guid)
-		{
-			return string.Equals(rt.Attribute(FlexBridgeConstants.GuidStr).Value, guid, StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }

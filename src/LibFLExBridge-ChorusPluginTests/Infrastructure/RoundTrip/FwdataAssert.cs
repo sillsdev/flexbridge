@@ -1,6 +1,7 @@
 // Copyright (c) 2026 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -48,7 +49,9 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 				.Select(pair => string.Format("{0} {1} owner={2}",
 					pair.Key,
 					pair.Value.Attribute(FlexBridgeConstants.Class).Value,
-					((string)pair.Value.Attribute(FlexBridgeConstants.OwnerGuid) ?? "none").ToLowerInvariant()))
+					pair.Value.Attribute(FlexBridgeConstants.OwnerGuid) == null
+						? "none"
+						: new Guid(pair.Value.Attribute(FlexBridgeConstants.OwnerGuid).Value).ToString()))
 				.OrderBy(summary => summary)
 				.ToList();
 		}

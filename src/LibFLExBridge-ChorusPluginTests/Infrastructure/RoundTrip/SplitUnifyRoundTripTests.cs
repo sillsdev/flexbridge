@@ -1,6 +1,7 @@
 // Copyright (c) 2026 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Xml.Linq;
 using LibFLExBridgeChorusPlugin.Infrastructure;
 using NUnit.Framework;
@@ -14,9 +15,9 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 	[TestFixture]
 	public class SplitUnifyRoundTripTests
 	{
-		private const string EntryGuid = "c1ed46bc-e382-11de-8a39-0800200c9a66";
-		private const string SenseGuid = "c1ed46bd-e382-11de-8a39-0800200c9a66";
-		private const string SubsenseGuid = "c1ed46be-e382-11de-8a39-0800200c9a66";
+		private static readonly Guid EntryGuid = new Guid("c1ed46bc-e382-11de-8a39-0800200c9a66");
+		private static readonly Guid SenseGuid = new Guid("c1ed46bd-e382-11de-8a39-0800200c9a66");
+		private static readonly Guid SubsenseGuid = new Guid("c1ed46be-e382-11de-8a39-0800200c9a66");
 
 		private static XElement CustomInteger(string name, int value)
 		{
@@ -84,11 +85,11 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 			{
 				var objects = SplitUnifyHarness.ObjectsByGuid(project.RoundTrip());
 
-				Assert.That(objects[SenseGuid].Attribute(FlexBridgeConstants.OwnerGuid).Value, Is.EqualTo(EntryGuid));
-				Assert.That(objects[SubsenseGuid].Attribute(FlexBridgeConstants.OwnerGuid).Value, Is.EqualTo(SenseGuid));
-				Assert.That(objects[EntryGuid].Element("Senses").Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value,
+				Assert.That(new Guid(objects[SenseGuid].Attribute(FlexBridgeConstants.OwnerGuid).Value), Is.EqualTo(EntryGuid));
+				Assert.That(new Guid(objects[SubsenseGuid].Attribute(FlexBridgeConstants.OwnerGuid).Value), Is.EqualTo(SenseGuid));
+				Assert.That(SplitUnifyHarness.GuidOf(objects[EntryGuid].Element("Senses").Element(FlexBridgeConstants.Objsur)),
 					Is.EqualTo(SenseGuid));
-				Assert.That(objects[SenseGuid].Element("Senses").Element(FlexBridgeConstants.Objsur).Attribute(FlexBridgeConstants.GuidStr).Value,
+				Assert.That(SplitUnifyHarness.GuidOf(objects[SenseGuid].Element("Senses").Element(FlexBridgeConstants.Objsur)),
 					Is.EqualTo(SubsenseGuid));
 			}
 		}

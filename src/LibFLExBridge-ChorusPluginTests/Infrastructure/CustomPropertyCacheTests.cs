@@ -1,6 +1,7 @@
 // Copyright (c) 2026 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -23,7 +24,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure
 	[TestFixture]
 	public class CustomPropertyCacheTests
 	{
-		private const string EntryGuid = "c1ed46bc-e382-11de-8a39-0800200c9a66";
+		private static readonly Guid EntryGuid = new Guid("c1ed46bc-e382-11de-8a39-0800200c9a66");
 
 		private TemporaryFolder _projectFolder;
 		private string _fwdataPathname;

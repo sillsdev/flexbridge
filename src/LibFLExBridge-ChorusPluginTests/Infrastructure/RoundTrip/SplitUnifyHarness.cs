@@ -124,7 +124,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		/// the object's element, and save the file. In split files an object's element is named for its class
 		/// (for example &lt;LexEntry guid='...'&gt;), or is &lt;ownseq class='...' guid='...'&gt; in an owning sequence.
 		/// </summary>
-		internal void EditSplitObject(string guid, Action<XElement> edit)
+		internal void EditSplitObject(Guid guid, Action<XElement> edit)
 		{
 			var pathname = SplitFileContaining(guid);
 			var doc = XDocument.Load(pathname);
@@ -133,7 +133,7 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 		}
 
 		/// <summary>The split file holding the object with <paramref name="guid"/>.</summary>
-		internal string SplitFileContaining(string guid)
+		internal string SplitFileContaining(Guid guid)
 		{
 			var pathnames = SplitFiles().Where(pathname => FindByGuid(XDocument.Load(pathname), guid).Any()).ToList();
 			if (pathnames.Count != 1)
@@ -142,11 +142,11 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 			return pathnames[0];
 		}
 
-		/// <summary>The &lt;rt&gt; elements of a .fwdata document, keyed by lowercase guid.</summary>
-		internal static Dictionary<string, XElement> ObjectsByGuid(XDocument fwdata)
+		/// <summary>The &lt;rt&gt; elements of a .fwdata document, keyed by guid.</summary>
+		internal static Dictionary<Guid, XElement> ObjectsByGuid(XDocument fwdata)
 		{
 			return fwdata.Root.Elements(FlexBridgeConstants.RtTag)
-				.ToDictionary(rt => rt.Attribute(FlexBridgeConstants.GuidStr).Value.ToLowerInvariant());
+				.ToDictionary(GuidOf);
 		}
 
 		public void Dispose()
@@ -155,12 +155,19 @@ namespace LibFLExBridgeChorusPluginTests.Infrastructure.RoundTrip
 			MetadataCache = MetadataCache.TestOnlyNewCache;
 		}
 
-		private static IEnumerable<XElement> FindByGuid(XDocument doc, string guid)
+		/// <summary>The guid of an element with a guid attribute, such as an &lt;rt&gt; or &lt;objsur&gt;.</summary>
+		internal static Guid GuidOf(XElement element)
+		{
+			return new Guid(element.Attribute(FlexBridgeConstants.GuidStr).Value);
+		}
+
+		private static IEnumerable<XElement> FindByGuid(XDocument doc, Guid guid)
 		{
 			// <objsur> elements refer to an object; they are not the object.
 			return doc.Descendants()
 				.Where(element => element.Name.LocalName != FlexBridgeConstants.Objsur
-					&& string.Equals((string)element.Attribute(FlexBridgeConstants.GuidStr), guid, StringComparison.OrdinalIgnoreCase));
+					&& element.Attribute(FlexBridgeConstants.GuidStr) != null
+					&& GuidOf(element) == guid);
 		}
 	}
 }
